@@ -59,7 +59,7 @@ export const BoardSettings = () => {
           Alternative classroom
         </button>
       </div>
-      <div className="absolute left-0 top-full flex flex-row gap-2 mt-20">
+      {/* <div className="absolute left-0 top-full flex flex-row gap-2 mt-20">
         <button
           className={` ${
             speech === "formal"
@@ -102,7 +102,7 @@ export const BoardSettings = () => {
         >
           English
         </button>
-      </div>
+      </div> */}
     </>
   );
 };

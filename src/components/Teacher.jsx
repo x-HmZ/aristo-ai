@@ -141,7 +141,7 @@ export function Teacher({ teacher, ...props }) {
   return (
     <group {...props} dispose={null} ref={group}>
       {loading && (
-        <Html position-y={teacher === "Nanami" ? 1.6 : 1.8}>
+        <Html position-y={teacher === "Sonia" ? 1.6 : 1.8}>
           <div className="flex justify-center items-center -translate-x-1/2">
             <span className="relative flex h-8 w-8 items-center justify-center">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>

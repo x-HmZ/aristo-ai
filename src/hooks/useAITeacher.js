@@ -1,75 +1,55 @@
 const { create } = require("zustand");
 
-export const teachers = ["Nanami", "Naoki"];
+export const teachers = ["Sonia", "Ryan"];
 
 export const useAITeacher = create((set, get) => ({
   messages: [],
   currentMessage: null,
   teacher: teachers[0],
+  loading: false,
+  classroom: "default",
+
   setTeacher: (teacher) => {
     set(() => ({
       teacher,
       messages: get().messages.map((message) => {
-        message.audioPlayer = null; // New teacher, new Voice
+        message.audioPlayer = null; // New teacher, new voice
         return message;
       }),
     }));
   },
-  classroom: "default",
+
   setClassroom: (classroom) => {
     set(() => ({
       classroom,
     }));
   },
-  loading: false,
-  furigana: true,
-  setFurigana: (furigana) => {
-    set(() => ({
-      furigana,
-    }));
-  },
-  english: true,
-  setEnglish: (english) => {
-    set(() => ({
-      english,
-    }));
-  },
-  speech: "formal",
-  setSpeech: (speech) => {
-    set(() => ({
-      speech,
-    }));
-  },
+
   askAI: async (question) => {
-    if (!question) {
-      return;
-    }
+    if (!question) return;
     const message = {
       question,
       id: get().messages.length,
+      answer: null, // Initialize answer
     };
-    set(() => ({
-      loading: true,
-    }));
 
-    const speech = get().speech;
-
-    // Ask AI
-    const res = await fetch(`/api/ai?question=${question}&speech=${speech}`);
-    const data = await res.json();
-    message.answer = data;
-    message.speech = speech;
-
-    set(() => ({
-      currentMessage: message,
-    }));
-
-    set((state) => ({
-      messages: [...state.messages, message],
-      loading: false,
-    }));
-    get().playMessage(message);
+    set({ loading: true });
+    try {
+      const res = await fetch(`/api/ai?question=${question}`);
+      const data = await res.json();
+      message.answer = data;
+      set(() => ({
+        currentMessage: message,
+        messages: [...get().messages, message],
+        loading: false,
+      }));
+      get().playMessage(message);
+    } catch (error) {
+      console.error("Error asking AI:", error);
+      set({ loading: false });
+    }
   },
+
   playMessage: async (message) => {
     set(() => ({
       currentMessage: message,
@@ -79,12 +59,11 @@ export const useAITeacher = create((set, get) => ({
       set(() => ({
         loading: true,
       }));
+      // Define the text to be converted to audio
+      const textToSpeak = `${message.answer.definition} ${message.answer.explanation} ${message.answer.example}`;
+
       // Get TTS
-      const audioRes = await fetch(
-        `/api/tts?teacher=${get().teacher}&text=${message.answer.japanese
-          .map((word) => word.word)
-          .join(" ")}`
-      );
+      const audioRes = await fetch(`/api/tts?teacher=${get().teacher}&text=${encodeURIComponent(textToSpeak)}`);
       const audio = await audioRes.blob();
       const visemes = JSON.parse(await audioRes.headers.get("visemes"));
       const audioUrl = URL.createObjectURL(audio);
@@ -111,6 +90,7 @@ export const useAITeacher = create((set, get) => ({
     message.audioPlayer.currentTime = 0;
     message.audioPlayer.play();
   },
+
   stopMessage: (message) => {
     message.audioPlayer.pause();
     set(() => ({

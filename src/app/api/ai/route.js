@@ -1,174 +1,70 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"], // This is the default and can be omitted
+  apiKey: process.env["OPENAI_API_KEY"]
 });
 
-const formalExample = {
-  japanese: [
-    { word: "日本", reading: "にほん" },
-    { word: "に" },
-    { word: "住んで", reading: "すんで" },
-    { word: "います" },
-    { word: "か" },
-    { word: "?" },
-  ],
-  grammarBreakdown: [
-    {
-      english: "Do you live in Japan?",
-      japanese: [
-        { word: "日本", reading: "にほん" },
-        { word: "に" },
-        { word: "住んで", reading: "すんで" },
-        { word: "います" },
-        { word: "か" },
-        { word: "?" },
-      ],
-      chunks: [
-        {
-          japanese: [{ word: "日本", reading: "にほん" }],
-          meaning: "Japan",
-          grammar: "Noun",
-        },
-        {
-          japanese: [{ word: "に" }],
-          meaning: "in",
-          grammar: "Particle",
-        },
-        {
-          japanese: [{ word: "住んで", reading: "すんで" }, { word: "います" }],
-          meaning: "live",
-          grammar: "Verb + て form + います",
-        },
-        {
-          japanese: [{ word: "か" }],
-          meaning: "question",
-          grammar: "Particle",
-        },
-        {
-          japanese: [{ word: "?" }],
-          meaning: "question",
-          grammar: "Punctuation",
-        },
-      ],
-    },
-  ],
-};
-
-const casualExample = {
-  japanese: [
-    { word: "日本", reading: "にほん" },
-    { word: "に" },
-    { word: "住んで", reading: "すんで" },
-    { word: "いる" },
-    { word: "の" },
-    { word: "?" },
-  ],
-  grammarBreakdown: [
-    {
-      english: "Do you live in Japan?",
-      japanese: [
-        { word: "日本", reading: "にほん" },
-        { word: "に" },
-        { word: "住んで", reading: "すんで" },
-        { word: "いる" },
-        { word: "の" },
-        { word: "?" },
-      ],
-      chunks: [
-        {
-          japanese: [{ word: "日本", reading: "にほん" }],
-          meaning: "Japan",
-          grammar: "Noun",
-        },
-        {
-          japanese: [{ word: "に" }],
-          meaning: "in",
-          grammar: "Particle",
-        },
-        {
-          japanese: [{ word: "住んで", reading: "すんで" }, { word: "いる" }],
-          meaning: "live",
-          grammar: "Verb + て form + いる",
-        },
-        {
-          japanese: [{ word: "の" }],
-          meaning: "question",
-          grammar: "Particle",
-        },
-        {
-          japanese: [{ word: "?" }],
-          meaning: "question",
-          grammar: "Punctuation",
-        },
-      ],
-    },
-  ],
-};
-
 export async function GET(req) {
-  // WARNING: Do not expose your keys
-  // WARNING: If you host publicly your project, add an authentication layer to limit the consumption of ChatGPT resources
+  const question = req.nextUrl.searchParams.get("question") || "What is photosynthesis?";
 
-  const speech = req.nextUrl.searchParams.get("speech") || "formal";
-  const speechExample = speech === "formal" ? formalExample : casualExample;
-
-  const chatCompletion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: `You are a Japanese language teacher. 
-Your student asks you how to say something from english to japanese.
-You should respond with: 
-- english: the english version ex: "Do you live in Japan?"
-- japanese: the japanese translation in split into words ex: ${JSON.stringify(
-          speechExample.japanese
-        )}
-- grammarBreakdown: an explanation of the grammar structure per sentence ex: ${JSON.stringify(
-          speechExample.grammarBreakdown
-        )}
-`,
-      },
-      {
-        role: "system",
-        content: `You always respond with a JSON object with the following format: 
+  try {
+    const chatCompletion = await openai.chat.completions.create({
+      messages: [
         {
-          "english": "",
-          "japanese": [{
-            "word": "",
-            "reading": ""
-          }],
-          "grammarBreakdown": [{
-            "english": "",
-            "japanese": [{
-              "word": "",
-              "reading": ""
-            }],
-            "chunks": [{
-              "japanese": [{
-                "word": "",
-                "reading": ""
-              }],
-              "meaning": "",
-              "grammar": ""
-            }]
-          }]
-        }`,
+          role: "system",
+          content: "You are an AI tasked with providing educational content. When asked a question about a topic, respond with structured JSON containing keys for 'definition', 'explanation', and 'example'. Ensure the format follows this structure."
+        },
+        {
+          role: "user",
+          content: question
+        }
+      ],
+      model: "gpt-3.5-turbo", // Ensure this model is available to you in your OpenAI dashboard
+      response_format: {
+        type: "json_object",
       },
-      {
-        role: "user",
-        content: `How to say ${
-          req.nextUrl.searchParams.get("question") ||
-          "Have you ever been to Japan?"
-        } in Japanese in ${speech} speech?`,
-      },
-    ],
-    // model: "gpt-4-turbo-preview", // https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
-    model: "gpt-3.5-turbo", // https://help.openai.com/en/articles/7102672-how-can-i-access-gpt-4
-    response_format: {
-      type: "json_object",
-    },
-  });
-  console.log(chatCompletion.choices[0].message.content);
-  return Response.json(JSON.parse(chatCompletion.choices[0].message.content));
+    });
+
+    if (chatCompletion.choices && chatCompletion.choices.length > 0) {
+      const responseContent = chatCompletion.choices[0].message.content;
+      
+      // Attempt to parse the responseContent, assuming it's already structured JSON
+      let aiResponse;
+      try {
+        aiResponse = JSON.parse(responseContent);
+      } catch (error) {
+        // If parsing fails, log the error and prepare a default response
+        console.error("Failed to parse AI response:", responseContent);
+        aiResponse = {
+          definition: "No valid definition provided.",
+          explanation: "No valid explanation provided.",
+          example: "No valid example provided."
+        };
+      }
+
+      const structuredResponse = {
+        definition: aiResponse.definition || "Definition not provided.",
+        explanation: aiResponse.explanation || "Explanation not provided.",
+        example: aiResponse.example || "Example not provided."
+      };
+
+      console.log(structuredResponse);
+      return new Response(JSON.stringify(structuredResponse), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } else {
+      throw new Error("No valid response in choices");
+    }
+  } catch (error) {
+    console.error("Error during API call or data handling:", error);
+    return new Response(JSON.stringify({ error: "Failed to process your request", details: error.message }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
 }
