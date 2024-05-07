@@ -10,6 +10,7 @@ export const MessagesList = () => {
     classroom,
     topMessage,
     currentQuestion,
+    Quiz,
   } = useAITeacher(state => ({
     messages: state.messages,
     currentMessage: state.currentMessage,
@@ -17,7 +18,9 @@ export const MessagesList = () => {
     stopMessage: state.stopMessage,
     classroom: state.classroom,
     topMessage: state.topMessage,
-    currentQuestion: state.currentQuestion
+    currentQuestion: state.currentQuestion,
+    Quiz: state.Quiz,
+    
   }));
 
   const containerRef = useRef(null);
@@ -103,61 +106,61 @@ export const MessagesList = () => {
         </div>
       )}
 
-      {/* Need to add Question here */}
-      {/* {currentQuestion && (
-        <div className="flex">
-          <div className="flex-grow">
-            <div className="flex items-center gap-3">
-              <span className="text-white/90 text-2xl font-bold uppercase px-3 py-1 rounded-full bg-indigo-600" >Question: </span>
-              <p className="text-4xl inline-block px-2 rounded-sm font-bold bg-clip-text text-transparent bg-gradient-to-br from-blue-300/90 to-white/90">
-                {currentQuestion}
-              </p>
+      {/* Show the Quiz message */}
+      {Quiz ? (
+        <div className="h-full w-full grid place-content-center text-center">
+          <h2 className="text-8xl font-bold font-jp text-red-600/90 italic">
+            Quiz Time
+          </h2>
+          <h2 className="text-8xl font-bold text-white/90 italic">
+            Look at your Desk
+          </h2>
+        </div>
+      ) : (
+        <>
+          {topMessage && (
+            <div className="flex justify-between items-center">
+              <div>{renderMessage(topMessage)}</div>
             </div>
-          </div>
-        </div>
-      )} */}
+          )}
 
-      {topMessage && (
-        <div className="flex justify-between items-center">
-          <div>{renderMessage(topMessage)}</div>
-        </div>
+
+          {messages.map((message, index) => (
+            <div key={index} className="flex justify-between items-center">
+              <div>{renderMessage(message)}</div>
+              <button
+                className="text-white/65"
+                onClick={() => currentMessage === message ? stopMessage(message) : playMessage(message)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-16 h-16"
+                >
+                  {currentMessage === message ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z"
+                    />
+                  )}
+                </svg>
+              </button>
+            </div>
+          ))}
+        </>
       )}
 
 
-
-
-      {messages.map((message, index) => (
-        <div key={index} className="flex justify-between items-center">
-          <div>{renderMessage(message)}</div>
-          <button
-            className="text-white/65"
-            onClick={() => currentMessage === message ? stopMessage(message) : playMessage(message)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-16 h-16"
-            >
-              {currentMessage === message ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-      ))}
     </div>
   );
 };

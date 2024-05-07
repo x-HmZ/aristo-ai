@@ -17,6 +17,7 @@ import { BoardSettings } from "./BoardSettings";
 import { MessagesList } from "./MessagesList";
 import { Teacher } from "./Teacher";
 import { TypingBox } from "./TypingBox";
+import { QuizBox } from "./QuizBox";
 
 const itemPlacement = {
   default: {
@@ -44,6 +45,7 @@ const itemPlacement = {
 export const Experience = () => {
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
+  const numberOfQuestion = useAITeacher((state) => state.numberOfQuestion);
 
   return (
     <>
@@ -58,6 +60,23 @@ export const Experience = () => {
         }}
       >
         <CameraManager />
+
+        {/* Quiz Box */}
+        {numberOfQuestion === 3 ? (
+          <Suspense>
+            <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
+              <Html
+                distanceFactor={0.9}
+                transform
+                position={[0, -0.8, -0.52]}
+                rotation-x={-1.4}
+              >
+                <QuizBox />
+              </Html>
+            </Float>
+          </Suspense>): null}
+        
+
 
         <Suspense>
           <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
