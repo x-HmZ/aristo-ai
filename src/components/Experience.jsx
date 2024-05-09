@@ -45,7 +45,7 @@ const itemPlacement = {
 export const Experience = () => {
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
-  const numberOfQuestion = useAITeacher((state) => state.numberOfQuestion);
+  const Quiz = useAITeacher((state) => state.Quiz);
 
   return (
     <>
@@ -62,7 +62,7 @@ export const Experience = () => {
         <CameraManager />
 
         {/* Quiz Box */}
-        {numberOfQuestion === 3 ? (
+        {Quiz ? (
           <Suspense>
             <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
               <Html

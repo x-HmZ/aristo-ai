@@ -6,13 +6,14 @@ const openai = new OpenAI({
 
 export async function GET(req) {
   const question = req.nextUrl.searchParams.get("question") || "What is photosynthesis?";
+  const teachingType = req.nextUrl.searchParams.get("teachingType") || "in technical terms";
 
   try {
     const chatCompletion = await openai.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: "You are an AI tasked with providing educational content. When asked a question about a topic, respond with structured JSON containing keys for 'definition', 'explanation', and 'example'. Ensure the format follows this structure."
+          content: `You are an AI tasked with providing educational content. When asked a question about a topic, respond with structured JSON containing keys for 'definition', 'explanation', and 'example'. Ensure the format follows this structure. Give explaination and example ${teachingType} `
         },
         {
           role: "user",
@@ -27,7 +28,7 @@ export async function GET(req) {
 
     if (chatCompletion.choices && chatCompletion.choices.length > 0) {
       const responseContent = chatCompletion.choices[0].message.content;
-      
+
       // Attempt to parse the responseContent, assuming it's already structured JSON
       let aiResponse;
       try {

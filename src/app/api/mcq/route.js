@@ -6,7 +6,6 @@ const openai = new OpenAI({
 
 export async function GET(req) {
   const previousQA = req.nextUrl.searchParams.get("previousQA");
-
   try {
     let previousQAMessages = [];
 
@@ -34,7 +33,7 @@ export async function GET(req) {
           "Paris"
         ]
       }
-      Based on this structure, generate five MCQs based on the previous questions and answers.`
+      Based on this structure, generate five MCQs based on the previous questions and answers. also make sure that the mcqs are generated only by the content provided to you  in answers of the questions explicitly. `
     };
 
     previousQAMessages.push(mcqPrompt);
