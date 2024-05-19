@@ -66,7 +66,7 @@ export const Experience = () => {
           <Suspense>
             <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
               <Html
-                distanceFactor={0.5}
+                distanceFactor={0.4}
                 transform
                 position={[0, -0.8, -0.52]}
                 rotation-x={-1.4}

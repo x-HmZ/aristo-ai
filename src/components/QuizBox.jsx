@@ -2,7 +2,7 @@ import { useAITeacher } from '@/hooks/useAITeacher';
 import { useEffect, useState } from 'react';
 
 export const QuizBox = () => {
-    const { quizQuestions, quizAnswers, quizCorrectAnswer, getQuizQuestions, Quiz, score, updateScore, setQuizPassedTrue, setQuizPassedFalse,quizFinished, quizFailed } = useAITeacher();
+    const { quizQuestions, quizAnswers, quizCorrectAnswer, getQuizQuestions, Quiz, score, updateScore, setQuizPassedTrue, setQuizPassedFalse, quizFinished, quizFailed, appendStoredQuizScore } = useAITeacher();
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
@@ -34,15 +34,16 @@ export const QuizBox = () => {
             setSelectedOption(null);
         } else {
             alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
+            appendStoredQuizScore();
             if (score >= 3) {
                 setQuizPassedTrue();
                 quizFinished();
-                
-            }else{
+
+            } else {
                 setQuizPassedFalse();
                 quizFailed();
             }
-            
+
         }
     };
 
@@ -69,8 +70,8 @@ export const QuizBox = () => {
                         key={index}
                         onClick={() => handleOptionClick(option)}
                         className={`w-full text-left px-4 py-2 ${selectedOption === option
-                                ? "bg-blue-200 hover:bg-blue-300"
-                                : "bg-gray-100 hover:bg-gray-200"
+                            ? "bg-blue-200 hover:bg-blue-300"
+                            : "bg-gray-100 hover:bg-gray-200"
                             } rounded-lg border border-gray-300 text-black`}
                     >
                         {option}

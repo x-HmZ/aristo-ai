@@ -1,4 +1,6 @@
 const { create } = require("zustand");
+import { db } from '@/app/firebase/config'; // Ensure this import points to your actual config file
+import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 
 export const teachers = ["Sonia", "Ryan"];
 
@@ -7,19 +9,22 @@ export const useAITeacher = create((set, get) => ({
   currentMessage: null,
   teacher: teachers[0],
   loading: false,
-  index : 0 ,
+  index: 0,
   classroom: "default",
   quizFailedTimes: 0,
-  learningTypes : ["in technical terms", "using metaphors", "as if you are explaining to a ten year old"],
-  
-  numberOfQuestion: 0,
-  maxQuestions: 1,
+  learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old"],
   quizOngoing: false,
-  
 
   // Answers and Questions stored before mcq
+  maxQuestions: 3,
+  numberOfQuestion: 0,
   answerOfQuestion: [],
   previousQuestion: [],
+  // For change of Mode
+  tempAnswerOfQuestion: [],
+  tempPreviousQuestion: [],
+  tempNumberOfQuestion: 0,
+
 
   // Start quiz and sructure the response  
   Quiz: false,
@@ -29,8 +34,44 @@ export const useAITeacher = create((set, get) => ({
   score: 0,
   quizPassed: false,
 
-  getTeachingType: () => {
-    return get().learningTypes[get().quizFailedTimes]; // Ensures the index is always valid
+  // Database Variables
+  courseMode: true,
+  speaking: false,
+  id: "",
+  userName: "",
+  email: "",
+  learningStyle: "",
+  currentTopic: 0,
+  topicList: [],  // This will be from "Courses" collection
+
+  updateUser: (name, email, learningStyle, currenTopic) => {
+    console.log("Updating User in Zustand: ", name, email, learningStyle, currenTopic);
+    set({
+      userName: name,
+      email: email,
+      learningStyle: learningStyle,
+      currentTopic: currenTopic,
+    });
+  },
+
+  // Quize Part
+  getTeachingType: async () => {
+    return get().learningStyle;
+  },
+
+  updateTeachingType: async () => {
+    const newLearningStyle = get().learningTypes[(get().learningTypes.indexOf(get().learningStyle) + 1) % 3];
+    set({ learningStyle: newLearningStyle });
+
+    const userDocRef = doc(db, "users", get().id);
+    try {
+      await updateDoc(userDocRef, {
+        learning_style: newLearningStyle
+      });
+      console.log("Learning style updated successfully in Firestore.");
+    } catch (error) {
+      console.error("Failed to update learning style in Firestore:", error);
+    }
   },
 
   setQuizPassedTrue: () => {
@@ -48,19 +89,18 @@ export const useAITeacher = create((set, get) => ({
 
   quizFailed: async () => {
     // Reset quiz state
-    
-    set({ quizFailedTimes : get().quizFailedTimes + 1});
-    if(get().quizFailedTimes > 2){set({quizFailedTimes: 0})};
+    get().updateTeachingType();
+    set({ quizFailedTimes: get().quizFailedTimes + 1 });
+    if (get().quizFailedTimes > 2) { set({ quizFailedTimes: 0 }) };
     set({ numberOfQuestion: 0 });
     set({ Quiz: false });
     set({ quizOngoing: true })
 
-    for (get().index; get().index < get().maxQuestions; set({index : get().index + 1})) {
+    for (get().index; get().index < get().maxQuestions; set({ index: get().index + 1 })) {
       await get().askAI(get().previousQuestion[get().index]);
       set({ numberOfQuestion: get().numberOfQuestion + 1 })
-      // console.log(i)
     }
-    set({index: 0});
+    set({ index: 0 });
     set({ score: 0 });
     set({ Quiz: true });
     console.log("All previous questions have been asked.");
@@ -80,6 +120,112 @@ export const useAITeacher = create((set, get) => ({
     })
   },
 
+  appendStoredQuizScore: async () => {
+    const userDocRef = doc(db, "users", get().id);
+    const currentScore = get().score;
+
+    try {
+      const docSnap = await getDoc(userDocRef);
+      let previousQuizScores = docSnap.exists() && docSnap.data().previous_quiz_score ? docSnap.data().previous_quiz_score : [];
+      
+      // Append the current score to the array
+      previousQuizScores.push(currentScore);
+
+      // Update the document with the new scores array
+      await updateDoc(userDocRef, {
+        previous_quiz_score: previousQuizScores
+      });
+
+      console.log("Quiz score updated successfully.");
+    } catch (error) {
+      console.error("Failed to update quiz scores:", error);
+    }
+  },
+
+  // Course Mode
+  setCourseMode: (mode) => set({ courseMode: mode }),
+
+  checkingInNoramlMode: () => {
+    const { answerOfQuestion, previousQuestion, numberOfQuestion } = get();
+
+    console.log("Normal mode")
+    if (answerOfQuestion.length !== 0) {
+      set({ tempAnswerOfQuestion: [...answerOfQuestion] });
+      console.log("Temp Answer of Question: ", get().tempAnswerOfQuestion)
+      set({ answerOfQuestion: [] });
+    }
+
+    if (previousQuestion.length !== 0) {
+      set({ tempPreviousQuestion: [...previousQuestion] });
+      console.log("Temp Previous Question: ", get().tempPreviousQuestion)
+      set({ previousQuestion: [] });
+    }
+
+    if (numberOfQuestion !== 0) {
+      set({ tempNumberOfQuestion: numberOfQuestion });
+      console.log("Temp Number of Question: ", get().tempNumberOfQuestion)
+      set({ numberOfQuestion: 0 });
+    }
+  },
+
+  checkingInCourseMode: () => {
+    const { tempAnswerOfQuestion, tempPreviousQuestion, tempNumberOfQuestion } = get();
+    if (tempAnswerOfQuestion.length !== 0) {
+      set({ answerOfQuestion: [...tempAnswerOfQuestion] });
+      console.log("Answer of Question: ", get().answerOfQuestion)
+      set({ tempAnswerOfQuestion: [] });
+    }
+    console.log("course Mode")
+    if (tempPreviousQuestion.length !== 0) {
+      set({ previousQuestion: [...tempPreviousQuestion] });
+      console.log("Previous Question: ", get().previousQuestion)
+      set({ tempPreviousQuestion: [] });
+    }
+
+    if (tempNumberOfQuestion !== 0) {
+      set({ numberOfQuestion: tempNumberOfQuestion });
+      console.log("Number of Question: ", get().numberOfQuestion)
+      set({ tempNumberOfQuestion: 0 });
+    }
+  },
+
+  fetchCourseData: async (userId) => {
+    set({ id: userId });
+    const coursesRef = collection(db, "courses");
+    const q = query(coursesRef, where("course_name", "==", "Science 4th"));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const courseData = querySnapshot.docs[0].data();
+      set({ topicList: courseData.topic_list });
+    } else {
+      console.log("No such course!");
+      set({ topicList: [] });
+    }
+
+  },
+
+  courseAI: async () => {
+    const whereAMI = get().topicList[get().currentTopic];
+    const question = `What is ${whereAMI}?`;
+    await get().askAI(question);
+
+    // Update the current topic
+    const newCurrentTopic = get().currentTopic + 1;
+
+    const userDocRef = doc(db, "users", get().id);
+    try {
+      set({ currentTopic: newCurrentTopic });
+      await updateDoc(userDocRef, {
+        current_topic: newCurrentTopic
+      });
+      console.log("Current topic successfully updated in Firestore and local state.");
+    } catch (error) {
+      console.error("Failed to update current topic in Firestore:", error);
+    }
+
+
+  },
 
   setTeacher: (teacher) => {
     set(() => ({
@@ -98,7 +244,8 @@ export const useAITeacher = create((set, get) => ({
   },
 
   askAI: async (question) => {
-    const teachingType = get().getTeachingType()
+    const teachingType = get().learningStyle
+    console.log("Teaching Type: ", teachingType)
     if (!question) return;
 
     const message = {
@@ -123,7 +270,7 @@ export const useAITeacher = create((set, get) => ({
         const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`
         set({ previousQuestion: [...get().previousQuestion, message.question] })
         set({ answerOfQuestion: [...get().answerOfQuestion, messageInParagraph] })
-      }else {
+      } else {
         // Replace existing question and answer pairs during a quiz
         const index = get().index;
         const updatedQuestions = [...get().previousQuestion];
@@ -138,9 +285,9 @@ export const useAITeacher = create((set, get) => ({
           previousQuestion: updatedQuestions,
           answerOfQuestion: updatedAnswers,
         })
-      
+
       }
-        
+
 
       await get().playMessage(message);
     } catch (error) {
@@ -180,6 +327,7 @@ export const useAITeacher = create((set, get) => ({
   playMessage: async (message) => {
     set(() => ({
       currentMessage: message,
+      speaking: true,
     }));
 
     if (!message.audioPlayer) {
@@ -201,7 +349,7 @@ export const useAITeacher = create((set, get) => ({
       const promise = new Promise((resolve) => {
         resolver.resolve = resolve;
         message.audioPlayer.onended = () => {
-          set(() => ({ currentMessage: null }));
+          set(() => ({ currentMessage: null, speaking: false }));
           if (get().numberOfQuestion === get().maxQuestions) {
             set({ Quiz: true });
             get().playMessageForQuiz();
@@ -272,7 +420,8 @@ export const useAITeacher = create((set, get) => ({
     }
     set(() => ({
       currentMessage: null,
-      currentResolver: null, // Clear the resolver after stopping
+      currentResolver: null,
+      speaking: false,
     }));
     if (get().numberOfQuestion === get().maxQuestions) {
       set({ Quiz: true });

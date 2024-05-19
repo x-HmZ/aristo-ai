@@ -1,7 +1,12 @@
+import Hero from "@/components/Hero";
+
 export default function Home() {
   return (
-    <main className="h-screen flex justify-center items-center bg-black text-white">
-      <div className="text-center">
+    <main className="h-screen relative flex flex-col justify-center items-center bg-black text-white">
+      <div className="w-full">
+        {/* <Hero /> */}
+
+
         <h1 className="text-4xl font-bold mb-8">
           Currently Building...
         </h1>
