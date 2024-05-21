@@ -32,7 +32,7 @@ const SignIn = () => {
       if (docSnap.exists()) {
         const userData = docSnap.data();
         updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic);
-        sessionStorage.setItem('userDetails', JSON.stringify(docSnap.data()));
+        sessionStorage.setItem('user', JSON.stringify(docSnap.data()));
         router.push('/home');
       } else {
         console.log('No such document!');

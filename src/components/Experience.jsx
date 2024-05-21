@@ -18,6 +18,7 @@ import { MessagesList } from "./MessagesList";
 import { Teacher } from "./Teacher";
 import { TypingBox } from "./TypingBox";
 import { QuizBox } from "./QuizBox";
+import ImageBox from "./ImageBox";
 
 const itemPlacement = {
   default: {
@@ -46,6 +47,8 @@ export const Experience = () => {
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
   const Quiz = useAITeacher((state) => state.Quiz);
+  const learningStyle = useAITeacher((state) => state.learningStyle)
+  const imageFlag = useAITeacher((state) => state.imageFlag)
 
   return (
     <>
@@ -64,7 +67,7 @@ export const Experience = () => {
         {/* Quiz Box */}
         {Quiz ? (
           <Suspense>
-            <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
+            <Float speed={0} floatIntensity={0} rotationIntensity={0}>
               <Html
                 distanceFactor={0.4}
                 transform
@@ -74,8 +77,24 @@ export const Experience = () => {
                 <QuizBox />
               </Html>
             </Float>
-          </Suspense>): null}
+          </Suspense>) : null}
+
         
+        {learningStyle === "as if explaining with a visual example" ? (
+          <Suspense>
+            <Float speed={1} floatIntensity={0.2} rotationIntensity={0.1}>
+              <Html
+                distanceFactor={0.8}
+                transform
+                position={[1.6, 0.1, -3]}
+                rotation-y={-0.4}
+              >
+                <ImageBox />
+              </Html>
+            </Float>
+          </Suspense>
+        ) : null}
+
 
 
         <Suspense>

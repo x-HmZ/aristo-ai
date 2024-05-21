@@ -12,7 +12,10 @@ export const useAITeacher = create((set, get) => ({
   index: 0,
   classroom: "default",
   quizFailedTimes: 0,
-  learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old"],
+  learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old", "as if explaining with a visual example"],
+  image: null,
+  imageFlag: false,
+  setImageFlag: (flag) => set({ imageFlag: flag }),
   quizOngoing: false,
 
   // Answers and Questions stored before mcq
@@ -60,7 +63,7 @@ export const useAITeacher = create((set, get) => ({
   },
 
   updateTeachingType: async () => {
-    const newLearningStyle = get().learningTypes[(get().learningTypes.indexOf(get().learningStyle) + 1) % 3];
+    const newLearningStyle = get().learningTypes[(get().learningTypes.indexOf(get().learningStyle) + 1) % get().learningTypes.length];
     set({ learningStyle: newLearningStyle });
 
     const userDocRef = doc(db, "users", get().id);
@@ -127,7 +130,7 @@ export const useAITeacher = create((set, get) => ({
     try {
       const docSnap = await getDoc(userDocRef);
       let previousQuizScores = docSnap.exists() && docSnap.data().previous_quiz_score ? docSnap.data().previous_quiz_score : [];
-      
+
       // Append the current score to the array
       previousQuizScores.push(currentScore);
 
@@ -244,16 +247,17 @@ export const useAITeacher = create((set, get) => ({
   },
 
   askAI: async (question) => {
-    const teachingType = get().learningStyle
-    console.log("Teaching Type: ", teachingType)
+    const teachingType = get().learningStyle;
+    console.log("Teaching Type: ", teachingType);
     if (!question) return;
-
+    if (get().learningStyle !== "as if explaining with a visual example") get().setImageFlag(false);
+  
     const message = {
       question,
       id: get().messages.length,
       answer: null, // Initialize answer
     };
-
+  
     set({ loading: true });
     try {
       const res = await fetch(`/api/ai?question=${question}&teachingType=${teachingType}`);
@@ -264,19 +268,27 @@ export const useAITeacher = create((set, get) => ({
         messages: [...get().messages, message],
         loading: false,
       }));
+  
+      // Start the image generation process in the background
+      if (get().learningStyle === "as if explaining with a visual example") {
+        get().generateImage(question);
+      }
 
+      // Start playing the message audio
+      await get().playMessage(message);
+  
       if (!get().quizOngoing) {
-        set({ numberOfQuestion: get().numberOfQuestion + 1 })
-        const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`
-        set({ previousQuestion: [...get().previousQuestion, message.question] })
-        set({ answerOfQuestion: [...get().answerOfQuestion, messageInParagraph] })
+        set({ numberOfQuestion: get().numberOfQuestion + 1 });
+        const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`;
+        set({ previousQuestion: [...get().previousQuestion, message.question] });
+        set({ answerOfQuestion: [...get().answerOfQuestion, messageInParagraph] });
       } else {
         // Replace existing question and answer pairs during a quiz
         const index = get().index;
         const updatedQuestions = [...get().previousQuestion];
         const updatedAnswers = [...get().answerOfQuestion];
-        const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`
-
+        const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`;
+  
         if (index < updatedQuestions.length) {
           updatedQuestions[index] = question;
           updatedAnswers[index] = messageInParagraph;
@@ -284,17 +296,26 @@ export const useAITeacher = create((set, get) => ({
         set({
           previousQuestion: updatedQuestions,
           answerOfQuestion: updatedAnswers,
-        })
-
+        });
       }
-
-
-      await get().playMessage(message);
     } catch (error) {
       console.error("Error asking AI:", error);
       set({ loading: false });
     }
   },
+  
+  generateImage: async (question) => {
+    try {
+      console.log("image started bsdk")
+      const res = await fetch(`/api/image_generation?prompting=${question}`);
+      const data = await res.json();
+      set({ image: data.image });
+      get().setImageFlag(true);
+    } catch (e) {
+      console.log("Image not generated :(", e);
+    }
+  },
+  
 
   getQuizQuestions: async () => {
     if (!get().Quiz) return;
