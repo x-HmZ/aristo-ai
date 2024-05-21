@@ -3,13 +3,13 @@ import { useState } from "react";
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 export const TypingBox = () => {
-  const { courseAI, askAI, courseMode, speaking, quizOngoing } = useAITeacher();
+  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [recognizer, setRecognizer] = useState(null); // Store the recognizer
 
-  // Function to handle the submission of questions
+
   const ask = () => {
     if (question.trim()) {
       askAI(question);
@@ -27,7 +27,8 @@ export const TypingBox = () => {
 
   const startSpeechRecognition = () => {
     setIsRecording(true);
-    const speechConfig = sdk.SpeechConfig.fromSubscription("9f4b6199aa76419397073e77af74bf02", "eastasia");
+    console.log("Starting speech recognition...");
+    const speechConfig = sdk.SpeechConfig.fromSubscription("d91aedba587c4c2fa23bb0025be8a1fb", "eastasia");
     speechConfig.speechRecognitionLanguage = "en-US";
     const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
     const newRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
@@ -47,6 +48,7 @@ export const TypingBox = () => {
 
     newRecognizer.startContinuousRecognitionAsync();
     setRecognizer(newRecognizer); // Store the recognizer instance
+    
   };
 
   const stopSpeechRecognition = () => {
@@ -63,7 +65,7 @@ export const TypingBox = () => {
 
   // ! Course Mode
   if (courseMode) {
-    if (speaking || quizOngoing) {
+    if (speaking || quizOngoing || Quiz) {
       return null
     } else {
       return (
@@ -100,7 +102,7 @@ export const TypingBox = () => {
   // ! Free Roam Mode
   return (
     <>
-      {speaking || quizOngoing ? null : (
+      {speaking || quizOngoing || Quiz ? null : (
         <div className="z-10 max-w-[600px] flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
           <div>
             <h2 className="text-white font-bold text-xl">

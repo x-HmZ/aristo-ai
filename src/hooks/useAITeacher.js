@@ -13,12 +13,15 @@ export const useAITeacher = create((set, get) => ({
   classroom: "default",
   quizFailedTimes: 0,
   learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old", "as if explaining with a visual example"],
+  
+  // Image
   image: null,
   imageFlag: false,
-  setImageFlag: (flag) => set({ imageFlag: flag }),
-  quizOngoing: false,
-
+  imageLoader: false,
+  setImageFlag: (flag) => set({ imageFlag: flag, imageLoader: true }),
+  
   // Answers and Questions stored before mcq
+  quizOngoing: false,
   maxQuestions: 3,
   numberOfQuestion: 0,
   answerOfQuestion: [],
@@ -248,16 +251,17 @@ export const useAITeacher = create((set, get) => ({
 
   askAI: async (question) => {
     const teachingType = get().learningStyle;
+    get().setImageFlag(false);
     console.log("Teaching Type: ", teachingType);
     if (!question) return;
-    if (get().learningStyle !== "as if explaining with a visual example") get().setImageFlag(false);
-  
+
+
     const message = {
       question,
       id: get().messages.length,
       answer: null, // Initialize answer
     };
-  
+
     set({ loading: true });
     try {
       const res = await fetch(`/api/ai?question=${question}&teachingType=${teachingType}`);
@@ -268,15 +272,21 @@ export const useAITeacher = create((set, get) => ({
         messages: [...get().messages, message],
         loading: false,
       }));
-  
-      // Start the image generation process in the background
-      if (get().learningStyle === "as if explaining with a visual example") {
-        get().generateImage(question);
-      }
 
       // Start playing the message audio
-      await get().playMessage(message);
-  
+      if(get().quizOngoing){
+        if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
+          get().generateImage(question);
+        }
+        await get().playMessage(message);
+      }else{
+          get().playMessage(message);
+          if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
+            get().generateImage(question);
+          }
+      }
+
+
       if (!get().quizOngoing) {
         set({ numberOfQuestion: get().numberOfQuestion + 1 });
         const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`;
@@ -288,7 +298,7 @@ export const useAITeacher = create((set, get) => ({
         const updatedQuestions = [...get().previousQuestion];
         const updatedAnswers = [...get().answerOfQuestion];
         const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`;
-  
+
         if (index < updatedQuestions.length) {
           updatedQuestions[index] = question;
           updatedAnswers[index] = messageInParagraph;
@@ -303,7 +313,7 @@ export const useAITeacher = create((set, get) => ({
       set({ loading: false });
     }
   },
-  
+
   generateImage: async (question) => {
     try {
       console.log("image started bsdk")
@@ -315,7 +325,7 @@ export const useAITeacher = create((set, get) => ({
       console.log("Image not generated :(", e);
     }
   },
-  
+
 
   getQuizQuestions: async () => {
     if (!get().Quiz) return;
@@ -388,6 +398,8 @@ export const useAITeacher = create((set, get) => ({
       message.audioPlayer.currentTime = 0;
       message.audioPlayer.play();
       return promise;
+    }else {
+      message.audioPlayer.play();
     }
   },
 
@@ -434,7 +446,9 @@ export const useAITeacher = create((set, get) => ({
   stopMessage: (message) => {
     if (message.audioPlayer) {
       message.audioPlayer.pause();
+      message.audioPlayer.currentTime = 0;
     }
+
     const resolver = get().currentResolver;
     if (resolver && resolver.resolve) {
       resolver.resolve();  // Resolve the promise when the audio is stopped
@@ -444,6 +458,7 @@ export const useAITeacher = create((set, get) => ({
       currentResolver: null,
       speaking: false,
     }));
+
     if (get().numberOfQuestion === get().maxQuestions) {
       set({ Quiz: true });
       get().playMessageForQuiz();

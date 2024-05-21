@@ -48,7 +48,6 @@ export const Experience = () => {
   const classroom = useAITeacher((state) => state.classroom);
   const Quiz = useAITeacher((state) => state.Quiz);
   const learningStyle = useAITeacher((state) => state.learningStyle)
-  const imageFlag = useAITeacher((state) => state.imageFlag)
 
   return (
     <>
@@ -80,9 +79,10 @@ export const Experience = () => {
           </Suspense>) : null}
 
         
-        {learningStyle === "as if explaining with a visual example" ? (
+        {/* Visual Respresentation  */}
+        {learningStyle === "as if explaining with a visual example" && Quiz === false ? (
           <Suspense>
-            <Float speed={1} floatIntensity={0.2} rotationIntensity={0.1}>
+            <Float speed={0.7} floatIntensity={0.2} rotationIntensity={0.1}>
               <Html
                 distanceFactor={0.8}
                 transform

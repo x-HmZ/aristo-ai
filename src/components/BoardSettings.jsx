@@ -1,7 +1,7 @@
 import { teachers, useAITeacher } from "@/hooks/useAITeacher";
 
 export const BoardSettings = () => {
-  const { setCourseMode, courseMode, checkingInCourseMode, checkingInNoramlMode } = useAITeacher();
+  const { setCourseMode, courseMode, checkingInCourseMode, checkingInNoramlMode, Quiz, quizOngoing } = useAITeacher();
 
   const teacher = useAITeacher((state) => state.teacher);
   const setTeacher = useAITeacher((state) => state.setTeacher);
@@ -54,36 +54,38 @@ export const BoardSettings = () => {
       </div>
 
 
+      {!Quiz || !quizOngoing ? (
+        <div className="absolute right-0 top-full flex flex-row gap-2 mt-20">
+          <button
+            className={` ${!courseMode
+              ? "text-white bg-slate-900/40 "
+              : "text-white/45 bg-slate-700/20 "
+              } py-4 px-10 text-4xl rounded-full transition-colors duration-500 backdrop-blur-md`}
+            onClick={() => {
+              setCourseMode(false)
+              checkingInNoramlMode()
 
-      <div className="absolute right-0 top-full flex flex-row gap-2 mt-20">
-        <button
-          className={` ${!courseMode
-            ? "text-white bg-slate-900/40 "
-            : "text-white/45 bg-slate-700/20 "
-            } py-4 px-10 text-4xl rounded-full transition-colors duration-500 backdrop-blur-md`}
-          onClick={() => {
-            setCourseMode(false)
-            checkingInNoramlMode()
+            }
+            }
+          >
+            Normal Mode
+          </button>
+          <button
+            className={` ${courseMode
+              ? "text-white bg-slate-900/40 "
+              : "text-white/45 bg-slate-700/20 "
+              } py-4 px-10 text-4xl rounded-full transition-colors duration-500 backdrop-blur-md`}
+            onClick={() => {
+              setCourseMode(true)
+              checkingInCourseMode()
+            }
+            }
+          >
+            Course Mode
+          </button>
+        </div>
+      ) : null}
 
-          }
-        }
-        >
-          Normal Mode
-        </button>
-        <button
-          className={` ${courseMode
-            ? "text-white bg-slate-900/40 "
-            : "text-white/45 bg-slate-700/20 "
-            } py-4 px-10 text-4xl rounded-full transition-colors duration-500 backdrop-blur-md`}
-          onClick={() => {
-            setCourseMode(true)
-            checkingInCourseMode()
-          }
-        }
-        >
-          Course Mode
-        </button>
-      </div>
 
     </>
   );

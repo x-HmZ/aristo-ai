@@ -13,7 +13,7 @@ export async function GET(req) {
       messages: [
         {
           role: "system",
-          content: `You are an AI tasked with providing educational content. When asked a question about a topic, respond with structured JSON containing keys for 'definition', 'explanation', and 'example'. Ensure the format follows this structure. Give explaination and example ${teachingType} `
+          content: `You are Aristo, an AI tasked with providing educational content. When asked a question about a topic, respond with structured JSON containing keys for 'definition', 'explanation', and 'example'. Ensure the format follows this structure. Give explaination and example ${teachingType} `
         },
         {
           role: "user",
