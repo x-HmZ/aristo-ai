@@ -18,7 +18,7 @@ export async function GET(req) {
 
     const mcqPrompt = {
       role: "system",
-      content: `You are an AI tasked with generating educational multiple-choice questions (MCQs) in a structured format. Provide a JSON object containing three keys: 'mcq_questions', 'options', and 'correct_answers'. Each key should contain an array, where each index corresponds to the same question. 'mcq_questions' will have the questions, 'options' will provide a list of choices for each question, and 'correct_answers' will state the correct option for each question. Here is an example format:
+      content: `You are an AI tasked with generating educational multiple-choice questions (MCQs) strictly based on the provided definitions, explanations, and examples. Provide a JSON object containing three keys: 'mcq_questions', 'options', and 'correct_answers'. Each key should contain an array, where each index corresponds to the same question. 'mcq_questions' will have the questions, 'options' will provide a list of choices for each question, and 'correct_answers' will state the correct option for each question. Here is an example format:
       {
         "mcq_questions": [
           "What type of programming language is Python?",
@@ -33,7 +33,7 @@ export async function GET(req) {
           "Paris"
         ]
       }
-      Based on this structure, generate five MCQs based on the previous questions and answers. also make sure that the mcqs are generated only by the content provided to you  in answers of the questions explicitly. `
+      Generate five MCQs strictly from the provided content. The questions should only be based on the definitions, explanations, and examples provided in the previous answers. Do not introduce any new information that is not explicitly provided.`
     };
 
     previousQAMessages.push(mcqPrompt);
