@@ -1,10 +1,11 @@
 const { create } = require("zustand");
-import { db } from '@/app/firebase/config'; // Ensure this import points to your actual config file
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { db } from '@/app/firebase/config';
 import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 
 export const teachers = ["Sonia", "Ryan"];
 
-export const useAITeacher = create((set, get) => ({
+export const useAITeacher = create(persist((set, get) => ({
   messages: [],
   currentMessage: null,
   teacher: teachers[0],
@@ -13,13 +14,13 @@ export const useAITeacher = create((set, get) => ({
   classroom: "default",
   quizFailedTimes: 0,
   learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old", "as if explaining with a visual example"],
-  
+
   // Image
   image: null,
   imageFlag: false,
   imageLoader: false,
   setImageFlag: (flag) => set({ imageFlag: flag, imageLoader: true }),
-  
+
   // Answers and Questions stored before mcq
   quizOngoing: false,
   maxQuestions: 3,
@@ -48,16 +49,37 @@ export const useAITeacher = create((set, get) => ({
   email: "",
   learningStyle: "",
   currentTopic: 0,
+  numberOfQuestionAsked: 0,
   topicList: [],  // This will be from "Courses" collection
 
-  updateUser: (name, email, learningStyle, currenTopic) => {
-    console.log("Updating User in Zustand: ", name, email, learningStyle, currenTopic);
+  updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked) => {
+    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked);
     set({
+      id: userId,
       userName: name,
       email: email,
       learningStyle: learningStyle,
       currentTopic: currenTopic,
+      numberOfQuestionAsked: numberOfQuestionAsked,
     });
+  },
+
+  updateNumberOfQuestionAsked: async () => {
+    const userId = get().id;
+    if (!userId) {
+      console.error("User ID is undefined or invalid");
+      return;
+    }
+    const userDocRef = doc(db, "users", userId);
+    const newNumberOfQuestionAsked = get().numberOfQuestionAsked + 1;
+    try {
+      await updateDoc(userDocRef, {
+        number_of_question_asked: newNumberOfQuestionAsked
+      });
+      set({ numberOfQuestionAsked: newNumberOfQuestionAsked });
+    } catch (error) {
+      console.error("Failed to update number of questions asked in Firestore:", error);
+    }
   },
 
   // Quize Part
@@ -106,6 +128,7 @@ export const useAITeacher = create((set, get) => ({
       await get().askAI(get().previousQuestion[get().index]);
       set({ numberOfQuestion: get().numberOfQuestion + 1 })
     }
+    
     set({ index: 0 });
     set({ score: 0 });
     set({ Quiz: true });
@@ -195,8 +218,7 @@ export const useAITeacher = create((set, get) => ({
     }
   },
 
-  fetchCourseData: async (userId) => {
-    set({ id: userId });
+  fetchCourseData: async () => {
     const coursesRef = collection(db, "courses");
     const q = query(coursesRef, where("course_name", "==", "Science 4th"));
     const querySnapshot = await getDocs(q);
@@ -274,16 +296,16 @@ export const useAITeacher = create((set, get) => ({
       }));
 
       // Start playing the message audio
-      if(get().quizOngoing){
+      if (get().quizOngoing) {
         if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
-          get().generateImage(question);
+          get().generateImage(message.answer.example);
         }
         await get().playMessage(message);
-      }else{
-          get().playMessage(message);
-          if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
-            get().generateImage(question);
-          }
+      } else {
+        get().playMessage(message);
+        if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
+          get().generateImage(message.answer.example);
+        }
       }
 
 
@@ -398,7 +420,7 @@ export const useAITeacher = create((set, get) => ({
       message.audioPlayer.currentTime = 0;
       message.audioPlayer.play();
       return promise;
-    }else {
+    } else {
       message.audioPlayer.play();
     }
   },
@@ -464,5 +486,9 @@ export const useAITeacher = create((set, get) => ({
       get().playMessageForQuiz();
     }
   },
+
+}), {
+  name: 'userStore',
+  storage: createJSONStorage(() => sessionStorage),
 
 }));

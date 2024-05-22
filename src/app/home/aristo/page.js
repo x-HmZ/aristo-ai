@@ -1,6 +1,4 @@
 "use client";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
 import { Experience } from "@/components/Experience";
 import { useEffect } from "react";
@@ -9,14 +7,13 @@ import { useEffect } from "react";
 
 const Aristo = () => {
     const router = useRouter();
-    const [user] = useAuthState(auth);
-    const userSession = sessionStorage.getItem('user')
+    const userSession = sessionStorage.getItem('userStore')
 
-   useEffect(() => {
-        if (!user || !userSession) {
-            router.push('/'); // Use router for redirection
+    useEffect(() => {
+        if (!userSession) {
+            router.push('/sign-in');
         }
-    }, [user, router]);
+    }, [userSession]);
 
 
     return (

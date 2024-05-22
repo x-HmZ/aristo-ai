@@ -3,7 +3,7 @@ import { useState } from "react";
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 export const TypingBox = () => {
-  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz } = useAITeacher();
+  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -13,7 +13,10 @@ export const TypingBox = () => {
   const ask = () => {
     if (question.trim()) {
       askAI(question);
-      setQuestion(""); // Clear the input after sending the question
+      setQuestion(""); 
+      if(!courseMode){
+        updateNumberOfQuestionAsked();
+      }
     }
   };
 
@@ -130,6 +133,7 @@ export const TypingBox = () => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     ask();
+
                   }
                 }}
               />

@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 
 function Home() {
     const router = useRouter();
-    const [user] = useAuthState(auth);
-    const userSession = sessionStorage.getItem('user');
-    const { userName, email, learningStyle, setCourseMode, fetchCourseData } = useAITeacher();
+    // const [user] = useAuthState(auth);
+    // const userSession = sessionStorage.getItem('user');
+    const { userName, email, learningStyle, setCourseMode, fetchCourseData, id} = useAITeacher();
 
     useEffect(() => {
-        if (!user || !userSession) {
+        if (!userName && !email && !id) {
             router.push('/sign-in');
         }
-    }, [user, userSession, router]);
+    }, [id, userName, email]);
 
     return (
         <div className="h-screen relative flex flex-col justify-center items-center bg-black text-white">
@@ -35,7 +35,7 @@ function Home() {
                 </button>
                 <button onClick={() => {
                     setCourseMode(true);
-                    fetchCourseData(user.uid); 
+                    fetchCourseData();
                     router.push('/home/aristo');
                 }} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Course Mode

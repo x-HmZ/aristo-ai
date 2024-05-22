@@ -12,11 +12,18 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
-  const router = useRouter(); // Use useRouter for navigation
+  const router = useRouter();
+
+  useEffect(() => {
+    sessionStorage.removeItem('userStore');
+    sessionStorage.removeItem('user');
+  }, [])
 
   useEffect(() => {
     if (user && user.user.uid) {
       fetchUserDetails(user.user.uid);
+      sessionStorage.removeItem('userStore');
+      sessionStorage.removeItem('user');
     }
   }, [user]);
 
@@ -31,7 +38,7 @@ const SignIn = () => {
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic);
+        updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic, userId, userData.number_of_question_asked);
         sessionStorage.setItem('user', JSON.stringify(docSnap.data()));
         router.push('/home');
       } else {

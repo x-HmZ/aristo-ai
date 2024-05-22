@@ -1,6 +1,14 @@
+"use client"
 import Hero from "@/components/Hero";
+import { useEffect } from "react";
 
 export default function Home() {
+
+  useEffect(()=>{
+    sessionStorage.removeItem('userStore');
+    sessionStorage.removeItem('user');
+  },[])
+
   return (
     <main className="h-screen relative flex flex-col justify-center items-center bg-black text-white">
       <div className="w-full">
