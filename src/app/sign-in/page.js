@@ -38,9 +38,16 @@ const SignIn = () => {
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic, userId, userData.number_of_question_asked);
+        updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic, userId, userData.number_of_question_asked, userData.role);
         sessionStorage.setItem('user', JSON.stringify(docSnap.data()));
-        router.push('/aristo');
+
+        // Redirect to the appropriate page based on the user role
+        if (userData.role === 'user') {
+          router.push('/aristo');
+        } else if (userData.role === 'admin') {
+          router.push('/admin');
+        }
+
       } else {
         console.log('No such document!');
       }

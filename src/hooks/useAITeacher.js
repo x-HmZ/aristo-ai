@@ -42,8 +42,9 @@ export const useAITeacher = create(persist((set, get) => ({
   quizPassed: false,
 
   // Database Variables
-  courseMode: true,
+  courseMode: false,
   speaking: false,
+  role: null,
   id: "",
   userName: "",
   email: "",
@@ -52,8 +53,8 @@ export const useAITeacher = create(persist((set, get) => ({
   numberOfQuestionAsked: 0,
   topicList: [],  // This will be from "Courses" collection
 
-  updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked) => {
-    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked);
+  updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked, role) => {
+    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked, role);
     set({
       id: userId,
       userName: name,
@@ -61,6 +62,7 @@ export const useAITeacher = create(persist((set, get) => ({
       learningStyle: learningStyle,
       currentTopic: currenTopic,
       numberOfQuestionAsked: numberOfQuestionAsked,
+      role: role  
     });
   },
 
@@ -122,7 +124,7 @@ export const useAITeacher = create(persist((set, get) => ({
     if (get().index < get().maxQuestions) {
       set({ shouldContinue: false });
       await get().askAI(get().previousQuestion[get().index]);
-      set({ index: get().index + 1, numberOfQuestion: get().numberOfQuestion + 1, shouldContinue: true});
+      set({ index: get().index + 1, numberOfQuestion: get().numberOfQuestion + 1, shouldContinue: true });
     } else {
       set({ index: 0, Quiz: true, score: 0 });  // Reset index and start quiz
       console.log("All previous questions have been re-asked.");
@@ -193,7 +195,9 @@ export const useAITeacher = create(persist((set, get) => ({
   },
 
   // Course Mode
-  setCourseMode: (mode) => set({ courseMode: mode }),
+  setCourseMode: (mode) => {
+    set({ courseMode: mode })
+  },
 
   checkingInNoramlMode: () => {
     const { answerOfQuestion, previousQuestion, numberOfQuestion } = get();

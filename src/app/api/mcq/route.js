@@ -18,7 +18,7 @@ export async function GET(req) {
 
     const mcqPrompt = {
       role: "system",
-      content: `You are an AI tasked with generating educational multiple-choice questions (MCQs) strictly based on the provided definitions, explanations, and examples. Provide a JSON object containing three keys: 'mcq_questions', 'options', and 'correct_answers'. Each key should contain an array, where each index corresponds to the same question. 'mcq_questions' will have the questions, 'options' will provide a list of choices for each question, and 'correct_answers' will state the correct option for each question. Here is an example format:
+      content: `You are an AI tasked with generating educational multiple-choice questions (MCQs) strictly based on the provided explanations, and examples. Provide a JSON object containing three keys: 'mcq_questions', 'options', and 'correct_answers'. Each key should contain an array, where each index corresponds to the same question. 'mcq_questions' will have the questions, 'options' will provide a list of choices for each question, and 'correct_answers' will state the correct option for each question. Here is an example format:
       {
         "mcq_questions": [
           "What type of programming language is Python?",

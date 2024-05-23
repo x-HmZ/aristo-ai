@@ -20,7 +20,7 @@ export async function GET(req) {
           content: question
         }
       ],
-      model: "gpt-3.5-turbo", // Ensure this model is available to you in your OpenAI dashboard
+      model: "gpt-4", 
       response_format: {
         type: "json_object",
       },

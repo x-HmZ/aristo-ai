@@ -27,7 +27,8 @@ const SignUp = () => {
           current_topic: 0,  
           learning_style: "in technical terms", 
           number_of_question_asked: 0,
-          previous_quiz_score: []  
+          previous_quiz_score: [],
+          role: "user"  
         }); 
 
         console.log('User data stored:', saveData);
