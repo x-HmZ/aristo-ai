@@ -27,10 +27,9 @@ export const QuizBox = () => {
 
     // Function to handle moving to the next question
     const handleNextQuestion = () => {
-        // Move to the next question
         if (currentQuestionIndex < quizQuestions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-            // Clear the selected option for the next question
+            
             setSelectedOption(null);
         } else {
             alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);

@@ -115,24 +115,46 @@ export const useAITeacher = create(persist((set, get) => ({
     }));
   },
 
+  shouldContinue: false,  // State to control the prompt for continuing
+  setShouldContinue: (value) => set({ shouldContinue: value }),
+
+  handleContinueAfterFailure: async () => {
+    if (get().index < get().maxQuestions) {
+      set({ shouldContinue: false });
+      await get().askAI(get().previousQuestion[get().index]);
+      set({ index: get().index + 1, numberOfQuestion: get().numberOfQuestion + 1, shouldContinue: true});
+    } else {
+      set({ index: 0, Quiz: true, score: 0 });  // Reset index and start quiz
+      console.log("All previous questions have been re-asked.");
+    }
+  },
+
   quizFailed: async () => {
     // Reset quiz state
     get().updateTeachingType();
-    set({ quizFailedTimes: get().quizFailedTimes + 1 });
-    if (get().quizFailedTimes > 2) { set({ quizFailedTimes: 0 }) };
-    set({ numberOfQuestion: 0 });
-    set({ Quiz: false });
-    set({ quizOngoing: true })
+    set({
+      quizFailedTimes: get().quizFailedTimes + 1,
+      numberOfQuestion: 0,
+      Quiz: false,
+      quizOngoing: true,
+      index: 0,
+      score: 0,
+      shouldContinue: true  // Enable the continue prompt
+    });
 
-    for (get().index; get().index < get().maxQuestions; set({ index: get().index + 1 })) {
-      await get().askAI(get().previousQuestion[get().index]);
-      set({ numberOfQuestion: get().numberOfQuestion + 1 })
+    if (get().quizFailedTimes > 2) {
+      set({ quizFailedTimes: 0 });
     }
-    
-    set({ index: 0 });
-    set({ score: 0 });
-    set({ Quiz: true });
-    console.log("All previous questions have been asked.");
+
+    // for (get().index; get().index < get().maxQuestions; set({ index: get().index + 1 })) {
+    //   await get().askAI(get().previousQuestion[get().index]);
+    //   set({ numberOfQuestion: get().numberOfQuestion + 1 })
+    // }
+
+    // set({ index: 0 });
+    // set({ score: 0 });
+    // set({ Quiz: true });
+    // console.log("All previous questions have been asked.");
   },
 
   quizFinished: () => {
@@ -160,7 +182,6 @@ export const useAITeacher = create(persist((set, get) => ({
       // Append the current score to the array
       previousQuizScores.push(currentScore);
 
-      // Update the document with the new scores array
       await updateDoc(userDocRef, {
         previous_quiz_score: previousQuizScores
       });

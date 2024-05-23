@@ -18,9 +18,9 @@ const SignUp = () => {
       console.log('User signed up:', userCredential);
       if (userCredential.user) {
         const user = userCredential.user;
-        const userProfile = doc(db, 'users', user.uid); // creating a document for user profile same as auth
+        const userProfile = doc(db, 'users', user.uid);
 
-        // Defined Schema for user profile
+        
         const saveData = await setDoc(userProfile, { 
           name: name,
           email: email,

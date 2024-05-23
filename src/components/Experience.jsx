@@ -19,6 +19,7 @@ import { Teacher } from "./Teacher";
 import { TypingBox } from "./TypingBox";
 import { QuizBox } from "./QuizBox";
 import ImageBox from "./ImageBox";
+import LogoutButton from "./LogoutButton";
 
 const itemPlacement = {
   default: {
@@ -44,6 +45,7 @@ const itemPlacement = {
 };
 
 export const Experience = () => {
+
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
   const Quiz = useAITeacher((state) => state.Quiz);
@@ -54,6 +56,10 @@ export const Experience = () => {
       <div className="z-10 md:justify-center fixed bottom-4 left-4 right-4 flex gap-3 flex-wrap justify-stretch">
         <TypingBox />
       </div>
+      <div className="z-10 md:justify-end fixed top-4 left-4 right-4 flex gap-0 flex-wrap justify-stretch">
+        <LogoutButton />
+      </div>
+
       <Leva hidden />
       <Loader />
       <Canvas
@@ -78,7 +84,7 @@ export const Experience = () => {
             </Float>
           </Suspense>) : null}
 
-        
+
         {/* Visual Respresentation  */}
         {learningStyle === "as if explaining with a visual example" && Quiz === false ? (
           <Suspense>

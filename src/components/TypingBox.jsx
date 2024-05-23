@@ -3,7 +3,7 @@ import { useState } from "react";
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 export const TypingBox = () => {
-  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked } = useAITeacher();
+  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -13,8 +13,8 @@ export const TypingBox = () => {
   const ask = () => {
     if (question.trim()) {
       askAI(question);
-      setQuestion(""); 
-      if(!courseMode){
+      setQuestion("");
+      if (!courseMode) {
         updateNumberOfQuestionAsked();
       }
     }
@@ -51,7 +51,7 @@ export const TypingBox = () => {
 
     newRecognizer.startContinuousRecognitionAsync();
     setRecognizer(newRecognizer); // Store the recognizer instance
-    
+
   };
 
   const stopSpeechRecognition = () => {
@@ -65,6 +65,38 @@ export const TypingBox = () => {
   };
 
 
+  if (quizOngoing && shouldContinue && !Quiz) {
+    return (
+      <>
+        <div className="z-10 max-w-[600px] w-full flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
+          <div className=" text-center">
+            <h2 className="text-white font-bold text-xl">
+              You have Failed the Quiz :(
+            </h2>
+            <p className="text-white/65">
+              Press continue to learn them with a different style
+            </p>
+          </div>
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <span className="relative flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-white"></span>
+              </span>
+            </div>
+          ) : (
+            <div className="gap-3 flex justify-center">
+              <button className="bg-blue-500/75 p-2 px-4 rounded-full text-white"
+                onClick={() => {
+                  handleContinueAfterFailure();
+                }}
+              >Continue</button>
+            </div>
+          )}
+        </div>
+      </>
+    )
+  }
 
   // ! Course Mode
   if (courseMode) {
