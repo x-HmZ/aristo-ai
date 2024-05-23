@@ -306,7 +306,7 @@ export const useAITeacher = create(persist((set, get) => ({
     const message = {
       question,
       id: get().messages.length,
-      answer: null, // Initialize answer
+      answer: null, 
     };
 
     set({ loading: true });
