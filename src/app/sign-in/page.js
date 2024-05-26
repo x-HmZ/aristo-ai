@@ -1,14 +1,13 @@
-'use client'
-import { useState, useEffect, use } from 'react';
+"use client"
+import { useRouter } from "next/navigation";
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { useRouter } from 'next/navigation'; // Don't change it 
+import { useState, useEffect } from 'react';
 import { auth, db } from '@/app/firebase/config';
 import { useAITeacher } from "@/hooks/useAITeacher";
+import { doc, getDoc } from 'firebase/firestore';
 
 const SignIn = () => {
-  const updateUser = useAITeacher((state) => state.updateUser)
-
+  const { updateUser, fetchAllCourses } = useAITeacher();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
@@ -17,82 +16,61 @@ const SignIn = () => {
   useEffect(() => {
     sessionStorage.removeItem('userStore');
     sessionStorage.removeItem('user');
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (user && user.user.uid) {
       fetchUserDetails(user.user.uid);
-      sessionStorage.removeItem('userStore');
-      sessionStorage.removeItem('user');
     }
   }, [user]);
 
-
   const fetchUserDetails = async (userId) => {
-    console.log("Database instance: ", db); // Check the Firestore instance
-    console.log("User ID: ", userId); // Check the user ID
-
-    try {
-      const docRef = doc(db, 'users', userId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic, userId, userData.number_of_question_asked, userData.role);
-        sessionStorage.setItem('user', JSON.stringify(docSnap.data()));
-
-        // Redirect to the appropriate page based on the user role
-        if (userData.role === 'user') {
-          router.push('/aristo');
-        } else if (userData.role === 'admin') {
-          router.push('/admin');
-        }
-
-      } else {
-        console.log('No such document!');
-      }
-    } catch (error) {
-      console.error('Error fetching user details:', error);
+    const docRef = doc(db, 'users', userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      updateUser(userData.name, userData.email, userData.learning_style, userData.current_topic, userId, userData.number_of_question_asked, userData.role, userData.selected_course);
+      fetchAllCourses();
+      sessionStorage.setItem('user', JSON.stringify(userData));
+      router.push(userData.role === 'user' ? '/aristo' : '/admin');
+    } else {
+      console.log('No such document!');
     }
   };
 
   const handleSignIn = async (event) => {
     event.preventDefault();
-    try {
-      await signInWithEmailAndPassword(email, password);
-    } catch (e) {
-      console.error(e);
-    }
+    await signInWithEmailAndPassword(email, password);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-10 rounded-lg shadow-xl w-96">
-        <h1 className="text-white text-2xl mb-5">Sign In</h1>
+    <div className="animated-background min-h-screen flex items-center justify-center">
+      <div className="bg-gray-800 p-10 rounded-lg shadow-lg w-96 outline outline-1 outline-gray-500">
+        <h1 className="text-4xl mb-8 mt-5 text-center gradient-text font-bold">Aristo</h1>
+        <div className="sign-up-divider pb-3">
+          <hr className='hr1' />
+          <span className="sign-up-text">Sign In</span>
+          <hr className='hr2' />
+        </div>
         <form onSubmit={handleSignIn}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500"
-          />
-          <button
-            type="submit"
-            className="w-full p-3 bg-indigo-600 rounded text-white hover:bg-indigo-500"
-          >
-            Sign In
-          </button>
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
+
+          <button type="submit" disabled={loading} className="w-full p-3 gradient-button rounded">{loading ? 'Loading...' : 'Sign In'}</button>
+          <p className="text-center text-gray-500 pt-5">Don't Have An Account?
+            <span
+              className="pl-1 italic text-gray-500 hover:text-white transition-colors duration-300 cursor-pointer"
+              onClick={() => router.push("/sign-up")}
+            >
+              Sign-up
+            </span>
+          </p>
+
+
+
+
         </form>
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error.message}</p>} {/* Display actual error message */}
+        {error && <p>Error: {error.message}</p>}
       </div>
     </div>
   );

@@ -51,10 +51,15 @@ export const useAITeacher = create(persist((set, get) => ({
   learningStyle: "",
   currentTopic: 0,
   numberOfQuestionAsked: 0,
-  topicList: [],  // This will be from "Courses" collection
+  selectedCourse: null,
+  courses: [],
+  topicList: [],
+  courseCompleted: false,
+  topicsFetched: false,
 
-  updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked, role) => {
-    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked, role);
+  // Run when User loged in
+  updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked, role, selectedCourse) => {
+    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked, role, selectedCourse);
     set({
       id: userId,
       userName: name,
@@ -62,9 +67,11 @@ export const useAITeacher = create(persist((set, get) => ({
       learningStyle: learningStyle,
       currentTopic: currenTopic,
       numberOfQuestionAsked: numberOfQuestionAsked,
-      role: role  
+      selectedCourse: selectedCourse,
+      role: role
     });
   },
+
 
   updateNumberOfQuestionAsked: async () => {
     const userId = get().id;
@@ -147,16 +154,6 @@ export const useAITeacher = create(persist((set, get) => ({
     if (get().quizFailedTimes > 2) {
       set({ quizFailedTimes: 0 });
     }
-
-    // for (get().index; get().index < get().maxQuestions; set({ index: get().index + 1 })) {
-    //   await get().askAI(get().previousQuestion[get().index]);
-    //   set({ numberOfQuestion: get().numberOfQuestion + 1 })
-    // }
-
-    // set({ index: 0 });
-    // set({ score: 0 });
-    // set({ Quiz: true });
-    // console.log("All previous questions have been asked.");
   },
 
   quizFinished: () => {
@@ -243,9 +240,65 @@ export const useAITeacher = create(persist((set, get) => ({
     }
   },
 
-  fetchCourseData: async () => {
+  // Fetching Names of each course Present in the Database
+  fetchAllCourses: async () => {
     const coursesRef = collection(db, "courses");
-    const q = query(coursesRef, where("course_name", "==", "Science 4th"));
+    try {
+      const querySnapshot = await getDocs(coursesRef);
+      const courseNames = [];
+
+      querySnapshot.forEach(doc => {
+        const courseData = doc.data();
+        console.log("Course Data: ", courseData);
+        if (typeof courseData.course_name === 'string') {
+          courseNames.push(courseData.course_name);
+        } else {
+          console.error('Invalid course name type:', courseData.course_name);
+        }
+      });
+      console.log("Course Names: ", courseNames);
+      if (courseNames.length > 0) {
+        set({ courses: courseNames });
+        console.log("Fetched course names:", courseNames);
+      } else {
+        console.log("No courses found!");
+        set({ courses: [] });
+      }
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    }
+  },
+
+
+  // Fetching the topic list of the selected course
+  fetchCourseData: async (param) => {
+    set({ topicsFetched: false })
+    let courseName = param;
+
+    //No Param then?
+    if (!param) {
+      courseName = get().selectedCourse;
+    } else {
+      const userDocRef = doc(db, "users", get().id);
+      try {
+        set({ selectedCourse: param })
+        await updateDoc(userDocRef, {
+          selected_course: get().selectedCourse
+        });
+        console.log("selected_course updated successfully in Firestore.");
+      } catch (error) {
+        console.error("Failed to update selected_course", error);
+      }
+    }
+
+    if (!courseName) {
+      console.error("No course selected");
+      return;
+    }
+
+    console.log("Fetching course data for course:", courseName);
+    const coursesRef = collection(db, "courses");
+    const q = query(coursesRef, where("course_name", "==", courseName));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -255,29 +308,51 @@ export const useAITeacher = create(persist((set, get) => ({
       console.log("No such course!");
       set({ topicList: [] });
     }
+    console.log("Fetched topic list:", get().topicList);
+    set({ topicsFetched: true });
 
   },
 
   courseAI: async () => {
-    const whereAMI = get().topicList[get().currentTopic];
-    const question = `What is ${whereAMI}?`;
-    await get().askAI(question);
+    if (get().currentTopic === get().topicList.length) {
+      await get().congratulation();
+    } else {
+      const whereAMI = get().topicList[get().currentTopic];
+      const question = `What is ${whereAMI}?`;
+      await get().askAI(question);
 
-    // Update the current topic
-    const newCurrentTopic = get().currentTopic + 1;
+      // Update the current topic
+      const newCurrentTopic = get().currentTopic + 1;
+      const userDocRef = doc(db, "users", get().id);
+      try {
+        set({ currentTopic: newCurrentTopic });
+        await updateDoc(userDocRef, {
+          current_topic: newCurrentTopic
+        });
+        console.log("Current topic successfully updated in Firestore and local state.");
+      } catch (error) {
+        console.error("Failed to update current topic in Firestore:", error);
+      }
+    }
 
+
+  },
+
+  // Course Completed
+  congratulation: async () => {
+    const newCurrentTopic = 0;
     const userDocRef = doc(db, "users", get().id);
     try {
       set({ currentTopic: newCurrentTopic });
       await updateDoc(userDocRef, {
-        current_topic: newCurrentTopic
+        current_topic: newCurrentTopic,
+        selected_course: null
       });
       console.log("Current topic successfully updated in Firestore and local state.");
     } catch (error) {
       console.error("Failed to update current topic in Firestore:", error);
     }
-
-
+    set({ courseCompleted: true, selectedCourse: null });
   },
 
   setTeacher: (teacher) => {
@@ -306,7 +381,7 @@ export const useAITeacher = create(persist((set, get) => ({
     const message = {
       question,
       id: get().messages.length,
-      answer: null, 
+      answer: null,
     };
 
     set({ loading: true });
@@ -333,7 +408,6 @@ export const useAITeacher = create(persist((set, get) => ({
         }
       }
 
-
       if (!get().quizOngoing) {
         set({ numberOfQuestion: get().numberOfQuestion + 1 });
         const messageInParagraph = `${message.answer.definition}, ${message.answer.explanation}, ${message.answer.example}`;
@@ -355,6 +429,7 @@ export const useAITeacher = create(persist((set, get) => ({
           answerOfQuestion: updatedAnswers,
         });
       }
+      console.log("Ask AI ended")
     } catch (error) {
       console.error("Error asking AI:", error);
       set({ loading: false });
@@ -428,6 +503,11 @@ export const useAITeacher = create(persist((set, get) => ({
         resolver.resolve = resolve;
         message.audioPlayer.onended = () => {
           set(() => ({ currentMessage: null, speaking: false }));
+
+          // if (get().currentTopic === get().topicList.length - 1 && get().courseMode) {
+          //   get().congratulation();
+          // }
+
           if (get().numberOfQuestion === get().maxQuestions) {
             set({ Quiz: true });
             get().playMessageForQuiz();
@@ -495,6 +575,11 @@ export const useAITeacher = create(persist((set, get) => ({
       message.audioPlayer.pause();
       message.audioPlayer.currentTime = 0;
     }
+
+
+    // if (get().currentTopic === get().topicList.length - 1) {
+    //   get().congratulation();
+    // }
 
     const resolver = get().currentResolver;
     if (resolver && resolver.resolve) {

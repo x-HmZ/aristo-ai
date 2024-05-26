@@ -3,7 +3,7 @@ import { useState } from "react";
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
 export const TypingBox = () => {
-  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure } = useAITeacher();
+  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure,topicsFetched } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -100,7 +100,7 @@ export const TypingBox = () => {
 
   // ! Course Mode
   if (courseMode) {
-    if (speaking || quizOngoing || Quiz) {
+    if (speaking || quizOngoing || Quiz || !topicsFetched) {
       return null
     } else {
       return (
@@ -108,7 +108,7 @@ export const TypingBox = () => {
           <div className="z-10 max-w-[600px] w-full flex space-y-6 flex-col bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 p-4 backdrop-blur-md rounded-xl border-slate-100/30 border">
             <div className=" text-center">
               <h2 className="text-white font-bold text-xl">
-                Press Continoue
+                Press Continue
               </h2>
               <p className="text-white/65">
                 when you are ready to go to next Topic
@@ -125,6 +125,7 @@ export const TypingBox = () => {
               <div className="gap-3 flex justify-center">
                 <button className="bg-blue-500/75 p-2 px-4 rounded-full text-white"
                   onClick={() => courseAI()}
+                  
                 >Continue</button>
               </div>
             )}

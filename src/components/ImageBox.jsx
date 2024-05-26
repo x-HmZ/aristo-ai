@@ -7,8 +7,8 @@ function ImageBox() {
 
   return (
     imageFlag ? (
-      <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg border border-gray-200 p-6 mt-8">
-        <div className="p-3">
+      <div className="max-w-md mx-auto bg-gradient-to-tr from-slate-300/30 via-gray-400/30 to-slate-600-400/30 backdrop-blur-3xl shadow-lg rounded-lg border-slate-100/30 border p-4 mt-8">
+        <div className="p-1">
           <img src={image} alt="Generated visual representation" className="w-full h-auto rounded" />
         </div>
       </div>

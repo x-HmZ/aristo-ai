@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/app/firebase/config';
@@ -9,57 +9,89 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
+  const [errorMessages, setErrorMessages] = useState({});
+  const [createUserWithEmailAndPassword, user, loading, firebaseError] = useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
 
-  const handleSignUp = async () => {
+  useEffect(() => {
+    sessionStorage.removeItem('userStore');
+    sessionStorage.removeItem('user');
+  }, []);
+
+  const validateForm = () => {
+    let errors = {};
+    if (!name) errors.name = "Name is required.";
+    if (!email) errors.email = "Email is required.";
+    if (!password) errors.password = "Password is required.";
+    return errors;
+  };
+
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setErrorMessages(errors);
+      return;
+    }
+    setErrorMessages({}); // Clear previous errors
     try {
-      const userCredential = await createUserWithEmailAndPassword(email, password);
-      console.log('User signed up:', userCredential);
-      if (userCredential.user) {
-        const user = userCredential.user;
-        const userProfile = doc(db, 'users', user.uid);
-
-        
-        const saveData = await setDoc(userProfile, { 
-          name: name,
-          email: email,
-          current_topic: 0,  
-          learning_style: "in technical terms", 
-          number_of_question_asked: 0,
-          previous_quiz_score: [],
-          role: "user"  
-        }); 
-
-        console.log('User data stored:', saveData);
-        setName('');
-        setEmail('');
-        setPassword('');
-
-        // Redirecting
-        router.push('/sign-in');  
-      }
-    } catch (e) {
-      console.error('Error during sign up:', e);
+      await createUserWithEmailAndPassword(email, password);
+    } catch (error) {
+      setErrorMessages({ form: "Failed to sign up: " + error.message });
     }
   };
 
+  useEffect(() => {
+    if (user?.user) {
+      const userProfile = doc(db, 'users', user.user.uid);
+      setDoc(userProfile, {
+        name: name,
+        email: email,
+        current_topic: 0,
+        learning_style: "in technical terms",
+        number_of_question_asked: 0,
+        previous_quiz_score: [],
+        selected_course: null,
+        role: "user"
+      }).then(() => {
+        setName('');
+        setEmail('');
+        setPassword('');
+        router.push('/sign-in');
+      }).catch(error => {
+        setErrorMessages({ form: "Error storing user data: " + error.message });
+      });
+    }
+  }, [user]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-10 rounded-lg shadow-xl w-96">
-        <h1 className="text-white text-2xl mb-5">Sign Up</h1>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
-        <button onClick={handleSignUp} className="w-full p-3 bg-indigo-600 rounded text-white hover:bg-indigo-500">
-          Sign Up
-        </button>
-        <button className="w-full p-3 mt-2 bg-white rounded text-black hover:bg-white-500">
-          <a href="/sign-in">Sign In</a>
-        </button>
+    <div className="animated-background min-h-screen flex items-center justify-center">
+      <div className="bg-gray-800 p-10 rounded-lg shadow-xl w-96 outline outline-1 outline-gray-500">
+        <h1 className="text-4xl mb-8 mt-3 text-center gradient-text font-bold">Aristo</h1>
+        <div className="sign-up-divider pb-1 pt-2">
+          <hr className='hr1' />
+          <span className="sign-up-text">Sign Up</span>
+          <hr className='hr2' />
+        </div>
+        <form onSubmit={handleSignUp} >
+          {loading && <div className="loader"></div>}
+          <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} className="w-full p-3 mb-1 mt-3 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
+          {errorMessages.name && <p className="text-red-500 text-sm">{errorMessages.name}</p>}
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="w-full p-3 mb-1 mt-3 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
+          {errorMessages.email && <p className="text-red-500 text-sm">{errorMessages.email}</p>}
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3 mb-1 mt-3 bg-gray-700 rounded outline-none text-white placeholder-gray-500" />
+          {errorMessages.password && <p className="text-red-500 text-sm">{errorMessages.password}</p>}
+          <button type="submit" disabled={loading} className="w-full p-3 mt-4 gradient-button rounded">{loading ? 'Loading...' : 'Sign Up'}</button>
+          {firebaseError && <p className="text-red-500 text-sm mt-2">{firebaseError.message}</p>}
+          <p className="text-center text-gray-500 pt-5">Already have an Account?
+            <span
+              className="pl-1 italic text-gray-500 hover:text-white transition-colors duration-300 cursor-pointer"
+              onClick={() => router.push("/sign-in")}
+            >
+              Sign-in
+            </span>
+          </p>
+        </form>
       </div>
     </div>
   );

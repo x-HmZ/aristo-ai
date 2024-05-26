@@ -1,7 +1,6 @@
 "use client"
 import React from 'react'
 import { LampContainer } from './ui/lamp'
-import { PlaceholdersAndVanishInput } from './ui/placeholders-and-vanish-input'
 
 const arr = [
   "Hello",
@@ -17,7 +16,6 @@ function Hero() {
       <div className="">
         <div>
           <LampContainer>Aristo</LampContainer>
-          <PlaceholdersAndVanishInput placeholders={arr} />
         </div>
       </div>
     </>

@@ -20,7 +20,7 @@ export async function GET(req) {
           content: question
         }
       ],
-      model: "gpt-4-turbo", 
+      model: "gpt-3.5-turbo", 
       response_format: {
         type: "json_object",
       },

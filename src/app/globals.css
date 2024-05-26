@@ -18,12 +18,9 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
@@ -41,6 +38,65 @@ body {
   background-color: white;
 }
 
+/* Pop-up */
+.dialog-style {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(31, 41, 55, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.dialog-style2{
+  max-width: 500px;
+  max-height: 400px;
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(31, 41, 55, 0.5);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+@keyframes popUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dialog-pop-up {
+  animation: popUp 0.5s ease-out forwards;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+
 
 .loader {
   border-top-color: slategray !important;
@@ -51,6 +107,7 @@ body {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -59,15 +116,119 @@ body {
 
 /* Add this CSS in your global stylesheet */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-spinner {
-  border: 4px solid #f3f3f3; /* Light grey */
-  border-top: 4px solid #3498db; /* Blue */
+  border: 4px solid #f3f3f3;
+  /* Light grey */
+  border-top: 4px solid #3498db;
+  /* Blue */
   border-radius: 50%;
   width: 12px;
   height: 12px;
   animation: spin 2s linear infinite;
+}
+
+
+
+/* Sign-up/sign-in page */
+.animated-background {
+  background: linear-gradient(270deg, #0d1b2a, #1b263b);
+  background-size: 600% 600%;
+  animation: AnimationName 5s ease infinite;
+}
+
+@keyframes AnimationName {
+  0% {
+    background-position: 0% 50%
+  }
+
+  50% {
+    background-position: 100% 50%
+  }
+
+  100% {
+    background-position: 0% 50%
+  }
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(270deg, #0091ff,#ff2dd5 ,#ff4011fb);
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-button {
+
+  background: linear-gradient(270deg, #0091ff,#ff2dd5 ,#ff4011fb);
+  /* Orange to purple gradient */
+  color: white;
+  border: none;
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+}
+
+.outline-button {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  transition: all 0.4s ease;
+}
+
+.outline-button:hover {
+  background: white;
+  color: black;
+}
+
+.sign-up-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.sign-up-divider .hr1 {
+  flex: 1;
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #ffffff44, #ffffffaa, #ffffffaa);
+}
+
+.sign-up-divider .hr2 {
+  flex: 1;
+  border: none;
+  height: 2px;
+  background: linear-gradient(to left, transparent, #ffffff44, #ffffffaa, #ffffffaa);
+}
+
+.sign-up-text {
+  padding: 0 10px;
+  white-space: nowrap;
+  font-size: 1em;
+  color: white;
 }
