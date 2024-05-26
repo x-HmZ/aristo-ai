@@ -1,5 +1,6 @@
 import { useAITeacher } from '@/hooks/useAITeacher';
 import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export const QuizBox = () => {
     const { quizQuestions, quizAnswers, quizCorrectAnswer, getQuizQuestions, Quiz, score, updateScore, setQuizPassedTrue, setQuizPassedFalse, quizFinished, quizFailed, appendStoredQuizScore } = useAITeacher();
@@ -29,16 +30,18 @@ export const QuizBox = () => {
     const handleNextQuestion = () => {
         if (currentQuestionIndex < quizQuestions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-            
+
             setSelectedOption(null);
         } else {
-            alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
+            // alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
             appendStoredQuizScore();
             if (score >= 3) {
+                toast.success(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
                 setQuizPassedTrue();
                 quizFinished();
 
             } else {
+                toast.error(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
                 setQuizPassedFalse();
                 quizFailed();
             }
@@ -57,6 +60,7 @@ export const QuizBox = () => {
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg border border-gray-200 p-6 mt-8">
+            <Toaster />
             <div className="text-center text-2xl font-semibold mb-4 text-black">
                 Quiz Time
             </div>

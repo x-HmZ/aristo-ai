@@ -140,23 +140,25 @@ const Aristo = () => {
 
             {congratulationsDialog && (
                 <dialog ref={congratulationsRef} className="dialog-style">
-                    <h2 className="font-bold text-[28px] mb-4 text-center">Congratulations! 🎉</h2>
-                    <p className="text-black/65 text-center mb-8">You have successfully completed the course.</p>
-                    <div className="flex justify-center">
-                        <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-xl m-2"
-                            onClick={() => {
-                                setShowMainDialog(true);
-                                setCourseMode(false);
-                                setCongratulationsDialog(false);
+                    <div className="px-7 py-3">
+                        <h2 className="font-bold py-3 text-center capitalize text-[32px]"> <span className="gradient-text">Congratulations!</span> 🎉</h2>
+                        <p className="text-[16px] py-2 mb-2 text-center text-white">You have successfully completed the course.</p>
+                        <div className="flex justify-center">
+                            <button
+                                className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-8 rounded-xl m-2"
+                                onClick={() => {
+                                    setShowMainDialog(true);
+                                    setCourseMode(false);
+                                    setCongratulationsDialog(false);
 
-                                if (congratulationsRef.current && congratulationsRef.current.open) {
-                                    congratulationsRef.current.close();
-                                }
-                            }}
-                        >
-                            Continue
-                        </button>
+                                    if (congratulationsRef.current && congratulationsRef.current.open) {
+                                        congratulationsRef.current.close();
+                                    }
+                                }}
+                            >
+                                Continue
+                            </button>
+                        </div>
                     </div>
                 </dialog>
             )}

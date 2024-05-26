@@ -1,7 +1,9 @@
 "use client"
 import Footer from "@/components/Footer/Footer";
 import Hero from "@/components/Hero";
+import MacbookScroll from "@/components/ui/macbook-scroll";
 import { useEffect } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Home() {
 
@@ -13,7 +15,9 @@ export default function Home() {
   return (
     <main className="h-screen relative flex flex-col justify-center items-center bg-black text-white">
       <div className="w-full">
+        <Toaster />
         <Hero />
+        <MacbookScroll />
         <h1 className="text-4xl font-bold mb-8">
           Currently Building...
         </h1>
