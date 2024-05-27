@@ -314,7 +314,7 @@ export const useAITeacher = create(persist((set, get) => ({
   },
 
   courseAI: async () => {
-    if (get().currentTopic === get().topicList.length) {
+    if (get().currentTopic >= get().topicList.length) {
       await get().congratulation();
     } else {
       const whereAMI = get().topicList[get().currentTopic];
@@ -352,7 +352,7 @@ export const useAITeacher = create(persist((set, get) => ({
     } catch (error) {
       console.error("Failed to update current topic in Firestore:", error);
     }
-    set({ courseCompleted: true, selectedCourse: null });
+    set({ courseCompleted: true, selectedCourse: null, numberOfQuestion:0 });
   },
 
   setTeacher: (teacher) => {
@@ -373,6 +373,7 @@ export const useAITeacher = create(persist((set, get) => ({
 
   askAI: async (question) => {
     const teachingType = get().learningStyle;
+    const courseName = get().selectedCourse;
     get().setImageFlag(false);
     console.log("Teaching Type: ", teachingType);
     if (!question) return;
@@ -386,7 +387,7 @@ export const useAITeacher = create(persist((set, get) => ({
 
     set({ loading: true });
     try {
-      const res = await fetch(`/api/ai?question=${question}&teachingType=${teachingType}`);
+      const res = await fetch(`/api/ai?question=${question}&teachingType=${teachingType}&course=${courseName}`);
       const data = await res.json();
       message.answer = data;
       set(() => ({
@@ -398,13 +399,13 @@ export const useAITeacher = create(persist((set, get) => ({
       // Start playing the message audio
       if (get().quizOngoing) {
         if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
-          get().generateImage(message.answer.example);
+          get().generateImage(message.answer.imageDescription);
         }
         await get().playMessage(message);
       } else {
         get().playMessage(message);
         if (get().learningStyle === "as if explaining with a visual example" && get().Quiz === false) {
-          get().generateImage(message.answer.example);
+          get().generateImage(message.answer.imageDescription);
         }
       }
 
