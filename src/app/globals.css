@@ -30,12 +30,12 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 24px;
-  background-color: rgba(255, 255, 255, 0.3);
+  width: 5px;
+  background-color: rgba(255, 255, 255, 0);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: white;
+  background-color: #ff4011fb;
 }
 
 /* Pop-up */
@@ -231,4 +231,23 @@ dialog::backdrop {
   white-space: nowrap;
   font-size: 1em;
   color: white;
+}
+
+
+
+
+
+/* //////////////////// */
+/* Hero Section */
+/* //////////////////// */
+
+.hero {
+  opacity: 0;
+  transform: translateY(-50px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.hero.animate {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -1,9 +1,14 @@
 "use client"
-import Footer from "@/components/Footer/Footer";
-import Hero from "@/components/Hero";
-import MacbookScroll from "@/components/ui/macbook-scroll";
 import { useEffect } from "react";
-import toast, { Toaster } from 'react-hot-toast';
+
+// Compnents
+import Footer from "@/components/Footer/Footer";
+import Hero from "@/components/Hero/Hero";
+import WhyAristo from "@/components/WhyAristo/WhyAristo";
+import GuideToAristo from "@/components/GuideToAristo/GuidToAristo";
+import Navbar from "@/components/Navbar/Navbar";
+import Team from "@/components/Team/Team";
+
 
 export default function Home() {
 
@@ -13,24 +18,21 @@ export default function Home() {
   }, [])
 
   return (
-    <main className="h-screen relative flex flex-col justify-center items-center bg-black text-white">
-      <div className="w-full">
-        <Toaster />
-        <Hero />
-        <MacbookScroll />
-        <h1 className="text-4xl font-bold mb-8">
-          Currently Building...
-        </h1>
-        <div className="space-x-4 mb-4 ">
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            <a href="/sign-up">Sign Up</a>
-          </button>
-          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            <a href="/sign-in">Sign Ins</a>
-          </button>
-        </div>
+    <main className="w-full relative flex flex-col justify-center bg-black text-white">
+      <Navbar />
+        <section id="hero" className="overflow-hidden">
+          <Hero />
+        </section>
+        <section id="why-aristo" className="overflow-hidden">
+          <WhyAristo />
+        </section>
+        <section id="guide-to-aristo" className="overflow-hidden">
+          <GuideToAristo />
+        </section>
+        <section id="guide-to-aristo" className="overflow-hidden">
+          <Team />
+        </section>
         <Footer />
-      </div>
     </main>
   );
 }
