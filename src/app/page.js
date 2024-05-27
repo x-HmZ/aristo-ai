@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <main className="w-full relative flex flex-col justify-center bg-black text-white">
       <Navbar />
-        <section id="hero" className="overflow-hidden">
+        <section id="hero" className="">
           <Hero />
         </section>
         <section id="why-aristo" className="overflow-hidden">
@@ -29,7 +29,7 @@ export default function Home() {
         <section id="guide-to-aristo" className="overflow-hidden">
           <GuideToAristo />
         </section>
-        <section id="guide-to-aristo" className="overflow-hidden">
+        <section id="our-team" className="overflow-hidden">
           <Team />
         </section>
         <Footer />

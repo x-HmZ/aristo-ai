@@ -1,11 +1,11 @@
 import React from 'react'
 
 const GuideToAristo = () => (
-    <section className="h-screen w-full flex flex-col justify-center items-center bg-gray-200 text-gray-800 px-7rem">
+    <section className="min-h-screen w-full flex flex-col justify-center items-center bg-gray-200 text-gray-800 px-7rem">
         <h2 className="text-3xl font-bold mb-8">Guide to Aristo</h2>
         <div className="flex flex-col md:flex-row items-center justify-between w-full">
             <div className="w-full md:w-1/2 mb-8 md:mb-0">
-                {/* Image with multiple layers for parallax effect */}
+                
                 <div className="relative h-80 md:h-full overflow-hidden">
                     {/* Add layers here */}
                     <img

@@ -29,7 +29,7 @@ const Navbar = ({ className }) => {
 
     const handleClick = (link) => {
         scroll.scrollTo(document.getElementById(link).offsetTop, {
-            duration: 500,
+            duration: 1200,
             smooth: "easeInOutQuart",
         });
     };
