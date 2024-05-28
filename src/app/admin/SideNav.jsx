@@ -2,7 +2,6 @@
 import { signOut } from 'firebase/auth';
 import React from 'react';
 import { auth } from '@/app/firebase/config';
-import sonia from "../../../public/images/sonia.jpg";
 
 
 function SideNav({ activePanel, setActivePanel }) {
@@ -16,7 +15,6 @@ function SideNav({ activePanel, setActivePanel }) {
         <div className="h-full w-64 fixed bg-gray-800 text-white flex flex-col">
             <div>
                 <div className="p-5 flex items-center space-x-4">
-                    <img src={sonia} alt="Admin" className="h-12 w-12 rounded-full" />
                     <span>Admin</span>
                 </div>
                 <ul className="mt-6">
