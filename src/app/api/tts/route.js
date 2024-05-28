@@ -6,8 +6,7 @@ export async function GET(req) {
   // WARNING: If you host publicly your project, add an authentication layer to limit the consumption of Azure resources
 
   const speechConfig = sdk.SpeechConfig.fromSubscription(
-    process.env.NEXT_PUBLIC_SPEECH_KEY,
-    process.env.NEXT_PUBLIC_SPEECH_REGION
+    "d91aedba587c4c2fa23bb0025be8a1fb", "eastasia"
   );
 
   // https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts
@@ -28,7 +27,7 @@ export async function GET(req) {
   const audioStream = await new Promise((resolve, reject) => {
     speechSynthesizer.speakTextAsync(
       req.nextUrl.searchParams.get("text") ||
-        "I'm excited to try text to speech",
+      "I'm excited to try text to speech",
       (result) => {
         const { audioData } = result;
 
