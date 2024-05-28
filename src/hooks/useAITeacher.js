@@ -6,6 +6,8 @@ import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'fireb
 export const teachers = ["Sonia", "Ryan"];
 
 export const useAITeacher = create(persist((set, get) => ({
+  primaryMode: false,
+  setPrimaryMode: (mode) => set({ primaryMode: mode }),
   messages: [],
   currentMessage: null,
   teacher: teachers[0],

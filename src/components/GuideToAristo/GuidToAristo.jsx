@@ -1,30 +1,30 @@
-import React from 'react'
+import React from 'react';
+import Carousal from './Carousal';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 
-const GuideToAristo = () => (
-    <section className="min-h-screen w-full flex flex-col justify-center items-center bg-gray-200 text-gray-800 px-7rem">
-        <h2 className="text-3xl font-bold mb-8">Guide to Aristo</h2>
-        <div className="flex flex-col md:flex-row items-center justify-between w-full">
-            <div className="w-full md:w-1/2 mb-8 md:mb-0">
-                
-                <div className="relative h-80 md:h-full overflow-hidden">
-                    {/* Add layers here */}
-                    <img
-                        src="image-path"
-                        alt="Aristo Guide"
-                        className="absolute inset-0 w-full h-full object-cover"
-                    />
-                </div>
+const GuideToAristo = () => {
+    const { ref: titleRef, inView: titleInView } = useInView({
+        triggerOnce: false,
+        threshold: 0.5,
+    });
+
+    return (
+        <section className="min-h-screen w-full flex flex-col justify-center items-center bg-black text-white px-[4rem]">
+            <motion.h2
+                ref={titleRef}
+                initial={{ opacity: 0, y: 20 }}
+                animate={titleInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5 }}
+                className="text-3xl font-bold mb-10"
+            >
+                Guide to <span className="gradient-text text-5xl">Aristo</span>
+            </motion.h2>
+            <div className="w-full mb-8 relative">
+                <Carousal />
             </div>
-            <div className="w-full md:w-1/2">
-                <p className="text-lg">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec
-                    odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla
-                    quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent
-                    mauris. Fusce nec tellus sed augue semper porta.
-                </p>
-            </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
 export default GuideToAristo;

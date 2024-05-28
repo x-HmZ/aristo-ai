@@ -1,13 +1,17 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useInView } from 'react-intersection-observer';
 
 const Hero = () => {
-  const router = useRouter();
   const controlsPink = useAnimation();
   const controlsOrange = useAnimation();
   const controlsBlue = useAnimation();
+  const controlsText = useAnimation();
   const heroRef = useRef(null);
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.5,
+  });
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -33,11 +37,20 @@ const Hero = () => {
       moveEllipse(controlsOrange, heroWidth, heroHeight);
       moveEllipse(controlsBlue, heroWidth, heroHeight);
     }
-  }, [controlsPink, controlsOrange, controlsBlue]);
+
+    if (inView) {
+      controlsText.start({ opacity: 1, y: 0 });
+    } else {
+      controlsText.start({ opacity: 0, y: -20 });
+    }
+  }, [controlsPink, controlsOrange, controlsBlue, controlsText, inView]);
 
   return (
     <motion.div
-      ref={heroRef}
+      ref={(node) => {
+        heroRef.current = node;
+        ref(node);
+      }}
       className="hero min-h-screen text-center flex flex-col justify-center items-center pt-16 relative overflow-hidden bg-black"
       initial={{ opacity: 0, y: -100 }}
       animate={{ opacity: 1, y: 0 }}
@@ -55,10 +68,22 @@ const Hero = () => {
         className="absolute top-0 left-0 w-72 h-72 bg-blue-500 rounded-full filter blur-3xl opacity-70"
         animate={controlsBlue}
       />
-      <h1 className="text-4xl text-white z-20">
+      <motion.h1
+        className="text-4xl text-white z-20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={controlsText}
+        transition={{ duration: 1, delay: 0.5 }}
+      >
         Welcome to <span className="gradient-text text-6xl font-bold z-20">Aristo</span>
-      </h1>
-      <p className="text-xl mt-2 italic text-gray-300 z-20">Your Personal AI Teacher</p>
+      </motion.h1>
+      <motion.p
+        className="text-xl mt-2 italic text-gray-300 z-20"
+        initial={{ opacity: 0, y: -20 }}
+        animate={controlsText}
+        transition={{ duration: 1, delay: 0.7 }}
+      >
+        Your Personal AI Teacher
+      </motion.p>
     </motion.div>
   );
 };

@@ -7,7 +7,7 @@ import { useAITeacher } from "@/hooks/useAITeacher";
 const Aristo = () => {
     const router = useRouter();
     const userSession = sessionStorage.getItem('userStore');
-    const { setCourseMode, fetchCourseData, selectedCourse, courses, courseCompleted, userName } = useAITeacher();
+    const { setCourseMode, fetchCourseData, selectedCourse, courses, courseCompleted, userName, setPrimaryMode } = useAITeacher();
 
     const [course, setCourse] = useState(selectedCourse);
 
@@ -54,6 +54,7 @@ const Aristo = () => {
                 fetchCourseData();
             }
         } else {
+            setPrimaryMode(true);
             setCourseMode(false);
         }
 

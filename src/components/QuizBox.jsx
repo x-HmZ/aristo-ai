@@ -33,15 +33,13 @@ export const QuizBox = () => {
 
             setSelectedOption(null);
         } else {
-            // alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
+            alert(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
             appendStoredQuizScore();
             if (score >= 3) {
-                toast.success(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
                 setQuizPassedTrue();
                 quizFinished();
 
             } else {
-                toast.error(`Quiz completed! Your score: ${score}/${quizQuestions.length}`);
                 setQuizPassedFalse();
                 quizFailed();
             }
@@ -60,7 +58,6 @@ export const QuizBox = () => {
 
     return (
         <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg border border-gray-200 p-6 mt-8">
-            <Toaster />
             <div className="text-center text-2xl font-semibold mb-4 text-black">
                 Quiz Time
             </div>

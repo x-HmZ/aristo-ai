@@ -35,7 +35,7 @@ const Navbar = ({ className }) => {
     };
 
     return (
-        <nav className={cn("fixed top-0 inset-x-0 bg-black backdrop-blur-5 z-50 px-[2rem] py-1", className)}>
+        <nav className={cn("fixed top-0 inset-x-0 bg-black backdrop-blur-5 z-50 px-[2rem] py-1 border-b-[1px] border-gray-300", className)}>
             <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
                 <div onClick={() => router.push("/")}>
                     <h1 className="text-2xl font-bold text-white cursor-pointer">ARISTO</h1>

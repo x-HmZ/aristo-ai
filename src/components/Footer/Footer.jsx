@@ -4,11 +4,11 @@ import Content from './content'
 function Footer() {
     return (
         <div
-            className="relative h-[200px] px-[7rem]"
-            style={{ clipPath: 'polygon(0% 0, 100% 0, 100% 100%, 0 100%)', background:'black' }}
+            className="relative h-[400px] px-[7rem] bg-black text-white "
+            style={{ clipPath: 'polygon(0% 0, 100% 0, 100% 100%, 0 100%)' }}
         >
-            <div className="relative h-[calc(100vh+200px)] -top-[100vh]">
-                <div className="sticky top-[calc(100vh-200px)] h-[200px]">
+            <div className="relative h-[calc(100vh+400px)] -top-[100vh]">
+                <div className="sticky top-[calc(100vh-400px)] h-[400px]">
                     <Content />
                 </div>
             </div>

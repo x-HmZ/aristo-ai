@@ -1,7 +1,7 @@
 import { teachers, useAITeacher } from "@/hooks/useAITeacher";
 
 export const BoardSettings = () => {
-  const { setCourseMode, courseMode, checkingInCourseMode, checkingInNoramlMode, Quiz, quizOngoing } = useAITeacher();
+  const { setCourseMode, courseMode, checkingInCourseMode, checkingInNoramlMode, Quiz, quizOngoing, primaryMode } = useAITeacher();
 
   const teacher = useAITeacher((state) => state.teacher);
   const setTeacher = useAITeacher((state) => state.setTeacher);
@@ -55,7 +55,7 @@ export const BoardSettings = () => {
 
 
       {
-        courseMode ? (
+        !primaryMode ? (
           !Quiz || !quizOngoing ? (
             <div className="absolute right-0 top-full flex flex-row gap-2 mt-20">
               <button
