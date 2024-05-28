@@ -45,7 +45,7 @@ const itemPlacement = {
 };
 
 export const Experience = () => {
-
+  
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
   const Quiz = useAITeacher((state) => state.Quiz);

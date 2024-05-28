@@ -3,10 +3,10 @@ import { useRouter } from "next/navigation";
 import { Experience } from "@/components/Experience";
 import { useEffect, useState, useRef } from "react";
 import { useAITeacher } from "@/hooks/useAITeacher";
+import toast, { Toaster } from "react-hot-toast";
 
 const Aristo = () => {
     const router = useRouter();
-    const userSession = sessionStorage.getItem('userStore');
     const { setCourseMode, fetchCourseData, selectedCourse, courses, courseCompleted, userName, setPrimaryMode } = useAITeacher();
 
     const [course, setCourse] = useState(selectedCourse);
@@ -16,15 +16,17 @@ const Aristo = () => {
 
     const selectCourseDialogRef = useRef(null);
     const [showSelectCourseDialog, setShowSelectCourseDialog] = useState(false);
-
     const [congratulationsDialog, setCongratulationsDialog] = useState(false);
     const congratulationsRef = useRef(null);
 
     useEffect(() => {
-        if (!userSession) {
+        const userInSession = sessionStorage.getItem('user');
+        if (!userInSession) {
             router.push('/sign-in');
         }
+    }, []);
 
+    useEffect(() => {
         if (showMainDialog && mainDialogRef.current && !mainDialogRef.current.open) {
             mainDialogRef.current.showModal();
         }
@@ -36,7 +38,7 @@ const Aristo = () => {
         if (congratulationsDialog && congratulationsRef.current && !congratulationsRef.current.open) {
             congratulationsRef.current.showModal();
         }
-    }, [userSession, showMainDialog, showSelectCourseDialog, congratulationsDialog]);
+    }, [showMainDialog, showSelectCourseDialog, congratulationsDialog]);
 
     useEffect(() => {
         if (courseCompleted) {
@@ -79,8 +81,8 @@ const Aristo = () => {
 
     return (
         <main className="h-screen min-h-screen relative">
+            <Toaster />
             <Experience />
-
             {showMainDialog && (
                 <dialog ref={mainDialogRef} className="dialog-style">
                     <div className="px-7 py-3">

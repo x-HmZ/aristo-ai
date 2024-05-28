@@ -47,7 +47,7 @@ export const useAITeacher = create(persist((set, get) => ({
   courseMode: false,
   speaking: false,
   role: null,
-  id: "",
+  id: null,
   userName: "",
   email: "",
   learningStyle: "",
