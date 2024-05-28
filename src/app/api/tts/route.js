@@ -6,8 +6,8 @@ export async function GET(req) {
   // WARNING: If you host publicly your project, add an authentication layer to limit the consumption of Azure resources
 
   const speechConfig = sdk.SpeechConfig.fromSubscription(
-    process.env["SPEECH_KEY"],
-    process.env["SPEECH_REGION"]
+    process.env.SPEECH_KEY,
+    process.env.SPEECH_REGION
   );
 
   // https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts

@@ -15,7 +15,7 @@ export const useAITeacher = create(persist((set, get) => ({
   index: 0,
   classroom: "default",
   quizFailedTimes: 0,
-  learningTypes: ["in technical terms", "using metaphors", "as if you are explaining to a ten year old", "as if explaining with a visual example"],
+  learningTypes: ["in technical terms","as if explaining with a visual example", "using metaphors", "as if you are explaining to a ten year old" ],
 
   // Image
   image: null,
@@ -61,7 +61,7 @@ export const useAITeacher = create(persist((set, get) => ({
 
   // Run when User loged in
   updateUser: (name, email, learningStyle, currenTopic, userId, numberOfQuestionAsked, role, selectedCourse) => {
-    console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked, role, selectedCourse);
+    // console.log("Updating User in Zustand: ", userId, name, email, learningStyle, currenTopic, numberOfQuestionAsked, role, selectedCourse);
     set({
       id: userId,
       userName: name,
@@ -251,7 +251,7 @@ export const useAITeacher = create(persist((set, get) => ({
 
       querySnapshot.forEach(doc => {
         const courseData = doc.data();
-        console.log("Course Data: ", courseData);
+        // console.log("Course Data: ", courseData);
         if (typeof courseData.course_name === 'string') {
           courseNames.push(courseData.course_name);
         } else {
@@ -298,7 +298,7 @@ export const useAITeacher = create(persist((set, get) => ({
       return;
     }
 
-    console.log("Fetching course data for course:", courseName);
+    // console.log("Fetching course data for course:", courseName);
     const coursesRef = collection(db, "courses");
     const q = query(coursesRef, where("course_name", "==", courseName));
     const querySnapshot = await getDocs(q);
@@ -432,7 +432,7 @@ export const useAITeacher = create(persist((set, get) => ({
           answerOfQuestion: updatedAnswers,
         });
       }
-      console.log("Ask AI ended")
+      // console.log("Ask AI ended")
     } catch (error) {
       console.error("Error asking AI:", error);
       set({ loading: false });
@@ -441,7 +441,7 @@ export const useAITeacher = create(persist((set, get) => ({
 
   generateImage: async (question) => {
     try {
-      console.log("image started bsdk")
+      // console.log("image started bsdk")
       const res = await fetch(`/api/image_generation?prompting=${question}`);
       const data = await res.json();
       set({ image: data.image });
@@ -467,7 +467,7 @@ export const useAITeacher = create(persist((set, get) => ({
       // Make the API call to fetch the quiz questions
       const res = await fetch(`/api/mcq?previousQA=${encodeURIComponent(JSON.stringify(previousQA))}`);
       const data = await res.json();
-      console.log(data)
+      // console.log(data)
 
       // Setting up the response
       set({
