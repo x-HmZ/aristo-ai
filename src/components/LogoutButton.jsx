@@ -9,7 +9,7 @@ function LogoutButton() {
         sessionStorage.removeItem('userStore');
         sessionStorage.removeItem('user');
         signOut(auth)
-        window.location.href = '/sign-in';
+        window.location.href = '/';
     }
 
     return (

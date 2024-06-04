@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 
 const loadGoogleCharts = () => {
     return new Promise((resolve) => {
-        if (window.google && window.google.charts) {
+        if (window.google && window.google.visualization) {
             resolve();
         } else {
             const script = document.createElement('script');
@@ -26,7 +26,7 @@ const GoogleChart = ({ type, data, options }) => {
 
             switch (type) {
                 case 'PieChart':
-                    chart = new window.google.visualization.PieChart(chartRef.current);
+                    chart =  new window.google.visualization.PieChart(chartRef.current);
                     break;
                 case 'BarChart':
                     chart = new window.google.visualization.BarChart(chartRef.current);

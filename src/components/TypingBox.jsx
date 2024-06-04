@@ -2,6 +2,7 @@ import { useAITeacher } from "@/hooks/useAITeacher";
 import { useState } from "react";
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 
+
 export const TypingBox = () => {
   const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure,topicsFetched } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
@@ -31,7 +32,7 @@ export const TypingBox = () => {
   const startSpeechRecognition = () => {
     setIsRecording(true);
     console.log("Starting speech recognition...");
-    const speechConfig = sdk.SpeechConfig.fromSubscription("d91aedba587c4c2fa23bb0025be8a1fb", "eastasia");
+    const speechConfig = sdk.SpeechConfig.fromSubscription("485540e86595451da1417300ec47bb4e", "eastasia");
     speechConfig.speechRecognitionLanguage = "en-US";
     const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
     const newRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
