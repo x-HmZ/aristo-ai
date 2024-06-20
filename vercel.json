@@ -1,8 +1,7 @@
 {
     "functions": {
-      "api/tts/route.js": {
-        "maxDuration": 30
-      }
+        "app/api/tts/route.js": {
+            "maxDuration": 30
+        }
     }
-  }
-  
+}
