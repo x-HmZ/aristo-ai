@@ -6,6 +6,7 @@ export const TypingBox = () => {
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [transcription, setTranscription] = useState("");
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -13,7 +14,7 @@ export const TypingBox = () => {
   const lastTranscriptionRef = useRef("");
 
   const ask = () => {
-    if (question.trim()) {
+    if (question.trim() && !isProcessing) {
       askAI(question);
       setQuestion("");
       if (!courseMode) {
@@ -25,6 +26,7 @@ export const TypingBox = () => {
   const processAudioChunk = async () => {
     if (audioChunksRef.current.length === 0) return;
 
+    setIsProcessing(true);
     const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
     const formData = new FormData();
     formData.append('audio', audioBlob, 'recording.webm');
@@ -47,13 +49,16 @@ export const TypingBox = () => {
       }
     } catch (error) {
       console.error('Error transcribing audio:', error);
+    } finally {
+      setIsProcessing(false);
+      // Clear the chunks after processing
+      audioChunksRef.current = [];
     }
-
-    // Clear the chunks after processing
-    audioChunksRef.current = [];
   };
 
   const startRecording = async () => {
+    if (isProcessing) return;
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
@@ -215,26 +220,65 @@ export const TypingBox = () => {
           ) : (
             <div className="gap-3 flex">
               <input
-                className="focus:outline focus:outline-white/80 flex-grow bg-slate-800/60 p-2 px-4 rounded-full text-white placeholder:text-white/50 shadow-inner shadow-slate-900/60"
+                className="focus:outline focus:outline-white/80 flex-grow bg-slate-800/60 p-2 px-4 rounded-full text-white placeholder:text-white/50 shadow-inner shadow-slate-900/60 disabled:opacity-50"
                 placeholder="Have you ever been to Japan?"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     ask();
-
                   }
                 }}
+                disabled={isProcessing}
               />
-              <button className="bg-slate-100/20 p-2 px-6 rounded-full text-white" onClick={ask}>Ask</button>
-              <button className="bg-blue-500/75 p-2 px-4 rounded-full text-white" onClick={toggleRecording}>
-                {isRecording ? 'Stop' : 'Speak'}
+              <button 
+                className="bg-slate-100/20 p-2 px-4 rounded-full text-white hover:bg-slate-100/30 transition-all duration-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={ask}
+                disabled={isProcessing}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                </svg>
+                <span>Ask</span>
+              </button>
+              <button 
+                className={`relative p-2 px-4 rounded-full text-white transition-all duration-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isRecording 
+                    ? 'bg-red-500/75 animate-pulse' 
+                    : 'bg-blue-500/75 hover:bg-blue-600/75'
+                }`}
+                onClick={toggleRecording}
+                disabled={isProcessing}
+              >
+                {isProcessing ? (
+                  <>
+                    <span className="relative flex h-5 w-5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-5 w-5 bg-white"></span>
+                    </span>
+                    <span>Processing...</span>
+                  </>
+                ) : isRecording ? (
+                  <>
+                    <span className="relative flex h-5 w-5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-5 w-5 bg-white"></span>
+                    </span>
+                    <span>Stop</span>
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+                    </svg>
+                    <span>Speak</span>
+                  </>
+                )}
               </button>
             </div>
           )}
         </div>
       )}
     </>
-
   );
 };
