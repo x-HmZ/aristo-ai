@@ -1,15 +1,16 @@
 import { useAITeacher } from "@/hooks/useAITeacher";
-import { useState } from "react";
-const sdk = require("microsoft-cognitiveservices-speech-sdk");
-
+import { useState, useRef, useEffect } from "react";
 
 export const TypingBox = () => {
-  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure,topicsFetched } = useAITeacher();
+  const { courseAI, askAI, courseMode, speaking, quizOngoing, Quiz, updateNumberOfQuestionAsked, shouldContinue, handleContinueAfterFailure, topicsFetched } = useAITeacher();
   const loading = useAITeacher((state) => state.loading);
   const [question, setQuestion] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const [recognizer, setRecognizer] = useState(null); // Store the recognizer
-
+  const [transcription, setTranscription] = useState("");
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const recordingIntervalRef = useRef(null);
+  const lastTranscriptionRef = useRef("");
 
   const ask = () => {
     if (question.trim()) {
@@ -21,50 +22,104 @@ export const TypingBox = () => {
     }
   };
 
+  const processAudioChunk = async () => {
+    if (audioChunksRef.current.length === 0) return;
+
+    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+    const formData = new FormData();
+    formData.append('audio', audioBlob);
+
+    try {
+      const response = await fetch('/api/whisper', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Transcription failed');
+      }
+
+      const data = await response.json();
+      if (data.text && data.text !== lastTranscriptionRef.current) {
+        lastTranscriptionRef.current = data.text;
+        setTranscription(data.text);
+        setQuestion(data.text);
+      }
+    } catch (error) {
+      console.error('Error transcribing audio:', error);
+    }
+
+    // Clear the chunks after processing
+    audioChunksRef.current = [];
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 16000
+        } 
+      });
+      
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus',
+        audioBitsPerSecond: 16000
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      setTranscription("");
+      lastTranscriptionRef.current = "";
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      // Process audio chunks every 3 seconds
+      recordingIntervalRef.current = setInterval(processAudioChunk, 3000);
+
+      mediaRecorder.onstop = async () => {
+        clearInterval(recordingIntervalRef.current);
+        await processAudioChunk();
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start(1000); // Collect data every second
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const toggleRecording = () => {
     if (!isRecording) {
-      startSpeechRecognition();
+      startRecording();
     } else {
-      stopSpeechRecognition();
+      stopRecording();
     }
   };
 
-  const startSpeechRecognition = () => {
-    setIsRecording(true);
-    console.log("Starting speech recognition...");
-    const speechConfig = sdk.SpeechConfig.fromSubscription("485540e86595451da1417300ec47bb4e", "eastasia");
-    speechConfig.speechRecognitionLanguage = "en-US";
-    const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
-    const newRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-
-    newRecognizer.recognized = (sender, event) => {
-      if (event.result.reason === sdk.ResultReason.RecognizedSpeech) {
-        setQuestion(event.result.text); // Set the question immediately when recognized
-        console.log(event.result.text)
-        stopSpeechRecognition(); // Stop recognition after the text is recognized
+  useEffect(() => {
+    return () => {
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+      if (mediaRecorderRef.current && isRecording) {
+        mediaRecorderRef.current.stop();
       }
     };
-
-    newRecognizer.canceled = (sender, event) => {
-      console.error(`CANCELED: Reason=${event.reason}`);
-      stopSpeechRecognition(); // Ensure to stop on cancellation
-    };
-
-    newRecognizer.startContinuousRecognitionAsync();
-    setRecognizer(newRecognizer); // Store the recognizer instance
-
-  };
-
-  const stopSpeechRecognition = () => {
-    if (recognizer) {
-      recognizer.stopContinuousRecognitionAsync(() => {
-        recognizer.close(); // Properly close the recognizer
-        setIsRecording(false); // Update recording state
-        setRecognizer(null); // Clear the recognizer from state
-      });
-    }
-  };
-
+  }, [isRecording]);
 
   if (quizOngoing && shouldContinue && !Quiz) {
     return (
