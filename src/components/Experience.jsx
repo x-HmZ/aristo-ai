@@ -4,14 +4,14 @@ import {
   CameraControls,
   Environment,
   Float,
-  Gltf,
   Html,
   Loader,
   useGLTF,
+  Stats,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Leva, button, useControls } from "leva";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useMemo } from "react";
 import { degToRad } from "three/src/math/MathUtils";
 import { BoardSettings } from "./BoardSettings";
 import { MessagesList } from "./MessagesList";
@@ -20,6 +20,7 @@ import { TypingBox } from "./TypingBox";
 import { QuizBox } from "./QuizBox";
 import ImageBox from "./ImageBox";
 import LogoutButton from "./LogoutButton";
+import { useModelLoader, preloadModels } from '@/utils/modelLoader';
 
 const itemPlacement = {
   default: {
@@ -44,12 +45,20 @@ const itemPlacement = {
   },
 };
 
+// Preload models when the module is imported
+preloadModels();
+
 export const Experience = () => {
-  
   const teacher = useAITeacher((state) => state.teacher);
   const classroom = useAITeacher((state) => state.classroom);
   const Quiz = useAITeacher((state) => state.Quiz);
-  const learningStyle = useAITeacher((state) => state.learningStyle)
+  const learningStyle = useAITeacher((state) => state.learningStyle);
+
+  // Memoize the classroom placement to prevent unnecessary recalculations
+  const classroomPlacement = useMemo(() => itemPlacement[classroom], [classroom]);
+
+  // Load the classroom model using our optimized loader
+  const { scene: classroomScene } = useModelLoader(`/models/classroom_${classroom}.glb`);
 
   return (
     <>
@@ -66,12 +75,24 @@ export const Experience = () => {
         camera={{
           position: [0, 0, 0.0001],
         }}
+        performance={{
+          min: 0.5,
+          max: 1,
+        }}
+        dpr={[1, 2]}
+        shadows={false}
+        gl={{
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
       >
+        <Stats />
         <CameraManager />
 
         {/* Quiz Box */}
         {Quiz ? (
-          <Suspense>
+          <Suspense fallback={null}>
             <Float speed={0} floatIntensity={0} rotationIntensity={0}>
               <Html
                 distanceFactor={0.4}
@@ -82,12 +103,12 @@ export const Experience = () => {
                 <QuizBox />
               </Html>
             </Float>
-          </Suspense>) : null}
+          </Suspense>
+        ) : null}
 
-
-        {/* Visual Respresentation  */}
+        {/* Visual Representation */}
         {learningStyle === "as if explaining with a visual example" && Quiz === false ? (
-          <Suspense>
+          <Suspense fallback={null}>
             <Float speed={0.7} floatIntensity={0.2} rotationIntensity={0.1}>
               <Html
                 distanceFactor={0.8}
@@ -101,31 +122,31 @@ export const Experience = () => {
           </Suspense>
         ) : null}
 
-
-
-        <Suspense>
+        <Suspense fallback={null}>
           <Float speed={0.5} floatIntensity={0.2} rotationIntensity={0.1}>
             <Html
               transform
-              {...itemPlacement[classroom].board}
+              {...classroomPlacement.board}
               distanceFactor={1}
             >
               <MessagesList />
               <BoardSettings />
-            </Html>
+            </Html> 
             <Environment preset="sunset" />
             <ambientLight intensity={0.8} color="pink" />
 
-            <Gltf
-              src={`/models/classroom_${classroom}.glb`}
-              {...itemPlacement[classroom].classroom}
+            <primitive
+              object={classroomScene}
+              {...classroomPlacement.classroom}
+              frustumCulled={true}
             />
             <Teacher
               teacher={teacher}
               key={teacher}
-              {...itemPlacement[classroom].teacher}
+              {...classroomPlacement.teacher}
               scale={1.5}
               rotation-y={degToRad(20)}
+              frustumCulled={true}
             />
           </Float>
         </Suspense>
@@ -189,6 +210,3 @@ const CameraManager = () => {
     />
   );
 };
-
-useGLTF.preload("/models/classroom_default.glb");
-useGLTF.preload("/models/classroom_alternative.glb");
