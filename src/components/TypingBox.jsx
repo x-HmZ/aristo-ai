@@ -27,7 +27,7 @@ export const TypingBox = () => {
 
     const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
     const formData = new FormData();
-    formData.append('audio', audioBlob);
+    formData.append('audio', audioBlob, 'recording.webm');
 
     try {
       const response = await fetch('/api/whisper', {
@@ -64,7 +64,7 @@ export const TypingBox = () => {
       });
       
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus',
+        mimeType: 'audio/webm',
         audioBitsPerSecond: 16000
       });
       
