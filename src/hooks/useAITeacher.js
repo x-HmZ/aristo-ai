@@ -489,13 +489,13 @@ export const useAITeacher = create(persist((set, get) => ({
     if (!message.audioPlayer) {
       set(() => ({ loading: true }));
       const textToSpeak = `${message.answer.definition} ${message.answer.explanation} ${message.answer.example}`;
-      const audioRes = await fetch(`/api/tts?teacher=${get().teacher}&text=${encodeURIComponent(textToSpeak)}`);
+      
+      // Use OpenAI TTS with nova voice for a friendly, engaging tone
+      const audioRes = await fetch(`/api/openai-tts?text=${encodeURIComponent(textToSpeak)}&voice=nova`);
       const audio = await audioRes.blob();
-      const visemes = JSON.parse(await audioRes.headers.get("visemes"));
       const audioUrl = URL.createObjectURL(audio);
       const audioPlayer = new Audio(audioUrl);
 
-      message.visemes = visemes;
       message.audioPlayer = audioPlayer;
 
       const resolver = {
@@ -506,10 +506,6 @@ export const useAITeacher = create(persist((set, get) => ({
         resolver.resolve = resolve;
         message.audioPlayer.onended = () => {
           set(() => ({ currentMessage: null, speaking: false }));
-
-          // if (get().currentTopic === get().topicList.length - 1 && get().courseMode) {
-          //   get().congratulation();
-          // }
 
           if (get().numberOfQuestion === get().maxQuestions) {
             set({ Quiz: true });
@@ -536,21 +532,18 @@ export const useAITeacher = create(persist((set, get) => ({
 
 
   playMessageForQuiz: async () => {
-    // Define the text to be converted to audio
     const message = {
       question: null,
       id: 69,
-      answer: "Now let's have a short quiz based on the topics we learned recently.", // Initialize answer
+      answer: "Now let's have a short quiz based on the topics we learned recently.",
     };
 
-    // Get TTS
-    const audioRes = await fetch(`/api/tts?teacher=${get().teacher}&text=${encodeURIComponent(message.answer)}`);
+    // Use OpenAI TTS with nova voice for quiz message
+    const audioRes = await fetch(`/api/openai-tts?text=${encodeURIComponent(message.answer)}&voice=nova`);
     const audio = await audioRes.blob();
-    const visemes = JSON.parse(await audioRes.headers.get("visemes"));
     const audioUrl = URL.createObjectURL(audio);
     const audioPlayer = new Audio(audioUrl);
 
-    message.visemes = visemes;
     message.audioPlayer = audioPlayer;
     message.audioPlayer.onended = () => {
       set(() => ({
@@ -568,7 +561,6 @@ export const useAITeacher = create(persist((set, get) => ({
       }),
     }));
 
-
     message.audioPlayer.currentTime = 0;
     message.audioPlayer.play();
   },
@@ -578,11 +570,6 @@ export const useAITeacher = create(persist((set, get) => ({
       message.audioPlayer.pause();
       message.audioPlayer.currentTime = 0;
     }
-
-
-    // if (get().currentTopic === get().topicList.length - 1) {
-    //   get().congratulation();
-    // }
 
     const resolver = get().currentResolver;
     if (resolver && resolver.resolve) {
