@@ -6,27 +6,76 @@ import { doc, getDoc, collection, query, where, getDocs, updateDoc } from 'fireb
 export const teachers = ["Sonia", "Ryan"];
 
 export const useAITeacher = create(persist((set, get) => ({
-  primaryMode: false,
-  setPrimaryMode: (mode) => set({ primaryMode: mode }),
-  messages: [],
+  // Non-persisted state (UI and temporary states)
   currentMessage: null,
-  teacher: teachers[0],
   loading: false,
-  index: 0,
-  classroom: "default",
-  quizFailedTimes: 0,
-  learningTypes: ["in technical terms","as if explaining with a visual example", "using metaphors", "as if you are explaining to a ten year old" ],
-
-  // Image
   image: null,
   imageFlag: false,
   imageLoader: false,
-  setImageFlag: (flag) => set({ imageFlag: flag, imageLoader: true }),
+  shouldContinue: false,
 
-  // Answers and Questions stored before mcq
+  // Persisted state
+  messages: [],
+  primaryMode: false,
+  teacher: teachers[0],
+  classroom: "default",
+  learningTypes: ["in technical terms","as if explaining with a visual example", "using metaphors", "as if you are explaining to a ten year old"],
+  courseMode: false,
+  speaking: false,
+  role: null,
+  id: null,
+  userName: "",
+  email: "",
+  learningStyle: "",
+  currentTopic: 0,
+  numberOfQuestionAsked: 0,
+  selectedCourse: null,
+  courses: [],
+  topicList: [],
+  courseCompleted: false,
+  topicsFetched: false,
+
+  // Quiz states (now persisted)
   quizOngoing: false,
   maxQuestions: 3,
   numberOfQuestion: 0,
+  answerOfQuestion: [],
+  previousQuestion: [],
+  tempAnswerOfQuestion: [],
+  tempPreviousQuestion: [],
+  tempNumberOfQuestion: 0,
+  Quiz: false,
+  quizQuestions: [],
+  quizAnswers: [],
+  quizCorrectAnswer: [],
+  score: 0,
+  quizPassed: false,
+  quizFailedTimes: 0,
+  index: 0,
+
+  // Update only persisted state
+  updatePersistedState: (newState) => {
+    const persistedKeys = [
+      'primaryMode', 'teacher', 'classroom', 'learningTypes', 'courseMode',
+      'speaking', 'role', 'id', 'userName', 'email', 'learningStyle',
+      'currentTopic', 'numberOfQuestionAsked', 'selectedCourse', 'courses',
+      'topicList', 'courseCompleted', 'topicsFetched'
+    ];
+    
+    const persistedUpdates = {};
+    Object.keys(newState).forEach(key => {
+      if (persistedKeys.includes(key)) {
+        persistedUpdates[key] = newState[key];
+      }
+    });
+    
+    set(persistedUpdates);
+  },
+
+  setPrimaryMode: (mode) => set({ primaryMode: mode }),
+  setImageFlag: (flag) => set({ imageFlag: flag, imageLoader: true }),
+
+  // Answers and Questions stored before mcq
   answerOfQuestion: [],
   previousQuestion: [],
   // For change of Mode
@@ -34,18 +83,8 @@ export const useAITeacher = create(persist((set, get) => ({
   tempPreviousQuestion: [],
   tempNumberOfQuestion: 0,
 
-
-  // Start quiz and sructure the response  
-  Quiz: false,
-  quizQuestions: [],
-  quizAnswers: [],
-  quizCorrectAnswer: [],
-  score: 0,
-  quizPassed: false,
-
   // Database Variables
   courseMode: false,
-  speaking: false,
   role: null,
   id: null,
   userName: "",
@@ -73,7 +112,6 @@ export const useAITeacher = create(persist((set, get) => ({
       role: role
     });
   },
-
 
   updateNumberOfQuestionAsked: async () => {
     const userId = get().id;
@@ -126,7 +164,6 @@ export const useAITeacher = create(persist((set, get) => ({
     }));
   },
 
-  shouldContinue: false,  // State to control the prompt for continuing
   setShouldContinue: (value) => set({ shouldContinue: value }),
 
   handleContinueAfterFailure: async () => {
@@ -271,7 +308,6 @@ export const useAITeacher = create(persist((set, get) => ({
     }
   },
 
-
   // Fetching the topic list of the selected course
   fetchCourseData: async (param) => {
     set({ topicsFetched: false })
@@ -337,7 +373,6 @@ export const useAITeacher = create(persist((set, get) => ({
       }
     }
 
-
   },
 
   // Course Completed
@@ -379,7 +414,6 @@ export const useAITeacher = create(persist((set, get) => ({
     get().setImageFlag(false);
     console.log("Teaching Type: ", teachingType);
     if (!question) return;
-
 
     const message = {
       question,
@@ -451,7 +485,6 @@ export const useAITeacher = create(persist((set, get) => ({
     }
   },
 
-
   getQuizQuestions: async () => {
     if (!get().Quiz) return;
 
@@ -489,13 +522,13 @@ export const useAITeacher = create(persist((set, get) => ({
     if (!message.audioPlayer) {
       set(() => ({ loading: true }));
       const textToSpeak = `${message.answer.definition} ${message.answer.explanation} ${message.answer.example}`;
-      const audioRes = await fetch(`/api/tts?teacher=${get().teacher}&text=${encodeURIComponent(textToSpeak)}`);
+      
+      // Use OpenAI TTS with nova voice for a friendly, engaging tone
+      const audioRes = await fetch(`/api/openai-tts?text=${encodeURIComponent(textToSpeak)}&voice=nova`);
       const audio = await audioRes.blob();
-      const visemes = JSON.parse(await audioRes.headers.get("visemes"));
       const audioUrl = URL.createObjectURL(audio);
       const audioPlayer = new Audio(audioUrl);
 
-      message.visemes = visemes;
       message.audioPlayer = audioPlayer;
 
       const resolver = {
@@ -506,10 +539,6 @@ export const useAITeacher = create(persist((set, get) => ({
         resolver.resolve = resolve;
         message.audioPlayer.onended = () => {
           set(() => ({ currentMessage: null, speaking: false }));
-
-          // if (get().currentTopic === get().topicList.length - 1 && get().courseMode) {
-          //   get().congratulation();
-          // }
 
           if (get().numberOfQuestion === get().maxQuestions) {
             set({ Quiz: true });
@@ -533,24 +562,19 @@ export const useAITeacher = create(persist((set, get) => ({
     }
   },
 
-
-
   playMessageForQuiz: async () => {
-    // Define the text to be converted to audio
     const message = {
       question: null,
       id: 69,
-      answer: "Now let's have a short quiz based on the topics we learned recently.", // Initialize answer
+      answer: "Now let's have a short quiz based on the topics we learned recently.",
     };
 
-    // Get TTS
-    const audioRes = await fetch(`/api/tts?teacher=${get().teacher}&text=${encodeURIComponent(message.answer)}`);
+    // Use OpenAI TTS with nova voice for quiz message
+    const audioRes = await fetch(`/api/openai-tts?text=${encodeURIComponent(message.answer)}&voice=nova`);
     const audio = await audioRes.blob();
-    const visemes = JSON.parse(await audioRes.headers.get("visemes"));
     const audioUrl = URL.createObjectURL(audio);
     const audioPlayer = new Audio(audioUrl);
 
-    message.visemes = visemes;
     message.audioPlayer = audioPlayer;
     message.audioPlayer.onended = () => {
       set(() => ({
@@ -568,7 +592,6 @@ export const useAITeacher = create(persist((set, get) => ({
       }),
     }));
 
-
     message.audioPlayer.currentTime = 0;
     message.audioPlayer.play();
   },
@@ -578,11 +601,6 @@ export const useAITeacher = create(persist((set, get) => ({
       message.audioPlayer.pause();
       message.audioPlayer.currentTime = 0;
     }
-
-
-    // if (get().currentTopic === get().topicList.length - 1) {
-    //   get().congratulation();
-    // }
 
     const resolver = get().currentResolver;
     if (resolver && resolver.resolve) {
@@ -600,8 +618,55 @@ export const useAITeacher = create(persist((set, get) => ({
     }
   },
 
+  setSessionTimeout: (timeout) => {
+    setTimeout(() => {
+      sessionStorage.removeItem('userStore');
+      sessionStorage.removeItem('user');
+      // Optionally redirect to login
+    }, timeout);
+  },
+
 }), {
   name: 'userStore',
   storage: createJSONStorage(() => sessionStorage),
+  partialize: (state) => ({
+    // Existing persisted states
+    messages: state.messages,
+    primaryMode: state.primaryMode,
+    teacher: state.teacher,
+    classroom: state.classroom,
+    learningTypes: state.learningTypes,
+    courseMode: state.courseMode,
+    speaking: state.speaking,
+    role: state.role,
+    id: state.id,
+    userName: state.userName,
+    email: state.email,
+    learningStyle: state.learningStyle,
+    currentTopic: state.currentTopic,
+    numberOfQuestionAsked: state.numberOfQuestionAsked,
+    selectedCourse: state.selectedCourse,
+    courses: state.courses,
+    topicList: state.topicList,
+    courseCompleted: state.courseCompleted,
+    topicsFetched: state.topicsFetched,
 
+    // Quiz states to persist
+    quizOngoing: state.quizOngoing,
+    maxQuestions: state.maxQuestions,
+    numberOfQuestion: state.numberOfQuestion,
+    answerOfQuestion: state.answerOfQuestion,
+    previousQuestion: state.previousQuestion,
+    tempAnswerOfQuestion: state.tempAnswerOfQuestion,
+    tempPreviousQuestion: state.tempPreviousQuestion,
+    tempNumberOfQuestion: state.tempNumberOfQuestion,
+    Quiz: state.Quiz,
+    quizQuestions: state.quizQuestions,
+    quizAnswers: state.quizAnswers,
+    quizCorrectAnswer: state.quizCorrectAnswer,
+    score: state.score,
+    quizPassed: state.quizPassed,
+    quizFailedTimes: state.quizFailedTimes,
+    index: state.index
+  })
 }));

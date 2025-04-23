@@ -96,8 +96,6 @@ dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-
-
 .loader {
   border-top-color: slategray !important;
   animation: spinner 1.5s linear infinite;
@@ -112,7 +110,6 @@ dialog::backdrop {
     transform: rotate(360deg);
   }
 }
-
 
 /* Add this CSS in your global stylesheet */
 @keyframes spin {
@@ -136,12 +133,9 @@ dialog::backdrop {
   animation: spin 2s linear infinite;
 }
 
-
-
 /* //////////////////// */
 /* Sign-up/sign-in page */
 /* //////////////////// */
-
 
 .animated-background {
   background: linear-gradient(270deg, #0d1b2a, #1b263b);
@@ -163,7 +157,6 @@ dialog::backdrop {
   }
 }
 
-
 @keyframes gradientAnimation {
   0% {
     background-position: 0% 50%;
@@ -176,26 +169,6 @@ dialog::backdrop {
   100% {
     background-position: 0% 50%;
   }
-}
-
-.gradient-text {
-  background: linear-gradient(270deg, #0091ff, #ff2dd5, #ff4011fb);
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-button {
-
-  background: linear-gradient(270deg, #0091ff, #ff2dd5, #ff4011fb);
-  /* Orange to purple gradient */
-  color: white;
-  border: none;
-  background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
 }
 
 .outline-button {
@@ -237,8 +210,6 @@ dialog::backdrop {
   color: white;
 }
 
-
-
 /* //////////////////// */
 /* Hero Section */
 /* //////////////////// */
@@ -253,8 +224,6 @@ dialog::backdrop {
   opacity: 1;
   transform: translateY(0);
 }
-
-
 
 /* //////////////////// */
 /* Features  */
@@ -326,7 +295,7 @@ dialog::backdrop {
 }
 
 .card:hover {
-  height: 410px;
+  height: 380px;
 }
 
 .card:hover .text {
@@ -352,4 +321,116 @@ dialog::backdrop {
 
 .card:hover .icon-svg .path-color {
   stroke: url(#gradientColor);
+}
+
+/* Enhanced gradient animations */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(270deg, #0091ff, #ff2dd5, #ff4011fb);
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-button {
+  background: linear-gradient(270deg, #0091ff, #ff2dd5, #ff4011fb);
+  color: white;
+  border: none;
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.gradient-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth fade-in animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced button styles */
+.button-primary {
+  @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  background: linear-gradient(270deg, #0091ff, #ff2dd5, #ff4011fb);
+  background-size: 200% 200%;
+  animation: gradientAnimation 5s ease infinite;
+}
+
+.button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.button-secondary {
+  @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  border: 2px solid white;
+}
+
+.button-secondary:hover {
+  background: white;
+  color: black;
+  transform: translateY(-2px);
+}
+
+/* Enhanced section transitions */
+.section-transition {
+  transition: all 0.5s ease;
+}
+
+.section-transition:hover {
+  transform: scale(1.02);
+}
+
+/* Glass morphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive text sizes */
+@media (max-width: 640px) {
+  .responsive-text {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-text {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsive-text {
+    font-size: 1.5rem;
+  }
 }
