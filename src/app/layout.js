@@ -28,14 +28,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Aristo - Your Personal AI Teacher",
     description: "Experience personalized learning with Aristo, your AI-powered teacher that adapts to your learning style.",
-    images: ["/images/twitter-image.jpg"],
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }) {

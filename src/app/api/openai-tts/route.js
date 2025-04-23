@@ -7,7 +7,7 @@ const openai = new OpenAI({
 export async function GET(req) {
   try {
     const text = req.nextUrl.searchParams.get("text");
-    const voice = req.nextUrl.searchParams.get("voice") || "nova"; // Default to nova voice
+    const voice = req.nextUrl.searchParams.get("voice") || "nova"; 
 
     if (!text) {
       return new Response(JSON.stringify({ error: "No text provided" }), {
