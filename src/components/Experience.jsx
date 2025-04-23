@@ -58,7 +58,7 @@ export const Experience = () => {
   const classroomPlacement = useMemo(() => itemPlacement[classroom], [classroom]);
 
   // Load the classroom model using our optimized loader
-  const { scene: classroomScene } = useModelLoader(`/models/classroom_${classroom}.glb`);
+  const { scene: classroomScene } = useModelLoader(`/models/classroom_${classroom || 'default'}.glb`);
 
   return (
     <>
