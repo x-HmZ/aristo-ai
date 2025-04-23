@@ -22,8 +22,9 @@ export async function POST(req) {
     const transcription = await openai.audio.transcriptions.create({
       file: file,
       model: "whisper-1",
-      language: "en",
-      response_format: "verbose_json"
+      temperature: 0.2,
+      response_format: "verbose_json",
+      prompt: "Transcribe the following audio exactly as spoken, without translation or interpretation."
     });
 
     return new Response(JSON.stringify({ 
