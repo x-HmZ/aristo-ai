@@ -1,26 +1,18 @@
-import { NextResponse } from "next/server";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+/**
+ * GET /api/admin/analytics
+ *
+ * Admin-only overview statistics. Uses the post-FSLSM schema:
+ *   - expertise distribution from learner_profiles.expertise_level
+ *   - Bloom level performance from quiz_attempts (is_correct grouped by bloom_level)
+ *   - struggling concepts from quiz_attempts (low accuracy, ≥2 attempts)
+ *   - recent attempts (last 10, new schema fields)
+ */
 
-// ─── Auth helper ──────────────────────────────────────────────────────────────
+import { NextResponse }          from "next/server";
+import { createServiceClient }   from "@/lib/supabase/server";
+import { verifyAdmin }           from "@/lib/admin/auth";
 
-async function verifyAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const service = createServiceClient();
-  const { data: profile } = await service
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
-
-  return profile?.is_admin ? user : null;
-}
-
-// ─── GET /api/admin/analytics ─────────────────────────────────────────────────
+// ─── GET /api/admin/analytics ──────────────────────────────────────────────────
 
 export async function GET() {
   const user = await verifyAdmin();
@@ -33,8 +25,8 @@ export async function GET() {
     { count: totalStudents },
     { count: studentsThisWeek },
     { count: publishedCourses },
-    { data: profiles },
-    { data: quizAttempts },
+    { data: learnerProfiles },
+    { data: rawAttempts },
   ] = await Promise.all([
     service.from("profiles").select("*", { count: "exact", head: true }),
     service
@@ -45,116 +37,109 @@ export async function GET() {
       .from("courses")
       .select("*", { count: "exact", head: true })
       .eq("is_published", true),
-    service.from("profiles").select("learning_style, teaching_flow"),
+    service.from("learner_profiles").select("expertise_level"),
     service
       .from("quiz_attempts")
-      .select("style_used, score, questions, topic, attempted_at")
-      .order("attempted_at", { ascending: false })
+      .select("concept_id, bloom_level, is_correct, created_at, concepts(name)")
+      .order("created_at", { ascending: false })
       .limit(500),
   ]);
 
-  // ── Style & flow distribution ───────────────────────────────────────────────
-  const styleCount: Record<string, number> = {};
-  const flowCount: Record<string, number> = {};
+  type AttemptRow = {
+    concept_id: string | null;
+    bloom_level: string | null;
+    is_correct: boolean | null;
+    created_at: string;
+    concepts: { name: string } | { name: string }[] | null;
+  };
 
-  (profiles ?? []).forEach((p) => {
-    if (p.learning_style)
-      styleCount[p.learning_style] = (styleCount[p.learning_style] ?? 0) + 1;
-    if (p.teaching_flow)
-      flowCount[p.teaching_flow] = (flowCount[p.teaching_flow] ?? 0) + 1;
+  const attempts = (rawAttempts ?? []) as unknown as AttemptRow[];
+
+  // Supabase may return concepts as an array or object depending on the FK relationship
+  const conceptName = (row: AttemptRow): string | null => {
+    if (!row.concepts) return null;
+    const c = Array.isArray(row.concepts) ? row.concepts[0] : row.concepts;
+    return c?.name ?? null;
+  };
+
+  // ── Expertise distribution ──────────────────────────────────────────────────
+  const expertiseCount: Record<string, number> = {};
+  (learnerProfiles ?? []).forEach((p) => {
+    const lvl = p.expertise_level ?? "beginner";
+    expertiseCount[lvl] = (expertiseCount[lvl] ?? 0) + 1;
   });
-
   const total = totalStudents ?? 0;
-
-  const styleDistribution = Object.entries(styleCount).map(
-    ([style, count]) => ({
-      style,
-      count,
-      pct: total > 0 ? Math.round((count / total) * 100) : 0,
+  const expertiseDistribution = (["beginner", "intermediate", "advanced"] as const).map(
+    (level) => ({
+      level,
+      count: expertiseCount[level] ?? 0,
+      pct:   total > 0 ? Math.round(((expertiseCount[level] ?? 0) / total) * 100) : 0,
     })
   );
 
-  const flowDistribution = Object.entries(flowCount).map(([flow, count]) => ({
-    flow,
-    count,
-    pct: total > 0 ? Math.round((count / total) * 100) : 0,
-  }));
-
-  // ── Quiz aggregation ────────────────────────────────────────────────────────
-  const attempts = quizAttempts ?? [];
-
-  const scoredAttempts = attempts.filter(
-    (a) => Array.isArray(a.questions) && a.questions.length > 0
-  );
-
-  const avgQuizScore =
-    scoredAttempts.length > 0
-      ? Math.round(
-          scoredAttempts.reduce((sum, a) => {
-            const qs = (a.questions as unknown[]).length;
-            return sum + (a.score / qs) * 100;
-          }, 0) / scoredAttempts.length
-        )
-      : 0;
-
-  // Quiz by style
-  const styleAgg: Record<string, { total: number; count: number }> = {};
+  // ── Bloom level performance ─────────────────────────────────────────────────
+  const bloomAgg: Record<string, { correct: number; total: number }> = {};
   attempts.forEach((a) => {
-    if (!a.style_used) return;
-    const qs = Array.isArray(a.questions) ? (a.questions as unknown[]).length : 1;
-    if (!styleAgg[a.style_used]) styleAgg[a.style_used] = { total: 0, count: 0 };
-    styleAgg[a.style_used].total += (a.score / qs) * 100;
-    styleAgg[a.style_used].count += 1;
+    if (!a.bloom_level) return;
+    bloomAgg[a.bloom_level] ??= { correct: 0, total: 0 };
+    bloomAgg[a.bloom_level].total++;
+    if (a.is_correct) bloomAgg[a.bloom_level].correct++;
   });
-
-  const quizByStyle = Object.entries(styleAgg).map(
-    ([style, { total, count }]) => ({
-      style,
-      avgScore: Math.round(total / count),
-      count,
-    })
-  );
-
-  // Struggling topics (lowest avg score, min 2 attempts)
-  const topicAgg: Record<string, { total: number; count: number }> = {};
-  attempts.forEach((a) => {
-    if (!a.topic) return;
-    const qs = Array.isArray(a.questions) ? (a.questions as unknown[]).length : 1;
-    if (!topicAgg[a.topic]) topicAgg[a.topic] = { total: 0, count: 0 };
-    topicAgg[a.topic].total += (a.score / qs) * 100;
-    topicAgg[a.topic].count += 1;
-  });
-
-  const strugglingTopics = Object.entries(topicAgg)
-    .map(([topic, { total, count }]) => ({
-      topic,
-      avgScore: Math.round(total / count),
-      attempts: count,
+  const bloomPerformance = Object.entries(bloomAgg)
+    .map(([bloom, { correct, total: t }]) => ({
+      bloom,
+      accuracy: t > 0 ? Math.round((correct / t) * 100) : 0,
+      count:    t,
     }))
-    .filter((t) => t.attempts >= 2)
+    .sort((a, b) => a.accuracy - b.accuracy);
+
+  // ── Struggling concepts ─────────────────────────────────────────────────────
+  const conceptAgg: Record<string, { correct: number; total: number; name: string }> = {};
+  attempts.forEach((a) => {
+    if (!a.concept_id) return;
+    conceptAgg[a.concept_id] ??= {
+      correct: 0,
+      total:   0,
+      name:    conceptName(a) ?? a.concept_id,
+    };
+    conceptAgg[a.concept_id].total++;
+    if (a.is_correct) conceptAgg[a.concept_id].correct++;
+  });
+
+  const strugglingTopics = Object.entries(conceptAgg)
+    .filter(([, { total: t }]) => t >= 2)
+    .map(([, { correct, total: t, name }]) => ({
+      topic:    name,
+      avgScore: t > 0 ? Math.round((correct / t) * 100) : 0,
+      attempts: t,
+    }))
     .sort((a, b) => a.avgScore - b.avgScore)
     .slice(0, 8);
 
-  // Recent attempts (last 10)
+  // ── Overall quiz score ──────────────────────────────────────────────────────
+  const correctCount = attempts.filter((a) => a.is_correct).length;
+  const avgQuizScore = attempts.length > 0
+    ? Math.round((correctCount / attempts.length) * 100)
+    : 0;
+
+  // ── Recent attempts ─────────────────────────────────────────────────────────
   const recentAttempts = attempts.slice(0, 10).map((a) => ({
-    topic: a.topic,
-    score: a.score,
-    total: Array.isArray(a.questions) ? (a.questions as unknown[]).length : 5,
-    style: a.style_used,
-    at: a.attempted_at,
+    topic:      conceptName(a) ?? a.concept_id ?? "Unknown",
+    bloom:      a.bloom_level    ?? "—",
+    is_correct: a.is_correct     ?? false,
+    at:         a.created_at,
   }));
 
   return NextResponse.json({
     stats: {
-      totalStudents: totalStudents ?? 0,
-      studentsThisWeek: studentsThisWeek ?? 0,
-      publishedCourses: publishedCourses ?? 0,
+      totalStudents:     totalStudents    ?? 0,
+      studentsThisWeek:  studentsThisWeek ?? 0,
+      publishedCourses:  publishedCourses ?? 0,
       avgQuizScore,
       totalQuizAttempts: attempts.length,
     },
-    styleDistribution,
-    flowDistribution,
-    quizByStyle,
+    expertiseDistribution,
+    bloomPerformance,
     strugglingTopics,
     recentAttempts,
   });

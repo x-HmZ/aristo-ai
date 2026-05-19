@@ -1,9 +1,11 @@
 "use client";
 
-import { Html, useGLTF, OrbitControls } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { Html, useGLTF } from "@react-three/drei";
+import { useFrame, ThreeEvent } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
-import { Group } from "three";
+import { Euler, Group } from "three";
+import { useAristoStore } from "@/store/useAristoStore";
+import type { ModelAnnotation } from "@/lib/agents/teaching";
 
 interface AnnotationPoint {
   label: string;
@@ -12,13 +14,35 @@ interface AnnotationPoint {
 
 interface GeneratedModelProps {
   modelUrl: string;
-  annotationHints?: string[];
+  annotationHints?: string[];                      // legacy: positional fallback
+  modelAnnotations?: ModelAnnotation[];            // preferred: { label, bias }
   position?: [number, number, number];
   scale?: number;
 }
 
-// Distribute annotation labels around the model in a circle
-function generateAnnotationPositions(hints: string[]): AnnotationPoint[] {
+const BIAS_DIRS: Record<ModelAnnotation["bias"], [number, number, number]> = {
+  front:  [ 0,    0.3,  0.9],
+  back:   [ 0,    0.3, -0.9],
+  left:   [-0.9,  0.3,  0  ],
+  right:  [ 0.9,  0.3,  0  ],
+  top:    [ 0,    1.1,  0  ],
+  bottom: [ 0,   -0.6,  0  ],
+};
+
+function biasPositions(annotations: ModelAnnotation[]): AnnotationPoint[] {
+  // Spread overlapping biases by stacking vertically
+  const groups: Record<string, number> = {};
+  return annotations.slice(0, 6).map((a) => {
+    const base = BIAS_DIRS[a.bias] ?? BIAS_DIRS.front;
+    const idx  = (groups[a.bias] = (groups[a.bias] ?? 0) + 1) - 1;
+    return {
+      label: a.label,
+      position: [base[0], base[1] + idx * 0.25, base[2]],
+    };
+  });
+}
+
+function hintPositions(hints: string[]): AnnotationPoint[] {
   const radius = 0.9;
   return hints.slice(0, 5).map((label, i) => {
     const angle = (i / hints.length) * Math.PI * 2;
@@ -36,39 +60,109 @@ function generateAnnotationPositions(hints: string[]): AnnotationPoint[] {
 export function GeneratedModel({
   modelUrl,
   annotationHints = [],
-  position = [1.8, -1.7, -3],
-  scale = 1.2,
+  modelAnnotations,
+  position = [1.1, -0.4, -3],
+  scale = 1.5,
 }: GeneratedModelProps) {
   const group = useRef<Group>(null);
   const { scene } = useGLTF(modelUrl);
   const [hoveredAnnotation, setHoveredAnnotation] = useState<string | null>(null);
   const [appeared, setAppeared] = useState(false);
 
-  const annotations = generateAnnotationPositions(annotationHints);
+  const setModelInteracting = useAristoStore((s) => s.setModelInteracting);
 
-  // Fade-in on mount
+  // TripoSR exports Z-up; correct to Y-up on the scene object so the group
+  // can spin freely in world space without gimbal issues
+  useEffect(() => {
+    scene.rotation.x = -Math.PI / 2;
+  }, [scene]);
+
+  const annotations: AnnotationPoint[] = modelAnnotations && modelAnnotations.length > 0
+    ? biasPositions(modelAnnotations)
+    : hintPositions(annotationHints);
+  const isDragging   = useRef(false);
+  const lastPointer  = useRef({ x: 0, y: 0 });
+  const rotY         = useRef(0);    // world-Y spin (like Earth's axis)
+  const rotX         = useRef(0);    // tilt (latitude)
+  const userScale    = useRef(scale);
+  const isHovered    = useRef(false);
+
+
+  useEffect(() => { userScale.current = scale; }, [scale]);
+
   useEffect(() => {
     const t = setTimeout(() => setAppeared(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-  // Slow auto-rotation
   useFrame((_, delta) => {
-    if (group.current) {
-      group.current.rotation.y += delta * 0.4;
+    if (!group.current) return;
+    // Auto-rotate on Y only when not interacted with (like Earth spinning on its axis)
+    if (!isHovered.current) {
+      rotY.current += delta * 0.4;
     }
+    // YXZ order: Y spin applied first, then X tilt — gives true globe feel
+    group.current.rotation.order = "YXZ" as unknown as Euler["order"];
+    group.current.rotation.y = rotY.current;
+    group.current.rotation.x = rotX.current;
+    group.current.scale.setScalar(appeared ? userScale.current : 0);
   });
+
+  const onPointerEnter = () => {
+    isHovered.current = true;
+    setModelInteracting(true);
+    document.body.style.cursor = "grab";
+  };
+
+  const onPointerLeave = () => {
+    isDragging.current = false;
+    isHovered.current = false;
+    setModelInteracting(false);
+    document.body.style.cursor = "";
+  };
+
+  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    isDragging.current = true;
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+    document.body.style.cursor = "grabbing";
+  };
+
+  const onPointerUp = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    isDragging.current = false;
+    document.body.style.cursor = "grab";
+  };
+
+  const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
+    if (!isDragging.current) return;
+    const dx = e.clientX - lastPointer.current.x;
+    const dy = e.clientY - lastPointer.current.y;
+    // Left-right drag → Y spin; up-down drag → X tilt (clamped so it doesn't flip)
+    rotY.current += dx * 0.012;
+    rotX.current  = Math.max(-Math.PI / 2.5, Math.min(Math.PI / 2.5, rotX.current + dy * 0.012));
+    lastPointer.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const onWheel = (e: ThreeEvent<WheelEvent>) => {
+    e.stopPropagation();
+    userScale.current = Math.max(0.4, Math.min(3.0, userScale.current - e.deltaY * 0.001));
+  };
 
   return (
     <group
       ref={group}
       position={position}
-      scale={appeared ? scale : 0}
       dispose={null}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerMove={onPointerMove}
+      onWheel={onWheel}
     >
       <primitive object={scene} />
 
-      {/* Annotation labels */}
       {annotations.map(({ label, position: aPos }) => (
         <Html
           key={label}
@@ -93,7 +187,7 @@ export function GeneratedModel({
         </Html>
       ))}
 
-      {/* Subtle glow ring at base */}
+      {/* Glow ring at base */}
       <mesh rotation-x={-Math.PI / 2} position-y={-0.01}>
         <ringGeometry args={[0.6, 0.8, 32]} />
         <meshBasicMaterial color="#F97B2F" transparent opacity={0.15} />

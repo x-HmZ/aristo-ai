@@ -150,4 +150,26 @@
     background: hsl(var(--aristo-brown) / 0.75);
     backdrop-filter: blur(4px);
   }
+
+  /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
+     Default WebKit scrollbars are invisible on the glass surfaces; this
+     gives the student a clear scroll affordance without breaking the
+     pastel aesthetic. */
+  .aristo-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--aristo-orange) / 0.45) transparent;
+  }
+  .aristo-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .aristo-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .aristo-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--aristo-orange) / 0.35);
+    border-radius: 6px;
+  }
+  .aristo-scroll::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--aristo-orange) / 0.6);
+  }
 }

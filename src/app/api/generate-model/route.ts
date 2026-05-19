@@ -1,77 +1,59 @@
-import { fal } from "@fal-ai/client";
-import { NextRequest, NextResponse } from "next/server";
+/**
+ * POST /api/generate-model
+ *
+ * Topic-level teaching image + 3D source image.  This is the legacy
+ * topic-wide visual that fires once at lesson start (kept for non-adaptive
+ * lessons and as the 3D model source).  Per-segment adaptive visuals live
+ * in /api/learn/segment-visuals — both routes share the underlying fal.ai
+ * helper at src/lib/imagegen/banana.ts.
+ */
 
-fal.config({ credentials: process.env.FAL_API_KEY });
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { generateInfographic, generate3dSourceImage } from "@/lib/imagegen/banana";
+
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const { imagePrompt, topic } = await req.json();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    if (!process.env.FAL_KEY) {
+      return NextResponse.json({ error: "FAL_KEY not configured" }, { status: 500 });
+    }
+
+    const { imagePrompt, model3dPrompt, topic } = await req.json();
     if (!imagePrompt || !topic) {
-      return NextResponse.json(
-        { error: "imagePrompt and topic are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "imagePrompt and topic are required" }, { status: 400 });
     }
 
-    // Step 1: Generate image with FLUX Schnell
-    console.log(`[generate-model] Generating image for: ${topic}`);
-    const imageResult = await fal.subscribe("fal-ai/flux/schnell", {
-      input: {
-        prompt: imagePrompt,
-        image_size: "square_hd",
-        num_inference_steps: 4,
-        num_images: 1,
-      },
-    }) as unknown as { images: { url: string }[] };
+    console.log(`[generate-model] NB Pro (teaching) + FLUX Schnell (3D source) for: ${topic}`);
 
-    const imageUrl = imageResult.images?.[0]?.url;
-    if (!imageUrl) {
-      throw new Error("Image generation failed — no image returned");
-    }
+    // Both run in parallel — NB Pro for the rich educational image, FLUX for TripoSR input.
+    // user.id is threaded through so usage_events rows are attributable on the cost page.
+    const [teachingImage, model3dImageUrl] = await Promise.all([
+      generateInfographic({
+        prompt:  imagePrompt,
+        style:   "annotated_photo",
+        userId:  user.id,
+        feature: "lesson.teaching_image",
+      }),
+      model3dPrompt
+        ? generate3dSourceImage(model3dPrompt, user.id)
+        : Promise.resolve(null),
+    ]);
 
-    console.log(`[generate-model] Image ready, generating 3D model...`);
-
-    // Step 2: Convert image to 3D with Tripo3D v2.5
-    const modelResult = await fal.subscribe(
-      "tripo3d/tripo/v2.5/image-to-3d",
-      {
-        input: {
-          image_url: imageUrl,
-          pivot_to_center_bottom: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any,
-        logs: true,
-        onQueueUpdate: (update) => {
-          if (update.status === "IN_PROGRESS") {
-            const latest = update.logs?.at(-1)?.message;
-            if (latest) console.log(`[tripo3d] ${latest}`);
-          }
-        },
-      }
-    ) as unknown as { model_mesh: { url: string }; rendered_image: { url: string } };
-
-    const modelUrl = modelResult.model_mesh?.url;
-    if (!modelUrl) {
-      throw new Error("3D model generation failed — no model returned");
-    }
-
-    console.log(`[generate-model] Done. Model URL: ${modelUrl}`);
-
+    console.log(`[generate-model] Images ready (cached=${teachingImage.cached})`);
     return NextResponse.json({
-      modelUrl,
-      imageUrl,
-      previewUrl: modelResult.rendered_image?.url ?? imageUrl,
+      imageUrl:        teachingImage.imageUrl,
+      model3dImageUrl: model3dImageUrl ?? teachingImage.imageUrl,
     });
   } catch (error) {
-    console.error("3D generation error:", error);
+    console.error("[generate-model] Error:", error);
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "3D model generation failed",
-      },
+      { error: error instanceof Error ? error.message : "Image generation failed" },
       { status: 500 }
     );
   }

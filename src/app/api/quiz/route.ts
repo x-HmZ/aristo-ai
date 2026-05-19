@@ -1,7 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
+import type Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { MODELS }        from "@/lib/agents/models";
+import { getAnthropic }  from "@/lib/llm/anthropic";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = getAnthropic();
 
 const quizTool: Anthropic.Tool = {
   name: "generate_quiz",
@@ -35,20 +37,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Topics are required" }, { status: 400 });
     }
 
-    const response = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
-      tools: [quizTool],
-      tool_choice: { type: "any" },
-      messages: [
-        {
-          role: "user",
-          content: `Generate exactly 5 multiple choice questions for middle-school students covering: ${topics.join(", ")}.
+    const response = await client.messages.create(
+      {
+        model: MODELS.fast,
+        max_tokens: 1024,
+        tools: [quizTool],
+        tool_choice: { type: "any" },
+        messages: [
+          {
+            role: "user",
+            content: `Generate exactly 5 multiple choice questions for middle-school students covering: ${topics.join(", ")}.
 Each question must have exactly 4 options. The correct field must exactly match one of the options.
 Learning style context: ${learningStyle}.`,
-        },
-      ],
-    });
+          },
+        ],
+      },
+      { feature: "quiz.legacy", metadata: { topics, learningStyle } }
+    );
 
     const toolUse = response.content.find((b) => b.type === "tool_use");
     if (!toolUse || toolUse.type !== "tool_use") {

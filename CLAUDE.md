@@ -2,193 +2,202 @@
 
 ## What This Is
 
-Aristo AI is an immersive AI teacher platform. A 3D avatar teaches middle-school students using voice, visuals, generated 3D models, and adaptive learning. This document is the single source of truth for all Claude sessions — read this fully before starting any work.
+Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D avatar teacher delivers structured 5-phase lessons to middle-school students, adapting to each learner's behaviorally-inferred profile and tracking mastery per concept with spaced repetition for long-term retention.
+
+> **For Claude:** Auto-memory at `~/.claude/projects/.../memory/` is the primary context — read `MEMORY.md` (the index) first. The authoritative spec is `AI_TEACHER_APP_SPEC.md` at project root; consult `spec_index.md` to read one section surgically rather than the full file. **The spec supersedes this CLAUDE.md on any conflict.**
 
 ---
 
-## Vision
+## Vision (do not redirect from this)
 
-- **#1 priority**: Real-time 3D model generation of the topic being taught, displayed in the scene alongside the teacher avatar, with the teacher narrating and annotating it
-- **Target user**: Middle-school students (prototype)
-- **Design**: Bright pastel orange + off-white/beige theme, modern, immersive, friendly
+- **Immersive 3D experience.** A teacher avatar (Ryan / Sonia) lives in a real-time R3F scene. When teaching physical/tangible topics, generate a 3D model (FLUX → Tripo3D) into the scene alongside the avatar.
+- **Real teaching, not summarization.** Every lesson follows a strict 5-phase protocol: Activate → Explain → Demonstrate → Challenge → Connect.
+- **Adaptive to each learner.** No fixed learning-style buckets (FSLSM was rejected). Instead a `DynamicProfile` (expertise / depth / pace / example preference) is inferred from behavioral signals and updated every session.
+- **Mastery-based, not time-based.** BKT (Bayesian Knowledge Tracing) per concept. FSRS spaced repetition. The KG decides what to teach next, not a linear playlist.
+- **Target user:** middle-school students (grades 6–8).
+- **Visual direction:** pastel orange (#F97B2F) + cream/beige, soft glassmorphism, modern, friendly, immersive. Not childish, not corporate.
 
 ---
 
-## Finalized Tech Stack
+## Tech Stack (finalized)
 
 | Area | Choice |
 |------|--------|
-| Framework | Next.js 15, TypeScript |
-| Auth + DB | Supabase (project ref: `thivgkbxgfchhystlyvh`) |
-| 3D Rendering | React Three Fiber v8 + Drei v9 |
-| State | Zustand (`src/store/useAristoStore.ts`) |
+| Framework | Next.js 15, TypeScript, App Router (with one Pages Router exception — see below) |
+| Auth + DB | Supabase (project ref: `thivgkbxgfchhystlyvh`) — pgvector enabled |
+| 3D Rendering | React Three Fiber v8 + Drei v9 + Three.js |
+| State | Zustand (`src/store/useAristoStore.ts`) — persisted to sessionStorage |
 | UI | shadcn/ui + Tailwind CSS |
-| AI - Teaching | Gemini 2.0 Flash (via `/api/teach`) |
-| AI - TTS/STT | Browser Web Speech API (free, no keys needed for now) |
+| Teaching / Assessment | Anthropic — Sonnet 4.6 (lessons, quiz gen) + Haiku 4.5 (explain-more, review questions, short-answer eval, free-mode chat) |
+| RAG embeddings | OpenAI `text-embedding-3-small` (1536 dim, gracefully optional) |
+| TTS / STT | Browser Web Speech API (Whisper / OpenAI TTS routes exist as a planned upgrade path — leave them in place) |
 | 3D Generation | fal.ai: FLUX Schnell (text→image) → Tripo3D v2.5 (image→GLB) |
-| Deployment | Vercel |
+| Deployment | Vercel (env vars set in dashboard) |
 
-### 3D Generation Pipeline
-```
-Topic → FLUX Schnell (fal.ai, text→image, ~5s)
-      → Tripo3D v2.5 (fal.ai, image→GLB, ~25-30s)
-      → GLB loaded into R3F scene
-```
+### Model IDs are centralized
+
+`src/lib/agents/models.ts` exports `MODELS.teaching | assessment | fast`. **Never hardcode model strings elsewhere.**
 
 ---
 
-## CRITICAL: React Three Fiber + Next.js 15 Architecture
+## CRITICAL: Pages Router constraint for `/learn`
 
-**Problem**: Next.js 15 App Router's `(app-pages-browser)` webpack layer aliases `react` to `next/dist/compiled/react` (React 19 build). This compiled React strips `__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED`. `react-reconciler@0.27.0` (R3F's dependency) reads `ReactCurrentOwner` from `__SECRET_INTERNALS` at **module initialization time**, causing a fatal crash.
+Next.js 15 App Router's `(app-pages-browser)` webpack layer aliases `react` to `next/dist/compiled/react` (React 19), which strips internals that `react-reconciler@0.27.0` (R3F's dep) reads at module init — fatal crash.
 
-**Solution**: `/learn` lives in the **Pages Router** (`pages/learn.tsx`), NOT the App Router. Pages Router uses the `(pages-browser)` webpack layer which does NOT alias react, so R3F finds real React 18 internals.
-
-**Rules — never violate these:**
+**Rules — do not violate:**
 - `pages/learn.tsx` — Pages Router page with `getServerSideProps` for Supabase auth
-- `src/components/learn/LearnClient.tsx` — `"use client"` component, statically imports `AristoCanvas`
-- `pages/learn.tsx` uses `next/dynamic({ ssr: false })` to load `LearnClient` — this is the SSR boundary
-- Do NOT move `/learn` back to `src/app/learn/` — it will break R3F
-- Do NOT add webpack aliases that redirect `react` to real `node_modules/react` — breaks `React.use` in App Router pages
+- `src/components/learn/LearnClient.tsx` — `"use client"`, statically imports `AristoCanvas`
+- `pages/learn.tsx` uses `next/dynamic({ ssr: false })` to load `LearnClient` (the SSR boundary)
+- Do **not** move `/learn` into `src/app/learn/` — breaks R3F
+- Do **not** add a webpack alias redirecting `react` to real `node_modules/react` — breaks `React.use` in App Router pages
+
+Everything else lives in App Router.
 
 ---
 
-## File Structure (key files)
+## Architecture
+
+### Agents (`src/lib/agents/`)
+
+| File | Exports | Model |
+|------|---------|-------|
+| `teaching.ts` | `generateLesson()` (5-phase), `explainMore()` | Sonnet / Haiku |
+| `assessment.ts` | `generateQuestions`, `generateLessonQuiz`, `generateReviewQuestion`, `evaluateShortAnswer`, `evaluateObjective` (local) | Sonnet / Haiku |
+| `curriculum.ts` | `generateCourse`, `flattenCourseConceptIds` | Sonnet |
+| `profiler.ts` | `updateDynamicProfile` (rule-based, no LLM), `computeBloomAccuracy` | — |
+| `models.ts` | `MODELS` constants | — |
+
+All Anthropic calls use `tool_use` with strict input schemas — no regex JSON parsing.
+
+### Subsystems
+
+- **RAG** (`src/lib/rag/`) — `embed.ts` + `retrieve.ts`. `match_reference_chunks()` RPC, top-4 chunks, similarity ≤ 0.3.
+- **SRS** (`src/lib/srs/`) — `scheduler.ts` (FSRS), `queue.ts` (`getDailyReviewQueue`, `getOverdueCount`).
+- **Mastery** (`src/lib/mastery/`) — BKT update; SRS scheduling; Bloom-level helpers.
+- **KG** (`src/lib/kg/`) — graph types and helpers.
+
+### API Routes (`src/app/api/...`)
+
+**Learning:**
+- `GET  /api/learn/lesson/[conceptId]` — full 5-phase lesson (parallel: profile + concept + prereq join + RAG)
+- `POST /api/learn/explain-more` — Haiku phase expansion
+- `POST /api/learn/challenge` — Haiku challenge eval
+- `POST /api/learn/complete` — mark lesson viewed
+- `GET  /api/learn/next` — next concept with 70/30 SRS blend (50/50 when ≥10 overdue)
+- `GET  /api/learn/overdue-count` — cheap SRS count for the header chip poller
+
+**Quiz:**
+- `GET  /api/quiz/lesson/[conceptId]` — 4 mixed questions (Sonnet)
+- `GET  /api/quiz/review` — Haiku review questions for SRS-due concepts
+- `POST /api/quiz/submit` — eval + BKT update + SRS update + `quiz_attempts` row; `context: "lesson" | "review"`
+- `POST /api/quiz/complete` — update `user_course_progress.last_activity`
+
+**Profile / Analytics:**
+- `GET  /api/profile` — static + dynamic profile
+- `GET  /api/profile/mastery` — per-concept mastery (`?domain` filter)
+- `POST /api/profile/session` — flush behavioral signals → run profiler → upsert `learner_profiles`
+- `GET  /api/profile/analytics` — student dashboard data (streak, time, mastery counts, weak concepts)
+
+**Courses:**
+- `GET  /api/courses` — list published
+- `GET  /api/courses/[id]` — course + masteryMap + conceptMeta
+- `POST /api/courses/generate` — CurriculumAgent → save course
+
+**Knowledge Graph:**
+- `GET  /api/kg/[domain]`, `POST /api/kg/concepts`, `POST /api/kg/generate/[domain]`, `POST /api/kg/validate/[domain]`
+- `POST /api/kg/ingest` — admin-only RAG ingest (chunk + embed + insert)
+
+**Other:**
+- `POST /api/teach` — free-mode chat companion (single Haiku call, profile-shaped tool_use)
+- `POST /api/generate-model` — fal.ai pipeline (FLUX → Tripo3D)
+- `GET  /api/auth/callback` — Supabase OAuth callback
+- `POST /api/auth/onboarding` — onboarding completion
+- Admin: `GET /api/admin/analytics`, `GET/POST/PATCH/DELETE /api/admin/courses`
+
+All Anthropic / fal.ai endpoints require auth.
+
+### Components (`src/components/`)
+
+**Learn:**
+- `LearnClient.tsx` — main shell; mode routing; overdue chip; Progress + Map + Sign Out in nav
+- `LessonView.tsx` — 5-phase cards (ActivateCard → ConnectCard); ExplainMore; signal tracking
+- `CourseMapView.tsx` — visual KG map, mastery-coloured nodes
+- `CourseFlow.tsx` — `CourseLoadingBar`, `CourseTakeQuizBar`, `CourseAdvanceBar`
+- `ModePicker.tsx` — free explore vs course picker + generate
+- `MessagePanel.tsx` — chat history (free mode) / dispatches to LessonView (course mode)
+- `InputBox.tsx` — text + mic input; Web Speech TTS
+- `TeacherControls.tsx` — avatar switcher, controls
+- `DashboardView.tsx` — Progress overlay (streak, time, mastery, weak concepts, profile badges)
+- `ReviewView.tsx` — daily SRS review session overlay
+
+**Quiz:**
+- `QuizView.tsx` — 8 question type renderers, per-question feedback, signal tracking; `context: "lesson" | "review"` prop
+
+**Onboarding:**
+- `OnboardingView.tsx` — 3-question first-login onboarding
+
+**Three (3D scene):**
+- `AristoCanvas.tsx` — R3F Canvas + OrbitControls + lighting
+- `Experience.tsx` — scene composition
+- `Teacher.tsx` — Ryan / Sonia GLB
+- `GeneratedModel.tsx` — loads generated GLB, float animation, annotation highlights
+
+### Hooks
+- `useSessionFlush.ts` — signals ref pattern; `beforeunload` keepalive flush
+- `useCourseAutoTeach.ts` — auto-fetches next lesson when course advances
+
+### Store (`src/store/useAristoStore.ts`)
+Key fields: `userId`, `profile` (DynamicProfile), `onboardingDone`, `behavioralSignals`, `mode` (`"course" | "free"`), `course` (CourseState with `structure`), `activeLesson` (LessonPayload), `messages`, `quiz` (legacy MCQ), `activeModelUrl`, `isGeneratingModel`.
+
+---
+
+## Migration State
+
+All run; no pending. `001_initial_schema` → `010_rag` (no `007` — quiz_attempts went into `006_mastery`).
+- `005_reset_and_graph.sql` — drops FSLSM tables, builds `concepts` / `concept_prerequisites`
+- `006_mastery.sql` — `learner_profiles`, `user_concept_mastery` (+ SRS), `user_course_progress`, `user_misconceptions`, `session_logs`, `quiz_attempts`
+- `008_courses.sql` — `courses` + `course_id` FK
+- `009_quiz_constraints.sql` — `UNIQUE(user_id, concept_id, misconception)`, `increment_misconception()` RPC
+- `010_rag.sql` — vector extension, `reference_chunks` + HNSW index, `match_reference_chunks()` RPC
+
+---
+
+## Environment Variables
 
 ```
-pages/
-  learn.tsx                          # Pages Router — Supabase auth + loads LearnClient
-
-src/
-  app/
-    page.tsx                         # Landing page
-    sign-in/page.tsx                 # Auth pages
-    sign-up/page.tsx
-    auth/
-      actions.ts                     # signIn, signUp, signOut server actions
-      callback/route.ts              # Supabase OAuth callback
-    api/
-      teach/route.ts                 # Gemini 2.0 Flash teaching API
-      generate-model/route.ts        # fal.ai FLUX→Tripo3D pipeline → returns GLB URL
-    admin/page.tsx                   # Stub placeholder
-
-  components/
-    learn/
-      LearnClient.tsx                # Full learning UI shell ("use client", static imports)
-      AristoCanvas.tsx               # R3F Canvas + OrbitControls + Experience
-      MessagePanel.tsx               # Chat history: definition/explanation/example/fun_fact cards
-      InputBox.tsx                   # Text input + mic (Web Speech API) + send; calls /api/teach then /api/generate-model
-      TeacherControls.tsx            # Avatar switcher (Ryan/Sonia), learning style pills, clear, generating badge
-    three/
-      Experience.tsx                 # R3F scene: lights, floor, Teacher, GeneratedModel
-      Teacher.tsx                    # Teacher avatar (Ryan/Sonia GLB)
-      GeneratedModel.tsx             # Loads generated GLB, float animation, annotation highlights
-
-  store/
-    useAristoStore.ts                # Zustand store — teacher, learningStyle, messages, activeModelUrl, etc.
-
-  lib/
-    supabase/
-      client.ts                      # Browser Supabase client
-      server.ts                      # Server Supabase client
-
-  middleware.ts                      # Protects /learn and /admin routes
-
-supabase/
-  migrations/
-    001_initial_schema.sql           # profiles, style_assessments, curricula, courses, sessions, quiz_attempts + RLS
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ANTHROPIC_API_KEY     # Teaching / Assessment / Curriculum / Profiler
+OPENAI_API_KEY        # RAG embeddings + planned Whisper / TTS upgrade — gracefully optional
+FAL_KEY               # fal.ai 3D generation (NOT FAL_API_KEY)
 ```
 
 ---
 
-## API Routes
+## Phase Status — all 9 phases complete
 
-### `POST /api/teach`
-- Input: `{ topic, learningStyle, history, userName }`
-- Uses Gemini 2.0 Flash with structured JSON schema
-- Returns: `{ definition, explanation, example, fun_fact, should_generate_model, model_prompt, quiz }`
-- `should_generate_model: true` triggers the 3D generation client-side
-
-### `POST /api/generate-model`
-- Input: `{ prompt }`
-- Step 1: fal.ai FLUX Schnell → image URL
-- Step 2: fal.ai Tripo3D v2.5 → GLB URL
-- Returns: `{ modelUrl }` (GLB URL usable directly by Three.js)
-
----
-
-## Zustand Store Shape (`useAristoStore.ts`)
-
-```ts
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  definition?: string;
-  explanation?: string;
-  example?: string;
-  fun_fact?: string;
-  annotationHints?: string[];
-  modelUrl?: string;
-  quiz?: QuizQuestion[];
-}
-
-interface AristoStore {
-  userId: string;
-  teacher: "ryan" | "sonia";
-  learningStyle: "visual" | "simple" | "metaphor" | "technical";
-  messages: Message[];
-  activeModelUrl: string | null;
-  isGeneratingModel: boolean;
-  // + setters for all of the above
-}
-```
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | Knowledge Graph Foundation | ✅ |
+| 2 | Learner Profile + Mastery | ✅ |
+| 3 | Teaching Agent 5-Phase Protocol | ✅ |
+| 4 | Quiz Generation + Answer Evaluation | ✅ |
+| 5 | Course Builder + Progression | ✅ |
+| 6 | Spaced Repetition Engine (FSRS) | ✅ |
+| 7 | Behavioral Profiling | ✅ |
+| 8 | RAG Pipeline (pgvector + OpenAI embeds) | ✅ |
+| 9 | Student Dashboard + Admin Cleanup | ✅ |
 
 ---
 
-## Phase Status
+## What's Next (post-Phase-9 polish)
 
-### Phase 1 — Foundation ✅ COMPLETE
-- Next.js 15 TypeScript, Firebase removed, all keys server-side
-- Supabase auth (middleware, server actions, callback, sign-in/sign-up pages)
-- Tailwind design system — pastel orange + cream, full CSS variable set
-- shadcn/ui components: button, card, input, label, badge, separator, toast, dialog, sheet, progress
-- Zustand store fully typed
-- DB schema at `supabase/migrations/001_initial_schema.sql`
-- Landing page, `/admin` stub, `/aristo` → `/learn` redirect
-
-**USER TODO**: Run `supabase/migrations/001_initial_schema.sql` in Supabase SQL editor (required for auth/profiles to work)
-
-### Phase 2 — 3D Model Generation ✅ COMPLETE (as of April 2026)
-
-**What was built:**
-- `/api/teach` — Gemini 2.0 Flash teaching route with structured output
-- `/api/generate-model` — fal.ai FLUX Schnell → Tripo3D v2.5 pipeline
-- R3F scene: `AristoCanvas`, `Experience`, `Teacher`, `GeneratedModel`
-- Full learning UI: `LearnClient`, `MessagePanel`, `InputBox`, `TeacherControls`
-- Pages Router architecture for `/learn` (fixes R3F + Next.js 15 compatibility)
-- Browser Web Speech API for STT/TTS (no API key required)
-- App is **running on `localhost:3000`** and loading the `/learn` page
-
-**Known remaining issue**: There is a minor runtime error on the `/learn` page (user reported "apart from this error" — error details TBD, investigate on next session start by checking browser console).
-
-**Pending wire-up / polish (Phase 2 completion tasks):**
-- Verify full teach → speak → generate model → display in scene flow end-to-end
-- Quiz rendering in MessagePanel (quiz data comes back from `/api/teach`)
-- Confirm `.env.local` has all required keys: `GEMINI_API_KEY`, `FAL_KEY`
-
-### Phase 3 — Personalized Teaching 🔜
-- Learning style assessment test on first login
-- Store results in Supabase, adaptive style shifts over time
-- Claude streaming for more conversational teaching
-- Real-time voice conversation
-
-### Phase 4 — Curriculum System 🔜
-- PDF upload → Supabase Storage → Gemini 2.0 Flash parses → structured curriculum
-- Admin dashboard: upload PDFs, review/edit curriculum, publish courses
-
-### Phase 5 — Shared Sessions 🔜
-- Supabase Realtime for session sync
-- Teacher controls pace, question queue
+- **Vercel deploy** — env vars in Vercel dashboard, verify `maxDuration = 60` on lesson route if Sonnet stalls
+- **RAG seeding** — admin-only `POST /api/kg/ingest` per domain (needs `OPENAI_API_KEY`)
+- **End-to-end 3D test** — fal.ai pipeline works with `FAL_KEY`; verify model appears in scene
+- **Phase 10 (planned)** — real-time voice (ElevenLabs / Whisper to replace Web Speech), shared sessions via Supabase Realtime
+- **Lesson streaming** — would replace the synchronous `generateLesson()` JSON return with progressive 5-phase render; requires LessonView + lesson route restructure (deferred)
 
 ---
 
@@ -196,36 +205,20 @@ interface AristoStore {
 
 | Decision | Choice | Why |
 |----------|--------|-----|
-| `/learn` in Pages Router | Yes — permanent | R3F + Next.js 15 App Router breaks react-reconciler; Pages Router fixes it |
-| Teaching AI | Gemini 2.0 Flash | Claude API added latency in structured output; Gemini faster for lesson JSON |
-| TTS/STT | Browser Web Speech API | Free, no keys, good enough for prototype; upgrade to ElevenLabs/Whisper in Phase 3 |
-| 3D gen via fal.ai | FLUX Schnell → Tripo3D v2.5 | Both on fal.ai, single SDK, no separate API keys; ~30-40s total |
-| Firebase → Supabase | Supabase | Better SQL, Realtime, Storage |
-| No webpack react alias | Confirmed | Aliasing react to node_modules breaks React.use in App Router pages |
+| `/learn` in Pages Router | Permanent | R3F + App Router crashes on react-reconciler internals |
+| FSLSM learning styles | **Removed** | Debunked; replaced by behaviorally-inferred DynamicProfile |
+| Teaching model | Sonnet 4.6 | Quality on structured 5-phase output |
+| Fast paths | Haiku 4.5 | explain-more, review questions, short-answer eval, free-mode |
+| LLM JSON | tool_use everywhere | Guaranteed valid JSON; no regex parsing |
+| TTS / STT | Web Speech (now), Whisper / TTS routes kept (planned upgrade) | Free for prototype; routes already wired for the swap |
+| 3D gen | fal.ai FLUX → Tripo3D | One SDK, one key, ~30–40s end-to-end |
+| Quiz UI | dedicated `QuizView`, 8 types | Replaces legacy `quiz` slice in store |
 
 ---
 
-## Claude Code Setup
+## Repo & Tooling
 
-### Skills installed (`~/.claude/skills/`)
-- `nextjs-turbopack`, `frontend-design`, `claude-api`, `fal-ai-media`, `security-review`, `design-system`, `postgres-patterns`, `database-migrations`
-
-### MCP Servers
-- `.mcp.json` (git-tracked): `context7`, `vercel`, `magic`, `sequential-thinking`
-- `~/.claude.json` (not in git): `supabase` (project ref: thivgkbxgfchhystlyvh), `github` PAT
-
----
-
-## Repo & Deployment
-- Git: `master` branch, user: x-HmZ
-- Working directory: `C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI`
-- Deployed on Vercel
-
----
-
-## Next Immediate Steps (start of next session)
-1. Check browser console on `/learn` for the reported error and fix it
-2. Verify end-to-end flow: sign in → ask question → Gemini responds → TTS speaks → 3D model generates and appears
-3. Fix quiz rendering in `MessagePanel` if quiz data isn't displaying
-4. Confirm `.env.local` has `GEMINI_API_KEY` and `FAL_KEY` set
-5. Then move to Phase 3: learning style assessment on first login
+- Git: `master` branch (currently on `build-v2`), user: x-HmZ
+- Working dir: `C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI`
+- Skills: `nextjs-turbopack`, `frontend-design`, `claude-api`, `fal-ai-media`, `security-review`, `design-system`, `postgres-patterns`, `database-migrations`
+- MCP: `context7`, `vercel`, `magic`, `sequential-thinking` (`.mcp.json`); `supabase`, `github` (`~/.claude.json`)

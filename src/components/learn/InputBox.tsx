@@ -1,48 +1,10 @@
 "use client";
 
-import {
-  useAristoStore,
-  type StructuredMessage,
-  type ChatMessage,
-} from "@/store/useAristoStore";
+import { useAristoStore, type ChatMessage } from "@/store/useAristoStore";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-// ─── Web Speech API types ─────────────────────────────────────────────────────
-
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionInstance extends EventTarget {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start(): void;
-  stop(): void;
-  onresult: ((e: SpeechRecognitionEvent) => void) | null;
-  onerror: ((e: Event) => void) | null;
-  onend: ((e: Event) => void) | null;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition?: new () => SpeechRecognitionInstance;
-    webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
-  }
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function speakText(text: string, onStart: () => void, onEnd: () => void) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 1.05;
-  utterance.pitch = 1.05;
-  utterance.onstart = onStart;
-  utterance.onend = onEnd;
-  window.speechSynthesis.speak(utterance);
-}
+import { useTTS } from "@/hooks/useTTS";
+import type { SpeechRecognitionInstance } from "@/lib/speech";
+import "@/lib/speech";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -51,215 +13,136 @@ export function InputBox() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
-  const learningStyle = useAristoStore((s) => s.learningStyle);
-  const teachingFlow = useAristoStore((s) => s.teachingFlow);
-  const messages = useAristoStore((s) => s.messages);
-  const isLoading = useAristoStore((s) => s.isLoading);
+  const messages          = useAristoStore((s) => s.messages);
+  const isLoading         = useAristoStore((s) => s.isLoading);
   const isGeneratingModel = useAristoStore((s) => s.isGeneratingModel);
 
-  const addMessage = useAristoStore((s) => s.addMessage);
-  const setIsLoading = useAristoStore((s) => s.setIsLoading);
-  const setIsSpeaking = useAristoStore((s) => s.setIsSpeaking);
-  const setActiveModelUrl = useAristoStore((s) => s.setActiveModelUrl);
-  const setIsGeneratingModel = useAristoStore((s) => s.setIsGeneratingModel);
+  const addMessage               = useAristoStore((s) => s.addMessage);
+  const setIsLoading             = useAristoStore((s) => s.setIsLoading);
+  const setIsSpeaking            = useAristoStore((s) => s.setIsSpeaking);
+  const setActiveModelUrl        = useAristoStore((s) => s.setActiveModelUrl);
+  const setActivePreviewImageUrl = useAristoStore((s) => s.setActivePreviewImageUrl);
+  const setIsGeneratingModel     = useAristoStore((s) => s.setIsGeneratingModel);
+  const setPending3dImageUrl     = useAristoStore((s) => s.setPending3dImageUrl);
+  const setViewMode3d            = useAristoStore((s) => s.setViewMode3d);
 
-  const isBusy = isLoading || isGeneratingModel;
-  const isInteractive = teachingFlow === "interactive";
+  const isBusy    = isLoading || isGeneratingModel;
+  const { speak } = useTTS();
 
-  // Determine if the last Aristo message is waiting for a student response
-  const lastMsg = messages[messages.length - 1];
-  const isAnsweringQuestion =
-    isInteractive &&
-    lastMsg?.type === "chat" &&
-    lastMsg.role === "assistant";
+  // ── Submit handler ──────────────────────────────────────────────────────────
 
-  // ── Interactive mode handler ────────────────────────────────────────────────
-
-  const handleSubmitInteractive = useCallback(
+  const handleSubmit = useCallback(
     async (userInput: string) => {
       const trimmed = userInput.trim();
       if (!trimmed || isBusy) return;
       setInput("");
 
-      // Add the user's chat bubble immediately
       const userMsg: ChatMessage = {
-        id: `msg_${Date.now()}_user`,
-        type: "chat",
-        role: "user",
-        content: trimmed,
+        id:        `msg_${Date.now()}_user`,
+        type:      "chat",
+        role:      "user",
+        content:   trimmed,
         timestamp: Date.now(),
       };
       addMessage(userMsg);
       setIsLoading(true);
 
       try {
-        // Build conversation history from existing chat messages + this new one
-        const chatHistory = messages
+        const history = messages
           .filter((m): m is ChatMessage => m.type === "chat")
           .map((m) => ({ role: m.role, content: m.content }));
-        chatHistory.push({ role: "user", content: trimmed });
 
         const res = await fetch("/api/teach", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            teachingFlow: "interactive",
-            learningStyle,
-            messages: chatHistory,
+            teachingFlow: "structured",
+            learningStyle: "explorer",
+            topic: trimmed,
+            history,
           }),
         });
 
         if (!res.ok) throw new Error("Teaching API failed");
 
-        const data: {
-          message: string;
-          has_question: boolean;
-          is_lesson_complete: boolean;
-        } = await res.json();
-
+        const data = await res.json();
         setIsLoading(false);
 
-        const aristoMsg: ChatMessage = {
-          id: `msg_${Date.now()}_ai`,
-          type: "chat",
-          role: "assistant",
-          content: data.message,
-          isLessonEnd: data.is_lesson_complete,
+        // Flatten structured response into a readable ChatMessage
+        const summary = [
+          data.definition  && `**Definition:** ${data.definition}`,
+          data.explanation && `**Explanation:** ${data.explanation}`,
+          data.example     && `**Example:** ${data.example}`,
+          data.fun_fact    && `**Fun fact:** ${data.fun_fact}`,
+        ]
+          .filter(Boolean)
+          .join("\n\n");
+
+        const assistantMsg: ChatMessage = {
+          id:        `msg_${Date.now()}_ai`,
+          type:      "chat",
+          role:      "assistant",
+          content:   summary || `Here's what you need to know about: ${trimmed}`,
           timestamp: Date.now(),
         };
-        addMessage(aristoMsg);
 
-        speakText(
-          data.message,
-          () => setIsSpeaking(true),
-          () => setIsSpeaking(false)
-        );
-      } catch (err) {
-        console.error("Interactive submit error:", err);
-        setIsLoading(false);
-      }
-    },
-    [
-      isBusy,
-      messages,
-      learningStyle,
-      addMessage,
-      setIsLoading,
-      setIsSpeaking,
-    ]
-  );
-
-  // ── Structured mode handler ─────────────────────────────────────────────────
-
-  const handleSubmitStructured = useCallback(
-    async (question: string) => {
-      const trimmed = question.trim();
-      if (!trimmed || isBusy) return;
-      setInput("");
-      setIsLoading(true);
-
-      try {
-        const history = messages
-          .filter((m): m is StructuredMessage => m.type === "structured")
-          .map((m) => m.question);
-
-        const teachRes = await fetch("/api/teach", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            topic: trimmed,
-            learningStyle,
-            teachingFlow: "structured",
-            history,
-          }),
+        const textToSpeak = `${data.definition ?? ""} ${data.explanation ?? ""}`.trim();
+        setIsSpeaking(true);
+        speak(textToSpeak || assistantMsg.content, {
+          onEnd: () => setIsSpeaking(false),
         });
 
-        if (!teachRes.ok) throw new Error("Teaching API failed");
-
-        const teach = await teachRes.json();
-        setIsLoading(false);
-
-        const msgId = `msg_${Date.now()}`;
-        const newMessage: StructuredMessage = {
-          id: msgId,
-          type: "structured",
-          question: trimmed,
-          definition: teach.definition,
-          explanation: teach.explanation,
-          example: teach.example,
-          fun_fact: teach.fun_fact,
-          annotationHints: teach.annotation_hints ?? [],
-          timestamp: Date.now(),
-        };
-
-        const textToSpeak = `${teach.definition} ${teach.explanation}`;
-        speakText(
-          textToSpeak,
-          () => setIsSpeaking(true),
-          () => setIsSpeaking(false)
-        );
-
-        if (teach.should_generate_model && teach.model_image_prompt) {
-          setIsGeneratingModel(true);
-          addMessage(newMessage);
-
-          try {
-            const modelRes = await fetch("/api/generate-model", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                imagePrompt: teach.model_image_prompt,
-                topic: trimmed,
-              }),
-            });
-
-            if (modelRes.ok) {
-              const { modelUrl, imageUrl } = await modelRes.json();
-              const updatedMessages = useAristoStore
-                .getState()
-                .messages.map((m) =>
-                  m.id === msgId ? { ...m, modelUrl, imageUrl } : m
-                );
-              useAristoStore.setState({ messages: updatedMessages });
-              setActiveModelUrl(modelUrl);
-            }
-          } catch (err) {
-            console.error("Model generation failed:", err);
-          } finally {
-            setIsGeneratingModel(false);
-          }
-        } else {
-          addMessage(newMessage);
+        if (data.should_generate_model && data.model_image_prompt) {
+          // Clear previous visuals so the scene resets for the new topic
           setActiveModelUrl(null);
+          setActivePreviewImageUrl(null);
+          setPending3dImageUrl(null);
+          setViewMode3d(false);
+          setIsGeneratingModel(true);
+          addMessage(assistantMsg);
+          // Stage 1 only: NB Pro (teaching image) + FLUX Schnell (3D source) in parallel.
+          // 3D conversion is deferred — user clicks "View in 3D" in the scene to trigger it.
+          fetch("/api/generate-model", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              imagePrompt:   data.model_image_prompt,
+              model3dPrompt: data.model_3d_prompt,
+              topic:         trimmed,
+            }),
+          })
+            .then((r) => r.json())
+            .then(({ imageUrl, model3dImageUrl }) => {
+              if (!imageUrl) return;
+              setActivePreviewImageUrl(imageUrl);
+              setPending3dImageUrl(model3dImageUrl ?? imageUrl);
+            })
+            .catch(() => {/* non-critical — scene stays empty */})
+            .finally(() => setIsGeneratingModel(false));
+        } else {
+          addMessage(assistantMsg);
+          setActiveModelUrl(null);
+          setActivePreviewImageUrl(null);
+          setPending3dImageUrl(null);
+          setViewMode3d(false);
         }
       } catch (err) {
-        console.error("Structured submit error:", err);
+        console.error("InputBox submit error:", err);
         setIsLoading(false);
       }
     },
     [
       isBusy,
       messages,
-      learningStyle,
       addMessage,
       setIsLoading,
       setIsSpeaking,
       setActiveModelUrl,
+      setActivePreviewImageUrl,
       setIsGeneratingModel,
+      setPending3dImageUrl,
+      setViewMode3d,
     ]
-  );
-
-  // ── Unified submit ──────────────────────────────────────────────────────────
-
-  const handleSubmit = useCallback(
-    (value: string) => {
-      if (isInteractive) {
-        handleSubmitInteractive(value);
-      } else {
-        handleSubmitStructured(value);
-      }
-    },
-    [isInteractive, handleSubmitInteractive, handleSubmitStructured]
   );
 
   // ── Speech recognition ──────────────────────────────────────────────────────
@@ -286,7 +169,7 @@ export function InputBox() {
       if (transcript) handleSubmit(transcript);
     };
     recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onend   = () => setIsListening(false);
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
@@ -295,34 +178,19 @@ export function InputBox() {
   useEffect(() => {
     return () => {
       recognitionRef.current?.stop();
-      window.speechSynthesis?.cancel();
     };
   }, []);
 
-  // ── Placeholder text ────────────────────────────────────────────────────────
+  // ── Render ──────────────────────────────────────────────────────────────────
 
   const placeholder = isBusy
     ? isGeneratingModel
       ? "Generating 3D model…"
       : "Thinking…"
-    : isInteractive
-    ? isAnsweringQuestion
-      ? "Your answer…"
-      : "Ask about a topic…"
-    : "Ask anything…";
+    : "Ask about any topic…";
 
   return (
     <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
-      {/* Mode indicator for interactive */}
-      {isInteractive && isAnsweringQuestion && !isBusy && (
-        <div className="flex items-center gap-1.5 mb-2 ml-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-pulse" />
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#F97B2F]">
-            Aristo is waiting for your answer
-          </span>
-        </div>
-      )}
-
       <div className="flex items-center gap-2">
         {/* Mic button */}
         <button
@@ -384,24 +252,9 @@ export function InputBox() {
           className="shrink-0 w-9 h-9 rounded-full bg-[#F97B2F] flex items-center justify-center text-white shadow-[0_2px_12px_rgba(249,123,47,0.35)] hover:bg-[#E06A20] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {isBusy ? (
-            <svg
-              className="w-4 h-4 animate-spin"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
+            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           ) : (
             <svg
@@ -411,11 +264,7 @@ export function InputBox() {
               strokeWidth={2.5}
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 12h14M12 5l7 7-7 7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           )}
         </button>

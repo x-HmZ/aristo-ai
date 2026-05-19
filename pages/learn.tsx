@@ -12,27 +12,19 @@ const LearnClient = dynamic(
 );
 
 interface Props {
-  userName: string;
-  savedStyle: string;
-  savedFlow: string;
-  styleAssessmentDone: boolean;
-  userId: string;
+  userName:      string;
+  userId:        string;
+  onboardingDone: boolean;
+  domain:        string | null;
 }
 
-export default function LearnPage({
-  userName,
-  savedStyle,
-  savedFlow,
-  styleAssessmentDone,
-  userId,
-}: Props) {
+export default function LearnPage({ userName, userId, onboardingDone, domain }: Props) {
   return (
     <LearnClient
       userName={userName}
-      savedStyle={savedStyle}
-      savedFlow={savedFlow}
-      styleAssessmentDone={styleAssessmentDone}
       userId={userId}
+      onboardingDone={onboardingDone}
+      domain={domain}
     />
   );
 }
@@ -61,27 +53,33 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return { redirect: { destination: "/sign-in", permanent: false } };
   }
 
+  // Fetch the new profile shape — no FSLSM columns
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, learning_style, teaching_flow, style_locked")
+    .select("full_name, goal")
     .eq("id", user.id)
+    .single();
+
+  // Check whether the user has started a course (onboarding sets this)
+  const { data: progress } = await supabase
+    .from("user_course_progress")
+    .select("domain")
+    .eq("user_id", user.id)
+    .limit(1)
     .single();
 
   return {
     props: {
-      userName: profile?.full_name?.split(" ")[0] ?? "learner",
-      savedStyle: profile?.learning_style ?? "visual",
-      savedFlow: profile?.teaching_flow ?? "structured",
-      styleAssessmentDone: profile?.style_locked ?? false,
-      userId: user.id,
+      userName:       profile?.full_name?.split(" ")[0] ?? "learner",
+      userId:         user.id,
+      onboardingDone: !!profile?.goal,          // goal set = onboarding complete
+      domain:         progress?.domain ?? null,
     },
   };
 };
