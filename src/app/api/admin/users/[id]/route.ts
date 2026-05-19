@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient }       from "@/lib/supabase/server";
 import { verifyAdmin }               from "@/lib/admin/auth";
 import { logAdminAction }            from "@/lib/admin/audit";
+import { sendUserApprovedEmail }     from "@/lib/email/resend";
 
 export async function GET(
   _req: NextRequest,
@@ -90,9 +91,10 @@ export async function PATCH(
 
   const { id } = await params;
   const body   = await req.json().catch(() => ({}));
-  const { is_admin, reset_mastery } = body as {
+  const { is_admin, reset_mastery, approval_status } = body as {
     is_admin?: boolean;
     reset_mastery?: boolean;
+    approval_status?: "approved" | "rejected" | "pending";
   };
 
   const service = createServiceClient();
@@ -100,9 +102,50 @@ export async function PATCH(
   // Capture before-state for diff
   const { data: before } = await service
     .from("profiles")
-    .select("is_admin, full_name")
+    .select("is_admin, full_name, approval_status")
     .eq("id", id)
     .single();
+
+  if (
+    approval_status &&
+    (approval_status === "approved" ||
+      approval_status === "rejected" ||
+      approval_status === "pending")
+  ) {
+    const patch: Record<string, unknown> = { approval_status };
+    if (approval_status === "approved") {
+      patch.approved_at = new Date().toISOString();
+      patch.approved_by = admin.id;
+    } else {
+      patch.approved_at = null;
+      patch.approved_by = null;
+    }
+
+    const { error } = await service.from("profiles").update(patch).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    await logAdminAction({
+      actorId:    admin.id,
+      actorEmail: admin.email,
+      action:     `user.${approval_status}`,
+      targetType: "user",
+      targetId:   id,
+      diff:       {
+        before: { approval_status: before?.approval_status ?? null },
+        after:  { approval_status },
+      },
+      request:    req,
+    });
+
+    // On approval, email the user (fire-and-forget — failure doesn't block).
+    if (approval_status === "approved") {
+      const { data: authUser } = await service.auth.admin.getUserById(id);
+      const email = authUser?.user?.email;
+      if (email) {
+        void sendUserApprovedEmail(email, before?.full_name ?? null);
+      }
+    }
+  }
 
   if (typeof is_admin === "boolean") {
     const { error } = await service

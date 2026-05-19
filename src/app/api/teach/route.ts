@@ -13,9 +13,12 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }             from "@/lib/supabase/server";
+import { requireApproved }          from "@/lib/auth/approval";
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
+
+export const maxDuration = 30;
 
 const client = getAnthropic();
 
@@ -112,11 +115,10 @@ Rules:
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await req.json() as {
       topic?: string;

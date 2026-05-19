@@ -1,7 +1,4 @@
 {
-    "functions": {
-        "app/api/tts/route.js": {
-            "maxDuration": 30
-        }
-    }
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs"
 }

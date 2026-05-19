@@ -151,14 +151,29 @@ Key fields: `userId`, `profile` (DynamicProfile), `onboardingDone`, `behavioralS
 
 ---
 
+## Approval gate (placeholder for the future paywall)
+
+Every signup lands in `approval_status='pending'`. Middleware redirects
+pending users from `/learn` to `/pending`, and learner API routes call
+`requireApproved()` ([src/lib/auth/approval.ts](src/lib/auth/approval.ts))
+as defence-in-depth. Admins are auto-approved.
+
+- DB columns on `profiles`: `approval_status`, `approved_at`, `approved_by`, `admin_notified_at` (migration `015_user_approval.sql`).
+- Email: [src/lib/email/resend.ts](src/lib/email/resend.ts). `notifyAdminOfNewSignup()` is idempotent via `admin_notified_at`; fired from `/auth/callback` and the `/pending` page.
+- Admin UI: `/admin/users` has Approve / Reject buttons + a status filter.
+- To swap for a real paywall later, replace the body of `requireApproved()` — call sites stay identical.
+
+---
+
 ## Migration State
 
-All run; no pending. `001_initial_schema` → `010_rag` (no `007` — quiz_attempts went into `006_mastery`).
+All run; no pending. `001_initial_schema` → `015_user_approval` (no `007` — quiz_attempts went into `006_mastery`).
 - `005_reset_and_graph.sql` — drops FSLSM tables, builds `concepts` / `concept_prerequisites`
 - `006_mastery.sql` — `learner_profiles`, `user_concept_mastery` (+ SRS), `user_course_progress`, `user_misconceptions`, `session_logs`, `quiz_attempts`
 - `008_courses.sql` — `courses` + `course_id` FK
 - `009_quiz_constraints.sql` — `UNIQUE(user_id, concept_id, misconception)`, `increment_misconception()` RPC
 - `010_rag.sql` — vector extension, `reference_chunks` + HNSW index, `match_reference_chunks()` RPC
+- `015_user_approval.sql` — `profiles.approval_status` + companion columns for the admin approval gate
 
 ---
 

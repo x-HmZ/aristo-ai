@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse }          from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { requireApproved }                   from "@/lib/auth/approval";
 
 export async function GET(
   _req: NextRequest,
@@ -15,11 +16,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // Use service client so both published and user-generated (unpublished) courses
     // are accessible — auth is already verified above.

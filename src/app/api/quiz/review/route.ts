@@ -10,17 +10,17 @@
 
 import { NextResponse }              from "next/server";
 import { createClient }              from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import { getDailyReviewQueue }       from "@/lib/srs/queue";
 import { generateReviewQuestion }    from "@/lib/agents/assessment";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
 
 export async function GET() {
   try {
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // ── 1. Fetch due concepts (cap at 5 for a reasonable session length) ──────
     const queue = await getDailyReviewQueue(user.id, supabase, 5);

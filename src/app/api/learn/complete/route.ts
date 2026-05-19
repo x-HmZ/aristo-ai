@@ -9,6 +9,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,12 +18,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "conceptId required" }, { status: 400 });
     }
 
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // Update last_activity on any active course progress rows
     await supabase

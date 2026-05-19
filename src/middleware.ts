@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
@@ -29,14 +30,15 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Redirect unauthenticated users away from protected routes
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith("/sign-in") ||
-    request.nextUrl.pathname.startsWith("/sign-up");
+  const pathname = request.nextUrl.pathname;
 
-  const isProtectedRoute =
-    request.nextUrl.pathname.startsWith("/learn") ||
-    request.nextUrl.pathname.startsWith("/admin");
+  const isAuthRoute =
+    pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
+
+  const isLearnRoute = pathname.startsWith("/learn");
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isPendingRoute = pathname.startsWith("/pending");
+  const isProtectedRoute = isLearnRoute || isAdminRoute || isPendingRoute;
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
@@ -44,17 +46,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // For /admin routes, additionally verify the user has the admin flag
-  if (user && request.nextUrl.pathname.startsWith("/admin")) {
-    const { data: profile } = await supabase
+  // Approval gate: any authenticated learner hitting /learn must be approved.
+  // Admins are exempt (admin implies approved). /pending is always reachable
+  // so users can see their status. We use the service client here to bypass
+  // RLS — the user is already authenticated against the anon-key session.
+  if (user && (isLearnRoute || isAdminRoute)) {
+    const service = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: profile } = await service
       .from("profiles")
-      .select("is_admin")
+      .select("is_admin, approval_status")
       .eq("id", user.id)
       .single();
 
-    if (!profile?.is_admin) {
+    if (isAdminRoute && !profile?.is_admin) {
       const url = request.nextUrl.clone();
       url.pathname = "/learn";
+      return NextResponse.redirect(url);
+    }
+
+    if (
+      isLearnRoute &&
+      !profile?.is_admin &&
+      profile?.approval_status !== "approved"
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/pending";
       return NextResponse.redirect(url);
     }
   }

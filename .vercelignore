@@ -1,0 +1,22 @@
+# Anything listed here is excluded from the Vercel deployment bundle.
+# Keep .gitignored items here too — Vercel doesn't apply .gitignore by default.
+
+# Dev-only tooling
+scripts/
+.claude/
+
+# Local design / handoff docs (not needed at runtime)
+ADAPTIVE_VISUAL_AID_PLAN.md
+HANDOFF_DESK_QUIZ.md
+design-prompt.md
+AI_TEACHER_APP_SPEC.md
+
+# Local env files (defence-in-depth — .env.local should never be uploaded)
+.env
+.env.local
+.env.*.local
+
+# Other build artifacts
+*.tsbuildinfo
+.next/
+node_modules/

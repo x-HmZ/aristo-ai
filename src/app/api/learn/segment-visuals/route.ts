@@ -36,7 +36,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApproved } from "@/lib/auth/approval";
 import { generateInfographic, type ImageStyle } from "@/lib/imagegen/banana";
 import type { SegmentVisual } from "@/lib/agents/teaching";
 
@@ -70,12 +70,10 @@ function isValidStyle(style: unknown): style is ImageStyle {
 
 export async function POST(req: NextRequest) {
   try {
-    // ─── Auth ──────────────────────────────────────────────────────────────
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    // ─── Auth + approval gate ──────────────────────────────────────────────
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
 
     // ─── Env ───────────────────────────────────────────────────────────────
     if (!process.env.FAL_KEY) {
@@ -124,12 +122,6 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── Parallel generation ───────────────────────────────────────────────
-    console.log(
-      `[segment-visuals] user=${user.id} firing ${normalized.length} parallel ` +
-      `Nano Banana Pro requests`
-    );
-    const startedAt = Date.now();
-
     const results: SegmentResult[] = await Promise.all(
       normalized.map(async (seg): Promise<SegmentResult> => {
         try {
@@ -146,12 +138,6 @@ export async function POST(req: NextRequest) {
           return { id: seg.id, error: message };
         }
       })
-    );
-
-    const elapsedMs = Date.now() - startedAt;
-    const okCount   = results.filter((r) => r.imageUrl).length;
-    console.log(
-      `[segment-visuals] done in ${elapsedMs}ms — ${okCount}/${normalized.length} ok`
     );
 
     return NextResponse.json({ results });

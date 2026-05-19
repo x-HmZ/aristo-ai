@@ -12,11 +12,15 @@ import { NextRequest, NextResponse } from "next/server";
 import type Anthropic                from "@anthropic-ai/sdk";
 import { MODELS }                    from "@/lib/agents/models";
 import { getAnthropic }              from "@/lib/llm/anthropic";
+import { requireApproved }           from "@/lib/auth/approval";
 
 const client = getAnthropic();
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+
     const {
       question,
       correctAnswer,

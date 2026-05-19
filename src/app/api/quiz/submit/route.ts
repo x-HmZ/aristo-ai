@@ -17,6 +17,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import {
   evaluateShortAnswer,
   evaluateObjective,
@@ -43,11 +44,10 @@ export async function POST(req: NextRequest) {
 
     const context = body.context ?? "lesson";
 
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // ── Build a minimal QuizQuestion for the evaluators ──────────────────────
     const q: QuizQuestion = {

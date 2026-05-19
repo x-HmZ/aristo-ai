@@ -19,6 +19,8 @@ export interface AdminUserRow {
   goal:                string | null;
   daily_time_minutes:  number | null;
   is_admin:            boolean;
+  approval_status:     "pending" | "approved" | "rejected";
+  approved_at:         string | null;
   created_at:          string;
   expertise_level:     string | null;
   pace:                string | null;
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest) {
   const url       = new URL(req.url);
   const search    = url.searchParams.get("search")?.trim().toLowerCase() ?? "";
   const expertise = url.searchParams.get("expertise") ?? "";
+  const status    = url.searchParams.get("status") ?? "";
   const page      = Math.max(1, parseInt(url.searchParams.get("page")  ?? "1", 10));
   const limit     = Math.min(200, Math.max(1, parseInt(url.searchParams.get("limit") ?? "50", 10)));
   const offset    = (page - 1) * limit;
@@ -56,10 +59,14 @@ export async function GET(req: NextRequest) {
   let profileQuery = service
     .from("profiles")
     .select(
-      "id, full_name, goal, daily_time_minutes, is_admin, created_at",
+      "id, full_name, goal, daily_time_minutes, is_admin, approval_status, approved_at, created_at",
       { count: "exact" }
     )
     .order("created_at", { ascending: false });
+
+  if (status === "pending" || status === "approved" || status === "rejected") {
+    profileQuery = profileQuery.eq("approval_status", status);
+  }
 
   if (search) {
     // OR clause: name ILIKE %term% OR id IN (email-matching ids).
@@ -134,6 +141,8 @@ export async function GET(req: NextRequest) {
       goal:               p.goal,
       daily_time_minutes: p.daily_time_minutes,
       is_admin:           p.is_admin,
+      approval_status:    (p.approval_status ?? "pending") as AdminUserRow["approval_status"],
+      approved_at:        p.approved_at ?? null,
       created_at:         p.created_at,
       expertise_level:    lp?.expertise_level     ?? null,
       pace:               lp?.pace                ?? null,

@@ -18,12 +18,15 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import { generateLesson }            from "@/lib/agents/teaching";
 import type { ConceptInput, LessonPayload } from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
 import { retrieveContext }           from "@/lib/rag/retrieve";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
+
+export const maxDuration = 60;
 
 export async function GET(
   _req: NextRequest,
@@ -33,13 +36,11 @@ export async function GET(
     const { conceptId: rawId } = await params;
     const conceptId = decodeURIComponent(rawId);
 
-    // ── Auth ──────────────────────────────────────────────────────────────────
+    // ── Auth + approval gate ──────────────────────────────────────────────────
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // ── Load learner profile + concept in parallel ────────────────────────────
     const [lpRes, conceptRes] = await Promise.all([

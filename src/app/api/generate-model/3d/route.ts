@@ -14,16 +14,16 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient }              from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import { generate3dModel }           from "@/lib/imagegen/banana";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
 
     if (!process.env.FAL_KEY) {
       return NextResponse.json({ error: "FAL_KEY not configured" }, { status: 500 });
@@ -34,10 +34,9 @@ export async function POST(req: NextRequest) {
 
     const { modelUrl, cached } = await generate3dModel(imageUrl, user.id);
 
-    console.log(`[generate-model/3d] modelUrl=${modelUrl} cached=${cached}`);
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {
-    console.error("[generate-model/3d] Error:", error);
+    console.error("[generate-model/3d] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "3D generation failed" },
       { status: 500 }

@@ -8,12 +8,16 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import { explainMore }               from "@/lib/agents/teaching";
 import type { LessonPayload }        from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+
     const body: {
       phase:        keyof LessonPayload["phases"];
       phaseContent: string;

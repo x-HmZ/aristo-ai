@@ -8,8 +8,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
+import { requireApproved }           from "@/lib/auth/approval";
 import { generateLessonQuiz }        from "@/lib/agents/assessment";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
+
+export const maxDuration = 60;
 
 export async function GET(
   _req: NextRequest,
@@ -18,11 +21,10 @@ export async function GET(
   try {
     const { conceptId } = await params;
 
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // ── 1. Load concept metadata ─────────────────────────────────────────────
     const { data: concept } = await supabase

@@ -2,11 +2,11 @@
 
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams }        from "next/navigation";
-import { Search, RefreshCw, Eye }            from "lucide-react";
+import { Search, RefreshCw, Eye, Check, X }  from "lucide-react";
 import { PageHeader }        from "@/components/admin/PageHeader";
 import { BrandCard }         from "@/components/admin/ui/BrandCard";
 import { BrandButton }       from "@/components/admin/ui/BrandButton";
-import { BrandBadge, EXPERTISE_COLOR } from "@/components/admin/ui/BrandBadge";
+import { BrandBadge, EXPERTISE_COLOR, STATUS_COLOR } from "@/components/admin/ui/BrandBadge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -24,6 +24,8 @@ interface UserRow {
   goal:                string | null;
   daily_time_minutes:  number | null;
   is_admin:            boolean;
+  approval_status:     "pending" | "approved" | "rejected";
+  approved_at:         string | null;
   created_at:          string;
   expertise_level:     string | null;
   pace:                string | null;
@@ -50,15 +52,18 @@ function UsersPageInner() {
 
   const [search, setSearch]         = useState("");
   const [expertise, setExpertise]   = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [users, setUsers]           = useState<UserRow[] | null>(null);
   const [total, setTotal]           = useState(0);
   const [loading, setLoading]       = useState(false);
+  const [busyId, setBusyId]         = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     const qs = new URLSearchParams();
     if (search)                 qs.set("search", search);
     if (expertise !== "all")    qs.set("expertise", expertise);
+    if (statusFilter !== "all") qs.set("status", statusFilter);
     qs.set("limit", "200");
     const res = await fetch(`/api/admin/users?${qs.toString()}`, { cache: "no-store" });
     if (res.ok) {
@@ -67,7 +72,24 @@ function UsersPageInner() {
       setTotal(data.total ?? 0);
     }
     setLoading(false);
-  }, [search, expertise]);
+  }, [search, expertise, statusFilter]);
+
+  const setApprovalStatus = useCallback(
+    async (id: string, next: "approved" | "rejected") => {
+      setBusyId(id);
+      try {
+        const res = await fetch(`/api/admin/users/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ approval_status: next }),
+        });
+        if (res.ok) fetchUsers();
+      } finally {
+        setBusyId(null);
+      }
+    },
+    [fetchUsers]
+  );
 
   useEffect(() => {
     const t = setTimeout(fetchUsers, 250);
@@ -115,6 +137,17 @@ function UsersPageInner() {
                 <SelectItem value="advanced">Advanced</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-44 bg-white/60 border-white/60">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
             <span className="ml-auto text-xs text-aristo-brown/50">
               {users === null ? "Loading…" : `${users.length} of ${total} shown`}
             </span>
@@ -136,6 +169,7 @@ function UsersPageInner() {
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead>User</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Goal</TableHead>
                 <TableHead>Expertise</TableHead>
                 <TableHead>Engagement</TableHead>
@@ -157,6 +191,11 @@ function UsersPageInner() {
                     <div className="text-[10px] text-aristo-brown/40 font-normal truncate max-w-[260px]">
                       {u.email ?? u.id}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <BrandBadge variant={STATUS_COLOR[u.approval_status] ?? "neutral"}>
+                      {u.approval_status}
+                    </BrandBadge>
                   </TableCell>
                   <TableCell className="text-xs text-aristo-brown/70 capitalize">
                     {u.goal?.replace(/_/g, " ") ?? "—"}
@@ -187,17 +226,47 @@ function UsersPageInner() {
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <BrandButton
-                      variant="secondary"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openUser(u.id);
-                      }}
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                      View
-                    </BrandButton>
+                    <div className="flex items-center justify-end gap-2">
+                      {u.approval_status === "pending" && (
+                        <>
+                          <BrandButton
+                            variant="success"
+                            size="sm"
+                            disabled={busyId === u.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setApprovalStatus(u.id, "approved");
+                            }}
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Approve
+                          </BrandButton>
+                          <BrandButton
+                            variant="destructive"
+                            size="sm"
+                            disabled={busyId === u.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setApprovalStatus(u.id, "rejected");
+                            }}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                            Reject
+                          </BrandButton>
+                        </>
+                      )}
+                      <BrandButton
+                        variant="secondary"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openUser(u.id);
+                        }}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        View
+                      </BrandButton>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
