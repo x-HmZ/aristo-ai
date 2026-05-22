@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
@@ -48,14 +47,11 @@ export async function middleware(request: NextRequest) {
 
   // Approval gate: any authenticated learner hitting /learn must be approved.
   // Admins are exempt (admin implies approved). /pending is always reachable
-  // so users can see their status. We use the service client here to bypass
-  // RLS — the user is already authenticated against the anon-key session.
+  // so users can see their status. We read the profile via the anon client
+  // (RLS lets a user read their own row); the service-role client doesn't
+  // work in the Edge Runtime, which is why this is NOT a service-role lookup.
   if (user && (isLearnRoute || isAdminRoute)) {
-    const service = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    const { data: profile } = await service
+    const { data: profile } = await supabase
       .from("profiles")
       .select("is_admin, approval_status")
       .eq("id", user.id)
