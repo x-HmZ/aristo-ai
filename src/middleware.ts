@@ -31,6 +31,13 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // TEMP DEBUG: prove middleware ran for this request, no matter the branch.
+  supabaseResponse.headers.set(
+    "x-mw-ran",
+    JSON.stringify({ path: pathname, hasUser: !!user, userId: user?.id ?? null })
+  );
+  console.log("[mw]", pathname, "user:", user?.id ?? "anon");
+
   const isAuthRoute =
     pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
 
