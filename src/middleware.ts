@@ -51,16 +51,32 @@ export async function middleware(request: NextRequest) {
   // (RLS lets a user read their own row); the service-role client doesn't
   // work in the Edge Runtime, which is why this is NOT a service-role lookup.
   if (user && (isLearnRoute || isAdminRoute)) {
-    const { data: profile } = await supabase
+    const lookup = await supabase
       .from("profiles")
       .select("is_admin, approval_status")
       .eq("id", user.id)
       .single();
+    const profile = lookup.data;
+
+    // TEMP DEBUG: surface middleware decision in response headers so we can
+    // verify the gate logic from a single curl. Remove once verified.
+    supabaseResponse.headers.set(
+      "x-mw-debug",
+      JSON.stringify({
+        user: user.id,
+        is_admin: profile?.is_admin ?? null,
+        approval: profile?.approval_status ?? null,
+        lookupErr: lookup.error?.message ?? null,
+        route: isLearnRoute ? "learn" : "admin",
+      })
+    );
 
     if (isAdminRoute && !profile?.is_admin) {
       const url = request.nextUrl.clone();
       url.pathname = "/learn";
-      return NextResponse.redirect(url);
+      const res = NextResponse.redirect(url);
+      res.headers.set("x-mw-decision", "redirect-admin->learn");
+      return res;
     }
 
     if (
@@ -70,8 +86,12 @@ export async function middleware(request: NextRequest) {
     ) {
       const url = request.nextUrl.clone();
       url.pathname = "/pending";
-      return NextResponse.redirect(url);
+      const res = NextResponse.redirect(url);
+      res.headers.set("x-mw-decision", "redirect-learn->pending");
+      return res;
     }
+
+    supabaseResponse.headers.set("x-mw-decision", "allow-through");
   }
 
   if (user && isAuthRoute) {
