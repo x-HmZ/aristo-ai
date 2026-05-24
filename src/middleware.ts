@@ -1,6 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/**
+ * Edge Middleware — auth redirect only.
+ *
+ * The approval-status gate (pending/approved/rejected) is NOT done here.
+ * It lives in the page-level Node-runtime SSR for /learn
+ * (pages/learn.tsx getServerSideProps) and in src/app/admin/layout.tsx,
+ * because the Edge Runtime + @supabase/ssr cookie handling has thrown
+ * intermittent parse errors that silently swallow the middleware redirect.
+ * Defence-in-depth on the API side: src/lib/auth/approval.ts.
+ */
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -25,80 +35,31 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Wrap in try/catch so any @supabase/ssr cookie-parse hiccup falls
+  // through to the route handler (which can still do its own auth check)
+  // instead of returning a 500.
+  let user: { id: string } | null = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+  } catch {
+    user = null;
+  }
 
   const pathname = request.nextUrl.pathname;
-
-  // TEMP DEBUG: prove middleware ran for this request, no matter the branch.
-  supabaseResponse.headers.set(
-    "x-mw-ran",
-    JSON.stringify({ path: pathname, hasUser: !!user, userId: user?.id ?? null })
-  );
-  console.log("[mw]", pathname, "user:", user?.id ?? "anon");
 
   const isAuthRoute =
     pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up");
 
-  const isLearnRoute = pathname.startsWith("/learn");
-  const isAdminRoute = pathname.startsWith("/admin");
-  const isPendingRoute = pathname.startsWith("/pending");
-  const isProtectedRoute = isLearnRoute || isAdminRoute || isPendingRoute;
+  const isProtectedRoute =
+    pathname.startsWith("/learn") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/pending");
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
     return NextResponse.redirect(url);
-  }
-
-  // Approval gate: any authenticated learner hitting /learn must be approved.
-  // Admins are exempt (admin implies approved). /pending is always reachable
-  // so users can see their status. We read the profile via the anon client
-  // (RLS lets a user read their own row); the service-role client doesn't
-  // work in the Edge Runtime, which is why this is NOT a service-role lookup.
-  if (user && (isLearnRoute || isAdminRoute)) {
-    const lookup = await supabase
-      .from("profiles")
-      .select("is_admin, approval_status")
-      .eq("id", user.id)
-      .single();
-    const profile = lookup.data;
-
-    // TEMP DEBUG: surface middleware decision in response headers so we can
-    // verify the gate logic from a single curl. Remove once verified.
-    supabaseResponse.headers.set(
-      "x-mw-debug",
-      JSON.stringify({
-        user: user.id,
-        is_admin: profile?.is_admin ?? null,
-        approval: profile?.approval_status ?? null,
-        lookupErr: lookup.error?.message ?? null,
-        route: isLearnRoute ? "learn" : "admin",
-      })
-    );
-
-    if (isAdminRoute && !profile?.is_admin) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/learn";
-      const res = NextResponse.redirect(url);
-      res.headers.set("x-mw-decision", "redirect-admin->learn");
-      return res;
-    }
-
-    if (
-      isLearnRoute &&
-      !profile?.is_admin &&
-      profile?.approval_status !== "approved"
-    ) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/pending";
-      const res = NextResponse.redirect(url);
-      res.headers.set("x-mw-decision", "redirect-learn->pending");
-      return res;
-    }
-
-    supabaseResponse.headers.set("x-mw-decision", "allow-through");
   }
 
   if (user && isAuthRoute) {

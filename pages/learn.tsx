@@ -59,12 +59,20 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     return { redirect: { destination: "/sign-in", permanent: false } };
   }
 
-  // Fetch the new profile shape — no FSLSM columns
+  // Fetch profile including approval gate fields. The gate lives here
+  // (in Node-runtime getServerSideProps) instead of in middleware because
+  // the Edge Runtime has cookie-parsing compatibility issues with
+  // @supabase/ssr that silently swallow the redirect.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, goal")
+    .select("full_name, goal, is_admin, approval_status")
     .eq("id", user.id)
     .single();
+
+  // Approval gate. Admins are exempt (admin implies approved).
+  if (!profile?.is_admin && profile?.approval_status !== "approved") {
+    return { redirect: { destination: "/pending", permanent: false } };
+  }
 
   // Check whether the user has started a course (onboarding sets this)
   const { data: progress } = await supabase
