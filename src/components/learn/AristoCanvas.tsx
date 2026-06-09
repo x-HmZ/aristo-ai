@@ -45,11 +45,17 @@ export function AristoCanvas({
         enabled={!controlsDisabled}
         enablePan={false}
         enableZoom={false}
-        minPolarAngle={Math.PI / 4}
+        // Pivot 0.5 m in front of the camera (camera z=0.9, target z=0.4)
+        // instead of on the teacher 3.9 m away.  Orbiting a far target swung
+        // the camera through the classroom walls; a near pivot makes drag
+        // feel like the student turning their head from their seat.
+        // minPolar π/6 lets them look ~60° down — enough to see their own
+        // desk (and the quiz placeholder paper) without leaving the chair.
+        minPolarAngle={Math.PI / 6}
         maxPolarAngle={Math.PI / 1.8}
         minAzimuthAngle={-Math.PI / 4}
         maxAzimuthAngle={Math.PI / 4}
-        target={[0, 0, -3]}
+        target={[0, 0, 0.4]}
       />
     </Canvas>
   );

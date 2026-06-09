@@ -195,7 +195,8 @@ function DeskPaper({ position, rotation }: { position: [number, number, number];
 
   return (
     <mesh ref={meshRef} position={position} rotation={rotation ? new THREE.Euler(...rotation) : undefined}>
-      <planeGeometry args={[1.2, 0.75]} />
+      {/* Sized to fit flat on the second-row desk (~1.05 × 0.6 surface). */}
+      <planeGeometry args={[0.6, 0.4]} />
       <meshBasicMaterial toneMapped={false} side={THREE.DoubleSide} />
     </mesh>
   );
@@ -286,12 +287,17 @@ const PLACEMENT = {
   default: {
     classroom: { position: [0.2, -1.7, -2]   as [number, number, number], rotationY: 0,             scale: 1   },
     board:     { position: [0.45, 0.382, -6] as [number, number, number] },
-    desk:      { position: [0.55, -1.3, -3.6] as [number, number, number] },
+    // The V1-verbatim anchor [0.55,-1.3,-3.6] sits in EMPTY AIR in this GLB
+    // (probed: nothing under it but floor at y=-1.694) — the paper visibly
+    // floated beside the desks.  Re-anchored flat onto the second-row desk
+    // (probed surface y=-0.888, x∈[-0.55,0.5], z∈[-2.1,-2.7]), offset right
+    // of the chair so the chair back doesn't occlude it from the camera.
+    desk:      { position: [0.3, -0.886, -2.35] as [number, number, number] },
   },
   alternative: {
     classroom: { position: [0.3, -1.7, -1.5] as [number, number, number], rotationY: -Math.PI / 2,  scale: 0.4 },
     board:     { position: [1.4, 0.84, -8]   as [number, number, number] },
-    desk:      { position: [0.55, -1.3, -3.6] as [number, number, number] },
+    desk:      { position: [0.3, -0.886, -2.35] as [number, number, number] },
   },
 };
 
@@ -320,7 +326,7 @@ export function Classroom({ variant }: ClassroomProps) {
       {!activeQuiz && (
         <DeskPaper
           position={cfg.desk.position}
-          rotation={[-Math.PI / 2.5, 0, 0.15]}
+          rotation={[-Math.PI / 2, 0, 0.12]}
         />
       )}
 

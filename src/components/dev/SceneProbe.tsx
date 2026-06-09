@@ -11,10 +11,32 @@
 
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import { Raycaster, Vector2 } from "three";
+import { Raycaster, Vector2, Vector3 } from "three";
 
 export function SceneProbe() {
   const { camera, scene, gl } = useThree();
+
+  // Downward probe: dispatch `window.dispatchEvent(new CustomEvent(
+  // "aristo:probe-down", { detail: { x, z } }))` to raycast straight down
+  // from y=+2 at (x, z) and log every surface it passes through.  Gives
+  // exact desk/floor heights without having to click through overlays.
+  useEffect(() => {
+    const raycaster = new Raycaster();
+    const onProbeDown = (e: Event) => {
+      const { x, z } = (e as CustomEvent<{ x: number; z: number }>).detail;
+      raycaster.set(new Vector3(x, 2, z), new Vector3(0, -1, 0));
+      const hits = raycaster.intersectObjects(scene.children, true)
+        .filter((h) => h.object.visible)
+        .slice(0, 5)
+        .map((h) => ({
+          y:    +h.point.y.toFixed(3),
+          mesh: h.object.name || "(unnamed)",
+        }));
+      console.log("[probe-down]", JSON.stringify({ x, z, hits }));
+    };
+    window.addEventListener("aristo:probe-down", onProbeDown);
+    return () => window.removeEventListener("aristo:probe-down", onProbeDown);
+  }, [scene]);
 
   useEffect(() => {
     const raycaster = new Raycaster();
