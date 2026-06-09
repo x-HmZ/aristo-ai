@@ -20,6 +20,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
+import { SceneProbe } from "@/components/dev/SceneProbe";
 import { useAristoStore } from "@/store/useAristoStore";
 import type { QuizQuestion } from "@/lib/agents/assessment";
 
@@ -39,7 +40,7 @@ interface Tunables {
 const DEFAULT_TUNABLES: Tunables = {
   deskPos:     [0,    0.2,  -0.05],
   deskTarget:  [0,   -1.05, -0.6],
-  paperAnchor: [0,   -0.75, -0.45],
+  paperAnchor: [0,   -0.878, -0.5],
   lambda:      3.2,
 };
 
@@ -228,7 +229,9 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
     <div style={{ position: "fixed", inset: 0, display: "flex" }}>
       {/* Scene — fills remaining width */}
       <div style={{ flex: 1, position: "relative" }}>
-        <AristoCanvas devOverrides={devOverrides} />
+        <AristoCanvas devOverrides={devOverrides}>
+          <SceneProbe />
+        </AristoCanvas>
         {/* Marker overlay — useful sanity reference */}
         <div style={{
           position: "absolute", top: 12, left: 12,

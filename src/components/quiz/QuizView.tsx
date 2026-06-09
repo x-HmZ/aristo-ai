@@ -534,6 +534,12 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           context,
         }),
       });
+      if (!res.ok) {
+        // Non-2xx bodies are error JSON, not an AnswerResult — treating
+        // them as one renders "Not quite." for every answer.  Throw into
+        // the local-eval fallback instead.
+        throw new Error(`quiz/submit HTTP ${res.status}`);
+      }
       const data: AnswerResult & { new_mastery?: number } = await res.json();
       if (data.is_correct) incrementSignal("questions_correct");
       setResults((prev) => {

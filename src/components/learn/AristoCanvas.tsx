@@ -2,7 +2,7 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Experience } from "@/components/three/Experience";
 import { useAristoStore } from "@/store/useAristoStore";
 
@@ -13,7 +13,10 @@ interface DevOverrides {
   paperAnchor?: [number, number, number];
 }
 
-export function AristoCanvas({ devOverrides }: { devOverrides?: DevOverrides } = {}) {
+export function AristoCanvas({
+  devOverrides,
+  children,
+}: { devOverrides?: DevOverrides; children?: ReactNode } = {}) {
   const modelInteracting = useAristoStore((s) => s.modelInteracting);
   // OrbitControls is disabled while the camera is locked on the desk for a
   // quiz — otherwise a stray drag would knock the framing off the paper
@@ -36,6 +39,7 @@ export function AristoCanvas({ devOverrides }: { devOverrides?: DevOverrides } =
       <Suspense fallback={null}>
         <Experience devOverrides={devOverrides} />
       </Suspense>
+      {children}
       <OrbitControls
         makeDefault
         enabled={!controlsDisabled}

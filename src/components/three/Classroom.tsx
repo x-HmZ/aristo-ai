@@ -201,6 +201,79 @@ function DeskPaper({ position, rotation }: { position: [number, number, number];
   );
 }
 
+// ─── Student-desk paper — quiz placeholder ───────────────────────────────────
+// Lies flat on the student's own desk (the surface the camera tilts down to
+// for the in-scene quiz — probed at y=-0.888, centre [0, ~, -0.5] via the
+// /dev/desk-quiz SceneProbe).  Outside quiz time it shows a faint "your quiz
+// will appear here" sheet so the desk reads as part of the experience; the
+// interactive DeskQuiz paper replaces it at the same spot during a quiz.
+
+function StudentDeskPaper() {
+  const meshRef    = useRef<THREE.Mesh>(null);
+  const textureRef = useRef<THREE.CanvasTexture | null>(null);
+
+  useEffect(() => {
+    const canvas  = document.createElement("canvas");
+    canvas.width  = 512;
+    canvas.height = 640;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Paper
+    ctx.fillStyle = "#fffef8";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Lined paper effect
+    ctx.strokeStyle = "rgba(180,190,255,0.3)";
+    ctx.lineWidth = 1;
+    for (let y = 70; y < canvas.height - 20; y += 34) {
+      ctx.beginPath();
+      ctx.moveTo(28, y);
+      ctx.lineTo(canvas.width - 28, y);
+      ctx.stroke();
+    }
+
+    // Red margin
+    ctx.strokeStyle = "rgba(220,60,60,0.25)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, 0);
+    ctx.lineTo(60, canvas.height);
+    ctx.stroke();
+
+    // Placeholder text
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.font = "italic 26px 'Arial', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Your quiz will appear here ✏️", canvas.width / 2, canvas.height / 2 - 10);
+    ctx.font = "italic 18px 'Arial', sans-serif";
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    ctx.fillText("finish the lesson to unlock it", canvas.width / 2, canvas.height / 2 + 26);
+
+    textureRef.current = new THREE.CanvasTexture(canvas);
+    if (meshRef.current) {
+      (meshRef.current.material as THREE.MeshBasicMaterial).map = textureRef.current;
+      (meshRef.current.material as THREE.MeshBasicMaterial).needsUpdate = true;
+    }
+    return () => {
+      textureRef.current?.dispose();
+    };
+  }, []);
+
+  return (
+    <mesh
+      ref={meshRef}
+      // 2 mm above the desktop to avoid z-fighting; slight z-spin so the
+      // sheet looks casually placed rather than machine-aligned.
+      position={[0, -0.886, -0.5]}
+      rotation={new THREE.Euler(-Math.PI / 2, 0, 0.06)}
+    >
+      <planeGeometry args={[0.42, 0.54]} />
+      <meshBasicMaterial toneMapped={false} />
+    </mesh>
+  );
+}
+
 // ─── Classroom scene ─────────────────────────────────────────────────────────
 // Layout matches V1 (Aristo Experience.jsx commit e8931f0). Camera lives at
 // [0, 0, 0.0001] (see AristoCanvas.tsx) so all anchors are V1-verbatim.
@@ -250,6 +323,10 @@ export function Classroom({ variant }: ClassroomProps) {
           rotation={[-Math.PI / 2.5, 0, 0.15]}
         />
       )}
+
+      {/* Quiz placeholder on the student's own desk — swapped for the
+          interactive DeskQuiz paper while a quiz is active. */}
+      {!activeQuiz && <StudentDeskPaper />}
     </group>
   );
 }

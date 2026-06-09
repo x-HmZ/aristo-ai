@@ -142,12 +142,15 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
         body:    JSON.stringify({ imageUrl: pending3dImageUrl }),
       });
       const data = await res.json();
-      if (data.modelUrl) {
-        setActiveModelUrl(data.modelUrl);
-        setViewMode3d(true);
+      if (!res.ok || !data.modelUrl) {
+        throw new Error(data.error ?? `generate-model/3d HTTP ${res.status}`);
       }
-    } catch {
-      /* non-critical — image stays */
+      setActiveModelUrl(data.modelUrl);
+      setViewMode3d(true);
+    } catch (err) {
+      // Image stays as the fallback visual — but say why in the console so
+      // a blank "View in 3D" click is diagnosable in the field.
+      console.error("[view-in-3d] 3D conversion failed:", err);
     } finally {
       setIsGeneratingModel(false);
     }
@@ -317,6 +320,24 @@ function SafeTeacher(props: React.ComponentProps<typeof Teacher>) {
   );
 }
 
+// Catches GLB load/parse failures from the generated-model URL so a bad
+// fal.ai asset degrades back to the teaching image instead of blanking the
+// entire canvas (useGLTF throws inside Suspense; without a boundary the
+// error unmounts the whole scene).
+interface ModelBoundaryProps { children: ReactNode; onError: () => void }
+
+class ModelErrorBoundary extends Component<ModelBoundaryProps, TeacherBoundaryState> {
+  state: TeacherBoundaryState = { hasError: false };
+  static getDerivedStateFromError(): TeacherBoundaryState { return { hasError: true }; }
+  componentDidCatch(err: Error, _info: ErrorInfo) {
+    console.error("[generated-model] GLB failed to load:", err);
+    this.props.onError();
+  }
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+
 function FloatingModel({
   modelUrl,
   modelAnnotations,
@@ -404,6 +425,8 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const viewMode3d            = useAristoStore((s) => s.viewMode3d);
   const lesson                = useAristoStore((s) => s.activeLesson);
   const awaitingAnswer        = useAristoStore((s) => s.awaitingAnswer);
+  const setViewMode3d         = useAristoStore((s) => s.setViewMode3d);
+  const setActiveModelUrl     = useAristoStore((s) => s.setActiveModelUrl);
 
   const showModel = !!activeModelUrl && viewMode3d;
   const showImage = !showModel && !!activePreviewImageUrl;
@@ -444,10 +467,19 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       </Suspense>
 
       {showModel ? (
-        <Suspense fallback={null}>
-          <FloatingModel modelUrl={activeModelUrl!} modelAnnotations={lesson?.metadata.model_annotations} />
-          <ModelToolbar />
-        </Suspense>
+        <ModelErrorBoundary
+          onError={() => {
+            // Bad GLB — drop back to the teaching image and clear the URL so
+            // a retry re-fetches rather than re-throwing the cached failure.
+            setActiveModelUrl(null);
+            setViewMode3d(false);
+          }}
+        >
+          <Suspense fallback={null}>
+            <FloatingModel modelUrl={activeModelUrl!} modelAnnotations={lesson?.metadata.model_annotations} />
+            <ModelToolbar />
+          </Suspense>
+        </ModelErrorBoundary>
       ) : showImage ? (
         <TeachingImagePanel imageUrl={activePreviewImageUrl!} />
       ) : null}
