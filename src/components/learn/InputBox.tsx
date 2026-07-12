@@ -111,13 +111,24 @@ export function InputBox() {
               topic:         trimmed,
             }),
           })
-            .then((r) => r.json())
-            .then(({ imageUrl, model3dImageUrl }) => {
-              if (!imageUrl) return;
-              setActivePreviewImageUrl(imageUrl);
-              setPending3dImageUrl(model3dImageUrl ?? imageUrl);
+            .then(async (r) => {
+              const payload = await r.json();
+              if (!r.ok || !payload.imageUrl) {
+                throw new Error(payload.error ?? `generate-model HTTP ${r.status}`);
+              }
+              setActivePreviewImageUrl(payload.imageUrl);
+              setPending3dImageUrl(payload.model3dImageUrl ?? payload.imageUrl);
             })
-            .catch(() => {/* non-critical — scene stays empty */})
+            .catch((err) => {
+              console.error("[free-mode] visual generation failed:", err);
+              addMessage({
+                id:        `msg_${Date.now()}_viz_err`,
+                type:      "chat",
+                role:      "assistant",
+                content:   "_(I couldn't create the visual for this topic right now — the lesson above still stands!)_",
+                timestamp: Date.now(),
+              });
+            })
             .finally(() => setIsGeneratingModel(false));
         } else {
           addMessage(assistantMsg);

@@ -17,7 +17,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import { generate3dModel }           from "@/lib/imagegen/banana";
 
-export const maxDuration = 60;
+// Tripo3D conversion alone runs 30-40s; with queue time a 60s cap produced
+// intermittent 504s that the client used to swallow silently.  Vercel's
+// platform limit is 300s on all plans — use it.
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   try {

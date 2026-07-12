@@ -27,7 +27,10 @@ import { useAristoStore } from "@/store/useAristoStore";
 // ─── Named framings ──────────────────────────────────────────────────────────
 
 const LESSON_POS    = new Vector3(0,    0,    0.9);
-const LESSON_TARGET = new Vector3(0,    0,   -3);
+// Must match OrbitControls' target in AristoCanvas.tsx — a near pivot
+// (0.5 m in front of the camera) so user drag reads as head-turn, not an
+// orbit around the teacher that swings the camera out of the classroom.
+const LESSON_TARGET = new Vector3(0,    0,    0.4);
 
 // Desk view — camera stays essentially at the student's POV and simply
 // tilts the gaze downward toward the desk surface in front of them.  This

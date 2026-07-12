@@ -2,7 +2,7 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Experience } from "@/components/three/Experience";
 import { useAristoStore } from "@/store/useAristoStore";
 
@@ -13,7 +13,10 @@ interface DevOverrides {
   paperAnchor?: [number, number, number];
 }
 
-export function AristoCanvas({ devOverrides }: { devOverrides?: DevOverrides } = {}) {
+export function AristoCanvas({
+  devOverrides,
+  children,
+}: { devOverrides?: DevOverrides; children?: ReactNode } = {}) {
   const modelInteracting = useAristoStore((s) => s.modelInteracting);
   // OrbitControls is disabled while the camera is locked on the desk for a
   // quiz — otherwise a stray drag would knock the framing off the paper
@@ -36,16 +39,23 @@ export function AristoCanvas({ devOverrides }: { devOverrides?: DevOverrides } =
       <Suspense fallback={null}>
         <Experience devOverrides={devOverrides} />
       </Suspense>
+      {children}
       <OrbitControls
         makeDefault
         enabled={!controlsDisabled}
         enablePan={false}
         enableZoom={false}
-        minPolarAngle={Math.PI / 4}
+        // Pivot 0.5 m in front of the camera (camera z=0.9, target z=0.4)
+        // instead of on the teacher 3.9 m away.  Orbiting a far target swung
+        // the camera through the classroom walls; a near pivot makes drag
+        // feel like the student turning their head from their seat.
+        // minPolar π/6 lets them look ~60° down — enough to see their own
+        // desk (and the quiz placeholder paper) without leaving the chair.
+        minPolarAngle={Math.PI / 6}
         maxPolarAngle={Math.PI / 1.8}
         minAzimuthAngle={-Math.PI / 4}
         maxAzimuthAngle={Math.PI / 4}
-        target={[0, 0, -3]}
+        target={[0, 0, 0.4]}
       />
     </Canvas>
   );

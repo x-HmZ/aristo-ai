@@ -9,21 +9,18 @@
  *     same plane as the paper mesh masked the entire DOM to a blank white
  *     sheet — depth precision was the killer.
  *
- *   • Attempt 2 dropped occlusion and used V1's tight positioning trick
- *     (Html close to camera, rotation-x for the reading tilt).  Still
- *     fragile because `<Html transform>`'s CSS3D projection has to be
- *     hand-tuned per camera FOV.
+ *   • Attempt 2/3 used a plain screen-space `<Html>` anchored near the
+ *     desk.  Crisp and interactive, but the DOM floats parallel to the
+ *     screen while the desk recedes in perspective — it never read as
+ *     "paper ON the desk", just "popup over a desk".
  *
- *   • Current: a plain `<Html>` (no transform) anchored to the desk
- *     position.  The DOM renders in screen-space as a normal HTML overlay
- *     — crisp at any DPI, fully interactive, never occluded.  The camera
- *     tilt animation still does the visual heavy lifting: the avatar leans
- *     out of frame, the desk fills the view, and the quiz paper appears
- *     centred.  Best of both worlds.
- *
- *   The trade-off: the quiz doesn't visibly tilt with the desk geometry.
- *   In practice this reads as "the student is leaning over the desk and
- *   looking straight down at the page" — entirely natural.
+ *   • Current: `<Html transform>` (NO occlude — that was Attempt 1's
+ *     killer, not the transform) rotated -90° about X so the DOM lies
+ *     physically in the desk's surface plane.  The desk surface was
+ *     probed via SceneProbe at y=-0.888, x∈[-0.46,0.47], z∈[-0.82,-0.22];
+ *     the paper is anchored 1 cm above its centre.  When CameraController
+ *     tilts down, the page foreshortens with the desk exactly like a real
+ *     sheet of paper.
  */
 
 import { Html } from "@react-three/drei";
@@ -32,14 +29,15 @@ import { QuizView } from "@/components/quiz/QuizView";
 
 // ─── Tunables ────────────────────────────────────────────────────────────────
 
-// Anchor point — placed on the student's desk surface immediately in
-// front of the lesson camera (≈0.45 m forward, ≈0.75 m below).  Tuned in
-// the /dev/desk-quiz harness so the projected paper sits on the desktop
-// once CameraController has tilted to the desk framing.  Coordinates are
-// in world space; with <Html center> the DOM centres at the screen
-// projection of this world point so the paper rests visually on the desk
-// regardless of viewport aspect.
-const PAPER_ANCHOR: [number, number, number] = [0, -0.75, -0.45];
+// Centre of the student-desk surface (probed: y=-0.888), nudged 1 cm up to
+// avoid z-fighting with the desktop mesh.
+const PAPER_ANCHOR: [number, number, number] = [0, -0.878, -0.5];
+
+// CSS-pixel → world scale for the transformed DOM.  The paper wrapper is
+// 520 px wide; the desk is ~0.93 world units wide.  distanceFactor in drei's
+// transform mode applies scale = distanceFactor/400 per px, so 0.55 ≈
+// 0.72 world units of paper width — comfortable margins on the desk.
+const PAPER_DISTANCE_FACTOR = 0.55;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -67,7 +65,11 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
   return (
     <Html
       position={paperAnchor ?? PAPER_ANCHOR}
-      center
+      // Lie flat in the desk plane: -90° about X points the DOM's face up
+      // (+Y) with the top of the page towards the back of the desk (-Z).
+      transform
+      rotation-x={-Math.PI / 2}
+      distanceFactor={PAPER_DISTANCE_FACTOR}
       // zIndexRange keeps the quiz above any other Html (callouts, image
       // toolbar) so they can't peek through during the tilt.
       zIndexRange={[200, 0]}
@@ -75,8 +77,8 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
       <div
         className="aristo-scroll"
         style={{
-          width:         "min(520px, 86vw)",
-          maxHeight:     "min(620px, 78vh)",
+          width:         "520px",
+          maxHeight:     "620px",
           overflowY:     "auto",
           background:    "#fffef8",
           borderRadius:  "16px",

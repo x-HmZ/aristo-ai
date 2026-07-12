@@ -12,7 +12,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireApproved } from "@/lib/auth/approval";
 import { generateInfographic, generate3dSourceImage } from "@/lib/imagegen/banana";
 
-export const maxDuration = 60;
+// NB Pro + FLUX run in parallel but NB Pro alone can take 30-60s under
+// load.  Vercel's platform limit is 300s on all plans — headroom is free.
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
   try {
