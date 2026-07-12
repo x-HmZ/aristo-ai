@@ -115,7 +115,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
 - [ ] T01 repo + docs consolidation
 - [x] T02 3D asset diet
-- [ ] T03 /learn loading experience
+- [x] T03 /learn loading experience
 - [ ] T04 landing page rebuild
 - [x] T05 LLM model bump
 - [ ] T06 persistent generation cache

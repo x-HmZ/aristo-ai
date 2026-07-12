@@ -46,7 +46,28 @@ not childish, not corporate. Existing tokens/utilities in `src/app/globals.css`
 
 ## Status checklist
 
-- [ ] Overlay component built (real progress)
-- [ ] dynamic() fallback matched to overlay
-- [ ] Stall/retry state handled
-- [ ] Verified cold + warm load in browser
+- [x] Overlay component built (real progress)
+- [x] dynamic() fallback matched to overlay
+- [x] Stall/retry state handled
+- [ ] Verified cold + warm load in browser — needs a human eyeball pass (type-check/build clean; agent cannot drive a real browser network throttle in this environment)
+
+## Implementation notes (2026-07-12)
+
+- `src/components/learn/LoadingScreenVisual.tsx` — pure presentational piece (wordmark, slim progress
+  bar, rotating microcopy, stall hint + reload button). No dependency on drei/three/the store, so it's
+  safe in `pages/learn.tsx` (Pages Router) and even gets server-rendered as the first paint.
+- `src/components/learn/SceneLoadingOverlay.tsx` — smart wrapper mounted in `LearnClient.tsx`, outside
+  the Canvas. Sources progress from drei's `useProgress()` directly (confirmed via
+  `node_modules/@react-three/drei/core/Progress.js`: it's a plain Zustand store bound to
+  `THREE.DefaultLoadingManager`, not the R3F/Fiber context — no bridge needed for progress itself).
+  Fades out (280ms) only once `progress >= 100` AND a `sceneReady` flag is true AND a 400ms minimum
+  display timer has elapsed (anti-flash on fast loads). Stall hint after 20s with no progress change.
+- `sceneReady` is a new (non-persisted) field on `useAristoStore` set by a tiny `SceneReadyReporter`
+  bridge component added inside `AristoCanvas.tsx`'s existing Suspense boundary (`useFrame` fires once
+  content mounts) — this IS the one place a bridge was needed, since "first frame painted" is a Fiber
+  concern, unlike raw byte progress.
+- `pages/learn.tsx`'s `dynamic()` `loading:` fallback now renders `<LoadingScreenVisual progress={0} />`
+  instead of the old bare cream div.
+- In-scene `AvatarLoadingPlaceholder` (Experience.tsx) untouched — still handles avatar switches.
+- Optional prefetch step done: `src/app/sign-in/page.tsx` now renders `<link rel="prefetch">` for the
+  three T02 eager assets (Teacher_Ryan.glb, animations_Ryan.glb, classroom_default.glb).
