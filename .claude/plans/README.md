@@ -117,7 +117,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] T02 3D asset diet
 - [ ] T03 /learn loading experience
 - [ ] T04 landing page rebuild
-- [ ] T05 LLM model bump
+- [x] T05 LLM model bump
 - [ ] T06 persistent generation cache
 - [ ] T07 3D gen model evaluation
 - [ ] T08 dynamic classroom pass

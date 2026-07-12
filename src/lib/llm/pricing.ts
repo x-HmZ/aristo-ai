@@ -28,6 +28,10 @@ export const ANTHROPIC_PRICING: Record<string, AnthropicPricing> = {
   // Opus tier
   "claude-opus-4-7":              { input: 15, output: 75,  cache_read: 1.5,  cache_creation: 18.75 },
   // Sonnet tier
+  // Introductory pricing through 2026-08-31 (docs.claude.com/en/docs/about-claude/pricing);
+  // standard pricing from 2026-09-01 is $3/$15 (input/output) — update this row then.
+  "claude-sonnet-5":              { input: 2,  output: 10,  cache_read: 0.2,  cache_creation: 2.5   },
+  // Historical — keep so past usage_events rows still attribute cost correctly.
   "claude-sonnet-4-6":            { input: 3,  output: 15,  cache_read: 0.3,  cache_creation: 3.75  },
   // Haiku tier
   "claude-haiku-4-5-20251001":    { input: 1,  output: 5,   cache_read: 0.1,  cache_creation: 1.25  },

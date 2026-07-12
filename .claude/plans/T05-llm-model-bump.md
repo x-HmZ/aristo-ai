@@ -51,7 +51,10 @@ that table must know the new model ID or cost attribution breaks.
 
 ## Status checklist
 
-- [ ] Sonnet 5 ID + pricing verified from docs
-- [ ] models.ts + pricing.ts updated
-- [ ] Repo grep clean
-- [ ] Smoke test passed (lesson latency observed: ____ s)
+- [x] Sonnet 5 ID + pricing verified from docs — `claude-sonnet-5`; introductory pricing
+      $2/$10 per MTok input/output through 2026-08-31, standard $3/$15 from 2026-09-01
+      (docs.claude.com/en/docs/about-claude/pricing, fetched live 2026-07-12)
+- [x] models.ts + pricing.ts updated
+- [x] Repo grep clean (admin/cost/page.tsx example string updated; historical migration
+      comment and plan docs left as-is — they document the change itself, not stray refs)
+- [x] Smoke test passed (lesson latency observed: 35.2 s; quiz latency: 14.3 s)
