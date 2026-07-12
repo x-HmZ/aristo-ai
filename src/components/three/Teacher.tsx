@@ -1,5 +1,6 @@
 "use client";
 
+import "./dracoDecoder";
 import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -82,7 +83,11 @@ interface AvatarConfig {
   pbrMaterials: boolean;
 }
 
-const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfig> = {
+// Exported so TeacherControls.tsx can preload an avatar's GLBs on
+// hover/select (see T02 — 3D asset diet: only the default avatar is preloaded
+// at module scope now; everything else lazy-loads via Suspense, optionally
+// warmed early by the switcher UI).
+export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfig> = {
   ryan: {
     sceneFile: "Teacher_Ryan.glb",
     animFile:  "animations_Ryan.glb",
@@ -469,14 +474,14 @@ export function Teacher({
   );
 }
 
-// Preload all four built-in avatars at module load time so the first switch
-// is instant. The 14 MB Avaturn GLBs start downloading in the background
-// while the user reads the welcome screen. The shared Avaturn animation pack
-// is listed once — it's reused by Marcus, Priya, and custom.
+// T02 — 3D asset diet: only preload the store's default avatar ("ryan", see
+// useAristoStore.ts) at module load time. Sonia/Marcus/Priya/custom are
+// larger (Avaturn PBR GLBs) and previously all downloaded eagerly even
+// though only one avatar renders at a time — that cost ~35 MB of dead
+// weight on every cold `/learn` load. They now lazy-load through the
+// existing Suspense boundary (see Experience.tsx SafeTeacher) the first
+// time a user switches avatars; TeacherControls.tsx additionally warms the
+// GLB cache on hover/click so the switch feels instant despite not being
+// preloaded upfront.
 useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.sceneFile}`);
 useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.animFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.sonia.sceneFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.sonia.animFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.marcus.sceneFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.priya.sceneFile}`);
-useGLTF.preload(CUSTOM_ANIMATIONS_URL);
