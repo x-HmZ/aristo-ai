@@ -190,6 +190,14 @@ interface AristoState {
    */
   quizResult: { score: number; total: number } | null;
 
+  /**
+   * True once the R3F scene has painted at least one frame after the initial
+   * asset Suspense resolves. Not persisted — resets to false on every fresh
+   * page load so SceneLoadingOverlay (src/components/learn) knows when it is
+   * safe to fade out without a flash of an unrendered/black canvas.
+   */
+  sceneReady: boolean;
+
   // ── Actions ──────────────────────────────────────────────────────────────
 
   setUserId: (id: string | null) => void;
@@ -255,6 +263,9 @@ interface AristoState {
   // Active quiz (in-scene desk quiz)
   setActiveQuiz: (q: { conceptId: string; questions: QuizQuestion[] } | null) => void;
   setQuizResult: (r: { score: number; total: number } | null) => void;
+
+  // Scene readiness (loading overlay)
+  setSceneReady: (ready: boolean) => void;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -313,6 +324,7 @@ export const useAristoStore = create<AristoState>()(
       awaitingAnswer:     false,
       activeQuiz:         null,
       quizResult:         null,
+      sceneReady:         false,
 
       setUserId:    (id) => set({ userId: id }),
 
@@ -390,6 +402,8 @@ export const useAristoStore = create<AristoState>()(
 
       setActiveQuiz: (q) => set({ activeQuiz: q }),
       setQuizResult: (r) => set({ quizResult: r }),
+
+      setSceneReady: (ready) => set({ sceneReady: ready }),
     }),
     {
       name: "aristo-session",
