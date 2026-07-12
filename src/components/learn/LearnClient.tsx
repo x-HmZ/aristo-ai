@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AristoCanvas }     from "@/components/learn/AristoCanvas";
+import { AristoCanvas }        from "@/components/learn/AristoCanvas";
+import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { MessagePanel }     from "@/components/learn/MessagePanel";
 import { InputBox }         from "@/components/learn/InputBox";
 import { TeacherControls }  from "@/components/learn/TeacherControls";
@@ -336,6 +337,12 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       <div className="absolute inset-0 z-0">
         <AristoCanvas />
       </div>
+
+      {/* Cold-start loading overlay — fades out once assets are downloaded
+          AND the scene has painted a frame. Sits above the top nav / right
+          panel so nothing is visible/interactive until the classroom is
+          actually ready. */}
+      <SceneLoadingOverlay />
 
       {/* Top nav */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
