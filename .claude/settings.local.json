@@ -48,7 +48,8 @@
       "PowerShell(cd \"c:\\\\Users\\\\Pc\\\\Desktop\\\\Empire\\\\Artisto\\\\Aristo 2.0\\\\Aristo-AI\"; ls -Recurse -Directory | Select-Object -First 20 | ForEach-Object {$_.FullName})",
       "Bash(findstr /R \"^\\\\.env\")",
       "Bash(git add *)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
