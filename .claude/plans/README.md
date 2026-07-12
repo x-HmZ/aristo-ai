@@ -114,7 +114,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] V6 parent weekly digest
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
 - [ ] T01 repo + docs consolidation
-- [ ] T02 3D asset diet
+- [x] T02 3D asset diet
 - [ ] T03 /learn loading experience
 - [ ] T04 landing page rebuild
 - [x] T05 LLM model bump
