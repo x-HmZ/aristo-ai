@@ -156,7 +156,46 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ ...result, new_mastery: newScore });
+    // ── Resolve a targeted misconception on correct answer (V4 teacher memory) ─
+    // No schema change needed: user_misconceptions already has resolved /
+    // resolved_at columns (migration 006). Matches by exact text — the quiz
+    // generator is instructed to copy an open misconception's text verbatim
+    // into misconception_targeted when it builds a question around it.
+    let misconceptionResolved = false;
+    let celebration: string | null = null;
+
+    if (result.is_correct && body.misconceptionTargeted) {
+      const { data: openRow } = await supabase
+        .from("user_misconceptions")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("concept_id", body.conceptId)
+        .eq("misconception", body.misconceptionTargeted)
+        .eq("resolved", false)
+        .maybeSingle();
+
+      if (openRow) {
+        const { error: resolveErr } = await supabase
+          .from("user_misconceptions")
+          .update({ resolved: true, resolved_at: new Date().toISOString() })
+          .eq("id", openRow.id)
+          .eq("user_id", user.id); // belt-and-suspenders: id already scoped by the SELECT above
+
+        if (!resolveErr) {
+          misconceptionResolved = true;
+          celebration = "That's the one that tripped you up before — you've got it now!";
+        } else {
+          console.warn("[quiz/submit] misconception resolve update failed (non-fatal)", resolveErr);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      ...result,
+      new_mastery:            newScore,
+      misconception_resolved: misconceptionResolved,
+      celebration,
+    });
   } catch (err) {
     console.error("POST /api/quiz/submit error:", err);
     return NextResponse.json({ error: "Evaluation failed" }, { status: 500 });

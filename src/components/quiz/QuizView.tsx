@@ -16,11 +16,13 @@ import { useAristoStore }                            from "@/store/useAristoStor
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface AnswerResult {
-  is_correct:             boolean;
-  score:                  number;
-  feedback:               string;
-  misconception_detected: string | null;
-  new_mastery?:           number;
+  is_correct:              boolean;
+  score:                   number;
+  feedback:                string;
+  misconception_detected:  string | null;
+  new_mastery?:            number;
+  misconception_resolved?: boolean;
+  celebration?:            string | null;
 }
 
 interface QuizViewProps {
@@ -468,15 +470,22 @@ function MatchingRenderer({
 
 function FeedbackBanner({ result }: { result: AnswerResult }) {
   return (
-    <div
-      className={`rounded-xl p-3 text-xs leading-relaxed ${
-        result.is_correct
-          ? "bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D]"
-          : "bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
-      }`}
-    >
-      <span className="font-bold mr-1">{result.is_correct ? "✓ Correct!" : "Not quite."}</span>
-      {result.feedback}
+    <div className="space-y-2">
+      <div
+        className={`rounded-xl p-3 text-xs leading-relaxed ${
+          result.is_correct
+            ? "bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D]"
+            : "bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
+        }`}
+      >
+        <span className="font-bold mr-1">{result.is_correct ? "✓ Correct!" : "Not quite."}</span>
+        {result.feedback}
+      </div>
+      {result.misconception_resolved && result.celebration && (
+        <div className="rounded-xl p-3 text-xs leading-relaxed bg-gradient-to-br from-[#FFF0E4] to-[#FFDBB8] border border-[#F97B2F]/40 text-[#8A4A16] font-medium">
+          {result.celebration}
+        </div>
+      )}
     </div>
   );
 }
@@ -485,6 +494,7 @@ function FeedbackBanner({ result }: { result: AnswerResult }) {
 
 export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson" }: QuizViewProps) {
   const incrementSignal = useAristoStore((s) => s.incrementSignal);
+  const setGesture      = useAristoStore((s) => s.setGesture);
 
   const [currentIdx,    setCurrentIdx]    = useState(0);
   const [results,       setResults]       = useState<(AnswerResult | null)[]>(
@@ -542,6 +552,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       }
       const data: AnswerResult & { new_mastery?: number } = await res.json();
       if (data.is_correct) incrementSignal("questions_correct");
+      setGesture(data.is_correct ? "nodding" : "shaking");
       setResults((prev) => {
         const next = [...prev];
         next[currentIdx] = data;
@@ -552,6 +563,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       // Fallback: evaluate locally
       const isCorrect = userAnswer.trim().toLowerCase() === currentQ.correct_answer.trim().toLowerCase();
       if (isCorrect) incrementSignal("questions_correct");
+      setGesture(isCorrect ? "nodding" : "shaking");
       const fb: AnswerResult = {
         is_correct:             isCorrect,
         score:                  isCorrect ? 1 : 0,

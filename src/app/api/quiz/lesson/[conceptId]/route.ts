@@ -50,18 +50,29 @@ export async function GET(
           description: `Quiz on: ${conceptId}`,
         };
 
-    // ── 2. Load current mastery ───────────────────────────────────────────────
-    const { data: masteryRow } = await supabase
-      .from("user_concept_mastery")
-      .select("mastery_score")
-      .eq("user_id", user.id)
-      .eq("concept_id", conceptId)
-      .maybeSingle();
+    // ── 2. Load current mastery + open misconceptions ─────────────────────────
+    const [masteryRes, misconceptionRes] = await Promise.all([
+      supabase
+        .from("user_concept_mastery")
+        .select("mastery_score")
+        .eq("user_id", user.id)
+        .eq("concept_id", conceptId)
+        .maybeSingle(),
+      supabase
+        .from("user_misconceptions")
+        .select("misconception")
+        .eq("user_id", user.id)
+        .eq("concept_id", conceptId)
+        .eq("resolved", false)
+        .order("last_detected", { ascending: false })
+        .limit(3),
+    ]);
 
-    const mastery = masteryRow?.mastery_score ?? 0.1;
+    const mastery            = masteryRes.data?.mastery_score ?? 0.1;
+    const openMisconceptions = (misconceptionRes.data ?? []).map((r) => r.misconception);
 
     // ── 3. Generate questions ─────────────────────────────────────────────────
-    const questions = await generateLessonQuiz(meta, mastery, 4);
+    const questions = await generateLessonQuiz(meta, mastery, 4, openMisconceptions);
 
     return NextResponse.json({ questions });
   } catch (err) {

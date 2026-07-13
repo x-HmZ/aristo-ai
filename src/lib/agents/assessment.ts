@@ -224,9 +224,10 @@ Return your response by calling the deliver_questions tool.`;
  * Uses Sonnet to produce pedagogically varied types + bloom levels.
  */
 export async function generateLessonQuiz(
-  concept:    ConceptMeta,
-  mastery:    number,          // current mastery score 0.0–1.0
-  count:      number = 4
+  concept:            ConceptMeta,
+  mastery:            number,          // current mastery score 0.0–1.0
+  count:              number = 4,
+  openMisconceptions: string[] = []    // student's recorded, unresolved misconceptions for this concept
 ): Promise<QuizQuestion[]> {
 
   const difficulty = Math.min(1.0, mastery + 0.15);
@@ -236,6 +237,10 @@ export async function generateLessonQuiz(
     ? "Include at least one code_completion or code_debugging question if the concept involves code."
     : "Include a variety of types suited to the concept.";
 
+  const misconceptionRule = openMisconceptions.length > 0
+    ? `- This student has a RECORDED, unresolved misconception on this concept (see <open_misconceptions>). Make EXACTLY ONE question directly target the FIRST listed misconception, and set that question's misconception_targeted field to the EXACT text of that misconception, copied verbatim (no paraphrasing) — this lets the system detect and clear it when answered correctly. Do not target more than one recorded misconception in this quiz.`
+    : `- No recorded misconceptions for this student on this concept — use misconception_targeted normally for any distractor-based reasoning.`;
+
   const prompt = `You are an assessment expert. Generate exactly ${count} quiz questions for the following concept, varying the question types and Bloom's taxonomy levels to build a comprehensive picture of understanding.
 
 <concept>
@@ -244,6 +249,10 @@ Description: ${concept.description}
 Learning objectives: ${JSON.stringify(concept.learning_objectives ?? [])}
 Common misconceptions: ${JSON.stringify(concept.common_misconceptions ?? [])}
 </concept>
+
+<open_misconceptions>
+${openMisconceptions.length > 0 ? openMisconceptions.map((m) => `- ${m}`).join("\n") : "None recorded."}
+</open_misconceptions>
 
 <requirements>
 Overall difficulty: ${difficulty.toFixed(2)} (0.0 = very easy, 1.0 = very hard)
@@ -264,6 +273,7 @@ Start with lower Bloom's levels (remember/understand) and progress to higher one
 - For matching: items are left-side terms; matches are right-side definitions; correct_answer is a JSON-stringified array of [term, definition] pairs in the correct matching.
 - Every question must have explanation_correct. MCQ/true_false must also have explanation_wrong (map option → reason it's wrong).
 - Keep each question focused. Do NOT ask the same thing twice.
+${misconceptionRule}
 </rules>
 
 Return your response by calling the deliver_questions tool with exactly ${count} questions.`;
