@@ -23,5 +23,8 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  // validator.ts is excluded due to vercel/next.js#82877 (the generated
+  // page-export validator drops src/ from import paths). Remove the
+  // exclusion when the upstream fix lands — see next.config.mjs.
+  "exclude": ["node_modules", ".next/types/validator.ts"]
 }

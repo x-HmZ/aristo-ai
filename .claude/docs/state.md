@@ -2,6 +2,14 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-07-13 — T10 ops hardening (autonomous parts)
+
+- Branch `dev/t10-ops-hardening` (off `deploy-prep`), not pushed. CI (`.github/workflows/ci.yml`),
+  Vitest unit tests (4 files / 47 tests: BKT, FSRS, profiler, pricing — all pure logic, no
+  network mocking), `.env.example` refreshed, and a read-only live-DB migration reconciliation
+  (all 15 migrations confirmed applied) are done. Resend env vars, admin bootstrap SQL, and
+  Sentry are user-dependent — runbook at `.claude/plans/T10-RUNBOOK.md`.
+
 ## 2026-07-12 — Roadmap era
 
 - Desk quiz + head-turn camera + free-mode 3D hardening shipped (was branch

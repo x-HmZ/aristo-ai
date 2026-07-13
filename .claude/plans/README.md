@@ -122,5 +122,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] T07 3D gen model evaluation
 - [ ] T08 dynamic classroom pass
 - [ ] T09 lesson streaming
-- [ ] T10 ops hardening
+- [ ] T10 ops hardening (autonomous parts done 2026-07-13 — CI + tests + migration
+      reconciliation + .env.example shipped on `dev/t10-ops-hardening`; Resend/admin
+      bootstrap/Sentry are user-dependent, see `.claude/plans/T10-RUNBOOK.md`)
 - [ ] T11 content seeding
