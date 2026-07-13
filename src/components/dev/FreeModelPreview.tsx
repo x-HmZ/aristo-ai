@@ -19,7 +19,12 @@
 
 import { useEffect, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
-import { useAristoStore } from "@/store/useAristoStore";
+import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
+
+// Dev-only query overrides: ?avatar=ryan|sonia|marcus|priya and ?room=alt
+// let the harness exercise every teacher GLB / the alternative classroom
+// without auth. Parsed once on mount, before the first stage effect runs.
+const AVATAR_PARAMS: readonly TeacherAvatar[] = ["ryan", "sonia", "marcus", "priya"];
 
 const PLACEHOLDER_GLB = "/models/dev_placeholder.glb";
 // 1×1 orange PNG data-URI — stands in for the fal.ai teaching image so the
@@ -33,7 +38,13 @@ export default function FreeModelPreview() {
   const [stage, setStage] = useState<Stage>("model");
 
   useEffect(() => {
-    useAristoStore.getState().setUserId("dev-mock-user");
+    const s = useAristoStore.getState();
+    s.setUserId("dev-mock-user");
+
+    const params = new URLSearchParams(window.location.search);
+    const avatar = params.get("avatar") as TeacherAvatar | null;
+    if (avatar && AVATAR_PARAMS.includes(avatar)) s.setTeacher(avatar);
+    if (params.get("room") === "alt") s.setClassroom("alternative");
   }, []);
 
   useEffect(() => {
