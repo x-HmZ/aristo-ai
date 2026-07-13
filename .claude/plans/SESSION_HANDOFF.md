@@ -69,10 +69,36 @@ Remaining human checks (nice-to-have, non-blocking): lipsync playback with real 
 (needs authed session), loading overlay on throttled network, watch `teach.lesson.retry`
 frequency in /admin/cost.
 
-## Wave 2 (in progress)
+## Wave 2 (done 2026-07-13)
 
-- V2 instant public demo: sonnet agent on branch `dev/v2-instant-demo` (see below / agent log).
-- Next after V2: T10 ops hardening (autonomous parts), then V1 raise-hand (opus).
+- **V2 instant demo**: built + browser-verified on `dev/v2-instant-demo` (pushed, UNMERGED).
+  2 frozen lessons, $0 per visitor, 0 API calls verified. Demo narrates via browser
+  speechSynthesis because the ElevenLabs key lacks `user_read` (quota unverifiable).
+  MERGE BLOCKED on user decision: keep browser voice vs pre-render ElevenLabs mp3s.
+- **T10 ops**: MERGED to deploy-prep (`fd81abd`). CI live and first run GREEN on GitHub.
+  47 vitest tests. Migrations reconciled: ALL applied incl. 011. Runbook:
+  `.claude/plans/T10-RUNBOOK.md`. Latent deferred bug: conditional hooks in
+  `src/utils/modelLoader.js` (eslint-warned, R3F-critical, do not blind-refactor).
+- **T06 persistent cache**: built on `dev/t06-persistent-cache` (pushed, UNMERGED).
+  Bucket `generated-assets` created live (public, immutable cache headers). Code layered
+  L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
+  live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
+  (REST API cannot run DDL), then rerun the cache-hit probe.
+- **V4 teacher memory**: sonnet agent launched on `dev/v4-teacher-memory` (in flight).
+
+## USER ACTIONS NEEDED (everything else is blocked on these)
+
+1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
+   SQL Editor -> then T06 verification + merge can proceed.
+2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — aitchemmzi is still
+   pending/non-admin in the live DB.
+3. Resend env vars in Vercel (runbook section 1) for signup notifications.
+4. V2 demo voice decision: browser TTS as-is, or confirm ElevenLabs quota headroom
+   (~6-8k chars one-time) for pre-rendered audio. V2 merge + T04 landing rebuild + V1
+   raise-hand are queued behind this to avoid conflicts on shared hooks.
+5. Optional: production visual pass (lipsync in authed /learn, loading overlay throttled).
+6. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+   fast-forward master to deploy-prep).
 
 ## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
 
