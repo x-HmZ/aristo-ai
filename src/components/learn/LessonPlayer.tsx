@@ -101,11 +101,11 @@ function PreparingVisualsOverlay() {
 
 // ─── Player ───────────────────────────────────────────────────────────────────
 
-export function LessonPlayer() {
+export function LessonPlayer({ demoMode = false }: { demoMode?: boolean } = {}) {
   const activeLesson = useAristoStore((s) => s.activeLesson);
   const currentSegmentId = useAristoStore((s) => s.currentSegmentId);
 
-  const playback = useLessonPlayback(activeLesson);
+  const playback = useLessonPlayback(activeLesson, { demoMode });
 
   // Telemetry — once per concept, record that the adaptive pipeline was used.
   useEffect(() => {

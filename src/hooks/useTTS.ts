@@ -141,6 +141,13 @@ const VOICE_BY_AVATAR: Record<TeacherAvatar, string> = {
 export interface SpeakOptions {
   voice?:  string;
   onEnd?:  () => void;
+  /**
+   * Force the window.speechSynthesis fallback regardless of the
+   * NEXT_PUBLIC_TTS env var. Set by the /demo route (demoMode) so a demo
+   * session never calls /api/tts (ElevenLabs quota is shared with the
+   * production teacher). Never set on the authed /learn path.
+   */
+  forceBrowser?: boolean;
 }
 
 export interface SpeakController {
@@ -181,8 +188,9 @@ export function useTTS() {
       stop();
 
       const useBrowser =
-        typeof process !== "undefined" &&
-        process.env.NEXT_PUBLIC_TTS === "browser";
+        !!opts.forceBrowser ||
+        (typeof process !== "undefined" &&
+          process.env.NEXT_PUBLIC_TTS === "browser");
 
       // Browser fallback path
       if (useBrowser) {
@@ -320,13 +328,14 @@ export function useTTS() {
   // the ~0.5–1.5s ElevenLabs latency between segments.  No-op in browser
   // TTS mode (no network fetch to warm).
   const prefetch = useCallback(
-    (text: string, opts: { voice?: string } = {}): void => {
+    (text: string, opts: { voice?: string; forceBrowser?: boolean } = {}): void => {
       const cleaned = text.trim();
       if (!cleaned) return;
 
       const useBrowser =
-        typeof process !== "undefined" &&
-        process.env.NEXT_PUBLIC_TTS === "browser";
+        !!opts.forceBrowser ||
+        (typeof process !== "undefined" &&
+          process.env.NEXT_PUBLIC_TTS === "browser");
       if (useBrowser) return;
 
       const voice = opts.voice ?? VOICE_BY_AVATAR[teacher] ?? "alloy";

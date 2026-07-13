@@ -83,6 +83,7 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
   const setIsGeneratingModel = useAristoStore((s) => s.setIsGeneratingModel);
   const setActiveModelUrl    = useAristoStore((s) => s.setActiveModelUrl);
   const setViewMode3d        = useAristoStore((s) => s.setViewMode3d);
+  const demoMode             = useAristoStore((s) => s.demoMode);
 
   // Current-segment callouts — adaptive-visual mode only. When LessonPlayer
   // bumps currentSegmentId, we look up the matching segment's visual.callouts
@@ -134,6 +135,16 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
       setViewMode3d(true);
       return;
     }
+
+    // Demo path: pending3dImageUrl already holds the frozen GLB URL
+    // (useLessonPlayback's demoMode branch stashes lesson.metadata
+    // .demo_model_url there) — no /api/generate-model/3d call.
+    if (demoMode) {
+      setActiveModelUrl(pending3dImageUrl);
+      setViewMode3d(true);
+      return;
+    }
+
     setIsGeneratingModel(true);
     try {
       const res = await fetch("/api/generate-model/3d", {

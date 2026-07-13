@@ -147,9 +147,23 @@ function isChallengeSegment(seg: NarrationSegment | undefined): boolean {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+export interface LessonPlaybackOpts {
+  /**
+   * True only on the unauthenticated /demo route. Skips every network call
+   * this hook would otherwise fire (segment-visuals, generate-model,
+   * lesson-complete, challenge eval) and forces TTS through the browser
+   * speechSynthesis fallback instead of /api/tts. Frozen demo lessons carry
+   * their resolved image/model URLs directly on the payload (segment.visual
+   * .imageUrl, metadata.demo_model_url) so playback still shows visuals.
+   */
+  demoMode?: boolean;
+}
+
 export function useLessonPlayback(
   lesson: LessonPayload | null,
+  opts: LessonPlaybackOpts = {},
 ): LessonPlaybackState & LessonPlaybackControls {
+  const demoMode = !!opts.demoMode;
   const { speak, stop, prefetch }     = useTTS();
   const setIsSpeaking                 = useAristoStore((s) => s.setIsSpeaking);
   const setGesture                    = useAristoStore((s) => s.setGesture);
@@ -229,6 +243,18 @@ export function useLessonPlayback(
   // to the segment-visuals batch.
   useEffect(() => {
     if (!lesson) return;
+
+    // Demo path: the GLB is already frozen on the payload — wire it straight
+    // to the "View in 3D" toggle (Experience.tsx's handleViewIn3d skips the
+    // /api/generate-model/3d fetch when demoMode and uses this URL as-is).
+    // Never calls /api/generate-model.
+    if (demoMode) {
+      if (lesson.metadata.demo_model_url) {
+        setPending3dImageUrl(lesson.metadata.demo_model_url);
+      }
+      return;
+    }
+
     const { should_generate_model, model_image_prompt, model_3d_prompt } = lesson.metadata;
     if (!should_generate_model || !model_image_prompt) return;
 
@@ -256,11 +282,23 @@ export function useLessonPlayback(
       .finally(() => { if (!cancelled) setIsGeneratingModel(false); });
 
     return () => { cancelled = true; };
-  }, [lesson, setIsGeneratingModel, setPending3dImageUrl]);
+  }, [lesson, demoMode, setIsGeneratingModel, setPending3dImageUrl]);
 
   // ─── Batch-fetch visuals on lesson load ─────────────────────────────────────
   useEffect(() => {
     if (!lesson || segments.length === 0) return;
+
+    // Demo path: frozen segments already carry a resolved static imageUrl —
+    // build the map synchronously, never call /api/learn/segment-visuals.
+    if (demoMode) {
+      const map: Record<string, VisualResult> = {};
+      for (const s of segments) {
+        if (s.visual?.imageUrl) map[s.id] = { imageUrl: s.visual.imageUrl, cached: true };
+      }
+      setVisualsByID(map);
+      setIsLoading(false);
+      return;
+    }
 
     // Only true segments (not legacy shim) need network visuals.  The shim's
     // segments have no .visual fields by construction.
@@ -310,7 +348,7 @@ export function useLessonPlayback(
       });
 
     return () => { cancelled = true; };
-  }, [lesson, segments]);
+  }, [lesson, segments, demoMode]);
 
   // ─── Force-idle while preparing visuals ────────────────────────────────────
   // Without this, the avatar inherits a stale gesture from a prior segment
@@ -339,12 +377,15 @@ export function useLessonPlayback(
         setCurrentSegmentId(null);
         setGesture("idle");
         setActivePreviewImageUrl(null);
-        // Mark concept viewed.  Non-critical — swallow errors.
-        fetch("/api/learn/complete", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ conceptId: lesson.concept_id }),
-        }).catch(() => {});
+        // Mark concept viewed.  Non-critical — swallow errors. Skipped in
+        // demoMode — no learner row exists to attribute this to.
+        if (!demoMode) {
+          fetch("/api/learn/complete", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ conceptId: lesson.concept_id }),
+          }).catch(() => {});
+        }
       }
       return;
     }
@@ -377,9 +418,10 @@ export function useLessonPlayback(
     // 3) Mark active segment for UI highlight
     setCurrentSegmentId(segment.id);
 
-    // 4) Warm-up the next segment's TTS while this one narrates
+    // 4) Warm-up the next segment's TTS while this one narrates (no-op in
+    //    demoMode — browser speechSynthesis has nothing to prefetch).
     const upcoming = segments[segmentIdx + 1];
-    if (upcoming?.text) prefetch(upcoming.text);
+    if (upcoming?.text) prefetch(upcoming.text, { forceBrowser: demoMode });
 
     // 5) Narrate.  Challenge segments pose a question — when narration ends
     //    we set awaitingAnswer instead of advancing, freezing playback until
@@ -387,6 +429,7 @@ export function useLessonPlayback(
     const isQuestion = isChallengeSegment(segment);
     setIsSpeaking(true);
     const controller = speak(segment.text, {
+      forceBrowser: demoMode,
       onEnd: () => {
         ttsControllerRef.current = null;
         if (isQuestion) {
@@ -408,7 +451,7 @@ export function useLessonPlayback(
       cleanupPlayback();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID]);
+  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID, demoMode]);
 
   // ─── Unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -467,6 +510,17 @@ export function useLessonPlayback(
       setSegmentIdx((i) => i + 1);
       return;
     }
+
+    // Demo path: no /api/learn/challenge call — any answer gets an
+    // encouraging scripted nod, per the demo brief ("accepts any answer
+    // with an encouraging scripted response").
+    if (demoMode) {
+      setGesture("nodding");
+      setAwaitingLocal(false);
+      setSegmentIdx((i) => i + 1);
+      return;
+    }
+
     const challengePhase = lesson.phases?.challenge;
     try {
       if (challengePhase?.question && challengePhase.answer) {
@@ -489,7 +543,7 @@ export function useLessonPlayback(
       setAwaitingLocal(false);
       setSegmentIdx((i) => i + 1);
     }
-  }, [lesson, setGesture]);
+  }, [lesson, setGesture, demoMode]);
 
   // Compute the pending challenge segment for consumers (AnswerInputPanel).
   const pendingChallengeSegment = useMemo<NarrationSegment | null>(() => {

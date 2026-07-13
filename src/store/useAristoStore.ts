@@ -198,6 +198,15 @@ interface AristoState {
    */
   sceneReady: boolean;
 
+  /**
+   * True only inside the unauthenticated /demo route. Gates every network
+   * call in the lesson-playback path (segment-visuals, generate-model,
+   * challenge eval, quiz submit/complete, lesson-complete telemetry) and
+   * forces browser speechSynthesis instead of /api/tts, so a demo session
+   * never touches a paid API. Never set true on the authed /learn path.
+   */
+  demoMode: boolean;
+
   // ── Actions ──────────────────────────────────────────────────────────────
 
   setUserId: (id: string | null) => void;
@@ -266,6 +275,9 @@ interface AristoState {
 
   // Scene readiness (loading overlay)
   setSceneReady: (ready: boolean) => void;
+
+  // Demo mode (unauthenticated /demo route)
+  setDemoMode: (v: boolean) => void;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -325,6 +337,7 @@ export const useAristoStore = create<AristoState>()(
       activeQuiz:         null,
       quizResult:         null,
       sceneReady:         false,
+      demoMode:           false,
 
       setUserId:    (id) => set({ userId: id }),
 
@@ -404,6 +417,8 @@ export const useAristoStore = create<AristoState>()(
       setQuizResult: (r) => set({ quizResult: r }),
 
       setSceneReady: (ready) => set({ sceneReady: ready }),
+
+      setDemoMode: (v) => set({ demoMode: v }),
     }),
     {
       name: "aristo-session",
