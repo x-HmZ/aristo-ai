@@ -49,14 +49,30 @@ Last updated: 2026-07-12 (session: full audit + roadmap, then product-vision tie
      `sceneReady` first-frame flag, 400 ms anti-flash minimum, 20 s stall -> reload hint,
      GLB prefetch on sign-in page.
 
-## NEEDS HUMAN VISUAL CHECK before merging wave-1 -> deploy-prep
+## Wave-1 verification + merge (done 2026-07-13)
 
-Open the Vercel preview for `dev/roadmap-wave-1` (or local dev) and verify:
-- [ ] Lipsync + gestures on all 4 avatars (compression kept morph data — confirm rendering)
-- [ ] "Alt. Room" classroom switch (biggest structural compression: 269->96 meshes, 1024px textures)
-- [ ] Marcus/Priya materials (dedup merged one duplicate texture each)
-- [ ] Loading overlay on cold load (throttle network) + no double-flash on fast load
-- [ ] One lesson generates end-to-end on Sonnet 5, then check /admin/cost attribution
+Supabase was paused (cause of the earlier unreachable-host issue) — user resumed it.
+Browser verification done via puppeteer on the auth-free dev harnesses:
+- All 4 avatars + both classrooms + desk quiz + draco decoding + sign-in prefetch: PASS.
+  Priya's pale-at-distance eyes proven pre-existing (texture diff vs pre-compression asset).
+  Harness gained dev-only `?avatar=`/`?room=alt` overrides (commit `904eca2`).
+- Sonnet-5 cost attribution verified in live `usage_events`: $0.058/lesson, exact match to
+  encoded intro pricing (incl. cache-creation).
+- **Sonnet-5 adaptive malformation found and fixed**: intermittently stuffed the payload into
+  `metadata` leaving phases/segments empty. Fix (commit `46887cf`, teaching.ts): all tool
+  schemas now `additionalProperties: false`, structural `validateLessonInput()`, one
+  corrective retry (tagged `teach.lesson.retry`), throw on double failure. Retry path
+  exercised against a live reproduction — self-healed.
+- **Merged to `deploy-prep` (`2b64b4b`) and pushed — in production.**
+
+Remaining human checks (nice-to-have, non-blocking): lipsync playback with real TTS audio
+(needs authed session), loading overlay on throttled network, watch `teach.lesson.retry`
+frequency in /admin/cost.
+
+## Wave 2 (in progress)
+
+- V2 instant public demo: sonnet agent on branch `dev/v2-instant-demo` (see below / agent log).
+- Next after V2: T10 ops hardening (autonomous parts), then V1 raise-hand (opus).
 
 ## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
 
