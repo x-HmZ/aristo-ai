@@ -10,7 +10,8 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 export interface UsageEvent {
   user_id?:               string | null;
-  provider:               "anthropic" | "openai" | "fal";
+  /** "internal" is for zero-cost product signals (e.g. greeting_action_taken), not a provider API call. */
+  provider:               "anthropic" | "openai" | "fal" | "internal";
   model:                  string;
   feature:                string;
   input_tokens?:          number | null;
