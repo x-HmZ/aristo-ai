@@ -60,8 +60,16 @@ have been done since):
 
 ## Status checklist
 
-- [ ] CI workflow merged + green
-- [ ] Resend live (email received)
-- [ ] Admin bootstrapped, migrations reconciled
-- [ ] Sentry live
-- [ ] Unit tests in CI
+- [x] CI workflow added (`.github/workflows/ci.yml`) — not yet green on a real PR (no push
+      access from this session); runs type-check, lint, test, build on Node 20 with dummy
+      build-time env vars.
+- [ ] Resend live (email received) — runbook: `.claude/plans/T10-RUNBOOK.md` §1 (needs Vercel
+      dashboard access + real Resend key).
+- [ ] Admin bootstrapped — runbook: `.claude/plans/T10-RUNBOOK.md` §2 (needs SQL run against
+      Supabase; account confirmed still `pending` this session, read-only check).
+- [x] Migrations reconciled — read-only check against the live DB this session: all 15
+      migration files are fully applied, nothing missing. See runbook §3 for the table.
+- [ ] Sentry live — runbook: `.claude/plans/T10-RUNBOOK.md` §4 (deferred, needs a DSN + a
+      decision on `/learn` wrapping risk).
+- [x] Unit tests in CI — 4 Vitest files, 47 tests, pure-logic only (BKT, FSRS, profiler,
+      pricing), wired into `yarn test` and the CI workflow.
