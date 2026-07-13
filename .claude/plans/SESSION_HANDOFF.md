@@ -84,7 +84,15 @@ frequency in /admin/cost.
   L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
   live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
   (REST API cannot run DDL), then rerun the cache-hit probe.
-- **V4 teacher memory**: sonnet agent launched on `dev/v4-teacher-memory` (in flight).
+- **V4 teacher memory**: DONE on `dev/v4-teacher-memory` (pushed, UNMERGED — needs authed
+  UI pass: greeting banner/chip in ModePicker, quiz celebration, TTS autoplay policy,
+  resume_course chip). GreetingAgent (Haiku, ~$0.002/greeting, 1.8 s), learner_history
+  back-references, misconception-targeted quiz + resolution (no DDL needed — resolved/
+  resolved_at columns already existed). Agent caught + fixed a privacy bug: personalized
+  lessons now SKIP the shared cached_lessons write (was about to leak per-user history
+  across users with the same profile signature). Own security pass: no findings.
+- **T07 3D-gen eval**: sonnet agent in flight (report-only, ~$5 API budget) — output will be
+  `.claude/plans/T07-REPORT.md` with the TripoSR-replacement recommendation.
 
 ## USER ACTIONS NEEDED (everything else is blocked on these)
 
