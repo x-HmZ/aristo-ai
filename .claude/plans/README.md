@@ -107,7 +107,8 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 ## Task status
 
 - [ ] V1 raise-hand teacher
-- [ ] V2 instant public demo
+- [x] V2 instant public demo (2026-07-13 — 2 lessons not 3 per cost/quota gate; ElevenLabs
+      quota unverifiable so demo TTS uses browser speechSynthesis, scoped to demoMode only)
 - [ ] V3 live blackboard worked examples
 - [ ] V4 teacher memory
 - [ ] V5 motivation loop

@@ -53,8 +53,36 @@ button on the landing page that drops visitors straight into the classroom, no a
 
 ## Status checklist
 
-- [ ] 3 demo lessons generated + frozen (assets in public/demo/)
-- [ ] Pre-rendered TTS + useTTS static path
-- [ ] /demo route with local-mode interactions
-- [ ] CTAs + /pending softening
-- [ ] $0-per-visit verified (time to first narration: ____ s)
+- [x] 2 demo lessons generated + frozen (assets in public/demo/) — "How Volcanoes Erupt" +
+      "What Is a Black Hole" (3 lessons cut to 2 per the executing brief's cost/quota
+      adjustment). Generated via the real pipeline (generateLesson + generateInfographic +
+      generate3dSourceImage/generate3dModel), frozen into src/data/demo/*.ts. Actual spend:
+      $0.73 (usage_events: teach.lesson + retry $0.38, segment visuals $0.20, FLUX+TripoSR
+      $0.15). Script kept at scripts/generate-demo-content.ts for regeneration.
+- [x] TTS: ElevenLabs quota could not be checked (API key lacks `user_read` permission —
+      GET /v1/user/subscription and /v1/user both 401 "missing_permissions"). Per the
+      executing brief's fallback rule, treated unknown quota as insufficient and shipped
+      the runtime browser speechSynthesis path instead of pre-rendering ElevenLabs mp3s.
+      Implemented as a scoped `forceBrowser` option on useTTS (demoMode only — /learn is
+      unaffected) rather than the global NEXT_PUBLIC_TTS=browser env var, so this never
+      touches the production ElevenLabs-backed teacher.
+- [x] /demo route with local-mode interactions — pages/demo.tsx (Pages Router, ssr:false,
+      no getServerSideProps auth), DemoClient.tsx (leaner than LearnClient — reuses
+      AristoCanvas/Experience/LessonPlayer directly, skips useCourseAutoTeach/session-flush/
+      profile-hydration). Store gained `demoMode` flag threaded through useLessonPlayback,
+      useTTS, Experience.tsx (View-in-3D), DeskQuiz/QuizView (localOnly eval via new
+      src/lib/quiz/localEval.ts) — every fetch on the playback path is gated off in
+      demoMode. Verified via Puppeteer: 0 `/api/` requests across topic pick → full 5-phase
+      narration → challenge answer → desk quiz (both questions) → results screen, for both
+      topics, including the "View in 3D" GLB swap.
+- [x] CTAs + /pending softening — landing hero primary CTA is now "Try a live lesson" → /demo,
+      secondary "Get started" → /sign-up; persistent top-bar demo pill + hard CTA at lesson/
+      quiz-result end ("Create your free account"); /pending shows a "try a live demo lesson"
+      offer link for users stuck in the approval queue.
+- [x] $0-per-visit verified — Puppeteer network-resource audit across the full flow
+      (both topics, including 3D toggle) shows 0 requests to `/api/`; the only non-`localhost`
+      resource was drei's pre-existing studio HDRI (raw.githack.com, unrelated to this task).
+      Time to first narration: scene interactive near-instantly on local dev; narration start
+      after topic click measured at ~49 ms (warm cache) with zero network round-trip — well
+      under the <15s cold-visitor target (informal local-dev measurement; not a throttled
+      cold-cache production measurement).
