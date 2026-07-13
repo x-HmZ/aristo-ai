@@ -93,12 +93,13 @@ export async function GET(
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
     let concept: ConceptInput;
     let ragContext: string[] = [];
+    let learnerHistory: string[] = [];
 
     if (dbConcept) {
       const [prereqRes, rag] = await Promise.all([
         supabase
           .from("concept_prerequisites")
-          .select("prerequisite:concepts!prerequisite_id(name)")
+          .select("prerequisite:concepts!prerequisite_id(id, name)")
           .eq("concept_id", conceptId),
         retrieveContext(
           {
@@ -113,14 +114,18 @@ export async function GET(
       ]);
       ragContext = rag;
 
-      const prereqNames: string[] =
+      type PrereqRow = { id: string; name: string };
+      const prereqs: PrereqRow[] =
         (prereqRes.data ?? [])
-          .map((row: { prerequisite: { name: string } | { name: string }[] | null }) => {
+          .map((row: { prerequisite: PrereqRow | PrereqRow[] | null }) => {
             const p = row.prerequisite;
             if (!p) return null;
-            return Array.isArray(p) ? p[0]?.name ?? null : p.name;
+            return Array.isArray(p) ? p[0] ?? null : p;
           })
-          .filter((n): n is string => typeof n === "string");
+          .filter((p): p is PrereqRow => !!p && typeof p.name === "string");
+
+      const prereqNames = prereqs.map((p) => p.name);
+      const prereqIds   = prereqs.map((p) => p.id);
 
       concept = {
         id:                    dbConcept.id,
@@ -132,6 +137,74 @@ export async function GET(
         common_misconceptions: dbConcept.common_misconceptions ?? [],
         prerequisites:         prereqNames,
       };
+
+      // ── Learner history facts (V4 teacher memory — DDL-free) ───────────────
+      // Best-effort: any failure here must not block lesson generation.
+      try {
+        const [lastSessionRes, prereqMisconceptionRes, strongPrereqRes] = await Promise.all([
+          supabase
+            .from("session_logs")
+            .select("session_start")
+            .eq("user_id", user.id)
+            .order("session_start", { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+          prereqIds.length > 0
+            ? supabase
+                .from("user_misconceptions")
+                .select("misconception, concepts(name)")
+                .eq("user_id", user.id)
+                .in("concept_id", prereqIds)
+                .eq("resolved", false)
+                .order("last_detected", { ascending: false })
+                .limit(1)
+                .maybeSingle()
+            : Promise.resolve({ data: null }),
+          prereqIds.length > 0
+            ? supabase
+                .from("user_concept_mastery")
+                .select("concepts(name)")
+                .eq("user_id", user.id)
+                .in("concept_id", prereqIds)
+                .gte("mastery_score", 0.8)
+                .order("last_assessed", { ascending: false })
+                .limit(1)
+                .maybeSingle()
+            : Promise.resolve({ data: null }),
+        ]);
+
+        if (lastSessionRes.data?.session_start) {
+          const days = Math.floor(
+            (Date.now() - new Date(lastSessionRes.data.session_start).getTime()) / (24 * 60 * 60 * 1000)
+          );
+          if (days > 0) {
+            learnerHistory.push(`Last studied ${days} day${days === 1 ? "" : "s"} ago.`);
+          }
+        }
+
+        type ConceptRef = { name: string } | { name: string }[] | null;
+        const asName = (c: ConceptRef): string | null =>
+          !c ? null : Array.isArray(c) ? c[0]?.name ?? null : c.name;
+
+        const misconceptionRow = prereqMisconceptionRes.data as
+          | { misconception: string; concepts: ConceptRef }
+          | null;
+        if (misconceptionRow) {
+          const prereqName = asName(misconceptionRow.concepts) ?? "a prerequisite";
+          learnerHistory.push(
+            `Previously showed a misconception on the prerequisite "${prereqName}": ${misconceptionRow.misconception}.`
+          );
+        }
+
+        const strongRow = strongPrereqRes.data as { concepts: ConceptRef } | null;
+        const strongName = asName(strongRow?.concepts ?? null);
+        if (strongName) {
+          learnerHistory.push(`Has already mastered the prerequisite "${strongName}".`);
+        }
+      } catch (historyErr) {
+        console.warn("[lesson] learner_history lookup failed (non-fatal)", historyErr);
+        learnerHistory = [];
+      }
     } else {
       // Free-form fallback — never cached.
       concept = {
@@ -141,10 +214,17 @@ export async function GET(
       };
     }
 
-    const lesson = await generateLesson(concept, profile, ragContext);
+    const lesson = await generateLesson(concept, profile, ragContext, learnerHistory);
 
     // ── Write to cache (only for KG-resolved concepts) ────────────────────────
-    if (dbConcept) {
+    // cached_lessons is keyed by (concept_id, profile_signature) — a cache
+    // bucket SHARED across every learner with that profile signature, not a
+    // per-user cache. When learnerHistory is non-empty this lesson's Activate
+    // phase may contain one learner's specific misconception/date facts, so
+    // it must never be written to the shared cache (would leak personal
+    // history to other students, and would go stale for this same student on
+    // their next visit). Personalized lessons are generated fresh every time.
+    if (dbConcept && learnerHistory.length === 0) {
       const decision = await decideModeration(dbConcept.id, service);
 
       // Insert/upsert. UNIQUE(concept_id, profile_signature) makes this idempotent.

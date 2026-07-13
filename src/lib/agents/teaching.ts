@@ -152,6 +152,7 @@ RULES:
 - If the learner's profile says "concise", keep each phase brief. If "detailed", go deeper with edge cases, caveats, and multiple examples.
 - Ground your explanations in the reference material provided. Do not fabricate facts.
 - For should_generate_model: set true ONLY for physical/tangible objects that benefit from 3D visualization (molecules, organs, machines, planets, animals, geometric solids). Set false for abstract concepts, code, processes, or anything non-physical.
+- The user message may include a <learner_history> block with 0-3 short facts about the student's past sessions (last-seen date, prerequisite misconceptions, prerequisite mastery). If — and only if — one of those facts is genuinely relevant to THIS concept, weave AT MOST ONE natural back-reference into the Activate phase content ("Remember when we covered X, and Y tripped you up? This builds right on that."). If learner_history is empty or nothing is relevant, do not force a reference — proceed normally. NEVER state raw scores, percentages, or attempt counts, and NEVER frame a past struggle as a failure or shortcoming — treat it as a normal step in learning, worth a "rematch" or "comeback," not shame.
 - When should_generate_model is true, you MUST provide BOTH image prompt fields, AND the demonstrate.visual_walkthrough must reference what is in the image:
   • model_image_prompt: A rich, educational infographic the teacher will literally point at while delivering visual_walkthrough. Annotated diagram style, labeled parts, cross-sections, educational poster aesthetic. Example: "anatomical cross-section of the human heart, labeled chambers and valves, arrows showing blood flow direction, medical illustration style, clean white background, vivid educational diagram". The labels in this image MUST match the elements you reference in visual_walkthrough.
   • model_3d_prompt: A SHORT, clean description of ONE isolated physical object suitable for 3D reconstruction — no text, no labels, no backgrounds, no scenes. Focus on shape, material, color. Example: "human heart, anatomically accurate, red and pink muscle tissue, realistic, isolated, centered, white background".
@@ -511,9 +512,10 @@ const lessonToolAdaptive: Anthropic.Tool = {
 // ─── User message template ─────────────────────────────────────────────────────
 
 function buildUserMessage(
-  concept:    ConceptInput,
-  profile:    DynamicProfile | null,
-  ragContext: string[] = []
+  concept:        ConceptInput,
+  profile:        DynamicProfile | null,
+  ragContext:     string[] = [],
+  learnerHistory: string[] = []
 ): string {
   const p = profile ?? {
     expertise_level:    "beginner",
@@ -559,6 +561,12 @@ ${ragContext.length > 0
   ? ragContext.join("\n\n---\n\n")
   : "No additional reference material available. Use your general knowledge."}
 </reference_material>
+
+<learner_history>
+${learnerHistory.length > 0
+  ? learnerHistory.map((f) => `- ${f}`).join("\n")
+  : "No prior session history yet — this is a fresh start."}
+</learner_history>
 
 Teach this concept following the 5-Phase Protocol. Tailor the depth and style to the learner profile above.`;
 }
@@ -610,12 +618,13 @@ function validateLessonInput(parsed: ParsedLessonInput, isAdaptive: boolean): st
 // ─── Main generator ────────────────────────────────────────────────────────────
 
 export async function generateLesson(
-  concept:    ConceptInput,
-  profile:    DynamicProfile | null,
-  ragContext: string[] = []
+  concept:        ConceptInput,
+  profile:        DynamicProfile | null,
+  ragContext:     string[] = [],
+  learnerHistory: string[] = []
 ): Promise<LessonPayload> {
   const isAdaptive = process.env.NEXT_PUBLIC_ADAPTIVE_VISUALS === "true";
-  const baseUserMessage = buildUserMessage(concept, profile, ragContext);
+  const baseUserMessage = buildUserMessage(concept, profile, ragContext, learnerHistory);
   const tool = isAdaptive ? lessonToolAdaptive : lessonTool;
   const systemText = isAdaptive ? SYSTEM_PROMPT_ADAPTIVE : SYSTEM_PROMPT;
 
