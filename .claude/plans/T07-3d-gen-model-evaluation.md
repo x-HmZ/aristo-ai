@@ -47,7 +47,8 @@ a replacement model may not need it).
 
 ## Status checklist
 
-- [ ] Candidate list with pricing/latency
-- [ ] 5-prompt eval run (spend: $____)
-- [ ] Side-by-side screenshots captured
-- [ ] T07-REPORT.md written with recommendation
+- [x] Candidate list with pricing/latency
+- [x] Eval run — reduced to 3 prompts for budget, then truncated by exhausted fal balance;
+      full 4-model matrix on animal-cell + TripoSR baseline on volcano (spend: $1.53 tracked)
+- [x] Side-by-side screenshots captured (fixed-camera three.js viewer; saved to session scratchpad)
+- [x] T07-REPORT.md written with recommendation (Tripo3D v2.5, $0.30/gen)
