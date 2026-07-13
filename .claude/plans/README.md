@@ -118,7 +118,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [x] T03 /learn loading experience
 - [ ] T04 landing page rebuild
 - [x] T05 LLM model bump
-- [ ] T06 persistent generation cache
+- [x] T06 persistent generation cache (code + bucket done; migration 016 written but NOT applied live — no DB DDL credential in-session, see brief)
 - [ ] T07 3D gen model evaluation
 - [ ] T08 dynamic classroom pass
 - [ ] T09 lesson streaming

@@ -55,7 +55,37 @@ Relevant code: `src/lib/imagegen/banana.ts` (all three generators + cache helper
 
 ## Status checklist
 
-- [ ] Migration 016 written + applied
-- [ ] Bucket created (public/private decision recorded: ____)
-- [ ] banana.ts layered lookup implemented
-- [ ] Cold-instance cache hit verified via usage_events
+- [x] Migration 016 written — `supabase/migrations/016_generated_assets.sql`. **NOT applied to the
+      live DB.** This environment has only `NEXT_PUBLIC_SUPABASE_URL` / anon key / service-role
+      key in `.env.local` — no Postgres connection string, no `SUPABASE_ACCESS_TOKEN`, no linked
+      `supabase` CLI session, and no `supabase` MCP server available in-session. PostgREST (what
+      the service-role key talks to) has no arbitrary-SQL endpoint, so DDL cannot be executed
+      from this session. Verified empirically: `select 1 from generated_assets` returns
+      `PGRST205 relation not found`. **Action needed:** paste the migration file's contents into
+      the Supabase SQL Editor once (10 seconds), or add a DB connection string / access token to
+      `.env.local` for a future automated session. Note also: `concept_id` is `VARCHAR(100)` (FK
+      to `concepts.id`), not `uuid` as sketched in this brief — `concepts.id` is
+      `VARCHAR(100)` per migration `005_reset_and_graph.sql`.
+- [x] Bucket created — `generated-assets`, **public**, 20MB file size limit, created live via
+      the Storage Admin API (works with the service-role key even though DDL doesn't). Uploads
+      use `cacheControl: "31536000"` (1y, immutable) — confirmed on real test uploads
+      (`cacheControl: 'max-age=31536000'` in the object metadata).
+- [x] banana.ts layered lookup implemented — `src/lib/imagegen/banana.ts`: memory (L1) ->
+      `generated_assets` table (L2) -> generate via fal -> upload to bucket -> upsert row ->
+      populate L1 with the durable Supabase URL. All three generators
+      (`generateInfographic`, `generate3dSourceImage`, `generate3dModel`) updated; `concept_id`
+      threaded from `/api/generate-model`, `/api/generate-model/3d`, `/api/learn/segment-visuals`
+      and their client call sites (`useLessonPlayback.ts`, `LessonView.tsx`, `Experience.tsx`).
+- [ ] Cold-instance cache hit verified via usage_events — **blocked on the migration above.**
+      Ran the layered code against the live (table-less) project twice, in two separate
+      `npx tsx` process invocations (genuine cold L1), via `generate3dSourceImage` (FLUX
+      Schnell, $0.003) + `generate3dModel` (TripoSR, $0.07): L1 memory hit confirmed
+      (0ms repeat call, same URL, same process); L2 lookup/insert correctly caught the missing
+      table and degraded to the fal.ai URL every time (`console.warn` fired, no throw, no
+      lesson-blocking) — this doubles as the "storage failure path" acceptance criterion,
+      proven against a real failure (missing table) rather than a simulated wrong bucket name.
+      Because the table doesn't exist, run 2 necessarily made its own fresh fal.ai calls
+      (4 new `usage_events` rows total, $0.146 spend, well under the $0.50 cap) — once migration
+      016 is applied, rerunning the same two-process probe is expected to show run 2's calls
+      collapse to L2 hits with zero new fal.ai rows. Test artifacts uploaded to the bucket during
+      the probe were deleted afterward to keep it clean.

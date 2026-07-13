@@ -2,6 +2,29 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-07-13 — T06 persistent generation cache
+
+- Branch `dev/t06-persistent-cache` (off `deploy-prep`), not pushed. `src/lib/imagegen/banana.ts`
+  now has a real L2 (Supabase Storage) layer under the existing L1 memory cache: lookup by
+  `(kind, prompt_hash)` in `generated_assets` -> generate via fal -> download -> upload to the
+  `generated-assets` bucket -> upsert row -> serve the durable URL from then on. `concept_id`
+  threaded through `/api/generate-model`, `/api/generate-model/3d`,
+  `/api/learn/segment-visuals` and their call sites. `yarn type-check` / `test` (47/47) /
+  `build` all green.
+- Bucket `generated-assets` (public, immutable cache headers) created live.
+- **Migration `016_generated_assets.sql` is written but NOT applied to the live DB** — this
+  session had only the anon/service-role REST keys (no Postgres connection string, no
+  `SUPABASE_ACCESS_TOKEN`, `supabase` CLI unlinked, no `supabase` MCP available), and PostgREST
+  has no arbitrary-SQL endpoint, so DDL isn't reachable from a plain agent session. **Next
+  session / user action: paste the migration into the Supabase SQL Editor once**, then rerun
+  the cold-instance proof (see `.claude/plans/T06-persistent-generation-cache.md` checklist) to
+  close out the "no new fal.ai usage_events row on repeat" acceptance criterion — verified live
+  that the code degrades gracefully in the table's absence (console.warn, fal.ai URL fallback,
+  never blocks), just not yet that the cache hit itself fires. Real fal.ai spend during testing:
+  $0.146 (2x FLUX Schnell + 2x TripoSR).
+- Also fixed a brief inaccuracy: `concepts.id` is `VARCHAR(100)`, not `uuid` — migration's
+  `concept_id` FK column matches that type.
+
 ## 2026-07-13 — T10 ops hardening (autonomous parts)
 
 - Branch `dev/t10-ops-hardening` (off `deploy-prep`), not pushed. CI (`.github/workflows/ci.yml`),
