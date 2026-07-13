@@ -7,7 +7,7 @@ import { MessagePanel }     from "@/components/learn/MessagePanel";
 import { InputBox }         from "@/components/learn/InputBox";
 import { TeacherControls }  from "@/components/learn/TeacherControls";
 import { ModePicker }       from "@/components/learn/ModePicker";
-import type { PublishedCourse } from "@/components/learn/ModePicker";
+import type { PublishedCourse, GreetingData, SuggestedActionType } from "@/components/learn/ModePicker";
 import { CourseMapView }    from "@/components/learn/CourseMapView";
 import {
   CourseTakeQuizBar,
@@ -16,11 +16,44 @@ import {
 } from "@/components/learn/CourseFlow";
 import { useCourseAutoTeach }  from "@/hooks/useCourseAutoTeach";
 import { useSessionFlush }     from "@/hooks/useSessionFlush";
+import { useTTS }              from "@/hooks/useTTS";
 import OnboardingView from "@/components/onboarding/OnboardingView";
 import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
+
+// V4 teacher memory — cache the daily greeting in sessionStorage so the
+// Haiku call happens at most once per calendar day per user, matching the
+// acceptance criterion "adds < 1 Haiku call/day/user".
+const GREETING_CACHE_KEY = "aristo_greeting_v1";
+
+function todayKey(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function readCachedGreeting(userId: string): GreetingData | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(GREETING_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { userId: string; date: string; data: GreetingData };
+    if (parsed.userId !== userId || parsed.date !== todayKey()) return null;
+    return parsed.data;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedGreeting(userId: string, data: GreetingData): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(
+      GREETING_CACHE_KEY,
+      JSON.stringify({ userId, date: todayKey(), data })
+    );
+  } catch { /* non-critical */ }
+}
 
 function flattenCourseConceptIds(structure: CourseStructure): string[] {
   return structure.modules.flatMap((m) =>
@@ -83,9 +116,12 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const [showReview,    setShowReview]    = useState(false);
   // Phase 9: student dashboard
   const [showDashboard, setShowDashboard] = useState(false);
+  // V4: teacher memory — session-open greeting
+  const [greeting, setGreeting] = useState<GreetingData | null>(null);
 
   // ── Phase 7: session flush + concept tracking ─────────────────────────────
   const { flushSession, addConceptViewed } = useSessionFlush();
+  const { speak } = useTTS();
 
   const handleSignOut = useCallback(async () => {
     await flushSession();
@@ -144,6 +180,35 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     return () => { cancelled = true; clearInterval(id); };
   }, [onboardingDone]);
 
+  // ── V4 teacher memory: session-open greeting ──────────────────────────────
+  // Fetched at most once per calendar day per user (sessionStorage cache);
+  // the avatar speaks it once per page load and it renders as the ModePicker
+  // header + a single suggested-action chip. Never blocks the picker.
+  useEffect(() => {
+    if (!localOnboarded || !userId) return;
+
+    const cached = readCachedGreeting(userId);
+    if (cached) {
+      setGreeting(cached);
+      speak(cached.greeting_speech);
+      return;
+    }
+
+    let cancelled = false;
+    fetch("/api/learn/greeting")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: (GreetingData & { source?: string }) | null) => {
+        if (cancelled || !data?.greeting_speech) return;
+        writeCachedGreeting(userId, data);
+        setGreeting(data);
+        speak(data.greeting_speech);
+      })
+      .catch(() => { /* non-critical — picker still works without a greeting */ });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [localOnboarded, userId]);
+
   // ── Course auto-teach ─────────────────────────────────────────────────────
   useCourseAutoTeach();
 
@@ -159,6 +224,70 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     setMode("free");
     setShowPicker(false);
   }, [setMode]);
+
+  /**
+   * V4 teacher memory — "resume where you left off". Reuses the existing
+   * /api/learn/next (course/review blend) + /api/courses/:id endpoints
+   * rather than a new one: sessionStorage's persisted `course` state resets
+   * on tab close, so a returning-next-day student needs this server-driven
+   * path to land back in the right lesson. Falls back to the ModePicker
+   * (already showing) if there's no course in progress.
+   */
+  const handleResumeCourse = useCallback(async () => {
+    try {
+      const nextRes = await fetch("/api/learn/next");
+      if (!nextRes.ok) throw new Error("learn/next failed");
+      const next = await nextRes.json();
+
+      if (next.type === "review") {
+        setShowPicker(false);
+        setShowReview(true);
+        return;
+      }
+      if (next.type !== "lesson" || !next.courseId || !next.conceptId) {
+        return; // no course in progress — keep the picker open
+      }
+
+      const courseRes = await fetch(`/api/courses/${next.courseId}`);
+      if (!courseRes.ok) throw new Error("course fetch failed");
+      const { course: courseData } = await courseRes.json();
+
+      const conceptIds = flattenCourseConceptIds(courseData.structure);
+      const flatIndex  = Math.max(0, conceptIds.indexOf(next.conceptId));
+
+      setCourse({
+        courseId:          courseData.id,
+        title:             courseData.title,
+        domain:            courseData.domain,
+        topics:            conceptIds,
+        currentTopicIndex: flatIndex,
+        sessionId:         null,
+        structure:         courseData.structure,
+      });
+      setMode("course");
+      setShowPicker(false);
+    } catch (err) {
+      console.error("Resume course failed:", err);
+      // Non-fatal — the picker is already showing as a fallback.
+    }
+  }, [setCourse, setMode]);
+
+  const handleSuggestedAction = useCallback((type: SuggestedActionType) => {
+    fetch("/api/learn/greeting", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ actionType: type, taken: true }),
+    }).catch(() => { /* non-critical */ });
+
+    if (type === "review") {
+      setShowPicker(false);
+      setShowReview(true);
+    } else if (type === "resume_course") {
+      handleResumeCourse();
+    } else {
+      handleExplore();
+    }
+  }, [handleResumeCourse, handleExplore]);
 
   /**
    * Called by ModePicker when user picks or generates a course.
@@ -414,7 +543,12 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
       {/* Mode picker overlay */}
       {localOnboarded && showPicker && (
-        <ModePicker onExplore={handleExplore} onStartCourse={handleStartCourse} />
+        <ModePicker
+          onExplore={handleExplore}
+          onStartCourse={handleStartCourse}
+          greeting={greeting}
+          onSuggestedAction={handleSuggestedAction}
+        />
       )}
 
       {/* Course map overlay */}

@@ -14,14 +14,24 @@ export interface PublishedCourse {
   estimated_hours: number | null;
 }
 
+export type SuggestedActionType = "resume_course" | "review" | "new_topic";
+
+export interface GreetingData {
+  greeting_speech:  string;
+  suggested_action: { type: SuggestedActionType; label: string };
+}
+
 interface ModePickerProps {
-  onExplore:     () => void;
-  onStartCourse: (course: PublishedCourse) => void;
+  onExplore:         () => void;
+  onStartCourse:     (course: PublishedCourse) => void;
+  /** V4 teacher memory — personalized session-open greeting, null while loading/unavailable. */
+  greeting?:         GreetingData | null;
+  onSuggestedAction?: (type: SuggestedActionType) => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
+export function ModePicker({ onExplore, onStartCourse, greeting, onSuggestedAction }: ModePickerProps) {
   const [courses,      setCourses]      = useState<PublishedCourse[] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError,     setGenError]     = useState<string | null>(null);
@@ -73,16 +83,36 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[#F97B2F] font-bold text-lg">✦</span>
             <h2 className="text-lg font-bold text-[#3D2110]">
-              What would you like to do?
+              {greeting ? "Welcome back" : "What would you like to do?"}
             </h2>
           </div>
-          <p className="text-xs text-[#8B6E5A]">
-            Start a course or explore any topic freely.
+          <p className="text-xs text-[#8B6E5A] leading-relaxed">
+            {greeting ? greeting.greeting_speech : "Start a course or explore any topic freely."}
           </p>
         </div>
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+
+          {/* Suggested action — V4 teacher memory */}
+          {greeting && onSuggestedAction && (
+            <button
+              onClick={() => onSuggestedAction(greeting.suggested_action.type)}
+              className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-[#FFF0E4] to-[#FBA962]/30 border border-[#F97B2F]/50 hover:border-[#F97B2F] hover:shadow-aristo-sm transition-all duration-200 group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">↻</span>
+                <div>
+                  <div className="font-bold text-[#F97B2F] text-sm">
+                    {greeting.suggested_action.label}
+                  </div>
+                  <div className="text-[10px] text-[#8B6E5A] mt-0.5">
+                    Suggested for you
+                  </div>
+                </div>
+              </div>
+            </button>
+          )}
 
           {/* Free explore */}
           <button
