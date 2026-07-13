@@ -91,8 +91,18 @@ frequency in /admin/cost.
   resolved_at columns already existed). Agent caught + fixed a privacy bug: personalized
   lessons now SKIP the shared cached_lessons write (was about to leak per-user history
   across users with the same profile signature). Own security pass: no findings.
-- **T07 3D-gen eval**: sonnet agent in flight (report-only, ~$5 API budget) — output will be
-  `.claude/plans/T07-REPORT.md` with the TripoSR-replacement recommendation.
+- **T07 3D-gen eval**: DONE — `.claude/plans/T07-REPORT.md`. Verdict: replace TripoSR with
+  **Tripo3D v2.5** (`tripo3d/tripo/v2.5/image-to-3d`, $0.30/gen, scored 4/5 vs TripoSR 1.5/5;
+  Trellis 2 hallucinates on diagram-style sources, Hunyuan v2 collapses them flat). Swap plan
+  is in the report (banana.ts slug/response/timeout, pricing row, remove the -PI/2 Z-up
+  rotation in GeneratedModel.tsx). Eval truncated by an exhausted fal balance ($1.53 spent);
+  optional ~$0.91 confirmation run after top-up. Swap itself = follow-up task, do after T06
+  merges (persistence makes $0.30/concept one-time).
+
+## ADDITIONAL USER ACTION
+
+7. **fal.ai balance is EXHAUSTED** ("User is locked") — production 3D/image generation will
+   fail until topped up. This also blocks the TripoSR->Tripo3D swap confirmation.
 
 ## USER ACTIONS NEEDED (everything else is blocked on these)
 
