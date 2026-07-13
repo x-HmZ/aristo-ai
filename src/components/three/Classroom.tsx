@@ -1,5 +1,6 @@
 "use client";
 
+import "./dracoDecoder";
 import { useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -337,6 +338,9 @@ export function Classroom({ variant }: ClassroomProps) {
   );
 }
 
-// Preload both variants
+// T02 — 3D asset diet: preload only the default classroom. The alternative
+// (still ~1.5 MB post-compression) was previously preloaded unconditionally
+// even when never shown — it now lazy-loads through the Suspense boundary
+// in Experience.tsx the first time the user switches scenes;
+// TeacherControls.tsx also warms it on hover/click of the "Alt. Room" button.
 useGLTF.preload("/models/classroom_default.glb");
-useGLTF.preload("/models/classroom_alternative.glb");

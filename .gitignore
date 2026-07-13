@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uncompressed 3D asset sources (see .claude/plans/T02-3d-asset-diet.md) —
+# originals for public/models/*.glb; git history has prior committed copies
+/assets-src/
+
+# scratch scripts used for one-off asset tooling, not part of the app
+/.tmp_scripts/

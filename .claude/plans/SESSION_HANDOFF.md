@@ -28,6 +28,35 @@ Last updated: 2026-07-12 (session: full audit + roadmap, then product-vision tie
    inventory, batchable on haiku/sonnet). README updated with the vision tier + recommended
    order V2 -> V1 -> V5 -> V4 -> V3 -> V6, interleaved with T02/T05/T09.
 5. Memory index updated (`roadmap-2026-07-12` memory points here).
+6. **Execution wave 1** (done 2026-07-12, user approved):
+   - **T01 (main session)**: docs committed; drift fixed (decisions.md TripoSR row, stale
+     handoff deleted, plans archived to docs/archive/); `dev/desk-quiz-3d-fixes` pushed and
+     merged into `deploy-prep` (pushed -> production deployed, merge commit `22fdbe4`).
+     Master promotion still pending (user must switch Vercel prod branch in dashboard first).
+   - Work branch **`dev/roadmap-wave-1`** created off deploy-prep; T05/T02/T03 executed on it
+     by sonnet subagents; branch pushed (Vercel preview available).
+   - **T05 done**: teaching/assessment -> `claude-sonnet-5` (intro pricing $2/$10 encoded in
+     pricing.ts with a note re standard $3/$15 from 2026-09-01). Live smoke test: lesson 35 s,
+     quiz 14 s, schemas valid. NOTE: usage_events DB write not observable from sandbox
+     (Supabase host unreachable there) — glance at admin cost page after next real lesson.
+   - **T02 done**: GLBs draco+webp compressed (82.6 -> 30.8 MB on disk), originals in
+     git-ignored `assets-src/`, unused FBX deleted, draco decoder self-hosted
+     (`src/components/three/dracoDecoder.ts`), preloads now default-only (ryan +
+     anims + classroom_default = **3.4 MB cold payload**, was ~78 MB), hover-warm preload on
+     avatar switcher. Morphs/visemes/clips verified identical programmatically.
+   - **T03 done**: branded loading overlay (`LoadingScreenVisual` + `SceneLoadingOverlay`),
+     SSR-rendered 0% state in pages/learn.tsx fallback, real byte progress via useProgress +
+     `sceneReady` first-frame flag, 400 ms anti-flash minimum, 20 s stall -> reload hint,
+     GLB prefetch on sign-in page.
+
+## NEEDS HUMAN VISUAL CHECK before merging wave-1 -> deploy-prep
+
+Open the Vercel preview for `dev/roadmap-wave-1` (or local dev) and verify:
+- [ ] Lipsync + gestures on all 4 avatars (compression kept morph data — confirm rendering)
+- [ ] "Alt. Room" classroom switch (biggest structural compression: 269->96 meshes, 1024px textures)
+- [ ] Marcus/Priya materials (dedup merged one duplicate texture each)
+- [ ] Loading overlay on cold load (throttle network) + no double-flash on fast load
+- [ ] One lesson generates end-to-end on Sonnet 5, then check /admin/cost attribution
 
 ## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
 

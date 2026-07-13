@@ -113,11 +113,11 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] V5 motivation loop
 - [ ] V6 parent weekly digest
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
-- [ ] T01 repo + docs consolidation
-- [ ] T02 3D asset diet
-- [ ] T03 /learn loading experience
+- [x] T01 repo + docs consolidation (2026-07-12 — master promotion still pending Vercel dashboard switch)
+- [x] T02 3D asset diet
+- [x] T03 /learn loading experience
 - [ ] T04 landing page rebuild
-- [ ] T05 LLM model bump
+- [x] T05 LLM model bump
 - [ ] T06 persistent generation cache
 - [ ] T07 3D gen model evaluation
 - [ ] T08 dynamic classroom pass

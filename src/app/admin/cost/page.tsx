@@ -248,7 +248,7 @@ export default function CostPage() {
         <div className="px-5 pt-5">
           <SectionTitle
             title="Spend by model"
-            description="Per-API spend partitioned by the model identifier (e.g. claude-sonnet-4-6, text-embedding-3-small, tripo3d)."
+            description="Per-API spend partitioned by the model identifier (e.g. claude-sonnet-5, text-embedding-3-small, tripo3d)."
           />
         </div>
         {!data || data.byModel.length === 0 ? (

@@ -13,6 +13,14 @@ export default async function SignInPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-aristo-gradient flex items-center justify-center p-4">
+      {/* Prefetch the default /learn GLBs (ryan + classroom) while the user
+          is still typing their credentials, so returning users hit a warm
+          HTTP cache instead of a cold Suspense wait. React 19 hoists these
+          into <head> automatically wherever they're rendered. */}
+      <link rel="prefetch" href="/models/Teacher_Ryan.glb" as="fetch" crossOrigin="anonymous" />
+      <link rel="prefetch" href="/models/animations_Ryan.glb" as="fetch" crossOrigin="anonymous" />
+      <link rel="prefetch" href="/models/classroom_default.glb" as="fetch" crossOrigin="anonymous" />
+
       {/* Background decorative blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-aristo-orange-pale/40 blur-3xl" />

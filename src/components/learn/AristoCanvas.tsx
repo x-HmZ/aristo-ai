@@ -1,8 +1,8 @@
 "use client";
 
 import { OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import { Suspense, type ReactNode } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense, useRef, type ReactNode } from "react";
 import { Experience } from "@/components/three/Experience";
 import { useAristoStore } from "@/store/useAristoStore";
 
@@ -11,6 +11,23 @@ interface DevOverrides {
   deskTarget?:  [number, number, number];
   lambda?:      number;
   paperAnchor?: [number, number, number];
+}
+
+// Bridge component: lives inside the same Suspense boundary as <Experience>,
+// so it only mounts once the initial GLB/texture Suspense resolves. Flips
+// `sceneReady` on the store the first time R3F actually paints a frame with
+// that content — SceneLoadingOverlay (rendered in plain DOM outside the
+// Canvas) waits on this before fading out, so it never drops a beat early
+// onto a blank/unrendered canvas.
+function SceneReadyReporter() {
+  const setSceneReady = useAristoStore((s) => s.setSceneReady);
+  const reported = useRef(false);
+  useFrame(() => {
+    if (reported.current) return;
+    reported.current = true;
+    setSceneReady(true);
+  });
+  return null;
 }
 
 export function AristoCanvas({
@@ -38,6 +55,7 @@ export function AristoCanvas({
     >
       <Suspense fallback={null}>
         <Experience devOverrides={devOverrides} />
+        <SceneReadyReporter />
       </Suspense>
       {children}
       <OrbitControls

@@ -1,14 +1,30 @@
 import type { GetServerSideProps } from "next";
 import { createServerClient } from "@supabase/ssr";
 import dynamic from "next/dynamic";
+import { LoadingScreenVisual } from "@/components/learn/LoadingScreenVisual";
 
 // Load the full client (including R3F) only in the browser.
 // Pages Router uses (pages-browser) webpack layer which does NOT alias
 // react to Next.js's compiled React 19 build, so react-reconciler's
 // React 18 internals are found correctly.
+//
+// The `loading:` fallback below is intentionally the SAME presentational
+// component the real overlay uses once the Canvas is live (see
+// SceneLoadingOverlay.tsx) — LoadingScreenVisual has no dependency on
+// @react-three/drei or the Zustand store, so it is safe to import here and
+// even gets server-rendered as the very first paint (next/dynamic's
+// ssr:false only excludes the LearnClient component itself, not this
+// fallback), eliminating the old blank cream flash entirely.
 const LearnClient = dynamic(
   () => import("@/components/learn/LearnClient").then((m) => m.LearnClient),
-  { ssr: false, loading: () => <div className="min-h-screen bg-[#fdf6ee]" /> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-[100]">
+        <LoadingScreenVisual progress={0} />
+      </div>
+    ),
+  }
 );
 
 interface Props {

@@ -1,6 +1,25 @@
 "use client";
 
+import { useGLTF } from "@react-three/drei";
 import { useAristoStore, type TeacherAvatar, type Classroom } from "@/store/useAristoStore";
+import { AVATAR_ASSETS } from "@/components/three/Teacher";
+
+// T02 — 3D asset diet: only the default avatar + classroom preload at module
+// scope (see Teacher.tsx / Classroom.tsx). Everything else lazy-loads via
+// Suspense on first render, which is correct but leaves a beat of loading
+// spinner on the very first switch. Warm the GLB cache as soon as the user
+// shows intent (hover) or commits (click) so the switch feels instant.
+function preloadAvatar(avatar: TeacherAvatar) {
+  if (avatar === "custom") return; // resolved to a runtime URL, nothing to preload
+  const asset = AVATAR_ASSETS[avatar];
+  useGLTF.preload(`/models/${asset.sceneFile}`);
+  useGLTF.preload(`/models/${asset.animFile}`);
+}
+
+function preloadClassroom(variant: Classroom) {
+  if (variant === "none") return;
+  useGLTF.preload(`/models/classroom_${variant}.glb`);
+}
 
 // ─── Avatar catalog ───────────────────────────────────────────────────────────
 // To add a new avatar: drop Teacher_<key>.glb + animations_<key>.glb into
@@ -83,6 +102,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
             <button
               key={a.value}
               onClick={() => setTeacher(a.value)}
+              onMouseEnter={() => preloadAvatar(a.value)}
               className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                 teacher === a.value
                   ? "bg-[#F97B2F] text-white shadow-sm"
@@ -126,6 +146,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
             <button
               key={e.value}
               onClick={() => setClassroom(e.value)}
+              onMouseEnter={() => preloadClassroom(e.value)}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                 classroom === e.value
                   ? "bg-[#8B5CF6] text-white shadow-sm"

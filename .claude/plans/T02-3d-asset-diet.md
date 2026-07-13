@@ -65,8 +65,36 @@ The Avaturn avatars (Marcus/Priya) carry 4096x4096 baked textures — most of th
 
 ## Status checklist
 
-- [ ] FBX files removed
-- [ ] GLBs compressed (record sizes: before ____ MB -> after ____ MB)
-- [ ] Draco decoder self-hosted and wired
-- [ ] Conditional preloads in place
-- [ ] Morph targets / lipsync verified post-compression
+- [x] FBX files removed (`Sonia.fbx` 7.25 MB, `Ryan.fbx` 2.46 MB — grep-confirmed
+      zero runtime references, all `fbx` hits were Blender-workflow comments)
+- [x] GLBs compressed (per-file, before -> after; see full table in the session
+      report). Total across the 9 compressed files: 82.64 MB -> 30.75 MB.
+      Originals preserved in git-ignored `assets-src/models/`.
+
+  | File | Before | After |
+  |------|-------:|------:|
+  | Teacher_Marcus.glb | 14.13 MB | 9.63 MB |
+  | Teacher_Priya.glb | 13.95 MB | 9.84 MB |
+  | Teacher_Sonia.glb | 6.70 MB | 5.25 MB |
+  | Teacher_Ryan.glb | 3.49 MB | 1.98 MB |
+  | animations_Avaturn.glb | 6.18 MB | 1.98 MB |
+  | animations_Sonia.glb | 729 KB | 499 KB |
+  | animations_Ryan.glb | 578 KB | 478 KB |
+  | classroom_alternative.glb | 36.99 MB | 1.47 MB |
+  | classroom_default.glb | 3.89 MB | 1.12 MB |
+
+- [x] Draco decoder self-hosted and wired (`public/draco/`, copied from
+      `node_modules/three/examples/jsm/libs/draco/gltf/`; wired via
+      `src/components/three/dracoDecoder.ts` calling
+      `useGLTF.setDecoderPath("/draco/")`, imported for its side effect by
+      both `Teacher.tsx` and `Classroom.tsx`)
+- [x] Conditional preloads in place (module scope now preloads only
+      `ryan` + `classroom_default`; all other avatars/classroom lazy-load via
+      the existing Suspense boundaries in `Experience.tsx`, additionally
+      warmed on hover/click in `TeacherControls.tsx`)
+- [x] Morph targets / lipsync verified post-compression (scripted
+      `@gltf-transform/core` inspection, not just visual — see report: morph
+      target counts/names, animation clip names + channel counts, and skin
+      joint counts are byte-for-byte identical pre/post compression for every
+      file). `yarn type-check` and `yarn build` both pass. Browser-level
+      lipsync/render check still recommended (see final report risk note).

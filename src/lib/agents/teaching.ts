@@ -321,6 +321,7 @@ Now produce the full lesson. Fill in ALL old phase-block fields as before, AND p
 const _phaseBase = {
   activate: {
     type: "object" as const,
+    additionalProperties: false,
     properties: {
       content:                  { type: "string" },
       prerequisites_referenced: { type: "array", items: { type: "string" } },
@@ -329,6 +330,7 @@ const _phaseBase = {
   },
   explain: {
     type: "object" as const,
+    additionalProperties: false,
     properties: {
       analogy:            { type: "string" },
       formal_explanation: { type: "string" },
@@ -338,6 +340,7 @@ const _phaseBase = {
   },
   demonstrate: {
     type: "object" as const,
+    additionalProperties: false,
     properties: {
       example_description:   { type: "string" },
       narration_pre_visual:  { type: "string" },
@@ -350,6 +353,7 @@ const _phaseBase = {
   },
   challenge: {
     type: "object" as const,
+    additionalProperties: false,
     properties: {
       question: { type: "string" },
       hint:     { type: "string" },
@@ -359,6 +363,7 @@ const _phaseBase = {
   },
   connect: {
     type: "object" as const,
+    additionalProperties: false,
     properties: {
       content:      { type: "string" },
       next_concept: { type: "string" },
@@ -369,6 +374,7 @@ const _phaseBase = {
 
 const _metadataSchema = {
   type: "object" as const,
+  additionalProperties: false,
   properties: {
     estimated_read_time_minutes: { type: "number" },
     bloom_level_taught:          { type: "string" },
@@ -380,6 +386,7 @@ const _metadataSchema = {
       type:  "array" as const,
       items: {
         type: "object",
+        additionalProperties: false,
         properties: {
           label: { type: "string" },
           bias:  { type: "string", enum: ["front", "left", "right", "back", "top", "bottom"] },
@@ -406,9 +413,11 @@ const lessonTool: Anthropic.Tool = {
   description: "Return a structured 5-phase lesson payload.",
   input_schema: {
     type: "object",
+    additionalProperties: false,
     properties: {
       phases: {
         type: "object",
+        additionalProperties: false,
         properties: _phaseBase,
         required: ["activate", "explain", "demonstrate", "challenge", "connect"],
       },
@@ -421,6 +430,7 @@ const lessonTool: Anthropic.Tool = {
 // Adaptive tool — dual-emit: old phase-block fields + new segments array
 const _segmentVisualSchema = {
   type: "object",
+  additionalProperties: false,
   properties: {
     prompt:           { type: "string" },
     style:            { type: "string", enum: ["infographic", "diagram", "comparison", "process_flow", "annotated_photo"] },
@@ -432,6 +442,7 @@ const _segmentVisualSchema = {
 
 const _segmentSchema = {
   type: "object",
+  additionalProperties: false,
   properties: {
     id:          { type: "string" },
     phase:       { type: "string", enum: ["activate", "explain", "demonstrate", "challenge", "connect"] },
@@ -478,6 +489,7 @@ const lessonToolAdaptive: Anthropic.Tool = {
   description: "Return a structured 5-phase lesson payload with ordered narration segments.",
   input_schema: {
     type: "object",
+    additionalProperties: false,
     properties: {
       segments: {
         type: "array",
@@ -486,6 +498,7 @@ const lessonToolAdaptive: Anthropic.Tool = {
       },
       phases: {
         type: "object",
+        additionalProperties: false,
         properties: _adaptivePhases,
         required: ["activate", "explain", "demonstrate", "challenge", "connect"],
       },
@@ -550,6 +563,50 @@ ${ragContext.length > 0
 Teach this concept following the 5-Phase Protocol. Tailor the depth and style to the learner profile above.`;
 }
 
+// ─── Structural validation ─────────────────────────────────────────────────────
+// Guards against the observed Sonnet-5 failure mode: the model returns a
+// tool_use call whose top-level `phases`/`segments` are empty because it
+// stuffed the entire lesson payload into `metadata` as a JSON string blob.
+
+const PHASE_KEYS = ["activate", "explain", "demonstrate", "challenge", "connect"] as const;
+
+type ParsedLessonInput = {
+  phases?:    Partial<LessonPayload["phases"]>;
+  metadata?:  LessonPayload["metadata"];
+  segments?:  NarrationSegment[];
+};
+
+/** Returns a list of human-readable problems; empty array means the payload is well-formed. */
+function validateLessonInput(parsed: ParsedLessonInput, isAdaptive: boolean): string[] {
+  const problems: string[] = [];
+
+  if (!parsed.phases || typeof parsed.phases !== "object") {
+    problems.push("top-level `phases` object is missing");
+  } else {
+    for (const key of PHASE_KEYS) {
+      const block = parsed.phases[key] as Record<string, unknown> | undefined;
+      if (!block || typeof block !== "object" || Object.keys(block).length === 0) {
+        problems.push(`phases.${key} is missing or empty`);
+      }
+    }
+  }
+
+  if (isAdaptive) {
+    if (!Array.isArray(parsed.segments) || parsed.segments.length === 0) {
+      problems.push("top-level `segments` array is missing or empty");
+    } else {
+      const badIndex = parsed.segments.findIndex(
+        (s) => !s || typeof s !== "object" || !s.id || !s.phase || !s.role || !s.text
+      );
+      if (badIndex !== -1) {
+        problems.push(`segments[${badIndex}] is missing a required field (id/phase/role/text)`);
+      }
+    }
+  }
+
+  return problems;
+}
+
 // ─── Main generator ────────────────────────────────────────────────────────────
 
 export async function generateLesson(
@@ -558,49 +615,82 @@ export async function generateLesson(
   ragContext: string[] = []
 ): Promise<LessonPayload> {
   const isAdaptive = process.env.NEXT_PUBLIC_ADAPTIVE_VISUALS === "true";
-  const userMessage = buildUserMessage(concept, profile, ragContext);
+  const baseUserMessage = buildUserMessage(concept, profile, ragContext);
+  const tool = isAdaptive ? lessonToolAdaptive : lessonTool;
+  const systemText = isAdaptive ? SYSTEM_PROMPT_ADAPTIVE : SYSTEM_PROMPT;
 
-  const response = await client.messages.create(
-    {
-      model:      MODELS.teaching,
-      max_tokens: isAdaptive ? 8192 : 4096,
-      system: [
-        {
-          type:          "text",
-          text:          isAdaptive ? SYSTEM_PROMPT_ADAPTIVE : SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" },
+  const CORRECTIVE_NOTE = `
+
+<correction_notice>
+Your previous response was structurally invalid: the lesson fields must be
+populated at the top level of the tool input (top-level "phases", each phase
+block nonempty, and — when adaptive visuals are on — a nonempty top-level
+"segments" array), NOT nested or serialized as a JSON string inside
+"metadata" or any other field. Emit every field directly per the tool's
+input schema.
+</correction_notice>`;
+
+  let lastProblems: string[] = [];
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const isRetry = attempt === 1;
+    const userMessage = isRetry ? `${baseUserMessage}${CORRECTIVE_NOTE}` : baseUserMessage;
+
+    const response = await client.messages.create(
+      {
+        model:      MODELS.teaching,
+        max_tokens: isAdaptive ? 8192 : 4096,
+        system: [
+          {
+            type:          "text",
+            text:          systemText,
+            cache_control: { type: "ephemeral" },
+          },
+        ],
+        tools:       [tool],
+        tool_choice: { type: "tool", name: "deliver_lesson" },
+        messages:    [{ role: "user", content: userMessage }],
+      },
+      {
+        feature:  isRetry ? "teach.lesson.retry" : "teach.lesson",
+        metadata: { concept_id: concept.id, adaptive: isAdaptive },
+      }
+    );
+
+    const toolUse = response.content.find((b) => b.type === "tool_use");
+    if (!toolUse || toolUse.type !== "tool_use") {
+      lastProblems = ["model did not return a tool_use block"];
+      console.warn(`[TeachingAgent] attempt ${attempt + 1}/2 failed: ${lastProblems[0]}`);
+      continue;
+    }
+
+    const parsed = toolUse.input as ParsedLessonInput;
+    const problems = validateLessonInput(parsed, isAdaptive);
+
+    if (problems.length === 0) {
+      return {
+        concept_id:   concept.id,
+        concept_name: concept.name,
+        phases:       parsed.phases as LessonPayload["phases"],
+        segments:     parsed.segments,
+        metadata:     parsed.metadata ?? {
+          estimated_read_time_minutes: 8,
+          bloom_level_taught:          "understand",
+          depth_level:                 "moderate",
+          should_generate_model:       false,
         },
-      ],
-      tools:       [isAdaptive ? lessonToolAdaptive : lessonTool],
-      tool_choice: { type: "tool", name: "deliver_lesson" },
-      messages:    [{ role: "user", content: userMessage }],
-    },
-    { feature: "teach.lesson", metadata: { concept_id: concept.id, adaptive: isAdaptive } }
-  );
+      };
+    }
 
-  const toolUse = response.content.find((b) => b.type === "tool_use");
-  if (!toolUse || toolUse.type !== "tool_use") {
-    throw new Error("TeachingAgent: model did not return tool_use");
+    lastProblems = problems;
+    console.warn(
+      `[TeachingAgent] attempt ${attempt + 1}/2 produced a structurally invalid lesson for concept "${concept.id}": ${problems.join("; ")}`
+    );
   }
 
-  const parsed = toolUse.input as {
-    phases:   LessonPayload["phases"];
-    metadata: LessonPayload["metadata"];
-    segments?: NarrationSegment[];
-  };
-
-  return {
-    concept_id:   concept.id,
-    concept_name: concept.name,
-    phases:       parsed.phases,
-    segments:     parsed.segments,
-    metadata:     parsed.metadata ?? {
-      estimated_read_time_minutes: 8,
-      bloom_level_taught:          "understand",
-      depth_level:                 "moderate",
-      should_generate_model:       false,
-    },
-  };
+  throw new Error(
+    `TeachingAgent: model returned a structurally invalid lesson payload after retry for concept "${concept.id}": ${lastProblems.join("; ")}`
+  );
 }
 
 // ─── Explain-more helper (Haiku) ──────────────────────────────────────────────
