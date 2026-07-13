@@ -109,7 +109,8 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] V1 raise-hand teacher
 - [ ] V2 instant public demo
 - [ ] V3 live blackboard worked examples
-- [ ] V4 teacher memory
+- [x] V4 teacher memory (2026-07-13, branch `dev/v4-teacher-memory` — see checklist
+      in V4-teacher-memory.md for details; not pushed)
 - [ ] V5 motivation loop
 - [ ] V6 parent weekly digest
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
