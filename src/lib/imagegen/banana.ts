@@ -13,18 +13,31 @@
  * system prompt cap them at ~40 words) while still guaranteeing a
  * consistent visual treatment per style category.
  *
- * Caching: a hash-keyed in-memory map.  Vercel Fluid Compute reuses
- * function instances across concurrent requests, so a Map living at module
- * scope acts as a warm cache — second students hitting the same lesson
- * pay zero fal.ai cost for the same prompt+style pair until the instance
- * is recycled.  A persistent (Supabase Storage) layer can be added later
- * by replacing `cacheGet` / `cacheSet`.
+ * Caching — two layers:
+ *   L1 (memory)  — hash-keyed in-memory Maps.  Vercel Fluid Compute reuses
+ *                  function instances across concurrent requests, so a Map
+ *                  living at module scope acts as a warm cache — second
+ *                  students hitting the same lesson pay zero fal.ai cost
+ *                  for the same prompt+style pair until the instance is
+ *                  recycled or the 12h TTL lapses.
+ *   L2 (Supabase) — `public.generated_assets` (migration 016) + the public
+ *                  `generated-assets` Storage bucket.  fal.ai URLs are
+ *                  temporary; the first generation for a given
+ *                  (kind, prompt_hash) is downloaded server-side and
+ *                  re-uploaded so every subsequent request — even from a
+ *                  cold instance days later — serves the durable Supabase
+ *                  URL and never calls fal.ai again.  Persistence is best
+ *                  effort: any storage/DB failure (including the ~3s
+ *                  timeout guard) degrades to returning the fal.ai URL
+ *                  as-is — a slow or broken storage layer must never block
+ *                  a lesson.
  */
 
 import { fal }                 from "@fal-ai/client";
 import { createHash }          from "crypto";
 import type { SegmentVisual }  from "@/lib/agents/teaching";
 import { logFalGeneration }    from "@/lib/llm/fal";
+import { createServiceClient } from "@/lib/supabase/server";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -47,6 +60,13 @@ export interface GenerateInfographicOpts {
    * to e.g. "lesson.segment_visual" when called from /api/learn/segment-visuals.
    */
   feature?: string;
+  /**
+   * Concept this image belongs to, when known (lesson / segment-visuals
+   * paths). Null in free-mode, which has no concept graph entry. Threaded
+   * onto the `generated_assets` row for future admin per-concept tooling —
+   * never used for cache keying (prompt_hash already disambiguates).
+   */
+  conceptId?: string | null;
 }
 
 export interface GenerateInfographicResult {
@@ -132,6 +152,131 @@ function cacheSet(map: Map<string, CacheEntry>, key: string, url: string): void 
 const cacheKey = (prompt: string, style: ImageStyle): string =>
   hashKey(`${style}|${prompt}`);
 
+// ─── L2 persistence — Supabase Storage + generated_assets table ─────────────
+//
+// `prompt_hash` reuses the exact same hash the L1 memory cache computes, so
+// the two layers key identically. Never throws — every function here is
+// wrapped so a storage/DB outage degrades to "as if L2 didn't exist" rather
+// than failing a lesson.
+
+type AssetKind = "infographic" | "flux_source" | "model_3d";
+
+const STORAGE_BUCKET      = "generated-assets";
+const PERSIST_TIMEOUT_MS  = 3000; // hard cap on the upload+insert round trip
+
+const ASSET_EXT: Record<AssetKind, string> = {
+  infographic: "png",
+  flux_source: "png",
+  model_3d:    "glb",
+};
+
+const ASSET_CONTENT_TYPE: Record<AssetKind, string> = {
+  infographic: "image/png",
+  flux_source: "image/png",
+  model_3d:    "model/gltf-binary",
+};
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (err)   => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
+/**
+ * L2 lookup — hit means a previous request (any instance, any day) already
+ * persisted this exact (kind, prompt_hash). Returns the durable public URL,
+ * or null on a miss / any failure (table missing, RLS, network — all
+ * treated the same: fall through to generation).
+ */
+async function lookupPersistedAsset(
+  kind: AssetKind,
+  promptHash: string
+): Promise<string | null> {
+  try {
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from("generated_assets")
+      .select("storage_path")
+      .eq("kind", kind)
+      .eq("prompt_hash", promptHash)
+      .maybeSingle();
+    if (error || !data) return null;
+
+    const { data: pub } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(data.storage_path);
+    return pub?.publicUrl ?? null;
+  } catch (err) {
+    console.warn(`[banana] L2 lookup failed (${kind}), falling back to generation:`, err);
+    return null;
+  }
+}
+
+/**
+ * Download the fal.ai artifact server-side and re-upload it to the
+ * `generated-assets` bucket, then record the row. Bounded by
+ * `PERSIST_TIMEOUT_MS` so a slow storage write can never meaningfully delay
+ * the response — on timeout or any error this logs a warning and returns
+ * null, and the caller falls back to the (temporary) fal.ai URL.
+ */
+async function persistAsset(opts: {
+  kind:        AssetKind;
+  promptHash:  string;
+  sourceUrl:   string;
+  sourceModel: string;
+  conceptId?:  string | null;
+}): Promise<string | null> {
+  const { kind, promptHash, sourceUrl, sourceModel, conceptId = null } = opts;
+
+  const run = async (): Promise<string | null> => {
+    const res = await fetch(sourceUrl);
+    if (!res.ok) throw new Error(`source fetch failed: HTTP ${res.status}`);
+    const bytes = Buffer.from(await res.arrayBuffer());
+
+    const supabase = createServiceClient();
+    const path = `${kind}/${promptHash}.${ASSET_EXT[kind]}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, bytes, {
+        contentType:  ASSET_CONTENT_TYPE[kind],
+        cacheControl: "31536000", // 1y — immutable, content-addressed path
+        upsert:       true,
+      });
+    if (uploadError) throw uploadError;
+
+    const { error: insertError } = await supabase
+      .from("generated_assets")
+      .upsert(
+        {
+          kind,
+          prompt_hash:  promptHash,
+          concept_id:   conceptId,
+          storage_path: path,
+          source_model: sourceModel,
+          bytes:        bytes.byteLength,
+        },
+        { onConflict: "kind,prompt_hash" }
+      );
+    if (insertError) throw insertError;
+
+    const { data: pub } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+    return pub?.publicUrl ?? null;
+  };
+
+  try {
+    return await withTimeout(run(), PERSIST_TIMEOUT_MS);
+  } catch (err) {
+    console.warn(
+      `[banana] L2 persistence skipped for ${kind} (serving fal.ai URL instead):`,
+      err instanceof Error ? err.message : err
+    );
+    return null;
+  }
+}
+
 // ─── fal config — idempotent ──────────────────────────────────────────────────
 
 let _falConfigured = false;
@@ -154,7 +299,7 @@ export async function generateInfographic(
 ): Promise<GenerateInfographicResult> {
   const {
     prompt, style, resolution = "1K", bypassCache = false,
-    userId = null, feature = "lesson.teaching_image",
+    userId = null, feature = "lesson.teaching_image", conceptId = null,
   } = opts;
   if (!prompt || !prompt.trim()) {
     throw new Error("generateInfographic: prompt is required");
@@ -168,6 +313,14 @@ export async function generateInfographic(
   if (!bypassCache) {
     const hit = cacheGet(_cache, key);
     if (hit) return { imageUrl: hit, cached: true };
+
+    // L2 — a prior request (any instance, any day) may have already
+    // persisted this exact prompt+style. A hit here means zero fal.ai cost.
+    const persistedHit = await lookupPersistedAsset("infographic", key);
+    if (persistedHit) {
+      cacheSet(_cache, key, persistedHit);
+      return { imageUrl: persistedHit, cached: true };
+    }
   }
 
   ensureFalConfigured();
@@ -184,17 +337,30 @@ export async function generateInfographic(
   const url = result.data?.images?.[0]?.url;
   if (!url) throw new Error("Nano Banana Pro returned no image");
 
+  const sourceModel = resolution === "2K" ? "fal-ai/nano-banana-pro/2K" : "fal-ai/nano-banana-pro";
+
   // Cost attribution — fire-and-forget. Skipped on cache hit upstream.
   logFalGeneration({
-    model:    resolution === "2K" ? "fal-ai/nano-banana-pro/2K" : "fal-ai/nano-banana-pro",
+    model:    sourceModel,
     feature,
     user_id:  userId,
     units:    1,
     metadata: { style: resolvedStyle, resolution, prompt_len: fullPrompt.length },
   });
 
-  cacheSet(_cache, key, url);
-  return { imageUrl: url, cached: false };
+  // L2 write-through — best effort, bounded by PERSIST_TIMEOUT_MS. On
+  // failure/timeout persistedUrl is null and we fall back to the fal URL.
+  const persistedUrl = await persistAsset({
+    kind:        "infographic",
+    promptHash:  key,
+    sourceUrl:   url,
+    sourceModel,
+    conceptId,
+  });
+  const canonicalUrl = persistedUrl ?? url;
+
+  cacheSet(_cache, key, canonicalUrl);
+  return { imageUrl: canonicalUrl, cached: false };
 }
 
 /**
@@ -211,6 +377,7 @@ export async function generate3dSourceImage(
   prompt:        string,
   userId?:       string | null,
   bypassCache:   boolean = false,
+  conceptId?:    string | null,
 ): Promise<string> {
   if (!prompt || !prompt.trim()) {
     throw new Error("generate3dSourceImage: prompt is required");
@@ -220,6 +387,12 @@ export async function generate3dSourceImage(
   if (!bypassCache) {
     const hit = cacheGet(_cacheFlux, key);
     if (hit) return hit;
+
+    const persistedHit = await lookupPersistedAsset("flux_source", key);
+    if (persistedHit) {
+      cacheSet(_cacheFlux, key, persistedHit);
+      return persistedHit;
+    }
   }
 
   ensureFalConfigured();
@@ -243,8 +416,17 @@ export async function generate3dSourceImage(
     metadata: { prompt_len: trimmed.length },
   });
 
-  cacheSet(_cacheFlux, key, url);
-  return url;
+  const persistedUrl = await persistAsset({
+    kind:        "flux_source",
+    promptHash:  key,
+    sourceUrl:   url,
+    sourceModel: "fal-ai/flux/schnell",
+    conceptId:   conceptId ?? null,
+  });
+  const canonicalUrl = persistedUrl ?? url;
+
+  cacheSet(_cacheFlux, key, canonicalUrl);
+  return canonicalUrl;
 }
 
 /**
@@ -264,6 +446,7 @@ export async function generate3dModel(
   imageUrl: string,
   userId?:  string | null,
   bypassCache: boolean = false,
+  conceptId?: string | null,
 ): Promise<{ modelUrl: string; cached: boolean }> {
   if (!imageUrl || !imageUrl.trim()) {
     throw new Error("generate3dModel: imageUrl is required");
@@ -273,6 +456,12 @@ export async function generate3dModel(
   if (!bypassCache) {
     const hit = cacheGet(_cache3d, key);
     if (hit) return { modelUrl: hit, cached: true };
+
+    const persistedHit = await lookupPersistedAsset("model_3d", key);
+    if (persistedHit) {
+      cacheSet(_cache3d, key, persistedHit);
+      return { modelUrl: persistedHit, cached: true };
+    }
   }
 
   ensureFalConfigured();
@@ -297,6 +486,15 @@ export async function generate3dModel(
     metadata: { source_image: trimmed },
   });
 
-  cacheSet(_cache3d, key, modelUrl);
-  return { modelUrl, cached: false };
+  const persistedUrl = await persistAsset({
+    kind:        "model_3d",
+    promptHash:  key,
+    sourceUrl:   modelUrl,
+    sourceModel: "fal-ai/triposr",
+    conceptId:   conceptId ?? null,
+  });
+  const canonicalUrl = persistedUrl ?? modelUrl;
+
+  cacheSet(_cache3d, key, canonicalUrl);
+  return { modelUrl: canonicalUrl, cached: false };
 }

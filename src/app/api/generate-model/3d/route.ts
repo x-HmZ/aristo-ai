@@ -32,10 +32,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "FAL_KEY not configured" }, { status: 500 });
     }
 
-    const { imageUrl } = await req.json();
-    if (!imageUrl) return NextResponse.json({ error: "imageUrl is required" }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const { imageUrl, conceptId } = body ?? {};
+    if (typeof imageUrl !== "string" || !imageUrl.trim()) {
+      return NextResponse.json({ error: "imageUrl is required" }, { status: 400 });
+    }
+    if (conceptId !== undefined && conceptId !== null && typeof conceptId !== "string") {
+      return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
+    }
+    const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
-    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id);
+    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId);
 
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {

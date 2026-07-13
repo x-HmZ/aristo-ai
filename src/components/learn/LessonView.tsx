@@ -589,6 +589,7 @@ export function LessonView({
         imagePrompt:   model_image_prompt,
         model3dPrompt: model_3d_prompt,
         topic:         lesson.concept_name,
+        conceptId:     lesson.concept_id,
       }),
     })
       .then((r) => r.json())
