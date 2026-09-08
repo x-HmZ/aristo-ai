@@ -59,6 +59,13 @@ export interface SegmentVisual {
   style: "infographic" | "diagram" | "comparison" | "process_flow" | "annotated_photo";
   callouts?: string[];        // 1–3 short labels the avatar references in speech
   persists_to_next?: boolean; // keep this image for the next segment too
+  /**
+   * Pre-resolved static image URL (frozen demo lessons only). When present,
+   * useLessonPlayback's demoMode path uses this directly instead of firing
+   * /api/learn/segment-visuals — never populated by the live generation
+   * pipeline.
+   */
+  imageUrl?: string;
 }
 
 export interface NarrationSegment {
@@ -125,6 +132,13 @@ export interface LessonPayload {
     model_3d_prompt?:            string;
     model_annotations?:          ModelAnnotation[];
     model_callouts?:             string[];
+    /**
+     * Pre-resolved static GLB URL (frozen demo lessons only). When present,
+     * useLessonPlayback's demoMode path wires this straight to the "View in
+     * 3D" toggle instead of calling /api/generate-model + /api/generate-model/3d
+     * — never populated by the live generation pipeline.
+     */
+    demo_model_url?: string;
   };
 }
 

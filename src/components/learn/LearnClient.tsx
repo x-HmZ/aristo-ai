@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AristoCanvas }        from "@/components/learn/AristoCanvas";
+import { preloadDefaultAvatar } from "@/components/three/Teacher";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { MessagePanel }     from "@/components/learn/MessagePanel";
 import { InputBox }         from "@/components/learn/InputBox";
@@ -94,6 +95,14 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     await supabase.auth.signOut();
     window.location.href = "/sign-in";
   }, [flushSession]);
+
+  // Warm the default avatar's GLBs. Teacher.tsx used to do this at module
+  // scope, which also charged /demo for an avatar it does not render (see
+  // preloadDefaultAvatar's comment). /learn is the page that actually starts
+  // on ryan, so it owns the preload.
+  useEffect(() => {
+    preloadDefaultAvatar();
+  }, []);
 
   // ── Boot: hydrate store ───────────────────────────────────────────────────
   useEffect(() => {

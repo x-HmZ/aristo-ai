@@ -47,7 +47,7 @@ export default function HomePage() {
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-8 rounded-xl text-base font-semibold shadow-aristo hover:shadow-aristo-lg hover:-translate-y-1 transition-all"
           >
-            <Link href="/sign-up">Start learning free</Link>
+            <Link href="/demo">Try a live lesson</Link>
           </Button>
           <Button
             asChild
@@ -55,9 +55,12 @@ export default function HomePage() {
             size="lg"
             className="h-14 px-8 rounded-xl text-base font-semibold border-border hover:bg-secondary transition-all"
           >
-            <Link href="/sign-in">Sign in</Link>
+            <Link href="/sign-up">Get started</Link>
           </Button>
         </div>
+        <p className="text-xs text-muted-foreground mt-3 animate-fade-in [animation-delay:0.35s]">
+          No account needed — jump straight into a full 3D lesson.
+        </p>
       </section>
 
       {/* Features strip */}

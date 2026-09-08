@@ -11,6 +11,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { QuizQuestion }                         from "@/lib/agents/assessment";
+import { evaluateObjective }                         from "@/lib/quiz/localEval";
 import { useAristoStore }                            from "@/store/useAristoStore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,6 +31,14 @@ interface QuizViewProps {
   onComplete: (score: number, total: number) => void;
   /** "lesson" (default) writes initial SRS seed; "review" runs full FSRS update */
   context?:   "lesson" | "review";
+  /**
+   * True only in the unauthenticated /demo route. Evaluates every answer
+   * with the pure evaluateObjective() helper and skips /api/quiz/submit +
+   * /api/quiz/complete entirely — the demo desk quiz only ever uses
+   * objective question types (multiple_choice / true_false), so this is
+   * always exact, not a degraded fallback.
+   */
+  localOnly?: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -483,7 +492,7 @@ function FeedbackBanner({ result }: { result: AnswerResult }) {
 
 // ─── Main QuizView ────────────────────────────────────────────────────────────
 
-export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson" }: QuizViewProps) {
+export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson", localOnly = false }: QuizViewProps) {
   const incrementSignal = useAristoStore((s) => s.incrementSignal);
 
   const [currentIdx,    setCurrentIdx]    = useState(0);
@@ -517,6 +526,20 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
     incrementSignal("questions_attempted");
 
     setIsEvaluating(true);
+
+    if (localOnly) {
+      // Demo path: pure client-side eval, no network, no mastery/SRS writes.
+      const data = evaluateObjective(currentQ, userAnswer);
+      if (data.is_correct) incrementSignal("questions_correct");
+      setResults((prev) => {
+        const next = [...prev];
+        next[currentIdx] = data;
+        return next;
+      });
+      setScores((prev) => [...prev, data.score]);
+      setIsEvaluating(false);
+      return;
+    }
 
     try {
       const res = await fetch("/api/quiz/submit", {
@@ -565,7 +588,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
     } finally {
       setIsEvaluating(false);
     }
-  }, [currentQ, currentR, currentIdx, isEvaluating]);
+  }, [currentQ, currentR, currentIdx, isEvaluating, localOnly, incrementSignal]);
 
   // ── Advance to next question ──────────────────────────────────────────────
   const handleNext = useCallback(async () => {
@@ -577,23 +600,25 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       const correct = results.filter((r) => r?.is_correct).length;
       setIsDone(true);
 
-      // Persist attempt
-      try {
-        await fetch("/api/quiz/complete", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({
-            conceptId,
-            score: correct,
-            total,
-            context,
-          }),
-        });
-      } catch { /* non-critical */ }
+      // Persist attempt — skipped in the demo path (no learner row exists).
+      if (!localOnly) {
+        try {
+          await fetch("/api/quiz/complete", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({
+              conceptId,
+              score: correct,
+              total,
+              context,
+            }),
+          });
+        } catch { /* non-critical */ }
+      }
 
       onComplete(correct, total);
     }
-  }, [currentIdx, totalQs, results, conceptId, onComplete]);
+  }, [currentIdx, totalQs, results, conceptId, onComplete, context, localOnly]);
 
   if (!currentQ || isDone) return null;
 

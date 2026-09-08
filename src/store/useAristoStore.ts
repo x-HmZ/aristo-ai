@@ -9,6 +9,23 @@ export type { LessonPayload, CourseStructure };
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type TeacherMode   = "course" | "free";
+/**
+ * The avatar a new session starts on, and the only one preloaded eagerly.
+ *
+ * marcus rather than ryan: only the Avaturn rigs (marcus, priya, custom) carry
+ * the 15 ARKit viseme blend shapes wawa-lipsync drives, so ryan and sonia can
+ * never lipsync -- their mouths do not move while the teacher narrates. That is
+ * the product's central visual claim, so the default has to be a rig that can
+ * actually do it.
+ *
+ * The cost is payload: marcus + the shared Avaturn animation pack is ~11.6 MB
+ * against ryan's ~2.5 MB, so a cold /learn is roughly 12.7 MB rather than the
+ * 3.6 MB T02 got it down to. Anything preloading or prefetching "the default"
+ * must read this constant rather than hardcoding a name -- Teacher.tsx's
+ * preloadDefaultAvatar() and the sign-in page's <link rel="prefetch"> both do.
+ */
+export const DEFAULT_TEACHER = "marcus" as const;
+
 export type TeacherAvatar =
   | "ryan"
   | "sonia"
@@ -198,6 +215,15 @@ interface AristoState {
    */
   sceneReady: boolean;
 
+  /**
+   * True only inside the unauthenticated /demo route. Gates every network
+   * call in the lesson-playback path (segment-visuals, generate-model,
+   * challenge eval, quiz submit/complete, lesson-complete telemetry) and
+   * forces browser speechSynthesis instead of /api/tts, so a demo session
+   * never touches a paid API. Never set true on the authed /learn path.
+   */
+  demoMode: boolean;
+
   // ── Actions ──────────────────────────────────────────────────────────────
 
   setUserId: (id: string | null) => void;
@@ -266,6 +292,9 @@ interface AristoState {
 
   // Scene readiness (loading overlay)
   setSceneReady: (ready: boolean) => void;
+
+  // Demo mode (unauthenticated /demo route)
+  setDemoMode: (v: boolean) => void;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -301,7 +330,7 @@ export const useAristoStore = create<AristoState>()(
       currentConceptId:   null,
       onboardingDone:     false,
       behavioralSignals:  defaultSignals,
-      teacher:            "ryan",
+      teacher:            DEFAULT_TEACHER,
       classroom:          "default",
       mode:               "free",
       course:             defaultCourse,
@@ -325,6 +354,7 @@ export const useAristoStore = create<AristoState>()(
       activeQuiz:         null,
       quizResult:         null,
       sceneReady:         false,
+      demoMode:           false,
 
       setUserId:    (id) => set({ userId: id }),
 
@@ -404,6 +434,8 @@ export const useAristoStore = create<AristoState>()(
       setQuizResult: (r) => set({ quizResult: r }),
 
       setSceneReady: (ready) => set({ sceneReady: ready }),
+
+      setDemoMode: (v) => set({ demoMode: v }),
     }),
     {
       name: "aristo-session",

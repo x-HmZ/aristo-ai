@@ -1,7 +1,7 @@
 "use client";
 
 import "./dracoDecoder";
-import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
+import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -474,14 +474,26 @@ export function Teacher({
   );
 }
 
-// T02 — 3D asset diet: only preload the store's default avatar ("ryan", see
-// useAristoStore.ts) at module load time. Sonia/Marcus/Priya/custom are
-// larger (Avaturn PBR GLBs) and previously all downloaded eagerly even
-// though only one avatar renders at a time — that cost ~35 MB of dead
-// weight on every cold `/learn` load. They now lazy-load through the
-// existing Suspense boundary (see Experience.tsx SafeTeacher) the first
-// time a user switches avatars; TeacherControls.tsx additionally warms the
+// T02 — 3D asset diet: only preload the store's default avatar (DEFAULT_TEACHER
+// in useAristoStore.ts). The others are larger (Avaturn PBR GLBs) and previously
+// all downloaded eagerly even though only one avatar renders at a time — that
+// cost ~35 MB of dead weight on every cold `/learn` load. They now lazy-load
+// through the existing Suspense boundary (see Experience.tsx SafeTeacher) the
+// first time a user switches avatars; TeacherControls.tsx additionally warms the
 // GLB cache on hover/click so the switch feels instant despite not being
 // preloaded upfront.
-useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.sceneFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.animFile}`);
+//
+// This is a function rather than a module-scope side effect because importing
+// this module does NOT imply ryan is the avatar that will render. /demo renders
+// marcus (only the Avaturn rigs carry viseme morphs) yet still pulls Teacher.tsx
+// into its graph, so an unconditional preload here downloaded 2.5 MB of ryan
+// that page never uses — on the funnel page, where payload matters most.
+// Callers that know ryan is the avatar (i.e. /learn) invoke this on mount.
+//
+// Note the `import "./dracoDecoder"` at the top of this file is still a
+// module-scope side effect, and must stay one: it sets the shared decoder path
+// before any useGLTF call resolves.
+export function preloadDefaultAvatar(): void {
+  useGLTF.preload(`/models/${AVATAR_ASSETS[DEFAULT_TEACHER].sceneFile}`);
+  useGLTF.preload(`/models/${AVATAR_ASSETS[DEFAULT_TEACHER].animFile}`);
+}

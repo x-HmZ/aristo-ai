@@ -49,6 +49,7 @@ interface DeskQuizProps {
 export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
   const activeQuiz    = useAristoStore((s) => s.activeQuiz);
   const userId        = useAristoStore((s) => s.userId);
+  const demoMode       = useAristoStore((s) => s.demoMode);
   const setActiveQuiz = useAristoStore((s) => s.setActiveQuiz);
   const setQuizResult = useAristoStore((s) => s.setQuizResult);
 
@@ -103,6 +104,7 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
           questions={activeQuiz.questions}
           userId={userId}
           onComplete={handleComplete}
+          localOnly={demoMode}
         />
       </div>
     </Html>
