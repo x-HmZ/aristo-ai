@@ -59,6 +59,16 @@ button on the landing page that drops visitors straight into the classroom, no a
       generate3dSourceImage/generate3dModel), frozen into src/data/demo/*.ts. Actual spend:
       $0.73 (usage_events: teach.lesson + retry $0.38, segment visuals $0.20, FLUX+TripoSR
       $0.15). Script kept at scripts/generate-demo-content.ts for regeneration.
+- [x] TTS **(revised 2026-09-08 — superseded the decision below)**: narration is now 30
+      pre-rendered ElevenLabs mp3s in `public/demo/<slug>/`, generated once by
+      `scripts/prerender-demo-tts.mjs` (7,029 chars total, inside the 10,000/month free tier,
+      $0 per visitor thereafter). Driven through a new `srcUrl` option on `useTTS`.
+      The deciding factor was not voice quality: `window.speechSynthesis` exposes no audio
+      buffer, so wawa-lipsync had nothing to analyse and the teacher narrated with a
+      motionless mouth — on the one page whose job is to show a talking 3D teacher. Also
+      forced the demo avatar to `marcus`: ryan carries 0 viseme morphs, so lipsync was
+      impossible on him regardless of the audio path. Verified in-browser, still 0 `/api/`
+      requests. Original decision, kept for the record:
 - [x] TTS: ElevenLabs quota could not be checked (API key lacks `user_read` permission —
       GET /v1/user/subscription and /v1/user both 401 "missing_permissions"). Per the
       executing brief's fallback rule, treated unknown quota as insufficient and shipped

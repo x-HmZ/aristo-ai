@@ -99,23 +99,82 @@ frequency in /admin/cost.
   optional ~$0.91 confirmation run after top-up. Swap itself = follow-up task, do after T06
   merges (persistence makes $0.30/concept one-time).
 
-## ADDITIONAL USER ACTION
+## Session 2026-09-08 — demo narration + avatar default
 
-7. **fal.ai balance is EXHAUSTED** ("User is locked") — production 3D/image generation will
-   fail until topped up. This also blocks the TripoSR->Tripo3D swap confirmation.
+Worked on `dev/v2-instant-demo` (merged `deploy-prep` in first, so it now carries T10's CI
+and vitest suite). **All of this is uncommitted** — see "Steps still to take".
 
-## USER ACTIONS NEEDED (everything else is blocked on these)
+- **V2's TTS decision reversed, and for a better reason than voice quality.** Demo narration
+  is now 30 pre-rendered ElevenLabs mp3s (7,029 chars, one-time, inside the free tier; $0 per
+  visitor after). `useTTS` gained `srcUrl`, which points the singleton audio element at a
+  static file. That element is what wawa-lipsync analyses — `speechSynthesis` exposes no audio
+  buffer — so the demo previously narrated with a completely motionless mouth. Generator:
+  `scripts/prerender-demo-tts.mjs` (plain node, no tsx/dotenv, resumable, `--dry-run` first).
+- **`DEFAULT_TEACHER` = marcus, on `/learn` too** (user's call). ryan has 0 viseme morphs;
+  sonia has no mouth morphs at all — both verified by parsing the GLB JSON chunks, so neither
+  can ever lipsync. Trade: cold `/learn` ~3.6 MB -> ~12.7 MB, partly undoing T02.
+  `preloadDefaultAvatar()` (was a module-scope side effect in `Teacher.tsx`, which also
+  charged `/demo` 2.5 MB for an avatar it discards) is now called by `LearnClient`; sign-in
+  prefetch retargeted. **Not yet smoke-tested on authed `/learn`** — worth one look.
+- Pricing comment corrected: Sonnet 5 stays at $2/$10, the 2026-09-01 rise was cancelled.
+- New brief `V7-alignment-lipsync.md`; sonia's phantom morph is item 0 in the UX backlog.
 
-1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
-   SQL Editor -> then T06 verification + merge can proceed.
-2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — aitchemmzi is still
-   pending/non-admin in the live DB.
-3. Resend env vars in Vercel (runbook section 1) for signup notifications.
-4. V2 demo voice decision: browser TTS as-is, or confirm ElevenLabs quota headroom
-   (~6-8k chars one-time) for pre-rendered audio. V2 merge + T04 landing rebuild + V1
-   raise-hand are queued behind this to avoid conflicts on shared hooks.
-5. Optional: production visual pass (lipsync in authed /learn, loading overlay throttled).
-6. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+**Note for any session working through the Cowork device bridge:** git writes from that
+sandbox leave `.git/index.lock` behind (it cannot unlink), which then blocks git on the
+Windows side. Stale locks were parked in `.git/_stale-locks/` and can be deleted. Run git on
+Windows, not through the bridge. `tsc` runs fine through it; vitest and `next build` do not
+(node_modules holds win32 native binaries).
+
+## Session 2026-09-08 (later) — V7 alignment lipsync
+
+Demo path is code-complete and unit-tested; `/learn`'s `with-timestamps` swap is untouched.
+New `src/lib/lipsync/visemes.ts` + tests, an `--align` pass on the prerender script, and a
+timeline-preferring `getCurrentViseme()` in `useTTS`. Full detail in
+`.claude/plans/V7-alignment-lipsync.md`.
+
+`/learn` gained the same treatment in the same session — a demo-only version was rightly
+called out as pointless. `/api/tts` now uses `/with-timestamps` (timings inline, same
+character cost, no extra key scope needed).
+
+**Three things need a human:**
+
+- **Enable `forced_alignment` on the ElevenLabs API key** (dashboard -> API Keys -> edit).
+  `--align` currently fails 401 `missing_permissions`. Worth enabling `user_read` at the
+  same time — its absence is why the V2 session could not check the quota. This affects the
+  demo only; `/learn` needs no new scope.
+- `node scripts/prerender-demo-tts.mjs --align` — after the permission is enabled, and from
+  a shell with real internet. `api.elevenlabs.io` is blocked by the Cowork session's egress
+  policy and the desktop VM has no outbound DNS, so no agent session can make this call.
+  Costs ~7.4 min of speech-to-text and **zero TTS characters**.
+- **Watch `/learn` narrate once after deploying.** The `with-timestamps` path has never run
+  against the live API. If anything looks wrong, set `TTS_TIMESTAMPS=off` in Vercel — that
+  reverts to plain audio and FFT lipsync with no code change. Server logs will say
+  `with-timestamps unavailable` if it silently fell back.
+- **Restart `next dev` before testing.** It wedged during this session — it stopped serving
+  the `DemoClient` dynamic chunk entirely (8 resources, no canvas), while the GLBs kept
+  returning 200. Not caused by the diff, but it blocked in-motion verification, so nobody
+  has yet seen the timeline drive a real mesh.
+
+## USER ACTIONS — all previously-blocking ones are now DONE (2026-09-08)
+
+1. ~~Migration 016~~ — applied. **T06 verification + merge is now unblocked.**
+2. ~~Admin bootstrap SQL~~ — run.
+3. ~~Resend env vars~~ — done: `RESEND_API_KEY` (prod + preview), plus `ADMIN_NOTIFY_EMAIL`
+   and `APP_URL` added as Config (prod + preview). Takes effect on the next deploy; verify
+   per runbook section 1 (signup -> email -> `profiles.admin_notified_at` non-null).
+4. ~~V2 demo voice decision~~ — resolved: pre-rendered ElevenLabs. T04 and V1 are unblocked.
+5. ~~fal.ai balance~~ — topped up.
+
+Still open:
+
+6. Smoke-test authed `/learn` after the avatar default change (load time + marcus renders).
+   Note `/demo` took ~25-40s to reach the topic picker in dev on a warm cache; production
+   (CDN + compression) should be far better, but if `/learn` feels slow this is the T02
+   trade showing up and it is worth measuring rather than assuming.
+7. T06: rerun the cache-hit probe now 016 is applied, then merge.
+8. Tripo3D v2.5 swap (T07's verdict) — **only after T06 merges**, so $0.30/gen is paid once
+   per concept rather than per cold instance per student.
+9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
 ## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)

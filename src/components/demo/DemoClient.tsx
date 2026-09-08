@@ -10,19 +10,40 @@
  * which call authed API routes).
  *
  * Every interaction here is local: topics are frozen LessonPayload objects
- * from src/data/demo, the desk quiz is evaluated client-side, and TTS uses
- * the browser speechSynthesis fallback (see useTTS's forceBrowser option) —
- * so a demo session never calls /api/anything.
+ * from src/data/demo, the desk quiz is evaluated client-side, and narration
+ * plays from static mp3s under public/demo/<slug>/ (rendered once by
+ * scripts/prerender-demo-tts.mjs) — so a demo session never calls
+ * /api/anything.
  */
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
 import { useAristoStore } from "@/store/useAristoStore";
+import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
+
+/**
+ * The demo must use an avatar that can actually lipsync. Only the Avaturn
+ * rigs (marcus, priya) carry the 15 ARKit viseme blend shapes wawa-lipsync
+ * drives; Teacher.tsx gates the viseme path on cfg.morphs.visemes, which
+ * they alone set. The store default (ryan) has 0 viseme morphs and only a
+ * binary mouthSmile, so his mouth never moves while narrating -- on the one
+ * page whose job is to show a talking 3D teacher.
+ *
+ * marcus pairs with the already-rendered narration voice (ElevenLabs Antoni).
+ * Switching to priya would mean re-rendering every segment.
+ *
+ * This currently equals DEFAULT_TEACHER, but is set explicitly rather than
+ * relying on that: /demo's narration files are baked against this avatar's
+ * voice, and the demo is the one page that cannot tolerate a mute mouth, so a
+ * future change to the global default must not silently retarget it.
+ */
+const DEMO_TEACHER = "marcus" as const;
 
 // ─── Topic picker overlay ─────────────────────────────────────────────────────
 
@@ -109,6 +130,7 @@ export function DemoClient() {
   const setPending3dImageUrl = useAristoStore((s) => s.setPending3dImageUrl);
   const setViewMode3d    = useAristoStore((s) => s.setViewMode3d);
   const stopAudio        = useAristoStore((s) => s.stopAudio);
+  const setTeacher       = useAristoStore((s) => s.setTeacher);
 
   const activeQuiz  = useAristoStore((s) => s.activeQuiz);
   const quizResult  = useAristoStore((s) => s.quizResult);
@@ -122,8 +144,22 @@ export function DemoClient() {
   useEffect(() => {
     setDemoMode(true);
     setUserId("demo-visitor");
+
+    // Remember whatever the visitor had chosen so an authed /learn session
+    // later in the same tab does not inherit the demo's avatar.
+    const previousTeacher = useAristoStore.getState().teacher;
+    setTeacher(DEMO_TEACHER);
+
+    // Warm the avatar while the topic picker is on screen. Teacher.tsx only
+    // module-preloads ryan (T02 trimmed the cold payload to default-only), and
+    // the Avaturn rig plus its shared animation pack is ~11.6 MB, so without
+    // this the download does not start until the visitor picks a topic.
+    useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].sceneFile}`);
+    useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].animFile}`);
+
     return () => {
       stopAudio();
+      setTeacher(previousTeacher);
       setDemoMode(false);
       setUserId(null);
       setActiveLesson(null);

@@ -145,16 +145,27 @@ function isChallengeSegment(seg: NarrationSegment | undefined): boolean {
   return seg.phase === "challenge" && seg.role !== "challenge_reveal";
 }
 
+/**
+ * Demo narration files already warmed into the HTTP cache. Module-scoped so it
+ * survives remounts within a session; the set is tiny (one entry per segment).
+ */
+const _warmedAudioUrls = new Set<string>();
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export interface LessonPlaybackOpts {
   /**
    * True only on the unauthenticated /demo route. Skips every network call
    * this hook would otherwise fire (segment-visuals, generate-model,
-   * lesson-complete, challenge eval) and forces TTS through the browser
-   * speechSynthesis fallback instead of /api/tts. Frozen demo lessons carry
-   * their resolved image/model URLs directly on the payload (segment.visual
-   * .imageUrl, metadata.demo_model_url) so playback still shows visuals.
+   * lesson-complete, challenge eval) and never touches /api/tts. Frozen demo
+   * lessons carry their resolved image/model URLs directly on the payload
+   * (segment.visual.imageUrl, metadata.demo_model_url) so playback still
+   * shows visuals.
+   *
+   * Narration plays from static per-segment mp3s under public/demo/<slug>/,
+   * rendered once by scripts/prerender-demo-tts.mjs -- still zero API calls
+   * per visitor, but real audio, so wawa-lipsync can drive the avatar's mouth.
+   * useTTS falls back to speechSynthesis per segment if a file is missing.
    */
   demoMode?: boolean;
 }
@@ -164,6 +175,19 @@ export function useLessonPlayback(
   opts: LessonPlaybackOpts = {},
 ): LessonPlaybackState & LessonPlaybackControls {
   const demoMode = !!opts.demoMode;
+
+  /**
+   * Static narration URL for a demo segment. The demo lesson's concept_id is
+   * also its public/demo/ folder slug (see src/data/demo/index.ts). Returns
+   * undefined outside demoMode so the authed /learn path is untouched.
+   */
+  const demoAudioUrl = useCallback(
+    (segmentId: string): string | undefined =>
+      demoMode && lesson?.concept_id
+        ? `/demo/${lesson.concept_id}/${segmentId}.mp3`
+        : undefined,
+    [demoMode, lesson?.concept_id],
+  );
   const { speak, stop, prefetch }     = useTTS();
   const setIsSpeaking                 = useAristoStore((s) => s.setIsSpeaking);
   const setGesture                    = useAristoStore((s) => s.setGesture);
@@ -418,18 +442,34 @@ export function useLessonPlayback(
     // 3) Mark active segment for UI highlight
     setCurrentSegmentId(segment.id);
 
-    // 4) Warm-up the next segment's TTS while this one narrates (no-op in
-    //    demoMode — browser speechSynthesis has nothing to prefetch).
+    // 4) Warm-up the next segment's narration while this one plays. On /learn
+    //    that means a /api/tts fetch; in demoMode it is just a static mp3, so
+    //    warm the HTTP cache directly rather than going through useTTS.
     const upcoming = segments[segmentIdx + 1];
-    if (upcoming?.text) prefetch(upcoming.text, { forceBrowser: demoMode });
+    if (upcoming?.text) {
+      const upcomingSrc = demoAudioUrl(upcoming.id);
+      if (upcomingSrc) {
+        // Guard against repeats: React strict mode double-invokes effects in
+        // dev, and any re-render that retriggers this effect would refetch the
+        // same file. Observed seg_002.mp3 going out three times without this.
+        if (!_warmedAudioUrls.has(upcomingSrc)) {
+          _warmedAudioUrls.add(upcomingSrc);
+          void fetch(upcomingSrc, { cache: "force-cache" }).catch(() => {});
+        }
+      } else {
+        prefetch(upcoming.text, { forceBrowser: demoMode });
+      }
+    }
 
     // 5) Narrate.  Challenge segments pose a question — when narration ends
     //    we set awaitingAnswer instead of advancing, freezing playback until
     //    the student replies (via submitAnswer).
     const isQuestion = isChallengeSegment(segment);
     setIsSpeaking(true);
+    const segmentSrc = demoAudioUrl(segment.id);
     const controller = speak(segment.text, {
-      forceBrowser: demoMode,
+      srcUrl:       segmentSrc,
+      forceBrowser: demoMode && !segmentSrc,
       onEnd: () => {
         ttsControllerRef.current = null;
         if (isQuestion) {
@@ -451,7 +491,7 @@ export function useLessonPlayback(
       cleanupPlayback();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID, demoMode]);
+  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID, demoMode, demoAudioUrl]);
 
   // ─── Unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {

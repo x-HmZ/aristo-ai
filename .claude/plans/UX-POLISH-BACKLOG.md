@@ -6,6 +6,28 @@ each line number before editing (code moves).
 
 ## High-value small fixes
 
+0a. ~~**A free-topic answer is narrated twice.**~~ **DONE 2026-09-08** — `speak()` removed
+   from `InputBox`, `FreeTopicCard` owns it, and `useTTS` now shares one in-flight request
+   per (voice, text). Measured 3 calls -> 1, 4.2s -> 1.69s, 3 aborts -> 0. Original writeup: `InputBox.tsx:91` speaks
+   `definition + explanation` as soon as `/api/teach` returns, and `FreeTopicCard.tsx:122`
+   speaks the same content again from its mount effect. `reactStrictMode: true` double-invokes
+   the card's effect, so dev fires three overlapping calls and production two. Since
+   2026-09-08 `useTTS` arbitrates so they no longer abort each other, but the redundant
+   ElevenLabs generations are still paid for and discarded, and running them together slowed
+   each from ~1.3s to ~4.2s — which is what "the audio is lagging" was.
+   Fix: delete the `speak()` from `InputBox` and let `FreeTopicCard` own it — the card is
+   what renders the text, it speaks the parsed text that matches what is on screen, and it
+   already sets `gesture` to "explaining"/"idle" and stops narration on unmount, none of
+   which InputBox does. Both a latency fix and a ~2x saving against the 10,000 char/month
+   tier.
+0. `Teacher.tsx` AVATAR_ASSETS — **sonia declares a morph she does not have.** Her config
+   sets `morphs.mouthSmile: "mouthSmile"`, but `Teacher_Sonia.glb` contains no `mouthSmile`
+   target (24 morphs, none mouth- or jaw-related). `lerpMorphTarget` looks it up, finds
+   nothing and returns silently, so sonia's mouth never moves at all — on `/learn` too, not
+   just during narration. Either drop the claim from her config so the code is honest, or
+   re-export the asset with mouth morphs. Ryan is a milder case of the same thing: he has
+   `mouthSmile` but no visemes, so he can smile but never lipsync (see V7). Verified by
+   parsing the GLB JSON chunks on 2026-09-08.
 1. `OnboardingView.tsx:33-35` — only 2 hardcoded domains (python_programming,
    middle_school_science). Load domains from the DB/courses instead. (Also see T11.)
 2. `QuizView.tsx` — `misconception_detected` is returned by the API but never displayed.

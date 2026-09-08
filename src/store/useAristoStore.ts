@@ -9,6 +9,23 @@ export type { LessonPayload, CourseStructure };
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type TeacherMode   = "course" | "free";
+/**
+ * The avatar a new session starts on, and the only one preloaded eagerly.
+ *
+ * marcus rather than ryan: only the Avaturn rigs (marcus, priya, custom) carry
+ * the 15 ARKit viseme blend shapes wawa-lipsync drives, so ryan and sonia can
+ * never lipsync -- their mouths do not move while the teacher narrates. That is
+ * the product's central visual claim, so the default has to be a rig that can
+ * actually do it.
+ *
+ * The cost is payload: marcus + the shared Avaturn animation pack is ~11.6 MB
+ * against ryan's ~2.5 MB, so a cold /learn is roughly 12.7 MB rather than the
+ * 3.6 MB T02 got it down to. Anything preloading or prefetching "the default"
+ * must read this constant rather than hardcoding a name -- Teacher.tsx's
+ * preloadDefaultAvatar() and the sign-in page's <link rel="prefetch"> both do.
+ */
+export const DEFAULT_TEACHER = "marcus" as const;
+
 export type TeacherAvatar =
   | "ryan"
   | "sonia"
@@ -313,7 +330,7 @@ export const useAristoStore = create<AristoState>()(
       currentConceptId:   null,
       onboardingDone:     false,
       behavioralSignals:  defaultSignals,
-      teacher:            "ryan",
+      teacher:            DEFAULT_TEACHER,
       classroom:          "default",
       mode:               "free",
       course:             defaultCourse,
