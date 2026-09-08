@@ -1,0 +1,16 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "//": [
+      "off",
+      "Burn-down baseline (T10): the repo had no ESLint config before CI was",
+      "added, so these three rules have pre-existing violations. They are",
+      "downgraded to warnings so lint reports them without blocking CI.",
+      "Fix the violations (worst: conditional hooks in src/utils/modelLoader.js,",
+      "an R3F-critical path) and then restore each rule to its default 'error'."
+    ],
+    "react/no-unescaped-entities": "warn",
+    "@next/next/no-html-link-for-pages": "warn",
+    "react-hooks/rules-of-hooks": "warn"
+  }
+}

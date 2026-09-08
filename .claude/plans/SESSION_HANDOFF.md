@@ -69,10 +69,54 @@ Remaining human checks (nice-to-have, non-blocking): lipsync playback with real 
 (needs authed session), loading overlay on throttled network, watch `teach.lesson.retry`
 frequency in /admin/cost.
 
-## Wave 2 (in progress)
+## Wave 2 (done 2026-07-13)
 
-- V2 instant public demo: sonnet agent on branch `dev/v2-instant-demo` (see below / agent log).
-- Next after V2: T10 ops hardening (autonomous parts), then V1 raise-hand (opus).
+- **V2 instant demo**: built + browser-verified on `dev/v2-instant-demo` (pushed, UNMERGED).
+  2 frozen lessons, $0 per visitor, 0 API calls verified. Demo narrates via browser
+  speechSynthesis because the ElevenLabs key lacks `user_read` (quota unverifiable).
+  MERGE BLOCKED on user decision: keep browser voice vs pre-render ElevenLabs mp3s.
+- **T10 ops**: MERGED to deploy-prep (`fd81abd`). CI live and first run GREEN on GitHub.
+  47 vitest tests. Migrations reconciled: ALL applied incl. 011. Runbook:
+  `.claude/plans/T10-RUNBOOK.md`. Latent deferred bug: conditional hooks in
+  `src/utils/modelLoader.js` (eslint-warned, R3F-critical, do not blind-refactor).
+- **T06 persistent cache**: built on `dev/t06-persistent-cache` (pushed, UNMERGED).
+  Bucket `generated-assets` created live (public, immutable cache headers). Code layered
+  L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
+  live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
+  (REST API cannot run DDL), then rerun the cache-hit probe.
+- **V4 teacher memory**: DONE on `dev/v4-teacher-memory` (pushed, UNMERGED — needs authed
+  UI pass: greeting banner/chip in ModePicker, quiz celebration, TTS autoplay policy,
+  resume_course chip). GreetingAgent (Haiku, ~$0.002/greeting, 1.8 s), learner_history
+  back-references, misconception-targeted quiz + resolution (no DDL needed — resolved/
+  resolved_at columns already existed). Agent caught + fixed a privacy bug: personalized
+  lessons now SKIP the shared cached_lessons write (was about to leak per-user history
+  across users with the same profile signature). Own security pass: no findings.
+- **T07 3D-gen eval**: DONE — `.claude/plans/T07-REPORT.md`. Verdict: replace TripoSR with
+  **Tripo3D v2.5** (`tripo3d/tripo/v2.5/image-to-3d`, $0.30/gen, scored 4/5 vs TripoSR 1.5/5;
+  Trellis 2 hallucinates on diagram-style sources, Hunyuan v2 collapses them flat). Swap plan
+  is in the report (banana.ts slug/response/timeout, pricing row, remove the -PI/2 Z-up
+  rotation in GeneratedModel.tsx). Eval truncated by an exhausted fal balance ($1.53 spent);
+  optional ~$0.91 confirmation run after top-up. Swap itself = follow-up task, do after T06
+  merges (persistence makes $0.30/concept one-time).
+
+## ADDITIONAL USER ACTION
+
+7. **fal.ai balance is EXHAUSTED** ("User is locked") — production 3D/image generation will
+   fail until topped up. This also blocks the TripoSR->Tripo3D swap confirmation.
+
+## USER ACTIONS NEEDED (everything else is blocked on these)
+
+1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
+   SQL Editor -> then T06 verification + merge can proceed.
+2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — aitchemmzi is still
+   pending/non-admin in the live DB.
+3. Resend env vars in Vercel (runbook section 1) for signup notifications.
+4. V2 demo voice decision: browser TTS as-is, or confirm ElevenLabs quota headroom
+   (~6-8k chars one-time) for pre-rendered audio. V2 merge + T04 landing rebuild + V1
+   raise-hand are queued behind this to avoid conflicts on shared hooks.
+5. Optional: production visual pass (lipsync in authed /learn, loading overlay throttled).
+6. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+   fast-forward master to deploy-prep).
 
 ## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
 

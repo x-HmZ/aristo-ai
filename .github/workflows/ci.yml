@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - deploy-prep
+      - master
+
+# Cancel superseded runs on the same branch/PR to save minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Dummy build-time values only — never real secrets. `next build` needs
+  # NEXT_PUBLIC_* vars to bake into the client bundle, and a handful of
+  # server clients read process.env at module scope, so every var the app
+  # reads must at least be defined for the build step to succeed. See
+  # .env.example for the authoritative list and what each one is for.
+  NEXT_PUBLIC_SUPABASE_URL: "https://ci-placeholder.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-anon-key"
+  SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-service-role-key"
+  ANTHROPIC_API_KEY: "ci-placeholder-anthropic-key"
+  OPENAI_API_KEY: "ci-placeholder-openai-key"
+  GOOGLE_AI_KEY: "ci-placeholder-google-key"
+  ELEVENLABS_API_KEY: "ci-placeholder-elevenlabs-key"
+  FAL_KEY: "ci-placeholder-fal-key"
+  RESEND_API_KEY: "ci-placeholder-resend-key"
+  ADMIN_NOTIFY_EMAIL: "ci@example.com"
+  APP_URL: "https://ci.example.com"
+  NEXT_PUBLIC_AVATURN_SUBDOMAIN: "ci-placeholder"
+  NEXT_PUBLIC_ADAPTIVE_VISUALS: "true"
+
+jobs:
+  build:
+    name: type-check, lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type check
+        run: yarn type-check
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit tests
+        run: yarn test
+
+      - name: Build
+        run: yarn build
