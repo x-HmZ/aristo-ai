@@ -79,11 +79,9 @@ frequency in /admin/cost.
   47 vitest tests. Migrations reconciled: ALL applied incl. 011. Runbook:
   `.claude/plans/T10-RUNBOOK.md`. Latent deferred bug: conditional hooks in
   `src/utils/modelLoader.js` (eslint-warned, R3F-critical, do not blind-refactor).
-- **T06 persistent cache**: built on `dev/t06-persistent-cache` (pushed, UNMERGED).
-  Bucket `generated-assets` created live (public, immutable cache headers). Code layered
-  L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
-  live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
-  (REST API cannot run DDL), then rerun the cache-hit probe.
+- **T06 persistent cache**: **DONE 2026-09-09** — see the session section at the bottom of
+  this file. (This bullet previously read "MERGE BLOCKED on migration 016"; the migration
+  is applied and every acceptance criterion is verified.)
 - **V4 teacher memory**: DONE on `dev/v4-teacher-memory` (pushed, UNMERGED — needs authed
   UI pass: greeting banner/chip in ModePicker, quiz celebration, TTS autoplay policy,
   resume_course chip). GreetingAgent (Haiku, ~$0.002/greeting, 1.8 s), learner_history
@@ -98,6 +96,21 @@ frequency in /admin/cost.
   rotation in GeneratedModel.tsx). Eval truncated by an exhausted fal balance ($1.53 spent);
   optional ~$0.91 confirmation run after top-up. Swap itself = follow-up task, do after T06
   merges (persistence makes $0.30/concept one-time).
+
+
+## USER ACTIONS (2026-07-13 wave — all resolved; see the 2026-09-08 section below)
+
+1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
+   SQL Editor -> then T06 verification + merge can proceed.
+2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — aitchemmzi is still
+   pending/non-admin in the live DB.
+3. Resend env vars in Vercel (runbook section 1) for signup notifications.
+4. V2 demo voice decision: browser TTS as-is, or confirm ElevenLabs quota headroom
+   (~6-8k chars one-time) for pre-rendered audio. V2 merge + T04 landing rebuild + V1
+   raise-hand are queued behind this to avoid conflicts on shared hooks.
+5. Optional: production visual pass (lipsync in authed /learn, loading overlay throttled).
+6. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+   fast-forward master to deploy-prep).
 
 ## Session 2026-09-08 — demo narration + avatar default
 
@@ -207,10 +220,16 @@ Still open:
    Note `/demo` took ~25-40s to reach the topic picker in dev on a warm cache; production
    (CDN + compression) should be far better, but if `/learn` feels slow this is the T02
    trade showing up and it is worth measuring rather than assuming.
-7. T06: rerun the cache-hit probe now 016 is applied, then merge.
-8. Tripo3D v2.5 swap (T07's verdict) — **only after T06 merges**, so $0.30/gen is paid once
-   per concept rather than per cold instance per student.
-9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+7. ~~T06: rerun the cache-hit probe, then merge~~ — done 2026-09-09, PR open into
+   `deploy-prep`. Only the merge button is left.
+8. ~~Tripo3D v2.5 swap~~ — **implemented 2026-09-09**, same branch/PR. **Unverified against
+   fal on purpose** (credit conservation): the first real 3D lesson after merge is the test.
+   Two things to eyeball then: the model is upright (Tripo3D is Y-up; the old `-PI/2`
+   rotation was removed) and generation completes inside 240 s.
+9. ~~Decide on `fal-ai/nano-banana-2` for segment visuals~~ — **DONE and applied
+   2026-09-09.** A/B run, NB2 matched Pro on text (3/3 each), 2.1x faster. Segment visuals
+   now run on the fast tier with a restraint suffix; Pro kept for the teaching image.
+10. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
 ## Repo state (as of 2026-09-09, on `deploy-prep`)
@@ -234,6 +253,62 @@ Two tiers, both in `.claude/plans/`:
 - **T-tier (maintenance/polish) T01-T11** — still valid; several are prerequisites for V-tier
   (T02 asset diet before mobile/demo perf; T05 model bump trivially first; T09 streaming is
   folded into/related to V1).
+
+## Session 2026-09-09 (later) — T06 shipped
+
+Branch `dev/t06-persistent-cache`, PR into `deploy-prep`.
+
+- **Merged `deploy-prep` in first.** Conflicts in `.claude/docs/state.md`,
+  `.claude/plans/README.md` and this file — all resolved keeping both sides
+  (`src/hooks/useLessonPlayback.ts` auto-merged cleanly; checked by hand that both the
+  demoMode/TTS work and T06's `conceptId` threading survived). The stale 2026-07-13
+  "USER ACTIONS NEEDED" block above was retitled rather than deleted: a newer section
+  supersedes it and leaving it phrased as blocking would mislead the next session.
+- **Bucket decision recorded: PUBLIC** (Hmz). It already existed — created live by the
+  earlier T06 session via the Storage Admin API, not by migration 016. Note for future
+  sessions: **the bucket is not in version control.** Migration 016 creates the table only,
+  so a fresh Supabase project needs the bucket created by hand.
+- **All four acceptance criteria verified live**, each probe run in its own process so L1 was
+  genuinely cold: cold-instance L2 hit at 300 ms with **no new `usage_events` row** (vs
+  3683 ms + a cost row to generate), and a wrong bucket name still let generation succeed
+  (warn, no throw, fal URL served). $0.009 of real fal.ai spend; test rows and objects
+  deleted afterwards.
+- **Found and fixed a silent-breakage defect** the brief's failure-path criterion led
+  straight to: a row does not prove the object exists, and `getPublicUrl` never checks, so
+  row-present + object-deleted served a URL returning 400 *forever* — the row kept "hitting"
+  so generation never re-ran. `lookupPersistedAsset` now confirms a hit with a bounded HEAD
+  (1500 ms), drops the row and regenerates on a definitive 400/404, and fails open on
+  anything else. ~100 ms per hit against ~3800 ms to regenerate. Reachable in practice:
+  admin bucket cleanup is exactly what the previous T06 session did.
+- Gates on the merge commit: `yarn type-check`, `yarn lint` (pre-existing warnings only),
+  `yarn test` (76/76), `yarn build` — all green.
+
+## Session 2026-09-09 (later) — Tripo3D swap + a 3.75x pricing error
+
+Continues the T06 branch/PR. Hmz asked for a re-eval of the image + 3D pipeline before
+committing spend, and explicitly asked for **no test generations** — so everything below is
+desk research against fal's live pricing API and model pages, plus code.
+
+- **Swapped `fal-ai/triposr` -> `tripo3d/tripo/v2.5/image-to-3d`** per T07. Code-complete,
+  **deliberately unrun.** Cache prefix bumped, Y-up rotation removed, 240 s timeout added.
+- **Found the fal pricing table understating the platform's biggest cost line by 3.75x.**
+  `fal-ai/nano-banana-pro` was priced at $0.04, which is the *non-Pro* rate; fal charges
+  $0.15. Every infographic cost figure in the cost dashboard — and in T07's own analysis —
+  was low. Corrected and pinned by tests.
+- **Use fal's pricing API, not the docs.** `GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>`
+  with the `FAL_KEY` returns authoritative live unit prices, costs nothing, and is the only
+  source that agreed with itself. The docs pages and third-party comparisons were stale or
+  contradictory. Note the returned `unit` varies — "images", "megapixels", "generations",
+  "credits", even "compute seconds" — so read it, don't assume per-generation.
+- **The re-eval's real conclusion is that the 3D model was never the expensive part.**
+  Measured from `usage_events`, a concept costs ~4.5 NB Pro images ($0.68) against one 3D
+  model ($0.07 before, $0.30 after). Images are ~70-90% of per-concept spend and had never
+  been evaluated. `fal-ai/nano-banana-2` is $0.08, 2-3x faster, and rated better for
+  infographic text — switching segment visuals to it saves more than the entire 3D upgrade
+  costs. **Not done: it needs a visual A/B, which costs credits.** Queued as user action 10.
+- Also surveyed and rejected for now: Tripo P1 ($0.40/$0.50, no evidence in hand vs v2.5),
+  Hunyuan3D v3.1 pro, and ByteDance Seed3D v2 — Seed3D bills per *compute second*, which
+  breaks the fixed per-concept cost model T06 is built around.
 
 ## Steps still to take (checklist for any resuming session)
 

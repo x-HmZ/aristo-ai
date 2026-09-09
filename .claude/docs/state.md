@@ -2,6 +2,142 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (final) — tiered image models applied
+
+Acting on the eval above. `generateInfographic` gained a `tier` option:
+
+- **"pro"** (`fal-ai/nano-banana-pro`, $0.15) — topic teaching image only, because
+  `visual_walkthrough` narration cites its labels by name.
+- **"fast"** (`fal-ai/nano-banana-2`, $0.08) — segment visuals. Measured equal to Pro on
+  text accuracy, 2.1x faster.
+
+Two details that matter:
+
+1. **The model is part of the cache key** (`cacheKey(prompt, style, model)`). Without it the
+   two tiers would serve each other's images out of L1/L2 for the same prompt+style. This
+   re-keys every existing infographic entry — free right now, since `generated_assets` was
+   emptied after the T06 probe.
+2. **`RESTRAINT_SUFFIX` is appended on the fast tier only.** NB2 renders text as well as Pro
+   but volunteers titles, explanatory paragraphs, "RESULT:" boxes and callouts labelling
+   styling rather than content — an image that explains itself talks over the teacher who is
+   narrating. Verified with one more generation ($0.08): the same flow prompt that produced
+   a cluttered poster came back as a clean numbered chevron diagram, correct labels, no
+   title, no paragraphs. Not applied to Pro, which is already restrained.
+
+Per concept now **$0.77** (1 Pro teaching image + 4 NB2 segment visuals + FLUX + Tripo3D),
+against $0.82 before for a worse 3D model — the whole quality upgrade lands cheaper than the
+status quo, and lessons render faster.
+
+Total eval spend across the session: **$2.43** of the $3 Hmz authorised.
+
+## 2026-09-09 (latest) — pipeline eval run, $2.35 spent, three findings
+
+Hmz authorised up to $3 for one round of real generations. Spent **$2.352**. Eval called fal
+**directly**, not through `banana.ts`, so `usage_events` stays clean (verified: still 57 rows,
+unchanged) — same precedent T07 set.
+
+**1. Nano Banana 2 matches Pro on text. My earlier assumption was wrong.**
+Tested on three *real* segment prompts pulled from `cached_lessons` — all text-heavy Python
+material (code snippets with quotes and line numbers, `python3 --version` / `Python 3.12.0`,
+labelled flow boxes). This is the hardest text workload the product has. **NB2 garbled nothing
+in 3/3.** Pro also 3/3. Text fidelity is a tie, so the premise for keeping Pro on segment
+visuals ("NB2 is worse at labels") does not survive contact with the actual prompts.
+
+The real difference is **design restraint**, and it cuts both ways:
+- Pro is disciplined and glanceable; on the flow prompt it was *too* sparse (three boxes in a
+  sea of white).
+- NB2 is richer and more engaging — its flow diagram is the better teaching visual — but it
+  over-annotates, adding explanatory paragraphs and useless callouts ("Terminal Background
+  (Dark)"). That competes with the teacher's narration, which is the thing narrating.
+
+Latency, measured: **Pro avg 27.6 s** (19.2 / 34.9 / 28.6) vs **NB2 avg 12.9 s** (16.1 / 9.8 /
+12.9) — NB2 is **2.1x faster**, matching the vendor claim.
+
+**2. The FLUX source step must stay — proven, not assumed.**
+Fed the labelled NB Pro teaching infographic to Tripo3D as an alternative source: it extruded
+the label text and leader lines into the geometry, producing garbled 3D lettering and arrows
+sticking out of the heart. Unusable. The clean, unlabelled, single-object FLUX source is
+load-bearing, and that architectural split is now justified by evidence.
+
+**3. T07's suggested FLUX prompt tweak is harmful — do NOT apply it.**
+Tested "solid opaque forms, thick volumetric shapes, no transparency, no thin membranes" on
+the exact case T07 flagged (animal cell). It **backfired**: FLUX rendered the membrane as a
+glassy petri dish, so Tripo3D reconstructed only the loose contents and returned disconnected
+floating blobs. The unmodified prompt produced a coherent solid disc. T07's hypothesis is
+refuted; the current prompt stays.
+
+**Tripo3D v2.5 confirmed good in production shape.** Heart from a FLUX source came out
+volumetric, anatomically plausible, with coronary vessels and clean PBR — the "flat coin"
+failure that made TripoSR unusable is gone. Latency 63-82 s, well inside the new 240 s
+timeout. Response fields confirmed as `task_id, model_mesh, base_model, pbr_model,
+rendered_image`, so the shipped `pbr_model ?? model_mesh` fallback is correct.
+One caveat: Tripo's own `rendered_image` preview came back blank on one of five calls even
+though the mesh was fine (14.9 MB) — treat that preview as unreliable, never as a health check.
+
+## 2026-09-09 (later) — Tripo3D v2.5 swap + fal pricing correction
+
+Same branch `dev/t06-persistent-cache`, on top of T06. **Not yet run against fal** — the
+swap is code-complete but deliberately unverified to preserve credits (Hmz's call).
+
+- **`fal-ai/triposr` -> `tripo3d/tripo/v2.5/image-to-3d`** (`texture: "standard"`,
+  `pbr: true`, $0.30/gen). T07 scored it 4/5 vs TripoSR's 1.5/5 and it is faster
+  (78 s vs ~100 s). Cache prefix `triposr|` -> `tripo25|` so old meshes are unreachable;
+  `GeneratedModel.tsx` drops the `-PI/2` X rotation (Tripo3D is Y-up glTF); 240 s timeout
+  added around `fal.subscribe`, which has none of its own and hung once in the eval.
+- **The fal pricing table was wrong on its biggest line.** `fal-ai/nano-banana-pro` was
+  set to $0.04 — that is the **non-Pro** rate ($0.0398) — while fal charges **$0.15**. The
+  cost dashboard has understated infographic spend **3.75x**. Corrected against fal's own
+  pricing API (`GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>`), which is
+  authoritative and free to query — the docs pages disagree with each other. Now pinned by
+  `pricing.test.ts` so the next drift fails CI.
+- **Real per-concept economics, one-time, post-T06** (~4.5 NB Pro images per concept,
+  measured from `usage_events`):
+
+  | | images | FLUX | 3D | total |
+  |---|---|---|---|---|
+  | before (as billed) | $0.68 | $0.003 | $0.07 | **$0.75** |
+  | after this swap | $0.68 | $0.003 | $0.30 | **$0.98** |
+  | if segment visuals move to nano-banana-2 | $0.36 | $0.003 | $0.30 | **$0.66** |
+
+  So the 3D upgrade is +31%, not the 4.3x that a 3D-only comparison implies — and switching
+  the image model would more than pay for it.
+- **Open recommendation, not done:** `fal-ai/nano-banana-2` (Gemini 3.1 Flash Image) is
+  $0.08 vs Pro's $0.15, 2-3x faster (4-8 s vs 10-20 s), and fal's own comparison rates it
+  *better* for infographic text spacing/readability; Pro's edge is print-grade typography,
+  which Aristo does not need. Worth an A/B on real segment prompts before switching — that
+  costs credits, so it is queued, not done. Would also cut lesson latency, which is the
+  other half of the `/learn` loading complaint.
+
+## 2026-09-09 (later) — T06 persistent generation cache COMPLETE
+
+Branch `dev/t06-persistent-cache`, merged up from `deploy-prep` first (so it carries the
+lipsync, demo and avatar-clone work). Closes the last open T06 item.
+
+- **`src/lib/imagegen/banana.ts` has a real L2 layer** under the existing L1 memory cache:
+  lookup `(kind, prompt_hash)` in `generated_assets` -> generate via fal -> download ->
+  upload to the public `generated-assets` bucket -> upsert row -> serve the durable Supabase
+  URL from then on. `concept_id` threaded through `/api/generate-model`,
+  `/api/generate-model/3d`, `/api/learn/segment-visuals` and their call sites.
+- **Migration 016 is applied** to the live DB (was the blocker; done by hand in the SQL
+  Editor — PostgREST has no arbitrary-SQL endpoint, so agent sessions cannot run DDL).
+- **Bucket decision: PUBLIC** (Hmz, 2026-09-09). Generated educational images, no learner
+  data, content-addressed unguessable paths, CDN-cacheable, no signing round trip — so the
+  URLs stay safe to hold in the L1 cache and in lesson payloads. Verified live:
+  `cache-control: public, max-age=31536000`.
+- **Acceptance criteria proven live**, each run in its own process so L1 was truly cold:
+  run 1 generated in 3683 ms and wrote one `usage_events` row ($0.003); run 2 served the
+  identical URL in 300 ms with **no new cost row**; with the bucket renamed to a wrong name,
+  generation still succeeded (warn, no throw, fal URL served, no row written for an
+  unstorable object). Total verification spend $0.009; all test rows/objects deleted after.
+- **Defect found and fixed while verifying.** A row does not prove the object exists —
+  `getPublicUrl` never checks — so row-present + object-deleted returned a URL that 400s,
+  and because the row kept "hitting", generation never re-ran: a silent, permanent broken
+  image. `lookupPersistedAsset` now confirms a hit with a bounded `HEAD` (1500 ms); a
+  definitive 400/404 drops the stale row and regenerates (self-healing), anything else
+  fails open and serves the URL. Costs ~100 ms per hit vs ~3800 ms to regenerate.
+- Gates: `yarn type-check`, `yarn lint` (pre-existing warnings only), `yarn test` (76/76),
+  `yarn build` — all green.
+
 ## 2026-09-09 — avatar T-pose + idle drift (one root cause)
 
 Two reported bugs, one cause. `Teacher.tsx` mounted the **globally cached** GLTF scene
@@ -211,10 +347,13 @@ CI/tests). **Uncommitted at time of writing.**
 
 ## Migration State
 
-All run; no pending. `001_initial_schema` → `015_user_approval` (no `007` — quiz_attempts went into `006_mastery`).
+All run; no pending. `001_initial_schema` → `016_generated_assets` (no `007` — quiz_attempts went into `006_mastery`).
 - `005_reset_and_graph.sql` — drops FSLSM tables, builds `concepts` / `concept_prerequisites`
 - `006_mastery.sql` — `learner_profiles`, `user_concept_mastery` (+ SRS), `user_course_progress`, `user_misconceptions`, `session_logs`, `quiz_attempts`
 - `008_courses.sql` — `courses` + `course_id` FK
 - `009_quiz_constraints.sql` — `UNIQUE(user_id, concept_id, misconception)`, `increment_misconception()` RPC
 - `010_rag.sql` — vector extension, `reference_chunks` + HNSW index, `match_reference_chunks()` RPC
 - `015_user_approval.sql` — `profiles.approval_status` + companion columns for the admin approval gate
+- `016_generated_assets.sql` — persistent generation cache (T06): `generated_assets` keyed
+  `UNIQUE (kind, prompt_hash)`, RLS read-for-authenticated / write-via-service-role; pairs
+  with the public `generated-assets` Storage bucket. Applied 2026-09-09.

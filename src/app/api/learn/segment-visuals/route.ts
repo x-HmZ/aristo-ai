@@ -9,6 +9,7 @@
  *
  * Request body
  *   {
+ *     conceptId?: string;                     // lesson.concept_id, when known
  *     segments: Array<{
  *       id:     string;                       // matches NarrationSegment.id
  *       prompt: string;                       // SegmentVisual.prompt
@@ -85,6 +86,13 @@ export async function POST(req: NextRequest) {
 
     // ─── Body validation ───────────────────────────────────────────────────
     const body = await req.json().catch(() => ({}));
+    const conceptIdRaw: unknown = body?.conceptId;
+    if (conceptIdRaw !== undefined && conceptIdRaw !== null && typeof conceptIdRaw !== "string") {
+      return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
+    }
+    const conceptId: string | null =
+      typeof conceptIdRaw === "string" && conceptIdRaw.trim() ? conceptIdRaw : null;
+
     const segments: unknown = body?.segments;
     if (!Array.isArray(segments) || segments.length === 0) {
       return NextResponse.json(
@@ -126,10 +134,16 @@ export async function POST(req: NextRequest) {
       normalized.map(async (seg): Promise<SegmentResult> => {
         try {
           const { imageUrl, cached } = await generateInfographic({
-            prompt:  seg.prompt,
-            style:   seg.style,
-            userId:  user.id,
-            feature: "lesson.segment_visual",
+            prompt:    seg.prompt,
+            style:     seg.style,
+            // Segment visuals run on the fast tier (nano-banana-2): measured
+            // equal to Pro on text accuracy across real text-heavy prompts,
+            // 2.1x faster and 53% of the price. Pro stays on the topic
+            // teaching image only, whose labels the narration cites by name.
+            tier:      "fast",
+            userId:    user.id,
+            feature:   "lesson.segment_visual",
+            conceptId,
           });
           return { id: seg.id, imageUrl, cached };
         } catch (err) {

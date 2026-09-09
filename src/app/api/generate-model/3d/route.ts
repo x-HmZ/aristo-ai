@@ -1,16 +1,17 @@
 /**
  * POST /api/generate-model/3d
  *
- * TripoSR — image-to-3D reconstruction.  Caller passes the clean FLUX
+ * Tripo3D v2.5 — image-to-3D reconstruction.  Caller passes the clean FLUX
  * source image URL from /api/generate-model and gets back a textured GLB.
  *
  * All fal.ai transport + the in-memory cache lives in
  * `src/lib/imagegen/banana.ts`.  This route is a thin auth gate + logger.
  *
  * Caching: keyed by source imageUrl.  Two students viewing the same lesson
- * on the same Vercel Fluid Compute instance share a single TripoSR call —
- * this is the largest single fal.ai cost on the platform ($0.07/call) so
- * the cache pays for itself within a handful of repeat views.
+ * on the same Vercel Fluid Compute instance share a single Tripo3D call.
+ * Since T06 the cache is durable (Supabase Storage), so the first student to
+ * view a concept pays the $0.30 once and every student after inherits it —
+ * which is what makes a model at this price affordable at all.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -32,10 +33,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "FAL_KEY not configured" }, { status: 500 });
     }
 
-    const { imageUrl } = await req.json();
-    if (!imageUrl) return NextResponse.json({ error: "imageUrl is required" }, { status: 400 });
+    const body = await req.json().catch(() => ({}));
+    const { imageUrl, conceptId } = body ?? {};
+    if (typeof imageUrl !== "string" || !imageUrl.trim()) {
+      return NextResponse.json({ error: "imageUrl is required" }, { status: 400 });
+    }
+    if (conceptId !== undefined && conceptId !== null && typeof conceptId !== "string") {
+      return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
+    }
+    const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
-    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id);
+    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId);
 
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {

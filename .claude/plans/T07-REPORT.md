@@ -137,3 +137,23 @@ Exhausted balance"), which is what actually stopped the eval.
   `generate3dSourceImage` would likely raise every model's floor. Worth a small A/B during the swap.
 - Untested newer tier: Hunyuan 3D v3.1 pro ($0.375 + $0.15 PBR ≈ $0.53). Only revisit if
   Tripo3D v2.5 disappoints in production.
+
+
+---
+
+## Addendum 2026-09-09 — swap shipped, and one recommendation refuted by test
+
+- **Swap implemented** on `dev/t06-persistent-cache`. Tripo3D v2.5 verified against fal:
+  heart from a FLUX source is volumetric with clean PBR, 63-82 s, response fields as
+  documented. The verdict above holds.
+- **§7's FLUX prompt suggestion is WRONG — do not apply it.** "solid colorful model, thick
+  forms, no transparency" was tested on the animal cell (§7's own example) and made the result
+  *worse*: FLUX turned the membrane into a glass dish and Tripo3D returned disconnected
+  floating blobs instead of a coherent cell. The unmodified production prompt wins. The
+  translucent-membrane problem is real but this is not the fix.
+- **Feeding the labelled NB Pro teaching image to Tripo3D instead of a FLUX source does not
+  work** — it extrudes label text and leader lines into the mesh. The separate clean-source
+  step is load-bearing.
+- **§1's price table understated Nano Banana Pro** at $0.04 (that is the non-Pro rate); fal
+  charges $0.15, verified against `api.fal.ai/v1/models/pricing`. Every per-concept cost
+  figure derived here was low on the image side.

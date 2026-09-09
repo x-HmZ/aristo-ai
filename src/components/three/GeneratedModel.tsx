@@ -71,10 +71,13 @@ export function GeneratedModel({
 
   const setModelInteracting = useAristoStore((s) => s.setModelInteracting);
 
-  // TripoSR exports Z-up; correct to Y-up on the scene object so the group
-  // can spin freely in world space without gimbal issues
+  // Tripo3D v2.5 emits Y-up glTF (the spec default), so no correction is
+  // needed. This used to apply `-PI/2` on X for TripoSR, which exported Z-up;
+  // that model was retired 2026-09-09 and its cached meshes are unreachable
+  // (the cache-key prefix changed with it), so the rotation would only ever
+  // tip a correctly-oriented model onto its back now.
   useEffect(() => {
-    scene.rotation.x = -Math.PI / 2;
+    scene.rotation.set(0, 0, 0);
   }, [scene]);
 
   const annotations: AnnotationPoint[] = modelAnnotations && modelAnnotations.length > 0

@@ -291,6 +291,7 @@ export function useLessonPlayback(
         imagePrompt:   model_image_prompt,
         model3dPrompt: model_3d_prompt,
         topic:         lesson.concept_name,
+        conceptId:     lesson.concept_id,
       }),
     })
       .then((r) => r.json())
@@ -343,6 +344,7 @@ export function useLessonPlayback(
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({
+        conceptId: lesson.concept_id,
         segments: withVisuals.map((s) => ({
           id:     s.id,
           prompt: s.visual!.prompt,

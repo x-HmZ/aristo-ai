@@ -150,7 +150,7 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
       const res = await fetch("/api/generate-model/3d", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ imageUrl: pending3dImageUrl }),
+        body:    JSON.stringify({ imageUrl: pending3dImageUrl, conceptId: activeLesson?.concept_id ?? null }),
       });
       const data = await res.json();
       if (!res.ok || !data.modelUrl) {
