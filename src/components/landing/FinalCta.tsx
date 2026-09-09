@@ -21,7 +21,7 @@ export function FinalCta() {
             </p>
             <Link
               href="/demo"
-              className="mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 rounded-2xl bg-white px-7 text-base font-bold text-aristo-orange-deep shadow-[0_10px_26px_rgba(120,58,12,0.24)] transition-transform hover:-translate-y-0.5 sm:w-auto"
+              className="mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 rounded-2xl bg-white px-7 text-base font-bold text-aristo-orange-deep shadow-[0_10px_26px_rgba(120,58,12,0.24)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary sm:w-auto"
             >
               Watch a live lesson
               <ArrowRight className="size-4" strokeWidth={2.4} />

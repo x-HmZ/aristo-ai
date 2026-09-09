@@ -23,7 +23,7 @@ export function LandingNav() {
             <a
               key={section.href}
               href={section.href}
-              className="text-sm font-medium text-foreground/60 transition-colors hover:text-foreground"
+              className="inline-flex min-h-[44px] items-center rounded-lg text-sm font-medium text-foreground/60 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {section.label}
             </a>
@@ -33,13 +33,13 @@ export function LandingNav() {
         <div className="flex items-center gap-1.5 sm:gap-2.5">
           <Link
             href="/sign-in"
-            className="rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground/60 transition-colors hover:text-foreground sm:px-3.5"
+            className="inline-flex min-h-[44px] items-center rounded-xl px-3 text-sm font-semibold text-foreground/60 transition-colors hover:text-foreground sm:px-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Sign in
           </Link>
           <Link
             href="/demo"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-aristo-sm transition-all hover:bg-primary/90 hover:shadow-aristo sm:px-[18px]"
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-aristo-sm transition-all hover:bg-primary/90 hover:shadow-aristo sm:px-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Try a lesson
             <ArrowRight className="size-[15px]" strokeWidth={2.4} />

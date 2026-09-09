@@ -39,7 +39,7 @@ export function SiteFooter() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-foreground/70 transition-colors hover:text-foreground"
+              className="text-sm text-foreground/70 transition-colors hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {link.label}
             </Link>
@@ -52,7 +52,7 @@ export function SiteFooter() {
           </span>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="inline-flex items-center gap-2 break-all text-sm text-foreground/70 transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 break-all text-sm text-foreground/70 transition-colors hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <Mail className="size-[15px] shrink-0 text-muted-foreground/70" />
             {CONTACT_EMAIL}
@@ -68,7 +68,7 @@ export function SiteFooter() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="transition-colors hover:text-foreground"
+                className="transition-colors hover:text-foreground rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {link.label}
               </Link>

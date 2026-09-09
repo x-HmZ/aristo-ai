@@ -13,33 +13,43 @@
  * `prefers-reduced-motion` is honoured by a media query rather than by JS, so
  * there is no first-paint animation to un-do.
  *
- * Two safety nets, because "hidden until something fires" is a bad start
- * state for a marketing page:
- *   - no JS at all: the `<noscript>` override in page.tsx unhides everything;
- *   - JS but no observer callbacks: the grace timer below unhides everything.
+ * Do NOT wrap the hero in this. Its start state is `opacity: 0`, and Chrome
+ * does not credit a transparent element as painted — wrapping the LCP
+ * candidate here pushes Largest Contentful Paint out by hydration time plus
+ * the transition. Above-the-fold content has nothing to reveal anyway.
  */
 
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";
 
+/** Matches the observer's rootMargin, so both paths reveal at the same line. */
+const REVEAL_MARGIN_PX = 80;
+
 /**
- * If nothing on the page has been reported in view within this window, treat
- * the observer as not delivering and show the content unanimated. A landing
- * page that renders blank is far worse than one that skips its animation.
+ * How often an element that is still hidden re-checks its own position.
+ *
+ * This is the backstop for the observer never reporting, which is not
+ * hypothetical: IntersectionObserver delivered no callbacks at all in the
+ * CDP-driven Chrome this page was verified in, and "hidden until something
+ * fires" would have shipped a blank marketing page. A page that skips its
+ * animation is far better than one that renders nothing.
+ *
+ * It is a repeating check rather than a one-shot timer on purpose. A one-shot
+ * has to decide, once, whether the observer is healthy — and any such latch
+ * either gives up too eagerly on a slow load or, if it trusts a single
+ * callback, leaves everything it has already stood down permanently hidden
+ * when delivery stops. Re-checking is self-healing and needs no such guess.
+ * The interval clears as soon as the element is shown, so a healthy page
+ * settles to zero timers.
  */
-const OBSERVER_GRACE_MS = 1200;
-
-// Page-load-scoped health check, shared by every Reveal on the page.
-let observerHasFired = false;
-let observerGaveUp = false;
-const giveUpListeners = new Set<() => void>();
-
-function giveUpOnObserver() {
-  if (observerHasFired || observerGaveUp) return;
-  observerGaveUp = true;
-  giveUpListeners.forEach((notify) => notify());
-}
+const FALLBACK_CHECK_MS = 1200;
 
 interface RevealProps {
   children: ReactNode;
@@ -49,40 +59,46 @@ interface RevealProps {
 }
 
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
-  const { ref, inView } = useInView({
+  const { ref: observerRef, inView } = useInView({
     triggerOnce: true,
     threshold: 0.15,
-    rootMargin: "0px 0px -80px 0px",
+    rootMargin: `0px 0px -${REVEAL_MARGIN_PX}px 0px`,
   });
-  const [showUnanimated, setShowUnanimated] = useState(false);
+  const nodeRef = useRef<HTMLDivElement | null>(null);
+  const [fallbackVisible, setFallbackVisible] = useState(false);
+
+  const setRefs = useCallback(
+    (node: HTMLDivElement | null) => {
+      nodeRef.current = node;
+      observerRef(node);
+    },
+    [observerRef]
+  );
 
   useEffect(() => {
-    if (inView) observerHasFired = true;
-  }, [inView]);
+    if (inView || fallbackVisible) return;
 
-  useEffect(() => {
-    if (observerGaveUp) {
-      setShowUnanimated(true);
-      return;
-    }
-    const notify = () => setShowUnanimated(true);
-    giveUpListeners.add(notify);
-    const timer = setTimeout(giveUpOnObserver, OBSERVER_GRACE_MS);
-    return () => {
-      giveUpListeners.delete(notify);
-      clearTimeout(timer);
-    };
-  }, []);
+    const id = setInterval(() => {
+      const node = nodeRef.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const viewportHeight =
+        window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top < viewportHeight - REVEAL_MARGIN_PX && rect.bottom > 0) {
+        setFallbackVisible(true);
+      }
+    }, FALLBACK_CHECK_MS);
+
+    return () => clearInterval(id);
+  }, [inView, fallbackVisible]);
+
+  const visible = inView || fallbackVisible;
 
   return (
     <div
-      ref={ref}
-      className={cn(
-        "landing-reveal",
-        (inView || showUnanimated) && "is-visible",
-        className
-      )}
-      style={delay && !showUnanimated ? { transitionDelay: `${delay}s` } : undefined}
+      ref={setRefs}
+      className={cn("landing-reveal", visible && "is-visible", className)}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
     </div>
