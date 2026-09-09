@@ -12,6 +12,7 @@
     --aristo-beige-dark: 35 40% 85%;     /* #E8D5BC — darker beige */
     --aristo-cream: 42 70% 97%;          /* #FDF8EF — off-white cream */
     --aristo-brown: 25 40% 18%;          /* #3D2110 — dark warm brown */
+    --aristo-orange-deep: 23 75% 43%;    /* #C05A1C — orange dark enough for body text on cream */
 
     /* shadcn/ui tokens — mapped to Aristo palette */
     --background: 42 70% 97%;            /* cream off-white */
@@ -151,6 +152,30 @@
     backdrop-filter: blur(4px);
   }
 
+
+  /* Landing-page scroll reveal. The class is toggled by
+     src/components/landing/Reveal.tsx; the motion itself lives here so that
+     prefers-reduced-motion is honoured without any JS involvement. */
+  .landing-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .landing-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .landing-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
   /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
      Default WebKit scrollbars are invisible on the glass surfaces; this
      gives the student a clear scroll affordance without breaking the
