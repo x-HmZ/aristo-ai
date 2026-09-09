@@ -226,10 +226,11 @@ Still open:
    fal on purpose** (credit conservation): the first real 3D lesson after merge is the test.
    Two things to eyeball then: the model is upright (Tripo3D is Y-up; the old `-PI/2`
    rotation was removed) and generation completes inside 240 s.
-9. **Decide on `fal-ai/nano-banana-2` for segment visuals** — $0.08 vs Pro's $0.15,
-   2-3x faster, and fal rates it better for infographic text. Needs a visual A/B on real
-   prompts (costs credits). Bigger win than the 3D swap: ~$0.32/concept, and it cuts
-   lesson latency.
+9. **Decide on `fal-ai/nano-banana-2` for segment visuals — A/B is DONE (2026-09-09).**
+   NB2 matched Pro on text accuracy across three real text-heavy prompts (3/3 each) and is
+   2.1x faster (12.9 s vs 27.6 s measured) at $0.08 vs $0.15. Recommendation: switch segment
+   visuals to NB2, keep Pro for the topic teaching image, and tighten the style prefixes —
+   NB2 over-annotates. Saves ~$0.28/concept. **Awaiting Hmz's go-ahead**; code not written.
 10. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 

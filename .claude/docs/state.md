@@ -2,6 +2,50 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (latest) — pipeline eval run, $2.35 spent, three findings
+
+Hmz authorised up to $3 for one round of real generations. Spent **$2.352**. Eval called fal
+**directly**, not through `banana.ts`, so `usage_events` stays clean (verified: still 57 rows,
+unchanged) — same precedent T07 set.
+
+**1. Nano Banana 2 matches Pro on text. My earlier assumption was wrong.**
+Tested on three *real* segment prompts pulled from `cached_lessons` — all text-heavy Python
+material (code snippets with quotes and line numbers, `python3 --version` / `Python 3.12.0`,
+labelled flow boxes). This is the hardest text workload the product has. **NB2 garbled nothing
+in 3/3.** Pro also 3/3. Text fidelity is a tie, so the premise for keeping Pro on segment
+visuals ("NB2 is worse at labels") does not survive contact with the actual prompts.
+
+The real difference is **design restraint**, and it cuts both ways:
+- Pro is disciplined and glanceable; on the flow prompt it was *too* sparse (three boxes in a
+  sea of white).
+- NB2 is richer and more engaging — its flow diagram is the better teaching visual — but it
+  over-annotates, adding explanatory paragraphs and useless callouts ("Terminal Background
+  (Dark)"). That competes with the teacher's narration, which is the thing narrating.
+
+Latency, measured: **Pro avg 27.6 s** (19.2 / 34.9 / 28.6) vs **NB2 avg 12.9 s** (16.1 / 9.8 /
+12.9) — NB2 is **2.1x faster**, matching the vendor claim.
+
+**2. The FLUX source step must stay — proven, not assumed.**
+Fed the labelled NB Pro teaching infographic to Tripo3D as an alternative source: it extruded
+the label text and leader lines into the geometry, producing garbled 3D lettering and arrows
+sticking out of the heart. Unusable. The clean, unlabelled, single-object FLUX source is
+load-bearing, and that architectural split is now justified by evidence.
+
+**3. T07's suggested FLUX prompt tweak is harmful — do NOT apply it.**
+Tested "solid opaque forms, thick volumetric shapes, no transparency, no thin membranes" on
+the exact case T07 flagged (animal cell). It **backfired**: FLUX rendered the membrane as a
+glassy petri dish, so Tripo3D reconstructed only the loose contents and returned disconnected
+floating blobs. The unmodified prompt produced a coherent solid disc. T07's hypothesis is
+refuted; the current prompt stays.
+
+**Tripo3D v2.5 confirmed good in production shape.** Heart from a FLUX source came out
+volumetric, anatomically plausible, with coronary vessels and clean PBR — the "flat coin"
+failure that made TripoSR unusable is gone. Latency 63-82 s, well inside the new 240 s
+timeout. Response fields confirmed as `task_id, model_mesh, base_model, pbr_model,
+rendered_image`, so the shipped `pbr_model ?? model_mesh` fallback is correct.
+One caveat: Tripo's own `rendered_image` preview came back blank on one of five calls even
+though the mesh was fine (14.9 MB) — treat that preview as unreliable, never as a health check.
+
 ## 2026-09-09 (later) — Tripo3D v2.5 swap + fal pricing correction
 
 Same branch `dev/t06-persistent-cache`, on top of T06. **Not yet run against fal** — the
