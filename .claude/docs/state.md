@@ -2,6 +2,40 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (later) — Tripo3D v2.5 swap + fal pricing correction
+
+Same branch `dev/t06-persistent-cache`, on top of T06. **Not yet run against fal** — the
+swap is code-complete but deliberately unverified to preserve credits (Hmz's call).
+
+- **`fal-ai/triposr` -> `tripo3d/tripo/v2.5/image-to-3d`** (`texture: "standard"`,
+  `pbr: true`, $0.30/gen). T07 scored it 4/5 vs TripoSR's 1.5/5 and it is faster
+  (78 s vs ~100 s). Cache prefix `triposr|` -> `tripo25|` so old meshes are unreachable;
+  `GeneratedModel.tsx` drops the `-PI/2` X rotation (Tripo3D is Y-up glTF); 240 s timeout
+  added around `fal.subscribe`, which has none of its own and hung once in the eval.
+- **The fal pricing table was wrong on its biggest line.** `fal-ai/nano-banana-pro` was
+  set to $0.04 — that is the **non-Pro** rate ($0.0398) — while fal charges **$0.15**. The
+  cost dashboard has understated infographic spend **3.75x**. Corrected against fal's own
+  pricing API (`GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>`), which is
+  authoritative and free to query — the docs pages disagree with each other. Now pinned by
+  `pricing.test.ts` so the next drift fails CI.
+- **Real per-concept economics, one-time, post-T06** (~4.5 NB Pro images per concept,
+  measured from `usage_events`):
+
+  | | images | FLUX | 3D | total |
+  |---|---|---|---|---|
+  | before (as billed) | $0.68 | $0.003 | $0.07 | **$0.75** |
+  | after this swap | $0.68 | $0.003 | $0.30 | **$0.98** |
+  | if segment visuals move to nano-banana-2 | $0.36 | $0.003 | $0.30 | **$0.66** |
+
+  So the 3D upgrade is +31%, not the 4.3x that a 3D-only comparison implies — and switching
+  the image model would more than pay for it.
+- **Open recommendation, not done:** `fal-ai/nano-banana-2` (Gemini 3.1 Flash Image) is
+  $0.08 vs Pro's $0.15, 2-3x faster (4-8 s vs 10-20 s), and fal's own comparison rates it
+  *better* for infographic text spacing/readability; Pro's edge is print-grade typography,
+  which Aristo does not need. Worth an A/B on real segment prompts before switching — that
+  costs credits, so it is queued, not done. Would also cut lesson latency, which is the
+  other half of the `/learn` loading complaint.
+
 ## 2026-09-09 (later) — T06 persistent generation cache COMPLETE
 
 Branch `dev/t06-persistent-cache`, merged up from `deploy-prep` first (so it carries the

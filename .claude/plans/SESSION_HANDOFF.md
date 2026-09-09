@@ -222,10 +222,15 @@ Still open:
    trade showing up and it is worth measuring rather than assuming.
 7. ~~T06: rerun the cache-hit probe, then merge~~ — done 2026-09-09, PR open into
    `deploy-prep`. Only the merge button is left.
-8. Tripo3D v2.5 swap (T07's verdict) — **unblocked the moment the T06 PR merges**, so
-   $0.30/gen is paid once per concept rather than per cold instance per student. This is
-   now the highest-value next task: T06 is exactly what makes it affordable.
-9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+8. ~~Tripo3D v2.5 swap~~ — **implemented 2026-09-09**, same branch/PR. **Unverified against
+   fal on purpose** (credit conservation): the first real 3D lesson after merge is the test.
+   Two things to eyeball then: the model is upright (Tripo3D is Y-up; the old `-PI/2`
+   rotation was removed) and generation completes inside 240 s.
+9. **Decide on `fal-ai/nano-banana-2` for segment visuals** — $0.08 vs Pro's $0.15,
+   2-3x faster, and fal rates it better for infographic text. Needs a visual A/B on real
+   prompts (costs credits). Bigger win than the 3D swap: ~$0.32/concept, and it cuts
+   lesson latency.
+10. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
 ## Repo state (as of 2026-09-09, on `deploy-prep`)
@@ -278,6 +283,33 @@ Branch `dev/t06-persistent-cache`, PR into `deploy-prep`.
   admin bucket cleanup is exactly what the previous T06 session did.
 - Gates on the merge commit: `yarn type-check`, `yarn lint` (pre-existing warnings only),
   `yarn test` (76/76), `yarn build` — all green.
+
+## Session 2026-09-09 (later) — Tripo3D swap + a 3.75x pricing error
+
+Continues the T06 branch/PR. Hmz asked for a re-eval of the image + 3D pipeline before
+committing spend, and explicitly asked for **no test generations** — so everything below is
+desk research against fal's live pricing API and model pages, plus code.
+
+- **Swapped `fal-ai/triposr` -> `tripo3d/tripo/v2.5/image-to-3d`** per T07. Code-complete,
+  **deliberately unrun.** Cache prefix bumped, Y-up rotation removed, 240 s timeout added.
+- **Found the fal pricing table understating the platform's biggest cost line by 3.75x.**
+  `fal-ai/nano-banana-pro` was priced at $0.04, which is the *non-Pro* rate; fal charges
+  $0.15. Every infographic cost figure in the cost dashboard — and in T07's own analysis —
+  was low. Corrected and pinned by tests.
+- **Use fal's pricing API, not the docs.** `GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>`
+  with the `FAL_KEY` returns authoritative live unit prices, costs nothing, and is the only
+  source that agreed with itself. The docs pages and third-party comparisons were stale or
+  contradictory. Note the returned `unit` varies — "images", "megapixels", "generations",
+  "credits", even "compute seconds" — so read it, don't assume per-generation.
+- **The re-eval's real conclusion is that the 3D model was never the expensive part.**
+  Measured from `usage_events`, a concept costs ~4.5 NB Pro images ($0.68) against one 3D
+  model ($0.07 before, $0.30 after). Images are ~70-90% of per-concept spend and had never
+  been evaluated. `fal-ai/nano-banana-2` is $0.08, 2-3x faster, and rated better for
+  infographic text — switching segment visuals to it saves more than the entire 3D upgrade
+  costs. **Not done: it needs a visual A/B, which costs credits.** Queued as user action 10.
+- Also surveyed and rejected for now: Tripo P1 ($0.40/$0.50, no evidence in hand vs v2.5),
+  Hunyuan3D v3.1 pro, and ByteDance Seed3D v2 — Seed3D bills per *compute second*, which
+  breaks the fixed per-concept cost model T06 is built around.
 
 ## Steps still to take (checklist for any resuming session)
 

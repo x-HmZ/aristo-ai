@@ -128,7 +128,9 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [x] T06 persistent generation cache (2026-09-09 — DONE: migration 016 applied, public
       `generated-assets` bucket, L1->L2->fal layering; cold-instance hit proven with no new
       `usage_events` row, storage-failure path proven, stale-row self-heal added)
-- [x] T07 3D gen model evaluation (2026-07-13 — report in T07-REPORT.md; recommends Tripo3D v2.5 swap; eval truncated by exhausted fal balance)
+- [x] T07 3D gen model evaluation (2026-07-13 — report in T07-REPORT.md). **Swap implemented
+      2026-09-09** on `dev/t06-persistent-cache`: Tripo3D v2.5 live in banana.ts, pricing table
+      corrected. Unverified against fal (credit conservation) — confirm on first real lesson.
 - [ ] T08 dynamic classroom pass
 - [ ] T09 lesson streaming
 - [ ] T10 ops hardening (autonomous parts done 2026-07-13 — CI + tests + migration
