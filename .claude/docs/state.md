@@ -2,6 +2,56 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (T04) — landing page rebuilt
+
+Branch `dev/t04-landing-page` off `deploy-prep`. `src/app/page.tsx` went from a hero plus
+three emoji cards to a full page in `src/components/landing/`: nav, split hero, capability
+strip, four-step how-it-works, six-card feature grid, a parents strip, a closing CTA and a
+footer. Design canvas approved before any code was written
+(https://claude.ai/code/artifact/d0d76f20-e5f9-4051-8ee3-ea36eb68a1d5).
+
+- **The product visuals are real, and they come from `/demo`, not `/learn`.** Three stills
+  captured from a **production build** with a dependency-free CDP driver: the volcano lesson
+  with its generated cross-section, the generated black-hole model standing in the room with
+  its labels, and the desk quiz. `/demo` renders the same classroom, avatar and lesson panel
+  but is public, session-free and calls no paid API, so re-shooting costs nothing. Exported
+  as WebP at 1760px into `public/images/landing/` (80-133 kB each), served through
+  `next/image`.
+- **The 3D shot is the black hole, not the volcano, and that was forced.** In the volcano
+  lesson the generated mesh sits behind the lesson panel and cannot be framed without
+  cropping the panel out. The black-hole model stands clear of it, with its accretion disk,
+  event horizon and bent-light-ring labels legible.
+- **Motion is `react-intersection-observer` + a CSS transition, not framer-motion.** Same
+  reveal, ~2 kB instead of ~38 kB: `/` first-load JS is **120 kB** (146 kB with
+  framer-motion), statically prerendered. `prefers-reduced-motion` is honoured by a media
+  query in `globals.css` rather than a JS branch, so there is no first-paint animation to
+  undo.
+- **The reveal has two ways not to hide the page.** A `<noscript>` rule unhides everything
+  when JS never runs, and `Reveal` gives up after 1200 ms if no observer callback has
+  arrived at all. That second net is not theoretical: IntersectionObserver never delivered a
+  callback in the CDP-driven Chrome used for verification, which is exactly the failure mode
+  that would otherwise have shipped a blank marketing page.
+- **One new token**: `--aristo-orange-deep` (`23 75% 43%` — the #C05A1C already hardcoded
+  around the learn/demo components) plus its `aristo.orange-deep` Tailwind colour. Nothing
+  else in the palette changed.
+- Copy is honest by construction: no testimonials, no user counts, no logos. The parents
+  strip says what is tracked (mastery, answers, session length), that access is
+  approval-gated, and that lessons are AI-generated and can be wrong.
+- **Not done, on purpose**: no FAQ (offered, not requested); `LEGAL_LINKS` in
+  `SiteFooter.tsx` is an empty array, so the privacy/terms row renders nothing rather than
+  shipping dead links.
+- Gates: `yarn type-check`, `yarn lint` (22 warnings, all pre-existing, none in the new
+  files), `yarn test` (83/83), `yarn build` — all green. No horizontal overflow at 360, 768,
+  1024, 1280 or 1440, verified by measuring `scrollWidth` against `innerWidth`.
+
+**Found while capturing, NOT fixed (out of T04 scope):** `pages/_app.tsx` never applies the
+`--font-geist-sans` / `--font-geist-mono` variables — those are set on `<body>` in
+`src/app/layout.tsx`, which the Pages Router never renders. So on `/demo` and `/learn` the
+`font-sans` declaration resolves to `var(--font-geist-sans), system-ui, sans-serif` with an
+undefined custom property, which invalidates the whole declaration and drops bold text to
+the default serif. It is visible in the landing screenshots. One-line fix in `pages/_app.tsx`;
+touching `/learn` was explicitly out of scope here.
+
 ## 2026-09-09 (final) — tiered image models applied
 
 Acting on the eval above. `generateInfographic` gained a `tier` option:

@@ -15,3 +15,5 @@ _Append new rows as decisions are made. Never re-litigate a decision without rea
 | Approval gate | `requireApproved()` placeholder | Future paywall swaps in by replacing one function body |
 | Voice TTS | ElevenLabs `eleven_turbo_v2_5` via `/api/tts` | Free-tier friendly, single swap point; wawa-lipsync visemes ride the audio element |
 | Desk quiz placement | `<Html transform>` at probed desk plane | Screen-anchored Html floated in mid-air; `occlude="blending"` was the original killer, not transform mode |
+| Landing-page motion | `react-intersection-observer` + CSS transition, not framer-motion | Same scroll reveal for ~2 kB instead of ~38 kB on the one page whose job is to load fast (first-load JS 146 kB -> 120 kB); `prefers-reduced-motion` becomes a media query instead of a JS branch |
+| Landing-page product shots | Stills captured from `/demo`, not `/learn` | Same classroom, avatar and lesson panel, but public, session-free and free to run; a real `/learn` capture costs Sonnet + fal per shot |
