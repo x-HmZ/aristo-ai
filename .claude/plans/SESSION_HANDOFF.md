@@ -3,7 +3,7 @@
 _Updated continuously. If you are a fresh session: read `CLAUDE.md`, then this file, then
 `.claude/plans/README.md`. This tells you exactly where work stands and what to do next._
 
-Last updated: 2026-07-12 (session: full audit + roadmap, then product-vision tier)
+Last updated: 2026-09-09 (session: ship avatar T-pose + idle-drift fix)
 
 ## What this session did (chronological)
 
@@ -155,6 +155,36 @@ character cost, no extra key scope needed).
   returning 200. Not caused by the diff, but it blocked in-motion verification, so nobody
   has yet seen the timeline drive a real mesh.
 
+## Session 2026-09-09 — avatar T-pose + idle drift shipped
+
+Branch `dev/v2-instant-demo`, now **committed and pushed** as `74f105e`.
+
+- **Both avatar bugs fixed, one root cause.** `Teacher.tsx` mounted the globally cached GLTF
+  scene via `<primitive object={scene}>` without cloning and mutated it, so every rig shared
+  bone objects. Fix: clone per mount with `SkeletonUtils.clone`, key `<Teacher>` by avatar in
+  `Experience.tsx` so a switch fully remounts, stop the mixer's actions on unmount. Full
+  reasoning and the ruled-out hypotheses are in `.claude/docs/state.md` (2026-09-09 entry).
+- **Verified by the user, in motion.** All four avatars animate, none T-pose; Marcus holds
+  position when left idle. `state.md` and `UX-POLISH-BACKLOG.md` item 0b updated from
+  "verification pending" to verified.
+- **`origin/deploy-prep` had moved ahead** (merge commit `fce3aa1`, PR #1 — the earlier
+  lipsync work `603a91d` was already merged there). Merged it in first; it was a clean
+  fast-forward with an empty content diff, so the branch now sits exactly on deploy-prep
+  plus this one commit.
+- **All four CI checks green locally before commit:** `yarn type-check`, `yarn lint`
+  (warnings only, all pre-existing, none in the changed files), `yarn test` (76 passed /
+  5 files), `yarn build`.
+
+**PR NOT YET OPENED — one user action needed.** No `gh` CLI on this machine and the GitHub
+MCP server returned `Bad credentials`, so the PR could not be created from the session.
+Open it with this link, which pre-selects the correct base:
+
+https://github.com/x-HmZ/aristo-ai/compare/deploy-prep...dev/v2-instant-demo?expand=1
+
+Base **must be `deploy-prep`** (the Vercel production branch), not `master` — GitHub defaults
+to `master`, which is stale. Ship via the PR so CI runs before prod deploys. Draft PR body is
+in this session's transcript; the commit message covers the same ground.
+
 ## USER ACTIONS — all previously-blocking ones are now DONE (2026-09-08)
 
 1. ~~Migration 016~~ — applied. **T06 verification + merge is now unblocked.**
@@ -177,12 +207,16 @@ Still open:
 9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
-## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
+## Repo state (as of 2026-09-09, branch `dev/v2-instant-demo`)
 
 - Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app; `master` is stale/ancient.
-- Current branch has 2 unpushed verified commits (desk quiz + camera fixes) + uncommitted:
-  modified `CLAUDE.md`, new `.claude/docs/`, `TECHNICAL_SUMMARY.md`, `.claude/plans/`.
-- Nothing from this session's plans has been executed as code yet.
+  Always target `deploy-prep`.
+- `dev/v2-instant-demo` = `origin/deploy-prep` (`fce3aa1`) + one pushed commit `74f105e`
+  (avatar clone fix). Working tree clean apart from this handoff edit. PR into `deploy-prep`
+  still to be opened by the user — see the 2026-09-09 section above for the link.
+- Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
+  `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
+  `dev/v4-teacher-memory`.
 
 ## Active work queue
 
