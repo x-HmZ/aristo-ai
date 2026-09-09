@@ -163,6 +163,7 @@ type AssetKind = "infographic" | "flux_source" | "model_3d";
 
 const STORAGE_BUCKET      = "generated-assets";
 const PERSIST_TIMEOUT_MS  = 3000; // hard cap on the upload+insert round trip
+const OBJECT_CHECK_TIMEOUT_MS = 1500; // hard cap on the L2-hit existence HEAD
 
 const ASSET_EXT: Record<AssetKind, string> = {
   infographic: "png",
@@ -191,6 +192,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * persisted this exact (kind, prompt_hash). Returns the durable public URL,
  * or null on a miss / any failure (table missing, RLS, network — all
  * treated the same: fall through to generation).
+ *
+ * A row does not prove the object is still there: deleting objects out of the
+ * bucket (admin cleanup, a lifecycle rule) leaves the row behind, and
+ * `getPublicUrl` is pure string building — it never checks. Serving that URL
+ * unchecked would put a permanently broken image in a lesson, because the row
+ * keeps "hitting" and generation never re-runs. So a hit is confirmed with a
+ * HEAD before it is trusted, and a definitively missing object drops the stale
+ * row so the next request regenerates and re-persists.
  */
 async function lookupPersistedAsset(
   kind: AssetKind,
@@ -207,7 +216,30 @@ async function lookupPersistedAsset(
     if (error || !data) return null;
 
     const { data: pub } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(data.storage_path);
-    return pub?.publicUrl ?? null;
+    const url = pub?.publicUrl;
+    if (!url) return null;
+
+    // Fail-open: only a definitive "not there" invalidates. A timeout or a
+    // network blip serves the URL anyway rather than paying to regenerate.
+    try {
+      const res = await withTimeout(fetch(url, { method: "HEAD" }), OBJECT_CHECK_TIMEOUT_MS);
+      if (res.status === 400 || res.status === 404) {
+        console.warn(
+          `[banana] L2 row for ${kind}/${promptHash} points at a missing object ` +
+          `(HTTP ${res.status}); dropping the row and regenerating.`
+        );
+        await supabase
+          .from("generated_assets")
+          .delete()
+          .eq("kind", kind)
+          .eq("prompt_hash", promptHash);
+        return null;
+      }
+    } catch {
+      // unreachable/slow storage — fall through and serve the URL
+    }
+
+    return url;
   } catch (err) {
     console.warn(`[banana] L2 lookup failed (${kind}), falling back to generation:`, err);
     return null;

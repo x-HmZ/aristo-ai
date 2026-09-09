@@ -125,7 +125,9 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [x] T03 /learn loading experience
 - [ ] T04 landing page rebuild
 - [x] T05 LLM model bump
-- [x] T06 persistent generation cache (code + bucket done; migration 016 written but NOT applied live — no DB DDL credential in-session, see brief)
+- [x] T06 persistent generation cache (2026-09-09 — DONE: migration 016 applied, public
+      `generated-assets` bucket, L1->L2->fal layering; cold-instance hit proven with no new
+      `usage_events` row, storage-failure path proven, stale-row self-heal added)
 - [x] T07 3D gen model evaluation (2026-07-13 — report in T07-REPORT.md; recommends Tripo3D v2.5 swap; eval truncated by exhausted fal balance)
 - [ ] T08 dynamic classroom pass
 - [ ] T09 lesson streaming

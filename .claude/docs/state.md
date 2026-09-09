@@ -2,6 +2,36 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (later) — T06 persistent generation cache COMPLETE
+
+Branch `dev/t06-persistent-cache`, merged up from `deploy-prep` first (so it carries the
+lipsync, demo and avatar-clone work). Closes the last open T06 item.
+
+- **`src/lib/imagegen/banana.ts` has a real L2 layer** under the existing L1 memory cache:
+  lookup `(kind, prompt_hash)` in `generated_assets` -> generate via fal -> download ->
+  upload to the public `generated-assets` bucket -> upsert row -> serve the durable Supabase
+  URL from then on. `concept_id` threaded through `/api/generate-model`,
+  `/api/generate-model/3d`, `/api/learn/segment-visuals` and their call sites.
+- **Migration 016 is applied** to the live DB (was the blocker; done by hand in the SQL
+  Editor — PostgREST has no arbitrary-SQL endpoint, so agent sessions cannot run DDL).
+- **Bucket decision: PUBLIC** (Hmz, 2026-09-09). Generated educational images, no learner
+  data, content-addressed unguessable paths, CDN-cacheable, no signing round trip — so the
+  URLs stay safe to hold in the L1 cache and in lesson payloads. Verified live:
+  `cache-control: public, max-age=31536000`.
+- **Acceptance criteria proven live**, each run in its own process so L1 was truly cold:
+  run 1 generated in 3683 ms and wrote one `usage_events` row ($0.003); run 2 served the
+  identical URL in 300 ms with **no new cost row**; with the bucket renamed to a wrong name,
+  generation still succeeded (warn, no throw, fal URL served, no row written for an
+  unstorable object). Total verification spend $0.009; all test rows/objects deleted after.
+- **Defect found and fixed while verifying.** A row does not prove the object exists —
+  `getPublicUrl` never checks — so row-present + object-deleted returned a URL that 400s,
+  and because the row kept "hitting", generation never re-ran: a silent, permanent broken
+  image. `lookupPersistedAsset` now confirms a hit with a bounded `HEAD` (1500 ms); a
+  definitive 400/404 drops the stale row and regenerates (self-healing), anything else
+  fails open and serves the URL. Costs ~100 ms per hit vs ~3800 ms to regenerate.
+- Gates: `yarn type-check`, `yarn lint` (pre-existing warnings only), `yarn test` (76/76),
+  `yarn build` — all green.
+
 ## 2026-09-09 — avatar T-pose + idle drift (one root cause)
 
 Two reported bugs, one cause. `Teacher.tsx` mounted the **globally cached** GLTF scene
@@ -169,29 +199,6 @@ CI/tests). **Uncommitted at time of writing.**
   costs no TTS quota.
 - Backlog: sonia's phantom `mouthSmile` morph added to `UX-POLISH-BACKLOG.md` as item 0.
 
-## 2026-07-13 — T06 persistent generation cache
-
-- Branch `dev/t06-persistent-cache` (off `deploy-prep`), not pushed. `src/lib/imagegen/banana.ts`
-  now has a real L2 (Supabase Storage) layer under the existing L1 memory cache: lookup by
-  `(kind, prompt_hash)` in `generated_assets` -> generate via fal -> download -> upload to the
-  `generated-assets` bucket -> upsert row -> serve the durable URL from then on. `concept_id`
-  threaded through `/api/generate-model`, `/api/generate-model/3d`,
-  `/api/learn/segment-visuals` and their call sites. `yarn type-check` / `test` (47/47) /
-  `build` all green.
-- Bucket `generated-assets` (public, immutable cache headers) created live.
-- **Migration `016_generated_assets.sql` is written but NOT applied to the live DB** — this
-  session had only the anon/service-role REST keys (no Postgres connection string, no
-  `SUPABASE_ACCESS_TOKEN`, `supabase` CLI unlinked, no `supabase` MCP available), and PostgREST
-  has no arbitrary-SQL endpoint, so DDL isn't reachable from a plain agent session. **Next
-  session / user action: paste the migration into the Supabase SQL Editor once**, then rerun
-  the cold-instance proof (see `.claude/plans/T06-persistent-generation-cache.md` checklist) to
-  close out the "no new fal.ai usage_events row on repeat" acceptance criterion — verified live
-  that the code degrades gracefully in the table's absence (console.warn, fal.ai URL fallback,
-  never blocks), just not yet that the cache hit itself fires. Real fal.ai spend during testing:
-  $0.146 (2x FLUX Schnell + 2x TripoSR).
-- Also fixed a brief inaccuracy: `concepts.id` is `VARCHAR(100)`, not `uuid` — migration's
-  `concept_id` FK column matches that type.
-
 ## 2026-07-13 — T10 ops hardening (autonomous parts)
 
 - Branch `dev/t10-ops-hardening` (off `deploy-prep`), not pushed. CI (`.github/workflows/ci.yml`),
@@ -234,10 +241,13 @@ CI/tests). **Uncommitted at time of writing.**
 
 ## Migration State
 
-All run; no pending. `001_initial_schema` → `015_user_approval` (no `007` — quiz_attempts went into `006_mastery`).
+All run; no pending. `001_initial_schema` → `016_generated_assets` (no `007` — quiz_attempts went into `006_mastery`).
 - `005_reset_and_graph.sql` — drops FSLSM tables, builds `concepts` / `concept_prerequisites`
 - `006_mastery.sql` — `learner_profiles`, `user_concept_mastery` (+ SRS), `user_course_progress`, `user_misconceptions`, `session_logs`, `quiz_attempts`
 - `008_courses.sql` — `courses` + `course_id` FK
 - `009_quiz_constraints.sql` — `UNIQUE(user_id, concept_id, misconception)`, `increment_misconception()` RPC
 - `010_rag.sql` — vector extension, `reference_chunks` + HNSW index, `match_reference_chunks()` RPC
 - `015_user_approval.sql` — `profiles.approval_status` + companion columns for the admin approval gate
+- `016_generated_assets.sql` — persistent generation cache (T06): `generated_assets` keyed
+  `UNIQUE (kind, prompt_hash)`, RLS read-for-authenticated / write-via-service-role; pairs
+  with the public `generated-assets` Storage bucket. Applied 2026-09-09.

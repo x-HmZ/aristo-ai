@@ -79,11 +79,9 @@ frequency in /admin/cost.
   47 vitest tests. Migrations reconciled: ALL applied incl. 011. Runbook:
   `.claude/plans/T10-RUNBOOK.md`. Latent deferred bug: conditional hooks in
   `src/utils/modelLoader.js` (eslint-warned, R3F-critical, do not blind-refactor).
-- **T06 persistent cache**: built on `dev/t06-persistent-cache` (pushed, UNMERGED).
-  Bucket `generated-assets` created live (public, immutable cache headers). Code layered
-  L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
-  live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
-  (REST API cannot run DDL), then rerun the cache-hit probe.
+- **T06 persistent cache**: **DONE 2026-09-09** — see the session section at the bottom of
+  this file. (This bullet previously read "MERGE BLOCKED on migration 016"; the migration
+  is applied and every acceptance criterion is verified.)
 - **V4 teacher memory**: DONE on `dev/v4-teacher-memory` (pushed, UNMERGED — needs authed
   UI pass: greeting banner/chip in ModePicker, quiz celebration, TTS autoplay policy,
   resume_course chip). GreetingAgent (Haiku, ~$0.002/greeting, 1.8 s), learner_history
@@ -222,9 +220,11 @@ Still open:
    Note `/demo` took ~25-40s to reach the topic picker in dev on a warm cache; production
    (CDN + compression) should be far better, but if `/learn` feels slow this is the T02
    trade showing up and it is worth measuring rather than assuming.
-7. T06: rerun the cache-hit probe now 016 is applied, then merge.
-8. Tripo3D v2.5 swap (T07's verdict) — **only after T06 merges**, so $0.30/gen is paid once
-   per concept rather than per cold instance per student.
+7. ~~T06: rerun the cache-hit probe, then merge~~ — done 2026-09-09, PR open into
+   `deploy-prep`. Only the merge button is left.
+8. Tripo3D v2.5 swap (T07's verdict) — **unblocked the moment the T06 PR merges**, so
+   $0.30/gen is paid once per concept rather than per cold instance per student. This is
+   now the highest-value next task: T06 is exactly what makes it affordable.
 9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
@@ -249,6 +249,35 @@ Two tiers, both in `.claude/plans/`:
 - **T-tier (maintenance/polish) T01-T11** — still valid; several are prerequisites for V-tier
   (T02 asset diet before mobile/demo perf; T05 model bump trivially first; T09 streaming is
   folded into/related to V1).
+
+## Session 2026-09-09 (later) — T06 shipped
+
+Branch `dev/t06-persistent-cache`, PR into `deploy-prep`.
+
+- **Merged `deploy-prep` in first.** Conflicts in `.claude/docs/state.md`,
+  `.claude/plans/README.md` and this file — all resolved keeping both sides
+  (`src/hooks/useLessonPlayback.ts` auto-merged cleanly; checked by hand that both the
+  demoMode/TTS work and T06's `conceptId` threading survived). The stale 2026-07-13
+  "USER ACTIONS NEEDED" block above was retitled rather than deleted: a newer section
+  supersedes it and leaving it phrased as blocking would mislead the next session.
+- **Bucket decision recorded: PUBLIC** (Hmz). It already existed — created live by the
+  earlier T06 session via the Storage Admin API, not by migration 016. Note for future
+  sessions: **the bucket is not in version control.** Migration 016 creates the table only,
+  so a fresh Supabase project needs the bucket created by hand.
+- **All four acceptance criteria verified live**, each probe run in its own process so L1 was
+  genuinely cold: cold-instance L2 hit at 300 ms with **no new `usage_events` row** (vs
+  3683 ms + a cost row to generate), and a wrong bucket name still let generation succeed
+  (warn, no throw, fal URL served). $0.009 of real fal.ai spend; test rows and objects
+  deleted afterwards.
+- **Found and fixed a silent-breakage defect** the brief's failure-path criterion led
+  straight to: a row does not prove the object exists, and `getPublicUrl` never checks, so
+  row-present + object-deleted served a URL returning 400 *forever* — the row kept "hitting"
+  so generation never re-ran. `lookupPersistedAsset` now confirms a hit with a bounded HEAD
+  (1500 ms), drops the row and regenerates on a definitive 400/404, and fails open on
+  anything else. ~100 ms per hit against ~3800 ms to regenerate. Reachable in practice:
+  admin bucket cleanup is exactly what the previous T06 session did.
+- Gates on the merge commit: `yarn type-check`, `yarn lint` (pre-existing warnings only),
+  `yarn test` (76/76), `yarn build` — all green.
 
 ## Steps still to take (checklist for any resuming session)
 
