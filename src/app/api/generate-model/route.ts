@@ -46,6 +46,11 @@ export async function POST(req: NextRequest) {
       generateInfographic({
         prompt:     imagePrompt,
         style:      "annotated_photo",
+        // Explicit rather than relying on the default: this is the one image
+        // the teacher points at while `visual_walkthrough` names its labels
+        // aloud, so it stays on Pro even though segment visuals moved to the
+        // cheaper tier.
+        tier:       "pro",
         userId:     user.id,
         feature:    "lesson.teaching_image",
         conceptId:  resolvedConceptId,

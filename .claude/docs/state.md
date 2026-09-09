@@ -2,6 +2,34 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 (final) — tiered image models applied
+
+Acting on the eval above. `generateInfographic` gained a `tier` option:
+
+- **"pro"** (`fal-ai/nano-banana-pro`, $0.15) — topic teaching image only, because
+  `visual_walkthrough` narration cites its labels by name.
+- **"fast"** (`fal-ai/nano-banana-2`, $0.08) — segment visuals. Measured equal to Pro on
+  text accuracy, 2.1x faster.
+
+Two details that matter:
+
+1. **The model is part of the cache key** (`cacheKey(prompt, style, model)`). Without it the
+   two tiers would serve each other's images out of L1/L2 for the same prompt+style. This
+   re-keys every existing infographic entry — free right now, since `generated_assets` was
+   emptied after the T06 probe.
+2. **`RESTRAINT_SUFFIX` is appended on the fast tier only.** NB2 renders text as well as Pro
+   but volunteers titles, explanatory paragraphs, "RESULT:" boxes and callouts labelling
+   styling rather than content — an image that explains itself talks over the teacher who is
+   narrating. Verified with one more generation ($0.08): the same flow prompt that produced
+   a cluttered poster came back as a clean numbered chevron diagram, correct labels, no
+   title, no paragraphs. Not applied to Pro, which is already restrained.
+
+Per concept now **$0.77** (1 Pro teaching image + 4 NB2 segment visuals + FLUX + Tripo3D),
+against $0.82 before for a worse 3D model — the whole quality upgrade lands cheaper than the
+status quo, and lessons render faster.
+
+Total eval spend across the session: **$2.43** of the $3 Hmz authorised.
+
 ## 2026-09-09 (latest) — pipeline eval run, $2.35 spent, three findings
 
 Hmz authorised up to $3 for one round of real generations. Spent **$2.352**. Eval called fal

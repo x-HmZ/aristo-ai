@@ -136,6 +136,11 @@ export async function POST(req: NextRequest) {
           const { imageUrl, cached } = await generateInfographic({
             prompt:    seg.prompt,
             style:     seg.style,
+            // Segment visuals run on the fast tier (nano-banana-2): measured
+            // equal to Pro on text accuracy across real text-heavy prompts,
+            // 2.1x faster and 53% of the price. Pro stays on the topic
+            // teaching image only, whose labels the narration cites by name.
+            tier:      "fast",
             userId:    user.id,
             feature:   "lesson.segment_visual",
             conceptId,

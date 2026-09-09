@@ -1,11 +1,12 @@
 /**
- * banana.ts — shared Nano Banana Pro image generation helper.
+ * banana.ts — shared image + 3D generation helper.
  *
- * Single point of contact with `fal-ai/nano-banana-pro` (Gemini 3 Pro
- * powered, best-in-class for educational infographics + readable text).
- * Consumed by:
- *   • `/api/generate-model`        — topic-level rich teaching image
- *   • `/api/learn/segment-visuals` — per-segment, per-moment visuals
+ * Single point of contact with fal.ai for every generated asset. Images run on
+ * two tiers (see `GenerateInfographicOpts.tier`):
+ *   • `/api/generate-model`        — topic-level teaching image, "pro"
+ *     (`fal-ai/nano-banana-pro`) because the narration cites its labels
+ *   • `/api/learn/segment-visuals` — per-segment visuals, "fast"
+ *     (`fal-ai/nano-banana-2`), measured equal on text and 2.1x faster
  *
  * Style hints (SegmentVisual["style"]) map to a small preset prefix that's
  * prepended to the segment's prompt before being sent to fal.  This keeps
@@ -60,6 +61,26 @@ export type ImageStyle = SegmentVisual["style"];
 export interface GenerateInfographicOpts {
   prompt: string;
   style?: ImageStyle;
+  /**
+   * Which image model to use. Default "pro".
+   *
+   *   "pro"  — `fal-ai/nano-banana-pro`, $0.15, ~28s measured. Reserved for the
+   *            topic teaching image: the teacher literally points at it and the
+   *            lesson's `visual_walkthrough` narration references its labels by
+   *            name, so nothing about it may drift.
+   *   "fast" — `fal-ai/nano-banana-2`, $0.08, ~13s measured. Used for segment
+   *            visuals.
+   *
+   * The tiering is evidence-based, not a guess: both models were run against
+   * three real text-heavy prompts taken from `cached_lessons` (Python code with
+   * quotes and line numbers, `python3 --version` output, labelled flow boxes) on
+   * 2026-09-09. Neither garbled any text — text fidelity is a tie. NB2's only
+   * weakness is over-production (it volunteers titles, explanatory paragraphs
+   * and callouts that annotate styling rather than content), which is what
+   * RESTRAINT_SUFFIX below exists to suppress. Full write-up in
+   * `.claude/docs/state.md`.
+   */
+  tier?: "pro" | "fast";
   /** Optional override for fal.ai output resolution. Default "1K". */
   resolution?: "1K" | "2K";
   /** Set true to skip the warm cache (admin previews, A/B tests). */
@@ -107,6 +128,25 @@ const STYLE_PREFIX: Record<ImageStyle, string> = {
 
 const DEFAULT_PREFIX = STYLE_PREFIX.infographic;
 
+/**
+ * Appended on the "fast" tier only.
+ *
+ * Nano Banana 2 renders text as accurately as Pro but is far less disciplined
+ * about *what* to draw: left alone it adds a poster title, explanatory
+ * paragraphs, "RESULT:" summary boxes, and callouts labelling the styling
+ * ("Terminal Background (Dark)") rather than the content. In this product the
+ * teacher narrates the explanation, so an image that also explains itself talks
+ * over the lesson.
+ *
+ * Deliberately not applied to the "pro" tier: Pro is already restrained — if
+ * anything it under-designs — so the same instruction would only make it
+ * sparser.
+ */
+const RESTRAINT_SUFFIX =
+  " Draw only what is described above. No title or heading, no caption, no " +
+  "explanatory sentences or paragraphs, no summary or result boxes. Use short " +
+  "labels that name a part, and label nothing that is merely decorative.";
+
 // ─── In-memory caches (warm-instance reuse) ──────────────────────────────────
 //
 // Three separate hash-keyed maps share the same shape but live in their own
@@ -118,7 +158,8 @@ const DEFAULT_PREFIX = STYLE_PREFIX.infographic;
 // imageUrl within TTL pay zero fal.ai cost until the instance is recycled.
 //
 // What each cache saves:
-//   • _cache    — Nano Banana Pro ($0.15/image, ~10-20s)
+//   • _cache    — teaching images (Pro $0.15) + segment visuals (NB2 $0.08),
+//                 keyed per model so the tiers never cross
 //   • _cacheFlux — FLUX Schnell  ($0.003/image, ~1s — cheap but adds up)
 //   • _cache3d  — Tripo3D v2.5   ($0.30/model — the priciest single call)
 //
@@ -159,8 +200,11 @@ function cacheSet(map: Map<string, CacheEntry>, key: string, url: string): void 
 }
 
 // Convenience wrappers, kept for call-site readability.
-const cacheKey = (prompt: string, style: ImageStyle): string =>
-  hashKey(`${style}|${prompt}`);
+// `model` is part of the key on purpose: without it the two tiers would serve
+// each other's images, and a segment visual would silently inherit whatever the
+// teaching image generated for the same prompt+style.
+const cacheKey = (prompt: string, style: ImageStyle, model: string): string =>
+  hashKey(`${model}|${style}|${prompt}`);
 
 // ─── L2 persistence — Supabase Storage + generated_assets table ─────────────
 //
@@ -179,6 +223,13 @@ type AssetKind = "infographic" | "flux_source" | "model_3d";
  */
 const TRIPO3D_MODEL      = "tripo3d/tripo/v2.5/image-to-3d";
 const TRIPO3D_TIMEOUT_MS = 240_000;
+
+/**
+ * Image models, by tier. Both slugs have a price row in `pricing.ts` pinned by
+ * tests, and both are part of the cache key — see `cacheKey`.
+ */
+const IMAGE_MODEL_PRO  = "fal-ai/nano-banana-pro"; // $0.15, ~28s
+const IMAGE_MODEL_FAST = "fal-ai/nano-banana-2";   // $0.08, ~13s
 
 const STORAGE_BUCKET      = "generated-assets";
 const PERSIST_TIMEOUT_MS  = 3000; // hard cap on the upload+insert round trip
@@ -349,7 +400,7 @@ export async function generateInfographic(
   opts: GenerateInfographicOpts
 ): Promise<GenerateInfographicResult> {
   const {
-    prompt, style, resolution = "1K", bypassCache = false,
+    prompt, style, tier = "pro", resolution = "1K", bypassCache = false,
     userId = null, feature = "lesson.teaching_image", conceptId = null,
   } = opts;
   if (!prompt || !prompt.trim()) {
@@ -358,15 +409,18 @@ export async function generateInfographic(
 
   const resolvedStyle = (style ?? "infographic") as ImageStyle;
   const prefix        = STYLE_PREFIX[resolvedStyle] ?? DEFAULT_PREFIX;
-  const fullPrompt    = `${prefix}${prompt.trim()}`;
+  const model         = tier === "fast" ? IMAGE_MODEL_FAST : IMAGE_MODEL_PRO;
+  const fullPrompt    = tier === "fast"
+    ? `${prefix}${prompt.trim()}${RESTRAINT_SUFFIX}`
+    : `${prefix}${prompt.trim()}`;
 
-  const key = cacheKey(fullPrompt, resolvedStyle);
+  const key = cacheKey(fullPrompt, resolvedStyle, model);
   if (!bypassCache) {
     const hit = cacheGet(_cache, key);
     if (hit) return { imageUrl: hit, cached: true };
 
     // L2 — a prior request (any instance, any day) may have already
-    // persisted this exact prompt+style. A hit here means zero fal.ai cost.
+    // persisted this exact model+prompt+style. A hit here means zero fal.ai cost.
     const persistedHit = await lookupPersistedAsset("infographic", key);
     if (persistedHit) {
       cacheSet(_cache, key, persistedHit);
@@ -376,7 +430,7 @@ export async function generateInfographic(
 
   ensureFalConfigured();
 
-  const result = (await fal.subscribe("fal-ai/nano-banana-pro", {
+  const result = (await fal.subscribe(model, {
     input: {
       prompt:        fullPrompt,
       aspect_ratio:  "1:1",
@@ -386,9 +440,12 @@ export async function generateInfographic(
   })) as unknown as FalImageResult;
 
   const url = result.data?.images?.[0]?.url;
-  if (!url) throw new Error("Nano Banana Pro returned no image");
+  if (!url) throw new Error(`${model} returned no image`);
 
-  const sourceModel = resolution === "2K" ? "fal-ai/nano-banana-pro/2K" : "fal-ai/nano-banana-pro";
+  // Only Pro has a separate 2K price row; NB2 bills one rate up to 4K.
+  const sourceModel = tier === "pro" && resolution === "2K"
+    ? "fal-ai/nano-banana-pro/2K"
+    : model;
 
   // Cost attribution — fire-and-forget. Skipped on cache hit upstream.
   logFalGeneration({
