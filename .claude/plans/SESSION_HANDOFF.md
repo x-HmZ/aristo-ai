@@ -237,9 +237,12 @@ Still open:
 - Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app. It is also the repo's
   **GitHub default branch**, so PRs base against it automatically. `master` is stale/ancient
   and must not be merged into.
-- `deploy-prep` is at `8c03c46` (merge of PR #2, avatar clone fix). Everything from
-  `dev/v2-instant-demo` — the V7 alignment lipsync and the avatar fix — is now merged and
-  deployed. That branch is fully contained in `deploy-prep` and can be deleted.
+- `deploy-prep` is at `a26b8ed` (merge of **PR #3**, 2026-09-09): T06 persistent cache,
+  Tripo3D v2.5 swap, tiered image models, corrected fal pricing. **Deployed to production
+  and verified live** (aristo-ai-ten.vercel.app returns 200). `dev/t06-persistent-cache`
+  is fully contained in `deploy-prep` and can be deleted.
+- Before that, `8c03c46` (PR #2) brought the V7 alignment lipsync and the avatar clone fix;
+  `dev/v2-instant-demo` is likewise fully contained and can be deleted.
 - Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
   `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
   `dev/v4-teacher-memory`.
