@@ -3,7 +3,7 @@
 _Updated continuously. If you are a fresh session: read `CLAUDE.md`, then this file, then
 `.claude/plans/README.md`. This tells you exactly where work stands and what to do next._
 
-Last updated: 2026-07-12 (session: full audit + roadmap, then product-vision tier)
+Last updated: 2026-09-09 (session: ship avatar T-pose + idle-drift fix)
 
 ## What this session did (chronological)
 
@@ -84,9 +84,23 @@ frequency in /admin/cost.
   L1 memory -> L2 generated_assets -> fal, 3 s timeout guards, graceful fallback
   live-tested. MERGE BLOCKED: migration `016_generated_assets.sql` must be applied by hand
   (REST API cannot run DDL), then rerun the cache-hit probe.
-- **V4 teacher memory**: sonnet agent launched on `dev/v4-teacher-memory` (in flight).
+- **V4 teacher memory**: DONE on `dev/v4-teacher-memory` (pushed, UNMERGED — needs authed
+  UI pass: greeting banner/chip in ModePicker, quiz celebration, TTS autoplay policy,
+  resume_course chip). GreetingAgent (Haiku, ~$0.002/greeting, 1.8 s), learner_history
+  back-references, misconception-targeted quiz + resolution (no DDL needed — resolved/
+  resolved_at columns already existed). Agent caught + fixed a privacy bug: personalized
+  lessons now SKIP the shared cached_lessons write (was about to leak per-user history
+  across users with the same profile signature). Own security pass: no findings.
+- **T07 3D-gen eval**: DONE — `.claude/plans/T07-REPORT.md`. Verdict: replace TripoSR with
+  **Tripo3D v2.5** (`tripo3d/tripo/v2.5/image-to-3d`, $0.30/gen, scored 4/5 vs TripoSR 1.5/5;
+  Trellis 2 hallucinates on diagram-style sources, Hunyuan v2 collapses them flat). Swap plan
+  is in the report (banana.ts slug/response/timeout, pricing row, remove the -PI/2 Z-up
+  rotation in GeneratedModel.tsx). Eval truncated by an exhausted fal balance ($1.53 spent);
+  optional ~$0.91 confirmation run after top-up. Swap itself = follow-up task, do after T06
+  merges (persistence makes $0.30/concept one-time).
 
-## USER ACTIONS NEEDED (everything else is blocked on these)
+
+## USER ACTIONS (2026-07-13 wave — all resolved; see the 2026-09-08 section below)
 
 1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
    SQL Editor -> then T06 verification + merge can proceed.
@@ -100,12 +114,131 @@ frequency in /admin/cost.
 6. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
-## Repo state (as of this session, branch `dev/desk-quiz-3d-fixes`)
+## Session 2026-09-08 — demo narration + avatar default
 
-- Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app; `master` is stale/ancient.
-- Current branch has 2 unpushed verified commits (desk quiz + camera fixes) + uncommitted:
-  modified `CLAUDE.md`, new `.claude/docs/`, `TECHNICAL_SUMMARY.md`, `.claude/plans/`.
-- Nothing from this session's plans has been executed as code yet.
+Worked on `dev/v2-instant-demo` (merged `deploy-prep` in first, so it now carries T10's CI
+and vitest suite). **All of this is uncommitted** — see "Steps still to take".
+
+- **V2's TTS decision reversed, and for a better reason than voice quality.** Demo narration
+  is now 30 pre-rendered ElevenLabs mp3s (7,029 chars, one-time, inside the free tier; $0 per
+  visitor after). `useTTS` gained `srcUrl`, which points the singleton audio element at a
+  static file. That element is what wawa-lipsync analyses — `speechSynthesis` exposes no audio
+  buffer — so the demo previously narrated with a completely motionless mouth. Generator:
+  `scripts/prerender-demo-tts.mjs` (plain node, no tsx/dotenv, resumable, `--dry-run` first).
+- **`DEFAULT_TEACHER` = marcus, on `/learn` too** (user's call). ryan has 0 viseme morphs;
+  sonia has no mouth morphs at all — both verified by parsing the GLB JSON chunks, so neither
+  can ever lipsync. Trade: cold `/learn` ~3.6 MB -> ~12.7 MB, partly undoing T02.
+  `preloadDefaultAvatar()` (was a module-scope side effect in `Teacher.tsx`, which also
+  charged `/demo` 2.5 MB for an avatar it discards) is now called by `LearnClient`; sign-in
+  prefetch retargeted. **Not yet smoke-tested on authed `/learn`** — worth one look.
+- Pricing comment corrected: Sonnet 5 stays at $2/$10, the 2026-09-01 rise was cancelled.
+- New brief `V7-alignment-lipsync.md`; sonia's phantom morph is item 0 in the UX backlog.
+
+**Note for any session working through the Cowork device bridge:** git writes from that
+sandbox leave `.git/index.lock` behind (it cannot unlink), which then blocks git on the
+Windows side. Stale locks were parked in `.git/_stale-locks/` and can be deleted. Run git on
+Windows, not through the bridge. `tsc` runs fine through it; vitest and `next build` do not
+(node_modules holds win32 native binaries).
+
+## Session 2026-09-08 (later) — V7 alignment lipsync
+
+Demo path is code-complete and unit-tested; `/learn`'s `with-timestamps` swap is untouched.
+New `src/lib/lipsync/visemes.ts` + tests, an `--align` pass on the prerender script, and a
+timeline-preferring `getCurrentViseme()` in `useTTS`. Full detail in
+`.claude/plans/V7-alignment-lipsync.md`.
+
+`/learn` gained the same treatment in the same session — a demo-only version was rightly
+called out as pointless. `/api/tts` now uses `/with-timestamps` (timings inline, same
+character cost, no extra key scope needed).
+
+**Three things need a human:**
+
+- **Enable `forced_alignment` on the ElevenLabs API key** (dashboard -> API Keys -> edit).
+  `--align` currently fails 401 `missing_permissions`. Worth enabling `user_read` at the
+  same time — its absence is why the V2 session could not check the quota. This affects the
+  demo only; `/learn` needs no new scope.
+- `node scripts/prerender-demo-tts.mjs --align` — after the permission is enabled, and from
+  a shell with real internet. `api.elevenlabs.io` is blocked by the Cowork session's egress
+  policy and the desktop VM has no outbound DNS, so no agent session can make this call.
+  Costs ~7.4 min of speech-to-text and **zero TTS characters**.
+- **Watch `/learn` narrate once after deploying.** The `with-timestamps` path has never run
+  against the live API. If anything looks wrong, set `TTS_TIMESTAMPS=off` in Vercel — that
+  reverts to plain audio and FFT lipsync with no code change. Server logs will say
+  `with-timestamps unavailable` if it silently fell back.
+- **Restart `next dev` before testing.** It wedged during this session — it stopped serving
+  the `DemoClient` dynamic chunk entirely (8 resources, no canvas), while the GLBs kept
+  returning 200. Not caused by the diff, but it blocked in-motion verification, so nobody
+  has yet seen the timeline drive a real mesh.
+
+## Session 2026-09-09 — avatar T-pose + idle drift shipped
+
+Branch `dev/v2-instant-demo`, now **committed and pushed** as `74f105e`.
+
+- **Both avatar bugs fixed, one root cause.** `Teacher.tsx` mounted the globally cached GLTF
+  scene via `<primitive object={scene}>` without cloning and mutated it, so every rig shared
+  bone objects. Fix: clone per mount with `SkeletonUtils.clone`, key `<Teacher>` by avatar in
+  `Experience.tsx` so a switch fully remounts, stop the mixer's actions on unmount. Full
+  reasoning and the ruled-out hypotheses are in `.claude/docs/state.md` (2026-09-09 entry).
+- **Verified by the user, in motion.** All four avatars animate, none T-pose; Marcus holds
+  position when left idle. `state.md` and `UX-POLISH-BACKLOG.md` item 0b updated from
+  "verification pending" to verified.
+- **`origin/deploy-prep` had moved ahead** (merge commit `fce3aa1`, PR #1 — the earlier
+  lipsync work `603a91d` was already merged there). Merged it in first; it was a clean
+  fast-forward with an empty content diff, so the branch now sits exactly on deploy-prep
+  plus this one commit.
+- **All four CI checks green locally before commit:** `yarn type-check`, `yarn lint`
+  (warnings only, all pre-existing, none in the changed files), `yarn test` (76 passed /
+  5 files), `yarn build`.
+
+**MERGED TO PRODUCTION.** PR #2 (https://github.com/x-HmZ/aristo-ai/pull/2) merged into
+`deploy-prep` as `8c03c46` on 2026-09-09, with both GitHub checks green on the PR head
+(`type-check, lint, test, build` and `Vercel Preview Comments`). That merge triggers the
+production deploy to aristo-ai-ten.vercel.app — confirm the deployment went out and do a
+quick avatar smoke-test on prod.
+
+Two notes for future PRs, both learned the hard way this session:
+
+- The repo's **default branch is already `deploy-prep`**, so GitHub does NOT default a new PR
+  to `master`. Earlier handoff text warning about that was wrong. `master` is still stale and
+  must not be merged into.
+- The `github` MCP server authenticates with a static PAT in `~/.claude.json`
+  (`GITHUB_PERSONAL_ACCESS_TOKEN`). It returned `Bad credentials` mid-session because the PAT
+  had expired; replacing the value and restarting fixed it. There is no `gh` CLI on this
+  machine — installing it (`winget install --id GitHub.cli`) would give a fallback path.
+
+## USER ACTIONS — all previously-blocking ones are now DONE (2026-09-08)
+
+1. ~~Migration 016~~ — applied. **T06 verification + merge is now unblocked.**
+2. ~~Admin bootstrap SQL~~ — run.
+3. ~~Resend env vars~~ — done: `RESEND_API_KEY` (prod + preview), plus `ADMIN_NOTIFY_EMAIL`
+   and `APP_URL` added as Config (prod + preview). Takes effect on the next deploy; verify
+   per runbook section 1 (signup -> email -> `profiles.admin_notified_at` non-null).
+4. ~~V2 demo voice decision~~ — resolved: pre-rendered ElevenLabs. T04 and V1 are unblocked.
+5. ~~fal.ai balance~~ — topped up.
+
+Still open:
+
+6. Smoke-test authed `/learn` after the avatar default change (load time + marcus renders).
+   Note `/demo` took ~25-40s to reach the topic picker in dev on a warm cache; production
+   (CDN + compression) should be far better, but if `/learn` feels slow this is the T02
+   trade showing up and it is worth measuring rather than assuming.
+7. T06: rerun the cache-hit probe now 016 is applied, then merge.
+8. Tripo3D v2.5 swap (T07's verdict) — **only after T06 merges**, so $0.30/gen is paid once
+   per concept rather than per cold instance per student.
+9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
+   fast-forward master to deploy-prep).
+
+## Repo state (as of 2026-09-09, on `deploy-prep`)
+
+- Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app. It is also the repo's
+  **GitHub default branch**, so PRs base against it automatically. `master` is stale/ancient
+  and must not be merged into.
+- `deploy-prep` is at `8c03c46` (merge of PR #2, avatar clone fix). Everything from
+  `dev/v2-instant-demo` — the V7 alignment lipsync and the avatar fix — is now merged and
+  deployed. That branch is fully contained in `deploy-prep` and can be deleted.
+- Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
+  `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
+  `dev/v4-teacher-memory`.
 
 ## Active work queue
 

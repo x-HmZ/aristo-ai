@@ -83,6 +83,7 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
   const setIsGeneratingModel = useAristoStore((s) => s.setIsGeneratingModel);
   const setActiveModelUrl    = useAristoStore((s) => s.setActiveModelUrl);
   const setViewMode3d        = useAristoStore((s) => s.setViewMode3d);
+  const demoMode             = useAristoStore((s) => s.demoMode);
 
   // Current-segment callouts — adaptive-visual mode only. When LessonPlayer
   // bumps currentSegmentId, we look up the matching segment's visual.callouts
@@ -134,6 +135,16 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
       setViewMode3d(true);
       return;
     }
+
+    // Demo path: pending3dImageUrl already holds the frozen GLB URL
+    // (useLessonPlayback's demoMode branch stashes lesson.metadata
+    // .demo_model_url there) — no /api/generate-model/3d call.
+    if (demoMode) {
+      setActiveModelUrl(pending3dImageUrl);
+      setViewMode3d(true);
+      return;
+    }
+
     setIsGeneratingModel(true);
     try {
       const res = await fetch("/api/generate-model/3d", {
@@ -314,7 +325,12 @@ function SafeTeacher(props: React.ComponentProps<typeof Teacher>) {
   return (
     <TeacherErrorBoundary onError={() => setTeacher("ryan")}>
       <Suspense fallback={<AvatarLoadingPlaceholder position={position as [number,number,number]} scale={scale} rotationY={rotationY} />}>
-        <Teacher {...props} />
+        {/* Keyed by avatar so a switch fully remounts the rig: new group, new
+            mixer, new actions. Without this, switching between two avatars that
+            share an animation file (marcus/priya both use animations_Avaturn.glb)
+            reused drei's memoised actions, which stayed bound to the previous
+            skeleton and left the new avatar in a T-pose. */}
+        <Teacher key={props.teacher} {...props} />
       </Suspense>
     </TeacherErrorBoundary>
   );

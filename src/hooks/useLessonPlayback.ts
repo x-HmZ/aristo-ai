@@ -145,11 +145,49 @@ function isChallengeSegment(seg: NarrationSegment | undefined): boolean {
   return seg.phase === "challenge" && seg.role !== "challenge_reveal";
 }
 
+/**
+ * Demo narration files already warmed into the HTTP cache. Module-scoped so it
+ * survives remounts within a session; the set is tiny (one entry per segment).
+ */
+const _warmedAudioUrls = new Set<string>();
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
+
+export interface LessonPlaybackOpts {
+  /**
+   * True only on the unauthenticated /demo route. Skips every network call
+   * this hook would otherwise fire (segment-visuals, generate-model,
+   * lesson-complete, challenge eval) and never touches /api/tts. Frozen demo
+   * lessons carry their resolved image/model URLs directly on the payload
+   * (segment.visual.imageUrl, metadata.demo_model_url) so playback still
+   * shows visuals.
+   *
+   * Narration plays from static per-segment mp3s under public/demo/<slug>/,
+   * rendered once by scripts/prerender-demo-tts.mjs -- still zero API calls
+   * per visitor, but real audio, so wawa-lipsync can drive the avatar's mouth.
+   * useTTS falls back to speechSynthesis per segment if a file is missing.
+   */
+  demoMode?: boolean;
+}
 
 export function useLessonPlayback(
   lesson: LessonPayload | null,
+  opts: LessonPlaybackOpts = {},
 ): LessonPlaybackState & LessonPlaybackControls {
+  const demoMode = !!opts.demoMode;
+
+  /**
+   * Static narration URL for a demo segment. The demo lesson's concept_id is
+   * also its public/demo/ folder slug (see src/data/demo/index.ts). Returns
+   * undefined outside demoMode so the authed /learn path is untouched.
+   */
+  const demoAudioUrl = useCallback(
+    (segmentId: string): string | undefined =>
+      demoMode && lesson?.concept_id
+        ? `/demo/${lesson.concept_id}/${segmentId}.mp3`
+        : undefined,
+    [demoMode, lesson?.concept_id],
+  );
   const { speak, stop, prefetch }     = useTTS();
   const setIsSpeaking                 = useAristoStore((s) => s.setIsSpeaking);
   const setGesture                    = useAristoStore((s) => s.setGesture);
@@ -229,6 +267,18 @@ export function useLessonPlayback(
   // to the segment-visuals batch.
   useEffect(() => {
     if (!lesson) return;
+
+    // Demo path: the GLB is already frozen on the payload — wire it straight
+    // to the "View in 3D" toggle (Experience.tsx's handleViewIn3d skips the
+    // /api/generate-model/3d fetch when demoMode and uses this URL as-is).
+    // Never calls /api/generate-model.
+    if (demoMode) {
+      if (lesson.metadata.demo_model_url) {
+        setPending3dImageUrl(lesson.metadata.demo_model_url);
+      }
+      return;
+    }
+
     const { should_generate_model, model_image_prompt, model_3d_prompt } = lesson.metadata;
     if (!should_generate_model || !model_image_prompt) return;
 
@@ -257,11 +307,23 @@ export function useLessonPlayback(
       .finally(() => { if (!cancelled) setIsGeneratingModel(false); });
 
     return () => { cancelled = true; };
-  }, [lesson, setIsGeneratingModel, setPending3dImageUrl]);
+  }, [lesson, demoMode, setIsGeneratingModel, setPending3dImageUrl]);
 
   // ─── Batch-fetch visuals on lesson load ─────────────────────────────────────
   useEffect(() => {
     if (!lesson || segments.length === 0) return;
+
+    // Demo path: frozen segments already carry a resolved static imageUrl —
+    // build the map synchronously, never call /api/learn/segment-visuals.
+    if (demoMode) {
+      const map: Record<string, VisualResult> = {};
+      for (const s of segments) {
+        if (s.visual?.imageUrl) map[s.id] = { imageUrl: s.visual.imageUrl, cached: true };
+      }
+      setVisualsByID(map);
+      setIsLoading(false);
+      return;
+    }
 
     // Only true segments (not legacy shim) need network visuals.  The shim's
     // segments have no .visual fields by construction.
@@ -312,7 +374,7 @@ export function useLessonPlayback(
       });
 
     return () => { cancelled = true; };
-  }, [lesson, segments]);
+  }, [lesson, segments, demoMode]);
 
   // ─── Force-idle while preparing visuals ────────────────────────────────────
   // Without this, the avatar inherits a stale gesture from a prior segment
@@ -341,12 +403,15 @@ export function useLessonPlayback(
         setCurrentSegmentId(null);
         setGesture("idle");
         setActivePreviewImageUrl(null);
-        // Mark concept viewed.  Non-critical — swallow errors.
-        fetch("/api/learn/complete", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ conceptId: lesson.concept_id }),
-        }).catch(() => {});
+        // Mark concept viewed.  Non-critical — swallow errors. Skipped in
+        // demoMode — no learner row exists to attribute this to.
+        if (!demoMode) {
+          fetch("/api/learn/complete", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ conceptId: lesson.concept_id }),
+          }).catch(() => {});
+        }
       }
       return;
     }
@@ -379,16 +444,34 @@ export function useLessonPlayback(
     // 3) Mark active segment for UI highlight
     setCurrentSegmentId(segment.id);
 
-    // 4) Warm-up the next segment's TTS while this one narrates
+    // 4) Warm-up the next segment's narration while this one plays. On /learn
+    //    that means a /api/tts fetch; in demoMode it is just a static mp3, so
+    //    warm the HTTP cache directly rather than going through useTTS.
     const upcoming = segments[segmentIdx + 1];
-    if (upcoming?.text) prefetch(upcoming.text);
+    if (upcoming?.text) {
+      const upcomingSrc = demoAudioUrl(upcoming.id);
+      if (upcomingSrc) {
+        // Guard against repeats: React strict mode double-invokes effects in
+        // dev, and any re-render that retriggers this effect would refetch the
+        // same file. Observed seg_002.mp3 going out three times without this.
+        if (!_warmedAudioUrls.has(upcomingSrc)) {
+          _warmedAudioUrls.add(upcomingSrc);
+          void fetch(upcomingSrc, { cache: "force-cache" }).catch(() => {});
+        }
+      } else {
+        prefetch(upcoming.text, { forceBrowser: demoMode });
+      }
+    }
 
     // 5) Narrate.  Challenge segments pose a question — when narration ends
     //    we set awaitingAnswer instead of advancing, freezing playback until
     //    the student replies (via submitAnswer).
     const isQuestion = isChallengeSegment(segment);
     setIsSpeaking(true);
+    const segmentSrc = demoAudioUrl(segment.id);
     const controller = speak(segment.text, {
+      srcUrl:       segmentSrc,
+      forceBrowser: demoMode && !segmentSrc,
       onEnd: () => {
         ttsControllerRef.current = null;
         if (isQuestion) {
@@ -410,7 +493,7 @@ export function useLessonPlayback(
       cleanupPlayback();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID]);
+  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID, demoMode, demoAudioUrl]);
 
   // ─── Unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -469,6 +552,17 @@ export function useLessonPlayback(
       setSegmentIdx((i) => i + 1);
       return;
     }
+
+    // Demo path: no /api/learn/challenge call — any answer gets an
+    // encouraging scripted nod, per the demo brief ("accepts any answer
+    // with an encouraging scripted response").
+    if (demoMode) {
+      setGesture("nodding");
+      setAwaitingLocal(false);
+      setSegmentIdx((i) => i + 1);
+      return;
+    }
+
     const challengePhase = lesson.phases?.challenge;
     try {
       if (challengePhase?.question && challengePhase.answer) {
@@ -491,7 +585,7 @@ export function useLessonPlayback(
       setAwaitingLocal(false);
       setSegmentIdx((i) => i + 1);
     }
-  }, [lesson, setGesture]);
+  }, [lesson, setGesture, demoMode]);
 
   // Compute the pending challenge segment for consumers (AnswerInputPanel).
   const pendingChallengeSegment = useMemo<NarrationSegment | null>(() => {

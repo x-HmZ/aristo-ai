@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getUserApprovalStatus } from "@/lib/auth/approval";
 import { notifyAdminOfNewSignup } from "@/lib/email/resend";
@@ -66,6 +67,12 @@ export default async function PendingPage() {
                 receive an email as soon as you&apos;re cleared to start
                 learning.
               </p>
+              <Link
+                href="/demo"
+                className="block mb-6 rounded-xl border border-primary/25 bg-accent/60 px-4 py-3 text-sm text-foreground hover:bg-accent transition-colors"
+              >
+                While you wait, <span className="font-semibold text-primary">try a live demo lesson</span> — no approval needed.
+              </Link>
             </>
           )}
 

@@ -21,6 +21,7 @@ Two tiers:
 | V4 teacher memory | Teacher greets you by name, recalls last session's struggle, targets your recorded misconceptions, celebrates comebacks. Data already exists; one Haiku call/day. | sonnet | M |
 | V5 motivation loop | Server-authoritative XP/levels + in-scene celebration (teacher claps, confetti, spoken praise). The retention loop the app has zero of today. | sonnet | M |
 | V6 parent weekly digest | Weekly progress email to the parent — the person who will actually pay. All ingredients exist. | sonnet | S-M |
+| V7 alignment lipsync | Drive the avatar's mouth from ElevenLabs character timings instead of an FFT guess. Free on /learn (same characters); the demo uses Forced Alignment, billed as STT, so it costs no TTS quota. | sonnet | M |
 
 Recommended V order: **V2 -> V1 -> V5 -> V4 -> V3 -> V6.** (V2 first: it makes everything
 else demoable to real people; V1 is the flagship but bigger. V6 waits on T10's Resend wiring.)
@@ -107,11 +108,17 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 ## Task status
 
 - [ ] V1 raise-hand teacher
-- [ ] V2 instant public demo
+- [x] V2 instant public demo (2026-07-13 — 2 lessons not 3 per cost/quota gate. TTS revisited
+      2026-09-08: narration is now 30 pre-rendered ElevenLabs mp3s under public/demo/, which
+      restored lipsync the speechSynthesis path could not do. Demo avatar forced to marcus.
+      Still UNMERGED — see SESSION_HANDOFF.md)
 - [ ] V3 live blackboard worked examples
 - [ ] V4 teacher memory
 - [ ] V5 motivation loop
 - [ ] V6 parent weekly digest
+- [~] V7 alignment-driven lipsync (2026-09-08 — both paths code-complete + unit-tested,
+      neither exercised against the live API. /learn needs nothing run. /demo is blocked on
+      enabling the key's `forced_alignment` permission, then `--align`.)
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
 - [x] T01 repo + docs consolidation (2026-07-12 — master promotion still pending Vercel dashboard switch)
 - [x] T02 3D asset diet
@@ -119,7 +126,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [ ] T04 landing page rebuild
 - [x] T05 LLM model bump
 - [x] T06 persistent generation cache (code + bucket done; migration 016 written but NOT applied live — no DB DDL credential in-session, see brief)
-- [ ] T07 3D gen model evaluation
+- [x] T07 3D gen model evaluation (2026-07-13 — report in T07-REPORT.md; recommends Tripo3D v2.5 swap; eval truncated by exhausted fal balance)
 - [ ] T08 dynamic classroom pass
 - [ ] T09 lesson streaming
 - [ ] T10 ops hardening (autonomous parts done 2026-07-13 — CI + tests + migration

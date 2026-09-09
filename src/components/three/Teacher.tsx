@@ -1,8 +1,9 @@
 "use client";
 
 import "./dracoDecoder";
-import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
+import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
+import { SkeletonUtils } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Group, LoopOnce, MathUtils, MeshStandardMaterial, SRGBColorSpace } from "three";
@@ -212,9 +213,38 @@ export function Teacher({
     };
   }, [teacher, customTeacherGlbUrl]);
 
-  const { scene }                    = useGLTF(sceneUrl);
+  const { scene: cachedScene }       = useGLTF(sceneUrl);
   const { animations }               = useGLTF(animUrl);
+
+  // Clone the cached GLTF scene rather than mounting it directly.
+  //
+  // useGLTF caches by URL and hands back ONE shared object graph. Mounting it
+  // with <primitive> meant every Teacher instance drove the *same* bones, and
+  // this component also mutates that graph (materials below, morph influences
+  // per frame), so those edits leaked into the cache. Two concrete bugs came
+  // out of that, both reported 2026-09-09:
+  //
+  //   • T-pose on every avatar except the default. Marcus and Priya share
+  //     animations_Avaturn.glb, so useGLTF returns the SAME animations array
+  //     for both; drei memoises actions on that array, so switching between
+  //     them never rebuilt the actions and they stayed bound to the previous
+  //     rig's bones. The new avatar got driven by nothing.
+  //   • Marcus slowly twisting out of position when left idle. A mixer from a
+  //     previous mount was still animating those shared bones alongside the
+  //     live one — two mixers crossfading the same Hips every 20s idle cycle,
+  //     which reads as small weird turns accumulating over minutes. (It is not
+  //     the clips: measured, their root yaw stays within ±6° and translation
+  //     is ~0, so no clip turns him around.)
+  //
+  // Cloning gives each mount its own skeleton, so a stale mixer can only
+  // animate a detached graph, and material/morph edits stay local.
+  const scene = useMemo(() => SkeletonUtils.clone(cachedScene), [cachedScene]);
+
   const { actions, mixer }           = useAnimations(animations, group);
+
+  // Belt-and-braces: stop a mixer's actions when this rig unmounts so it is not
+  // left running against the detached clone.
+  useEffect(() => () => { mixer.stopAllAction(); }, [mixer]);
 
   const isLoading  = useAristoStore((s) => s.isLoading);
   const isSpeaking = useAristoStore((s) => s.isSpeaking);
@@ -474,14 +504,26 @@ export function Teacher({
   );
 }
 
-// T02 — 3D asset diet: only preload the store's default avatar ("ryan", see
-// useAristoStore.ts) at module load time. Sonia/Marcus/Priya/custom are
-// larger (Avaturn PBR GLBs) and previously all downloaded eagerly even
-// though only one avatar renders at a time — that cost ~35 MB of dead
-// weight on every cold `/learn` load. They now lazy-load through the
-// existing Suspense boundary (see Experience.tsx SafeTeacher) the first
-// time a user switches avatars; TeacherControls.tsx additionally warms the
+// T02 — 3D asset diet: only preload the store's default avatar (DEFAULT_TEACHER
+// in useAristoStore.ts). The others are larger (Avaturn PBR GLBs) and previously
+// all downloaded eagerly even though only one avatar renders at a time — that
+// cost ~35 MB of dead weight on every cold `/learn` load. They now lazy-load
+// through the existing Suspense boundary (see Experience.tsx SafeTeacher) the
+// first time a user switches avatars; TeacherControls.tsx additionally warms the
 // GLB cache on hover/click so the switch feels instant despite not being
 // preloaded upfront.
-useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.sceneFile}`);
-useGLTF.preload(`/models/${AVATAR_ASSETS.ryan.animFile}`);
+//
+// This is a function rather than a module-scope side effect because importing
+// this module does NOT imply ryan is the avatar that will render. /demo renders
+// marcus (only the Avaturn rigs carry viseme morphs) yet still pulls Teacher.tsx
+// into its graph, so an unconditional preload here downloaded 2.5 MB of ryan
+// that page never uses — on the funnel page, where payload matters most.
+// Callers that know ryan is the avatar (i.e. /learn) invoke this on mount.
+//
+// Note the `import "./dracoDecoder"` at the top of this file is still a
+// module-scope side effect, and must stay one: it sets the shared decoder path
+// before any useGLTF call resolves.
+export function preloadDefaultAvatar(): void {
+  useGLTF.preload(`/models/${AVATAR_ASSETS[DEFAULT_TEACHER].sceneFile}`);
+  useGLTF.preload(`/models/${AVATAR_ASSETS[DEFAULT_TEACHER].animFile}`);
+}

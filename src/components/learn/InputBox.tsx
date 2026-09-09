@@ -2,7 +2,6 @@
 
 import { useAristoStore, type ChatMessage } from "@/store/useAristoStore";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTTS } from "@/hooks/useTTS";
 import type { SpeechRecognitionInstance } from "@/lib/speech";
 import "@/lib/speech";
 
@@ -19,7 +18,6 @@ export function InputBox() {
 
   const addMessage               = useAristoStore((s) => s.addMessage);
   const setIsLoading             = useAristoStore((s) => s.setIsLoading);
-  const setIsSpeaking            = useAristoStore((s) => s.setIsSpeaking);
   const setActiveModelUrl        = useAristoStore((s) => s.setActiveModelUrl);
   const setActivePreviewImageUrl = useAristoStore((s) => s.setActivePreviewImageUrl);
   const setIsGeneratingModel     = useAristoStore((s) => s.setIsGeneratingModel);
@@ -27,7 +25,6 @@ export function InputBox() {
   const setViewMode3d            = useAristoStore((s) => s.setViewMode3d);
 
   const isBusy    = isLoading || isGeneratingModel;
-  const { speak } = useTTS();
 
   // ── Submit handler ──────────────────────────────────────────────────────────
 
@@ -86,11 +83,12 @@ export function InputBox() {
           timestamp: Date.now(),
         };
 
-        const textToSpeak = `${data.definition ?? ""} ${data.explanation ?? ""}`.trim();
-        setIsSpeaking(true);
-        speak(textToSpeak || assistantMsg.content, {
-          onEnd: () => setIsSpeaking(false),
-        });
+        // Narration is deliberately NOT started here. FreeTopicCard owns it:
+        // it renders this answer, speaks the parsed text that matches what is on
+        // screen, and handles the explaining/idle gesture plus cleanup on
+        // unmount. Speaking here as well meant every free-topic answer was
+        // narrated twice on one shared <audio> element -- two full-price
+        // ElevenLabs generations per question, competing with each other.
 
         if (data.should_generate_model && data.model_image_prompt) {
           // Clear previous visuals so the scene resets for the new topic
@@ -147,7 +145,6 @@ export function InputBox() {
       messages,
       addMessage,
       setIsLoading,
-      setIsSpeaking,
       setActiveModelUrl,
       setActivePreviewImageUrl,
       setIsGeneratingModel,
