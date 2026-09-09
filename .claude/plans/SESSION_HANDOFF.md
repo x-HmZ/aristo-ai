@@ -343,6 +343,13 @@ Branch `dev/t04-landing-page` off `deploy-prep` (which was clean at `341ac81`), 
   `react-intersection-observer` plus a CSS transition gives the same scroll reveal for ~2 kB
   instead of ~38 kB. `/` first-load JS is 120 kB, statically prerendered. Reasoning is in
   `.claude/docs/decisions.md`.
+- **A `typescript-reviewer` pass on the diff caught two real things**, both fixed in
+  `c18a167` before merge: the hero was wrapped in `Reveal` (start state `opacity: 0`), which
+  gates the LCP candidate behind hydration plus the transition; and the observer fallback
+  used a one-way module-scoped latch that a single slow load could trip, permanently
+  disabling the animation for the rest of the tab. The fallback is now a per-element
+  repeating rect check that clears once shown. Worth knowing if you touch `Reveal`: neither
+  latch direction is safe, which is why it re-checks instead.
 - **Gates all green** on the final tree: `yarn type-check`, `yarn lint` (22 warnings, all
   pre-existing, none in the new files), `yarn test` (83/83), `yarn build`.
 

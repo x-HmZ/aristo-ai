@@ -26,11 +26,21 @@ footer. Design canvas approved before any code was written
   framer-motion), statically prerendered. `prefers-reduced-motion` is honoured by a media
   query in `globals.css` rather than a JS branch, so there is no first-paint animation to
   undo.
-- **The reveal has two ways not to hide the page.** A `<noscript>` rule unhides everything
-  when JS never runs, and `Reveal` gives up after 1200 ms if no observer callback has
-  arrived at all. That second net is not theoretical: IntersectionObserver never delivered a
-  callback in the CDP-driven Chrome used for verification, which is exactly the failure mode
-  that would otherwise have shipped a blank marketing page.
+- **The hero is deliberately NOT wrapped in `Reveal`.** Its start state is `opacity: 0` and
+  Chrome does not credit a transparent element as painted, so wrapping the classroom
+  screenshot (the LCP candidate, preloaded with `priority`) pushed LCP out by hydration plus
+  the transition. Above the fold there is nothing to reveal anyway.
+- **The reveal cannot leave the page hidden.** A `<noscript>` rule unhides everything when
+  JS never runs, and an element that is still hidden re-checks its own rect on a 1200 ms
+  interval, clearing the interval once shown. That second net is not theoretical:
+  IntersectionObserver delivered no callbacks at all in the CDP-driven Chrome used for
+  verification. It is a repeating check rather than a one-shot timer because any one-shot
+  latch has to guess once whether the observer is healthy, and both guesses fail — giving up
+  eagerly kills the animation for the whole tab after one slow load, and trusting a single
+  callback leaves everything already stood down permanently hidden if delivery stops. Both
+  were written and both were caught in review; the repeating check needs no guess. Verified
+  by scrolling a production build: 1 of 15 revealed at rest, then 4, 6, 13, 15 on the way
+  down.
 - **One new token**: `--aristo-orange-deep` (`23 75% 43%` — the #C05A1C already hardcoded
   around the learn/demo components) plus its `aristo.orange-deep` Tailwind colour. Nothing
   else in the palette changed.
