@@ -175,15 +175,21 @@ Branch `dev/v2-instant-demo`, now **committed and pushed** as `74f105e`.
   (warnings only, all pre-existing, none in the changed files), `yarn test` (76 passed /
   5 files), `yarn build`.
 
-**PR NOT YET OPENED — one user action needed.** No `gh` CLI on this machine and the GitHub
-MCP server returned `Bad credentials`, so the PR could not be created from the session.
-Open it with this link, which pre-selects the correct base:
+**MERGED TO PRODUCTION.** PR #2 (https://github.com/x-HmZ/aristo-ai/pull/2) merged into
+`deploy-prep` as `8c03c46` on 2026-09-09, with both GitHub checks green on the PR head
+(`type-check, lint, test, build` and `Vercel Preview Comments`). That merge triggers the
+production deploy to aristo-ai-ten.vercel.app — confirm the deployment went out and do a
+quick avatar smoke-test on prod.
 
-https://github.com/x-HmZ/aristo-ai/compare/deploy-prep...dev/v2-instant-demo?expand=1
+Two notes for future PRs, both learned the hard way this session:
 
-Base **must be `deploy-prep`** (the Vercel production branch), not `master` — GitHub defaults
-to `master`, which is stale. Ship via the PR so CI runs before prod deploys. Draft PR body is
-in this session's transcript; the commit message covers the same ground.
+- The repo's **default branch is already `deploy-prep`**, so GitHub does NOT default a new PR
+  to `master`. Earlier handoff text warning about that was wrong. `master` is still stale and
+  must not be merged into.
+- The `github` MCP server authenticates with a static PAT in `~/.claude.json`
+  (`GITHUB_PERSONAL_ACCESS_TOKEN`). It returned `Bad credentials` mid-session because the PAT
+  had expired; replacing the value and restarting fixed it. There is no `gh` CLI on this
+  machine — installing it (`winget install --id GitHub.cli`) would give a fallback path.
 
 ## USER ACTIONS — all previously-blocking ones are now DONE (2026-09-08)
 
@@ -207,13 +213,14 @@ Still open:
 9. Later: master promotion (switch Vercel prod branch -> master in dashboard, then
    fast-forward master to deploy-prep).
 
-## Repo state (as of 2026-09-09, branch `dev/v2-instant-demo`)
+## Repo state (as of 2026-09-09, on `deploy-prep`)
 
-- Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app; `master` is stale/ancient.
-  Always target `deploy-prep`.
-- `dev/v2-instant-demo` = `origin/deploy-prep` (`fce3aa1`) + one pushed commit `74f105e`
-  (avatar clone fix). Working tree clean apart from this handoff edit. PR into `deploy-prep`
-  still to be opened by the user — see the 2026-09-09 section above for the link.
+- Production = Vercel `deploy-prep` branch at aristo-ai-ten.vercel.app. It is also the repo's
+  **GitHub default branch**, so PRs base against it automatically. `master` is stale/ancient
+  and must not be merged into.
+- `deploy-prep` is at `8c03c46` (merge of PR #2, avatar clone fix). Everything from
+  `dev/v2-instant-demo` — the V7 alignment lipsync and the avatar fix — is now merged and
+  deployed. That branch is fully contained in `deploy-prep` and can be deleted.
 - Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
   `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
   `dev/v4-teacher-memory`.
