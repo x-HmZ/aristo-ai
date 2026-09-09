@@ -2,6 +2,37 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-09 — avatar T-pose + idle drift (one root cause)
+
+Two reported bugs, one cause. `Teacher.tsx` mounted the **globally cached** GLTF scene
+directly (`<primitive object={scene} />`, no clone) and mutated it via `scene.traverse`
+(materials, per-frame morph influences). Every Teacher instance therefore drove the *same*
+bone objects.
+
+- **T-pose on every avatar except the default.** Marcus and Priya share
+  `animations_Avaturn.glb`, so `useGLTF` returns the same `animations` array for both.
+  drei memoises actions on that array, so switching between them never rebuilt the actions —
+  they stayed bound to the previous rig's bones and the new avatar was driven by nothing.
+- **Marcus slowly twisting out of position when idle.** A mixer from an earlier mount kept
+  animating those shared bones alongside the live one; two mixers crossfading the same Hips
+  on each 20s idle cycle reads as small weird turns accumulating.
+
+Ruled out on the way, with measurements rather than guesses:
+- Missing animation files — all present.
+- Bone-name mismatch — Priya's clip targets resolve 100% against her mesh (Ryan/Sonia miss
+  only 13 `_end` leaf tips out of ~79, which cannot cause a T-pose).
+- A "turn to the blackboard" idle clip — parsed the GLB accessors: root yaw across
+  Idle/Idle2/Idle3/Idle4 stays within ±6° and translation is ~0. No clip turns him.
+- `rotationY` — a static prop (0.3), never animated.
+
+Fix: clone per mount (`SkeletonUtils.clone`, memoised on the cached scene) so each rig owns
+its skeleton and edits stay local; key `<Teacher>` by avatar in `Experience.tsx` so a switch
+fully remounts (new group, mixer, actions); stop the mixer's actions on unmount.
+
+**Verified running 2026-09-09.** Loaded `/learn` and switched through Ryan / Sonia / Priya /
+Marcus: all four animate, none T-pose. Left Marcus idle for several minutes — he holds
+position, no drift or turning. Typecheck, lint, tests and build all pass.
+
 ## 2026-09-08 (later) — V7 alignment lipsync, demo path built
 
 Same branch `dev/v2-instant-demo`, still uncommitted.

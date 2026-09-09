@@ -20,6 +20,10 @@ each line number before editing (code moves).
    already sets `gesture` to "explaining"/"idle" and stops narration on unmount, none of
    which InputBox does. Both a latency fix and a ~2x saving against the 10,000 char/month
    tier.
+0b. **Avatar T-pose + idle drift — FIXED 2026-09-09** (see `.claude/docs/state.md`). The
+   cached GLTF scene was mounted and mutated without cloning, so all rigs shared bones.
+   Fixed by cloning per mount and keying `<Teacher>` by avatar. Verified running 2026-09-09:
+   all four avatars animate, none T-pose, and Marcus no longer drifts when left idle.
 0. `Teacher.tsx` AVATAR_ASSETS — **sonia declares a morph she does not have.** Her config
    sets `morphs.mouthSmile: "mouthSmile"`, but `Teacher_Sonia.glb` contains no `mouthSmile`
    target (24 morphs, none mouth- or jaw-related). `lerpMorphTarget` looks it up, finds
