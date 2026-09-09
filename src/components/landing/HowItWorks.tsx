@@ -1,183 +1,196 @@
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/landing/Reveal";
-import { SectionHeading } from "@/components/landing/SectionHeading";
+import { SHAPE } from "@/components/landing/shape";
 
 const PHASES = ["Activate", "Explain", "Demonstrate", "Challenge", "Connect"];
 
 function StepNumber({ n }: { n: number }) {
   return (
-    <span className="inline-flex size-9 items-center justify-center rounded-xl bg-accent text-[15px] font-extrabold text-aristo-orange-deep">
+    <span
+      className={cn(
+        SHAPE.control,
+        "inline-flex size-9 items-center justify-center bg-accent text-[15px] font-extrabold text-aristo-orange-deep"
+      )}
+    >
       {n}
     </span>
   );
 }
 
-function Shot({ src, alt }: { src: string; alt: string }) {
+function Shot({
+  src,
+  alt,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+}) {
   return (
-    <div className="overflow-hidden rounded-[18px] border border-white/80 shadow-[0_18px_40px_rgba(94,52,20,0.16)]">
+    <div
+      className={cn(
+        SHAPE.surface,
+        "overflow-hidden border border-white/80 shadow-[0_18px_40px_hsl(25_60%_22%/0.15)]"
+      )}
+    >
       <Image
         src={src}
         alt={alt}
         width={1760}
         height={990}
-        sizes="(max-width: 1023px) 100vw, 504px"
+        sizes={sizes}
         className="block h-auto w-full"
       />
     </div>
   );
 }
 
-/** One alternating row. `flip` puts the visual on the left at lg and up. */
-function Step({
-  n,
-  title,
-  children,
-  visual,
-  flip = false,
-}: {
-  n: number;
-  title: string;
-  children: React.ReactNode;
-  visual: React.ReactNode;
-  flip?: boolean;
-}) {
-  return (
-    <Reveal>
-      <div className="grid items-center gap-8 rounded-[28px] border border-border/80 bg-white/60 p-6 shadow-[0_4px_22px_rgba(140,90,45,0.06)] sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12">
-        <div className={flip ? "lg:order-2" : undefined}>
-          <div className="flex flex-col items-start gap-3.5">
-            <StepNumber n={n} />
-            <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
-              {title}
-            </h3>
-            {children}
-          </div>
-        </div>
-        <div className={flip ? "lg:order-1" : undefined}>{visual}</div>
-      </div>
-    </Reveal>
-  );
-}
-
+/**
+ * Four steps, four different layout families, on purpose.
+ *
+ * The first cut of this section was four consecutive text-and-image splits,
+ * which reads as one long zigzag and makes every step feel identical in
+ * weight. Now: a compact text band, a split, a full-width band that lets the
+ * 3D model be big, then a reversed split. No two adjacent steps share a shape,
+ * and the section never runs three splits in a row.
+ */
 export function HowItWorks() {
   return (
     <section
       id="how-it-works"
       className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
     >
-      <SectionHeading
-        eyebrow="How a lesson runs"
-        title="Four steps, and none of them are “read this wall of text”"
-        blurb="Every lesson follows the same five-phase shape, so the pacing feels familiar even when the subject is new."
-      />
+      <Reveal>
+        <h2 className="max-w-[720px] text-balance text-3xl font-extrabold leading-[1.12] tracking-[-0.03em] text-foreground sm:text-4xl lg:text-[42px] lg:leading-[1.1]">
+          Four steps, and none of them are &ldquo;read this wall of text&rdquo;
+        </h2>
+      </Reveal>
 
-      <div className="mt-12 flex flex-col gap-8 lg:mt-16">
-        <Step
-          n={1}
-          title="Pick something you are curious about"
-          visual={
-            <div className="flex flex-col gap-3 rounded-[20px] border border-primary/20 bg-[#FFF8F2] p-5 sm:p-[22px]">
-              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground/70">
-                Pick a lesson
-              </span>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex flex-col gap-1.5 rounded-2xl border border-primary/25 bg-white p-4">
-                  <span className="text-[15px] font-bold text-aristo-brown">
-                    How volcanoes erupt
-                  </span>
-                  <span className="text-[12.5px] leading-snug text-muted-foreground">
-                    Magma, gas pressure, and the moment a mountain lets go.
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1.5 rounded-2xl border border-border/80 bg-white p-4">
-                  <span className="text-[15px] font-bold text-aristo-brown">
-                    What is a black hole
-                  </span>
-                  <span className="text-[12.5px] leading-snug text-muted-foreground">
-                    Collapsing stars, extreme gravity, the point of no return.
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2.5 rounded-2xl border border-dashed border-primary/35 bg-white px-4 py-3.5">
-                <Sparkles className="size-4 shrink-0 text-primary" />
-                <span className="text-[13.5px] text-muted-foreground">
-                  … or ask for anything else
-                </span>
-              </div>
+      <div className="mt-10 flex flex-col gap-6 lg:mt-14 lg:gap-8">
+        {/* 1 - compact text band. No visual: this step is one sentence of
+            setup, and giving it a screenshot would inflate it to match the
+            steps that have something to show. */}
+        <Reveal>
+          <div
+            className={cn(
+              SHAPE.surface,
+              "flex flex-col gap-4 border border-border/70 bg-white/55 p-6 sm:flex-row sm:items-center sm:gap-8 sm:p-9"
+            )}
+          >
+            <div className="flex items-center gap-4 sm:shrink-0">
+              <StepNumber n={1} />
+              <h3 className="text-xl font-bold tracking-[-0.02em] text-foreground sm:text-2xl">
+                Pick anything you are curious about
+              </h3>
             </div>
-          }
-        >
-          <p className="text-base leading-relaxed text-foreground/70">
-            Type any topic, or follow a course Aristo lays out for you. Before it
-            teaches anything it works out what you already know, so you are not
-            sat through the easy part again.
-          </p>
-        </Step>
+            <p className="text-base leading-relaxed text-foreground/70 sm:border-l sm:border-border/70 sm:pl-8">
+              Type a topic or follow a course Aristo lays out for you. It works
+              out what you already know first, so you are not sat through the
+              easy part again.
+            </p>
+          </div>
+        </Reveal>
 
-        <Step
-          n={2}
-          flip
-          title="Your teacher explains it out loud"
-          visual={
+        {/* 2 - split, text left. */}
+        <Reveal>
+          <div
+            className={cn(
+              SHAPE.surface,
+              "grid items-center gap-8 border border-border/70 bg-white/55 p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
+            )}
+          >
+            <div className="flex flex-col items-start gap-3.5">
+              <StepNumber n={2} />
+              <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+                Your teacher explains it out loud
+              </h3>
+              <p className="text-base leading-relaxed text-foreground/70">
+                Hook it to something you know, explain it, demonstrate it,
+                challenge you, connect it forward. Diagrams are generated as the
+                lesson goes, so what is on the board is what is being said.
+              </p>
+              <ul className="flex flex-wrap gap-2 pt-1">
+                {PHASES.map((phase) => (
+                  <li
+                    key={phase}
+                    className={cn(
+                      SHAPE.pill,
+                      "bg-accent/60 px-3 py-1.5 text-xs font-bold text-aristo-orange-deep"
+                    )}
+                  >
+                    {phase}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <Shot
               src="/images/landing/classroom-lesson.webp"
               alt="The teacher points at a labelled cross-section of a volcano generated for this lesson, while the lesson panel highlights the sentence being spoken."
+              sizes="(max-width: 1023px) 100vw, 504px"
             />
-          }
-        >
-          <p className="text-base leading-relaxed text-foreground/70">
-            Hook it to something you already know, explain it, demonstrate it,
-            challenge you, connect it forward. Diagrams are generated as the
-            lesson goes, so the picture on the board is the thing being said
-            right now.
-          </p>
-          <ul className="flex flex-wrap gap-2 pt-0.5">
-            {PHASES.map((phase) => (
-              <li
-                key={phase}
-                className="rounded-full bg-accent/60 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.04em] text-aristo-orange-deep"
-              >
-                {phase}
-              </li>
-            ))}
-          </ul>
-        </Step>
+          </div>
+        </Reveal>
 
-        <Step
-          n={3}
-          title="See the thing itself, not a picture of it"
-          visual={
-            <Shot
-              src="/images/landing/classroom-3d-model.webp"
-              alt="A generated 3D black hole standing in the classroom beside the teacher, with its accretion disk, event horizon and bent light ring labelled in place."
-            />
-          }
-        >
-          <p className="text-base leading-relaxed text-foreground/70">
-            When a topic has a shape — a volcano, a heart, a black hole — Aristo
-            builds a 3D model of it and stands it in the room. Turn it, zoom in,
-            and read the labels where they actually sit.
-          </p>
-        </Step>
+        {/* 3 - full-width band. Breaks the split rhythm and gives the model
+            the width it needs to read at all. */}
+        <Reveal>
+          <div
+            className={cn(
+              SHAPE.band,
+              "overflow-hidden border border-aristo-beige-dark/70 bg-gradient-to-br from-accent/50 to-aristo-cream"
+            )}
+          >
+            <div className="flex flex-col gap-4 p-6 sm:p-9 lg:flex-row lg:items-end lg:justify-between lg:gap-12 lg:p-12 lg:pb-10">
+              <div className="flex flex-col items-start gap-3.5 lg:max-w-[440px]">
+                <StepNumber n={3} />
+                <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+                  See the thing itself, not a picture of it
+                </h3>
+              </div>
+              <p className="text-base leading-relaxed text-foreground/70 lg:max-w-[420px]">
+                When a topic has a shape, Aristo builds a 3D model of it and
+                stands it in the room. Turn it, zoom in, and read the labels
+                where they actually sit.
+              </p>
+            </div>
+            <div className="px-6 pb-6 sm:px-9 sm:pb-9 lg:px-12 lg:pb-12">
+              <Shot
+                src="/images/landing/classroom-3d-model.webp"
+                alt="A generated 3D model standing in the classroom beside the teacher, with its parts labelled in place."
+                sizes="(max-width: 1023px) 100vw, 1056px"
+              />
+            </div>
+          </div>
+        </Reveal>
 
-        <Step
-          n={4}
-          flip
-          title="Answer — and get it brought back later"
-          visual={
+        {/* 4 - split, image left. Non-adjacent to step 2's split. */}
+        <Reveal>
+          <div
+            className={cn(
+              SHAPE.surface,
+              "grid items-center gap-8 border border-border/70 bg-white/55 p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
+            )}
+          >
             <Shot
               src="/images/landing/classroom-desk-quiz.webp"
               alt="The classroom camera looks down at the desk, where the quiz card lies flat with four answer options."
+              sizes="(max-width: 1023px) 100vw, 504px"
             />
-          }
-        >
-          <p className="text-base leading-relaxed text-foreground/70">
-            Look down and the quiz is on your desk. Aristo scores each concept
-            separately, notices the ones you half-know, and schedules them to
-            come round again just before you would have forgotten them.
-          </p>
-        </Step>
+            <div className="flex flex-col items-start gap-3.5 lg:order-first">
+              <StepNumber n={4} />
+              <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+                Answer, and get it brought back later
+              </h3>
+              <p className="text-base leading-relaxed text-foreground/70">
+                Look down and the quiz is on your desk. Aristo scores each
+                concept separately, notices the ones you half-know, and
+                schedules them to come round again just before you would have
+                forgotten them.
+              </p>
+            </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
