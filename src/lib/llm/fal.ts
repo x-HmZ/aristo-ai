@@ -3,7 +3,7 @@
  *
  * The fal SDK is consumed in two places today:
  *   1. `src/lib/imagegen/banana.ts`           — nano-banana-pro + flux/schnell
- *   2. `src/app/api/generate-model/3d/route.ts` — triposr (image → GLB)
+ *   2. `src/app/api/generate-model/3d/route.ts` — tripo3d v2.5 (image → GLB)
  *
  * fal returns *no* usage block in its responses, so cost is computed per-unit
  * from `FAL_PRICING`. Callers fire `logFalGeneration()` after a successful
@@ -12,8 +12,8 @@
  * `feature` should describe *why* fal was called — e.g.
  *   - `lesson.segment_visual` (per-segment adaptive image)
  *   - `lesson.teaching_image` (topic-level lesson image)
- *   - `lesson.3d_source`     (FLUX image used as TripoSR input)
- *   - `lesson.3d_model`      (TripoSR GLB)
+ *   - `lesson.3d_source`     (FLUX image used as Tripo3D input)
+ *   - `lesson.3d_model`      (Tripo3D GLB)
  * so the cost page can aggregate by service per provider.
  */
 
@@ -21,7 +21,7 @@ import { falCostMicros } from "@/lib/llm/pricing";
 import { logUsage }      from "@/lib/llm/usage";
 
 export interface LogFalOpts {
-  /** Canonical fal model slug, e.g. "fal-ai/nano-banana-pro" or "fal-ai/triposr". */
+  /** Canonical fal model slug, e.g. "fal-ai/nano-banana-pro" or "tripo3d/tripo/v2.5/image-to-3d". */
   model:    string;
   /** Feature tag — see file header. */
   feature:  string;

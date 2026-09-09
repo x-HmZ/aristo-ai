@@ -1,16 +1,17 @@
 /**
  * POST /api/generate-model/3d
  *
- * TripoSR — image-to-3D reconstruction.  Caller passes the clean FLUX
+ * Tripo3D v2.5 — image-to-3D reconstruction.  Caller passes the clean FLUX
  * source image URL from /api/generate-model and gets back a textured GLB.
  *
  * All fal.ai transport + the in-memory cache lives in
  * `src/lib/imagegen/banana.ts`.  This route is a thin auth gate + logger.
  *
  * Caching: keyed by source imageUrl.  Two students viewing the same lesson
- * on the same Vercel Fluid Compute instance share a single TripoSR call —
- * this is the largest single fal.ai cost on the platform ($0.07/call) so
- * the cache pays for itself within a handful of repeat views.
+ * on the same Vercel Fluid Compute instance share a single Tripo3D call.
+ * Since T06 the cache is durable (Supabase Storage), so the first student to
+ * view a concept pays the $0.30 once and every student after inherits it —
+ * which is what makes a model at this price affordable at all.
  */
 
 import { NextRequest, NextResponse } from "next/server";

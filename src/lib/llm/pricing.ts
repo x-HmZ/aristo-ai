@@ -63,14 +63,19 @@ export const OPENAI_PRICING: Record<string, OpenAIPricing> = {
  * Update when fal.ai pricing changes — see https://fal.ai/models.
  */
 export const FAL_PRICING: Record<string, number> = {
-  "fal-ai/nano-banana-pro":   0.04,   // per image @ 1K
-  "fal-ai/nano-banana-pro/2K": 0.08,  // per image @ 2K
-  "fal-ai/flux/schnell":      0.003,  // per image
-  "fal-ai/triposr":           0.07,   // per generation
+  // Verified 2026-09-09 against fal's own pricing API
+  // (GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>), not the docs pages.
+  "fal-ai/nano-banana-pro":   0.15,   // per image @ 1K/2K (4K doubles to 0.30)
+  "fal-ai/nano-banana-pro/2K": 0.15,  // fal charges 1K and 2K alike; only 4K doubles
+  "fal-ai/nano-banana-2":     0.08,   // Gemini 3.1 Flash Image — cheaper/faster alternative
+  "fal-ai/nano-banana":       0.0398, // non-Pro (Gemini 2.5 Flash Image)
+  "fal-ai/flux/schnell":      0.003,  // per megapixel; our square 1K request is ~1 MP
+  "tripo3d/tripo/v2.5/image-to-3d": 0.30, // standard texture + PBR (0.20 untextured, 0.40 HD)
+  "fal-ai/triposr":           0.07,   // retired 2026-09-09 — kept so historical rows price correctly
   // Legacy aliases (older usage_events rows may have these — keep so lookups don't return 0).
-  "nano-banana":              0.04,
+  "nano-banana":              0.0398,
   "flux-schnell":             0.003,
-  "tripo3d":                  0.50,
+  "tripo3d":                  0.30,
   "default":                  0.05,
 };
 

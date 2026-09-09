@@ -42,7 +42,18 @@ import { createServiceClient } from "@/lib/supabase/server";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type FalImageResult    = { data: { images: { url: string }[] } };
-type TripoSRResult     = { data: { model_mesh: { url: string } } };
+/**
+ * Tripo3D v2.5 returns several mesh variants. `model_mesh` is always present;
+ * `pbr_model` / `base_model` appear when texturing is on, which it is.
+ */
+type Tripo3DResult     = {
+  data: {
+    model_mesh?:     { url: string };
+    pbr_model?:      { url: string };
+    base_model?:     { url: string };
+    rendered_image?: { url: string };
+  };
+};
 
 export type ImageStyle = SegmentVisual["style"];
 
@@ -100,27 +111,26 @@ const DEFAULT_PREFIX = STYLE_PREFIX.infographic;
 //
 // Three separate hash-keyed maps share the same shape but live in their own
 // namespace so a teaching-image cache hit can't accidentally serve up a
-// FLUX 3D-source URL or a TripoSR .glb URL.
+// FLUX 3D-source URL or a Tripo3D .glb URL.
 //
 // Vercel Fluid Compute reuses function instances across concurrent requests,
 // so the maps act as a warm cache.  Repeat fetches of the same prompt /
 // imageUrl within TTL pay zero fal.ai cost until the instance is recycled.
 //
 // What each cache saves:
-//   • _cache    — Nano Banana Pro ($0.04/image, ~6s)
+//   • _cache    — Nano Banana Pro ($0.15/image, ~10-20s)
 //   • _cacheFlux — FLUX Schnell  ($0.003/image, ~1s — cheap but adds up)
-//   • _cache3d  — TripoSR        ($0.07/model, ~0.5s — was the big leak)
+//   • _cache3d  — Tripo3D v2.5   ($0.30/model — the priciest single call)
 //
-// A persistent (Supabase Storage) layer for _cache3d is the obvious next
-// upgrade — model URLs are stable enough to be saved per concept, which
-// would mean *every* student after the first pays nothing for that lesson's
-// 3D model.  Tracked in HANDOFF.md.
+// These are only the L1 half. T06 added the durable L2 layer below, so a
+// cold instance no longer regenerates anything — the first student to view a
+// concept pays once and every student after inherits it from Supabase.
 
 interface CacheEntry { url: string; cachedAt: number }
 
 const _cache     = new Map<string, CacheEntry>(); // NB Pro infographic
 const _cacheFlux = new Map<string, CacheEntry>(); // FLUX Schnell 3D source
-const _cache3d   = new Map<string, CacheEntry>(); // TripoSR .glb
+const _cache3d   = new Map<string, CacheEntry>(); // Tripo3D .glb
 
 const CACHE_MAX_ENTRIES = 256;
 const CACHE_TTL_MS      = 1000 * 60 * 60 * 12; // 12h — fal CDN URLs live longer than this
@@ -160,6 +170,15 @@ const cacheKey = (prompt: string, style: ImageStyle): string =>
 // than failing a lesson.
 
 type AssetKind = "infographic" | "flux_source" | "model_3d";
+
+/**
+ * Image-to-3D model. Centralised here rather than inlined at the call site so
+ * the slug, its price row in `pricing.ts`, and the cache-key prefix stay
+ * visibly coupled — changing the model without busting the cache prefix would
+ * silently serve the old model's meshes forever.
+ */
+const TRIPO3D_MODEL      = "tripo3d/tripo/v2.5/image-to-3d";
+const TRIPO3D_TIMEOUT_MS = 240_000;
 
 const STORAGE_BUCKET      = "generated-assets";
 const PERSIST_TIMEOUT_MS  = 3000; // hard cap on the upload+insert round trip
@@ -396,13 +415,13 @@ export async function generateInfographic(
 }
 
 /**
- * Generate a clean FLUX-Schnell source image for 3D reconstruction (TripoSR).
+ * Generate a clean FLUX-Schnell source image for 3D reconstruction (Tripo3D).
  * Kept in this helper so all fal.ai image touchpoints live in one file.
  *
  * Cached by prompt — same lesson re-loaded by the same student (or by a
  * second student before the warm instance recycles) skips the fal.ai call
- * entirely.  Stable URL out is important for the TripoSR cache downstream:
- * if FLUX returned a fresh URL every time, the TripoSR cache key (which
+ * entirely.  Stable URL out is important for the Tripo3D cache downstream:
+ * if FLUX returned a fresh URL every time, the Tripo3D cache key (which
  * hashes the imageUrl) would always miss.
  */
 export async function generate3dSourceImage(
@@ -462,17 +481,26 @@ export async function generate3dSourceImage(
 }
 
 /**
- * Run TripoSR (image → textured GLB) with a warm cache keyed by source
- * imageUrl.
+ * Run Tripo3D v2.5 (image → textured GLB) through both cache layers.
  *
- * This is the single most expensive cache miss in the whole stack:
- * TripoSR costs $0.07/call and was firing on *every* "View in 3D" click,
- * even when the same student clicked the same model twice in a row.  Now
- * the second click — and any subsequent click within TTL — is free.
+ * Replaced `fal-ai/triposr` on 2026-09-09 (T07's verdict). TripoSR is a
+ * 2024-era single-view model that scored 1.5/5 in the bake-off — it returned
+ * a flat "coin" relief of the source image with a muddy back face, which is
+ * not classroom-usable. Tripo3D v2.5 scored 4/5 on the same input: true
+ * volumetric geometry, vivid PBR colour, and it is *faster* (78 s vs ~100 s
+ * observed end to end).
  *
- * Future upgrade: persist results to Supabase Storage keyed by `concept_id`
- * so the *first* student to view a topic pays once and every subsequent
- * student inherits the model from the table.  Tracked in HANDOFF.md.
+ * The price goes $0.07 -> $0.30 per generation, which is only affordable
+ * because T06's persistent cache made this a one-time cost per concept
+ * rather than per cold instance per student. Do not revert one without the
+ * other.
+ *
+ * Two consequences of the swap, both deliberate:
+ *   • the cache key prefix moved `triposr|` -> `tripo25|`, so old TripoSR
+ *     entries in L1/L2 are never served again (they are orphaned, not
+ *     deleted — historical `usage_events` rows still price correctly).
+ *   • Tripo3D emits Y-up glTF, so the `-PI/2` X rotation that
+ *     `GeneratedModel.tsx` applied for TripoSR's Z-up output is gone.
  */
 export async function generate3dModel(
   imageUrl: string,
@@ -484,7 +512,7 @@ export async function generate3dModel(
     throw new Error("generate3dModel: imageUrl is required");
   }
   const trimmed = imageUrl.trim();
-  const key     = hashKey(`triposr|${trimmed}`);
+  const key     = hashKey(`tripo25|${trimmed}`);
   if (!bypassCache) {
     const hit = cacheGet(_cache3d, key);
     if (hit) return { modelUrl: hit, cached: true };
@@ -497,21 +525,27 @@ export async function generate3dModel(
   }
 
   ensureFalConfigured();
-  const result = (await fal.subscribe("fal-ai/triposr", {
-    input: {
-      image_url:            trimmed,
-      output_format:        "glb",
-      do_remove_background: true,
-      foreground_ratio:     0.85,
-      mc_resolution:        256,
-    },
-  })) as unknown as TripoSRResult;
+  // The eval saw one Tripo3D call hang indefinitely. `fal.subscribe` has no
+  // timeout of its own, so without this the route would sit until Vercel's
+  // 300s ceiling killed it and the student would watch a spinner the whole
+  // time. 240s leaves headroom to fail cleanly inside that budget.
+  const result = (await withTimeout(
+    fal.subscribe(TRIPO3D_MODEL, {
+      input: {
+        image_url: trimmed,
+        texture:   "standard", // "no" $0.20 / "standard" $0.30 / "HD" $0.40
+        pbr:       true,
+      },
+    }),
+    TRIPO3D_TIMEOUT_MS
+  )) as unknown as Tripo3DResult;
 
-  const modelUrl = result.data?.model_mesh?.url;
-  if (!modelUrl) throw new Error("TripoSR returned no model URL");
+  // PBR is the better asset when present; `model_mesh` is always populated.
+  const modelUrl = result.data?.pbr_model?.url ?? result.data?.model_mesh?.url;
+  if (!modelUrl) throw new Error("Tripo3D returned no model URL");
 
   logFalGeneration({
-    model:    "fal-ai/triposr",
+    model:    TRIPO3D_MODEL,
     feature:  "lesson.3d_model",
     user_id:  userId ?? null,
     units:    1,
@@ -522,7 +556,7 @@ export async function generate3dModel(
     kind:        "model_3d",
     promptHash:  key,
     sourceUrl:   modelUrl,
-    sourceModel: "fal-ai/triposr",
+    sourceModel: TRIPO3D_MODEL,
     conceptId:   conceptId ?? null,
   });
   const canonicalUrl = persistedUrl ?? modelUrl;

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
     const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
-    // Both run in parallel — NB Pro for the rich educational image, FLUX for TripoSR input.
+    // Both run in parallel — NB Pro for the rich educational image, FLUX for Tripo3D input.
     // user.id is threaded through so usage_events rows are attributable on the cost page;
     // conceptId (when known) is threaded onto the generated_assets row for admin tooling.
     const [teachingImage, model3dImageUrl] = await Promise.all([

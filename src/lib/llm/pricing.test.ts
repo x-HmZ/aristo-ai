@@ -93,6 +93,31 @@ describe("falCostMicros", () => {
     const micros = falCostMicros({ model: "some-new-model", units: 1 });
     expect(micros).toBe(50_000); // $0.05 default
   });
+
+  // Regression guard. `fal-ai/nano-banana-pro` sat at $0.04 — the *non-Pro*
+  // rate — while fal actually charged $0.15, so the cost dashboard understated
+  // the platform's single biggest line by 3.75x for months. Nothing caught it
+  // because no test pinned the rates. These values were read from fal's own
+  // pricing API on 2026-09-09:
+  //   GET https://api.fal.ai/v1/models/pricing?endpoint_id=<slug>
+  // If fal moves a price, update both this table and FAL_PRICING together.
+  it.each([
+    ["fal-ai/nano-banana-pro",           0.15],
+    ["fal-ai/nano-banana-2",             0.08],
+    ["fal-ai/nano-banana",               0.0398],
+    ["fal-ai/flux/schnell",              0.003],
+    ["tripo3d/tripo/v2.5/image-to-3d",   0.30],
+    ["fal-ai/triposr",                   0.07],
+  ])("prices %s at $%s per unit", (model, usd) => {
+    expect(falCostMicros({ model, units: 1 })).toBe(Math.round(usd * 1_000_000));
+  });
+
+  it("never silently prices a live model at the unknown-model default", () => {
+    // A typo'd or renamed slug would otherwise bill $0.05 and look plausible.
+    for (const model of ["fal-ai/nano-banana-pro", "tripo3d/tripo/v2.5/image-to-3d"]) {
+      expect(falCostMicros({ model, units: 1 })).not.toBe(50_000);
+    }
+  });
 });
 
 describe("microsToUsd", () => {
