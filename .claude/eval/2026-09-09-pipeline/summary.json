@@ -1,0 +1,119 @@
+{
+  "spend": 1.746,
+  "items": [
+    {
+      "test": "image",
+      "id": "s1_code_compare",
+      "model": "fal-ai/nano-banana-pro",
+      "ms": 19225,
+      "name": "s1_code_compare__fal-ai-nano-banana-pro.png",
+      "bytes": 1106810
+    },
+    {
+      "test": "image",
+      "id": "s1_code_compare",
+      "model": "fal-ai/nano-banana-2",
+      "ms": 16097,
+      "name": "s1_code_compare__fal-ai-nano-banana-2.png",
+      "bytes": 923693
+    },
+    {
+      "test": "image",
+      "id": "s2_terminal",
+      "model": "fal-ai/nano-banana-pro",
+      "ms": 34856,
+      "name": "s2_terminal__fal-ai-nano-banana-pro.png",
+      "bytes": 673255
+    },
+    {
+      "test": "image",
+      "id": "s2_terminal",
+      "model": "fal-ai/nano-banana-2",
+      "ms": 9791,
+      "name": "s2_terminal__fal-ai-nano-banana-2.png",
+      "bytes": 630885
+    },
+    {
+      "test": "image",
+      "id": "s3_flow",
+      "model": "fal-ai/nano-banana-pro",
+      "ms": 28588,
+      "name": "s3_flow__fal-ai-nano-banana-pro.png",
+      "bytes": 859520
+    },
+    {
+      "test": "image",
+      "id": "s3_flow",
+      "model": "fal-ai/nano-banana-2",
+      "ms": 12929,
+      "name": "s3_flow__fal-ai-nano-banana-2.png",
+      "bytes": 1092074
+    },
+    {
+      "test": "flux",
+      "id": "current",
+      "model": "fal-ai/flux/schnell",
+      "ms": 3273,
+      "name": "flux_current.png",
+      "bytes": 153997
+    },
+    {
+      "test": "flux",
+      "id": "tweaked",
+      "model": "fal-ai/flux/schnell",
+      "ms": 3272,
+      "name": "flux_tweaked.png",
+      "bytes": 127336
+    },
+    {
+      "test": "image",
+      "id": "teaching_heart",
+      "model": "fal-ai/nano-banana-pro",
+      "ms": 31757,
+      "name": "teaching_heart_pro.png",
+      "bytes": 903444
+    },
+    {
+      "test": "tripo3d",
+      "id": "current",
+      "ms": 75703,
+      "mesh": true,
+      "preview": "tripo_current_preview.png",
+      "fields": [
+        "task_id",
+        "model_mesh",
+        "base_model",
+        "pbr_model",
+        "rendered_image"
+      ]
+    },
+    {
+      "test": "tripo3d",
+      "id": "tweaked",
+      "ms": 72563,
+      "mesh": true,
+      "preview": "tripo_tweaked_preview.png",
+      "fields": [
+        "task_id",
+        "model_mesh",
+        "base_model",
+        "pbr_model",
+        "rendered_image"
+      ]
+    },
+    {
+      "test": "tripo3d",
+      "id": "teaching",
+      "ms": 63069,
+      "mesh": true,
+      "preview": "tripo_teaching_preview.png",
+      "fields": [
+        "task_id",
+        "model_mesh",
+        "base_model",
+        "pbr_model",
+        "rendered_image"
+      ]
+    }
+  ]
+}

@@ -121,6 +121,11 @@ touching `/learn` was explicitly out of scope here.
 
 ## 2026-09-09 (final) — tiered image models applied
 
+**Eval artifacts kept:** `.claude/eval/2026-09-09-pipeline/` (README + 16 comparison images
++ 4 reference GLBs, Draco-compressed, 7.6 MB) is the evidence behind every choice below, and
+the thing to point a fresh session at. The good heart model is demo-ready at
+`public/demo/heart/model.glb` (1.88 MB).
+
 Acting on the eval above. `generateInfographic` gained a `tier` option:
 
 - **"pro"** (`fal-ai/nano-banana-pro`, $0.15) — topic teaching image only, because

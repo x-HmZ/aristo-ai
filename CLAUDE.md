@@ -49,6 +49,7 @@ Everything else lives in App Router.
 | `.claude/docs/architecture.md` | Agents, subsystems, all API routes, components, hooks, store, approval gate |
 | `.claude/docs/decisions.md` | Decision log — why things are the way they are |
 | `AI_TEACHER_APP_SPEC.md` | Authoritative spec (use `spec_index.md` to navigate) |
+| `.claude/eval/2026-09-09-pipeline/README.md` | Real fal.ai output behind the image/3D model choices — comparison images, reference GLBs, and three decisions not to re-litigate |
 
 ## Workflow
 

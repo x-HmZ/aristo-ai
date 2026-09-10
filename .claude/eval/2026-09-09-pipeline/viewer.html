@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:#f5efe6}#c{display:block}
+#s{position:fixed;left:8px;top:8px;font:13px system-ui;background:#fff;padding:6px 10px;border-radius:6px;z-index:9}
+</style>
+<script type="importmap">
+{"imports":{
+ "three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+ "three/examples/jsm/":"https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+</script>
+</head><body><div id="s">loading...</div><canvas id="c"></canvas>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+const W=1280,H=720;
+const MODEL = new URLSearchParams(location.search).get("m") || "/demo/heart/model.glb";
+const s=document.getElementById('s'), c=document.getElementById('c');
+const r=new THREE.WebGLRenderer({canvas:c,antialias:true});
+r.setPixelRatio(1); r.setSize(W,H,true); r.setClearColor(0xf5efe6,1);
+r.outputColorSpace=THREE.SRGBColorSpace;
+const sc=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(45,W/H,0.01,100);
+sc.add(new THREE.AmbientLight(0xffffff,2.0));
+const d=new THREE.DirectionalLight(0xffffff,2.5); d.position.set(3,5,4); sc.add(d);
+const d2=new THREE.DirectionalLight(0xffffff,1.2); d2.position.set(-3,1,-4); sc.add(d2);
+window.__three={THREE,r,sc,cam};
+const dl=new DRACOLoader(); dl.setDecoderPath("/draco/");
+const gl=new GLTFLoader(); gl.setDRACOLoader(dl);
+gl.load(MODEL,(g)=>{
+  const o=g.scene;
+  const box=new THREE.Box3().setFromObject(o), size=box.getSize(new THREE.Vector3()), ctr=box.getCenter(new THREE.Vector3());
+  o.position.sub(ctr); sc.add(o); window.__obj=o;
+  const m=Math.max(size.x,size.y,size.z); cam.position.set(0,0,m*2.2); cam.lookAt(0,0,0);
+  const tall=(size.y>=size.x&&size.y>=size.z)?"Y (upright)":(size.z>=size.x&&size.z>=size.y)?"Z (needs rotation)":"X";
+  s.textContent=`OK  bbox ${size.x.toFixed(2)} x ${size.y.toFixed(2)} x ${size.z.toFixed(2)}  tallest: ${tall}  canvas ${c.width}x${c.height}`;
+  window.__ok=true;
+  let t=0; (function loop(){ t+=0.008; o.rotation.y=t; r.render(sc,cam); requestAnimationFrame(loop); })();
+},undefined,(e)=>{ s.textContent="LOAD ERROR: "+e; });
+</script></body></html>
