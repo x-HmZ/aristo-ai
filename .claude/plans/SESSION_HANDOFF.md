@@ -3,7 +3,7 @@
 _Updated continuously. If you are a fresh session: read `CLAUDE.md`, then this file, then
 `.claude/plans/README.md`. This tells you exactly where work stands and what to do next._
 
-Last updated: 2026-09-09 (session: ship avatar T-pose + idle-drift fix)
+Last updated: 2026-09-10 (session: 3D root cause, heart demo topic, PR #4 merged)
 
 ## What this session did (chronological)
 
@@ -243,6 +243,9 @@ Still open:
   is fully contained in `deploy-prep` and can be deleted.
 - Before that, `8c03c46` (PR #2) brought the V7 alignment lipsync and the avatar clone fix;
   `dev/v2-instant-demo` is likewise fully contained and can be deleted.
+- `dev/t04-landing-page` was **merged into `deploy-prep`** on 2026-09-10 as PR #4:
+  landing rebuild, Pages Router font fix, 3D texture-coverage root cause + multi-view,
+  heart demo topic replacing black holes. The branch is fully contained and can be deleted.
 - Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
   `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
   `dev/v4-teacher-memory`.
@@ -312,6 +315,82 @@ desk research against fal's live pricing API and model pages, plus code.
 - Also surveyed and rejected for now: Tripo P1 ($0.40/$0.50, no evidence in hand vs v2.5),
   Hunyuan3D v3.1 pro, and ByteDance Seed3D v2 — Seed3D bills per *compute second*, which
   breaks the fixed per-concept cost model T06 is built around.
+
+## Session 2026-09-09 (later) — T04 landing page rebuilt
+
+Branch `dev/t04-landing-page` off `deploy-prep` (which was clean at `341ac81`), PR into
+`deploy-prep`. **T04 is done** — ticked in `.claude/plans/README.md` and in the brief.
+
+- **Designed before coded.** A multi-artboard design canvas (desktop 1440, mobile 390, and an
+  alternate centred hero) was published and reviewed first:
+  https://claude.ai/code/artifact/d0d76f20-e5f9-4051-8ee3-ea36eb68a1d5
+  Hmz picked the split hero and supplied the footer contact address. Working files for
+  re-seeding that canvas live only in the session scratchpad — to change it later, read the
+  artifact back and `--extract` it rather than starting over.
+- **Screenshots come from `/demo`, on a production build.** Not `/learn`: the demo renders the
+  same classroom, avatar and lesson panel, but it is public, needs no session and calls no
+  paid API, so it can be re-shot for free. Three stills in `public/images/landing/`. The
+  capture rig was a dependency-free CDP driver (Node 22 has a global `WebSocket`, so no
+  puppeteer/playwright install) — worth rebuilding if more product shots are ever needed.
+  Two things it taught, for whoever needs shots next:
+  - `next dev` is unreliable for this. It intermittently stopped serving the `DemoClient`
+    dynamic chunk (the same wedge the 2026-09-08 session hit). `next build && next start`
+    was stable across every run.
+  - Give each Chrome an isolated `--user-data-dir` **and** port. Sharing a profile silently
+    reattaches to the previous run's tab, which produced two rounds of confusing results.
+- **The 3D shot had to be the black hole.** In the volcano lesson the generated mesh sits
+  behind the 400px lesson panel; there is no crop that shows the model whole without cutting
+  the panel out. The black-hole model stands clear of it with its labels legible.
+- **framer-motion was deliberately not used**, even though the brief offered it:
+  `react-intersection-observer` plus a CSS transition gives the same scroll reveal for ~2 kB
+  instead of ~38 kB. `/` first-load JS is 120 kB, statically prerendered. Reasoning is in
+  `.claude/docs/decisions.md`.
+- **A `typescript-reviewer` pass on the diff caught two real things**, both fixed in
+  `c18a167` before merge: the hero was wrapped in `Reveal` (start state `opacity: 0`), which
+  gates the LCP candidate behind hydration plus the transition; and the observer fallback
+  used a one-way module-scoped latch that a single slow load could trip, permanently
+  disabling the animation for the rest of the tab. The fallback is now a per-element
+  repeating rect check that clears once shown. Worth knowing if you touch `Reveal`: neither
+  latch direction is safe, which is why it re-checks instead.
+- **Gates all green** on the final tree: `yarn type-check`, `yarn lint` (22 warnings, all
+  pre-existing, none in the new files), `yarn test` (83/83), `yarn build`.
+
+**Pre-existing bug found while capturing, left unfixed on purpose:** `pages/_app.tsx` never
+applies the Geist font variables (they are set on `<body>` in `src/app/layout.tsx`, which the
+Pages Router never renders), so `/demo` and `/learn` fall back to the browser default serif
+for bold text. One-line fix, but `/learn` was explicitly out of T04's scope — see the
+2026-09-09 (T04) entry in `.claude/docs/state.md`. **It is visible in the shipped landing
+screenshots**, so fixing it means re-capturing them.
+
+Two smaller things left open by choice: no FAQ section (offered, not asked for), and
+`LEGAL_LINKS` in `SiteFooter.tsx` is an empty array so the privacy/terms footer row renders
+nothing until those routes exist.
+
+
+## Session 2026-09-10 - 3D root cause, fonts, landing rebuild
+
+Same branch, PR #4. Full detail in the 2026-09-10 entry of .claude/docs/state.md. The
+short version: the demo models looked bad because Tripo's single-image path only textures
+what one view sees; multi-view fixes it and is now wired behind a per-topic decision from
+the teaching agent; glow topics opt out of 3D entirely; and the Pages Router finally has
+its Geist font variables. The landing page was rebuilt a second time against the
+design-taste audit.
+
+**Next session is a visual identity pass**, briefed in
+.claude/plans/T04b-landing-visual-identity.md. The structure is settled; the palette
+(90% saturation against the skill's 80% ceiling), the wordmark and the missing dark mode
+are not.
+
+## Next session: T04b landing visual identity
+
+Briefed in .claude/plans/T04b-landing-visual-identity.md. The page's structure is settled
+and passes the design-taste pre-flight; its identity is not. Three decisions: the palette
+(90% saturation against the skill's 80% ceiling), the typography (flat, sentence case
+throughout), and dark mode (globals.css defines no dark values for any --aristo-* token).
+
+One correction carried into that brief: the wordmark and the typography are INDEPENDENT.
+An earlier version treated the logo as a reason to hesitate over restyling the type. It is
+not; the logo is out of scope unless Hmz says otherwise.
 
 ## Steps still to take (checklist for any resuming session)
 

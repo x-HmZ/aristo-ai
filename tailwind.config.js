@@ -55,6 +55,7 @@ module.exports = {
           orange: "hsl(var(--aristo-orange))",
           "orange-light": "hsl(var(--aristo-orange-light))",
           "orange-pale": "hsl(var(--aristo-orange-pale))",
+          "orange-deep": "hsl(var(--aristo-orange-deep))",
           beige: "hsl(var(--aristo-beige))",
           "beige-dark": "hsl(var(--aristo-beige-dark))",
           cream: "hsl(var(--aristo-cream))",

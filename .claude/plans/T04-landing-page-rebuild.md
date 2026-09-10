@@ -55,7 +55,20 @@ Rebuild `src/app/page.tsx` (splitting sections into `src/components/landing/*`) 
 
 ## Status checklist
 
-- [ ] Screenshots/video sourced
-- [ ] Sections built (hero, how-it-works, features, parents, footer)
-- [ ] Responsive + reduced-motion verified
-- [ ] Build passes
+- [x] Screenshots/video sourced — three stills captured from a production build of `/demo`
+      (volcano lesson, generated black-hole model, desk quiz) into `public/images/landing/`
+- [x] Sections built (hero, how-it-works, features, parents, footer) — plus a capability
+      strip and a closing CTA, in `src/components/landing/`
+- [x] Responsive + reduced-motion verified — no horizontal overflow at 360 / 768 / 1024 /
+      1280 / 1440; reveal is a CSS transition disabled by a `prefers-reduced-motion` query
+- [x] Build passes — type-check, lint, test (83/83) and build all green; `/` first-load JS
+      120 kB, statically prerendered
+
+## Outcome (2026-09-09)
+
+Built on `dev/t04-landing-page`. Design canvas reviewed before any code was written:
+https://claude.ai/code/artifact/d0d76f20-e5f9-4051-8ee3-ea36eb68a1d5
+
+Still open, deliberately: no FAQ section (offered, not asked for), and `LEGAL_LINKS` in
+`SiteFooter.tsx` is an empty array so the privacy/terms row renders nothing until those
+routes exist.

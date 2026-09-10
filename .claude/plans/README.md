@@ -72,7 +72,7 @@ local-first answer eval, per-call cost logging) is genuinely well designed — n
 | Avatars | Keep Ryan/Sonia/Marcus/Priya — swapping ecosystems (e.g. Ready Player Me) buys little for real migration cost. The problems are size (13.5 MB each, uncompressed) and load strategy, not the avatars themselves (T02). Optional polish: gaze/saccades (T08). |
 | 3D environment | Static classroom GLB is a fine base; do not replace it. Add cheap dynamism: live blackboard content, ambient life, idle motion (T08). The 35 MB `classroom_alternative.glb` is the single worst asset (T02). |
 | Load performance | Worst finding. `/learn` preloads ~78 MB of GLBs (both classrooms + all 4 avatars + anims), uncompressed, behind a blank-div loading fallback. Fix = compress + conditional preload (T02) + real loading screen (T03). |
-| Landing page | Thin: hero + 3 emoji cards, no product visual, no how-it-works, no footer. Rebuild (T04). |
+| Landing page | **Rebuilt 2026-09-09 (T04)**: hero with a real classroom screenshot, how-it-works, feature grid, parents strip, footer. |
 | App flow | Sign-up -> pending -> onboarding -> learn is sound. The killer wait is synchronous lesson generation (30-60 s of nothing). Fix = split-generation streaming (T09). |
 | Ops | Branch sprawl (production on `deploy-prep`, `master` stale, current work unpushed), Resend not wired, admin not bootstrapped, no CI, no tests, docs drift (decisions.md says "Tripo3D"; actual model is TripoSR) (T01, T10). |
 
@@ -123,7 +123,7 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [x] T01 repo + docs consolidation (2026-07-12 — master promotion still pending Vercel dashboard switch)
 - [x] T02 3D asset diet
 - [x] T03 /learn loading experience
-- [ ] T04 landing page rebuild
+- [x] T04 landing page rebuild (2026-09-09)
 - [x] T05 LLM model bump
 - [x] T06 persistent generation cache (2026-09-09 — DONE: migration 016 applied, public
       `generated-assets` bucket, L1->L2->fal layering; cold-instance hit proven with no new

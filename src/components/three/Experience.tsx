@@ -20,7 +20,7 @@ function RendererConfig() {
   return null;
 }
 
-// Shared anchor — image panel and 3D model both live here.
+// Shared anchor for the image panel and the 3D model.
 // Image plane is IMG_SIZE × IMG_SIZE (≈1.46), so shifting the anchor by
 // half-image (~0.73) left and up moves the plane towards the avatar's head
 // so "pointing" gestures actually land on the diagram instead of empty air.
@@ -28,11 +28,15 @@ const SCENE_X = 0.37;   // was 1.1 — half-width left
 const SCENE_Y = 0.33;   // was -0.4 — half-height up (head/shoulder level)
 const SCENE_Z = -3;
 
-// 3D model anchor — kept at the original chest-height position so generated
-// models read at body scale rather than floating around the avatar's face.
-const MODEL_X = 1.1;
-const MODEL_Y = -0.4;
-const MODEL_Z = -3;
+// 3D model anchor. This used to sit at the original chest-height spot
+// (1.1, -0.4), on the reasoning that a model at head height would crowd the
+// avatar's face. Seen side by side that was the wrong trade: the image plane
+// was moved up and left so pointing gestures land on it, and the model was
+// left behind at the old anchor, so it spawned low and to the right where the
+// lesson panel clips it. They share the anchor again (Hmz, 2026-09-10).
+const MODEL_X = SCENE_X;
+const MODEL_Y = SCENE_Y;
+const MODEL_Z = SCENE_Z;
 
 function Floor() {
   return (
@@ -150,7 +154,13 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
       const res = await fetch("/api/generate-model/3d", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ imageUrl: pending3dImageUrl, conceptId: activeLesson?.concept_id ?? null }),
+        body:    JSON.stringify({
+          imageUrl:       pending3dImageUrl,
+          conceptId:      activeLesson?.concept_id ?? null,
+          // Four views cost roughly twice one, so only the topics the teaching
+          // agent judged to need them get them. See teaching.ts guidance.
+          needsMultiview: activeLesson?.metadata?.model_needs_multiview === true,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.modelUrl) {

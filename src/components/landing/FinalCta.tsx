@@ -1,0 +1,46 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/landing/Reveal";
+import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
+
+export function FinalCta() {
+  return (
+    <section className="relative z-10 mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+      <Reveal>
+        <div
+          className={cn(
+            SHAPE.band,
+            "relative overflow-hidden bg-gradient-to-br from-primary to-aristo-orange-light px-6 py-12 text-center shadow-aristo-lg sm:px-10 sm:py-16 lg:px-14 lg:py-[68px]"
+          )}
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -top-32 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0)_68%)]"
+          />
+          <div className="relative flex flex-col items-center gap-5">
+            <h2 className="max-w-[640px] text-balance text-[32px] font-extrabold leading-[1.08] tracking-[-0.03em] text-white sm:text-4xl lg:text-[44px]">
+              Go and meet your teacher
+            </h2>
+            <p className="max-w-[460px] text-base leading-relaxed text-white/90 sm:text-[17.5px]">
+              About five minutes, in the browser. No account, no card, nothing
+              to install.
+            </p>
+            <Link
+              href="/demo"
+              className={cn(
+                SHAPE.control,
+                PRESS,
+                FOCUS,
+                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-white px-7 text-base font-bold text-aristo-orange-deep shadow-[0_10px_26px_hsl(25_70%_20%/0.24)] hover:-translate-y-0.5 focus-visible:ring-white focus-visible:ring-offset-primary sm:w-auto"
+              )}
+            >
+              Watch a live lesson
+              <ArrowRight className="size-4" strokeWidth={2.4} />
+            </Link>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}

@@ -2,7 +2,182 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-10 (later) — heart demo topic, three playback bugs, PR #4 merged
+
+- **Black holes retired, heart added, $0 of fal spend.** A black hole is light, not a
+  surface: rendered through the app's own loader stack its model measured
+  `0.08 x 0.85 x 1.00`, a paper-thin sliver. The heart's model and labelled teaching image
+  were already paid for by the 2026-09-09 eval and were sitting in `public/demo/heart/`
+  (I had wrongly reported that model as lost, having checked only the persistent cache and
+  the tracked GLBs). `scripts/generate-demo-heart.ts` makes **zero fal calls**.
+- **No segment visuals were generated either.** `useLessonPlayback` holds the last visible
+  image when a segment supplies none, so one teaching image on `seg_005` carries the whole
+  lesson. Adding real segment visuals later is ~$0.08 each and does not touch narration.
+- **3,321 ElevenLabs characters**, taken from the script's `--dry-run` before spending, not
+  estimated after. Alignment sidecars cost **zero** TTS credits: forced alignment bills as
+  speech-to-text, and the `forced_alignment` key permission now works.
+
+### Three bugs, all found by playing it rather than by testing
+
+1. **Demo audio is addressed by `concept_id`, not by slug.** `useLessonPlayback` resolves
+   `/demo/<lesson.concept_id>/<segment>.mp3`, so the concept id names the asset folder. The
+   original two topics satisfied `slug === concept_id` by coincidence, which hid the coupling
+   until a topic arrived with concept id `human-heart` and folder `heart`. Every mp3 404d, so
+   every segment "ended" instantly and playback raced to segment 15 *during the loading
+   screen* — which presents as "the lesson starts halfway through". `src/data/demo/index.ts`
+   now asserts the invariant at module load, and the generator derives the id from `SLUG`.
+2. **Missing alignment sidecars degrade lipsync silently.** 15 mp3s and 0 `.align.json` meant
+   the heart fell back to the FFT guess while the volcano used real character timings. Both
+   topics now have 15/15.
+3. **The 3D model sat at a stale anchor.** `SCENE_*` was moved to head height so pointing
+   gestures land on the diagram; `MODEL_*` was left at the old `(1.1, -0.4)` behind a comment
+   arguing head height would crowd the avatar's face, while the comment above `SCENE_*` still
+   claimed both shared the anchor. They share it again.
+
+### Landing page
+
+The last stale asset is replaced: `classroom-3d-model.webp` is now Hmz's own capture of the
+heart at the shared anchor. It was cropped from the left rather than squashed, because the
+source frame was 1.96:1 against the 1.78:1 the other two shots use and a mismatched intrinsic
+aspect makes `next/image` reserve the wrong space.
+
+**PR #4 merged into `deploy-prep`** with both checks green, which deploys to production.
+
+### Still open
+
+- **T04b visual identity** (`.claude/plans/T04b-landing-visual-identity.md`) — its own
+  session. Palette at 90% saturation, flat typography, no dark mode. Note the brief was
+  corrected: the wordmark is NOT a blocker on the typography work, they are independent.
+- **Multiview pricing is the one unpinned row** in `pricing.ts`, because fal reports that
+  endpoint in credits rather than per generation. Reconcile against the dashboard after the
+  first real production run.
+- Optional, ~$0.16: two real segment visuals for the heart if one static board across fifteen
+  segments reads thin next to the volcano's two.
+- ElevenLabs: ~2,879 credits left after this session.
+
+## 2026-09-10 — 3D root-caused and fixed, landing rebuilt twice
+
+Continues the T04 branch (`dev/t04-landing-page`, PR #4 into `deploy-prep`).
+
+**The demo 3D models were bad for a reason nobody had measured.** Not the mesh, not the
+generator: **texture coverage**. Tripo's single-image path paints only the surface its one
+source view can see and fills the rest with flat pale grey. Unpacking the volcano's albedo
+atlas showed roughly half of it as featureless filler, and under the classroom's
+`<Environment preset="studio">` a large pale surface at roughness 0.37 reads as chrome. The
+metalness theory was tested and rejected (measured 0.011).
+
+`scripts/eval-multiview-3d.mjs` proved the fix for $0.67: one strong three-quarter front view
+(nano-banana-pro), three rotations of it by *editing* that view (flux-pro/kontext), then
+`tripo3d/tripo/v2.5/multiview-to-3d` at texture HD. Editing rather than regenerating is what
+keeps the four inputs the same object. The new atlas carries basalt across the whole surface.
+The volcano in `/demo` is that model: **658 KB**, against 1.65 MB single-view and 4.0 MB for
+the TripoSR original. Better and smaller each time.
+
+Wired into production behind a per-topic decision: the teaching agent now returns
+`model_needs_multiview`, reasoning about whether the sides and back differ meaningfully from
+the front. Four views cost ~$0.67 against $0.303, so a planet does not pay the price of a
+heart. `generate3dModelMultiview` falls back to single-view if any view edit fails.
+
+**Glow topics now opt out of 3D entirely.** A black hole is light, not matter, so image-to-mesh
+returns torn shards. `teaching.ts` guidance previously excluded only "abstract concepts, code,
+processes"; it now also excludes fire, plasma, gas, fields, forces, waves, explosions, and
+anything whose appearance is its glow.
+
+**Also fixed: the Pages Router never had the Geist font variables.** They were declared inline
+in the App Router root layout and set on its `<body>`, so `/demo`, `/learn` and `/dev/*` fell
+back to the browser's default serif. An undefined `var()` does not fall through to the next
+family; the whole declaration is dropped. Both fonts now come from `src/lib/fonts.ts`, and the
+Pages Router side defines the properties on `:root` from `_app.tsx`. Two dead ends recorded in
+the commit: a wrapper in `_app.tsx` leaves body-level Radix portals serif, and `_document.tsx`
+cannot do it at all because next/font is only wired up from `_app` or a page.
+
+**The landing page was rebuilt a second time** against the `design-taste-frontend` skill's
+audit, which failed the first version on seven mechanical counts: 8 em-dashes in rendered copy
+(now 0), 8 eyebrow labels against a budget of 3 (now 2), 12 corner radii (now 4, documented in
+`shape.ts`), four consecutive zigzag splits (now four distinct layouts), three-equal-cards
+twice (now a six-cell bento), a five-element hero with 28-word subtext (now four and 17), and
+no press feedback on any control.
+
+### Open
+
+- **Visual identity is NOT done** and Hmz has called it: the orange is 90% saturation against
+  the skill's 80% ceiling, the lowercase wordmark undersells, and he wants a dark mode.
+  Brief written: `.claude/plans/T04b-landing-visual-identity.md`, to run as its own session.
+- **The two landing images that show a 3D model are stale** (they show the old rejected one).
+  Re-shoot after confirming the new volcano looks right.
+- **The black-hole demo topic should be swapped** for something with real geometry. A full
+  topic swap is roughly $0.80-1.00 plus TTS quota; the model is the cheap part.
+- The heart model from the earlier eval **does not exist**: those scripts called fal directly
+  and never persisted. The cache has only the two models from this session's regen.
+- Multiview pricing is the one row in `pricing.ts` not pinned to a fal API reading, because
+  the API reports that endpoint in credits. Reconcile against the dashboard after a real run.
+
+## 2026-09-09 (T04) — landing page rebuilt
+
+Branch `dev/t04-landing-page` off `deploy-prep`. `src/app/page.tsx` went from a hero plus
+three emoji cards to a full page in `src/components/landing/`: nav, split hero, capability
+strip, four-step how-it-works, six-card feature grid, a parents strip, a closing CTA and a
+footer. Design canvas approved before any code was written
+(https://claude.ai/code/artifact/d0d76f20-e5f9-4051-8ee3-ea36eb68a1d5).
+
+- **The product visuals are real, and they come from `/demo`, not `/learn`.** Three stills
+  captured from a **production build** with a dependency-free CDP driver: the volcano lesson
+  with its generated cross-section, the generated black-hole model standing in the room with
+  its labels, and the desk quiz. `/demo` renders the same classroom, avatar and lesson panel
+  but is public, session-free and calls no paid API, so re-shooting costs nothing. Exported
+  as WebP at 1760px into `public/images/landing/` (80-133 kB each), served through
+  `next/image`.
+- **The 3D shot is the black hole, not the volcano, and that was forced.** In the volcano
+  lesson the generated mesh sits behind the lesson panel and cannot be framed without
+  cropping the panel out. The black-hole model stands clear of it, with its accretion disk,
+  event horizon and bent-light-ring labels legible.
+- **Motion is `react-intersection-observer` + a CSS transition, not framer-motion.** Same
+  reveal, ~2 kB instead of ~38 kB: `/` first-load JS is **120 kB** (146 kB with
+  framer-motion), statically prerendered. `prefers-reduced-motion` is honoured by a media
+  query in `globals.css` rather than a JS branch, so there is no first-paint animation to
+  undo.
+- **The hero is deliberately NOT wrapped in `Reveal`.** Its start state is `opacity: 0` and
+  Chrome does not credit a transparent element as painted, so wrapping the classroom
+  screenshot (the LCP candidate, preloaded with `priority`) pushed LCP out by hydration plus
+  the transition. Above the fold there is nothing to reveal anyway.
+- **The reveal cannot leave the page hidden.** A `<noscript>` rule unhides everything when
+  JS never runs, and an element that is still hidden re-checks its own rect on a 1200 ms
+  interval, clearing the interval once shown. That second net is not theoretical:
+  IntersectionObserver delivered no callbacks at all in the CDP-driven Chrome used for
+  verification. It is a repeating check rather than a one-shot timer because any one-shot
+  latch has to guess once whether the observer is healthy, and both guesses fail — giving up
+  eagerly kills the animation for the whole tab after one slow load, and trusting a single
+  callback leaves everything already stood down permanently hidden if delivery stops. Both
+  were written and both were caught in review; the repeating check needs no guess. Verified
+  by scrolling a production build: 1 of 15 revealed at rest, then 4, 6, 13, 15 on the way
+  down.
+- **One new token**: `--aristo-orange-deep` (`23 75% 43%` — the #C05A1C already hardcoded
+  around the learn/demo components) plus its `aristo.orange-deep` Tailwind colour. Nothing
+  else in the palette changed.
+- Copy is honest by construction: no testimonials, no user counts, no logos. The parents
+  strip says what is tracked (mastery, answers, session length), that access is
+  approval-gated, and that lessons are AI-generated and can be wrong.
+- **Not done, on purpose**: no FAQ (offered, not requested); `LEGAL_LINKS` in
+  `SiteFooter.tsx` is an empty array, so the privacy/terms row renders nothing rather than
+  shipping dead links.
+- Gates: `yarn type-check`, `yarn lint` (22 warnings, all pre-existing, none in the new
+  files), `yarn test` (83/83), `yarn build` — all green. No horizontal overflow at 360, 768,
+  1024, 1280 or 1440, verified by measuring `scrollWidth` against `innerWidth`.
+
+**Found while capturing, NOT fixed (out of T04 scope):** `pages/_app.tsx` never applies the
+`--font-geist-sans` / `--font-geist-mono` variables — those are set on `<body>` in
+`src/app/layout.tsx`, which the Pages Router never renders. So on `/demo` and `/learn` the
+`font-sans` declaration resolves to `var(--font-geist-sans), system-ui, sans-serif` with an
+undefined custom property, which invalidates the whole declaration and drops bold text to
+the default serif. It is visible in the landing screenshots. One-line fix in `pages/_app.tsx`;
+touching `/learn` was explicitly out of scope here.
+
 ## 2026-09-09 (final) — tiered image models applied
+
+**Eval artifacts kept:** `.claude/eval/2026-09-09-pipeline/` (README + 16 comparison images
++ 4 reference GLBs, Draco-compressed, 7.6 MB) is the evidence behind every choice below, and
+the thing to point a fresh session at. The good heart model is demo-ready at
+`public/demo/heart/model.glb` (1.88 MB).
 
 Acting on the eval above. `generateInfographic` gained a `tier` option:
 
