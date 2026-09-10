@@ -38,7 +38,9 @@ const MODEL_URL = `/demo/${SLUG}/model.glb`;
 const TEACHING_IMAGE = `/demo/${SLUG}/teaching.jpg`;
 
 const concept = {
-  id:          "human-heart",
+  // MUST equal SLUG: useLessonPlayback resolves demo audio as
+  // /demo/<lesson.concept_id>/<segment>.mp3, so the concept id IS the folder name.
+  id:          SLUG,
   name:        "How the Heart Pumps Blood",
   description:
     "How the four chambers of the heart move blood through the body and the lungs, and why it flows in one direction only.",

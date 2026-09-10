@@ -10,7 +10,7 @@ import type { LessonPayload } from "@/lib/agents/teaching";
 import type { QuizQuestion }  from "@/lib/agents/assessment";
 
 export const lesson: LessonPayload = {
-  "concept_id": "human-heart",
+  "concept_id": "heart",
   "concept_name": "How the Heart Pumps Blood",
   "phases": {
     "activate": {
@@ -249,7 +249,7 @@ export const lesson: LessonPayload = {
 export const quiz: QuizQuestion[] = [
   {
     "id": "heart-q1",
-    "concept_id": "human-heart",
+    "concept_id": "heart",
     "question_type": "multiple_choice",
     "bloom_level": "remember",
     "question": "Which chamber pushes blood out to the rest of the body?",
@@ -270,7 +270,7 @@ export const quiz: QuizQuestion[] = [
   },
   {
     "id": "heart-q2",
-    "concept_id": "human-heart",
+    "concept_id": "heart",
     "question_type": "true_false",
     "bloom_level": "understand",
     "question": "The valves in the heart are what stop blood flowing backwards.",
