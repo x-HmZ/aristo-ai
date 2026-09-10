@@ -3,7 +3,7 @@
 _Updated continuously. If you are a fresh session: read `CLAUDE.md`, then this file, then
 `.claude/plans/README.md`. This tells you exactly where work stands and what to do next._
 
-Last updated: 2026-09-09 (session: T04 landing page rebuild)
+Last updated: 2026-09-10 (session: 3D root cause + landing rebuild)
 
 ## What this session did (chronological)
 
@@ -364,6 +364,20 @@ Two smaller things left open by choice: no FAQ section (offered, not asked for),
 `LEGAL_LINKS` in `SiteFooter.tsx` is an empty array so the privacy/terms footer row renders
 nothing until those routes exist.
 
+
+## Session 2026-09-10 - 3D root cause, fonts, landing rebuild
+
+Same branch, PR #4. Full detail in the 2026-09-10 entry of .claude/docs/state.md. The
+short version: the demo models looked bad because Tripo's single-image path only textures
+what one view sees; multi-view fixes it and is now wired behind a per-topic decision from
+the teaching agent; glow topics opt out of 3D entirely; and the Pages Router finally has
+its Geist font variables. The landing page was rebuilt a second time against the
+design-taste audit.
+
+**Next session is a visual identity pass**, briefed in
+.claude/plans/T04b-landing-visual-identity.md. The structure is settled; the palette
+(90% saturation against the skill's 80% ceiling), the wordmark and the missing dark mode
+are not.
 
 ## Steps still to take (checklist for any resuming session)
 

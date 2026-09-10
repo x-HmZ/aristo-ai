@@ -2,6 +2,63 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-10 — 3D root-caused and fixed, landing rebuilt twice
+
+Continues the T04 branch (`dev/t04-landing-page`, PR #4 into `deploy-prep`).
+
+**The demo 3D models were bad for a reason nobody had measured.** Not the mesh, not the
+generator: **texture coverage**. Tripo's single-image path paints only the surface its one
+source view can see and fills the rest with flat pale grey. Unpacking the volcano's albedo
+atlas showed roughly half of it as featureless filler, and under the classroom's
+`<Environment preset="studio">` a large pale surface at roughness 0.37 reads as chrome. The
+metalness theory was tested and rejected (measured 0.011).
+
+`scripts/eval-multiview-3d.mjs` proved the fix for $0.67: one strong three-quarter front view
+(nano-banana-pro), three rotations of it by *editing* that view (flux-pro/kontext), then
+`tripo3d/tripo/v2.5/multiview-to-3d` at texture HD. Editing rather than regenerating is what
+keeps the four inputs the same object. The new atlas carries basalt across the whole surface.
+The volcano in `/demo` is that model: **658 KB**, against 1.65 MB single-view and 4.0 MB for
+the TripoSR original. Better and smaller each time.
+
+Wired into production behind a per-topic decision: the teaching agent now returns
+`model_needs_multiview`, reasoning about whether the sides and back differ meaningfully from
+the front. Four views cost ~$0.67 against $0.303, so a planet does not pay the price of a
+heart. `generate3dModelMultiview` falls back to single-view if any view edit fails.
+
+**Glow topics now opt out of 3D entirely.** A black hole is light, not matter, so image-to-mesh
+returns torn shards. `teaching.ts` guidance previously excluded only "abstract concepts, code,
+processes"; it now also excludes fire, plasma, gas, fields, forces, waves, explosions, and
+anything whose appearance is its glow.
+
+**Also fixed: the Pages Router never had the Geist font variables.** They were declared inline
+in the App Router root layout and set on its `<body>`, so `/demo`, `/learn` and `/dev/*` fell
+back to the browser's default serif. An undefined `var()` does not fall through to the next
+family; the whole declaration is dropped. Both fonts now come from `src/lib/fonts.ts`, and the
+Pages Router side defines the properties on `:root` from `_app.tsx`. Two dead ends recorded in
+the commit: a wrapper in `_app.tsx` leaves body-level Radix portals serif, and `_document.tsx`
+cannot do it at all because next/font is only wired up from `_app` or a page.
+
+**The landing page was rebuilt a second time** against the `design-taste-frontend` skill's
+audit, which failed the first version on seven mechanical counts: 8 em-dashes in rendered copy
+(now 0), 8 eyebrow labels against a budget of 3 (now 2), 12 corner radii (now 4, documented in
+`shape.ts`), four consecutive zigzag splits (now four distinct layouts), three-equal-cards
+twice (now a six-cell bento), a five-element hero with 28-word subtext (now four and 17), and
+no press feedback on any control.
+
+### Open
+
+- **Visual identity is NOT done** and Hmz has called it: the orange is 90% saturation against
+  the skill's 80% ceiling, the lowercase wordmark undersells, and he wants a dark mode.
+  Brief written: `.claude/plans/T04b-landing-visual-identity.md`, to run as its own session.
+- **The two landing images that show a 3D model are stale** (they show the old rejected one).
+  Re-shoot after confirming the new volcano looks right.
+- **The black-hole demo topic should be swapped** for something with real geometry. A full
+  topic swap is roughly $0.80-1.00 plus TTS quota; the model is the cheap part.
+- The heart model from the earlier eval **does not exist**: those scripts called fal directly
+  and never persisted. The cache has only the two models from this session's regen.
+- Multiview pricing is the one row in `pricing.ts` not pinned to a fal API reading, because
+  the API reports that endpoint in credits. Reconcile against the dashboard after a real run.
+
 ## 2026-09-09 (T04) — landing page rebuilt
 
 Branch `dev/t04-landing-page` off `deploy-prep`. `src/app/page.tsx` went from a hero plus
