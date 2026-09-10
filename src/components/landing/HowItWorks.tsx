@@ -157,7 +157,7 @@ export function HowItWorks() {
             <div className="px-6 pb-6 sm:px-9 sm:pb-9 lg:px-12 lg:pb-12">
               <Shot
                 src="/images/landing/classroom-3d-model.webp"
-                alt="A generated 3D model standing in the classroom beside the teacher, with its parts labelled in place."
+                alt="The generated 3D heart standing in the classroom beside the teacher, with its chambers and the aorta labelled in place."
                 sizes="(max-width: 1023px) 100vw, 1056px"
               />
             </div>
