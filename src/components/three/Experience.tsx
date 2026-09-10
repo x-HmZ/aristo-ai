@@ -150,7 +150,13 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
       const res = await fetch("/api/generate-model/3d", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ imageUrl: pending3dImageUrl, conceptId: activeLesson?.concept_id ?? null }),
+        body:    JSON.stringify({
+          imageUrl:       pending3dImageUrl,
+          conceptId:      activeLesson?.concept_id ?? null,
+          // Four views cost roughly twice one, so only the topics the teaching
+          // agent judged to need them get them. See teaching.ts guidance.
+          needsMultiview: activeLesson?.metadata?.model_needs_multiview === true,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.modelUrl) {

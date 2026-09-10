@@ -130,6 +130,17 @@ export interface LessonPayload {
     should_generate_3d_model?:   boolean;  // new canonical name
     model_image_prompt?:         string;
     model_3d_prompt?:            string;
+    /**
+     * Whether the 3D step needs four views instead of one.
+     *
+     * Single-image reconstruction only textures the surface its one source
+     * view can see and fills the rest with flat grey, which is what made the
+     * first demo models read as chrome in the classroom. Four views fix that
+     * but cost about $0.67 against $0.303, so the teaching agent decides per
+     * topic rather than the pipeline paying for every object as though it
+     * were the hard case. Absent means false.
+     */
+    model_needs_multiview?:      boolean;
     model_annotations?:          ModelAnnotation[];
     model_callouts?:             string[];
     /**
@@ -170,6 +181,7 @@ RULES:
 - When should_generate_model is true, you MUST provide BOTH image prompt fields, AND the demonstrate.visual_walkthrough must reference what is in the image:
   • model_image_prompt: A rich, educational infographic the teacher will literally point at while delivering visual_walkthrough. Annotated diagram style, labeled parts, cross-sections, educational poster aesthetic. Example: "anatomical cross-section of the human heart, labeled chambers and valves, arrows showing blood flow direction, medical illustration style, clean white background, vivid educational diagram". The labels in this image MUST match the elements you reference in visual_walkthrough.
   • model_3d_prompt: A SHORT, clean description of ONE isolated physical object suitable for 3D reconstruction — no text, no labels, no backgrounds, no scenes. Focus on shape, material, color. Example: "human heart, anatomically accurate, red and pink muscle tissue, realistic, isolated, centered, white background".
+  • model_needs_multiview: true when the object's sides and back look meaningfully DIFFERENT from its front, so one view cannot describe the whole surface: organs, animals, machines, tools, vehicles, buildings, anything asymmetric. false when one view already implies the rest: spheres, planets, cells, crystals, balls, and radially symmetric or near-symmetric objects. Four views cost roughly twice one, so ask for them only when the other sides carry real information.
   • model_annotations: 3–6 short labels (≤3 words each) for the 3D model, with a bias hint of front/left/right/back/top/bottom describing roughly where on the object the label sits. Example for a heart: [{"label":"Left ventricle","bias":"left"},{"label":"Aorta","bias":"top"}].
   • model_callouts: 1–4 short sentences the teacher will narrate when the 3D model appears, each tied to the annotations. Example: ["Notice the left ventricle on the left — that's the strongest chamber.","The aorta exits at the top, carrying blood to the body."].
 
@@ -397,6 +409,7 @@ const _metadataSchema = {
     should_generate_model:       { type: "boolean" },
     model_image_prompt:          { type: "string" },
     model_3d_prompt:             { type: "string" },
+    model_needs_multiview:       { type: "boolean" },
     model_annotations: {
       type:  "array" as const,
       items: {

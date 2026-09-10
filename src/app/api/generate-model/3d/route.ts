@@ -34,16 +34,21 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const { imageUrl, conceptId } = body ?? {};
+    const { imageUrl, conceptId, needsMultiview } = body ?? {};
     if (typeof imageUrl !== "string" || !imageUrl.trim()) {
       return NextResponse.json({ error: "imageUrl is required" }, { status: 400 });
     }
     if (conceptId !== undefined && conceptId !== null && typeof conceptId !== "string") {
       return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
     }
+    if (needsMultiview !== undefined && typeof needsMultiview !== "boolean") {
+      return NextResponse.json({ error: "needsMultiview must be a boolean" }, { status: 400 });
+    }
     const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
-    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId);
+    const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId, {
+      multiview: needsMultiview === true,
+    });
 
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {

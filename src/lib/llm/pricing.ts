@@ -71,6 +71,13 @@ export const FAL_PRICING: Record<string, number> = {
   "fal-ai/nano-banana":       0.0398, // non-Pro (Gemini 2.5 Flash Image)
   "fal-ai/flux/schnell":      0.003,  // per megapixel; our square 1K request is ~1 MP
   "tripo3d/tripo/v2.5/image-to-3d": 0.30, // standard texture + PBR (0.20 untextured, 0.40 HD)
+  // Multi-view path, used when the teaching agent sets model_needs_multiview.
+  // NOTE: fal's pricing API reports this endpoint in "credits", not per
+  // generation, so unlike every other row here this one is NOT pinned to an
+  // API reading. 0.40 is Tripo's published HD tier, which is what we request.
+  // Reconcile against the fal dashboard after the first production run.
+  "tripo3d/tripo/v2.5/multiview-to-3d": 0.40,
+  "fal-ai/flux-pro/kontext":  0.04,   // image edit, used to rotate the source view
   "fal-ai/triposr":           0.07,   // retired 2026-09-09 — kept so historical rows price correctly
   // Legacy aliases (older usage_events rows may have these — keep so lookups don't return 0).
   "nano-banana":              0.0398,

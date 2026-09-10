@@ -107,6 +107,8 @@ describe("falCostMicros", () => {
     ["fal-ai/nano-banana",               0.0398],
     ["fal-ai/flux/schnell",              0.003],
     ["tripo3d/tripo/v2.5/image-to-3d",   0.30],
+    ["tripo3d/tripo/v2.5/multiview-to-3d", 0.40],
+    ["fal-ai/flux-pro/kontext",           0.04],
     ["fal-ai/triposr",                   0.07],
   ])("prices %s at $%s per unit", (model, usd) => {
     expect(falCostMicros({ model, units: 1 })).toBe(Math.round(usd * 1_000_000));

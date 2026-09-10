@@ -225,6 +225,37 @@ const TRIPO3D_MODEL      = "tripo3d/tripo/v2.5/image-to-3d";
 const TRIPO3D_TIMEOUT_MS = 240_000;
 
 /**
+ * Multi-view reconstruction, used when the teaching agent sets
+ * `metadata.model_needs_multiview`.
+ *
+ * Why it exists: the single-image path only textures the surface its one
+ * source view can see and fills everything else with flat pale grey. Unpacking
+ * the first demo volcano showed roughly half its albedo atlas as featureless
+ * filler, which under the classroom's studio environment map reads as chrome.
+ * Four views remove the filler. Measured on the volcano, and the resulting
+ * model was also smaller (658 KB against 1.65 MB) because a coherent texture
+ * compresses better than a patchwork one.
+ *
+ * The extra views are edits of the front view rather than independent
+ * generations, so the object keeps its identity across the four inputs. Tripo
+ * tolerates approximate angles; it does not tolerate four different volcanoes.
+ */
+const TRIPO3D_MULTIVIEW  = "tripo3d/tripo/v2.5/multiview-to-3d";
+const VIEW_EDIT_MODEL    = "fal-ai/flux-pro/kontext";
+
+const EXTRA_VIEWS = [
+  { field: "left_image_url",  instruction: "Rotate the object 90 degrees to show its LEFT side." },
+  { field: "back_image_url",  instruction: "Rotate the object 180 degrees to show its BACK." },
+  { field: "right_image_url", instruction: "Rotate the object 270 degrees to show its RIGHT side." },
+] as const;
+
+/** Everything the edit must NOT change, or the four views stop being one object. */
+const VIEW_EDIT_SUFFIX =
+  " Keep the exact same object, the same colours and materials, the same size in frame, " +
+  "the same even lighting and the same plain flat white background. Do not change the style. " +
+  "Do not add text or labels.";
+
+/**
  * Image models, by tier. Both slugs have a price row in `pricing.ts` pinned by
  * tests, and both are part of the cache key — see `cacheKey`.
  */
@@ -564,7 +595,11 @@ export async function generate3dModel(
   userId?:  string | null,
   bypassCache: boolean = false,
   conceptId?: string | null,
+  opts: { multiview?: boolean } = {},
 ): Promise<{ modelUrl: string; cached: boolean }> {
+  if (opts.multiview) {
+    return generate3dModelMultiview(imageUrl, userId, bypassCache, conceptId);
+  }
   if (!imageUrl || !imageUrl.trim()) {
     throw new Error("generate3dModel: imageUrl is required");
   }
@@ -614,6 +649,111 @@ export async function generate3dModel(
     promptHash:  key,
     sourceUrl:   modelUrl,
     sourceModel: TRIPO3D_MODEL,
+    conceptId:   conceptId ?? null,
+  });
+  const canonicalUrl = persistedUrl ?? modelUrl;
+
+  cacheSet(_cache3d, key, canonicalUrl);
+  return { modelUrl: canonicalUrl, cached: false };
+}
+
+/**
+ * Four-view reconstruction. Generates left / back / right by editing the front
+ * view, then hands all four to Tripo. Falls back to the single-view path if
+ * any edit fails, because three good views plus one missing is worse input
+ * than one good view.
+ *
+ * Cost: 3 edits ($0.04 each) + one HD multiview generation ($0.40), against
+ * $0.30 for the single-view standard tier. Cached by front image like every
+ * other asset here, so it is paid once per concept, not once per lesson.
+ */
+export async function generate3dModelMultiview(
+  frontImageUrl: string,
+  userId?:  string | null,
+  bypassCache: boolean = false,
+  conceptId?: string | null,
+): Promise<{ modelUrl: string; cached: boolean }> {
+  const trimmed = frontImageUrl.trim();
+  if (!trimmed) throw new Error("generate3dModelMultiview: frontImageUrl is required");
+
+  // Distinct prefix: a multi-view model and a single-view model built from the
+  // same front image are different assets and must not share a cache entry.
+  const key = hashKey(`tripo25mv|${trimmed}`);
+  if (!bypassCache) {
+    const hit = cacheGet(_cache3d, key);
+    if (hit) return { modelUrl: hit, cached: true };
+    const persistedHit = await lookupPersistedAsset("model_3d", key);
+    if (persistedHit) {
+      cacheSet(_cache3d, key, persistedHit);
+      return { modelUrl: persistedHit, cached: true };
+    }
+  }
+
+  ensureFalConfigured();
+
+  const views: Record<string, string> = {};
+  try {
+    for (const view of EXTRA_VIEWS) {
+      const edited = (await withTimeout(
+        fal.subscribe(VIEW_EDIT_MODEL, {
+          input: {
+            prompt:        view.instruction + VIEW_EDIT_SUFFIX,
+            image_url:     trimmed,
+            num_images:    1,
+            output_format: "png",
+          },
+        }),
+        TRIPO3D_TIMEOUT_MS
+      )) as unknown as FalImageResult;
+      const url = edited.data?.images?.[0]?.url;
+      if (!url) throw new Error(`${VIEW_EDIT_MODEL} returned no image for ${view.field}`);
+      views[view.field] = url;
+      logFalGeneration({
+        model:   VIEW_EDIT_MODEL,
+        feature: "lesson.3d_view",
+        user_id: userId ?? null,
+        units:   1,
+        metadata: { field: view.field },
+      });
+    }
+  } catch (err) {
+    console.warn("[banana] multi-view generation failed, falling back to single view:", err);
+    return generate3dModel(trimmed, userId, bypassCache, conceptId);
+  }
+
+  const result = (await withTimeout(
+    fal.subscribe(TRIPO3D_MULTIVIEW, {
+      input: {
+        front_image_url: trimmed,
+        left_image_url:  views.left_image_url,
+        back_image_url:  views.back_image_url,
+        right_image_url: views.right_image_url,
+        texture:           "HD",
+        pbr:               true,
+        texture_alignment: "original_image",
+        orientation:       "align_image",
+        face_limit:        120_000,
+      },
+    }),
+    TRIPO3D_TIMEOUT_MS
+  )) as unknown as Tripo3DResult;
+
+  const modelUrl = result.data?.pbr_model?.url ?? result.data?.model_mesh?.url;
+  if (!modelUrl) throw new Error("Tripo3D multiview returned no model URL");
+
+  logFalGeneration({
+    model:    TRIPO3D_MULTIVIEW,
+    feature:  "lesson.3d_model",
+    user_id:  userId ?? null,
+    units:    1,
+    metadata: { source_image: trimmed, views: Object.keys(views).length + 1 },
+  });
+
+  const persistedUrl = await persistAsset({
+    kind:        "model_3d",
+    promptHash:  key,
+    sourceUrl:   modelUrl,
+    sourceModel: TRIPO3D_MULTIVIEW,
     conceptId:   conceptId ?? null,
   });
   const canonicalUrl = persistedUrl ?? modelUrl;
