@@ -3,7 +3,7 @@
 _Updated continuously. If you are a fresh session: read `CLAUDE.md`, then this file, then
 `.claude/plans/README.md`. This tells you exactly where work stands and what to do next._
 
-Last updated: 2026-09-10 (session: 3D root cause + landing rebuild)
+Last updated: 2026-09-10 (session: 3D root cause, heart demo topic, PR #4 merged)
 
 ## What this session did (chronological)
 
@@ -243,7 +243,9 @@ Still open:
   is fully contained in `deploy-prep` and can be deleted.
 - Before that, `8c03c46` (PR #2) brought the V7 alignment lipsync and the avatar clone fix;
   `dev/v2-instant-demo` is likewise fully contained and can be deleted.
-- **Open PR: `dev/t04-landing-page` -> `deploy-prep`** (T04 landing rebuild, 2026-09-09).
+- `dev/t04-landing-page` was **merged into `deploy-prep`** on 2026-09-10 as PR #4:
+  landing rebuild, Pages Router font fix, 3D texture-coverage root cause + multi-view,
+  heart demo topic replacing black holes. The branch is fully contained and can be deleted.
 - Older branches still around: `dev/desk-quiz-3d-fixes` (merged into deploy-prep in wave 1),
   `dev/roadmap-wave-1`, `dev/t06-persistent-cache`, `dev/t10-ops-hardening`,
   `dev/v4-teacher-memory`.
@@ -378,6 +380,17 @@ design-taste audit.
 .claude/plans/T04b-landing-visual-identity.md. The structure is settled; the palette
 (90% saturation against the skill's 80% ceiling), the wordmark and the missing dark mode
 are not.
+
+## Next session: T04b landing visual identity
+
+Briefed in .claude/plans/T04b-landing-visual-identity.md. The page's structure is settled
+and passes the design-taste pre-flight; its identity is not. Three decisions: the palette
+(90% saturation against the skill's 80% ceiling), the typography (flat, sentence case
+throughout), and dark mode (globals.css defines no dark values for any --aristo-* token).
+
+One correction carried into that brief: the wordmark and the typography are INDEPENDENT.
+An earlier version treated the logo as a reason to hesitate over restyling the type. It is
+not; the logo is out of scope unless Hmz says otherwise.
 
 ## Steps still to take (checklist for any resuming session)
 

@@ -2,6 +2,59 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-10 (later) — heart demo topic, three playback bugs, PR #4 merged
+
+- **Black holes retired, heart added, $0 of fal spend.** A black hole is light, not a
+  surface: rendered through the app's own loader stack its model measured
+  `0.08 x 0.85 x 1.00`, a paper-thin sliver. The heart's model and labelled teaching image
+  were already paid for by the 2026-09-09 eval and were sitting in `public/demo/heart/`
+  (I had wrongly reported that model as lost, having checked only the persistent cache and
+  the tracked GLBs). `scripts/generate-demo-heart.ts` makes **zero fal calls**.
+- **No segment visuals were generated either.** `useLessonPlayback` holds the last visible
+  image when a segment supplies none, so one teaching image on `seg_005` carries the whole
+  lesson. Adding real segment visuals later is ~$0.08 each and does not touch narration.
+- **3,321 ElevenLabs characters**, taken from the script's `--dry-run` before spending, not
+  estimated after. Alignment sidecars cost **zero** TTS credits: forced alignment bills as
+  speech-to-text, and the `forced_alignment` key permission now works.
+
+### Three bugs, all found by playing it rather than by testing
+
+1. **Demo audio is addressed by `concept_id`, not by slug.** `useLessonPlayback` resolves
+   `/demo/<lesson.concept_id>/<segment>.mp3`, so the concept id names the asset folder. The
+   original two topics satisfied `slug === concept_id` by coincidence, which hid the coupling
+   until a topic arrived with concept id `human-heart` and folder `heart`. Every mp3 404d, so
+   every segment "ended" instantly and playback raced to segment 15 *during the loading
+   screen* — which presents as "the lesson starts halfway through". `src/data/demo/index.ts`
+   now asserts the invariant at module load, and the generator derives the id from `SLUG`.
+2. **Missing alignment sidecars degrade lipsync silently.** 15 mp3s and 0 `.align.json` meant
+   the heart fell back to the FFT guess while the volcano used real character timings. Both
+   topics now have 15/15.
+3. **The 3D model sat at a stale anchor.** `SCENE_*` was moved to head height so pointing
+   gestures land on the diagram; `MODEL_*` was left at the old `(1.1, -0.4)` behind a comment
+   arguing head height would crowd the avatar's face, while the comment above `SCENE_*` still
+   claimed both shared the anchor. They share it again.
+
+### Landing page
+
+The last stale asset is replaced: `classroom-3d-model.webp` is now Hmz's own capture of the
+heart at the shared anchor. It was cropped from the left rather than squashed, because the
+source frame was 1.96:1 against the 1.78:1 the other two shots use and a mismatched intrinsic
+aspect makes `next/image` reserve the wrong space.
+
+**PR #4 merged into `deploy-prep`** with both checks green, which deploys to production.
+
+### Still open
+
+- **T04b visual identity** (`.claude/plans/T04b-landing-visual-identity.md`) — its own
+  session. Palette at 90% saturation, flat typography, no dark mode. Note the brief was
+  corrected: the wordmark is NOT a blocker on the typography work, they are independent.
+- **Multiview pricing is the one unpinned row** in `pricing.ts`, because fal reports that
+  endpoint in credits rather than per generation. Reconcile against the dashboard after the
+  first real production run.
+- Optional, ~$0.16: two real segment visuals for the heart if one static board across fifteen
+  segments reads thin next to the volcano's two.
+- ElevenLabs: ~2,879 credits left after this session.
+
 ## 2026-09-10 — 3D root-caused and fixed, landing rebuilt twice
 
 Continues the T04 branch (`dev/t04-landing-page`, PR #4 into `deploy-prep`).
