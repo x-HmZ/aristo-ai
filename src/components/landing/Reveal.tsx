@@ -1,7 +1,8 @@
 "use client";
 
 /**
- * Reveal — the landing page's only client component.
+ * Reveal — one of the landing page's two client leaves (ThemeToggle is the
+ * other).
  *
  * The page itself stays a server component; sections wrap their content in
  * this leaf so the scroll-in animation costs one small client boundary

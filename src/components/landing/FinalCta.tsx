@@ -4,6 +4,12 @@ import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/landing/Reveal";
 import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
 
+/**
+ * T04b: this band used to be a full orange gradient, the single most
+ * saturated thing on the page. It is now a surface in the page's own theme
+ * with the classroom's warm light rising from its lower edge, so the button
+ * is the one solid block of accent in it.
+ */
 export function FinalCta() {
   return (
     <section className="relative z-10 mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
@@ -11,18 +17,18 @@ export function FinalCta() {
         <div
           className={cn(
             SHAPE.band,
-            "relative overflow-hidden bg-gradient-to-br from-primary to-aristo-orange-light px-6 py-12 text-center shadow-aristo-lg sm:px-10 sm:py-16 lg:px-14 lg:py-[68px]"
+            "relative overflow-hidden border border-lp-tint-line bg-lp-surface px-6 py-12 text-center sm:px-10 sm:py-16 lg:px-14 lg:py-[72px]"
           )}
         >
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-20 -top-32 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0)_68%)]"
+            className="lp-glow-rise pointer-events-none absolute inset-0"
           />
           <div className="relative flex flex-col items-center gap-5">
-            <h2 className="max-w-[640px] text-balance text-[32px] font-extrabold leading-[1.08] tracking-[-0.03em] text-white sm:text-4xl lg:text-[44px]">
+            <h2 className="lp-display max-w-[760px] text-balance text-[30px] font-extrabold leading-none tracking-[-0.02em] sm:text-[40px] lg:text-[48px]">
               Go and meet your teacher
             </h2>
-            <p className="max-w-[460px] text-base leading-relaxed text-white/90 sm:text-[17.5px]">
+            <p className="max-w-[460px] text-base leading-relaxed text-lp-body sm:text-[17.5px]">
               About five minutes, in the browser. No account, no card, nothing
               to install.
             </p>
@@ -32,7 +38,7 @@ export function FinalCta() {
                 SHAPE.control,
                 PRESS,
                 FOCUS,
-                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-white px-7 text-base font-bold text-aristo-orange-deep shadow-[0_10px_26px_hsl(25_70%_20%/0.24)] hover:-translate-y-0.5 focus-visible:ring-white focus-visible:ring-offset-primary sm:w-auto"
+                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-lp-accent px-7 text-base font-bold text-lp-accent-ink hover:-translate-y-0.5 hover:bg-lp-accent/90 sm:w-auto"
               )}
             >
               Watch a live lesson
