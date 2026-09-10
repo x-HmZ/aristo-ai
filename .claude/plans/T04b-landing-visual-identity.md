@@ -1,5 +1,8 @@
 # T04b — Landing page visual identity pass
 
+> **Status: DONE 2026-09-11.** Direction "Night Class" (B), tokens scoped to the landing
+> page, theme follows the OS with a toggle. See `.claude/docs/landing-design-system.md`.
+
 **Model:** opus for the design decisions, sonnet to execute | **Depends on:** T04 (done, PR #4)
 
 Paste the block at the bottom of this file to start the session.

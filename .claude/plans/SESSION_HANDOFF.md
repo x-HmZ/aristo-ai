@@ -381,16 +381,17 @@ design-taste audit.
 (90% saturation against the skill's 80% ceiling), the wordmark and the missing dark mode
 are not.
 
-## Next session: T04b landing visual identity
+## Session 2026-09-11 - T04b landing visual identity (done)
 
-Briefed in .claude/plans/T04b-landing-visual-identity.md. The page's structure is settled
-and passes the design-taste pre-flight; its identity is not. Three decisions: the palette
-(90% saturation against the skill's 80% ceiling), the typography (flat, sentence case
-throughout), and dark mode (globals.css defines no dark values for any --aristo-* token).
+Branch `dev/t04b-visual-identity`, PR into `deploy-prep`. Hmz picked "Night Class" from three
+directions on a design canvas (https://claude.ai/code/artifact/faee56f8-fe76-499b-9ee2-4e19f5fcf3dc):
+dark-first ink, orange as a spark, Archivo wide caps for display, a real light variant,
+following the OS with a toggle. Tokens are scoped to `.landing`; the classroom is untouched.
+The system is written down in `.claude/docs/landing-design-system.md`; the session detail is
+in the 2026-09-11 entry of `.claude/docs/state.md`.
 
-One correction carried into that brief: the wordmark and the typography are INDEPENDENT.
-An earlier version treated the logo as a reason to hesitate over restyling the type. It is
-not; the logo is out of scope unless Hmz says otherwise.
+Open follow-ups: product-wide palette migration (the classroom hardcodes #F97B2F ~87 times),
+and whether the wordmark should change now that the page around it has.
 
 ## Steps still to take (checklist for any resuming session)
 

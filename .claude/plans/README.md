@@ -124,6 +124,8 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [x] T02 3D asset diet
 - [x] T03 /learn loading experience
 - [x] T04 landing page rebuild (2026-09-09)
+- [x] T04b landing visual identity (2026-09-11 — "Night Class", landing-scoped tokens, light/dark
+      following the OS with a toggle; see `.claude/docs/landing-design-system.md`)
 - [x] T05 LLM model bump
 - [x] T06 persistent generation cache (2026-09-09 — DONE: migration 016 applied, public
       `generated-assets` bucket, L1->L2->fal layering; cold-instance hit proven with no new
