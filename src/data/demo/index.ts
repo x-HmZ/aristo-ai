@@ -8,7 +8,7 @@ import type { LessonPayload } from "@/lib/agents/teaching";
 import type { QuizQuestion }  from "@/lib/agents/assessment";
 
 import { lesson as volcanoLesson, quiz as volcanoQuiz } from "./volcano-eruption";
-import { lesson as blackHoleLesson, quiz as blackHoleQuiz } from "./black-holes";
+import { lesson as heartLesson, quiz as heartQuiz } from "./heart";
 
 export interface DemoTopic {
   slug:   string;
@@ -29,12 +29,12 @@ export const DEMO_TOPICS: DemoTopic[] = [
     quiz:   volcanoQuiz,
   },
   {
-    slug:   "black-holes",
-    title:  "What Is a Black Hole",
-    blurb:  "Collapsing stars, extreme gravity, and the point of no return.",
-    emoji:  "🕳️",
-    lesson: blackHoleLesson,
-    quiz:   blackHoleQuiz,
+    slug:   "heart",
+    title:  "How the Heart Pumps Blood",
+    blurb:  "Four chambers, two pumps, and why blood only flows one way.",
+    emoji:  "🫀",
+    lesson: heartLesson,
+    quiz:   heartQuiz,
   },
 ];
 
