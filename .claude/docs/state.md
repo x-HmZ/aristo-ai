@@ -2,6 +2,39 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-11 — T04b landing visual identity ("Night Class")
+
+Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.
+
+- **Audit first, measured.** The shipped primary button put cream text on `#F59047` at
+  **2.2:1**, failing WCAG AA. That token rendered at 90% saturation while its comment claimed
+  `#F97B2F`. Orange carried every job on the page (gradient headline, glow shadows, two
+  blobs, tinted cells, 9 icon chips, pills, a full-orange band). The hero headline ran to 3
+  lines at 1440. No `--aristo-*` token had a dark value.
+- **Three directions on a canvas** (https://claude.ai/code/artifact/faee56f8-fe76-499b-9ee2-4e19f5fcf3dc):
+  A Ember (keep orange, calmer), B Night Class (dark-first), C Cobalt (move the accent). Hmz
+  picked **B**, **landing-only scope**, **follow the OS with a toggle**.
+- **Scoped, not global:** `--lp-*` tokens under `.landing`. `/learn` + `/demo` hardcode
+  `#F97B2F` ~87 times, so global tokens would have half-migrated the app. The system is
+  written down in `.claude/docs/landing-design-system.md`.
+- **Theme:** stored choice mirrored to `html[data-landing-theme]` by an inline pre-paint
+  script; otherwise `prefers-color-scheme`. Choosing the OS's own mode clears the choice.
+  Toggle in the nav at sm+, in the footer below sm (at 360px it wrapped the nav actions).
+- **Type:** Archivo `wdth` 125 caps for display only, loaded from a landing-only module so it
+  never preloads on `/learn`. Headline measured to 2 lines at lg/xl.
+- **Gates:** type-check, lint (same 22 pre-existing warnings, none in landing), tests 85/85,
+  build. `/` still static, first-load JS 120 -> 122 kB (the toggle). Checked on a production
+  build in both themes; no horizontal overflow at 360/768/1024/1280/1440.
+- **Red herring worth knowing:** a local capture showed the old black-hole shot in step 3.
+  The server was sending the committed heart byte-for-byte; the headless browser had cached
+  the old `/_next/image` response from an earlier session on the same port.
+
+### Open
+
+- Product-wide migration of the palette (a sweep of the ~87 hardcoded hex values) is its own task.
+- The wordmark was not touched. Whether it should change now the page around it has is Hmz's call.
+- Screenshots did not need re-shooting: the product did not change.
+
 ## 2026-09-10 (later) — heart demo topic, three playback bugs, PR #4 merged
 
 - **Black holes retired, heart added, $0 of fal spend.** A black hole is light, not a

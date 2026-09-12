@@ -61,6 +61,23 @@ module.exports = {
           cream: "hsl(var(--aristo-cream))",
           brown: "hsl(var(--aristo-brown))",
         },
+        // Landing page only (T04b). Defined under `.landing` in globals.css,
+        // with light and dark values; undefined anywhere else.
+        lp: {
+          bg: "rgb(var(--lp-bg) / <alpha-value>)",
+          surface: "rgb(var(--lp-surface) / <alpha-value>)",
+          sunk: "rgb(var(--lp-sunk) / <alpha-value>)",
+          ink: "rgb(var(--lp-ink) / <alpha-value>)",
+          body: "rgb(var(--lp-body) / <alpha-value>)",
+          muted: "rgb(var(--lp-muted) / <alpha-value>)",
+          line: "rgb(var(--lp-line) / <alpha-value>)",
+          accent: "rgb(var(--lp-accent) / <alpha-value>)",
+          "accent-ink": "rgb(var(--lp-accent-ink) / <alpha-value>)",
+          "accent-text": "rgb(var(--lp-accent-text) / <alpha-value>)",
+          tint: "rgb(var(--lp-tint) / <alpha-value>)",
+          "tint-line": "rgb(var(--lp-tint-line) / <alpha-value>)",
+          glow: "rgb(var(--lp-glow) / <alpha-value>)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

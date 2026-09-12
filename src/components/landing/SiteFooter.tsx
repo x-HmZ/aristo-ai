@@ -3,6 +3,7 @@ import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FOCUS } from "@/components/landing/shape";
 import { Wordmark } from "@/components/landing/Wordmark";
+import { ThemeToggle } from "@/components/landing/ThemeToggle";
 
 const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
@@ -26,20 +27,20 @@ const LEGAL_LINKS: { href: string; label: string }[] = [];
  */
 function ColumnHeading({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[13px] font-semibold text-foreground/55">
+    <span className="text-[13px] font-semibold text-lp-muted">
       {children}
     </span>
   );
 }
 
 const linkClass = cn(
-  "rounded-sm text-sm text-foreground/70 transition-colors hover:text-foreground",
+  "rounded-sm text-sm text-lp-body transition-colors hover:text-lp-ink",
   FOCUS
 );
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-aristo-beige-dark/70 bg-aristo-beige/45">
+    <footer className="relative z-10 border-t border-lp-line bg-lp-sunk">
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 pb-8 pt-12 sm:px-8 sm:pt-14 lg:grid-cols-[2fr_1fr_1fr] lg:gap-12">
         <div className="flex flex-col items-start gap-3">
           <Link
@@ -49,7 +50,7 @@ export function SiteFooter() {
           >
             <Wordmark className="text-xl" />
           </Link>
-          <p className="max-w-[300px] text-sm leading-relaxed text-muted-foreground">
+          <p className="max-w-[300px] text-sm leading-relaxed text-lp-muted">
             An immersive AI teacher for middle school. Built by one person, in
             the open.
           </p>
@@ -70,14 +71,18 @@ export function SiteFooter() {
             href={`mailto:${CONTACT_EMAIL}`}
             className={cn(linkClass, "inline-flex items-center gap-2 break-all")}
           >
-            <Mail className="size-[15px] shrink-0 text-muted-foreground/70" />
+            <Mail className="size-[15px] shrink-0 text-lp-muted" />
             {CONTACT_EMAIL}
           </a>
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 border-t border-aristo-beige-dark/60 px-5 py-6 text-[13px] text-muted-foreground/80 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
-        <span>© {new Date().getFullYear()} Aristo</span>
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 border-t border-lp-line px-5 py-6 text-[13px] text-lp-muted sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
+        <div className="flex items-center justify-between gap-4">
+          <span>© {new Date().getFullYear()} Aristo</span>
+          {/* The nav hides its toggle below sm; this is where it lives there. */}
+          <ThemeToggle className="sm:hidden" />
+        </div>
         {LEGAL_LINKS.length > 0 && (
           <div className="flex items-center gap-4">
             {LEGAL_LINKS.map((link) => (

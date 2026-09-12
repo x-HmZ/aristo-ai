@@ -10,7 +10,7 @@ function StepNumber({ n }: { n: number }) {
     <span
       className={cn(
         SHAPE.control,
-        "inline-flex size-9 items-center justify-center bg-accent text-[15px] font-extrabold text-aristo-orange-deep"
+        "lp-display inline-flex size-9 items-center justify-center border border-lp-tint-line bg-lp-tint text-[15px] font-extrabold text-lp-accent-text"
       )}
     >
       {n}
@@ -31,7 +31,7 @@ function Shot({
     <div
       className={cn(
         SHAPE.surface,
-        "overflow-hidden border border-white/80 shadow-[0_18px_40px_hsl(25_60%_22%/0.15)]"
+        "lp-shadow overflow-hidden border border-lp-line"
       )}
     >
       <Image
@@ -62,7 +62,7 @@ export function HowItWorks() {
       className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
     >
       <Reveal>
-        <h2 className="max-w-[720px] text-balance text-3xl font-extrabold leading-[1.12] tracking-[-0.03em] text-foreground sm:text-4xl lg:text-[42px] lg:leading-[1.1]">
+        <h2 className="lp-display max-w-[920px] text-balance text-[26px] font-extrabold leading-[1.05] tracking-[-0.015em] sm:text-4xl lg:text-[40px]">
           Four steps, and none of them are &ldquo;read this wall of text&rdquo;
         </h2>
       </Reveal>
@@ -75,16 +75,16 @@ export function HowItWorks() {
           <div
             className={cn(
               SHAPE.surface,
-              "flex flex-col gap-4 border border-border/70 bg-white/55 p-6 sm:flex-row sm:items-center sm:gap-8 sm:p-9"
+              "flex flex-col gap-4 border border-lp-line bg-lp-surface p-6 sm:flex-row sm:items-center sm:gap-8 sm:p-9"
             )}
           >
             <div className="flex items-center gap-4 sm:shrink-0">
               <StepNumber n={1} />
-              <h3 className="text-xl font-bold tracking-[-0.02em] text-foreground sm:text-2xl">
+              <h3 className="text-xl font-bold tracking-[-0.02em] text-lp-ink sm:text-2xl">
                 Pick anything you are curious about
               </h3>
             </div>
-            <p className="text-base leading-relaxed text-foreground/70 sm:border-l sm:border-border/70 sm:pl-8">
+            <p className="text-base leading-relaxed text-lp-body sm:border-l sm:border-lp-line sm:pl-8">
               Type a topic or follow a course Aristo lays out for you. It works
               out what you already know first, so you are not sat through the
               easy part again.
@@ -97,15 +97,15 @@ export function HowItWorks() {
           <div
             className={cn(
               SHAPE.surface,
-              "grid items-center gap-8 border border-border/70 bg-white/55 p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
+              "grid items-center gap-8 border border-lp-line bg-lp-surface p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
             )}
           >
             <div className="flex flex-col items-start gap-3.5">
               <StepNumber n={2} />
-              <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+              <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
                 Your teacher explains it out loud
               </h3>
-              <p className="text-base leading-relaxed text-foreground/70">
+              <p className="text-base leading-relaxed text-lp-body">
                 Hook it to something you know, explain it, demonstrate it,
                 challenge you, connect it forward. Diagrams are generated as the
                 lesson goes, so what is on the board is what is being said.
@@ -116,7 +116,7 @@ export function HowItWorks() {
                     key={phase}
                     className={cn(
                       SHAPE.pill,
-                      "bg-accent/60 px-3 py-1.5 text-xs font-bold text-aristo-orange-deep"
+                      "border border-lp-line px-3 py-1.5 text-xs font-semibold text-lp-body"
                     )}
                   >
                     {phase}
@@ -138,17 +138,17 @@ export function HowItWorks() {
           <div
             className={cn(
               SHAPE.band,
-              "overflow-hidden border border-aristo-beige-dark/70 bg-gradient-to-br from-accent/50 to-aristo-cream"
+              "overflow-hidden border border-lp-tint-line bg-gradient-to-br from-lp-tint to-lp-surface"
             )}
           >
             <div className="flex flex-col gap-4 p-6 sm:p-9 lg:flex-row lg:items-end lg:justify-between lg:gap-12 lg:p-12 lg:pb-10">
               <div className="flex flex-col items-start gap-3.5 lg:max-w-[440px]">
                 <StepNumber n={3} />
-                <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+                <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
                   See the thing itself, not a picture of it
                 </h3>
               </div>
-              <p className="text-base leading-relaxed text-foreground/70 lg:max-w-[420px]">
+              <p className="text-base leading-relaxed text-lp-body lg:max-w-[420px]">
                 When a topic has a shape, Aristo builds a 3D model of it and
                 stands it in the room. Turn it, zoom in, and read the labels
                 where they actually sit.
@@ -169,7 +169,7 @@ export function HowItWorks() {
           <div
             className={cn(
               SHAPE.surface,
-              "grid items-center gap-8 border border-border/70 bg-white/55 p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
+              "grid items-center gap-8 border border-lp-line bg-lp-surface p-6 sm:p-9 lg:grid-cols-2 lg:gap-12 lg:p-12"
             )}
           >
             <Shot
@@ -179,10 +179,10 @@ export function HowItWorks() {
             />
             <div className="flex flex-col items-start gap-3.5 lg:order-first">
               <StepNumber n={4} />
-              <h3 className="text-2xl font-bold tracking-[-0.02em] text-foreground sm:text-[27px]">
+              <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
                 Answer, and get it brought back later
               </h3>
-              <p className="text-base leading-relaxed text-foreground/70">
+              <p className="text-base leading-relaxed text-lp-body">
                 Look down and the quiz is on your desk. Aristo scores each
                 concept separately, notices the ones you half-know, and
                 schedules them to come round again just before you would have

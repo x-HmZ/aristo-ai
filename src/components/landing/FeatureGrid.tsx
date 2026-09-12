@@ -40,8 +40,8 @@ function Cell({
         SHAPE.surface,
         "flex h-full flex-col items-start gap-3 border p-6 sm:p-7",
         tinted
-          ? "border-aristo-orange-pale/80 bg-gradient-to-br from-accent/55 to-aristo-cream"
-          : "border-border/70 bg-white/60",
+          ? "border-lp-tint-line bg-gradient-to-br from-lp-tint to-lp-surface"
+          : "border-lp-line bg-lp-surface",
         className
       )}
     >
@@ -49,13 +49,13 @@ function Cell({
         className={cn(
           SHAPE.control,
           "inline-flex size-11 items-center justify-center",
-          tinted ? "bg-white/70" : "bg-accent/60"
+          tinted ? "bg-lp-surface/70" : "border border-lp-line bg-lp-bg"
         )}
       >
-        <Icon className="size-[21px] text-primary" />
+        <Icon className="size-[21px] text-lp-accent-text" />
       </span>
-      <h3 className="text-lg font-bold text-foreground">{title}</h3>
-      <p className="text-[14.5px] leading-relaxed text-foreground/70">
+      <h3 className="text-lg font-bold text-lp-ink">{title}</h3>
+      <p className="text-[14.5px] leading-relaxed text-lp-body">
         {children}
       </p>
     </div>
@@ -69,7 +69,7 @@ export function FeatureGrid() {
       className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
     >
       <Reveal>
-        <h2 className="max-w-[620px] text-balance text-3xl font-extrabold leading-[1.12] tracking-[-0.03em] text-foreground sm:text-4xl lg:text-[42px] lg:leading-[1.1]">
+        <h2 className="lp-display max-w-[900px] text-balance text-[26px] font-extrabold leading-[1.05] tracking-[-0.015em] sm:text-4xl lg:text-[40px]">
           Built like a tutor, not like a search box
         </h2>
       </Reveal>
@@ -87,27 +87,27 @@ export function FeatureGrid() {
           <div
             className={cn(
               SHAPE.surface,
-              "flex h-full flex-col overflow-hidden border border-border/70 bg-white/60"
+              "flex h-full flex-col overflow-hidden border border-lp-line bg-lp-surface"
             )}
           >
             <div className="flex flex-col items-start gap-3 p-6 sm:p-7">
               <span
                 className={cn(
                   SHAPE.control,
-                  "inline-flex size-11 items-center justify-center bg-accent/60"
+                  "inline-flex size-11 items-center justify-center border border-lp-line bg-lp-bg"
                 )}
               >
-                <Box className="size-[21px] text-primary" />
+                <Box className="size-[21px] text-lp-accent-text" />
               </span>
-              <h3 className="text-lg font-bold text-foreground">
+              <h3 className="text-lg font-bold text-lp-ink">
                 Models made for the lesson
               </h3>
-              <p className="text-[14.5px] leading-relaxed text-foreground/70">
+              <p className="text-[14.5px] leading-relaxed text-lp-body">
                 Topics with a shape get a 3D model generated on the spot and
                 placed in the classroom.
               </p>
             </div>
-            <div className="mt-auto h-28 overflow-hidden border-t border-border/60 sm:h-32">
+            <div className="mt-auto h-28 overflow-hidden border-t border-lp-line sm:h-32">
               <Image
                 src="/images/landing/classroom-3d-model.webp"
                 alt=""

@@ -78,6 +78,115 @@
   }
 }
 
+/* Landing page identity ("Night Class", T04b).
+ *
+ * Scoped to the landing page on purpose. /learn and /demo hardcode #F97B2F
+ * in ~87 places, so changing the shared --aristo-* / shadcn tokens would
+ * restyle the dashboard and auth pages but not the classroom. The landing
+ * page gets its own set instead; see .claude/docs/landing-design-system.md.
+ *
+ * Values are bare RGB channels so Tailwind's `lp-*` colours accept opacity
+ * modifiers (`bg-lp-accent/10`).
+ *
+ * Theme resolution, in order:
+ *   1. html[data-landing-theme] set by ThemeToggle (an explicit choice), else
+ *   2. prefers-color-scheme.
+ * The dark values therefore appear twice, once per route in. Keep them equal.
+ *
+ * Each rule matches both `.landing` and `:root` while a `.landing` is mounted,
+ * so the page background behind overscroll follows the theme too. `:is()`
+ * takes a forgiving selector list: a browser without `:has()` drops that arm
+ * and still themes `.landing`. */
+@layer base {
+  :is(:root:has(.landing), .landing) {
+    --lp-bg: 243 244 246; /* #F3F4F6 cool paper */
+    --lp-surface: 252 252 253; /* #FCFCFD */
+    --lp-sunk: 234 236 240; /* #EAECF0 footer */
+    --lp-ink: 14 17 23; /* #0E1117 */
+    --lp-body: 62 68 82; /* #3E4452  8.9:1 on bg */
+    --lp-muted: 90 97 112; /* #5A6170  5.7:1 on bg */
+    --lp-line: 220 223 229; /* #DCDFE5 */
+    --lp-accent: 180 83 31; /* #B4531F  71% sat; 4.9:1 under accent-ink */
+    --lp-accent-ink: 252 252 253;
+    --lp-accent-text: 169 76 27; /* #A94C1B  accent as text, 5.1:1 on bg */
+    --lp-tint: 244 234 227; /* #F4EAE3 warm wash */
+    --lp-tint-line: 230 211 198; /* #E6D3C6 */
+    --lp-glow: 180 83 31; /* the classroom's light spill, see .lp-glow-* */
+    --lp-glow-strength: 0.1;
+    --lp-shadow: 14 17 23 / 0.14; /* full colour incl. alpha, see .lp-shadow */
+    --lp-icon-sun: none; /* ThemeToggle shows the icon for the other mode */
+    --lp-icon-moon: block;
+    color-scheme: light;
+    background-color: rgb(var(--lp-bg));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :is(
+        :root:not([data-landing-theme="light"]):has(.landing),
+        :root:not([data-landing-theme="light"]) .landing
+      ) {
+      --lp-bg: 14 17 23; /* #0E1117 ink */
+      --lp-surface: 21 25 34; /* #151922 */
+      --lp-sunk: 11 13 18; /* #0B0D12 */
+      --lp-ink: 236 237 239; /* #ECEDEF */
+      --lp-body: 183 189 199; /* #B7BDC7  10:1 on bg */
+      --lp-muted: 143 151 164; /* #8F97A4  6.4:1 on bg */
+      --lp-line: 37 43 54; /* #252B36 */
+      --lp-accent: 233 138 82; /* #E98A52  77% sat; 7.4:1 under accent-ink */
+      --lp-accent-ink: 14 17 23;
+      --lp-accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
+      --lp-tint: 33 26 23; /* #211A17 */
+      --lp-tint-line: 58 44 36; /* #3A2C24 */
+      --lp-glow: 233 138 82;
+      --lp-glow-strength: 0.22;
+      --lp-shadow: 0 0 0 / 0.5;
+      --lp-icon-sun: block;
+      --lp-icon-moon: none;
+      color-scheme: dark;
+    }
+  }
+
+  :is(
+      :root[data-landing-theme="dark"]:has(.landing),
+      :root[data-landing-theme="dark"] .landing
+    ) {
+    --lp-bg: 14 17 23;
+    --lp-surface: 21 25 34;
+    --lp-sunk: 11 13 18;
+    --lp-ink: 236 237 239;
+    --lp-body: 183 189 199;
+    --lp-muted: 143 151 164;
+    --lp-line: 37 43 54;
+    --lp-accent: 233 138 82;
+    --lp-accent-ink: 14 17 23;
+    --lp-accent-text: 239 154 102;
+    --lp-tint: 33 26 23;
+    --lp-tint-line: 58 44 36;
+    --lp-glow: 233 138 82;
+    --lp-glow-strength: 0.22;
+    --lp-shadow: 0 0 0 / 0.5;
+    --lp-icon-sun: block;
+    --lp-icon-moon: none;
+    color-scheme: dark;
+  }
+
+  /* The global `* { border-color }` below resolves to the app's beige, which
+     would draw cream hairlines through the dark theme wherever a landing
+     element sets a border width without a colour. */
+  .landing * {
+    border-color: rgb(var(--lp-line));
+  }
+
+  /* The app-wide scrollbar is orange on a beige track; on the landing page it
+     follows the theme instead. */
+  :root:has(.landing)::-webkit-scrollbar-track {
+    background: rgb(var(--lp-bg));
+  }
+  :root:has(.landing)::-webkit-scrollbar-thumb {
+    background: rgb(var(--lp-muted) / 0.5);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -175,6 +284,56 @@
       transform: none;
       transition: none;
     }
+  }
+
+  /* Landing display type: Archivo at its widest, set in capitals. Display
+     sizes only (H1, section H2s, the closing CTA); H3s and body stay sentence
+     case in Geist. `--font-display` is defined by the landing root only, so
+     this class means nothing outside it. The source copy stays sentence case;
+     casing is presentation. */
+  .lp-display {
+    font-family: var(--font-display), var(--font-geist-sans), system-ui,
+      sans-serif;
+    font-variation-settings: "wdth" 125;
+    text-transform: uppercase;
+  }
+
+  /* Below sm the widest cut turns a 7-word headline into five lines; a
+     slightly narrower one keeps the character and saves a line. */
+  @media (max-width: 639px) {
+    .lp-display {
+      font-variation-settings: "wdth" 112;
+    }
+  }
+
+  /* Landing elevation. One shadow colour per theme (--lp-shadow carries its
+     own alpha): soft ink on paper, a deep drop on ink. */
+  .lp-shadow {
+    box-shadow: 0 12px 30px rgb(var(--lp-shadow));
+  }
+  .lp-shadow-lg {
+    box-shadow:
+      0 30px 70px rgb(var(--lp-shadow)),
+      0 6px 18px rgb(var(--lp-shadow));
+  }
+
+  /* The classroom's warm light spilling onto the page: behind the hero shot
+     (pool) and up from the bottom of the closing band (rise). Atmosphere,
+     not a glow on a control. Strength is a theme token. */
+  .lp-glow-pool {
+    background: radial-gradient(
+      55% 60% at 55% 55%,
+      rgb(var(--lp-glow) / var(--lp-glow-strength)) 0%,
+      rgb(var(--lp-glow) / calc(var(--lp-glow-strength) * 0.3)) 45%,
+      transparent 72%
+    );
+  }
+  .lp-glow-rise {
+    background: radial-gradient(
+      70% 120% at 50% 115%,
+      rgb(var(--lp-glow) / calc(var(--lp-glow-strength) * 1.25)) 0%,
+      transparent 62%
+    );
   }
   /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
      Default WebKit scrollbars are invisible on the glass surfaces; this

@@ -14,107 +14,109 @@ import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
  * Four text elements, no more: one label, headline, subtext, CTAs. The
  * reassurance line that used to sit under the buttons now lives in the closing
  * CTA, where it is the only thing competing for attention.
+ *
+ * Layout (T04b): the headline spans the full content width above the split.
+ * Archivo at 125% width needs the room, and it is what holds the headline to
+ * two lines at desktop; in a 480px column it ran to three.
  */
 export function Hero() {
   return (
-    <section className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-start gap-12 px-5 pb-16 pt-6 sm:px-8 lg:flex-row lg:items-center lg:gap-14 lg:pb-24 lg:pt-12">
-      <div className="flex w-full flex-col items-start gap-6 lg:w-[480px] lg:shrink-0">
-        <span
-          className={cn(
-            SHAPE.pill,
-            "border border-primary/25 bg-white/70 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-aristo-orange-deep shadow-aristo-sm"
-          )}
-        >
-          Built for grades 6 to 8
-        </span>
+    <section className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-8 sm:px-8 lg:pb-24 lg:pt-14">
+      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-lp-muted">
+        Grades 6 to 8
+      </span>
 
-        <h1 className="text-balance text-[40px] font-extrabold leading-[1.04] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-6xl">
-          A teacher who <span className="text-gradient">actually teaches</span>{" "}
-          you.
-        </h1>
+      {/* Sizes are measured against the content width, not guessed: at lg
+          (960px) and xl (1088px) the second line "actually teaches you" fits
+          at 58 / 64px and wraps at anything much larger. "teaches you" is
+          bound so a near-miss drops both words rather than orphaning "you". */}
+      <h1 className="lp-display mt-4 text-[34px] font-extrabold leading-none tracking-[-0.02em] sm:text-5xl lg:text-[58px] xl:text-[64px]">
+        A teacher who <span className="text-lp-accent-text">actually</span>{" "}
+        <span className="whitespace-nowrap">teaches you</span>
+      </h1>
 
-        <p className="max-w-[440px] text-base leading-relaxed text-foreground/70 sm:text-lg lg:text-[19px]">
-          Aristo explains your topic out loud in a 3D classroom, draws it as it
-          goes, then checks that it stuck.
-        </p>
+      <div className="mt-8 grid gap-12 lg:mt-12 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-16">
+        <div className="flex flex-col gap-7 lg:pt-2">
+          <p className="max-w-[440px] text-base leading-relaxed text-lp-body sm:text-lg lg:text-[19px]">
+            Aristo explains your topic out loud in a 3D classroom, draws it as it
+            goes, then checks that it stuck.
+          </p>
 
-        <div className="flex w-full flex-col gap-3 pt-1 sm:w-auto sm:flex-row sm:items-center sm:gap-3.5">
-          <Link
-            href="/demo"
-            className={cn(
-              SHAPE.control,
-              PRESS,
-              FOCUS,
-              "inline-flex min-h-[56px] items-center justify-center gap-2.5 bg-primary px-6 text-base font-bold text-primary-foreground shadow-aristo hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-aristo-lg"
-            )}
-          >
-            <Play className="size-4 fill-current" strokeWidth={0} />
-            Watch a live lesson
-          </Link>
-          <Link
-            href="/sign-up"
-            className={cn(
-              SHAPE.control,
-              PRESS,
-              FOCUS,
-              "inline-flex min-h-[56px] items-center justify-center border border-border bg-white/70 px-6 text-base font-semibold text-foreground hover:bg-secondary"
-            )}
-          >
-            Create an account
-          </Link>
+          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <Link
+              href="/demo"
+              className={cn(
+                SHAPE.control,
+                PRESS,
+                FOCUS,
+                "inline-flex min-h-[56px] items-center justify-center gap-2.5 bg-lp-accent px-6 text-base font-bold text-lp-accent-ink hover:-translate-y-0.5 hover:bg-lp-accent/90"
+              )}
+            >
+              <Play className="size-4 fill-current" strokeWidth={0} />
+              Watch a live lesson
+            </Link>
+            <Link
+              href="/sign-up"
+              className={cn(
+                SHAPE.control,
+                PRESS,
+                FOCUS,
+                "inline-flex min-h-[56px] items-center justify-center border border-lp-line px-6 text-base font-semibold text-lp-ink hover:border-lp-muted/50 hover:bg-lp-surface"
+              )}
+            >
+              Create an account
+            </Link>
+          </div>
         </div>
-      </div>
 
-      {/* The mockup bleeds past the content column on wide screens so the
-          classroom reads as big as it can. The bleed only starts at xl and
-          grows at 2xl - at lg the gutter is too narrow to give away, and
-          `overflow-x-hidden` on the page would clip it flush to the edge. */}
-      <div className="relative w-full lg:min-w-0 lg:flex-1 xl:-mr-16 2xl:-mr-[104px]">
-        <div
-          aria-hidden
-          className={cn(
-            SHAPE.band,
-            "absolute -inset-x-5 -bottom-8 -top-6 bg-gradient-to-br from-aristo-orange-pale/70 to-transparent"
-          )}
-        />
+        {/* The shot bleeds past the content column on wide screens so the
+            classroom reads as big as it can. The bleed only starts at xl and
+            grows at 2xl - at lg the gutter is too narrow to give away, and
+            `overflow-x-hidden` on the page would clip it flush to the edge. */}
+        <div className="relative xl:-mr-16 2xl:-mr-[104px]">
+          {/* The classroom is the lit window on this page: its warm light
+              spills onto the surface around it. */}
+          <div
+            aria-hidden
+            className="lp-glow-pool pointer-events-none absolute -inset-x-16 -bottom-20 -top-10"
+          />
 
-        <div
-          className={cn(
-            SHAPE.surface,
-            "relative overflow-hidden border border-white/70 bg-aristo-cream/70 shadow-[0_30px_70px_hsl(25_60%_22%/0.18),0_6px_18px_hsl(25_60%_22%/0.07)] backdrop-blur-sm lg:-rotate-[0.7deg]"
-          )}
-        >
-          <div className="flex items-center gap-2.5 border-b border-border/70 bg-white/60 px-4 py-2.5">
-            <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
-              aristo
-            </span>
-            <span aria-hidden className="h-3 w-px bg-border" />
-            <span className="text-[11px] text-muted-foreground/80">
-              live lesson
-            </span>
+          <div
+            className={cn(
+              SHAPE.surface,
+              "lp-shadow-lg relative overflow-hidden border border-lp-line bg-lp-surface"
+            )}
+          >
+            <div className="flex items-center gap-2.5 border-b border-lp-line px-4 py-2.5">
+              <span className="text-[11px] font-semibold tracking-wide text-lp-muted">
+                aristo
+              </span>
+              <span aria-hidden className="h-3 w-px bg-lp-line" />
+              <span className="text-[11px] text-lp-muted">live lesson</span>
+            </div>
+
+            <Image
+              src="/images/landing/classroom-lesson.webp"
+              alt="The Aristo classroom: the 3D teacher points at a labelled cross-section of a volcano generated for the lesson, with the lesson text following along in a panel beside it."
+              width={1760}
+              height={990}
+              sizes="(max-width: 1023px) 100vw, 760px"
+              priority
+              className="block h-auto w-full"
+            />
           </div>
 
-          <Image
-            src="/images/landing/classroom-lesson.webp"
-            alt="The Aristo classroom: the 3D teacher points at a labelled cross-section of a volcano generated for the lesson, with the lesson text following along in a panel beside it."
-            width={1760}
-            height={990}
-            sizes="(max-width: 1023px) 100vw, 620px"
-            priority
-            className="block h-auto w-full"
-          />
-        </div>
-
-        <div
-          className={cn(
-            SHAPE.control,
-            "absolute bottom-6 left-3 flex items-center gap-2.5 border border-aristo-orange-pale/90 bg-aristo-cream/95 px-3.5 py-2.5 shadow-[0_12px_30px_hsl(25_60%_22%/0.14)] sm:-left-8"
-          )}
-        >
-          <AudioLines className="size-[18px] shrink-0 text-primary" />
-          <span className="text-xs font-semibold text-aristo-brown sm:text-[12.5px]">
-            Narrating segment 3 of 5
-          </span>
+          <div
+            className={cn(
+              SHAPE.control,
+              "lp-shadow absolute bottom-6 left-3 flex items-center gap-2.5 border border-lp-line bg-lp-surface px-3.5 py-2.5 sm:-left-7"
+            )}
+          >
+            <AudioLines className="size-[18px] shrink-0 text-lp-accent-text" />
+            <span className="text-xs font-semibold text-lp-ink sm:text-[12.5px]">
+              Narrating segment 3 of 5
+            </span>
+          </div>
         </div>
       </div>
     </section>

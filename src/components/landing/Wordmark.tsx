@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("flex items-baseline gap-1.5", className)}>
-      <span className="font-bold tracking-tight text-foreground">aristo</span>
-      <span aria-hidden className="text-[0.82em] font-bold text-primary">
+      <span className="font-bold tracking-tight text-lp-ink">aristo</span>
+      <span aria-hidden className="text-[0.82em] font-bold text-lp-accent">
         ✦
       </span>
     </span>
