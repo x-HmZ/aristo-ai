@@ -171,6 +171,8 @@ user-visible list above has an owner and lands inside V8.1.
 
 ## V8.1 — Brand foundation: story, voice, copy, mark
 
+> **2026-09-18:** the name stays Aristo, so the rename split in V8.0b is cancelled. The mark is R1 The Column: draw the ARISTO wordmark in spaced capitals with the column as the I, as one vector, plus the standalone column for favicon, app icons and OG image (see decisions.md).
+
 **Model:** **Opus 5** for the messaging doc and the mark, then **Sonnet 5** (`/model sonnet`) once the words are settled and the job becomes "apply these strings in these files".
 
 **Goal:** the words and the mark, applied everywhere they appear.
@@ -229,6 +231,8 @@ instead of a sweep.
 every surface renders correctly in both themes; the brand-system doc exists.
 
 ## V8.3 — Landing v3: the teacher alive, the method as the story
+
+> **Superseded in part (2026-09-18, V8.0 decision).** Hmz chose a live 3D landing: a teacher appears, smiles, greets, then moves through interactive sections, with the five phases as a pinned scroll. The looping hero video and its capture pipeline below are replaced by that. Plan this sub-task in plan mode first: R3F cannot run under App Router, so `/` likely moves to the Pages Router like `/learn`; the 135 kB first-load budget and a poster as LCP still apply. See decisions.md, "Landing concept".
 
 **Model:** **`/model opusplan`**. One exception: if the capture and encoding pipeline fights back for more than a couple of rounds (codec, determinism, LCP), give that sub-problem one scoped **Fable 5.1** session.
 
@@ -386,8 +390,8 @@ Per-phase choices are stated above. The rules behind them:
 
 ## Status checklist
 
-- [ ] V8.0 direction lock (positioning, mark, narrative, classroom UI, casing)
-- [ ] V8.0b name decision (keep or change, screened and recorded)
+- [x] V8.0 direction lock (2026-09-18): positioning P1, mark R1 The Column (pillar as the I), wide caps for hero and close only, 3D landing with pinned phases, classroom UI A
+- [x] V8.0b name decision: **keep Aristo** (2026-09-18, screen recorded in decisions.md)
 - [ ] V8.1 brand foundation (messaging doc, copy, metadata, mark in 3 places)
 - [ ] V8.2 design system v2 (after the token refactor merges)
 - [ ] V8.3 landing v3 (hero video pipeline, five-phase story, KG map)

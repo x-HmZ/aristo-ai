@@ -2,6 +2,19 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-18 — Wave 1 direction (V8.0, V8.0b, V9.0), no code
+
+Branch `docs/v8-v9-programme`. Canvas: https://claude.ai/artifact/CNqx2JxQMkpyyeWXhc36HP (positioning, marks, casing, name screen, landing wireframes, classroom UI over the real scene, teacher looks).
+
+- **Decided** (rows in decisions.md): positioning P1 "One teacher. One student. Every kid."; wide caps for hero and close only, Title Case Geist elsewhere; **keep the name Aristo**; classroom UI A (caption first); landing becomes a live 3D introduction with a pinned-scroll five-phase section; L2 and L3 teacher looks both go to the V9.1 bake-off with younger, casual casting; two new teachers; Marcus/Priya retired from the picker later; $0 animation plan.
+- **Name screen:** 12 candidates, six died on specific findings (a live AI tutor on Bloom, Chiron, Hypatia; Lantern is a VPN school filters block). The full table is on the canvas.
+- **V9.0 had no renders:** Blender was not running and no candidate meshes exist yet. Renders move to V9.1, where they belong anyway.
+
+### Next
+- **Mark decided:** R1 The Column, from Hmz's own pillar reference (round two on the canvas). V8.1 draws the final vector wordmark.
+- **V9.1 bake-off** (wave 2): L2 and L3 candidates with L5 casting, rendered in the classroom at the real framing. Needs Blender running with the MCP add-on.
+- **V8.3 now needs a plan-mode pass** before anything: 3D on `/` means a Pages Router move and a new performance plan.
+
 ## 2026-09-11 — T04b landing visual identity ("Night Class")
 
 Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.

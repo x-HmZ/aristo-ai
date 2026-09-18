@@ -354,7 +354,7 @@ Per-phase choices are stated above. The rules behind them:
 
 ## Status checklist
 
-- [ ] V9.0 look direction chosen
+- [x] V9.0 look direction chosen (2026-09-18): L2 and L3 both to the V9.1 bake-off, L5 casting on both, two teachers, Marcus/Priya retired from the picker, $0 animation plan confirmed
 - [ ] V9.1 bake-off report, candidate chosen
 - [ ] V9.2 animation packs built for the new rig(s) and the Avaturn rig
 - [ ] V9.3 manifest, director (tested), layers wired
