@@ -116,14 +116,17 @@ const CANINO3D = {
   modified:   true,
 } as const;
 
-// Canino3d rigs ship three clips, retargeted from animations_Avaturn.glb and
-// embedded in their own GLB. With no Thinking clip, thinking falls back to
-// Idle; nodding / shaking already fall back to idle in the state machine.
+// Canino3d rigs ship six clips, retargeted from animations_Avaturn.glb and
+// embedded in their own GLB. Their "Thinking" is baked from the pack's
+// Thinking2 (looking up, arms relaxed): the pack's Thinking puts a hand to
+// the chin, which on these proportions lands on the chest (V9.1e).
 const CANINO_CLIPS: AvatarConfig["clips"] = {
   idle:     ["Idle"],
-  thinking: ["Idle"],
+  thinking: ["Thinking"],
   talking:  ["Talking"],
   pointing: ["Pointing"],
+  nodding:  ["Nodding"],
+  shaking:  ["ShakeNo"],
 };
 const ARKIT_BLINK = ["eyeBlinkLeft", "eyeBlinkRight"] as const;
 
@@ -478,13 +481,21 @@ export function Teacher({
     return () => clearInterval(id);
   }, [gesture, isLoading, isSpeaking, cfg.clips.idle]);
 
-  // Auto-revert short one-shot gestures (nod ~2s, shake ~1.5s)
+  // Auto-revert one-shot gestures. When the clip is playing, revert as it
+  // ends, less the crossfade, so the fade covers its tail: the fixed 1.5 s cut
+  // the 3.1 s ShakeNo after its first turn (V9.1e) -- on every avatar with the
+  // clip, custom Avaturn teachers included. Until the clip starts, or on an
+  // avatar without one (the nod then keeps Idle), the fixed timings stand.
   useEffect(() => {
     if (gesture !== "nodding" && gesture !== "shaking") return;
-    const ms = gesture === "nodding" ? 2000 : 1500;
+    const pool = gesture === "nodding" ? cfg.clips.nodding : cfg.clips.shaking;
+    const clip = pool?.includes(animation) ? actions[animation]?.getClip() : undefined;
+    const ms = clip
+      ? Math.max(0, clip.duration - ANIMATION_FADE_TIME) * 1000
+      : gesture === "nodding" ? 2000 : 1500;
     const id = setTimeout(() => setGesture("idle"), ms);
     return () => clearTimeout(id);
-  }, [gesture, setGesture]);
+  }, [gesture, animation, actions, cfg.clips, setGesture]);
 
   // The gesture is read through a ref so the play effect below runs only when
   // the clip changes. With `gesture` in its deps, a gesture change re-ran it
