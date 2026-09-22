@@ -24,9 +24,14 @@ pickers; Ryan/Sonia/Marcus/Priya archived (config + GLBs kept), `DEFAULT_TEACHER
 old choices remap to it. `/demo` opens on Jake with a Jake/MJ switcher. `/learn` checked signed in
 (switcher only). The /learn switcher had been hiding Jake/MJ in a clipped 260 px row.
 
-**Next:** MJ in `/demo` speaks with the male narration: a female render is 6,856 ElevenLabs chars
-(needs Hmz OK). Cosmetic: MJ skirt pleat shading, forehead scalp seam. More clips (Thinking,
-Nodding, ShakeNo) are one `retarget_action` each.
+**Next:** V9.1d — motion QA of all clips frame by frame, MJ's wardrobe held to a written quality bar,
+then more clips (Thinking, Nodding, ShakeNo). Start prompt:
+`.claude/plans/NEXT-SESSION-V91D-MOTION-WARDROBE-QA.md`. Motion was only checked at 3 sampled frames
+per clip; wrist twist, fingers, feet and where Pointing lands are unverified.
+
+**TODO, parked by Hmz (2026-09-22):** female narration for MJ in `/demo` (she lip-syncs the male
+pre-rendered voice). 6,856 ElevenLabs chars for both topics, plus per-voice folders in the player.
+Do not start without Hmz's go.
 
 ## 2026-09-21 — V9.1b: the Canino pair is shippable
 
