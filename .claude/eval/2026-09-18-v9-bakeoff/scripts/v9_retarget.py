@@ -42,6 +42,8 @@ Two things that would otherwise go wrong:
   unscaled hip translation moves them a fraction of the distance they should.
 """
 
+import math
+
 import bpy
 import numpy as np
 from mathutils import Matrix, Vector
@@ -96,6 +98,14 @@ for cc in ("L", "R"):
         AIM[f"CC_Base_{cc}_{f}2"] = f"CC_Base_{cc}_{f}3"
 
 
+# Both rigs rest flat-footed, but Mixamo's foot bone aims 28 deg down to the
+# ball of the foot and CC4's 11-14 deg: that pitch is anatomy (ankle height
+# against foot length), like the pelvis tilt above. Matching it pitched both
+# teachers' feet ~15 deg toe-down in every clip (V9.1d), so feet only take the
+# yaw part of the swing -- the toe-out angle.
+YAW_ONLY = {"CC_Base_L_Foot", "CC_Base_R_Foot"}
+
+
 def resolve(arm, logical):
     """
     CC4 bone names survive the Sketchfab GLB conversion with a numeric suffix
@@ -129,6 +139,27 @@ def _head(arm, name):
     return arm.matrix_world @ arm.data.bones[name].head_local
 
 
+def _yaw(arm, left, right):
+    v = _head(arm, left) - _head(arm, right)
+    return math.atan2(v.y, v.x)
+
+
+def facing_map(tgt_arm, src_arm):
+    """
+    World rotation (about Z) that turns the source's facing into the target's.
+
+    Deltas are measured in world space, so they only transfer unchanged when
+    both rigs face the same way. V9.1c baked every shipped clip with the
+    teachers turned to the app's facing (rotZ 0.3) and the source facing
+    front, which rotated every delta 17 deg about the vertical: arm and hand
+    directions came out 13-20 deg off the source, the hand up to 11 cm (V9.1d).
+    Conjugating by this map makes the bake independent of placement.
+    """
+    ty = _yaw(tgt_arm, resolve(tgt_arm, "CC_Base_L_Thigh"), resolve(tgt_arm, "CC_Base_R_Thigh"))
+    sy = _yaw(src_arm, "LeftUpLeg", "RightUpLeg")
+    return Matrix.Rotation(ty - sy, 3, "Z")
+
+
 def rest_alignment(tgt_arm, src_arm):
     """
     Per target bone, the world-space swing that turns the target's rest pose
@@ -143,6 +174,7 @@ def rest_alignment(tgt_arm, src_arm):
     which is what the first bake did in every clip.
     """
     swing = {}
+    C = facing_map(tgt_arm, src_arm)
     for cc in BONE_MAP:  # dict order is parents-first, so a leaf's parent is set
         t = resolve(tgt_arm, cc)
         if not t:
@@ -152,7 +184,9 @@ def rest_alignment(tgt_arm, src_arm):
         s, sa = BONE_MAP[cc], BONE_MAP.get(aim) if aim else None
         if ta and sa in src_arm.data.bones:
             dt = _head(tgt_arm, ta) - _head(tgt_arm, t)
-            ds = _head(src_arm, sa) - _head(src_arm, s)
+            ds = C @ (_head(src_arm, sa) - _head(src_arm, s))
+            if cc in YAW_ONLY:
+                dt.z = ds.z = 0.0
             swing[t] = dt.rotation_difference(ds).to_matrix()
         else:
             parent = tgt_arm.data.bones[t].parent
@@ -160,6 +194,187 @@ def rest_alignment(tgt_arm, src_arm):
                 parent = parent.parent
             swing[t] = swing[parent.name].copy() if parent else Matrix.Identity(3)
     return swing
+
+
+# Helper bones Mixamo has no opinion about, driven after the bake (V9.1d).
+# CC4 skins the elbow and knee creases to a share bone that is meant to sit
+# halfway between the two limb bones; left at identity it follows the lower
+# bone fully, the inner crease collapses and a hard step shows in MJ's bare
+# elbow. The forearm twist bones are meant to carry part of the hand's roll
+# so the forearm skin twists gradually instead of all at the wrist.
+#   share: (helper, upper limb, lower limb, blend towards lower)
+#   twist: (helper, twisting child, its parent, cumulative share of the roll)
+SHARE = [("{s}_ElbowShareBone", "{s}_Upperarm", "{s}_Forearm", 0.5),
+         ("{s}_KneeShareBone", "{s}_Thigh", "{s}_Calf", 0.5)]
+TWIST = [("{s}_ForearmTwist01", "{s}_Hand", "{s}_Forearm", 0.25),
+         ("{s}_ForearmTwist02", "{s}_Hand", "{s}_Forearm", 0.60)]
+
+
+def _twist_angle(q, axis):
+    """Signed angle of the twist part of `q` about unit `axis` (swing-twist)."""
+    v = Vector((q.x, q.y, q.z))
+    return 2.0 * math.atan2(v.dot(axis), q.w)
+
+
+def drive_helpers(tgt_arm, action, start, end, twist=True, share=True):
+    """
+    Key the share and twist helpers on an already baked action, frame by frame.
+
+    Twist bones get a *fraction* of the hand's roll about the forearm axis,
+    never a copy of the parent's delta -- copying double-counts and
+    corkscrews the forearm, which is why they were first left unmapped. The
+    hand's own rotation is untouched: its parent is the forearm, not a twist
+    bone. Each helper's basis is solved from its actual parent's pose, which
+    on MJ's glTF rig is a `_scaleCompensation` bone, not the limb bone.
+    """
+    scene = bpy.context.scene
+    ad = tgt_arm.animation_data
+    ad.action = action
+    if hasattr(ad, "action_slot") and action.slots:
+        ad.action_slot = action.slots[0]
+    bones = tgt_arm.data.bones
+    pbs = tgt_arm.pose.bones
+
+    def name(pattern, side):
+        return resolve(tgt_arm, "CC_Base_" + pattern.format(s=side))
+
+    jobs = []
+    for side in ("L", "R"):
+        if share:
+            for h, a, b, t in SHARE:
+                n = [name(x, side) for x in (h, a, b)]
+                if all(n):
+                    jobs.append(("share", n, t))
+        if twist:
+            for h, c, p, w in TWIST:
+                n = [name(x, side) for x in (h, c, p)]
+                if all(n):
+                    jobs.append(("twist", n, w))
+
+    for f in range(start, end + 1):
+        scene.frame_set(f)
+        posed = {}
+
+        def pose_of(bone):
+            # A bone between a helper keyed this frame and this one (MJ's
+            # `_scaleCompensation`) still holds last frame's pose until the
+            # depsgraph runs, so rebuild it from the chain; it has an
+            # identity basis.
+            if bone.name in posed:
+                return posed[bone.name]
+            p = bone.parent
+            while p is not None and p.name not in posed:
+                p = p.parent
+            if p is None:
+                return pbs[bone.name].matrix
+            return pose_of(p) @ p.matrix_local.inverted() @ bone.matrix_local
+
+        for kind, (h, a, b), t in jobs:
+            hb, pb = bones[h], pbs[h]
+            parent = hb.parent
+            p_pose = pose_of(parent)
+            rigid = p_pose @ parent.matrix_local.inverted() @ hb.matrix_local
+            if kind == "share":
+                # Where the helper would be if rigid with the upper bone, and
+                # if rigid with the lower one; sit `t` of the way between.
+                r_up = (pbs[a].matrix @ bones[a].matrix_local.inverted() @ hb.matrix_local).to_quaternion()
+                r_lo = rigid.to_quaternion()
+                rot = r_up.slerp(r_lo, t)
+                desired = Matrix.Translation(rigid.to_translation()) @ rot.to_matrix().to_4x4()
+                basis = rigid.inverted() @ desired
+            else:
+                # Hand roll relative to the forearm, about the forearm's rest axis.
+                dp = pbs[b].matrix.to_3x3() @ bones[b].matrix_local.to_3x3().inverted()
+                dc = pbs[a].matrix.to_3x3() @ bones[a].matrix_local.to_3x3().inverted()
+                rel = (dp.inverted() @ dc).to_quaternion()
+                axis = (bones[a].head_local - bones[b].head_local).normalized()
+                tau = _twist_angle(rel, axis)
+                # Cumulative share, minus what a twisting parent already carries.
+                inherited = next((w for k, (hh, _, _), w in jobs
+                                  if k == "twist" and hh != h and
+                                  _is_ancestor(bones[hh], hb)), 0.0)
+                ang = (t - inherited) * tau
+                y = hb.matrix_local.col[1].xyz.normalized()
+                sign = 1.0 if y.dot(axis) >= 0 else -1.0
+                basis = Matrix.Rotation(sign * ang, 4, "Y")
+                desired = rigid @ basis
+            posed[h] = desired
+            pb.rotation_mode = "QUATERNION"
+            pb.rotation_quaternion = basis.to_quaternion()
+            pb.keyframe_insert("rotation_quaternion", frame=f)
+    return len(jobs)
+
+
+def ground(tgt_arm, action, start, end):
+    """
+    Keep the lower foot on the floor, frame by frame, by lowering the hips.
+
+    The Avaturn clips pin the hips at rest height while the legs pose, so the
+    source's own feet rise 1.2-3.2 cm off the floor (Marcus hides it by
+    standing 2 cm into it). On the CC4 legs it came out 1-6 cm (V9.1d). The
+    teachers are normalised to stand on z=0 at rest, so the floor is each
+    foot's rest height: whichever of heel (Foot) or ball (ToeBase) is closest
+    to its rest height sets the drop. Returns the largest drop, in metres.
+    """
+    scene = bpy.context.scene
+    ad = tgt_arm.animation_data
+    ad.action = action
+    if hasattr(ad, "action_slot") and action.slots:
+        ad.action_slot = action.slots[0]
+    root = resolve(tgt_arm, ROOT_CC)
+    rb, rpb = tgt_arm.data.bones[root], tgt_arm.pose.bones[root]
+    joints = [resolve(tgt_arm, f"CC_Base_{s}_{b}") for s in ("L", "R") for b in ("Foot", "ToeBase")]
+    mw = tgt_arm.matrix_world
+    rest_z = {j: (mw @ tgt_arm.data.bones[j].head_local).z for j in joints}
+    to_local = rb.matrix_local.to_3x3().inverted() @ mw.to_3x3().inverted()
+    worst = 0.0
+    for f in range(start, end + 1):
+        scene.frame_set(f)
+        lift = min((mw @ tgt_arm.pose.bones[j].head).z - rest_z[j] for j in joints)
+        rpb.location = rpb.location + to_local @ Vector((0.0, 0.0, -lift))
+        rpb.keyframe_insert("location", frame=f)
+        worst = max(worst, abs(lift))
+    return worst
+
+
+TEACHERS = {"Jake": "Armature.002", "MJ": "Object_4.001"}
+
+
+def bake_clips(clips, src_name="MarcusArma", teachers=TEACHERS, keep_suffix=None):
+    """
+    Bake `clips` (source action names) onto every teacher as `<Teacher>_<clip>`,
+    then drive the helper bones. An existing action of that name is replaced,
+    or renamed to `<name><keep_suffix>` first if a suffix is given.
+    """
+    src = bpy.data.objects[src_name]
+    done = []
+    for pre, arm_name in teachers.items():
+        arm = bpy.data.objects[arm_name]
+        pairs, _ = build_pairs(arm, src)
+        ratio = height_ratio(arm, src, pairs)
+        for clip in clips:
+            name = f"{pre}_{clip}"
+            old = bpy.data.actions.get(name)
+            if old is not None:
+                if keep_suffix and not bpy.data.actions.get(name + keep_suffix):
+                    old.name = name + keep_suffix
+                    old.use_fake_user = True
+                else:
+                    bpy.data.actions.remove(old)
+            act, s, e = retarget_action(arm, src, bpy.data.actions[clip], pairs, ratio, new_name=name)
+            drive_helpers(arm, act, s, e)
+            drop = ground(arm, act, s, e)
+            done.append((name, s, e, round(drop * 1000, 1)))
+    return done
+
+
+def _is_ancestor(a, b):
+    p = b.parent
+    while p is not None:
+        if p == a:
+            return True
+        p = p.parent
+    return False
 
 
 def height_ratio(tgt_arm, src_arm, pairs):
@@ -210,6 +425,8 @@ def retarget_action(tgt_arm, src_arm, action, pairs, ratio,
     src_root_rest_head = (src_arm.matrix_world @ src_arm.data.bones["Hips"].head_local)
 
     Mt3_inv = tgt_arm.matrix_world.to_3x3().inverted()
+    C = facing_map(tgt_arm, src_arm)
+    C_inv = C.inverted()
 
     probe = src_arm.pose.bones["RightHand"]
     probe_path = []
@@ -221,7 +438,7 @@ def retarget_action(tgt_arm, src_arm, action, pairs, ratio,
         for t, s in order:
             spb = src_arm.pose.bones[s]
             delta = (src_arm.matrix_world @ spb.matrix).to_3x3() @ s_rest[s].inverted()
-            desired[t] = delta @ t_rest[t]
+            desired[t] = C @ delta @ C_inv @ t_rest[t]
 
         for t, s in order:
             tpb = tgt_arm.pose.bones[t]
@@ -251,7 +468,7 @@ def retarget_action(tgt_arm, src_arm, action, pairs, ratio,
             tpb.scale = (1.0, 1.0, 1.0)
             if t == root and root_motion:
                 src_head = src_arm.matrix_world @ src_arm.pose.bones["Hips"].head
-                off = (src_head - src_root_rest_head) * ratio
+                off = C @ (src_head - src_root_rest_head) * ratio
                 # `location` lives in the bone's own rest frame, not armature space.
                 tpb.location = rest3.inverted() @ (Mt3_inv @ off)
             else:

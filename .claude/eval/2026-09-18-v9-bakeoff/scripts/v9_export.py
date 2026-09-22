@@ -36,6 +36,7 @@ import numpy as np
 from mathutils import Vector
 
 TARGET_HEIGHT = 1.859  # Marcus, root scale divided out
+MARCUS_HIP_XY = (0.0, -0.0141)  # Marcus's Hips joint at rest, same space
 
 
 def descend(o):
@@ -104,8 +105,28 @@ def stack_nla(arm, clips):
 
 
 def normalise(root_name, exclude=()):
-    """Stand the character on z=0 at the origin, unrotated, at TARGET_HEIGHT."""
+    """
+    Stand the character on z=0 at the origin, unrotated, at TARGET_HEIGHT.
+
+    Measured in the rest pose. A skinned mesh's bounding box follows the
+    current pose, so the V9.1c export measured Jake in whatever frame was
+    showing -- toes pitched into the floor -- and his rest soles came out
+    30 mm above it, 45 mm in the app (V9.1d).
+    """
     root = bpy.data.objects[root_name]
+    arms = [o for o in descend(root) if o.type == "ARMATURE"]
+    old = [a.data.pose_position for a in arms]
+    for a in arms:
+        a.data.pose_position = "REST"
+    try:
+        return _normalise(root, exclude)
+    finally:
+        for a, p in zip(arms, old):
+            a.data.pose_position = p
+        bpy.context.view_layer.update()
+
+
+def _normalise(root, exclude):
     root.rotation_euler = (0, 0, 0)
     root.location = (0, 0, 0)
     root.scale = (1, 1, 1)
@@ -126,9 +147,14 @@ def normalise(root_name, exclude=()):
         if o.type == "MESH" and o.name not in exclude and not o.hide_render:
             pts += [o.matrix_world @ Vector(c) for c in o.bound_box]
     P = np.array([p[:] for p in pts])
-    root.location = (-(P[:, 0].min() + P[:, 0].max()) / 2,
-                     -(P[:, 1].min() + P[:, 1].max()) / 2,
-                     -P[:, 2].min())
+    # Stand the hip joint where Marcus's stands, not the bounding-box centre:
+    # the box moves with the A-pose arms and the hair, which put Jake 8 cm
+    # behind Marcus's spot in V9.1c, and the lesson camera and the Pointing
+    # anchor in Experience.tsx were tuned on Marcus.
+    arm = next(o for o in descend(root) if o.type == "ARMATURE")
+    hip = next(b for b in arm.data.bones if b.name.startswith("CC_Base_Hip"))
+    h = arm.matrix_world @ hip.head_local
+    root.location = (MARCUS_HIP_XY[0] - h.x, MARCUS_HIP_XY[1] - h.y, -P[:, 2].min())
     bpy.context.view_layer.update()
     return height, s
 
