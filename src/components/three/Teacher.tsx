@@ -49,7 +49,7 @@ const ANIMATION_FADE_TIME = 0.5;
 //
 // ── Blend-shape names by source ──────────────────────────────────────────────
 //   Ryan / Sonia (legacy custom rig):  mouthSmile, eye_close
-//   CC4 / Avaturn (ARKit standard):    mouthSmile, eyeBlinkLeft (+ eyeBlinkRight)
+//   CC4 / Avaturn (ARKit standard):    mouthSmile, eyeBlinkLeft + eyeBlinkRight
 //   CGTrader Auto-Rig Pro:             varies — inspect in Blender and update morphs
 //
 // ── pbrMaterials flag ────────────────────────────────────────────────────────
@@ -60,6 +60,7 @@ const ANIMATION_FADE_TIME = 0.5;
 //            them makes the character look flat and washed-out).
 
 interface AvatarConfig {
+  label:            string;   // shown in the teacher pickers
   sceneFile:        string;
   animFile:         string;
   spawnLabelHeight: number;
@@ -73,7 +74,11 @@ interface AvatarConfig {
   };
   morphs: {
     mouthSmile?: string;  // blend-shape name for mouth-open / smile (legacy fallback)
-    eyeClose?:   string;  // blend-shape name for eye blink (single target)
+    /**
+     * Blend shape(s) closed on each blink. ARKit rigs split the blink per eye
+     * (eyeBlinkLeft / eyeBlinkRight); naming only one of them winks.
+     */
+    eyeClose?:   string | readonly string[];
     /**
      * If true, the rig has the full Avaturn ARKit viseme set
      * (viseme_aa, viseme_E, viseme_O, …). Teacher.tsx will drive these
@@ -82,7 +87,45 @@ interface AvatarConfig {
     visemes?:    boolean;
   };
   pbrMaterials: boolean;
+  /**
+   * Required attribution for a third-party model (CC BY and similar).
+   * <AvatarCredit> renders it wherever this avatar is on screen, so an avatar
+   * whose licence demands credit cannot ship without it.
+   */
+  credit?: AvatarCreditInfo;
 }
+
+export interface AvatarCreditInfo {
+  title:      string;
+  author:     string;
+  sourceUrl:  string;
+  authorUrl:  string;
+  license:    string;
+  licenseUrl: string;
+  /** CC BY 4.0 section 3(a)(1)(B): say that the work was changed. */
+  modified:   boolean;
+}
+
+// Both Canino3d teachers are retargeted, re-clothed and re-materialed in
+// .claude/eval/2026-09-18-v9-bakeoff/scripts, so `modified` is true.
+const CANINO3D = {
+  author:     "Canino3d",
+  authorUrl:  "https://sketchfab.com/Canino3d",
+  license:    "CC BY 4.0",
+  licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+  modified:   true,
+} as const;
+
+// Canino3d rigs ship three clips, retargeted from animations_Avaturn.glb and
+// embedded in their own GLB. With no Thinking clip, thinking falls back to
+// Idle; nodding / shaking already fall back to idle in the state machine.
+const CANINO_CLIPS: AvatarConfig["clips"] = {
+  idle:     ["Idle"],
+  thinking: ["Idle"],
+  talking:  ["Talking"],
+  pointing: ["Pointing"],
+};
+const ARKIT_BLINK = ["eyeBlinkLeft", "eyeBlinkRight"] as const;
 
 // Exported so TeacherControls.tsx can preload an avatar's GLBs on
 // hover/select (see T02 — 3D asset diet: only the default avatar is preloaded
@@ -90,6 +133,7 @@ interface AvatarConfig {
 // warmed early by the switcher UI).
 export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfig> = {
   ryan: {
+    label:     "Ryan",
     sceneFile: "Teacher_Ryan.glb",
     animFile:  "animations_Ryan.glb",
     spawnLabelHeight: 1.2,
@@ -98,6 +142,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     pbrMaterials: false,
   },
   sonia: {
+    label:     "Sonia",
     sceneFile: "Teacher_Sonia.glb",
     animFile:  "animations_Sonia.glb",
     spawnLabelHeight: 1.1,
@@ -107,6 +152,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
   },
   // Avaturn photorealistic adult male — Mixamo-animated, 16+ clips
   marcus: {
+    label:     "Marcus",
     sceneFile: "Teacher_Marcus.glb",
     animFile:  "animations_Avaturn.glb",
     spawnLabelHeight: 1.25,
@@ -118,11 +164,12 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       nodding:  ["Nodding"],
       shaking:  ["ShakeNo"],
     },
-    morphs: { mouthSmile: "mouthSmile", eyeClose: "eyeBlinkLeft", visemes: true },
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
   },
   // Avaturn photorealistic adult female — same shared animation file
   priya: {
+    label:     "Priya",
     sceneFile: "Teacher_Priya.glb",
     animFile:  "animations_Avaturn.glb",
     spawnLabelHeight: 1.15,
@@ -134,8 +181,39 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       nodding:  ["Nodding"],
       shaking:  ["ShakeNo"],
     },
-    morphs: { mouthSmile: "mouthSmile", eyeClose: "eyeBlinkLeft", visemes: true },
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
+  },
+  // Stylised Character Creator 4 rigs (V9). The 15 visemes are baked shape
+  // keys, so the lipsync path drives them unchanged; normalised to Marcus's
+  // height, so the lesson camera and placement are unchanged too.
+  jake: {
+    label:     "Jake",
+    sceneFile: "Teacher_Jake.glb",
+    animFile:  "Teacher_Jake.glb",
+    spawnLabelHeight: 1.4,
+    clips:  CANINO_CLIPS,
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
+    pbrMaterials: true,
+    credit: {
+      title:     "Free Cartoon Game Man Character (Rigged)",
+      sourceUrl: "https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411",
+      ...CANINO3D,
+    },
+  },
+  mj: {
+    label:     "MJ",
+    sceneFile: "Teacher_MJ.glb",
+    animFile:  "Teacher_MJ.glb",
+    spawnLabelHeight: 1.4,
+    clips:  CANINO_CLIPS,
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
+    pbrMaterials: true,
+    credit: {
+      title:     "Free Stylized Cartoon Girl Rigged Character",
+      sourceUrl: "https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4",
+      ...CANINO3D,
+    },
   },
 };
 
@@ -151,7 +229,7 @@ const CUSTOM_CONFIG: Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials"> = {
     nodding:  ["Nodding"],
     shaking:  ["ShakeNo"],
   },
-  morphs: { mouthSmile: "mouthSmile", eyeClose: "eyeBlinkLeft", visemes: true },
+  morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
   pbrMaterials: true,
 };
 
@@ -451,7 +529,8 @@ export function Teacher({
     }
 
     if (cfg.morphs.eyeClose) {
-      lerpMorphTarget(cfg.morphs.eyeClose, blink ? 1 : 0, 0.5);
+      const lids = typeof cfg.morphs.eyeClose === "string" ? [cfg.morphs.eyeClose] : cfg.morphs.eyeClose;
+      for (const lid of lids) lerpMorphTarget(lid, blink ? 1 : 0, 0.5);
     }
 
     // Cycle multi-variant pools at clip end (only while in their state).
@@ -514,11 +593,11 @@ export function Teacher({
 // preloaded upfront.
 //
 // This is a function rather than a module-scope side effect because importing
-// this module does NOT imply ryan is the avatar that will render. /demo renders
-// marcus (only the Avaturn rigs carry viseme morphs) yet still pulls Teacher.tsx
-// into its graph, so an unconditional preload here downloaded 2.5 MB of ryan
-// that page never uses — on the funnel page, where payload matters most.
-// Callers that know ryan is the avatar (i.e. /learn) invoke this on mount.
+// this module does NOT imply the default is the avatar that will render: /demo
+// picks its own (DEMO_TEACHER) yet still pulls Teacher.tsx into its graph, and
+// an unconditional preload once cost that page 2.5 MB it never used — on the
+// funnel page, where payload matters most. Callers that know the default is
+// the avatar (i.e. /learn) invoke this on mount.
 //
 // Note the `import "./dracoDecoder"` at the top of this file is still a
 // module-scope side effect, and must stay one: it sets the shared decoder path

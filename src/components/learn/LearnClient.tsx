@@ -99,7 +99,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   // Warm the default avatar's GLBs. Teacher.tsx used to do this at module
   // scope, which also charged /demo for an avatar it does not render (see
   // preloadDefaultAvatar's comment). /learn is the page that actually starts
-  // on ryan, so it owns the preload.
+  // on DEFAULT_TEACHER, so it owns the preload.
   useEffect(() => {
     preloadDefaultAvatar();
   }, []);

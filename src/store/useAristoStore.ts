@@ -12,25 +12,39 @@ export type TeacherMode   = "course" | "free";
 /**
  * The avatar a new session starts on, and the only one preloaded eagerly.
  *
- * marcus rather than ryan: only the Avaturn rigs (marcus, priya, custom) carry
- * the 15 ARKit viseme blend shapes wawa-lipsync drives, so ryan and sonia can
- * never lipsync -- their mouths do not move while the teacher narrates. That is
- * the product's central visual claim, so the default has to be a rig that can
- * actually do it.
+ * It has to be a rig that can lipsync -- the product's central visual claim --
+ * which rules out ryan and sonia (no viseme blend shapes). jake carries the 15
+ * visemes and his clips are embedded in his own GLB, so the whole avatar is one
+ * 2.5 MB file against marcus + the shared Avaturn pack at ~11.6 MB.
  *
- * The cost is payload: marcus + the shared Avaturn animation pack is ~11.6 MB
- * against ryan's ~2.5 MB, so a cold /learn is roughly 12.7 MB rather than the
- * 3.6 MB T02 got it down to. Anything preloading or prefetching "the default"
- * must read this constant rather than hardcoding a name -- Teacher.tsx's
- * preloadDefaultAvatar() and the sign-in page's <link rel="prefetch"> both do.
+ * Anything preloading or prefetching "the default" must follow this constant --
+ * Teacher.tsx's preloadDefaultAvatar() reads it; the sign-in page's
+ * <link rel="prefetch"> hardcodes the file and must be kept in step.
  */
-export const DEFAULT_TEACHER = "marcus" as const;
+export const DEFAULT_TEACHER = "jake" as const;
+
+/**
+ * The teachers offered in the pickers (/learn and /demo), in display order.
+ *
+ * ryan, sonia, marcus and priya are archived (2026-09-22): their config stays
+ * in AVATAR_ASSETS and their GLBs in public/models, so they can be restored by
+ * adding them back here, but they are not offered, and a persisted choice of
+ * one falls back to DEFAULT_TEACHER on rehydrate. "custom" is separate: it is
+ * offered only to a learner who has created one.
+ */
+export const ACTIVE_TEACHERS = ["jake", "mj"] as const;
+
+export function isOfferedTeacher(t: unknown): t is TeacherAvatar {
+  return t === "custom" || (ACTIVE_TEACHERS as readonly unknown[]).includes(t);
+}
 
 export type TeacherAvatar =
   | "ryan"
   | "sonia"
   | "marcus"   // realistic adult male — drop Teacher_Marcus.glb + animations_Marcus.glb
   | "priya"    // realistic adult female — drop Teacher_Priya.glb + animations_Priya.glb
+  | "jake"     // stylised adult male (Canino3d, CC BY 4.0) — clips embedded in Teacher_Jake.glb
+  | "mj"       // stylised adult female (Canino3d, CC BY 4.0) — clips embedded in Teacher_MJ.glb
   | "custom";  // Avaturn-generated avatar
 export type Classroom     = "default" | "alternative" | "none";
 
@@ -450,6 +464,16 @@ export const useAristoStore = create<AristoState>()(
         currentConceptId:    s.currentConceptId,
         customTeacherGlbUrl: s.customTeacherGlbUrl,
       }),
+      // A session saved before the 2026-09-22 archive can hold marcus & co.;
+      // land it on the default instead of an avatar the picker no longer shows.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<AristoState>;
+        return {
+          ...current,
+          ...p,
+          teacher: isOfferedTeacher(p.teacher) ? p.teacher : current.teacher,
+        };
+      },
     }
   )
 );

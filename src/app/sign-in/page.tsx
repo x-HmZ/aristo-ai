@@ -19,11 +19,11 @@ export default async function SignInPage({ searchParams }: PageProps) {
           they're rendered.
 
           These must stay in sync with DEFAULT_TEACHER in useAristoStore.ts —
-          currently marcus, which shares animations_Avaturn.glb with priya and
-          custom avatars. Prefetching the wrong avatar is worse than prefetching
-          none: it spends the user's bandwidth on a file /learn never opens. */}
-      <link rel="prefetch" href="/models/Teacher_Marcus.glb" as="fetch" crossOrigin="anonymous" />
-      <link rel="prefetch" href="/models/animations_Avaturn.glb" as="fetch" crossOrigin="anonymous" />
+          currently jake, whose clips are embedded in his own GLB, so one file
+          covers the avatar. Prefetching the wrong avatar is worse than
+          prefetching none: it spends the user's bandwidth on a file /learn
+          never opens. */}
+      <link rel="prefetch" href="/models/Teacher_Jake.glb" as="fetch" crossOrigin="anonymous" />
       <link rel="prefetch" href="/models/classroom_default.glb" as="fetch" crossOrigin="anonymous" />
 
       {/* Background decorative blobs */}
