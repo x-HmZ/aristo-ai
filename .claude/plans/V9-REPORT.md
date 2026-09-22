@@ -416,3 +416,150 @@ can pick them up. **None of the options needs money or an account.**
   froze it; the code review flagged the change and it is deliberate. Baking Nodding and ShakeNo
   is what gives them a gesture.
 - The forehead scalp seam and hair clipping the shoulder: unchanged, still listed.
+
+## V9.1e — MJ's wardrobe option A shipped, then Thinking, Nodding, ShakeNo (2026-09-23)
+
+**Verdict: A passes the bar in Blender and in three.js, so B was not built. Both teachers now
+ship six clips.** Evidence in `.claude/eval/2026-09-18-v9-bakeoff/`: `v91e_mj_option_a.png`
+(Jake above MJ, lesson camera and three-quarter view, Idle / Talking / Pointing; rendered
+with the hem at 0.50, since shortened to 0.52), `v91e_thinking_hand_on_chest.png` (the
+rejected Thinking bake), `v91e_new_clips_thinking2.png` and `v91e_new_clips_shakeno.png`
+(Marcus, Jake and MJ, with a camera tracking the wrist). Scene backup before this session:
+`bakeoff_scene_pre_v91e.blend`.
+
+### What V9.1d got wrong or could not see
+
+| V9.1d state | Found by | Fix |
+|---|---|---|
+| MJ's arm skin through the back of her right sleeve, up to **18 mm** in Talking (12 mm in Idle), in the shipped GLB since V9.1c. The report's "torso through tee" line covered the waist only | `find_pokes` arms vs tee, then an armpit close-up | Skin weighted 0.55 to Spine02 under a sleeve weighted 0.47 to the upper arm: when the arm comes forward the sleeve goes with it. The skin there is `mask_under`'s kept margin, so masking removed nothing. `v9_mask.adopt_weights`: skin under a garment takes the garment's weights, blended back to its own within 12-30 mm of the garment's edge (136 vertices) |
+| Option A "0 legs through the skirt" | a new check, `v9_skirt.check_through` | `find_pokes` only tests skin a garment covers at rest within 2 cm. A flared skirt stands far off the hands and knees, so **MJ's fingers sat 24-33 mm inside the skirt in every Idle frame, and up to 79 mm in Talking**, invisible to it. In close-up her fingertips vanish into the skirt |
+| The mock-up's skirt centre was a fixed `(0, 0.005)` | ray casts: her body axis is at y = −0.039 | `normalise` moved her in V9.1d. `build` now measures the axis per build |
+| "1 tee vertex through the waistband" | — | Gone with the rebuilt tee |
+
+### Tee (`scripts/v9_tee.py`, new)
+
+The V9.1c extension was cut away rather than patched. `rebuild()` bisects the tee at
+z = 1.305, above the band where the normal map draws the rolled hem's folds (the source of
+the ridge), and welds the import's split UV seams. It then grows a closed tube down to 1.065,
+tucked 3.5 cm under the waistband:
+
+- Ring radii come from a proxy of her waist. That proxy is the V9.1c tee itself, because the
+  skin under it was masked in V9.1c. Ease is 8-11 mm, not 4 mm, and each ring narrows no
+  faster than a drape limit, so the tee hangs from the ribs. It is drawn in over the last
+  2.5 cm to tuck.
+- The new faces map into a flat corner of the tee's normal map: **0 zero-area UV faces**
+  (was 464), so three.js has a tangent frame everywhere. The rest of the tee keeps its
+  normal map.
+- Custom normals are dropped after welding, so seams stay smooth. The V9.1d mesh is kept as
+  a fake-user copy, and every run starts from it.
+
+### Skirt (`scripts/v9_skirt.py`)
+
+- Rebuilt from the script as `MJ_skirt`, parented to `Object_4.001` with an Armature
+  modifier. The body target is legs, pelvis skin and the new tee.
+- Additions to the mock-up:
+  - a 3 cm unpleated waistband at 5 mm ease;
+  - an inward lip that closes the gap to the tee when seen from above;
+  - 128 segments;
+  - pleat depth 18 mm (was 12), which reads at lesson distance.
+- The hem is at **0.52** (was 0.50). The rejected Thinking bake put a calf through it at
+  0.50. The knee joint is at 0.55.
+- A darker hem band was tried and dropped: at lesson distance nothing needed it.
+- The old skirt `Object_39.001` is retired through `v9_strip.HIDE`, which every solo and
+  strip uses. It stays in the scene, hidden.
+- **Hands:** a narrower skirt (8 mm ease, 5 cm flare) was tried and put her legs through it
+  in Pointing (12 mm), so the skirt kept its size and the arms moved instead.
+  `clear_hands` swings each hanging upper arm out about the shoulder, per frame, by the
+  smallest angle that clears the skirt by 8 mm. The angle is max-filtered over ±4 frames and
+  Gaussian-smoothed; the rotation is rigid, so the elbow and twist helpers keep their
+  relation. The swing is:
+  - Idle 3.2-3.6°;
+  - Talking up to 9.9° at its start and end;
+  - Thinking 4.9 / 8.2°;
+  - Nodding and ShakeNo about 3.3°;
+  - Pointing 0°, so its aim is unchanged.
+
+  **This deliberately breaks "bone directions match the source"** for MJ's hanging arms
+  (3.56° measured on Idle). In the strips her arms at Talking's start and end hang visibly
+  a little wider than Marcus's.
+- Remaining pokes pushed under: 19 pelvis vertices, about 12 leg vertices, and 2 arm
+  vertices, all ≤ 2 mm except one armpit vertex at 8.2 mm.
+
+**Automated result: zero on every frame (step 1) of all six shipped clips.** Checked: torso
+skin vs tee + skirt, legs vs skirt, tee vs skirt, arms vs tee, knees outside the skirt, and
+hands inside it.
+
+### Judged in three.js (`/dev/free-model`, close-ups by a second camera)
+
+Lesson framing and close-ups from the front, side and back, in Idle, Talking (including the
+hand-at-waist moment) and Pointing:
+
+- the waistband sits over the tee, and nothing shows through;
+- no crop line;
+- no faceting;
+- no dark blotches, though the skirt reads slightly lighter and bluer than in Eevee;
+- hands clear of the skirt;
+- all 17 morph targets present.
+
+Against item 7, beside Jake: a white tee and a pleated navy skirt, in the same flat-colour
+language as his white shirt and dark trousers.
+
+### Part 3: new clips
+
+**Thinking was rejected and replaced by Thinking2.** The pack's Thinking brings Marcus's
+wrist to his collar and beard. Replayed as rotations, which match the source to 0.000° on
+every bone, the Canino proportions put the hand 6-8 cm lower, on the chest. It no longer
+reads as thinking, and on MJ it reads as a hand on her breast
+(`v91e_thinking_hand_on_chest.png`). The same bake also put her calf through the 0.50 hem
+and Jake's crotch skin 4 mm through his trousers.
+
+A two-bone IK back to the chin was tried and thrown away. Holding the hand's world
+orientation pushed Jake's skin **19 mm** through his cuff; letting the hand follow the
+forearm left a limp, dangling wrist. **Thinking2** (head up and around, arms relaxed) has no
+contact to break, still reads as pondering, and ships under the clip name `Thinking`. That
+is recorded in `decisions.md`.
+
+| Clip | Frames (24 fps) | Bone delta vs source | Lower sole vs floor | Loop seam | Pokes |
+|---|---|---|---|---|---|
+| Thinking (from Thinking2) | 99 (4.1 s), loops | 0.000° (MJ's hanging arms: the swing above) | Jake −0.4 to 0 mm, MJ 0 mm | 0.17° Jake (= source), 0.25° MJ | 0 / 0 |
+| Nodding | 63 (2.6 s), one-shot | 0.000° | −0.3 to 0 mm | — | 0 / 0 |
+| ShakeNo | 74 (3.1 s), one-shot | 0.000° | Jake −0.3 to 0.7, MJ −1.7 to −0.3 mm | — | 0 / 0 |
+
+Jake needed four body vertices pushed under in the rejected Thinking, and none in the
+shipped clips. His body push moves the shape keys with it, so his visemes are unchanged.
+
+**One-shot timing, `Teacher.tsx`:** the fixed 1500 ms shake revert cut ShakeNo right after
+its 33° turn; its return and a smaller second shake run to about 2.3 s. The revert now
+follows the playing clip, less the 0.5 s crossfade. Measured in the running app:
+
+- nod reverts at 2.17-2.19 s;
+- shake reverts at 2.61-2.64 s, after the head has settled.
+
+Avatars without the clip keep 2000 / 1500 ms. `CANINO_CLIPS` gains `thinking: ["Thinking"]`,
+`nodding: ["Nodding"]` and `shaking: ["ShakeNo"]`.
+
+**Transitions in the app** (MJ, stepping the mixer at about 48 ms): Talking → Pointing and
+Pointing → Idle show no isolated step. The largest per-step change is Talking's own hand
+motion (8-12° per step), which continues through the crossfade. Nod peaks at 15-17° of head
+motion, shake at 33-34°, Thinking at 30° (head up), on both teachers.
+
+**Sizes:** Jake **2.96 MB** (was 2.54), MJ **2.92 MB** (was 2.27), six clips each, 303 and
+765 channels per clip, 17 morph targets each. Both are still a third of Marcus (9.18 MB).
+
+### Tooling notes for next time
+
+- The Browser pane can stop running `requestAnimationFrame` while a script runs, even when
+  visible: `gl.info.render.frame` stays still and only screenshots render a few frames.
+  Drive the frame loop yourself: `await setTimeout(33); three.advance(performance.now())`.
+  The mixer then runs on real time.
+- Setting a gesture that is already current does not restart its clip, so reset to `idle`
+  between trials.
+- `clear_hands` straight after a bake once measured nothing. Always re-run `check_through`
+  afterwards.
+
+### Not done
+
+- A female narration for MJ in `/demo` stays parked.
+- Hair clipping the shoulder and the forehead scalp seam are unchanged.
+- MJ was not re-checked in `/demo` or `/learn`. The GLB loads through the same path as
+  `/dev/free-model`.

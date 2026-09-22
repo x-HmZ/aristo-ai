@@ -2,6 +2,30 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 — V9.1e: MJ's wardrobe A shipped; six clips per teacher
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not built.**
+
+- **Tee** rebuilt below the old crop hem (`scripts/v9_tee.py`): cut above the hem's
+  normal-map folds, re-grown loose and tucked, 0 zero-area UV faces.
+- **Skirt** `MJ_skirt`: pleated navy A-line with waistband and lip, hem 0.52, parented to her
+  rig. The old skirt is hidden via `v9_strip.HIDE`.
+- **Missed by V9.1d, now fixed:**
+  - arm skin through MJ's sleeve, 18 mm, fixed with `v9_mask.adopt_weights`;
+  - MJ's fingers inside any eased skirt, fixed by `v9_skirt.clear_hands`, which swings
+    hanging arms 3-10° (a deliberate deviation from the source; Pointing untouched).
+- Zero pokes on every frame of all six clips for both teachers. The new `check_through`
+  covers the hands and knees that `find_pokes` cannot see.
+- **Clips:** Thinking (baked from the pack's Thinking2; the pack's Thinking put the hand on
+  the chest), Nodding and ShakeNo, on both teachers. The `Teacher.tsx` nod/shake revert now
+  follows clip length.
+- Sizes: Jake 2.96 MB, MJ 2.92 MB. Gates: type-check clean, lint 22 (pre-existing), tests
+  85/85.
+
+**Next:** Hmz to look at MJ in `/demo` (not re-checked there this session). More clips if
+wanted (Talking2 and the other Idle variants are in the pack). Still open: the hair clipping
+her shoulder, the forehead scalp seam, and the parked female narration.
+
 ## 2026-09-23 — V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on Hmz
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.1d"). **V9.1c's motion was wrong in ways three
