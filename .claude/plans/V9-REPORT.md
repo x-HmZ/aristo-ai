@@ -411,4 +411,8 @@ can pick them up. **None of the options needs money or an account.**
 ### Not done
 
 - Part 3 (Thinking, Nodding, ShakeNo): gated on Part 2 passing. The retarget is ready for it.
+  Until then a nod or head-shake on Jake or MJ (and Ryan, Sonia) keeps the Idle already playing:
+  no visible gesture. Before the `Teacher.tsx` fix it restarted Idle from frame 0 (a snap) and
+  froze it; the code review flagged the change and it is deliberate. Baking Nodding and ShakeNo
+  is what gives them a gesture.
 - The forehead scalp seam and hair clipping the shoulder: unchanged, still listed.
