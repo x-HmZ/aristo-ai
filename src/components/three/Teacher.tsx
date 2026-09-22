@@ -6,7 +6,7 @@ import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Group, LoopOnce, MathUtils, MeshStandardMaterial, SRGBColorSpace } from "three";
+import { Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, SRGBColorSpace } from "three";
 import { randInt } from "three/src/math/MathUtils.js";
 import { getCurrentViseme } from "@/hooks/useTTS";
 
@@ -486,21 +486,33 @@ export function Teacher({
     return () => clearTimeout(id);
   }, [gesture, setGesture]);
 
+  // The gesture is read through a ref so the play effect below runs only when
+  // the clip changes. With `gesture` in its deps, a gesture change re-ran it
+  // for the clip still playing and `reset()` snapped that clip to frame 0 for
+  // one frame before the crossfade: a 33 deg pop of the arm on Talking ->
+  // Pointing (V9.1d). It also made a nod that falls back to Idle (every
+  // avatar without a Nodding clip) turn Idle into a clamped one-shot for good.
+  const gestureRef = useRef(gesture);
+  useEffect(() => { gestureRef.current = gesture; }, [gesture]);
+
   // Play animation with crossfade. One-shot gestures (nod/shake) play once.
   useEffect(() => {
     const action = actions[animation];
     if (!action) return;
-    const isOneShot = gesture === "nodding" || gesture === "shaking";
+    const isOneShot = gestureRef.current === "nodding" || gestureRef.current === "shaking";
     if (isOneShot) {
       action.setLoop(LoopOnce, 1);
       action.clampWhenFinished = true;
+    } else {
+      action.setLoop(LoopRepeat, Infinity);
+      action.clampWhenFinished = false;
     }
     action.reset().fadeIn(mixer.time > 0 ? ANIMATION_FADE_TIME : 0).play();
     // Prime the mixer on first mount so bones are in the correct pose before
     // the first useFrame tick — prevents a one-frame T-pose flash at startup.
     if (mixer.time === 0) mixer.update(1 / 60);
     return () => { action.fadeOut(ANIMATION_FADE_TIME); };
-  }, [animation, actions, mixer, gesture]);
+  }, [animation, actions, mixer]);
 
   // Morph targets per frame
   //
