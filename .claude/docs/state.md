@@ -18,14 +18,14 @@ sampled frames could not show.**
   the image's upper-left for both (Marcus lands just outside it).
 - Gates: type-check clean, lint 22 (pre-existing), tests 85/85.
 
-**Blocked on Hmz:** MJ's extended tee and skirt fail the bar (slits showing her legs, stretched
-dark blotches, jagged hem, crop-hem ridge on the tee). Options rendered in
-`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`: **A** rebuilt pleated skirt
-(`scripts/v9_skirt.py`, recommended, clean in automated checks) or **B** CC0 MPFB trousers (poor
-quick fit, style clash). Both free.
+**MJ's wardrobe:** her extended tee and skirt fail the bar (slits showing her legs, stretched
+dark blotches, jagged hem, crop-hem ridge on the tee). Options in
+`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`. **Hmz picked A** (rebuilt
+pleated skirt, `scripts/v9_skirt.py`, plus a tee repair) **with B (CC0 MPFB trousers) as the
+fallback** if A cannot pass. Until it ships, students who pick MJ see the failing skirt.
 
-**Next:** build the pick (plus the tee repair for A), judge in three.js, re-ship; then Part 3 —
-Thinking, Nodding, ShakeNo per `.claude/plans/NEXT-SESSION-V91D-MOTION-WARDROBE-QA.md`.
+**Next:** V9.1e — build A (B only if A fails), judge in three.js, re-ship; then Thinking, Nodding,
+ShakeNo. Start prompt: `.claude/plans/NEXT-SESSION-V91E-MJ-SKIRT-AND-CLIPS.md`.
 Scene backup before this session: `bakeoff_scene_pre_v91d.blend`.
 
 ## 2026-09-22 — V9.1c: V9.1b audited, rebuilt, and wired into the app
