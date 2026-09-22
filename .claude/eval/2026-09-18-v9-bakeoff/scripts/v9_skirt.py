@@ -23,10 +23,16 @@ the old `Object_39.001` hidden via v9_strip.HIDE), after v9_tee.rebuild():
 
     tgt = body_target(arm, ["Object_13.001", "Object_10.001", "Object_31.001"],
                       name="MJ_skirt_target")
-    sk = build(tgt, name="MJ_skirt", segments=128, pleat_depth=0.018,
+    sk = build(tgt, name="MJ_skirt", z_bot=0.52, segments=128, pleat_depth=0.018,
                waistband=0.03, waist_clearance=0.005, lip=0.006)
     weight_and_bind(sk, arm, ["Object_13.001", "Object_10.001"])
     clear_hands(arm, "MJ_<clip>", sk, ["Object_12.001", "Object_14.001"])
+
+The hem was 0.50 in the V9.1d mock-up; the pack's Thinking (baked, then
+replaced by Thinking2) bends a knee back far enough to put the calf through
+it, so it ships at 0.52 (the knee joint is at 0.55).
+Re-check with check_through after clear_hands: straight after a bake it once
+measured nothing and swung nothing (V9.1e), and only a second run caught it.
 
 Its checks are v9_mask.find_pokes (skin the garments cover at rest) plus
 check_through below (knees and hands, which the flare stands far off).
