@@ -173,6 +173,51 @@ def push_under(skin, pokes, pad=0.002, rings=1):
     return len(offsets)
 
 
+def mirror_region(skin, joint, r_full, r_fade, u_mirror=5.0):
+    """
+    Rebuild the +x side of `skin` around a world point `joint` as the mirror
+    of its -x side (V9.1e, MJ's left elbow).
+
+    Her left arm carries a sculpt defect from the source asset: at rest a
+    notch on the inner elbow and a hump at its point, up to 49 mm off the
+    mirrored right arm, while her rig is symmetric to 0.1 mm and the rest of
+    the arm to a median 0.1 mm. Seen in the app as a broken elbow.
+
+    Left and right vertices are paired through the UVs (Character Creator
+    lays the arms out mirrored: u + u' = `u_mirror`, same v), not by
+    position, since position is what is broken. Vertices within `r_full` of
+    the joint take the mirrored position; the correction fades out by
+    `r_fade`. Run in the rest pose. Returns the number of vertices moved.
+    """
+    skin = bpy.data.objects[skin] if isinstance(skin, str) else skin
+    me = skin.data
+    mw = skin.matrix_world
+    mwi3 = mw.inverted().to_3x3()
+    W = [mw @ v.co for v in me.vertices]
+    uvs = [[] for _ in me.vertices]
+    uvl = me.uv_layers.active.data
+    for loop in me.loops:
+        uvs[loop.vertex_index].append(tuple(uvl[loop.index].uv))
+    key = lambda u, v: (round(u, 4), round(v, 4))
+    right = {key(u, v): i for i in range(len(W)) if W[i].x < 0 for u, v in uvs[i]}
+    joint = Vector(joint)
+    moved = 0
+    for i, w in enumerate(W):
+        d = (w - joint).length
+        if w.x <= 0 or d >= r_fade:
+            continue
+        j = next((right[k] for k in (key(u_mirror - u, v) for u, v in uvs[i]) if k in right), None)
+        if j is None:
+            continue
+        t = 1.0 if d <= r_full else 1.0 - (d - r_full) / (r_fade - r_full)
+        t = t * t * (3 - 2 * t)
+        target = Vector((-W[j].x, W[j].y, W[j].z))
+        me.vertices[i].co += mwi3 @ ((target - w) * t)
+        moved += 1
+    me.update()
+    return moved
+
+
 def adopt_weights(skin, garment, reach=0.03, edge_near=0.012, edge_far=0.03, k=4,
                   only=None):
     """
