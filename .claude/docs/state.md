@@ -2,6 +2,87 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-22 — V9.1c: V9.1b audited, rebuilt, and wired into the app
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1c"). **V9.1b was overstated**: arms were buried behind
+the back in every clip (T-pose vs A-pose rest mismatch), 5 of 6 clips were frozen stills (the export
+hid the source rig), and MJ's 32k tris came from decimation that shattered her teeth and hair.
+
+- **Fixed and re-shipped**: rest-aligned retarget (`v9_retarget.rest_alignment`, guard raises on a
+  frozen source), MJ rebuilt from undecimated meshes, hidden skin masked instead of decimating
+  (`v9_mask.py`), material pass (`v9_postprocess.mjs` via `v9_ship.sh`), SS and I recipes corrected.
+  Jake 42.8k tris / 2.49 MB, MJ 53.3k / 2.21 MB. Accepted, no simplify.
+- **Wired**: `jake` / `mj` in the union, `AVATAR_ASSETS` (label 1.4, by looking), switcher, voice map,
+  dev harness (`/dev/free-model?avatar=&state=`). Blink now drives both eyes (all ARKit rigs winked).
+- **CC BY credit** on each avatar's config → `<AvatarCredit>` in the `/learn` and `/demo` panels, plus
+  `asset.copyright` in each GLB.
+- Gates: type-check clean, lint 22 (pre-existing), tests 85/85. Checked in `/dev/free-model` and in
+  `/demo`, then `/learn` once Hmz signed in (see follow-up).
+
+**Follow-up (same day, Hmz):** Jake and MJ are the roster. `ACTIVE_TEACHERS` in the store drives both
+pickers; Ryan/Sonia/Marcus/Priya archived (config + GLBs kept), `DEFAULT_TEACHER` = jake, persisted
+old choices remap to it. `/demo` opens on Jake with a Jake/MJ switcher. `/learn` checked signed in
+(switcher only). The /learn switcher had been hiding Jake/MJ in a clipped 260 px row.
+
+**Next:** MJ in `/demo` speaks with the male narration: a female render is 6,856 ElevenLabs chars
+(needs Hmz OK). Cosmetic: MJ skirt pleat shading, forehead scalp seam. More clips (Thinking,
+Nodding, ShakeNo) are one `retarget_action` each.
+
+## 2026-09-21 — V9.1b: the Canino pair is shippable
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1b"). Renders and the working scene are in
+`.claude/eval/2026-09-18-v9-bakeoff/`; reusable Blender scripts in its `scripts/`.
+
+**The face-rig blocker is solved — L3 is back on, and it beats the Rocketbox fallback.**
+
+- The woman's FBX is only broken in the **forearm chain** (92/101 bones fit at zero residual). Her
+  head matches the clean GLB to **0.66 mm**, so all 68 face shapes transferred exactly. No sculpting.
+- The 15 Oculus visemes are **baked as real shape keys** from CC's 68 face shapes, so
+  `Teacher.tsx` drives both rigs **with no code change**. CC's `Open` moves lips 3.3 mm; the jaw
+  drop is `Mouth_Open` at 16.3 mm — which is why a 15 → 8 name map would have failed.
+- Retarget works: rotation **delta** relative to each rig's own rest pose (not world directions).
+  52/52 bones mapped; Idle, Talking, Pointing baked for both.
+- She is re-clothed (hip-length tee, knee-length skirt) by extending her own garments.
+- Shipped: `public/models/Teacher_Jake.glb` **2.69 MB** and `Teacher_MJ.glb` **1.87 MB** — both
+  smaller than Marcus (9.18 MB). Normalised to Marcus's height so the lesson camera is unchanged.
+- Verified in the browser at `/dev/avatar-lab`: Draco decodes, all 17 morph targets present with
+  the right names, all 3 clips play, lipsync tracks the demo narration.
+
+**Next:** add `jake` / `mj` to `AVATAR_ASSETS` in `src/components/three/Teacher.tsx`
+(`visemes: true`, `animFile` = their own GLB, set `spawnLabelHeight`), then add the **CC-BY 4.0
+attribution for Canino3d** — required wherever these ship. Cosmetic: MJ's skirt shows faint seams
+between its 139 pleat panels; her forehead has a scalp seam from the source asset.
+
+Rocketbox F01/M04 remain the fallback, rendered and ready, but are no longer the plan.
+
+
+## 2026-09-18 (later) — V9.1 bake-off, round 1 renders
+
+Findings, numbers and licences are in `.claude/plans/V9-REPORT.md`; renders are in `.claude/eval/2026-09-18-v9-bakeoff/`.
+
+- Blender 5.1.1 via MCP (the add-on is outdated but works). Scene `V9_bakeoff` matches the app's lesson camera, placement and lights.
+- Rendered: Marcus control; L2-a MPFB female; L2-b Rocketbox F17 and M12; L3-a the same MPFB female with cel shading and an outline. Each at lesson framing and in close-up.
+- **Face rig is not the blocker any more:** MPFB (CC0) and Rocketbox (MIT) both ship 52 ARKit shapes + 15 visemes.
+- Quaternius free tier dropped (Superhero bodies only, no clothes, no face). The generate-and-rig run was skipped by Hmz.
+- Installed into Blender: the MPFB 2.0.17 extension + 13 CC0 asset packs. Sources are git-ignored under `sources/`.
+
+### 2026-09-20 (later) — L3 reopened: the Canino pair goes first next session
+
+The GLB test changed the picture. `sources/canino/MJ_sketchfab.glb` has **clean geometry and rig** (the author's FBX is the broken one) but **zero morph targets**; the FBX has the 69 shapes and a broken body. Neither file has both, so the next session's first job is to get one that does. Start prompt: `.claude/plans/NEXT-SESSION-CANINO.md`.
+
+Rocketbox F01/M04 stay as the fallback, fully rendered and ready.
+
+### 2026-09-20 — casting settled, L3 abandoned
+
+- **Teachers: Rocketbox Female_Adult_01 + Male_Adult_04** (MIT). Rendered at lesson framing and close-up. Known defect: M04's hair seams where alpha cards overlap.
+- **L3 dropped after testing.** Canino3d's set: the man (`Jake`) is excellent, but the woman's arms are melted in the rest mesh and the young man explodes; their GLB conversion has no shape keys. No matching free stylised female exists (~250 models searched, CC tags are fan art of copyrighted characters). `Jake` is parked in the report as a one-teacher or paid-pair option.
+- Measured, against the claim that these avatars are low-res: Rocketbox ships 2048² colour/normal/specular vs Marcus's 1024²-and-below. See `quality_check.png`.
+
+### Next
+- V9.2 retarget: Rocketbox Biped -> the existing Mixamo clips (note both import traps in the report), then GLB export + compressed sizes.
+- Fix M04's hair material; rename Rocketbox shapes (`AA_VI_10_aa` -> `viseme_aa`, `AK_*` -> ARKit) for `Teacher.tsx`.
+- `pages/dev/avatar-lab.tsx` with demo narration for lipsync judging.
+
 ## 2026-09-18 — Wave 1 direction (V8.0, V8.0b, V9.0), no code
 
 Branch `docs/v8-v9-programme`. Canvas: https://claude.ai/artifact/CNqx2JxQMkpyyeWXhc36HP (positioning, marks, casing, name screen, landing wireframes, classroom UI over the real scene, teacher looks).
