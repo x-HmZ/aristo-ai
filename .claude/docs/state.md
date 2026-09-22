@@ -2,6 +2,32 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 — V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on Hmz
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1d"). **V9.1c's motion was wrong in ways three
+sampled frames could not show.**
+
+- **Fixed, re-baked, re-shipped** (Jake 2.54 MB, MJ 2.27 MB): arms/hands were 13–20° off the
+  source (bake ran with the teachers turned 17°, world deltas rotated with them), now ≤ 0.1°;
+  feet stood toe-down (anatomy swing), then floated (source pins hips), now flat and grounded;
+  Jake stood 30 mm up and 8 cm behind Marcus's mark (normalise measured a posed frame); MJ's
+  elbow stepped (share bone undriven); skin through Jake's cuff (mislabelled vertex group).
+- **`Teacher.tsx`:** a gesture change reset the playing clip (33° arm pop on Talking → Pointing),
+  and a nod froze Idle for good on every avatar without a Nodding clip. Fixed; measured in app.
+- **Passing:** wrists, fingers, shoulders, loop seams, transitions, face; Pointing lands inside
+  the image's upper-left for both (Marcus lands just outside it).
+- Gates: type-check clean, lint 22 (pre-existing), tests 85/85.
+
+**Blocked on Hmz:** MJ's extended tee and skirt fail the bar (slits showing her legs, stretched
+dark blotches, jagged hem, crop-hem ridge on the tee). Options rendered in
+`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`: **A** rebuilt pleated skirt
+(`scripts/v9_skirt.py`, recommended, clean in automated checks) or **B** CC0 MPFB trousers (poor
+quick fit, style clash). Both free.
+
+**Next:** build the pick (plus the tee repair for A), judge in three.js, re-ship; then Part 3 —
+Thinking, Nodding, ShakeNo per `.claude/plans/NEXT-SESSION-V91D-MOTION-WARDROBE-QA.md`.
+Scene backup before this session: `bakeoff_scene_pre_v91d.blend`.
+
 ## 2026-09-22 — V9.1c: V9.1b audited, rebuilt, and wired into the app
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.1c"). **V9.1b was overstated**: arms were buried behind

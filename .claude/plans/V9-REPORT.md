@@ -322,3 +322,93 @@ Hmz's call after the audit: Jake runs the demo, both new teachers are offered in
 - Checked in Hmz's signed-in `/learn` (switcher only, no lesson started): Jake, MJ, + Create, no
   clipping, credit swaps with the avatar, the old persisted choice remapped to jake. Checked `/demo`
   with both teachers.
+
+## V9.1d — motion QA, then MJ's wardrobe against a written bar (2026-09-22/23)
+
+**Verdict: motion passes after fixes. MJ's wardrobe fails the bar and needs Hmz's pick. Part 3
+(more clips) not started: it was gated on both.** Evidence in `.claude/eval/2026-09-18-v9-bakeoff/`:
+`v91d_retarget_facing_fix.png`, `v91d_mj_elbow_share.png`, `v91d_mj_wardrobe_options.png`.
+Method: frame strips at every 4th frame (source Marcus beside each teacher; the lesson camera, a
+three-quarter view on a plain floor, and cameras that track each wrist, shoulder and the feet;
+`scripts/v9_strip.py`), numbers read off the rigs, then three.js in `/dev/free-model` and `/demo`.
+
+### What V9.1c got wrong (all fixed and re-shipped)
+
+| V9.1c state | Found by | Fix |
+|---|---|---|
+| Arms and hands 13–20° off the source in every clip; hands palm-up where Marcus is palm-down, up to 11 cm out | wrist strips beside the source, then bone-direction comparison | The bake ran with the teachers turned to the app facing (rotZ 0.3) and the source facing front, and world-space deltas rotated with it. The shipped Talking is **bit-identical** to a bake made that way, so this was the cause. `facing_map` now conjugates by the yaw difference: every limb and finger is **≤ 0.1°** from the source in all three clips, and placement no longer matters (rotated vs unrotated bake: 0.000°). |
+| Feet pitched ~15° toe-down: heels 4–7 cm off the floor, toes 4–12 mm into it | foot pitch vs rest, sole heights per frame | Mixamo's foot bone aims 28° down to the ball, CC4's 11–14°. That is anatomy, like the pelvis. Feet now take only the yaw of the rest swing (`YAW_ONLY`). |
+| With flat feet, the feet floated 1–6 cm | sole heights per frame | Inherited: the Avaturn clips pin the hips at rest height while the legs pose, so **Marcus's own feet rise 1.2–3.2 cm** (he stands 2 cm into the floor, which hid it). `ground()` lowers the hips per frame so the lower foot keeps its rest contact. MJ's lower sole now stays within ±3 mm. |
+| Jake's rest soles 30 mm above the floor (45 mm in the app); both teachers off Marcus's mark | per-mesh rest bounds | `normalise` measured skinned bounds in whatever pose was showing. It now measures in the rest pose and puts the hip joint on Marcus's hip (0, −14 mm) instead of the bounding-box centre, which had put Jake 8 cm behind Marcus. Scale changed ±0.9%. |
+| Hard skin step inside MJ's elbow when it bends (Talking) | tracking close-up | `ElbowShareBone` followed the forearm fully. `drive_helpers` sets Elbow/KneeShare halfway between the limb bones and gives `ForearmTwist01/02` **25% / 60% of the hand's roll** (a fraction, never the parent's delta). |
+| Skin through Jake's right cuff, up to 4 mm (Talking 49–65; present in the V9.1c bake too) | cuff close-ups, then `v9_mask.find_pokes` over every frame | His shirt's right sleeve is weighted to a group named `R_ElbowShareBone` that mirrors the left sleeve's `ForearmTwist01` to 0.01 weight: a mislabel in the source asset, harmless until the share bone is driven. Renamed; one wrist vertex pushed 2 mm under. **Zero skin-through-cloth vertices on Jake in any frame of the three clips.** |
+| One-frame 33° arm pop on Talking → Pointing; Idle frozen after any nod | per-frame bone rotation logged in the running app (30 fps) | `Teacher.tsx`: the play effect had `gesture` in its deps, so a gesture change re-ran it for the clip still playing and `reset()` snapped it to frame 0. For avatars with no Nodding clip (Jake, MJ, Ryan, Sonia) a nod falls back to the Idle already playing, and the re-run switched it to `LoopOnce` for good: bone motion 0.086°/frame before a nod, 0.003 after (measured on the old code). The gesture is now read through a ref, and non-one-shot clips get their loop mode back. |
+
+The shirt-group rename and the body push are in the working scene, not a script (one-off asset
+repairs). Sizes after re-ship: Jake 2.54 MB (was 2.49), MJ 2.27 MB (was 2.21); the growth is the
+helper-bone channels. All 17 morph targets present on both, checked in three.js.
+
+### Checked and passing
+
+- **Wrists and forearms:** no candy-wrapper in Talking at up to 96° of hand roll, close up and at
+  lesson distance, both teachers.
+- **Hands and fingers:** a relaxed curl matching Marcus frame for frame; no claw, no paddle. After
+  the rest swing the palm normal is within 3.6–5.1° of Mixamo's.
+- **Shoulders:** no hunch or drop, no cloth or skin collapse. Pointing lifts the arm forward
+  across the body, so the armpit never opens in these clips.
+- **Feet:** flat, planted, no sinking. Foot slide is the source's own (toes travel 1.2 cm in Idle
+  and 5.5 cm in Talking with the hips fixed); the lesson camera cuts off at the shins.
+- **Knees:** Talking holds a 34° knee bend. That is the source clip (matched to 0.0°); Jake's slim
+  trousers show it more than Marcus's suit does.
+- **Loop points:** hip jump from last frame to first ≤ 0.04 mm; rotation seams equal the source's
+  own (0.28° Talking, 0.37° Pointing); no pop in the strips.
+- **Pointing lands:** measured in three.js, the finger ray meets the diagram plane at x −0.20
+  (Jake), −0.31 (MJ) and −0.40 (Marcus), against the image's left edge at −0.36, all at
+  y ≈ 0.6–0.7. **Jake and MJ land inside the image's upper-left, Marcus just outside it.** The
+  three aim within 2° of each other. Anchor unchanged.
+- **Transitions** (Idle → Talking → Pointing → Idle, three trials each, both teachers): no
+  isolated spikes after the fix, no T-pose frame.
+- **Face while moving:** blink drives both eyes identically (difference 0.000), the resting smile
+  drops to 0 while speaking, and visemes are active on 82% of Talking frames across 11 shapes.
+  Nothing new.
+
+### MJ's wardrobe: fails the bar
+
+Judged in three.js (`/demo`, plus a free camera in the running app) and in Eevee, all three clips.
+
+| Bar item | Tee (extended crop top) | Skirt (extended micro skirt) |
+|---|---|---|
+| 1 skin through | torso skin through tee/skirt at 22 vertices, up to 7.3 mm | **legs show through open slits as thin orange lines**, every frame |
+| 2 garment through garment | tee through the skirt waistband at 15 vertices, up to 20 mm | — |
+| 3 faceting, holes, slashed hems | 464 faces with zero UV area under a normal map | **jagged hem** (139 panel ends at different heights); 676 of 1,244 faces with zero UV area |
+| 4 hem reads as a hem | **the old crop hem shows as a ridge with a shading step**: reads as a crop top over a white bodysuit | — |
+| 5 moves without tearing or tenting | projected skin-tight onto the waist | wide bell/tent in every clip |
+| 6 dark blotches | — | **not acceptable**: rectangles of baked pleat shading stretched down the zero-UV extension read as tears at lesson distance |
+| 7 same artist, age-appropriate | the skin-tight tee reads as body paint | — |
+
+The root causes are modelling, not weights or normals: the skirt is 139 separate panels that
+flare apart, the grown rings copied the hem's UVs, and the tee's extension starts below the old
+rolled hem. So, per the brief, this stopped at options, rendered in `v91d_mj_wardrobe_options.png`
+(rows: current, A, B; each at lesson framing and three-quarter; Idle ×2, Talking ×2, Pointing):
+
+- **A. Rebuilt pleated skirt (recommended).** One continuous tube from 1.10 m to below the knee,
+  sized from her body's cross-section, 16 knife pleats, real UVs, flat navy, weights folded into
+  thigh and hip so a wide stance swings it instead of tearing it (`scripts/v9_skirt.py`,
+  reproducible). Automated checks on every third frame of all three clips: **0 legs through the
+  skirt, 0 torso through tee or skirt, 1 tee vertex through the waistband** (a spot fix).
+  +3.5k tris. Keeps her look. Still to do if picked: the tee (remove the old rolled hem ring
+  before growing, loosen the fit, drop or re-UV the normal map), then judging in three.js.
+- **B. MPFB CC0 wool trousers** (`toigo_wool_pants`). The quick fit is poor: the MakeHuman cut
+  sags into a harem crotch on her stylised body and splits at the calf, and its realistic texture
+  clashes with the Canino style. A proper fit is real work.
+- Not rendered: the other MPFB CC0 garments (a basic tucked tee, a female tee, the jeans in
+  `female_casualsuit01`, cargo trousers) share B's style clash; Jake's own garments would match the
+  artist but are cut for a man's body.
+
+The mock-ups sit in the scene's `V91d_options` collection, outside MJ's hierarchy, so no export
+can pick them up. **None of the options needs money or an account.**
+
+### Not done
+
+- Part 3 (Thinking, Nodding, ShakeNo): gated on Part 2 passing. The retarget is ready for it.
+- The forehead scalp seam and hair clipping the shoulder: unchanged, still listed.
