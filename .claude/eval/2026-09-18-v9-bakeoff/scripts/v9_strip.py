@@ -32,7 +32,8 @@ SUBJECTS = {
     "Jake": ("ROOT_canino_man", "Armature.002", lambda c: f"Jake_{c}"),
     "MJ": ("ROOT_canino_girl_GLB", "Object_4.001", lambda c: f"MJ_{c}"),
 }
-HIDE = ("Icosphere", "Icosphere.001", "Object_41.001", "Object_11.001")
+# Object_39.001 is MJ's old extended skirt, retired in V9.1e for MJ_skirt.
+HIDE = ("Icosphere", "Icosphere.001", "Object_41.001", "Object_11.001", "Object_39.001")
 
 
 MIXAMO = {"L_Hand": "LeftHand", "R_Hand": "RightHand", "L_Foot": "LeftFoot",

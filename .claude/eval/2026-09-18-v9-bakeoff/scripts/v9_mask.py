@@ -173,6 +173,87 @@ def push_under(skin, pokes, pad=0.002, rings=1):
     return len(offsets)
 
 
+def adopt_weights(skin, garment, reach=0.03, edge_near=0.012, edge_far=0.03, k=4,
+                  only=None):
+    """
+    Skin under a garment takes the garment's weights, so the two move as one.
+
+    V9.1e: MJ's arm skin at the back of the armpit is weighted 0.55 to
+    Spine02, the sleeve over it 0.47 to the upper arm, so when the arm comes
+    forward (Talking) the sleeve goes with it and the skin stays: 18 mm of
+    skin through the back of the sleeve. The skin there is the margin
+    `mask_under` keeps, so masking cannot remove it.
+
+    A skin vertex is under the garment when a ray along its normal (or
+    against it, for skin already outside) meets the garment within `reach`
+    at rest. Its new weights are the garment's, interpolated over the `k`
+    nearest garment vertices, blended with its own by distance from the
+    garment's open edges: its own at `edge_near`, the garment's from
+    `edge_far`, so skin leaving a hem keeps a continuous weight field.
+    `only` limits it to vertex indices. Run in the rest pose.
+    Returns the number of vertices changed.
+    """
+    from mathutils.kdtree import KDTree
+    skin = bpy.data.objects[skin] if isinstance(skin, str) else skin
+    garment = bpy.data.objects[garment] if isinstance(garment, str) else garment
+    bvh = _garment_bvh([garment])
+    gm = garment.matrix_world
+    gnames = {g.index: g.name for g in garment.vertex_groups}
+    gpts = [gm @ v.co for v in garment.data.vertices]
+    kd = KDTree(len(gpts))
+    for i, p in enumerate(gpts):
+        kd.insert(p, i)
+    kd.balance()
+    bm = bmesh.new()
+    bm.from_mesh(garment.data)
+    edges = [gm @ v.co for v in bm.verts if v.is_boundary]
+    bm.free()
+    ke = KDTree(len(edges))
+    for i, p in enumerate(edges):
+        ke.insert(p, i)
+    ke.balance()
+
+    mw = skin.matrix_world
+    nm = mw.to_3x3().inverted().transposed()
+    snames = {g.index: g.name for g in skin.vertex_groups}
+    plan = {}
+    for v in skin.data.vertices:
+        if only is not None and v.index not in only:
+            continue
+        p = mw @ v.co
+        n = (nm @ v.normal).normalized()
+        if (bvh.ray_cast(p + n * 1e-4, n, reach)[0] is None
+                and bvh.ray_cast(p - n * 1e-4, -n, reach)[0] is None):
+            continue
+        t = (ke.find(p)[2] - edge_near) / (edge_far - edge_near)
+        t = min(1.0, max(0.0, t))
+        if t <= 0:
+            continue
+        t = t * t * (3 - 2 * t)
+        acc = {}
+        for _co, i, d in kd.find_n(p, k):
+            w = 1.0 / max(d, 1e-4)
+            for g in garment.data.vertices[i].groups:
+                if g.group in gnames:
+                    acc[gnames[g.group]] = acc.get(gnames[g.group], 0.0) + g.weight * w
+        s = sum(acc.values())
+        new = {nme: x / s * t for nme, x in acc.items()}
+        own = {snames[g.group]: g.weight for g in v.groups if g.group in snames}
+        so = sum(own.values()) or 1.0
+        for nme, x in own.items():
+            new[nme] = new.get(nme, 0.0) + x / so * (1 - t)
+        plan[v.index] = new
+    for vi, new in plan.items():
+        for g in skin.vertex_groups:
+            g.remove([vi])
+        top = sorted(new.items(), key=lambda z: -z[1])[:4]
+        s = sum(x for _, x in top)
+        for nme, x in top:
+            g = skin.vertex_groups.get(nme) or skin.vertex_groups.new(name=nme)
+            g.add([vi], x / s, "REPLACE")
+    return len(plan)
+
+
 def mask_under(body, garments, max_dist, keep_rings=2, only_materials=None,
                poke_dist=0.0):
     """
