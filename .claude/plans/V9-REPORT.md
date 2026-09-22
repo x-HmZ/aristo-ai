@@ -435,6 +435,7 @@ rejected Thinking bake), `v91e_new_clips_thinking2.png` and `v91e_new_clips_shak
 | Option A "0 legs through the skirt" | a new check, `v9_skirt.check_through` | `find_pokes` only tests skin a garment covers at rest within 2 cm. A flared skirt stands far off the hands and knees, so **MJ's fingers sat 24-33 mm inside the skirt in every Idle frame, and up to 79 mm in Talking**, invisible to it. In close-up her fingertips vanish into the skirt |
 | The mock-up's skirt centre was a fixed `(0, 0.005)` | ray casts: her body axis is at y = −0.039 | `normalise` moved her in V9.1d. `build` now measures the axis per build |
 | "1 tee vertex through the waistband" | — | Gone with the rebuilt tee |
+| **MJ's left elbow broken** (a notch on the inner elbow, a hump at its point) in every clip since she shipped. V9.1d's elbow-share fix was real, but this was a different defect | Hmz, from the app, after this session had signed her off | A sculpt defect in the source mesh. It is there at rest, up to 49 mm off the mirrored right arm, while her rig is symmetric to 0.1 mm and the rest of the arm to a median 0.1 mm. No weight or bone fix could reach it. `v9_mask.mirror_region` rebuilds the left arm within 16 cm of the elbow (fading out by 20 cm) as the mirror of the right, pairing vertices through the mirrored UVs (u + u' = 5): 394 vertices. Checked at rest, in Idle, Talking and Pointing in Eevee and three.js; arm pokes still 0 in all six clips. My left-vs-right strips never compared the two elbows, which is how it got through |
 
 ### Tee (`scripts/v9_tee.py`, new)
 

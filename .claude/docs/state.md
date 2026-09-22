@@ -14,6 +14,8 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not buil
   - arm skin through MJ's sleeve, 18 mm, fixed with `v9_mask.adopt_weights`;
   - MJ's fingers inside any eased skirt, fixed by `v9_skirt.clear_hands`, which swings
     hanging arms 3-10° (a deliberate deviation from the source; Pointing untouched).
+  - MJ's broken left elbow (spotted by Hmz): a sculpt defect in the source mesh, rebuilt
+    as a mirror of her right arm with `v9_mask.mirror_region`.
 - Zero pokes on every frame of all six clips for both teachers. The new `check_through`
   covers the hands and knees that `find_pokes` cannot see.
 - **Clips:** Thinking (baked from the pack's Thinking2; the pack's Thinking put the hand on
