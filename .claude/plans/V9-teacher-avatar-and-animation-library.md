@@ -382,7 +382,7 @@ Per-phase choices are stated above. The rules behind them:
 - [ ] V9.2 animation packs built for the new rig(s) and the Avaturn rig. **Canino rigs done 2026-09-23** (17 clips, base + lazy pack, see V9-REPORT "V9.2"); open: the Avaturn rig and the catalogue's gap clips
 - [x] V9.2b scale and placement (Hmz settled on taller-than-real, not the brief's original "believable adult"), fingers and Jake's trousers fixed (2026-09-23)
 - [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for Hmz is in V9-REPORT)
-- [ ] V9.4 face, expressions, gaze
+- [x] V9.4 face, expressions, gaze (2026-09-23; the Canino rigs have only a weak `mouthSmile` and blink, so expressions are smile levels plus eye gaze, see V9-REPORT "V9.4")
 - [ ] V9.5 integrated, budgets measured, docs and LICENSES.md done
 
 ## Sources (checked 2026-09-11)

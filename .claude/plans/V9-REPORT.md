@@ -966,3 +966,87 @@ gets the warm face hint and no head motion until a Tier 2 "let's look again" cli
   frame; `quizActive` ignores DeskQuiz's `userId` gate.
 - The dev-only `window.__v93` hook used for these checks was reverted before committing, like
   `__v91d` and `__v92`.
+
+## V9.4 - face and gaze (2026-09-23)
+
+Model: Sonnet 5 throughout. No escalation to Opus was needed: the viseme and morph mapping on the Canino
+rigs behaved (see "What the rigs have"). Gates: type-check clean, lint 22 (pre-existing), tests 267/267,
+build green (temporary distDir, reverted). `typescript-reviewer` on the Teacher diff: no correctness
+bugs; one finding acted on (`smileGain`, below).
+
+### What the rigs have (inspected in the GLBs and in the running app, not assumed)
+
+Jake and MJ carry exactly: 14 visemes (`viseme_PP` ... `viseme_U`; no `viseme_sil`, which is the
+absence of all of them), `mouthSmile`, `eyeBlinkLeft`, `eyeBlinkRight`. **No brow, frown, cheek or
+eye-look shapes.** The face mesh (`CC_Base_Body` on Jake, `Object_9.001` on MJ) holds the real shapes;
+the other skinned meshes carry all-zero placeholders, and the tongue has six visemes. So the four face
+hints cannot be four morph-built expressions: they are told apart by the smile alone, plus the eyes for
+"thinking". Two further facts shaped the work:
+
+- `mouthSmile` is weak: corners move 9-10 mm at full weight against 17-18 mm for `viseme_aa`. At 1.0
+  it barely reads on screen (Jake, close-up).
+- The clips never key the eye bones (`CC_Base_L_Eye` / `R_Eye`, MJ's numbered `_045` / `_046`), and
+  their rest rotations are odd (a half-turn), so the eyes are driven by rotating the bones directly.
+
+### What was built
+
+- **`src/lib/avatar/face.ts`** (pure, 29 table-driven tests with `gaze.ts`): smile level per hint,
+  resting and speaking; `stepSmile` (frame-rate independent, fast out of the way, slow in); a blink
+  scheduler (1.5-5 s gaps, 60 ms close and 120 ms open, 15% double blinks).
+- **`src/lib/avatar/gaze.ts`** (pure): pull toward the look target (clamped, weighted), saccades
+  (up to 3.5 deg / 2 deg every 0.6-2.8 s), drift (about 1 deg), and the averted gaze of "thinking".
+- **`Teacher.tsx`:** the face hint from the director sets the smile; the blink runs in `useFrame`
+  from the scheduler (the old `useState` + `setTimeout` blink, which re-rendered the component
+  twice per blink, is gone); morph meshes are cached once instead of walking the scene 19 times a frame;
+  `applyEyes` runs after `applyLook` and turns both eye bones toward the same camera, board, model
+  and desk targets. Rigs without `CC_Base_[LR]_Eye` bones (Ryan, Sonia, Marcus, Priya, custom
+  teachers) get no eye layer and are otherwise unchanged.
+
+### Numbers that came from looking
+
+| Setting | Value | Why |
+|---|---|---|
+| Smile at rest: neutral / smile / warm / thinking | 0.15 / 1.6 / 0.8 / 0.03 | 1.0 was too faint to tell smile from neutral. 1.8 looked clean on Jake with no mesh artifacts, so 1.6 keeps margin. Influences above 1 extrapolate a small delta linearly |
+| Smile while speaking | 0 / 0.35 / 0.2 / 0 | Checked against viseme O, PP, aa and FF on Jake with the smile hint on: the mouth shapes read the same as with it off |
+| Eye clamp, weight | 14 deg yaw, 9 deg pitch; 0.8 of the remaining error | 18 deg / 0.9 pinned the eyes at the clamp for a teacher standing off-axis, which reads as a strained side-eye |
+| Thinking | Eyes up 8 deg and 13 deg to one side (side fixed per teacher), mouth flat | The rig has no brow, so the eyes carry the expression |
+| Per-rig `smileGain` | 1 on Jake and MJ; 0.4 for any rig not set | The review's one finding: Marcus, Priya and custom teachers share the `visemes` path and their `mouthSmile` is unchecked. Untuned rigs now get 40% of the lift above the plain smile |
+
+### Verified in the browser
+
+Jake and MJ on `/dev/free-model` and Jake on `/demo`, with a temporary `window.__v94` hook (forced hint,
+forced viseme, close-up camera; reverted before committing, like `__v93`).
+
+| Check | Result |
+|---|---|
+| Expressions, both rigs | Neutral, smile, warm and thinking all render; smile is a clear friendly curve, warm is smaller, thinking has flat mouth and averted eyes. Differences are real but gentle: the rig has one weak smile shape |
+| Eyes follow the camera | Camera placed 0.45-0.5 m to either side of the face: the head turns half way (about 14 deg) and the eyes make up most of the rest, both sides |
+| Eyes follow board and desk | On `/demo` (real anchors), head and eyes both turn down and to the right toward the board and desk; eye yaw and pitch match the target |
+| Blink | 6 blinks in 20 s, closure peaks at 0.99, both lids |
+| Saccades and drift | Eye angle changes by more than 0.8 deg about once a second at rest: visible as life, not as darting |
+| Visemes, alignment timeline | On `/demo` the sidecar `.align.json` loads and the top viseme changes about every quarter second through 25 samples (aa, SS, RR, DD, kk, I, E, nn, O, TH, U) with intensities 0.03-0.72 |
+| Visemes, FFT fallback | With the sidecars blocked at `fetch`, wawa-lipsync drives the mouth. See the finding below |
+| Viseme shapes | O, PP (lips pressed), aa (open, teeth), FF (lip tuck) read correctly on Jake |
+
+### Finding, not fixed: the FFT fallback saturates
+
+With the timeline blocked, the raw `features.volume` from wawa-lipsync stayed between 0.56 and 0.73 for the
+whole clip (p10 0.56, median 0.64, max 0.73). `getCurrentViseme` turns it into
+`min(1, volume * 4)`, which is 1 for all of it, and Teacher then scales by 1.4: the detected shape is
+always driven to full. In practice the mouth sits mostly on `viseme_E` and `viseme_DD` at 0.95-1.0. It
+moves and reads as talking, but with no loudness variation. The alignment timeline (the demo, and live
+TTS when the API returns character timings) is the primary path and is fine, so the fallback's scaling
+is untouched: one stream of one voice is thin evidence for a new curve. If live TTS turns out to lack
+timings, remap the volume to a spread range (about 0.4-0.75 to 0.3-0.85) and re-check.
+
+### Known edges
+
+- The smile is one weak morph. A more expressive teacher (brows, cheeks) means editing the meshes or
+  a different rig; out of scope here.
+- Vergence: both eyes aim at the target separately, so at a camera closer than about 1 m they look
+  slightly cross-eyed. The real camera is far enough that it does not show.
+- Per-frame allocations remain in `gaze.ts` and `stepBlink` (a handful of small objects a frame).
+  Negligible on desktop; revisit if a mobile profile says otherwise.
+- A future clip that keys an eye bone would be overridden by `applyEyes` (noted in a comment).
+- The face hints in a real quiz (correct, wrong, lesson complete) were not exercised in the browser,
+  only in the director tests.

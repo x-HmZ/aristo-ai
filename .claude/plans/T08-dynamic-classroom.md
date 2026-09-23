@@ -57,7 +57,7 @@ below must be toggleable and cheap.
 ## Status checklist
 
 - [ ] Blackboard live-render
-- [ ] Gaze + blink polish
+- [x] Gaze + blink polish (done in V9.4: blink scheduler, saccades, drift, eyes follow camera/board/model/desk, Canino rigs only)
 - [ ] Ambient FX (toggleable)
 - [ ] Camera micro-sway
 - [ ] FPS before ____ / after ____

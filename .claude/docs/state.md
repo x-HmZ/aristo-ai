@@ -2,6 +2,24 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 - V9.4 done: face and gaze (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.4"). No escalation to Opus needed.
+
+- **Done:** `face.ts` and `gaze.ts` (pure, tested) plus `Teacher.tsx`: the director's face hint drives the
+  smile, blink runs from a scheduler in `useFrame`, and the eyes follow camera/board/model/desk with
+  saccades and drift. 267 tests, type-check clean, lint 22, build green. Checked in the browser on Jake
+  and MJ (all four expressions, eye tracking, blink, visemes by timeline and by FFT). T08's gaze item ticked.
+- **Found:** the Canino rigs have only a weak `mouthSmile` and blink shapes (no brows), so expressions are
+  smile levels (1.6 for a smile, over 1 on purpose) plus eye gaze. `smileGain` scales the hint per rig;
+  unset rigs get 0.4. The FFT viseme fallback pins the mouth at full (volume 0.56-0.73 into
+  `min(1, volume*4)`); not fixed, the timeline path is the real one.
+- **Not verified visually:** the face hints in a real quiz (correct, wrong, lesson complete), covered by
+  the director tests only; Marcus/Priya/custom teachers (archived, gain 0.4); `/learn` (needs auth).
+- **Blocked on Hmz:** still the ShakeNo question from V9.3 (recommendation: silence it).
+- **Next:** V9.5 integration (budgets, `AVATAR_ASSETS`, picker and `/create-teacher`, docs,
+  `LICENSES.md`). The Tier 2 clips are still open.
+
 ## 2026-09-23 — V9.3 done: the animation director is wired (Sonnet)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.3", with the coverage table and the ShakeNo question).
