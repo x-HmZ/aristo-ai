@@ -510,3 +510,18 @@ export function overlayWeight(blend: number): number {
   const b = Math.min(OVERLAY_DOMINANCE, Math.max(0, blend * OVERLAY_DOMINANCE));
   return b / (1 - b);
 }
+
+// ─── Signal helpers for the renderer ──────────────────────────────────────────
+
+/**
+ * The phase of the segment with `segmentId`, or null when there is no lesson,
+ * no segment being narrated, or the id is not in the lesson (a legacy lesson
+ * has no `segments` at all).
+ */
+export function phaseOf(
+  lesson: { segments?: readonly { id: string; phase: Phase }[] } | null | undefined,
+  segmentId: string | null | undefined,
+): Phase | null {
+  if (!lesson?.segments || !segmentId) return null;
+  return lesson.segments.find((s) => s.id === segmentId)?.phase ?? null;
+}
