@@ -2,7 +2,26 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-23 — V9.3 director: design half done, wiring next (Sonnet)
+## 2026-09-23 — V9.3 done: the animation director is wired (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.3", with the coverage table and the ShakeNo question).
+
+- **Done:** `Teacher.tsx` runs on `src/lib/avatar/` (base, masked overlays, latched reactions, look).
+  `lessonComplete` mirrored into the store. `Experience.tsx` passes `lookTargets`. 237 tests, type-check
+  clean, lint 22, build green. Checked in the browser on Jake, MJ, Ryan, a custom teacher, pack
+  blocked, and `/demo`.
+- **Found in the app:** MJ's numbered bone names (`CC_Base_Head_038`) defeated the structural masks, so
+  she had no greeting or head overlays until `HEAD`/`HIP` accepted a numeric suffix. Fixed and tested.
+- **Not verified visually:** head-to-desk in a real quiz, `lessonComplete` and quiz-result reactions,
+  Marcus/Priya on their own GLBs, `/learn` (needs auth).
+- **Blocked on Hmz:** the ShakeNo question (keep, or silence a wrong-answer head shake until a
+  "let's look again" clip exists). Recommendation: silence.
+- **Next:** V9.4 face and gaze (expressions from the director's `face` hint, eyes, drift and
+  saccades). The Tier 2 clips (present model, wrong answer, quiz supportive) are still open.
+- **Tooling note:** another session's `next dev` holds `.next` on Windows, so `yarn build` fails
+  with EPERM; build with a temporary `distDir` and revert the config and `tsconfig.json`.
+
+## 2026-09-23 — V9.3 director: design half done, wiring next (Sonnet) — superseded above
 
 - **Done (Opus):** `src/lib/avatar/` — `animationManifest.ts` (clips, scenario table, clip sets
   per avatar), `director.ts` (pure step function: base/overlay/look/face, no repeats,

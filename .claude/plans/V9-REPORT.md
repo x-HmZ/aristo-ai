@@ -858,3 +858,111 @@ doesn't carry this kind of sculpted knee wrinkle), nothing to fix there.
   half-written state** (missing `routes-manifest.json` etc., 500 on every route). Fix: stop the
   server, `rm -rf .next`, restart — happened once this session pulling a "before" scale
   screenshot.
+
+## V9.3 — the animation director, wired (2026-09-23)
+
+Ran against `.claude/plans/V93-WIRING.md`. The design half (manifest, director, masks, look maths,
+122 tests) was already committed; this session wired it into the app and executed the brief as
+written, with one fix the running app forced (below).
+
+**Verdict: wired and verified in the browser on Jake, MJ, Ryan (legacy set) and a custom
+teacher (`customTeacherGlbUrl` = the Marcus GLB), with the pack blocked, and in `/demo`.**
+Gates: type-check clean, lint 22 (pre-existing), tests 237/237, build green.
+
+### What changed
+
+- **Store and playback:** `lessonComplete` (not persisted) mirrors `useLessonPlayback`'s
+  `isComplete`, reset on unmount.
+- **`Teacher.tsx`:** `AvatarConfig.clips` is now a clip set from the manifest; `CANINO_CLIPS` and the
+  whole `useEffect` state machine are gone. The director runs in `useFrame` after drei's mixer
+  update: base crossfade, masked-copy overlays with weight dominance, the store latch for nod and
+  shake, the release back to `gesture: "idle"`, and a head look layer applied after the mixer.
+- **`Experience.tsx`:** passes `lookTargets` (board and model at the scene anchor, desk at
+  `PAPER_ANCHOR`, now exported from `DeskQuiz.tsx`). The dev pages get the camera for everything.
+- **Tests:** `phaseOf`, manifest integrity, and the coverage table below (`manifest.test.ts`).
+
+### The one fix the app forced (the brief was wrong for MJ)
+
+`skeletonMasks` found nothing on MJ: no masks, no head, so the greeting and every head-only
+overlay silently never played. Her export numbers its bones (`CC_Base_Head_038`,
+`CC_Base_Hip_02`) and wraps them in `..._scaleCompensation` nodes; Jake's names are clean, which
+is why the design-time fixtures passed. Fix: `HEAD` and `HIP` accept an optional `_<digits>`
+suffix (wrappers and `_0` mesh children still do not match). MJ's real skeleton is now a fixture in
+`skeletonMasks.test.ts`. After it, MJ's masked clips carry tracks (Talking6M@upper 48,
+Nodding@head 2, ShakeNo@head 2) and she greets.
+
+### Verified in the app
+
+| Check | Result |
+|---|---|
+| Greeting | Plays once on load for Jake and MJ (Talking6M, upper mask, legs and stance stay on the base). Frozen mid-wave: hand raised, body idle |
+| Talking, thinking cycles | 24 s of talking: 7 clips, no back-to-back repeat, none from the same family in a row, time-warp 0.93-1.07. Thinking alternates Thinking/ThinkingM |
+| Pointing crossfade | Talking3 to Pointing: the largest per-bone step in the fade (L_Upperarm, 5-6 deg/frame) is a smooth ramp inside the range of ordinary talking (baseline 7-8.5 deg/frame); no single-frame spike. Fingertip still points at the board with the head turned toward it (head-only look) |
+| Nod over talking | Head-only nod over Talking4, the body keeps its clip. `gesture` back to idle at 2.64 s |
+| Shake | Back to idle at 3.11 s (3.16 s on the custom teacher) |
+| Lesson-style reaction | `setGesture("nodding")` then `setGesture("explaining")` in one tick: the nod still plays over the next segment's talking, and the release leaves `explaining` alone |
+| Pack blocked (404) | Only Idle/Talking/Thinking available. Pointing plays Talking, the nod keeps Idle looping (running actions: Idle, loop repeat, not clamped) and reverts at 2.06 s, greeting drops after its window, teacher stays up |
+| Long wait | After 25 s quiet, `Idle3@upper` (48 tracks, none on hips, waist or legs) plays over the idle base. Starting to talk fades it out inside 0.7 s |
+| MJ transitions | Point, unpoint, nod, shake, stop, think, idle: worst per-frame bone step in each 0.8 s window (1.3 to 7.3 deg) stays under the clip baseline (8.5 deg) |
+| Look targets | `out.look` reads camera while talking or idle, none while thinking, board while pointing, model while `modelInteracting`, desk with `activeQuiz` |
+| Custom teacher | Marcus GLB as custom: Idle, Thinking, Talking, Talking2, Pointing, Nodding, ShakeNo only; masks found (`Head`), nod 2.70 s, shake 3.16 s, no greeting |
+| Ryan (legacy set) | Four clips, pointing falls back to Talking, nod reverts at 2.06 s |
+| `/demo` | Volcanoes lesson plays with Jake selected; talking clips cycle under the `explaining` gesture |
+
+**Not verified visually:** the head-to-desk look in an actual quiz (checked as `out.look` only),
+`lessonComplete` and quiz-result reactions in a real run, Marcus/Priya on their own GLBs (archived
+from the picker), and `/learn` (needs auth). The director tests cover all four of the event paths.
+
+### Coverage table
+
+Clips per catalogue row after fallbacks; "via X" means the row has no clips of its own and plays
+X's pool (`manifest.test.ts` snapshots this, so a pack change shows in review).
+
+| Row | Jake, MJ | Marcus, Priya | Custom | Ryan, Sonia |
+|---|---|---|---|---|
+| 1 idle | 3 | 3 | 1 | 1 |
+| 2 long wait | 1 | 1 | 0 | 0 |
+| 3 greeting | 2 | 1 | 0 | 0 |
+| 4 thinking | 2 | 2 | 1 | 1 |
+| 5 talking | 6 | 5 | 2 | 2 |
+| 6, 7, 11, 17, 19 talk by phase, explaining | 6 via talking | 5 via talking | 2 via talking | 2 via talking |
+| 8 point | 1 | 1 | 1 | 2 via talking |
+| 9 present model | 0 | 0 | 0 | 0 |
+| 12 listen | 3 | 3 | 1 | 1 |
+| 13 correct | 1 | 1 | 1 | 0 |
+| 14 wrong | 1 | 1 | 1 | 0 |
+| 15 quiz look | 3 | 3 | 1 | 1 |
+| 16 quiz good | 1 | 1 | 1 | 0 |
+| 16 quiz supportive | 0 | 0 | 0 | 0 |
+| 18 lesson complete | 1 via quiz good | 1 via quiz good | 1 via quiz good | 0 |
+
+Rows 9 and 16-supportive have no clip on any rig (Tier 2 work); row 9 still turns the head to the
+model, and both keep their timing and face hint. Ryan and Sonia get no head reactions at all:
+their nod and shake fall back to a timed release, as before.
+
+### Question for Hmz: ShakeNo
+
+A wrong answer still plays **ShakeNo** (a head shake), to keep today's behaviour. The catalogue
+asks for a gentle "let's look again" instead, and for grade 6-8 learners a head shake at a wrong
+answer is arguably the wrong emotion. Options: (a) keep it; (b) silence it, so a wrong answer
+gets the warm face hint and no head motion until a Tier 2 "let's look again" clip exists;
+(c) swap it for the Nodding-with-a-tilt Tier 2 clip when that is keyed. It is a one-row change in
+`animationManifest.ts` (ShakeNo's `scenarios`), no renderer code. Recommendation: (b).
+
+### Known edges (not fixed, by design or too rare)
+
+- If a clip drops the head track as rest (the V9.2 diet) and a head-only overlay then plays, the
+  mixer saves the head's original value at first activation, which already includes a small look
+  offset. The offset is at most a few degrees and decays as the look damps; not seen in the app.
+- Picking a clip that is still fading out (`fadeIn` restarts its weight ramp at 0) is possible only
+  when a pool is exhausted by cooldowns; the director prefers cooled clips, so it did not occur.
+- `typescript-reviewer` pass on `Teacher.tsx` and `Experience.tsx`: no crashes or leaks. One real bug
+  fixed (a reaction preempted by a quiz result or lesson completion never released the store's
+  gesture, so the next identical nod was not latched; `director.ts` now carries the release, with a
+  test). Not fixed, low: pitch is applied about the group's X axis, not the head's (about 6 deg of
+  roll at 40 deg yaw and 10 deg pitch); masked actions are not invalidated if a custom GLB URL
+  changes without a remount (`useAnimations` has the same limit); a correct answer and lesson
+  completion in the same frame drop the completion celebration; a few short-lived allocations per
+  frame; `quizActive` ignores DeskQuiz's `userId` gate.
+- The dev-only `window.__v93` hook used for these checks was reverted before committing, like
+  `__v91d` and `__v92`.

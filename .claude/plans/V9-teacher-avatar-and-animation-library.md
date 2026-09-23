@@ -381,7 +381,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.1 bake-off report, candidate chosen (2026-09-21 to 09-23): the Canino pair, Jake and MJ, shipped through V9.1b-e
 - [ ] V9.2 animation packs built for the new rig(s) and the Avaturn rig. **Canino rigs done 2026-09-23** (17 clips, base + lazy pack, see V9-REPORT "V9.2"); open: the Avaturn rig and the catalogue's gap clips
 - [x] V9.2b scale and placement (Hmz settled on taller-than-real, not the brief's original "believable adult"), fingers and Jake's trousers fixed (2026-09-23)
-- [ ] V9.3 manifest, director (tested), layers wired
+- [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for Hmz is in V9-REPORT)
 - [ ] V9.4 face, expressions, gaze
 - [ ] V9.5 integrated, budgets measured, docs and LICENSES.md done
 
