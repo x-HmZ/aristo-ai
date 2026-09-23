@@ -24,11 +24,9 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn
   - Fixed: the talking cycler skipped variants.
 - **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85; `typescript-reviewer` pass.
 
-**Next:** V9.3 director (manifest, pools, runtime time-warp; wire Idle3 and the waves).
-**Waiting on Hmz:**
-- the Mixamo downloads (8 search terms in the report);
-- a yes or no on downloading Quaternius UAL (CC0, no login);
-- a look at Idle3 in motion.
+**Next:** V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
+waves), then Tier 2 hand-keyed gestures for the gaps (see decisions.md "Clip sources").
+**Waiting on Hmz:** a look at Idle3 in motion.
 
 **Still open:** the Avaturn rig's packs (mirrors, diet); MJ's hair on her shoulder; the scalp
 seam.
