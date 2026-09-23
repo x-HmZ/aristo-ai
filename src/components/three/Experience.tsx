@@ -1,6 +1,6 @@
 "use client";
 
-import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
+import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
 import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
 import { Component, Suspense, useEffect, useRef, useMemo, type ErrorInfo, type ReactNode } from "react";
@@ -309,8 +309,8 @@ function TeachingImagePanel({ imageUrl }: { imageUrl: string }) {
 }
 
 // ─── Teacher error boundary ───────────────────────────────────────────────────
-// Catches GLB 404s / parse errors from useGLTF and resets the avatar to Ryan
-// so the scene never stays blank when an optional avatar GLB is missing.
+// Catches GLB 404s / parse errors from useGLTF and resets the avatar to the default
+// (Jake) so the scene never stays blank when an optional avatar GLB is missing.
 
 interface TeacherBoundaryProps { children: ReactNode; onError: () => void }
 interface TeacherBoundaryState { hasError: boolean }
@@ -341,8 +341,15 @@ function AvatarLoadingPlaceholder({ position, scale, rotationY }: { position: [n
 function SafeTeacher(props: React.ComponentProps<typeof Teacher>) {
   const setTeacher = useAristoStore((s) => s.setTeacher);
   const { position = [-1, -1.7, -3], scale = 1.5, rotationY = 0.35 } = props;
+  // A teacher that fails to load is swapped for the default. Keyed by avatar so
+  // the boundary resets with the switch (an errored boundary renders nothing
+  // and would otherwise stay blank), and a default that itself fails stays put
+  // rather than looping.
   return (
-    <TeacherErrorBoundary onError={() => setTeacher("ryan")}>
+    <TeacherErrorBoundary
+      key={props.teacher}
+      onError={() => { if (props.teacher !== DEFAULT_TEACHER) setTeacher(DEFAULT_TEACHER); }}
+    >
       <Suspense fallback={<AvatarLoadingPlaceholder position={position as [number,number,number]} scale={scale} rotationY={rotationY} />}>
         {/* Keyed by avatar so a switch fully remounts the rig: new group, new
             mixer, new actions. Without this, switching between two avatars that

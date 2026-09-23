@@ -29,9 +29,14 @@ import { headBoneOf, maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/
 // ─── Avatar config ────────────────────────────────────────────────────────────
 //
 // To add a new avatar:
-//   1. Drop Teacher_<Name>.glb + animations_<Name>.glb into public/models/.
-//   2. Add an entry here.
-//   3. Flip readyToUse to true in TeacherControls.tsx.
+//   1. Drop Teacher_<Name>.glb (base clips inside it, or a separate
+//      animations_<Name>.glb) into public/models/, plus a clip pack if it has one.
+//   2. Add an entry here, with a `credit` if its licence needs one, and a row
+//      in LICENSES.md.
+//   3. List it in ACTIVE_TEACHERS in useAristoStore.ts to offer it in the pickers.
+//
+// The default teacher is Jake (DEFAULT_TEACHER in useAristoStore.ts); MJ is the
+// second. Ryan, Sonia, Marcus and Priya are archived: configured, not offered.
 //
 // ── Recommended realistic sources (free, commercial-OK) ──────────────────────
 //
@@ -379,8 +384,8 @@ export function Teacher({
   // on every frame and the animation kept re-randomising itself.
   //
   // Custom avatar fallback: if the user picked "custom" but never finished
-  // /create-teacher (customTeacherGlbUrl is null), fall back to the Ryan GLB
-  // so the scene doesn't crash on a null model URL.
+  // /create-teacher (customTeacherGlbUrl is null), fall back to the default
+  // teacher (Jake) so the scene doesn't crash on a null model URL.
   const { sceneUrl, animUrl, cfg } = useMemo(() => {
     const useCustom = teacher === "custom" && !!customTeacherGlbUrl;
     if (useCustom) {
@@ -394,9 +399,9 @@ export function Teacher({
       };
     }
     const key = teacher === "custom"
-      ? "ryan"
+      ? DEFAULT_TEACHER
       : (teacher as Exclude<TeacherAvatar, "custom">);
-    const asset = AVATAR_ASSETS[key] ?? AVATAR_ASSETS.ryan;
+    const asset = AVATAR_ASSETS[key] ?? AVATAR_ASSETS[DEFAULT_TEACHER];
     return {
       sceneUrl: `/models/${asset.sceneFile}`,
       animUrl:  `/models/${asset.animFile}`,
