@@ -10,12 +10,14 @@ export type { LessonPayload, CourseStructure };
 
 export type TeacherMode   = "course" | "free";
 /**
- * The avatar a new session starts on, and the only one preloaded eagerly.
+ * The avatar a new session starts on (Jake, decided by Hmz 2026-09-23), and the
+ * only one preloaded eagerly. MJ is the second teacher in the picker.
  *
  * It has to be a rig that can lipsync -- the product's central visual claim --
- * which rules out ryan and sonia (no viseme blend shapes). jake carries the 15
- * visemes and his clips are embedded in his own GLB, so the whole avatar is one
- * 2.5 MB file against marcus + the shared Avaturn pack at ~11.6 MB.
+ * which rules out ryan and sonia (no viseme blend shapes). jake carries 14
+ * visemes and his three base clips live in his own GLB (2.3 MB); the other 14
+ * clips are a 0.5 MB pack fetched after the scene is ready, so the eager
+ * payload is one file against marcus + the shared Avaturn pack at ~11.6 MB.
  *
  * Anything preloading or prefetching "the default" must follow this constant --
  * Teacher.tsx's preloadDefaultAvatar() reads it; the sign-in page's
@@ -43,8 +45,8 @@ export type TeacherAvatar =
   | "sonia"
   | "marcus"   // realistic adult male — drop Teacher_Marcus.glb + animations_Marcus.glb
   | "priya"    // realistic adult female — drop Teacher_Priya.glb + animations_Priya.glb
-  | "jake"     // stylised adult male (Canino3d, CC BY 4.0) — clips embedded in Teacher_Jake.glb
-  | "mj"       // stylised adult female (Canino3d, CC BY 4.0) — clips embedded in Teacher_MJ.glb
+  | "jake"     // stylised adult male (Canino3d, CC BY 4.0) — the default; base clips in Teacher_Jake.glb, rest in Teacher_Jake_clips.glb
+  | "mj"       // stylised adult female (Canino3d, CC BY 4.0) — base clips in Teacher_MJ.glb, rest in Teacher_MJ_clips.glb
   | "custom";  // Avaturn-generated avatar
 export type Classroom     = "default" | "alternative" | "none";
 

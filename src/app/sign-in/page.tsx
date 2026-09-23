@@ -19,8 +19,8 @@ export default async function SignInPage({ searchParams }: PageProps) {
           they're rendered.
 
           These must stay in sync with DEFAULT_TEACHER in useAristoStore.ts —
-          currently jake, whose clips are embedded in his own GLB, so one file
-          covers the avatar. Prefetching the wrong avatar is worse than
+          currently jake, whose scene and base clips are one GLB; his clip pack
+          loads after the scene and is not prefetched. Prefetching the wrong avatar is worse than
           prefetching none: it spends the user's bandwidth on a file /learn
           never opens. */}
       <link rel="prefetch" href="/models/Teacher_Jake.glb" as="fetch" crossOrigin="anonymous" />

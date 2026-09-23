@@ -57,7 +57,7 @@ export type Layer = "base" | "upper" | "face" | "look";
 /** Where the head aims. `none` hands the head back to the clip. */
 export type LookTarget = "camera" | "board" | "model" | "desk" | "none";
 
-/** Expression hint for the face layer. Rendered from V9.4; ignored before. */
+/** Expression hint for the face layer: a smile level plus, for `thinking`, averted eyes (face.ts, gaze.ts). */
 export type FaceHint = "neutral" | "smile" | "warm" | "thinking";
 
 export interface ScenarioSpec {

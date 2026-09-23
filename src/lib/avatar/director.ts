@@ -9,7 +9,7 @@
  * - overlay: at most one upper-body or head clip over the base, played once
  *   (greeting, long wait, answer reactions), blended in and out by weight;
  * - look: where the head aims (camera, board, model, desk, or nowhere);
- * - face: an expression hint for V9.4.
+ * - face: an expression hint the renderer turns into a smile level and eye gaze (face.ts, gaze.ts).
  *
  * The rules that each fixed a real regression before this module existed,
  * kept here so they cannot come back:
