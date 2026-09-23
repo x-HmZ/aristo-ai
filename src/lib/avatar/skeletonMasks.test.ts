@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { maskTrackNames, skeletonMasks, trackNode, type BoneInfo } from "@/lib/avatar/skeletonMasks";
+import { headBoneOf, maskTrackNames, skeletonMasks, trackNode, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 
 /** Builds a skeleton from "parent > child" chains; shared prefixes merge. */
 function skeleton(...chains: string[][]): BoneInfo[] {
@@ -64,5 +64,16 @@ describe("track helpers", () => {
   it("keeps only the tracks of masked bones", () => {
     const tracks = ["Hips.position", "Hips.quaternion", "Neck.quaternion", "Head.quaternion", "LeftUpLeg.quaternion"];
     expect(maskTrackNames(tracks, new Set(["Neck", "Head"]))).toEqual(["Neck.quaternion", "Head.quaternion"]);
+  });
+});
+
+describe("headBoneOf", () => {
+  it("finds the head on each rig", () => {
+    expect(headBoneOf(CANINO)).toBe("CC_Base_Head");
+    expect(headBoneOf(AVATURN)).toBe("Head");
+  });
+  it("is null without a head under the hips", () => {
+    expect(headBoneOf(skeleton(["Root", "Spine"]))).toBeNull();
+    expect(headBoneOf([])).toBeNull();
   });
 });

@@ -28,6 +28,26 @@ const HEAD = /head$/i;
 const HIP  = /hips?$/i;
 const NECK = /neck/i;
 
+/** The name of the head bone (the one whose chain passes through the hips), or null. */
+export function headBoneOf(bones: readonly BoneInfo[]): string | null {
+  const chain = headChainOf(bones);
+  return chain ? chain[chain.length - 1] : null;
+}
+
+function headChainOf(bones: readonly BoneInfo[]): string[] | null {
+  const parentOf = new Map(bones.map((b) => [b.name, b.parent]));
+  for (const b of bones) {
+    if (!HEAD.test(b.name)) continue;
+    const chain: string[] = [];
+    for (let n: string | null | undefined = b.name; n; n = parentOf.get(n)) {
+      if (chain.includes(n)) break; // a malformed cycle
+      chain.unshift(n);
+    }
+    if (chain.some((n) => HIP.test(n))) return chain;
+  }
+  return null;
+}
+
 export function skeletonMasks(bones: readonly BoneInfo[]): SkeletonMasks {
   const parentOf = new Map(bones.map((b) => [b.name, b.parent]));
   const children = new Map<string, string[]>();
@@ -38,14 +58,6 @@ export function skeletonMasks(bones: readonly BoneInfo[]): SkeletonMasks {
     children.set(b.parent, list);
   }
 
-  const chainTo = (name: string): string[] => {
-    const chain: string[] = [];
-    for (let n: string | null | undefined = name; n; n = parentOf.get(n)) {
-      if (chain.includes(n)) break; // a malformed cycle
-      chain.unshift(n);
-    }
-    return chain;
-  };
   const subtree = (root: string): Set<string> => {
     const out = new Set<string>();
     const stack = [root];
@@ -58,11 +70,7 @@ export function skeletonMasks(bones: readonly BoneInfo[]): SkeletonMasks {
     return out;
   };
 
-  // The head is the one whose chain passes through the hips.
-  const headChain = bones
-    .filter((b) => HEAD.test(b.name))
-    .map((b) => chainTo(b.name))
-    .find((chain) => chain.some((n) => HIP.test(n)));
+  const headChain = headChainOf(bones);
   if (!headChain) return {};
 
   const masks: SkeletonMasks = {};
