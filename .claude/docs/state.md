@@ -24,9 +24,11 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not buil
 - Sizes: Jake 2.96 MB, MJ 2.92 MB. Gates: type-check clean, lint 22 (pre-existing), tests
   85/85.
 
-**Next:** Hmz to look at MJ in `/demo` (not re-checked there this session). More clips if
-wanted (Talking2 and the other Idle variants are in the pack). Still open: the hair clipping
-her shoulder, the forehead scalp seam, and the parked female narration.
+**Next:** V9.2, the animation library. Plan-mode first: channel diet (MJ carries 765 channels
+per clip) and how packs ship, then the remaining 10 source clips. Start prompt:
+`.claude/plans/NEXT-SESSION-V92-ANIMATION-LIBRARY.md`. Still open: MJ in `/demo` (not
+re-checked), her hair clipping the shoulder, the forehead scalp seam, and the parked female
+narration.
 
 ## 2026-09-23 — V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on Hmz
 
