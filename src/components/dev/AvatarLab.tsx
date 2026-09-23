@@ -29,15 +29,46 @@ import {
   visemeAt,
   type VisemeSpan,
 } from "@/lib/lipsync/visemes";
+import { FADE, overlayBlend, overlayWeight } from "@/lib/avatar/director";
+import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
+import { AVATAR_ASSETS } from "@/components/three/Teacher";
 
 const CANDIDATES = {
-  jake:   { file: "Teacher_Jake.glb",   label: "Jake (Canino, CC4)" },
-  mj:     { file: "Teacher_MJ.glb",     label: "MJ (Canino, CC4)" },
-  marcus: { file: "Teacher_Marcus.glb", label: "Marcus (shipping control)" },
+  jake:   { file: "Teacher_Jake.glb",   label: "Jake (Canino, CC4)", pack: "Teacher_Jake_clips.glb" },
+  mj:     { file: "Teacher_MJ.glb",     label: "MJ (Canino, CC4)",   pack: "Teacher_MJ_clips.glb" },
+  marcus: { file: "Teacher_Marcus.glb", label: "Marcus (shipping control)", pack: null },
 } as const;
 type CandidateKey = keyof typeof CANDIDATES;
 
 const CLIPS = ["Idle", "Talking", "Pointing"] as const;
+
+/**
+ * Overlay gestures to review in motion (V9.6), with the mask each plays under.
+ * Played the way Teacher.tsx plays an overlay: a masked copy of the pack clip
+ * over the base, weighted by the director's own fade and dominance curve. The
+ * V9.6 clips are not in the manifest until Hmz approves them; the last three
+ * are shipped overlays, for comparison.
+ */
+const GESTURES = [
+  { name: "PresentModel", mask: "upper", note: "V9.6" },
+  { name: "LookAgain",    mask: "head",  note: "V9.6" },
+  { name: "Encourage",    mask: "upper", note: "V9.6" },
+  { name: "Nodding",      mask: "head",  note: "shipped" },
+  { name: "ShakeNo",      mask: "head",  note: "shipped" },
+  { name: "Talking6M",    mask: "upper", note: "shipped (greeting)" },
+] as const;
+type GestureName = (typeof GESTURES)[number]["name"];
+interface GestureCue { name: GestureName; id: number; loop: boolean }
+
+/** Where the generated 3D model appears in the classroom (Experience.tsx SCENE_X/Y/Z). */
+const MODEL_SPOT: [number, number, number] = [0.37, 0.18, -3];
+
+/** Loads a teacher's lazy clip pack and hands its clips up. */
+function ClipPack({ url, onClips }: { url: string; onClips: (c: THREE.AnimationClip[]) => void }) {
+  const { animations } = useGLTF(url);
+  useEffect(() => { onClips(animations); }, [animations, onClips]);
+  return null;
+}
 
 /** The 15 the app drives, cleared every frame so none stick on. */
 const VISEMES = [
@@ -51,18 +82,78 @@ const SEGMENTS = Array.from({ length: 15 }, (_, i) =>
   `/demo/${DEMO}/seg_${String(i + 1).padStart(3, "0")}.mp3`);
 
 function Teacher({
-  candidate, clip, audio, onReport, onViseme,
+  candidate, clip, audio, onReport, onViseme, gesture, classroom, onGesture,
 }: {
   candidate: CandidateKey;
   clip: string;
   audio: HTMLAudioElement | null;
   onReport: (r: { morphs: string[]; clips: string[]; current: string }) => void;
   onViseme: (v: string, spans: number) => void;
+  gesture: GestureCue | null;
+  classroom: boolean;
+  onGesture: (status: string) => void;
 }) {
   const url = `/models/${CANDIDATES[candidate].file}`;
+  const pack = CANDIDATES[candidate].pack;
   const { scene, animations } = useGLTF(url);
   const root = useRef<THREE.Group>(null);
-  const { actions } = useAnimations(animations, root);
+  const { actions, mixer } = useAnimations(animations, root);
+  const [packClips, setPackClips] = useState<THREE.AnimationClip[]>([]);
+
+  // Overlay masks by structure, as Teacher.tsx finds them.
+  const masks = useMemo(() => {
+    const bones: BoneInfo[] = [];
+    scene.traverse((o) => {
+      const b = o as THREE.Bone;
+      if (b.isBone) bones.push({ name: b.name, parent: (b.parent as THREE.Bone | null)?.isBone ? b.parent!.name : null });
+    });
+    return skeletonMasks(bones);
+  }, [scene]);
+
+  const clock = useRef(0);
+  const play = useRef<{
+    action: THREE.AnimationAction; startedAt: number; fadeIn: number; fadeOutAt: number; endsAt: number;
+  } | null>(null);
+  const masked = useRef(new Map<string, THREE.AnimationAction>());
+
+  const startGesture = useCallback((name: GestureName) => {
+    const spec = GESTURES.find((g) => g.name === name)!;
+    const source = packClips.find((c) => c.name === name);
+    const bones = masks[spec.mask];
+    if (!source || !bones || !root.current) {
+      onGesture(!source ? `${name}: not in this teacher's pack` : `${name}: no ${spec.mask} mask`);
+      return;
+    }
+    let action = masked.current.get(name);
+    if (!action) {
+      const keep = new Set(maskTrackNames(source.tracks.map((t) => t.name), bones));
+      const tracks = source.tracks.filter((t) => keep.has(t.name)).map((t) => t.clone());
+      action = mixer.clipAction(new THREE.AnimationClip(`${name}@${spec.mask}`, source.duration, tracks), root.current);
+      action.setLoop(THREE.LoopOnce, 1);
+      action.clampWhenFinished = true;
+      masked.current.set(name, action);
+    }
+    play.current?.action.stop();
+    const head = spec.mask === "head";
+    const fadeOut = head ? FADE.headOut : FADE.upperOut;
+    const now = clock.current;
+    action.reset().setEffectiveWeight(0).play();
+    play.current = {
+      action, startedAt: now, fadeIn: head ? FADE.headIn : FADE.upperIn,
+      fadeOutAt: now + Math.max(0, source.duration - fadeOut), endsAt: now + source.duration,
+    };
+    onGesture(`${name}@${spec.mask}: ${action.getClip().tracks.length} tracks, ${source.duration.toFixed(2)} s`);
+  }, [packClips, masks, mixer, onGesture]);
+
+  // A new cue plays at once; a looping cue replays 1 s after it ends.
+  const cue = useRef<GestureCue | null>(null);
+  const replayAt = useRef<number | null>(null);
+  useEffect(() => {
+    cue.current = gesture;
+    replayAt.current = null;
+    if (gesture) startGesture(gesture.name);
+    else { play.current?.action.stop(); play.current = null; }
+  }, [gesture, startGesture]);
   const [timeline, setTimeline] = useState<VisemeSpan[]>([]);
   const blink = useRef(0);
   const lastViseme = useRef("—");
@@ -130,6 +221,23 @@ function Teacher({
   };
 
   useFrame((_, dt) => {
+    clock.current += dt;
+    const p = play.current;
+    if (p) {
+      if (clock.current >= p.endsAt) {
+        p.action.stop();
+        play.current = null;
+        if (cue.current?.loop) replayAt.current = clock.current + 1;
+      } else {
+        // Not fadeIn/fadeOut: through the dominance ratio they pop (Teacher.tsx).
+        p.action.setEffectiveWeight(overlayWeight(overlayBlend(p, clock.current)));
+      }
+    }
+    if (replayAt.current !== null && clock.current >= replayAt.current && cue.current) {
+      replayAt.current = null;
+      startGesture(cue.current.name);
+    }
+
     const t = audio && !audio.paused ? audio.currentTime : NaN;
     const v = timeline.length ? visemeAt(timeline, t) : null;
     for (const name of VISEMES) {
@@ -150,9 +258,32 @@ function Teacher({
     setMorph("eyeBlinkRight", closed, 0.5);
   });
 
-  // Same placement as Experience.tsx (scale 1.5, rotY 0.3), but centred on x
-  // so the lab frames one candidate at a time.
-  return <primitive ref={root} object={scene} position={[0, -1.7, -3]} scale={1.5} rotation={[0, 0.3, 0]} />;
+  // Centred on x so the lab frames one candidate at a time; the classroom
+  // framing uses the app's own placement (Experience.tsx: x -1, standScale,
+  // rotY 0.3) and marks where the generated model appears.
+  const standScale = candidate === "marcus" ? 1.5 : AVATAR_ASSETS[candidate].standScale ?? 1.5;
+  return (
+    <>
+      <primitive
+        ref={root}
+        object={scene}
+        position={classroom ? [-1, -1.7, -3] : [0, -1.7, -3]}
+        scale={classroom ? standScale : 1.5}
+        rotation={[0, 0.3, 0]}
+      />
+      {pack && (
+        <Suspense fallback={null}>
+          <ClipPack url={`/models/${pack}`} onClips={setPackClips} />
+        </Suspense>
+      )}
+      {classroom && (
+        <mesh position={MODEL_SPOT}>
+          <sphereGeometry args={[0.18, 24, 16]} />
+          <meshStandardMaterial color="#F97B2F" transparent opacity={0.45} />
+        </mesh>
+      )}
+    </>
+  );
 }
 
 /**
@@ -161,8 +292,10 @@ function Teacher({
  * distance, and lesson distance is the only framing that matters for casting.
  */
 const VIEWS = {
-  lesson: { pos: [0, -0.2, 0.9], target: [0, -0.2, -3] },
-  face:   { pos: [0, 0.82, -1.75], target: [0, 0.82, -3] },
+  lesson:    { pos: [0, -0.2, 0.9], target: [0, -0.2, -3] },
+  face:      { pos: [0, 0.82, -1.75], target: [0, 0.82, -3] },
+  // The app's camera and placement (AristoCanvas.tsx, Experience.tsx).
+  classroom: { pos: [0, 0, 0.9], target: [0, 0, 0.4] },
 } as const;
 type ViewKey = keyof typeof VIEWS;
 
@@ -189,6 +322,9 @@ export default function AvatarLab() {
   const [view, setView] = useState<ViewKey>("lesson");
   const [live, setLive] = useState("—");
   const [spans, setSpans] = useState(0);
+  const [gesture, setGesture] = useState<GestureCue | null>(null);
+  const [loop, setLoop] = useState(true);
+  const [gestureStatus, setGestureStatus] = useState("—");
   // Stable identity: Teacher calls this from an effect, so a new function
   // every render would re-run that effect in a loop.
   const onViseme = useCallback((v: string, n: number) => { setLive(v); setSpans(n); }, []);
@@ -215,6 +351,9 @@ export default function AvatarLab() {
               audio={audioEl}
               onReport={setReport}
               onViseme={onViseme}
+              gesture={gesture}
+              classroom={view === "classroom"}
+              onGesture={setGestureStatus}
             />
           </Suspense>
           <Framing view={view} controls={controls} />
@@ -250,6 +389,29 @@ export default function AvatarLab() {
               {c}
             </button>
           ))}
+        </Section>
+
+        <Section title="Gesture review (over the clip above)">
+          {GESTURES.map((g) => (
+            <button key={g.name} title={`${g.mask} mask, ${g.note}`}
+              onClick={() => setGesture({ name: g.name, id: Date.now(), loop })}
+              style={{ ...btn, marginBottom: 6, background: gesture?.name === g.name ? "#F97B2F" : "#F3E7DA", color: gesture?.name === g.name ? "#fff" : "#4A3A2C" }}>
+              {g.name}
+            </button>
+          ))}
+          <div style={{ marginTop: 4, fontSize: 13 }}>
+            <label>
+              <input type="checkbox" checked={loop}
+                onChange={(e) => { setLoop(e.target.checked); setGesture((g) => g && { ...g, loop: e.target.checked, id: Date.now() }); }} />{" "}
+              replay every time it ends
+            </label>{" "}
+            <button style={btn} onClick={() => setGesture(null)}>stop</button>
+          </div>
+          <div style={{ ...mono, marginTop: 6 }}>{gestureStatus}</div>
+          <div style={{ fontSize: 11, color: "#9A8574", marginTop: 4 }}>
+            &quot;classroom&quot; framing is the app&apos;s camera and placement; the orange ball is where the 3D model appears.
+            The app also turns the head toward the model, which this page does not.
+          </div>
         </Section>
 
         <Section title="Demo narration (heart)">
