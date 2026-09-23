@@ -41,13 +41,23 @@ export const SMILE_SPEAKING: Record<FaceHint, number> = {
 export const SMILE_RATE_IN  = 3.5;
 export const SMILE_RATE_OUT = 9;
 
-export function smileTarget(face: FaceHint, speaking: boolean): number {
-  return (speaking ? SMILE_SPEAKING : SMILE_REST)[face];
+/** Gain for a rig whose `mouthSmile` has not been checked at the tuned levels. */
+export const SMILE_GAIN_UNTUNED = 0.4;
+
+/**
+ * The smile for a hint. `gain` scales how far the hint lifts above the plain
+ * (neutral) level, for rigs whose `mouthSmile` is stronger than the Canino
+ * pair's the tables above were tuned on: 1 is as tuned, 0 shows no hint.
+ */
+export function smileTarget(face: FaceHint, speaking: boolean, gain = 1): number {
+  const table = speaking ? SMILE_SPEAKING : SMILE_REST;
+  const floor = table.neutral;
+  return floor + (table[face] - floor) * gain;
 }
 
 /** One smile step: frame-rate independent, fast down and slow up. */
-export function stepSmile(current: number, face: FaceHint, speaking: boolean, dt: number): number {
-  const target = smileTarget(face, speaking);
+export function stepSmile(current: number, face: FaceHint, speaking: boolean, dt: number, gain = 1): number {
+  const target = smileTarget(face, speaking, gain);
   const rate = target < current ? SMILE_RATE_OUT : SMILE_RATE_IN;
   return current + (target - current) * (1 - Math.exp(-rate * Math.max(0, dt)));
 }

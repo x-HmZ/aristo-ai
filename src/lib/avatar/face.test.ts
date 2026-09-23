@@ -31,6 +31,19 @@ describe("smile", () => {
     expect(smileTarget("smile", true)).toBe(SMILE_SPEAKING.smile);
   });
 
+  it("scales the lift above neutral by the rig's gain, never the plain level", () => {
+    for (const speaking of [false, true]) {
+      const plain = smileTarget("neutral", speaking);
+      expect(smileTarget("neutral", speaking, 0.4)).toBe(plain);
+      expect(smileTarget("smile", speaking, 0)).toBe(plain);
+      expect(smileTarget("smile", speaking, 1)).toBe(smileTarget("smile", speaking));
+      const half = smileTarget("smile", speaking, 0.5);
+      expect(half).toBeCloseTo(plain + (smileTarget("smile", speaking) - plain) / 2, 9);
+    }
+    // A hint below neutral (thinking) lifts less, not more, with a small gain.
+    expect(smileTarget("thinking", false, 0.4)).toBeGreaterThan(smileTarget("thinking", false));
+  });
+
   it("eases toward the target without overshoot", () => {
     let v = 0;
     let last = 0;

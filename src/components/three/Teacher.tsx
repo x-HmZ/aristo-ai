@@ -19,7 +19,7 @@ import {
   createDirectorState, overlayBlend, overlayWeight, phaseOf, stepDirector,
   type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
 } from "@/lib/avatar/director";
-import { createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
+import { SMILE_GAIN_UNTUNED, createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
 import {
   EYE_RATE, EYE_WEIGHT, createGazeState, eyeAim, gazeTarget, stepSaccade, type GazeState,
 } from "@/lib/avatar/gaze";
@@ -115,6 +115,13 @@ interface AvatarConfig {
      * directly from wawa-lipsync per frame instead of toggling mouthSmile.
      */
     visemes?:    boolean;
+    /**
+     * How strongly the director's face hint shows (face.ts): the smile levels
+     * are tuned on the Canino rigs, whose `mouthSmile` is a weak shape. Left
+     * unset it is SMILE_GAIN_UNTUNED, so a rig nobody has looked at cannot be
+     * over-driven; set 1 once a rig has been checked at the tuned levels.
+     */
+    smileGain?:  number;
   };
   pbrMaterials: boolean;
   /**
@@ -214,7 +221,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // 1.125 = 1.3824, height 2.57 m.
     standScale: 1.3824,
     clips:  CANINO_CLIP_SET,
-    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true, smileGain: 1 },
     pbrMaterials: true,
     credit: {
       title:     "Free Cartoon Game Man Character (Rigged)",
@@ -237,7 +244,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // back, per the app scale, not the GLB.
     standScale: 1.3521,
     clips:  CANINO_CLIP_SET,
-    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
+    morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true, smileGain: 1 },
     pbrMaterials: true,
     credit: {
       title:     "Free Stylized Cartoon Girl Rigged Character",
@@ -572,11 +579,11 @@ export function Teacher({
     if (masks.upper) maskSet.add("upper");
     if (masks.head) maskSet.add("head");
     // The eyes (V9.4): the Canino rigs' CC_Base_L_Eye / R_Eye. No clip animates
-    // them, so the rest pose is the bind pose. An offset is turned about the
+    // them, so the rest pose is the bind pose (a future clip that keys an eye
+    // would be overridden by this layer). An offset is turned about the
     // teacher's own axes, then carried into the eye's parent frame by the
     // parent's bind orientation (the eye bones' own axes are not aligned).
     const eyes: EyeBone[] = [];
-    scene.updateMatrixWorld(true);
     for (const b of byName.values()) {
       if (!/^CC_Base_[LR]_Eye(_\d+)?$/.test(b.name) || !b.parent) continue;
       const parentBind = b.parent.getWorldQuaternion(new Quaternion());
@@ -821,7 +828,7 @@ export function Teacher({
         const target = (v && v.viseme === name) ? Math.min(1, v.intensity * 1.4) : 0;
         lerpMorphTarget(name, target, 0.4);
       }
-      face.smile = stepSmile(face.smile, face.hint, isSpeaking, delta);
+      face.smile = stepSmile(face.smile, face.hint, isSpeaking, delta, cfg.morphs.smileGain ?? SMILE_GAIN_UNTUNED);
       if (cfg.morphs.mouthSmile) lerpMorphTarget(cfg.morphs.mouthSmile, face.smile, 1);
     } else if (cfg.morphs.mouthSmile) {
       lerpMorphTarget(cfg.morphs.mouthSmile, isSpeaking ? 0.5 : 0.2, isSpeaking ? 0.1 : 0.5);
