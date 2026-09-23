@@ -32,7 +32,8 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.2b"). Ran against `NEXT-SESSION-V92B
   transforms. Reverted before this commit, same as `__v91d`/`__v91dStore`.
 
 **Next:** V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
-waves).
+waves). Start prompt: `.claude/plans/NEXT-SESSION-V93-DIRECTOR.md` (Opus 5 to design, Sonnet 5 to
+grind — see "Model discipline" in the programme plan).
 
 **Still open:** the Avaturn rig's packs (mirrors, diet); the gap clips (Mixamo exhausted, see
 "Clip sources" below); MJ's hair on her shoulder; the scalp seam; female narration for MJ
