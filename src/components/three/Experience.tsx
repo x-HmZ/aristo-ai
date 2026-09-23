@@ -1,13 +1,13 @@
 "use client";
 
-import { useAristoStore } from "@/store/useAristoStore";
+import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
 import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
 import { Component, Suspense, useEffect, useRef, useMemo, type ErrorInfo, type ReactNode } from "react";
 import { Group, MeshBasicMaterial, SRGBColorSpace } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { GeneratedModel } from "./GeneratedModel";
-import { Teacher } from "./Teacher";
+import { Teacher, AVATAR_ASSETS } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
 import { CameraController } from "./CameraController";
@@ -25,7 +25,7 @@ function RendererConfig() {
 // half-image (~0.73) left and up moves the plane towards the avatar's head
 // so "pointing" gestures actually land on the diagram instead of empty air.
 const SCENE_X = 0.37;   // was 1.1 — half-width left
-const SCENE_Y = 0.33;   // was -0.4 — half-height up (head/shoulder level)
+const SCENE_Y = 0.18;   // was 0.33, then -0.035 for the 2.2-2.3 m halfway pass — re-tuned again for standScale 10-15% taller still (V9.2b, Hmz)
 const SCENE_Z = -3;
 
 // 3D model anchor. This used to sit at the original chest-height spot
@@ -37,6 +37,15 @@ const SCENE_Z = -3;
 const MODEL_X = SCENE_X;
 const MODEL_Y = SCENE_Y;
 const MODEL_Z = SCENE_Z;
+
+// Legacy rigs (Ryan/Sonia/Marcus/Priya/custom Avaturn) never got measured
+// against the classroom furniture — only Jake and MJ, the shipped roster,
+// have a `standScale`. Keep the old flat 1.5 for everything else (V9.2b).
+const LEGACY_STAND_SCALE = 1.5;
+function standScaleFor(teacher: TeacherAvatar): number {
+  if (teacher === "custom") return LEGACY_STAND_SCALE;
+  return AVATAR_ASSETS[teacher]?.standScale ?? LEGACY_STAND_SCALE;
+}
 
 function Floor() {
   return (
@@ -377,7 +386,10 @@ function FloatingModel({
         modelUrl={modelUrl}
         modelAnnotations={modelAnnotations}
         position={[MODEL_X, MODEL_Y, MODEL_Z]}
-        scale={1.5}
+        // Was 1.5 — Hmz called the initial spawn size too big (V9.2b, 2026-09-23):
+        // 45% smaller (middle of his 40-50% ask), 1.5 * 0.55 = 0.825. The user's
+        // own scroll-to-resize (GeneratedModel's onWheel) is unaffected.
+        scale={0.825}
       />
     </Float>
   );
@@ -389,9 +401,10 @@ function FloatingModel({
 // visual cue — the actual interactive input is the AnswerInputPanel in the
 // right panel where typing/dictation makes sense.
 //
-// The avatar sits at [-1, -1.7, -3] with scale 1.5; head ≈ (avatarY + 1.4 * scale).
+// Re-tuned for standScale 10-15% taller still (V9.2b, Hmz — see SCENE_Y).
+// Jake and MJ differ by ~5 cm at this scale but share one bubble anchor.
 const TEACHER_HEAD_X = -0.25;
-const TEACHER_HEAD_Y = 0.55;
+const TEACHER_HEAD_Y = 0.65;
 const TEACHER_HEAD_Z = -3;
 
 function YourTurnBubble() {
@@ -479,7 +492,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       <SafeTeacher
         teacher={teacher}
         position={[-1, -1.7, SCENE_Z]}
-        scale={1.5}
+        scale={standScaleFor(teacher)}
         rotationY={0.3}
       />
 

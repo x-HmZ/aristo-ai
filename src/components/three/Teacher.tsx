@@ -76,6 +76,16 @@ interface AvatarConfig {
    */
   clipPacks?:       readonly string[];
   spawnLabelHeight: number;
+  /**
+   * World-space height multiplier applied in Experience.tsx (SafeTeacher's
+   * `scale` prop). The Canino rigs are normalised in Blender to Marcus's
+   * TARGET_HEIGHT (1.859 m, see v9_export.py) regardless of the character's
+   * real-world height, so this is where each teacher gets their own stature
+   * back: `standScale * 1.859` should equal the real height. Falls back to
+   * the legacy flat 1.5 (Ryan/Sonia/Marcus/Priya/custom) when unset — those
+   * rigs were never measured against real-world furniture (V9.2b).
+   */
+  standScale?:      number;
   clips: {
     idle:     string[];   // one or more; cycles on a timer when standing still
     thinking: string[];   // one or more; cycles at clip end while loading
@@ -211,7 +221,14 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_Jake.glb",
     animFile:  "Teacher_Jake.glb",
     clipPacks: ["Teacher_Jake_clips.glb"],
-    spawnLabelHeight: 1.4,
+    // Local units (pre-scale): was 1.4, tuned for the old flat scale=1.5.
+    // Re-tuned in world space for the new standScale (V9.2b).
+    spawnLabelHeight: 2.1,
+    // Real height (1.78 m / 1.859 m TARGET_HEIGHT) read as a dwarf next to
+    // the old 2.79 m giant (Hmz, 2026-09-23) — halfway between the two was
+    // 1.2288 (2.28 m), then Hmz asked for 10-15% taller still: 1.2288 *
+    // 1.125 = 1.3824, height 2.57 m.
+    standScale: 1.3824,
     clips:  CANINO_CLIPS,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
@@ -226,7 +243,15 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_MJ.glb",
     animFile:  "Teacher_MJ.glb",
     clipPacks: ["Teacher_MJ_clips.glb"],
-    spawnLabelHeight: 1.4,
+    // See Jake's comment — same re-tune for the new standScale (V9.2b).
+    spawnLabelHeight: 2.1,
+    // Real height (1.68 m) read as a dwarf next to the old 2.79 m giant
+    // (Hmz, 2026-09-23) — halfway between the two was 1.2019 (2.23 m), then
+    // Hmz asked for 10-15% taller still: 1.2019 * 1.125 = 1.3521, height
+    // 2.51 m. She was normalised to Jake's rig height
+    // (v9_export.TARGET_HEIGHT), so this is where she gets her own stature
+    // back, per the app scale, not the GLB.
+    standScale: 1.3521,
     clips:  CANINO_CLIPS,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
