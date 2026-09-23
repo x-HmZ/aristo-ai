@@ -31,7 +31,26 @@
  *   scene is right, so three.js loads the right one, but the rest is cruft.
  *
  * Then the size pass the app expects: WebP textures at 1024, Draco geometry
- * (the app self-hosts the Draco decoder and has no meshopt decoder).
+ * (the app self-hosts the Draco decoder).
+ *
+ * Animation (V9.2):
+ *
+ * - Tracks that hold their node's rest value on every key are dropped. MJ's
+ *   rig exports 765 channels per clip, 625-654 of them rest constants
+ *   (`_scaleCompensation` bones, `_0`/`_1` leaf duplicates, every scale), and
+ *   in glTF each one costs a channel, a sampler and two accessors of JSON:
+ *   0.76 MB of her 1.32 MB of animation. three.js restores a node's loaded
+ *   value when no action drives it, and blends it in for missing weight during
+ *   a crossfade, so a dropped rest track plays exactly like a kept one. Tracks
+ *   that hold an off-rest value (a curled finger) are kept.
+ * - `--resample <tol>` optionally removes keys an interpolation reproduces;
+ *   off by default (see resampleTol below).
+ * - `--base A,B,C --pack <clips.glb>` splits the file: the output keeps the
+ *   mesh and the base clips; the pack gets every other clip on the same node
+ *   tree (no meshes, skins or materials), so its tracks bind to the mesh
+ *   file's bones by name. The pack is meshopt-compressed: drei's useGLTF
+ *   registers the meshopt decoder on every loader, so it decodes for free.
+ * `v9_verify_anim.mjs` checks the result against the raw export in three.js.
  */
 
 import { createRequire } from "module";
@@ -44,9 +63,12 @@ const require = createRequire(path.join(process.cwd(), "package.json"));
 const imp = (p) => import(pathToFileURL(path.join(process.cwd(), "node_modules", p, "dist", "index.js")).href);
 const { NodeIO } = await imp("@gltf-transform/core");
 const { ALL_EXTENSIONS } = await imp("@gltf-transform/extensions");
-const { dedup, prune, draco, textureCompress } = await imp("@gltf-transform/functions");
+const { cloneDocument, dedup, prune, draco, meshopt, resample, textureCompress } =
+  await imp("@gltf-transform/functions");
 const draco3d = require("draco3dgltf");
 const sharp = require("sharp");
+const { MeshoptEncoder } = require("meshoptimizer");
+await MeshoptEncoder.ready;
 
 const args = process.argv.slice(2);
 const [src, out] = args;
@@ -54,11 +76,111 @@ const flag = (name) => args.flatMap((a, i) => (a === name ? [args[i + 1]] : []))
 const eyelashFrom = flag("--eyelash-from")[0];
 const dropMaterials = new Set(flag("--drop-material"));
 const copyright = flag("--copyright")[0];
+const base = flag("--base")[0]?.split(",");
+const packOut = flag("--pack")[0];
+// Off by default. Measured on MJ's 8-clip export (V9.2): 1e-4 saves 0.18 MB
+// but moves bones up to 0.45 deg / 7 mm against the raw export; 1e-5 saves
+// 27 KB and grows the pack, because resampled tracks lose the one shared
+// time accessor per clip, which meshopt compresses well. The prune alone is
+// exact (<= 0.06 deg, 0.006 mm).
+const resampleTol = Number(flag("--resample")[0] ?? 0);
+if (!base !== !packOut) throw new Error("--base and --pack go together");
 
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
   "draco3d.decoder": await draco3d.createDecoderModule(),
   "draco3d.encoder": await draco3d.createEncoderModule(),
+  "meshopt.encoder": MeshoptEncoder,
 });
+
+// Rest-track tolerances: 0.05 deg, and 0.1 mm in the node's local units.
+// Non-hip translations on these rigs wobble by float noise up to 40 um.
+const ROT_TOL = Math.cos((0.05 * Math.PI) / 180 / 2);
+const POS_TOL = 1e-4;
+
+function holdsRest(channel) {
+  const path = channel.getTargetPath();
+  if (!["rotation", "translation", "scale"].includes(path)) return false;
+  const node = channel.getTargetNode();
+  const rest = path === "rotation" ? node.getRotation()
+    : path === "translation" ? node.getTranslation() : node.getScale();
+  const values = channel.getSampler().getOutput().getArray();
+  const k = rest.length;
+  for (let i = 0; i < values.length; i += k) {
+    if (path === "rotation") {
+      let dot = 0;
+      for (let j = 0; j < 4; j++) dot += values[i + j] * rest[j];
+      if (Math.abs(dot) < ROT_TOL) return false;
+    } else {
+      for (let j = 0; j < 3; j++) if (Math.abs(values[i + j] - rest[j]) > POS_TOL) return false;
+    }
+  }
+  return true;
+}
+
+function pruneRestTracks(doc) {
+  let dropped = 0, kept = 0;
+  for (const anim of doc.getRoot().listAnimations()) {
+    for (const ch of anim.listChannels()) {
+      if (holdsRest(ch)) {
+        ch.dispose();
+        dropped++;
+      } else kept++;
+    }
+    const used = new Set(anim.listChannels().map((ch) => ch.getSampler()));
+    for (const s of anim.listSamplers()) if (!used.has(s)) s.dispose();
+  }
+  return { dropped, kept };
+}
+
+// Rotation outputs as normalized int16, which core glTF allows for rotation
+// samplers and three's GLTFLoader decodes. 1/32767 per component is about
+// 0.004 deg; the base GLB carries Draco, not meshopt, so this is the only
+// compression its animation gets. Translations stay float (the spec wants it).
+function quantizeRotations(doc) {
+  const done = new Set();
+  for (const anim of doc.getRoot().listAnimations()) {
+    for (const ch of anim.listChannels()) {
+      const out = ch.getSampler().getOutput();
+      if (ch.getTargetPath() !== "rotation" || done.has(out) || out.getNormalized()) continue;
+      const src = out.getArray();
+      const q = new Int16Array(src.length);
+      for (let i = 0; i < src.length; i++) q[i] = Math.round(Math.max(-1, Math.min(1, src[i])) * 32767);
+      out.setArray(q).setNormalized(true);
+      done.add(out);
+    }
+  }
+  return done.size;
+}
+
+// Animation.dispose() leaves its samplers alive, still holding their
+// accessors, so prune() keeps the data: the first 17-clip split left 0.72 MB
+// of pack keyframes inside each base file.
+function dropAnimation(a) {
+  for (const ch of a.listChannels()) ch.dispose();
+  for (const s of a.listSamplers()) s.dispose();
+  a.dispose();
+}
+
+// The pack: the same node tree, the non-base clips, nothing else.
+async function writePack(doc, path) {
+  const pack = cloneDocument(doc);
+  const root = pack.getRoot();
+  for (const a of root.listAnimations()) if (base.includes(a.getName())) dropAnimation(a);
+  for (const n of root.listNodes()) {
+    n.setMesh(null);
+    n.setSkin(null);
+  }
+  for (const m of root.listMeshes()) m.dispose();
+  for (const s of root.listSkins()) s.dispose();
+  for (const m of root.listMaterials()) m.dispose();
+  for (const t of root.listTextures()) t.dispose();
+  for (const e of root.listExtensionsUsed()) e.dispose();
+  // keepLeaves: bones with no children must survive, or their tracks lose
+  // their target and the clip stops binding in the app.
+  await pack.transform(prune({ keepLeaves: true }), meshopt({ encoder: MeshoptEncoder, level: "medium" }));
+  await io.write(path, pack);
+  return root.listAnimations().map((a) => `${a.getName()}(${a.listChannels().length})`);
+}
 
 const doc = await io.read(src);
 const root = doc.getRoot();
@@ -126,6 +248,19 @@ for (const m of root.listMaterials()) {
     log.push(`${n}: metallic 1 -> 0`);
   }
 }
+
+const diet = pruneRestTracks(doc);
+log.push(`animation: dropped ${diet.dropped} rest tracks, kept ${diet.kept}`);
+if (resampleTol > 0) await doc.transform(resample({ tolerance: resampleTol }));
+log.push(`animation: ${quantizeRotations(doc)} rotation outputs as int16`);
+
+if (packOut) {
+  const missing = base.filter((b) => !root.listAnimations().some((a) => a.getName() === b));
+  if (missing.length) throw new Error(`base clips not in the export: ${missing.join(", ")}`);
+  log.push(`pack ${packOut}: ${(await writePack(doc, packOut)).join(" ")}`);
+  for (const a of root.listAnimations()) if (!base.includes(a.getName())) dropAnimation(a);
+}
+log.push(`base: ${root.listAnimations().map((a) => `${a.getName()}(${a.listChannels().length})`).join(" ")}`);
 
 await doc.transform(
   prune(),
