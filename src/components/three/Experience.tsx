@@ -7,11 +7,11 @@ import { Component, Suspense, useEffect, useRef, useMemo, type ErrorInfo, type R
 import { Group, MeshBasicMaterial, SRGBColorSpace } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { GeneratedModel } from "./GeneratedModel";
-import { Teacher, AVATAR_ASSETS } from "./Teacher";
+import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
 import { CameraController } from "./CameraController";
-import { DeskQuiz } from "./DeskQuiz";
+import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 
 // Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
 function RendererConfig() {
@@ -470,6 +470,15 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const showModel = !!activeModelUrl && viewMode3d;
   const showImage = !showModel && !!activePreviewImageUrl;
 
+  // Where the teacher's head looks (V9.3): the board and a shown model share
+  // the scene anchor; the desk is the quiz paper.
+  const paperAnchor = devOverrides?.paperAnchor;
+  const lookTargets = useMemo<LookTargets>(() => ({
+    board: [SCENE_X, SCENE_Y, SCENE_Z],
+    model: [SCENE_X, SCENE_Y, SCENE_Z],
+    desk:  paperAnchor ?? PAPER_ANCHOR,
+  }), [paperAnchor]);
+
   return (
     <>
       <RendererConfig />
@@ -494,6 +503,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
         position={[-1, -1.7, SCENE_Z]}
         scale={standScaleFor(teacher)}
         rotationY={0.3}
+        lookTargets={lookTargets}
       />
 
       {/* Awaiting-answer cue — avatar speech bubble */}
@@ -502,7 +512,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       {/* In-scene quiz on the desk paper.  Self-gated on store.activeQuiz —
           renders nothing when no quiz is active. */}
       <Suspense fallback={null}>
-        <DeskQuiz paperAnchor={devOverrides?.paperAnchor} />
+        <DeskQuiz paperAnchor={paperAnchor} />
       </Suspense>
 
       {showModel ? (

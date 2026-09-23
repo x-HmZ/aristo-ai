@@ -5,15 +5,23 @@ import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/use
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
-import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Component, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
-  Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, SRGBColorSpace,
-  type AnimationAction, type AnimationClip,
+  AnimationClip, Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, Quaternion, SRGBColorSpace, Vector3,
+  type AnimationAction, type Bone,
 } from "three";
 import { randInt } from "three/src/math/MathUtils.js";
 import { getCurrentViseme } from "@/hooks/useTTS";
-
-const ANIMATION_FADE_TIME = 0.5;
+import {
+  AVATURN_CLIP_SET, CANINO_CLIP_SET, CUSTOM_CLIP_SET, LEGACY_CLIP_SET, MOUNT_CLIP,
+  type ClipMask, type LookTarget,
+} from "@/lib/avatar/animationManifest";
+import {
+  createDirectorState, overlayBlend, overlayWeight, phaseOf, stepDirector,
+  type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
+} from "@/lib/avatar/director";
+import { LOOK_RATE, LOOK_WEIGHT, aimAngles, damp, lookOffset, yawPitchOf } from "@/lib/avatar/look";
+import { headBoneOf, maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 
 // ─── Avatar config ────────────────────────────────────────────────────────────
 //
@@ -71,7 +79,7 @@ interface AvatarConfig {
    * ready (V9.2) so they never compete with the first load. Their clips bind
    * to the teacher's bones by name. A clip named in `clips` that lives in a
    * pack is skipped until the pack arrives: pointing falls back to talking,
-   * nodding and shaking to idle. `clips.idle[0]` must live in `animFile`:
+   * nodding and shaking to idle. `MOUNT_CLIP` must live in `animFile`:
    * it is the clip a teacher mounts on.
    */
   clipPacks?:       readonly string[];
@@ -86,14 +94,11 @@ interface AvatarConfig {
    * rigs were never measured against real-world furniture (V9.2b).
    */
   standScale?:      number;
-  clips: {
-    idle:     string[];   // one or more; cycles on a timer when standing still
-    thinking: string[];   // one or more; cycles at clip end while loading
-    talking:  string[];   // one or more; cycles at clip end while speaking
-    pointing?: string[];  // played when gesture === "pointing"; falls back to talking
-    nodding?:  string[];  // played once on correct-answer feedback
-    shaking?:  string[];  // played once on incorrect-answer feedback
-  };
+  /**
+   * The clip names this avatar ships, a set from animationManifest.ts. What
+   * each clip is for lives in the manifest; the director (director.ts) picks.
+   */
+  clips: readonly string[];
   morphs: {
     mouthSmile?: string;  // blend-shape name for mouth-open / smile (legacy fallback)
     /**
@@ -138,22 +143,12 @@ const CANINO3D = {
   modified:   true,
 } as const;
 
-// Canino3d rigs: clips retargeted from the Mixamo pack behind
-// animations_Avaturn.glb. The teacher's own GLB carries the base clips (Idle,
-// Talking, Thinking); the rest come from its clip pack (V9.2). Their
-// "Thinking" is baked from the pack's Thinking2 (looking up, arms relaxed):
-// the pack's Thinking puts a hand to the chin, which on these proportions
-// lands on the chest (V9.1e). An `M` suffix is a left-right mirror. The pack
-// also carries Idle3 (a restless fidget), Talking6 and Talking6M (a wave),
-// kept out of these pools for the V9.3 director's long-wait and greeting rows.
-const CANINO_CLIPS: AvatarConfig["clips"] = {
-  idle:     ["Idle", "Idle2", "Idle4"],
-  thinking: ["Thinking", "ThinkingM"],
-  talking:  ["Talking", "Talking2", "Talking2M", "Talking3", "Talking3M", "Talking4"],
-  pointing: ["Pointing"],
-  nodding:  ["Nodding"],
-  shaking:  ["ShakeNo"],
-};
+// Canino3d rigs (Jake, MJ): clips retargeted from the Mixamo pack behind
+// animations_Avaturn.glb (CANINO_CLIP_SET). The teacher's own GLB carries the
+// base clips (Idle, Talking, Thinking); the rest come from its clip pack
+// (V9.2). Their "Thinking" is baked from the pack's Thinking2 (looking up,
+// arms relaxed): the pack's Thinking puts a hand to the chin, which on these
+// proportions lands on the chest (V9.1e). An `M` suffix is a left-right mirror.
 const ARKIT_BLINK = ["eyeBlinkLeft", "eyeBlinkRight"] as const;
 
 // Exported so TeacherControls.tsx can preload an avatar's GLBs on
@@ -166,7 +161,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_Ryan.glb",
     animFile:  "animations_Ryan.glb",
     spawnLabelHeight: 1.2,
-    clips:  { idle: ["Idle"], thinking: ["Thinking"], talking: ["Talking", "Talking2"] },
+    clips:  LEGACY_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: "eye_close" },
     pbrMaterials: false,
   },
@@ -175,7 +170,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_Sonia.glb",
     animFile:  "animations_Sonia.glb",
     spawnLabelHeight: 1.1,
-    clips:  { idle: ["Idle"], thinking: ["Thinking"], talking: ["Talking", "Talking2"] },
+    clips:  LEGACY_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: "eye_close" },
     pbrMaterials: false,
   },
@@ -185,14 +180,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_Marcus.glb",
     animFile:  "animations_Avaturn.glb",
     spawnLabelHeight: 1.25,
-    clips: {
-      idle:     ["Idle", "Idle2", "Idle3", "Idle4"],
-      thinking: ["Thinking", "Thinking2"],
-      talking:  ["Talking", "Talking2", "Talking3", "Talking4", "Talking5", "Talking6"],
-      pointing: ["Pointing"],
-      nodding:  ["Nodding"],
-      shaking:  ["ShakeNo"],
-    },
+    clips:  AVATURN_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
   },
@@ -202,14 +190,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     sceneFile: "Teacher_Priya.glb",
     animFile:  "animations_Avaturn.glb",
     spawnLabelHeight: 1.15,
-    clips: {
-      idle:     ["Idle", "Idle2", "Idle3", "Idle4"],
-      thinking: ["Thinking", "Thinking2"],
-      talking:  ["Talking", "Talking2", "Talking3", "Talking4", "Talking5", "Talking6"],
-      pointing: ["Pointing"],
-      nodding:  ["Nodding"],
-      shaking:  ["ShakeNo"],
-    },
+    clips:  AVATURN_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
   },
@@ -229,7 +210,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // 1.2288 (2.28 m), then Hmz asked for 10-15% taller still: 1.2288 *
     // 1.125 = 1.3824, height 2.57 m.
     standScale: 1.3824,
-    clips:  CANINO_CLIPS,
+    clips:  CANINO_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
     credit: {
@@ -252,7 +233,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // (v9_export.TARGET_HEIGHT), so this is where she gets her own stature
     // back, per the app scale, not the GLB.
     standScale: 1.3521,
-    clips:  CANINO_CLIPS,
+    clips:  CANINO_CLIP_SET,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
     pbrMaterials: true,
     credit: {
@@ -267,14 +248,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
 // animation pack at public/models/animations_Avaturn.glb.
 const CUSTOM_ANIMATIONS_URL = "/models/animations_Avaturn.glb";
 const CUSTOM_CONFIG: Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials"> = {
-  clips: {
-    idle:     ["Idle"],
-    thinking: ["Thinking"],
-    talking:  ["Talking", "Talking2"],
-    pointing: ["Pointing"],
-    nodding:  ["Nodding"],
-    shaking:  ["ShakeNo"],
-  },
+  clips: CUSTOM_CLIP_SET,
   morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
   pbrMaterials: true,
 };
@@ -313,10 +287,55 @@ class ClipPackBoundary extends Component<{ url: string; children: ReactNode }, {
   render() { return this.state.failed ? null : this.props.children; }
 }
 
+// ─── Director plumbing ────────────────────────────────────────────────────────
+
+interface LivePlay {
+  seq:       number;
+  action:    AnimationAction;
+  startedAt: number;
+  fadeIn:    number;
+  fadeOutAt: number;
+  endsAt:    number;
+}
+
+// The director's view of the store, read inside useFrame so nothing here
+// re-renders the teacher.
+function signalsOf(
+  s: ReturnType<typeof useAristoStore.getState>,
+  reaction: DirectorSignals["reaction"],
+): DirectorSignals {
+  return {
+    gesture:          s.gesture,
+    isLoading:        s.isLoading,
+    isSpeaking:       s.isSpeaking,
+    phase:            phaseOf(s.activeLesson, s.currentSegmentId),
+    awaitingAnswer:   s.awaitingAnswer,
+    // The condition Experience.tsx uses to show the model.
+    modelShown:       !!s.activeModelUrl && s.viewMode3d,
+    modelInteracting: s.modelInteracting,
+    quizActive:       !!s.activeQuiz,
+    quizResult:       s.quizResult,
+    lessonComplete:   s.lessonComplete,
+    sceneReady:       s.sceneReady,
+    reaction,
+  };
+}
+
+// Scratch objects for the look layer; it runs every frame.
+const _qGroup = new Quaternion(), _qGroupInv = new Quaternion(), _qParent = new Quaternion();
+const _qParentInv = new Quaternion(), _qOffset = new Quaternion(), _qPitch = new Quaternion();
+const _vHead = new Vector3(), _vCur = new Vector3(), _vTarget = new Vector3();
+const _X = new Vector3(1, 0, 0), _Y = new Vector3(0, 1, 0);
+
 // ─── Component ────────────────────────────────────────────────────────────────
+
+/** World-space points the head can look at (V9.3); the camera is always available. */
+export type LookTargets = Partial<Record<"board" | "model" | "desk", readonly [number, number, number]>>;
 
 interface TeacherProps {
   teacher:    TeacherAvatar;
+  /** Where the head looks for the board, a shown model and the quiz desk. Unset: the camera. */
+  lookTargets?: LookTargets;
   position?:  [number, number, number];
   scale?:     number;
   rotationY?: number;
@@ -327,6 +346,7 @@ export function Teacher({
   position  = [-1, -1.7, -3],
   scale     = 1.5,
   rotationY = 0.35,
+  lookTargets,
 }: TeacherProps) {
   const group               = useRef<Group>(null);
   const customTeacherGlbUrl = useAristoStore((s) => s.customTeacherGlbUrl);
@@ -398,38 +418,33 @@ export function Teacher({
   // Clip packs (V9.2). Their actions go on the SAME mixer and root, but not
   // through useAnimations: drei stops every action whenever its clip list
   // changes, so appending would snap the playing clip back to frame 0. A ref
-  // is enough, because pools are resolved at pick time (see `loaded`) and a
-  // late pack must not re-run the state machine mid-sentence.
+  // is enough: the director reads `available` every frame, so a late pack is
+  // picked up at the next clip boundary without re-running anything.
   const sceneReady  = useAristoStore((s) => s.sceneReady);
   const packActions = useRef<Record<string, AnimationAction>>({});
+  const allowed     = useMemo(() => new Set<string>(cfg.clips), [cfg.clips]);
+  // Clips the director may pick now: name -> duration, only names in the
+  // avatar's clip set that have an action.
+  const availableRef = useRef(new Map<string, number>());
+  useLayoutEffect(() => {
+    for (const clip of animations) if (allowed.has(clip.name)) availableRef.current.set(clip.name, clip.duration);
+  }, [animations, allowed]);
   const onPackLoad  = useCallback((clips: AnimationClip[]) => {
     const root = group.current;
     if (!root) return;
     for (const clip of clips) {
+      if (!allowed.has(clip.name)) continue;
       packActions.current[clip.name] ??= mixer.clipAction(clip, root);
+      availableRef.current.set(clip.name, clip.duration);
     }
-  }, [mixer]);
+  }, [mixer, allowed]);
   const getAction = useCallback(
     (name: string): AnimationAction | undefined => actions[name] ?? packActions.current[name] ?? undefined,
     [actions],
   );
-  // The clips of a pool that can play now; `fallback` when none of them can.
-  const loaded = useCallback((pool: string[] | undefined, fallback: string[] = []) => {
-    const ready = (pool ?? []).filter((n) => getAction(n));
-    return ready.length ? ready : fallback.filter((n) => getAction(n));
-  }, [getAction]);
 
   const isLoading  = useAristoStore((s) => s.isLoading);
   const isSpeaking = useAristoStore((s) => s.isSpeaking);
-  const gesture    = useAristoStore((s) => s.gesture);
-  const setGesture = useAristoStore((s) => s.setGesture);
-  const [animation, setAnimation]    = useState<string>(cfg.clips.idle[0]);
-
-  // When the avatar switches, snap to the new rig's first idle clip so we don't
-  // try to play an animation name that no longer exists on the new actions map.
-  useEffect(() => {
-    setAnimation(cfg.clips.idle[0]);
-  }, [cfg]);
   const [blink, setBlink]            = useState(false);
   const [thinkingDots, setThinkingDots] = useState(".");
 
@@ -512,117 +527,215 @@ export function Teacher({
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  // ─── Animation state machine ────────────────────────────────────────────────
+  // ─── Animation director (V9.3) ──────────────────────────────────────────────
   //
-  // Resolution order (highest priority first):
-  //   1. gesture override (pointing / nodding / shaking)
-  //   2. isLoading        → thinking
-  //   3. isSpeaking       → talking
-  //   4. fallback         → idle
+  // What plays is decided by src/lib/avatar/director.ts (pure, unit-tested);
+  // this component only applies its output. Layers:
+  //   base    one looping full-body clip, crossfaded on change
+  //   overlay a masked, once-played gesture over the base (greeting, long wait,
+  //           nod, shake), blended in and out by weight
+  //   look    the head turned toward camera / board / model / desk
   //
-  // Pointing is a "talking-while-pointing" mode — if the avatar isn't speaking,
-  // we still play the pointing clip so the gesture lands; if it IS speaking,
-  // pointing replaces the talking clip (the Mixamo "Pointing" clip already
-  // includes torso/head motion that reads as speech).
-  useEffect(() => {
-    // Only clips that can play now: a pack clip before its pack arrives
-    // would stop the current clip and leave the bind pose.
-    const pickRandom = (pool: string[] | undefined, fallback?: string[]) => {
-      const variants = loaded(pool, fallback);
-      if (variants.length) setAnimation(variants[randInt(0, variants.length - 1)]);
-    };
+  // Each rule below was a regression once; the director's own header lists
+  // the ones it now owns (no restart of a playing clip on a scenario change,
+  // base always loops, variants from its own record). What stays here:
+  //  - the director runs in useFrame AFTER useAnimations, so drei's
+  //    mixer.update has already run this frame;
+  //  - an action still fading out keeps its time when it is picked again:
+  //    reset() on it snaps it to frame 0 for a frame (the V9.1d arm pop);
+  //  - overlays are masked COPIES of the clip, never the base action, so a
+  //    reaction can never clamp the base (the V9.2 frozen-Idle bug);
+  //  - the mount clip is primed before the first frame (no T-pose flash).
 
-    if (gesture === "pointing") {
-      pickRandom(cfg.clips.pointing, cfg.clips.talking);
-      return;
+  // Bones, overlay masks and the head, found once per scene by structure.
+  const rig = useMemo(() => {
+    const bones: BoneInfo[] = [];
+    const byName = new Map<string, Bone>();
+    scene.traverse((o) => {
+      const b = o as Bone;
+      if (!b.isBone) return;
+      bones.push({ name: b.name, parent: (b.parent as Bone | null)?.isBone ? b.parent!.name : null });
+      byName.set(b.name, b);
+    });
+    const masks = skeletonMasks(bones);
+    const headName = headBoneOf(bones);
+    const head = headName ? byName.get(headName) ?? null : null;
+    // The head's forward axis in its own space, from the bind pose before any
+    // animation: the look layer aims with it.
+    let headForward: Vector3 | null = null;
+    if (head) {
+      scene.updateMatrixWorld(true);
+      headForward = new Vector3(0, 0, 1).applyQuaternion(head.getWorldQuaternion(new Quaternion()).invert());
     }
-    if (gesture === "nodding") {
-      pickRandom(cfg.clips.nodding, cfg.clips.idle);
-      return;
+    const maskSet = new Set<ClipMask>(["full"]);
+    if (masks.upper) maskSet.add("upper");
+    if (masks.head) maskSet.add("head");
+    return { masks, maskSet, head, headForward };
+  }, [scene]);
+
+  // Masked copies of clips, by "<clip>@<mask>". three has no bone masks, so an
+  // upper-body gesture is the clip with only the tracks of those bones.
+  const maskedActions = useRef(new Map<string, AnimationAction>());
+  const overlayAction = useCallback((name: string, mask: ClipMask): AnimationAction | undefined => {
+    const key = `${name}@${mask}`;
+    const cached = maskedActions.current.get(key);
+    if (cached) return cached;
+    const bones = mask === "full" ? undefined : rig.masks[mask];
+    const source = getAction(name)?.getClip();
+    const root = group.current;
+    if (!bones || !source || !root) return undefined;
+    const keep = new Set(maskTrackNames(source.tracks.map((t) => t.name), bones));
+    const tracks = source.tracks.filter((t) => keep.has(t.name)).map((t) => t.clone());
+    if (!tracks.length) return undefined;
+    const action = mixer.clipAction(new AnimationClip(key, source.duration, tracks, source.blendMode), root);
+    action.setLoop(LoopOnce, 1);
+    action.clampWhenFinished = true;
+    maskedActions.current.set(key, action);
+    return action;
+  }, [getAction, mixer, rig]);
+
+  // A nod or a shake, latched from the store. A lesson sets "nodding" and then
+  // the next segment's gesture in the same tick, so the director sampling
+  // `gesture` once a frame would nearly always miss it.
+  const reactionRef     = useRef<{ kind: ReactionKind; id: number } | null>(null);
+  const reactionCounter = useRef(0);
+  useEffect(() => useAristoStore.subscribe((s, prev) => {
+    if (s.gesture !== prev.gesture && (s.gesture === "nodding" || s.gesture === "shaking")) {
+      reactionRef.current = { kind: s.gesture, id: ++reactionCounter.current };
     }
-    if (gesture === "shaking") {
-      pickRandom(cfg.clips.shaking, cfg.clips.idle);
-      return;
-    }
-    if (gesture === "explaining") {
-      // Deliberate lecturing pose. Falls back to talking pool until a
-      // dedicated "Lecturing"-derived clip is baked into the animation file.
-      pickRandom(cfg.clips.talking);
-      return;
-    }
+  }), []);
 
-    if (isLoading) {
-      pickRandom(cfg.clips.thinking);
-    } else if (isSpeaking) {
-      pickRandom(cfg.clips.talking);
-    } else {
-      pickRandom(cfg.clips.idle);
-    }
-  }, [gesture, isLoading, isSpeaking, cfg.clips, loaded]);
+  // The teacher is keyed by avatar in SafeTeacher, so a switch is a new mount
+  // and a new director.
+  const directorRef = useRef<DirectorState | null>(null);
+  directorRef.current ??= createDirectorState(MOUNT_CLIP, signalsOf(useAristoStore.getState(), null));
+  const clockRef       = useRef(0);
+  const appliedBase    = useRef({ seq: 0, clip: MOUNT_CLIP as string });
+  const appliedOverlay = useRef(0);
+  const livePlays      = useRef<LivePlay[]>([]);
+  const lookRef        = useRef({ yaw: 0, pitch: 0 });
+  const headRef        = useRef({ clip: new Quaternion(), written: new Quaternion(), wrote: false });
+  const lookTargetsRef = useRef(lookTargets);
+  lookTargetsRef.current = lookTargets;
 
-  // Idle variant cycling — rotates every 20s so the avatar never freezes
-  useEffect(() => {
-    if (gesture !== "idle" || isLoading || isSpeaking || cfg.clips.idle.length <= 1) return;
-    const id = setInterval(() => {
-      setAnimation((cur) => {
-        const variants = loaded(cfg.clips.idle);
-        if (!variants.length) return cur;
-        const idx = variants.indexOf(cur);
-        return variants[(idx + 1) % variants.length];
-      });
-    }, 20_000);
-    return () => clearInterval(id);
-  }, [gesture, isLoading, isSpeaking, cfg.clips.idle, loaded]);
-
-  // Auto-revert one-shot gestures. When the clip is playing, revert as it
-  // ends, less the crossfade, so the fade covers its tail: the fixed 1.5 s cut
-  // the 3.1 s ShakeNo after its first turn (V9.1e) -- on every avatar with the
-  // clip, custom Avaturn teachers included. Until the clip starts, or on an
-  // avatar without one (the nod then keeps Idle), the fixed timings stand.
-  useEffect(() => {
-    if (gesture !== "nodding" && gesture !== "shaking") return;
-    const pool = gesture === "nodding" ? cfg.clips.nodding : cfg.clips.shaking;
-    const clip = pool?.includes(animation) ? getAction(animation)?.getClip() : undefined;
-    const ms = clip
-      ? Math.max(0, clip.duration - ANIMATION_FADE_TIME) * 1000
-      : gesture === "nodding" ? 2000 : 1500;
-    const id = setTimeout(() => setGesture("idle"), ms);
-    return () => clearTimeout(id);
-  }, [gesture, animation, getAction, cfg.clips, setGesture]);
-
-  // The gesture is read through a ref so the play effect below runs only when
-  // the clip changes. With `gesture` in its deps, a gesture change re-ran it
-  // for the clip still playing and `reset()` snapped that clip to frame 0 for
-  // one frame before the crossfade: a 33 deg pop of the arm on Talking ->
-  // Pointing (V9.1d). It also made a nod that falls back to Idle (every
-  // avatar without a Nodding clip) turn Idle into a clamped one-shot for good.
-  const gestureRef = useRef(gesture);
-  useEffect(() => { gestureRef.current = gesture; }, [gesture]);
-
-  // Play animation with crossfade. One-shot gestures (nod/shake) play once.
-  useEffect(() => {
-    const action = getAction(animation);
+  // Prime the mount clip so the bones are posed before the first frame.
+  useLayoutEffect(() => {
+    const action = getAction(MOUNT_CLIP);
     if (!action) return;
-    // One-shot only when the clip IS the gesture's clip. A nod that fell back
-    // to Idle (no Nodding yet, clip pack still loading) must keep Idle
-    // looping: clamped, it froze on its last frame until something else
-    // changed the clip.
-    const g = gestureRef.current;
-    const oneShotPool = g === "nodding" ? cfg.clips.nodding : g === "shaking" ? cfg.clips.shaking : undefined;
-    const isOneShot = !!oneShotPool?.includes(animation);
-    if (isOneShot) {
-      action.setLoop(LoopOnce, 1);
-      action.clampWhenFinished = true;
-    } else {
-      action.setLoop(LoopRepeat, Infinity);
-      action.clampWhenFinished = false;
-    }
-    action.reset().fadeIn(mixer.time > 0 ? ANIMATION_FADE_TIME : 0).play();
-    // Prime the mixer on first mount so bones are in the correct pose before
-    // the first useFrame tick — prevents a one-frame T-pose flash at startup.
+    action.setLoop(LoopRepeat, Infinity);
+    action.clampWhenFinished = false;
+    action.reset().play();
     if (mixer.time === 0) mixer.update(1 / 60);
-    return () => { action.fadeOut(ANIMATION_FADE_TIME); };
-  }, [animation, getAction, mixer, cfg.clips.nodding, cfg.clips.shaking]);
+  }, [getAction, mixer]);
+
+  const applyBase = (base: BasePlay) => {
+    if (base.seq === appliedBase.current.seq) return;
+    appliedBase.current.seq = base.seq;
+    const next = getAction(base.clip);
+    const prev = getAction(appliedBase.current.clip);
+    if (!next || next === prev) return;
+    prev?.fadeOut(base.fade);
+    next.setLoop(LoopRepeat, Infinity);
+    next.clampWhenFinished = false;
+    next.setEffectiveTimeScale(base.timeScale);
+    if (!next.isRunning()) next.reset();
+    next.fadeIn(mixer.time > 0 ? base.fade : 0).play();
+    appliedBase.current.clip = base.clip;
+  };
+
+  const applyOverlay = (overlay: OverlayPlay | null, now: number) => {
+    const live = livePlays.current;
+    if (overlay && overlay.seq !== appliedOverlay.current) {
+      appliedOverlay.current = overlay.seq;
+      // An older play still live fades out over the new one's fade-in.
+      for (const p of live) {
+        p.fadeOutAt = Math.min(p.fadeOutAt, now);
+        p.endsAt = Math.min(p.endsAt, now + (overlay.fadeIn || 0.2));
+      }
+      const action = overlay.clip ? overlayAction(overlay.clip, overlay.mask) : undefined;
+      if (action) {
+        const same = live.findIndex((p) => p.action === action);
+        if (same >= 0) live.splice(same, 1);
+        action.reset();
+        action.setEffectiveTimeScale(overlay.timeScale);
+        action.setEffectiveWeight(0);
+        action.play();
+        live.push({
+          seq: overlay.seq, action, startedAt: overlay.startedAt, fadeIn: overlay.fadeIn,
+          fadeOutAt: overlay.fadeOutAt, endsAt: overlay.endsAt,
+        });
+      }
+    }
+    for (let i = live.length - 1; i >= 0; i--) {
+      const p = live[i];
+      // The director can pull an overlay's end forward (the base moved on).
+      if (overlay && p.seq === overlay.seq) { p.fadeOutAt = overlay.fadeOutAt; p.endsAt = overlay.endsAt; }
+      if (now >= p.endsAt) { p.action.stop(); live.splice(i, 1); continue; }
+      // Not fadeIn/fadeOut: they scale the weight linearly, which through the
+      // dominance ratio ramps far too fast (a pop).
+      p.action.setEffectiveWeight(overlayWeight(overlayBlend(p, now)));
+    }
+  };
+
+  // Turns the head toward `target` on top of the clip's own head motion.
+  const applyLook = (target: LookTarget, camera: Vector3, delta: number) => {
+    const { head, headForward } = rig;
+    const root = group.current;
+    if (!head || !headForward || !root || !head.parent) return;
+    const hs = headRef.current;
+    // If the mixer did not write the head this frame (value unchanged, or the
+    // track was dropped as rest by the V9.2 diet), head.quaternion is still
+    // what we wrote: use the stored clip value, or the offset compounds.
+    if (!(hs.wrote && head.quaternion.equals(hs.written))) hs.clip.copy(head.quaternion);
+
+    root.updateWorldMatrix(true, false);
+    head.parent.updateWorldMatrix(true, false);
+    root.getWorldQuaternion(_qGroup);
+    _qGroupInv.copy(_qGroup).invert();
+    head.parent.getWorldQuaternion(_qParent);
+    _vHead.copy(head.position).applyMatrix4(head.parent.matrixWorld);
+
+    // The head's forward and the target, in the teacher's own space.
+    _vCur.copy(headForward).applyQuaternion(hs.clip).applyQuaternion(_qParent).applyQuaternion(_qGroupInv);
+    const t = lookTargetsRef.current;
+    const world = target === "board" || target === "model" || target === "desk" ? t?.[target] : undefined;
+    if (world) _vTarget.fromArray(world); else _vTarget.copy(camera);
+    _vTarget.sub(_vHead).applyQuaternion(_qGroupInv);
+
+    const off = lookOffset(yawPitchOf(_vCur), aimAngles(_vTarget), LOOK_WEIGHT[target]);
+    const look = lookRef.current;
+    look.yaw   = damp(look.yaw,   off.yaw,   LOOK_RATE, delta);
+    look.pitch = damp(look.pitch, off.pitch, LOOK_RATE, delta);
+
+    // Yaw about +Y, then pitch about the yawed +X (up is negative about +X),
+    // in the teacher's space; then into the head's parent space.
+    _qOffset.setFromAxisAngle(_Y, look.yaw).multiply(_qPitch.setFromAxisAngle(_X, -look.pitch));
+    _qOffset.premultiply(_qGroup).multiply(_qGroupInv);
+    _qOffset.premultiply(_qParentInv.copy(_qParent).invert()).multiply(_qParent);
+    head.quaternion.copy(_qOffset).multiply(hs.clip);
+    hs.written.copy(head.quaternion);
+    hs.wrote = true;
+  };
+
+  useFrame((state, delta) => {
+    const now = (clockRef.current += delta);
+    const store = useAristoStore.getState();
+    const step = stepDirector(directorRef.current!, {
+      now,
+      signals:   signalsOf(store, reactionRef.current),
+      available: availableRef.current,
+      masks:     rig.maskSet,
+      rng:       Math.random,
+    });
+    directorRef.current = step.state;
+    const out = step.output;
+
+    applyBase(out.base);
+    applyOverlay(out.overlay, now);
+    // The old auto-revert: hand a finished nod or shake back to the store.
+    if (out.release && store.gesture === out.release) store.setGesture("idle");
+    applyLook(out.look, state.camera.position, delta);
+  });
 
   // Morph targets per frame
   //
@@ -653,25 +766,6 @@ export function Teacher({
     if (cfg.morphs.eyeClose) {
       const lids = typeof cfg.morphs.eyeClose === "string" ? [cfg.morphs.eyeClose] : cfg.morphs.eyeClose;
       for (const lid of lids) lerpMorphTarget(lid, blink ? 1 : 0, 0.5);
-    }
-
-    // Cycle multi-variant pools at clip end (only while in their state).
-    const cycleAt = (pool: string[]) => {
-      const variants = loaded(pool);
-      const act = getAction(animation);
-      if (variants.length <= 1 || !act) return;
-      // From the rendered clip, not the updater's `cur`: this runs every
-      // frame of the fade window, and several frames can pass before React
-      // re-renders, so stepping from `cur` skipped variants.
-      if (act.time > act.getClip().duration - ANIMATION_FADE_TIME) {
-        setAnimation(variants[(variants.indexOf(animation) + 1) % variants.length]);
-      }
-    };
-    if (gesture === "idle") {
-      if (isSpeaking)  cycleAt(cfg.clips.talking);
-      if (isLoading)   cycleAt(cfg.clips.thinking);
-    } else if (gesture === "explaining") {
-      cycleAt(cfg.clips.talking);
     }
   });
 
