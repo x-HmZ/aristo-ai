@@ -21,9 +21,9 @@ describe("smile", () => {
 
   it.each(HINTS)("%s stays inside the rig's range and below its rest while speaking", (h) => {
     expect(SMILE_REST[h]).toBeGreaterThanOrEqual(0);
-    expect(SMILE_REST[h]).toBeLessThanOrEqual(1);
+    expect(SMILE_REST[h]).toBeLessThanOrEqual(2); // above 1 extrapolates the weak shape
     expect(SMILE_SPEAKING[h]).toBeLessThanOrEqual(SMILE_REST[h]);
-    expect(SMILE_SPEAKING[h]).toBeLessThanOrEqual(0.25); // a wide smile fights the visemes
+    expect(SMILE_SPEAKING[h]).toBeLessThanOrEqual(0.4); // a wide smile fights the visemes
   });
 
   it("targets the speaking or the resting level", () => {
@@ -44,9 +44,11 @@ describe("smile", () => {
   });
 
   it("gets out of the way faster than it comes in", () => {
-    const down = stepSmile(0.6, "neutral", true, 0.1);       // toward 0
-    const up   = stepSmile(0, "smile", false, 0.1);           // toward 0.6
-    expect(0.6 - down).toBeGreaterThan(up);
+    const from = SMILE_REST.smile;
+    const down = stepSmile(from, "neutral", true, 0.1);       // toward SMILE_SPEAKING.neutral
+    const up   = stepSmile(0, "smile", false, 0.1);           // toward SMILE_REST.smile
+    // Compare the share of the way covered, not the raw distance.
+    expect((from - down) / (from - SMILE_SPEAKING.neutral)).toBeGreaterThan(up / SMILE_REST.smile);
   });
 
   it("is frame-rate independent", () => {

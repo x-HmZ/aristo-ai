@@ -16,10 +16,10 @@ const DEG = Math.PI / 180;
 export interface Gaze { yaw: number; pitch: number }
 
 /** How far the eyes can turn from the head's forward. Small: no wall-eyed stare. */
-export const GAZE_LIMITS: Gaze = { yaw: 18 * DEG, pitch: 12 * DEG };
+export const GAZE_LIMITS: Gaze = { yaw: 14 * DEG, pitch: 9 * DEG };
 
 /** Share of the remaining error the eyes close toward the target (the head did part). */
-export const EYE_WEIGHT = { camera: 0.9, board: 0.9, model: 0.9, desk: 0.9, none: 0 } as const;
+export const EYE_WEIGHT = { camera: 0.8, board: 0.8, model: 0.8, desk: 0.8, none: 0 } as const;
 
 /** Response rate of the eyes, 1/s. Eyes are quick: a saccade lands in about 0.05 s. */
 export const EYE_RATE = 30;

@@ -11,11 +11,18 @@
  */
 import type { FaceHint } from "./animationManifest";
 
-/** `mouthSmile` influence for each hint when the teacher is not speaking. */
+/**
+ * `mouthSmile` influence for each hint when the teacher is not speaking.
+ *
+ * The rigs' `mouthSmile` is a weak shape (corners move 9 mm at full weight,
+ * against 17 mm for viseme_aa): at 1.0 it barely reads on screen. Influences
+ * above 1 extrapolate the shape linearly, which is safe for a small delta
+ * like this one; checked at 1.8 on Jake with no mesh artifacts.
+ */
 export const SMILE_REST: Record<FaceHint, number> = {
   neutral:  0.15, // the existing resting smile: the face must not read as dead
-  smile:    0.6,  // greeting, correct, quiz good
-  warm:     0.35, // wrong, quiz supportive: kind, not celebrating
+  smile:    1.6,  // greeting, correct, quiz good
+  warm:     0.8,  // wrong, quiz supportive: kind, not celebrating
   thinking: 0.03, // a flat, attentive mouth
 };
 
@@ -25,8 +32,8 @@ export const SMILE_REST: Record<FaceHint, number> = {
  */
 export const SMILE_SPEAKING: Record<FaceHint, number> = {
   neutral:  0,
-  smile:    0.2,
-  warm:     0.1,
+  smile:    0.35,
+  warm:     0.2,
   thinking: 0,
 };
 
