@@ -383,7 +383,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.2b scale and placement (Hmz settled on taller-than-real, not the brief's original "believable adult"), fingers and Jake's trousers fixed (2026-09-23)
 - [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for Hmz is in V9-REPORT)
 - [x] V9.4 face, expressions, gaze (2026-09-23; the Canino rigs have only a weak `mouthSmile` and blink, so expressions are smile levels plus eye gaze, see V9-REPORT "V9.4")
-- [ ] V9.5 integrated, budgets measured, docs and LICENSES.md done
+- [x] V9.5 integrated, budgets measured, docs and LICENSES.md done (2026-09-23; Jake is the default, budgets not blown, LICENSES.md has open items for Hmz, see V9-REPORT "V9.5")
 
 ## Sources (checked 2026-09-11)
 

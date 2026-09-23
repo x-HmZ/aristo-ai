@@ -1050,3 +1050,97 @@ timings, remap the volume to a spread range (about 0.4-0.75 to 0.3-0.85) and re-
 - A future clip that keys an eye bone would be overridden by `applyEyes` (noted in a comment).
 - The face hints in a real quiz (correct, wrong, lesson complete) were not exercised in the browser,
   only in the director tests.
+
+## V9.5 - integration (2026-09-23)
+
+Model: Sonnet 5 throughout, no escalation, no design decision needed. Jake as the default teacher was settled by
+Hmz beforehand (`DEFAULT_TEACHER` was already `"jake"`; recorded in decisions.md). Gates: type-check clean, lint 22
+(pre-existing), tests 267/267, build green (temporary distDir, reverted). `typescript-reviewer` on the
+`Teacher.tsx` and `Experience.tsx` diff: no findings beyond one stale comment, fixed. `security-reviewer` not run:
+nothing touched auth or `/create-teacher` input handling.
+
+### Default teacher wiring
+
+| Check | Result |
+|---|---|
+| Eager download | `preloadDefaultAvatar()` (called by `LearnClient`) preloads Jake's scene only; his `animFile` is the same URL, so one fetch. Packs are never preloaded; `<ClipPack>` mounts them after `sceneReady`. `/demo` preloads its own `DEMO_TEACHER` (Jake, set explicitly on purpose); the picker preloads a teacher's scene on hover. The sign-in `<link rel="prefetch">` is Jake's GLB. Nothing still points at Marcus or Ryan |
+| Returning user, persisted `marcus` (checked in the app) | The store's `merge` lands on Jake. On `/dev/free-model` with `aristo-session` set to `marcus`: Jake rendered, no Marcus file requested |
+| `custom` with no GLB URL | **Fixed.** Was Ryan (an archived, non-lipsyncing avatar); now Jake. Checked in the app |
+| Unknown avatar key | Same fix: `?? AVATAR_ASSETS[DEFAULT_TEACHER]` |
+| Teacher GLB fails to load | **Fixed.** `SafeTeacher` set the store to `"ryan"`, but its error boundary was never reset, so the slot stayed empty. It now keys the boundary by avatar and swaps in Jake; a failing default does not loop. Checked in the app with a custom URL that 404s: Jake appeared and the store held `jake`. (The old blank slot is from reading the code, not from running the old build) |
+| Picker order, `/create-teacher` | `ACTIVE_TEACHERS` is `["jake", "mj"]`, `custom` first when the learner has one. `/create-teacher` never mentions Jake or the default, so nothing there to change |
+
+### Picker and custom teachers (checked on `/demo` and `/dev/free-model`)
+
+| Check | Result |
+|---|---|
+| Jake to MJ mid-lesson | Segment 1 to 2 of the volcano lesson, MJ posed, credit line changed to MJ's, lesson kept going. MJ's pack arrived 0.28 s after her scene |
+| MJ back to Jake | Jake posed again, credit changed back |
+| Credit | Renders for both teachers on `/demo`: "Free Cartoon Game Man Character (Rigged)" and "Free Stylized Cartoon Girl Rigged Character" by Canino3d, CC BY 4.0, modified. `/learn` uses the same component in `TeacherControls`; `/learn` itself needs auth and was not opened |
+| Custom URL resolves | `customTeacherGlbUrl` = the Marcus GLB: loaded with `animations_Avaturn.glb`, posed. `CUSTOM_CLIP_SET` and `smileGain` 0.4 unchanged, as instructed |
+
+### Load budget
+
+Method: Chrome driven over DevTools (a scratch script, not committed), fresh profile per run, production
+builds via `next start` on this machine, `/demo` because `/dev/free-model` 404s in a production build.
+"Before" is the first commit of this branch, `3b7f076` (default and demo teacher Marcus), built in a worktree;
+"after" is the branch head. Bytes are `Network.loadingFinished.encodedDataLength` (what crossed the wire,
+including headers). "Posed" is when the loading overlay leaves the DOM, i.e. the first R3F frame with the teacher
+and classroom in it, plus the overlay's minimum display time and its 0.28 s fade. Median of 3; headless Chrome, so
+compare the two columns, not the absolute times.
+
+| `/demo`, default teacher | Before (Marcus) | After (Jake) |
+|---|---|---|
+| Teacher scene on the wire | 4,809 KB (file 9.6 MB) | 1,916 KB (file 2.3 MB) |
+| Shared Avaturn clip file / Jake's clip pack | 1,093 KB (eager) | 265 KB (lazy, after the scene) |
+| Classroom | 1,048 KB | 1,048 KB |
+| All GLBs, cold | 6,951 KB | 3,229 KB |
+| Everything, cold | 9,188 KB | 5,475 KB (5,210 KB before the pack) |
+| Posed, cold, unthrottled | 7.7 s | 6.4 s |
+| Posed, cold, 9 Mbps and 40 ms | 14.7 s | 9.4 s |
+| Posed, warm cache | 2.3 s | 2.4 s |
+| Bytes, warm cache | 3 KB | 3 KB |
+
+`/dev/free-model` (dev server, so the total includes unminified JS; the GLBs are the same files): Jake 1,916 KB scene
++ 265 KB pack; MJ 1,407 KB scene + 271 KB pack; the classroom (1,048 KB) and the 100 KB placeholder duck are common.
+Cold GLB total 3,329 KB for Jake, 2,826 KB for MJ. That page has no loading overlay, so no posed time.
+
+**Budget verdict: nothing blown, so no re-export options proposed.** T02's bar is "cold `/learn` initial GLB
+payload under about 12 MB (default avatar, classroom, animations)": Jake's is 2.96 MB on the wire before the pack
+(3.9 MB on disk with it), MJ's about 2.5 MB, against 12.7 MB on disk for the Marcus default, which was over. V9's
+bar of 3 MB of animation per rig is met with room (0.5 MB pack plus three base clips inside the scene). Warm loads
+are unchanged. Not measured: `/learn` (auth), a phone, real networks beyond the 9 Mbps profile, frame rate.
+
+### Cleanup
+
+- Comments that called V9.4 future work, said the default has "clips embedded in his own GLB", or said the eye
+  layer was missing now match the code (`animationManifest.ts`, `director.ts`, `useAristoStore.ts`, the sign-in
+  prefetch, the decisions row for the look layer). `Teacher.tsx`'s "how to add an avatar" no longer points at a
+  `readyToUse` flag that does not exist.
+- **No dead code found from the V9.3 rewrite.** The old state machine and `CANINO_CLIPS` are already gone. Every
+  export in `src/lib/avatar/` is used by the app or by a test.
+- The `AVATAR_ASSETS` entries for Ryan, Sonia, Marcus and Priya are archived by decision, not dead: Marcus is
+  the custom teacher's rig source, and `/dev/free-model?avatar=` can still select any of them. Kept.
+- **Found, not touched (deleting needs your yes):** a whole V1 JSX tree is imported by nothing:
+  `src/components/{Experience,Teacher,BoardSettings,ImageBox,MessagesList,QuizBox,TypingBox,LogoutButton}.jsx`
+  and `src/components/{Hero,Navbar,Team,WhyAristo,GuideToAristo,Footer}`, with `public/images/{1..12}.png`,
+  `teamMember1-2.jpg`, `Ryan.jpg`, `Sonia.jpg`. V8.7 already lists the second group for removal after your
+  confirmation; the first group (V1's `Teacher.jsx` and friends) is not on that list.
+
+### LICENSES.md
+
+New, at the project root. Verified today against Sketchfab's API: both Canino3d models are CC BY 4.0, with the
+titles and author already in the app; the GLB `asset.copyright` fields match. **Could not verify, and flagged in
+the file:** Mixamo (Adobe's FAQ returned 403), Avaturn's terms (404), and the terms for ElevenLabs, Tripo3D and
+fal.ai (never recorded). **Source unknown:** both classroom GLBs, Ryan and Sonia, the V1 images.
+`dev_placeholder.glb` is the Khronos/Sony Duck (SCEA Shared Source License, seen on screen), not a plain open
+licence.
+
+### Known edges
+
+- A default teacher that itself fails to load renders no teacher and logs nothing; there is nothing left to fall
+  back to.
+- The hover preload in the picker warms only a teacher's scene, so the first switch to a teacher still fetches
+  its pack after the scene appears (0.28 s in the check above).
+- Not exercised: `/learn` end to end (needs your login), the face hints in a real quiz (still covered by the
+  director tests only), a phone.

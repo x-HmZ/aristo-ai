@@ -2,6 +2,26 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 - V9.5 done: integration, budgets, docs, licences (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.5"). V9 is finished apart from the open items below. No escalation needed.
+
+- **Done:** Jake confirmed as the default (recorded in decisions.md; CLAUDE.md, architecture.md and the code comments
+  say so; nothing preloads or prefetches anything else). Fallbacks fixed: `custom` with no URL, an unknown key and a
+  teacher that fails to load now land on Jake (they went to Ryan, or to a blank slot). Persisted Marcus/Priya/Ryan/Sonia
+  already fell back through the store. Picker, Jake/MJ switching mid-lesson, credit for both, and custom URLs checked
+  on `/demo` and `/dev/free-model`. 267 tests, type-check clean, lint 22, build green.
+- **Budget (cold `/demo`, before = branch start with Marcus, after = Jake):** GLBs 6.95 MB to 3.23 MB, everything 9.2 MB
+  to 5.5 MB, posed at 9 Mbps 14.7 s to 9.4 s, warm unchanged. T02's 12 MB bar met; nothing to re-export.
+- **Docs:** `LICENSES.md` (new), `.claude/docs/architecture.md` ("Teacher avatar subsystem"), CLAUDE.md avatar notes.
+- **Blocked on Hmz / open questions:** (1) ShakeNo on a wrong answer (recommendation: silence it); (2) the Tier 2 clips;
+  (3) `LICENSES.md` open items: classroom GLB source, Ryan and Sonia source, the Sony duck `dev_placeholder.glb`,
+  and the Mixamo/Avaturn/ElevenLabs/Tripo3D/fal.ai terms nobody read; (4) delete the unreferenced V1 JSX tree and its
+  images (list in V9-REPORT "V9.5").
+- **Not verified:** `/learn` end to end (needs auth), face hints in a real quiz, a phone, frame rate.
+- **Next:** V8.7 re-capture is no longer blocked by V9; the plan also waits on V8.4 and V8.5 (both still unticked).
+  The plan assigns it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal once you confirm.
+
 ## 2026-09-23 - V9.4 done: face and gaze (Sonnet)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.4"). No escalation to Opus needed.
