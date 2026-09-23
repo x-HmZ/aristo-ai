@@ -486,3 +486,14 @@ describe("overlayWeight", () => {
     expect(overlayWeight(1)).toBeGreaterThan(50);
   });
 });
+
+describe("a preempted reaction", () => {
+  it("still releases its gesture when a quiz result replaces it", () => {
+    const first = run({ seconds: 0.5, signalsAt: () => sig({ reaction: { kind: "nodding", id: 1 } }) });
+    const second = run({
+      seconds: 0.1, from: 0.5, state: first.state,
+      signalsAt: () => sig({ reaction: { kind: "nodding", id: 1 }, quizResult: { score: 5, total: 5 } }),
+    });
+    expect(second.outputs.some((o) => o.release === "nodding")).toBe(true);
+  });
+});

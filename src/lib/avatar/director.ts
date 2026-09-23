@@ -426,7 +426,12 @@ export function stepDirector(
       release:   eventRelease,
       fallbackS: eventRelease ? REACTION_FALLBACK_S[eventRelease] : undefined,
     });
-    if (started) overlay = started;
+    if (started) {
+      // A preempted reaction still hands its gesture back, or the store stays
+      // on "nodding" and the next identical nod is not a change.
+      if (overlay?.release) release = overlay.release;
+      overlay = started;
+    }
   }
 
   // ── Row 9: a model appears, the head turns to it for a moment ──
