@@ -752,3 +752,109 @@ Nothing was downloaded; that needs Hmz's go.
   Opus; Hmz can pick Sonnet in the model menu next time.
 - **Unchanged:** MJ's hair clipping her shoulder, the forehead scalp seam, and the parked female
   narration.
+
+## V9.2b — three fixes Hmz found in the app (2026-09-23)
+
+**Verdict: all three fixed and shipped.** Scale/placement went through three rounds of Hmz's
+live feedback before landing; fingers and trousers each needed one real fix, both root-caused
+before touching anything, per the brief. Scene backup before this session:
+`bakeoff_scene_pre_v92b.blend`.
+
+### 1. Scale and placement
+
+The teachers stood 2.79 m in a classroom built at real furniture size (chair 0.45-0.5 m, desk
+0.7-0.8 m, camera eye 1.71 m) — never checked against it before this session. Added
+`AvatarConfig.standScale` to `Teacher.tsx`, read via `standScaleFor(teacher)` in `Experience.tsx`;
+legacy avatars (Ryan/Sonia/Marcus/Priya/custom) keep the old flat `scale={1.5}`.
+
+Three rounds, each verified live in `/dev/free-model` and re-tuning `SCENE_Y` / `TEACHER_HEAD_Y`
+/ `spawnLabelHeight` to match:
+
+1. True real height (Jake 1.78 m, MJ 1.68 m) — Hmz: reads as a dwarf next to the old giant.
+2. Halfway between the giant and true height (Jake 2.28 m, MJ 2.23 m) — still short.
+3. **Final: halfway value × 1.125** (10-15% taller, his range) — **Jake `standScale` 1.3824
+   (2.57 m), MJ 1.3521 (2.51 m)**. Signed off.
+
+`spawnLabelHeight` (the Thinking… label) needed no re-tune after the first pass: it lives inside
+the teacher's own scaled `<group>`, so it tracks `standScale` automatically. `SCENE_Y` (shared
+image-panel / generated-model anchor) and `TEACHER_HEAD_Y` (Your-turn bubble) are world-space
+siblings of that group and needed re-tuning each round; final values 0.18 and 0.65.
+
+Hmz also asked the generated-model's initial spawn size down **45% (1.5 → 0.825)** once the
+teacher's own scale grew past it — the student's own scroll-to-resize is untouched.
+
+Checked at the final scale: Pointing's fingertip lands right at the panel's edge for both
+teachers (tighter than the V9.1d bar for Marcus, "lands just outside it"), checked at the
+clip's exact peak-extension frame via a temporary `window.__v92` mixer-freeze hook (see
+Tooling). The demo's real heart model reads at a believable size next to Jake. `DeskQuiz`'s
+camera and paper anchor are unaffected — both are pinned to the probed student-desk geometry,
+not the teacher.
+
+Full numbers and the superseded intermediate values are in `decisions.md`, so a future session
+doesn't re-derive any of the three passes.
+
+### 2. Fingers
+
+Already ruled out before this session: rest alignment puts each palm within 3.6-5.1° of
+Marcus's, and finger deltas copy the Mixamo source to 0.000°. Confirmed live in three.js
+(frozen frames, same clip and time, side by side): at the exact same instant, Marcus's Talking
+hand is open and relaxed; Jake's and MJ's are visibly clawed. Not a retarget bug — the *same*
+rotation values read as a tighter clench on the Canino rigs' shorter, thicker finger segments
+than on Marcus's longer ones.
+
+**Fix (`scripts/v9_fingers.py`, new):** `relax_fingers` slerps every finger bone's baked
+`rotation_quaternion` keyframe 35% toward its own rest pose, per clip, as a step after
+`bake_clips` — it doesn't touch the retarget maths, `drive_helpers`, or `ground`. Applied to all
+17 shipped clips for both teachers; Pointing's right index chain (the pointing finger) is
+excluded, per the brief. 35% fixed the worst offenders (Talking, and to a lesser extent Idle)
+without visibly flattening clips that already read fine (Talking3, Pointing).
+
+Re-exported, re-shipped. `v9_verify_anim.mjs` unaffected by the fingers change: worst clip
+0.0166° / 0.242 mm, same as V9.2 (the relax only touches Blender-side keyframes before export,
+not the diet/compression pass).
+
+### 3. Jake's trousers deform at the knee
+
+Also ruled out by elimination before editing anything, per the brief's own candidate list:
+
+- **Not the normal map.** The trousers material carries no normal map at all in the shipped
+  GLB (`hasNormalMap: false`). Stripped the diffuse texture in three.js and the dark crease was
+  still there, fully lit and shadowed like real geometry — so it isn't a painted texture detail
+  either.
+- **Not the `KneeShareBone` helper or a weight-blend bug.** The crease is present with
+  `mixer.stopAllAction()` — zero pose applied, the true bind mesh — and barely changes between
+  Idle and the more extreme Talking4 leg pose.
+
+It's a fold sculpted into the source Sketchfab trouser mesh's rest geometry itself, independent
+of pose. **Fix:** a distance-feathered Laplacian smooth (smoothstep falloff, factor 0.5, 3
+iterations) on `Pants_14249_Shape`, centred on each `CC_Base_{L,R}_Calf` bone head (radius
+0.11 m), edited directly on the rest mesh with `bmesh` — no armature or pose involved. Both
+knees, since the fold is symmetric.
+
+Verified fixed at rest, at Talking4, and at normal (non-close-up) viewing distance, both knees.
+`v9_mask.find_pokes` run for trousers, shirt and shoes across all 17 clips after the edit:
+**0 pokes on all three** — the smoothing didn't pull the trouser surface into the leg skin
+anywhere. MJ's skirt and legs were checked in the same pass: no equivalent defect (a skirt
+doesn't carry this kind of sculpted knee wrinkle), nothing to fix there.
+
+### Tooling paid for this session
+
+- **`window.__v92` mixer-freeze hook**, in `Teacher.tsx` next to the existing `__v91d` /
+  `__v91dStore` hooks from V9.2: `{ mixer, packActions, actions, scene, group }`, set on every
+  render. Freezes any clip at any exact time and renders a close-up with the *real* R3F camera
+  moved to a bone's world position (`three.gl.render(three.scene, cam)` after
+  `three.setFrameloop('never')`), which is far more reliable for judging fingers/trousers than
+  eyeballing a live loop. **The manual `gl.render()` call needs `scene.updateMatrixWorld(true)`
+  immediately after `mixer.update()`** — skipping it reads the previous frame's stale bone
+  transforms, which silently breaks camera aim. Both debug hooks are reverted before this
+  commit, per the V9.2 rule; re-add them the same way next session.
+- **The browser pane occasionally caches a stale canvas frame** after a manual render call —
+  wait ~1-2 s before screenshotting, not immediately after.
+- **A freshly-created background tab can render into only a corner of its emulated viewport**
+  (a pane sizing quirk, not a page bug — confirmed via `gl.domElement`/`camera.aspect`, which
+  were correct). Fronting the tab (`tabs_select`) fixes it; the pane's own native size always
+  renders correctly with no fix needed.
+- **`git stash`/`pop` on live source files while `next dev` is running can leave `.next` in a
+  half-written state** (missing `routes-manifest.json` etc., 500 on every route). Fix: stop the
+  server, `rm -rf .next`, restart — happened once this session pulling a "before" scale
+  screenshot.

@@ -2,6 +2,42 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 — V9.2b: scale, fingers, trousers — all three fixed
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.2b"). Ran against `NEXT-SESSION-V92B-FIXES.md`.
+
+- **Scale:** three live rounds with Hmz. True real height (Jake 1.78 m) read as a dwarf; halfway
+  to the old 2.79 m giant still read short; landed on **halfway × 1.125 — Jake 2.57 m
+  (`standScale` 1.3824), MJ 2.51 m (1.3521)**, taller than the brief's original "believable
+  adult" target, by Hmz's explicit choice after seeing it live. New `AvatarConfig.standScale` in
+  `Teacher.tsx`, read via `standScaleFor(teacher)` in `Experience.tsx`; legacy avatars keep the
+  old flat 1.5. `SCENE_Y`/`TEACHER_HEAD_Y` re-tuned to match (final: 0.18 / 0.65). Generated-model
+  initial spawn size also cut 45% (1.5 → 0.825) — the student's own scroll-to-resize is
+  untouched. All numbers, including the two superseded intermediate passes, are in
+  `decisions.md` — don't re-derive them.
+- **Fingers:** not a retarget bug (deltas were already 0.000° vs Marcus) — the same Mixamo
+  rotation values read as a tighter clench on the Canino rigs' shorter fingers. Fixed with a new
+  `scripts/v9_fingers.py`: `relax_fingers` slerps baked finger rotations 35% toward rest, per
+  clip, for both teachers; Pointing's index untouched. Re-shipped, `v9_verify_anim.mjs` still
+  passes.
+- **Jake's trousers:** not the normal map (there isn't one) and not a skinning bug (the crease
+  survives `mixer.stopAllAction()` — true bind pose). It's a fold sculpted into the source
+  mesh's rest geometry. Fixed with a feathered Laplacian smooth on `Pants_14249_Shape` at both
+  knees, edited directly on the rest mesh. `v9_mask.find_pokes`: 0 pokes on trousers/shirt/shoes
+  across all 17 clips after the edit. MJ's skirt/legs checked, no equivalent issue.
+- **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85.
+- **New tooling** (documented in V9-REPORT.md "V9.2b Tooling"): a `window.__v92` mixer-freeze
+  hook for exact-frame close-ups with the real R3F camera — needs
+  `scene.updateMatrixWorld(true)` right after `mixer.update()` or camera aim reads stale bone
+  transforms. Reverted before this commit, same as `__v91d`/`__v91dStore`.
+
+**Next:** V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
+waves).
+
+**Still open:** the Avaturn rig's packs (mirrors, diet); the gap clips (Mixamo exhausted, see
+"Clip sources" below); MJ's hair on her shoulder; the scalp seam; female narration for MJ
+(parked, needs Hmz's go).
+
 ## 2026-09-23 — V9.2: animation library for Jake and MJ (17 clips, base + lazy pack)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn rig is not.**
