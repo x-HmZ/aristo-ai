@@ -2,6 +2,16 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 — V9.3 director: design half done, wiring next (Sonnet)
+
+- **Done (Opus):** `src/lib/avatar/` — `animationManifest.ts` (clips, scenario table, clip sets
+  per avatar), `director.ts` (pure step function: base/overlay/look/face, no repeats,
+  cooldowns, latched reactions, greeting, long wait, fallbacks), `skeletonMasks.ts`, `look.ts`.
+  122 table-driven tests; suite 207/207, type-check clean. Nothing in the app uses them yet.
+- **Next:** wire `Teacher.tsx` to it, per `.claude/plans/V93-WIRING.md`. That brief holds
+  the settled decisions (Pointing stays base, nod/shake head-only overlays, reactions latched,
+  weight-dominance overlays, `lessonComplete` store mirror) — execute it, don't re-derive.
+
 ## 2026-09-23 — V9.2b: scale, fingers, trousers — all three fixed
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.2b"). Ran against `NEXT-SESSION-V92B-FIXES.md`.
