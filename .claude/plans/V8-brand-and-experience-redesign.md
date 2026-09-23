@@ -355,9 +355,8 @@ After V8.4, V8.5 and V9 have merged:
    `public/images/landing/` on a production build. Clear `.next/cache/images` and use a
    fresh browser profile: on 2026-09-11 a headless capture showed a stale cached image.
 2. Final OG image and social assets from the new captures.
-3. Remove dead legacy components after confirming with Hmz: `src/components/{Hero,Navbar,
-   Team,WhyAristo,GuideToAristo,Footer}` (old JSX landing, imported nowhere; `/aristo` now
-   only redirects to `/learn`).
+3. ~~Remove dead legacy components~~ Done in V9.5 (2026-09-23, Hmz confirmed): the old JSX landing
+   `src/components/{Hero,Navbar,Team,WhyAristo,GuideToAristo,Footer}` and the V1 `Experience.jsx` tree are deleted.
 4. Update `CLAUDE.md` (Vision section), `brand-system.md`, `state.md`, and tick this file.
 
 ## Model discipline (keeping this cheap without losing quality)

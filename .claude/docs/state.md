@@ -14,10 +14,8 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.5"). V9 is finished apart from the o
 - **Budget (cold `/demo`, before = branch start with Marcus, after = Jake):** GLBs 6.95 MB to 3.23 MB, everything 9.2 MB
   to 5.5 MB, posed at 9 Mbps 14.7 s to 9.4 s, warm unchanged. T02's 12 MB bar met; nothing to re-export.
 - **Docs:** `LICENSES.md` (new), `.claude/docs/architecture.md` ("Teacher avatar subsystem"), CLAUDE.md avatar notes.
-- **Blocked on Hmz / open questions:** (1) ShakeNo on a wrong answer (recommendation: silence it); (2) the Tier 2 clips;
-  (3) `LICENSES.md` open items: classroom GLB source, Ryan and Sonia source, the Sony duck `dev_placeholder.glb`,
-  and the Mixamo/Avaturn/ElevenLabs/Tripo3D/fal.ai terms nobody read; (4) delete the unreferenced V1 JSX tree and its
-  images (list in V9-REPORT "V9.5").
+- **Blocked on Hmz / open questions:** (1) ShakeNo: Hmz decided to keep it for now; (2) the Tier 2 clips (hand-keyed gestures: present a model, "let's look again", supportive quiz);
+  (3) `LICENSES.md`: classroom and Ryan/Sonia are open source from a YouTuber per Hmz (creator, licence, URL still to record), the Sony duck `dev_placeholder.glb` still open; (4) done: the unreferenced V1 JSX tree and its images are deleted (lint is now 10 warnings, not 22).
 - **Not verified:** `/learn` end to end (needs auth), face hints in a real quiz, a phone, frame rate.
 - **Next:** V8.7 re-capture is no longer blocked by V9; the plan also waits on V8.4 and V8.5 (both still unticked).
   The plan assigns it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal once you confirm.

@@ -1121,11 +1121,11 @@ are unchanged. Not measured: `/learn` (auth), a phone, real networks beyond the 
   export in `src/lib/avatar/` is used by the app or by a test.
 - The `AVATAR_ASSETS` entries for Ryan, Sonia, Marcus and Priya are archived by decision, not dead: Marcus is
   the custom teacher's rig source, and `/dev/free-model?avatar=` can still select any of them. Kept.
-- **Found, not touched (deleting needs your yes):** a whole V1 JSX tree is imported by nothing:
+- **Deleted after Hmz's go (git history keeps it):** a whole V1 JSX tree that nothing imported:
   `src/components/{Experience,Teacher,BoardSettings,ImageBox,MessagesList,QuizBox,TypingBox,LogoutButton}.jsx`
   and `src/components/{Hero,Navbar,Team,WhyAristo,GuideToAristo,Footer}`, with `public/images/{1..12}.png`,
-  `teamMember1-2.jpg`, `Ryan.jpg`, `Sonia.jpg`. V8.7 already lists the second group for removal after your
-  confirmation; the first group (V1's `Teacher.jsx` and friends) is not on that list.
+  `teamMember1-2.jpg`, `Ryan.jpg`, `Sonia.jpg`. 36 files. Type-check, tests and build pass; lint warnings fell from 22 to 10
+  (the dead files carried 12). V8.7's item 3 (the second group) is therefore already done.
 
 ### LICENSES.md
 

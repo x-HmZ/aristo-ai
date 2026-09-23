@@ -45,14 +45,14 @@ the use Mixamo's terms describe, but nobody has confirmed that reading with Adob
 |---|---|---|---|
 | `Teacher_Marcus.glb`, `Teacher_Priya.glb` | Avatars generated with Avaturn's editor | Avaturn's terms of service; the page at avaturn.me/terms returned 404, so the wording is **unverified** | Archived. Marcus is the source of the shared Avaturn rig and of custom teachers |
 | `animations_Avaturn.glb` | Mixamo clips retargeted to the Avaturn rig | See "Animation clips" | Used by custom teachers |
-| `Teacher_Ryan.glb`, `animations_Ryan.glb`, `Teacher_Sonia.glb`, `animations_Sonia.glb` | V1 (2024) characters | **Source and licence unknown.** Added in the "Aristo V1" commit; the V1 app followed the Wawa Sensei "AI teacher" tutorial (its Nanami and Naoki characters). No record of where Ryan and Sonia came from | Archived. Cannot be cleared without the original source |
+| `Teacher_Ryan.glb`, `animations_Ryan.glb`, `Teacher_Sonia.glb`, `animations_Sonia.glb` | V1 (2024) characters | Open-source models from a YouTuber's tutorial (Hmz, 2026-09-23; the V1 app followed the Wawa Sensei "AI teacher" tutorial). **Not recorded:** the creator's name, the exact licence and a source URL | Archived. Fill in the licence and URL when known |
 | `dev_placeholder.glb` | Stand-in model for `/dev/free-model` | It renders as the yellow duck on `/dev/free-model` (seen on screen), and its generator (COLLADA2GLTF) matches the Khronos glTF sample "Duck", which is under the **SCEA Shared Source License 1.0** (Sony Computer Entertainment, 2006, per the Khronos repository). A byte-for-byte match was not checked | Dev only. The page 404s in production, but the file is still copied into `public/` and so is served. See Open items |
 
 ## Classroom
 
 | File | Source | Licence |
 |---|---|---|
-| `public/models/classroom_default.glb`, `classroom_alternative.glb` | **Unknown.** Added in the "AI Module" commit of 2024-05-04 with the Nanami and Naoki files, under the names the Wawa Sensei tutorial uses. Compressed by Aristo (Draco, WebP) in 2026 | **Unverified** |
+| `public/models/classroom_default.glb`, `classroom_alternative.glb` | Open-source model from a YouTuber's tutorial (Hmz, 2026-09-23), added in the "AI Module" commit of 2024-05-04. Compressed by Aristo (Draco, WebP) in 2026. **Not recorded:** creator, exact licence, source URL | Open source per Hmz; the exact licence is **unrecorded** |
 
 ## Demo lessons (`public/demo/`)
 
@@ -70,19 +70,13 @@ the use Mixamo's terms describe, but nobody has confirmed that reading with Adob
 |---|---|---|
 | `public/draco/*` | Google's Draco decoder, copied from three.js (`three/examples/jsm/libs/draco/gltf`) | Apache 2.0 (Draco); verified from the upstream project, not re-read from the copy |
 | `public/images/landing/*.webp` | Aristo's own screenshots of the product (with the Marcus teacher) | Aristo's own. They show an Avaturn avatar, see the Marcus row |
-| `public/images/1.png` to `12.png`, `teamMember1.jpg`, `teamMember2.jpg`, `Ryan.jpg`, `Sonia.jpg` | V1 (2024) site. Only the first two groups are referenced by code that nothing imports (see Open items) | **Unknown** |
 | `public/next.svg`, `public/vercel.svg` | Next.js starter template | Vercel's starter, MIT-licensed project; unused |
 
 ## Open items
 
-1. **Ryan and Sonia** (`Teacher_Ryan.glb`, `Teacher_Sonia.glb`, both animation files): no source known.
-   They are archived and not offered, but they are still in `public/` and fetchable. Remove them or find
-   the source.
-2. **Classroom GLBs** (both): source and licence unknown. These are on screen in every lesson, so this is
-   the one that matters most.
+1. **Ryan, Sonia and the classroom GLBs**: open source from a YouTuber, per Hmz. Add the creator's name, the
+   exact licence and the URL to the rows above. The classroom is on screen in every lesson, so it matters most.
 3. **`dev_placeholder.glb`**: the Khronos/Sony Duck, under a licence that is not a plain open licence.
    It is dev-only; the cleanest fix is to drop it from `public/` or swap it for a CC0 model.
-4. **Mixamo, Avaturn, ElevenLabs, Tripo3D and fal.ai terms** could not be read today (403, 404, or never
-   recorded). None looks like a blocker, but the wording should be read once and pasted here.
-5. **V1 images** (`1.png` to `12.png`, team photos, Ryan and Sonia portraits): unknown source, used only by
-   the unreferenced V1 component tree.
+4. **Mixamo, Avaturn, ElevenLabs, Tripo3D and fal.ai terms**: Hmz has read them (2026-09-23), but the fetch
+   tool could not, so the wording is not pasted here. Note the plan and date of the ElevenLabs render.
