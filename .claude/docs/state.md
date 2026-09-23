@@ -24,9 +24,16 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn
   - Fixed: the talking cycler skipped variants.
 - **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85; `typescript-reviewer` pass.
 
-**Next:** V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
-waves), then Tier 2 hand-keyed gestures for the gaps (see decisions.md "Clip sources").
-**Waiting on Hmz:** a look at Idle3 in motion.
+**Next:** **V9.2b** fixes Hmz found in the app. Start prompt:
+`.claude/plans/NEXT-SESSION-V92B-FIXES.md` (Sonnet).
+- The teachers stand 2.79 m in a real-size classroom (`scale={1.5}`), so a desk reaches the
+  knee.
+- The fingers look bent.
+- Jake's trousers deform at the knees.
+
+Then V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
+waves), then Tier 2 hand-keyed gestures for the gaps (decisions.md "Clip sources"). Hmz saw
+Idle3: fine.
 
 **Still open:** the Avaturn rig's packs (mirrors, diet); MJ's hair on her shoulder; the scalp
 seam.

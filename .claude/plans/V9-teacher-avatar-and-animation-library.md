@@ -279,6 +279,29 @@ compress with `@gltf-transform/cli` (already a dev dependency): resample, prune,
 meshopt. Source every scenario in the catalogue. Prepare the Mixamo clip list for Hmz to
 download. Total animation payload ≤ 3 MB per rig.
 
+**V9.2b — Fixes Hmz found in the app (2026-09-23), before V9.3.** **Model: Sonnet 5**, escalating to Opus if a diagnosis does not converge. Start prompt: `.claude/plans/NEXT-SESSION-V92B-FIXES.md`.
+
+1. **Scale and placement.** The classroom is built at real size (chair seats 0.45-0.5 m, desk
+   tops 0.7-0.8 m, camera eye 1.71 m above the floor). The teachers stand **2.79 m** tall
+   (1.859 m × `scale={1.5}` in `Experience.tsx`), so a desk comes to their knee. The 1.5 was
+   tuned on Marcus and never checked against the furniture. Settle on a real height (about
+   1.70-1.80 m), then re-frame everything that was tuned to the giant together:
+   - the teacher's spot and rotation;
+   - `SCENE_X`/`SCENE_Y` (the image panel, where Pointing lands);
+   - the generated model's anchor and its `scale={1.5}`;
+   - the speech bubble and `spawnLabelHeight`;
+   - the desk-quiz camera.
+   Measure before and after; Hmz signs off from screenshots.
+2. **Fingers look bent** on both teachers. Already ruled out: the palm roll after rest
+   alignment is within 3.6-5.1° of Marcus, and the finger deltas copy the source exactly, so it
+   is not the retarget maths. Compare close-ups beside Marcus in three.js for Idle and Talking.
+   Then either the Mixamo finger pose reads badly on the cartoon hands (fix: a gentle per-clip
+   blend of the fingers towards a relaxed pose, baked) or something shows only in three.js.
+3. **Jake's trousers deform** at the knees and shins (lumps and deep creases). Render rest
+   against Idle in Blender and three.js. Candidates: the source's baked wrinkle normal map, the
+   knee-share helper, the trouser weights at the knee. Check MJ's legs and skirt in the same
+   pass.
+
 **V9.3 — Director and scenario wiring.** **Model: Opus 5** designs the director and its tests, **Sonnet 5** writes them. Pure logic with unit tests, so mistakes are cheap to catch; no Fable.
 
 Manifest plus director plus unit tests; wire
@@ -357,6 +380,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.0 look direction chosen (2026-09-18): L2 and L3 both to the V9.1 bake-off, L5 casting on both, two teachers, Marcus/Priya retired from the picker, $0 animation plan confirmed
 - [x] V9.1 bake-off report, candidate chosen (2026-09-21 to 09-23): the Canino pair, Jake and MJ, shipped through V9.1b-e
 - [ ] V9.2 animation packs built for the new rig(s) and the Avaturn rig. **Canino rigs done 2026-09-23** (17 clips, base + lazy pack, see V9-REPORT "V9.2"); open: the Avaturn rig and the catalogue's gap clips
+- [ ] V9.2b scale and placement at real size, fingers, Jake's trousers (Hmz, 2026-09-23)
 - [ ] V9.3 manifest, director (tested), layers wired
 - [ ] V9.4 face, expressions, gaze
 - [ ] V9.5 integrated, budgets measured, docs and LICENSES.md done
