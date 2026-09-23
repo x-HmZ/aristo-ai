@@ -5,8 +5,11 @@ import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/use
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, SRGBColorSpace } from "three";
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, SRGBColorSpace,
+  type AnimationAction, type AnimationClip,
+} from "three";
 import { randInt } from "three/src/math/MathUtils.js";
 import { getCurrentViseme } from "@/hooks/useTTS";
 
@@ -63,6 +66,15 @@ interface AvatarConfig {
   label:            string;   // shown in the teacher pickers
   sceneFile:        string;
   animFile:         string;
+  /**
+   * Animation-only GLBs on the same skeleton, fetched once the scene is
+   * ready (V9.2) so they never compete with the first load. Their clips bind
+   * to the teacher's bones by name. A clip named in `clips` that lives in a
+   * pack is skipped until the pack arrives: pointing falls back to talking,
+   * nodding and shaking to idle. `clips.idle[0]` must live in `animFile`:
+   * it is the clip a teacher mounts on.
+   */
+  clipPacks?:       readonly string[];
   spawnLabelHeight: number;
   clips: {
     idle:     string[];   // one or more; cycles on a timer when standing still
@@ -116,14 +128,18 @@ const CANINO3D = {
   modified:   true,
 } as const;
 
-// Canino3d rigs ship six clips, retargeted from animations_Avaturn.glb and
-// embedded in their own GLB. Their "Thinking" is baked from the pack's
-// Thinking2 (looking up, arms relaxed): the pack's Thinking puts a hand to
-// the chin, which on these proportions lands on the chest (V9.1e).
+// Canino3d rigs: clips retargeted from the Mixamo pack behind
+// animations_Avaturn.glb. The teacher's own GLB carries the base clips (Idle,
+// Talking, Thinking); the rest come from its clip pack (V9.2). Their
+// "Thinking" is baked from the pack's Thinking2 (looking up, arms relaxed):
+// the pack's Thinking puts a hand to the chin, which on these proportions
+// lands on the chest (V9.1e). An `M` suffix is a left-right mirror. The pack
+// also carries Idle3 (a restless fidget), Talking6 and Talking6M (a wave),
+// kept out of these pools for the V9.3 director's long-wait and greeting rows.
 const CANINO_CLIPS: AvatarConfig["clips"] = {
-  idle:     ["Idle"],
-  thinking: ["Thinking"],
-  talking:  ["Talking"],
+  idle:     ["Idle", "Idle2", "Idle4"],
+  thinking: ["Thinking", "ThinkingM"],
+  talking:  ["Talking", "Talking2", "Talking2M", "Talking3", "Talking3M", "Talking4"],
   pointing: ["Pointing"],
   nodding:  ["Nodding"],
   shaking:  ["ShakeNo"],
@@ -194,6 +210,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     label:     "Jake",
     sceneFile: "Teacher_Jake.glb",
     animFile:  "Teacher_Jake.glb",
+    clipPacks: ["Teacher_Jake_clips.glb"],
     spawnLabelHeight: 1.4,
     clips:  CANINO_CLIPS,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
@@ -208,6 +225,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     label:     "MJ",
     sceneFile: "Teacher_MJ.glb",
     animFile:  "Teacher_MJ.glb",
+    clipPacks: ["Teacher_MJ_clips.glb"],
     spawnLabelHeight: 1.4,
     clips:  CANINO_CLIPS,
     morphs: { mouthSmile: "mouthSmile", eyeClose: ARKIT_BLINK, visemes: true },
@@ -245,6 +263,31 @@ const AVATURN_VISEMES = [
   "viseme_aa",  "viseme_E",  "viseme_I",  "viseme_O",  "viseme_U",
 ] as const;
 
+// ─── Clip packs ───────────────────────────────────────────────────────────────
+
+// Loads one animation-only GLB and hands its clips up. It renders nothing and
+// suspends only its own Suspense boundary, so the teacher keeps playing while
+// the pack downloads.
+function ClipPack({ url, onLoad }: { url: string; onLoad: (clips: AnimationClip[]) => void }) {
+  const { animations } = useGLTF(url);
+  useEffect(() => { onLoad(animations); }, [animations, onLoad]);
+  return null;
+}
+
+// A pack that fails to load must not reach SafeTeacher's boundary, which
+// would swap the whole teacher out. The base clips carry on without it.
+class ClipPackBoundary extends Component<{ url: string; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error: Error) {
+    console.warn(`[Teacher] clip pack ${this.props.url} failed to load:`, error.message);
+    // useGLTF's cache keeps the rejection for the life of the tab; clear it
+    // so the next mount of this teacher fetches again instead of rethrowing.
+    useGLTF.clear(this.props.url);
+  }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface TeacherProps {
@@ -280,7 +323,7 @@ export function Teacher({
         cfg: {
           ...CUSTOM_CONFIG,
           spawnLabelHeight: 1.25,
-        } as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight">,
+        } as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks">,
       };
     }
     const key = teacher === "custom"
@@ -290,7 +333,7 @@ export function Teacher({
     return {
       sceneUrl: `/models/${asset.sceneFile}`,
       animUrl:  `/models/${asset.animFile}`,
-      cfg: asset as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight">,
+      cfg: asset as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks">,
     };
   }, [teacher, customTeacherGlbUrl]);
 
@@ -326,6 +369,30 @@ export function Teacher({
   // Belt-and-braces: stop a mixer's actions when this rig unmounts so it is not
   // left running against the detached clone.
   useEffect(() => () => { mixer.stopAllAction(); }, [mixer]);
+
+  // Clip packs (V9.2). Their actions go on the SAME mixer and root, but not
+  // through useAnimations: drei stops every action whenever its clip list
+  // changes, so appending would snap the playing clip back to frame 0. A ref
+  // is enough, because pools are resolved at pick time (see `loaded`) and a
+  // late pack must not re-run the state machine mid-sentence.
+  const sceneReady  = useAristoStore((s) => s.sceneReady);
+  const packActions = useRef<Record<string, AnimationAction>>({});
+  const onPackLoad  = useCallback((clips: AnimationClip[]) => {
+    const root = group.current;
+    if (!root) return;
+    for (const clip of clips) {
+      packActions.current[clip.name] ??= mixer.clipAction(clip, root);
+    }
+  }, [mixer]);
+  const getAction = useCallback(
+    (name: string): AnimationAction | undefined => actions[name] ?? packActions.current[name] ?? undefined,
+    [actions],
+  );
+  // The clips of a pool that can play now; `fallback` when none of them can.
+  const loaded = useCallback((pool: string[] | undefined, fallback: string[] = []) => {
+    const ready = (pool ?? []).filter((n) => getAction(n));
+    return ready.length ? ready : fallback.filter((n) => getAction(n));
+  }, [getAction]);
 
   const isLoading  = useAristoStore((s) => s.isLoading);
   const isSpeaking = useAristoStore((s) => s.isSpeaking);
@@ -433,53 +500,54 @@ export function Teacher({
   // pointing replaces the talking clip (the Mixamo "Pointing" clip already
   // includes torso/head motion that reads as speech).
   useEffect(() => {
-    const pickRandom = (variants: string[]) =>
-      variants[randInt(0, variants.length - 1)];
+    // Only clips that can play now: a pack clip before its pack arrives
+    // would stop the current clip and leave the bind pose.
+    const pickRandom = (pool: string[] | undefined, fallback?: string[]) => {
+      const variants = loaded(pool, fallback);
+      if (variants.length) setAnimation(variants[randInt(0, variants.length - 1)]);
+    };
 
     if (gesture === "pointing") {
-      const pool = cfg.clips.pointing ?? cfg.clips.talking;
-      setAnimation(pickRandom(pool));
+      pickRandom(cfg.clips.pointing, cfg.clips.talking);
       return;
     }
     if (gesture === "nodding") {
-      const pool = cfg.clips.nodding ?? cfg.clips.idle;
-      setAnimation(pickRandom(pool));
+      pickRandom(cfg.clips.nodding, cfg.clips.idle);
       return;
     }
     if (gesture === "shaking") {
-      const pool = cfg.clips.shaking ?? cfg.clips.idle;
-      setAnimation(pickRandom(pool));
+      pickRandom(cfg.clips.shaking, cfg.clips.idle);
       return;
     }
     if (gesture === "explaining") {
       // Deliberate lecturing pose. Falls back to talking pool until a
       // dedicated "Lecturing"-derived clip is baked into the animation file.
-      const pool = cfg.clips.talking;
-      setAnimation(pickRandom(pool));
+      pickRandom(cfg.clips.talking);
       return;
     }
 
     if (isLoading) {
-      setAnimation(pickRandom(cfg.clips.thinking));
+      pickRandom(cfg.clips.thinking);
     } else if (isSpeaking) {
-      setAnimation(pickRandom(cfg.clips.talking));
+      pickRandom(cfg.clips.talking);
     } else {
-      setAnimation(pickRandom(cfg.clips.idle));
+      pickRandom(cfg.clips.idle);
     }
-  }, [gesture, isLoading, isSpeaking, cfg.clips]);
+  }, [gesture, isLoading, isSpeaking, cfg.clips, loaded]);
 
   // Idle variant cycling — rotates every 20s so the avatar never freezes
   useEffect(() => {
     if (gesture !== "idle" || isLoading || isSpeaking || cfg.clips.idle.length <= 1) return;
     const id = setInterval(() => {
       setAnimation((cur) => {
-        const variants = cfg.clips.idle;
+        const variants = loaded(cfg.clips.idle);
+        if (!variants.length) return cur;
         const idx = variants.indexOf(cur);
         return variants[(idx + 1) % variants.length];
       });
     }, 20_000);
     return () => clearInterval(id);
-  }, [gesture, isLoading, isSpeaking, cfg.clips.idle]);
+  }, [gesture, isLoading, isSpeaking, cfg.clips.idle, loaded]);
 
   // Auto-revert one-shot gestures. When the clip is playing, revert as it
   // ends, less the crossfade, so the fade covers its tail: the fixed 1.5 s cut
@@ -489,13 +557,13 @@ export function Teacher({
   useEffect(() => {
     if (gesture !== "nodding" && gesture !== "shaking") return;
     const pool = gesture === "nodding" ? cfg.clips.nodding : cfg.clips.shaking;
-    const clip = pool?.includes(animation) ? actions[animation]?.getClip() : undefined;
+    const clip = pool?.includes(animation) ? getAction(animation)?.getClip() : undefined;
     const ms = clip
       ? Math.max(0, clip.duration - ANIMATION_FADE_TIME) * 1000
       : gesture === "nodding" ? 2000 : 1500;
     const id = setTimeout(() => setGesture("idle"), ms);
     return () => clearTimeout(id);
-  }, [gesture, animation, actions, cfg.clips, setGesture]);
+  }, [gesture, animation, getAction, cfg.clips, setGesture]);
 
   // The gesture is read through a ref so the play effect below runs only when
   // the clip changes. With `gesture` in its deps, a gesture change re-ran it
@@ -508,9 +576,15 @@ export function Teacher({
 
   // Play animation with crossfade. One-shot gestures (nod/shake) play once.
   useEffect(() => {
-    const action = actions[animation];
+    const action = getAction(animation);
     if (!action) return;
-    const isOneShot = gestureRef.current === "nodding" || gestureRef.current === "shaking";
+    // One-shot only when the clip IS the gesture's clip. A nod that fell back
+    // to Idle (no Nodding yet, clip pack still loading) must keep Idle
+    // looping: clamped, it froze on its last frame until something else
+    // changed the clip.
+    const g = gestureRef.current;
+    const oneShotPool = g === "nodding" ? cfg.clips.nodding : g === "shaking" ? cfg.clips.shaking : undefined;
+    const isOneShot = !!oneShotPool?.includes(animation);
     if (isOneShot) {
       action.setLoop(LoopOnce, 1);
       action.clampWhenFinished = true;
@@ -523,7 +597,7 @@ export function Teacher({
     // the first useFrame tick — prevents a one-frame T-pose flash at startup.
     if (mixer.time === 0) mixer.update(1 / 60);
     return () => { action.fadeOut(ANIMATION_FADE_TIME); };
-  }, [animation, actions, mixer]);
+  }, [animation, getAction, mixer, cfg.clips.nodding, cfg.clips.shaking]);
 
   // Morph targets per frame
   //
@@ -557,14 +631,15 @@ export function Teacher({
     }
 
     // Cycle multi-variant pools at clip end (only while in their state).
-    const cycleAt = (variants: string[]) => {
-      if (variants.length <= 1 || !actions[animation]) return;
-      const act = actions[animation];
+    const cycleAt = (pool: string[]) => {
+      const variants = loaded(pool);
+      const act = getAction(animation);
+      if (variants.length <= 1 || !act) return;
+      // From the rendered clip, not the updater's `cur`: this runs every
+      // frame of the fade window, and several frames can pass before React
+      // re-renders, so stepping from `cur` skipped variants.
       if (act.time > act.getClip().duration - ANIMATION_FADE_TIME) {
-        setAnimation((cur) => {
-          const idx = variants.indexOf(cur);
-          return variants[(idx + 1) % variants.length];
-        });
+        setAnimation(variants[(variants.indexOf(animation) + 1) % variants.length]);
       }
     };
     if (gesture === "idle") {
@@ -602,6 +677,13 @@ export function Teacher({
         </Html>
       )}
       <primitive object={scene} />
+      {sceneReady && cfg.clipPacks?.map((file) => (
+        <ClipPackBoundary key={file} url={`/models/${file}`}>
+          <Suspense fallback={null}>
+            <ClipPack url={`/models/${file}`} onLoad={onPackLoad} />
+          </Suspense>
+        </ClipPackBoundary>
+      ))}
     </group>
   );
 }
