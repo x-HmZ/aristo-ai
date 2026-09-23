@@ -8,18 +8,21 @@ import { useFrame } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   AnimationClip, Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, Quaternion, SRGBColorSpace, Vector3,
-  type AnimationAction, type Bone,
+  type AnimationAction, type Bone, type SkinnedMesh,
 } from "three";
-import { randInt } from "three/src/math/MathUtils.js";
 import { getCurrentViseme } from "@/hooks/useTTS";
 import {
   AVATURN_CLIP_SET, CANINO_CLIP_SET, CUSTOM_CLIP_SET, LEGACY_CLIP_SET, MOUNT_CLIP,
-  type ClipMask, type LookTarget,
+  type ClipMask, type FaceHint, type LookTarget,
 } from "@/lib/avatar/animationManifest";
 import {
   createDirectorState, overlayBlend, overlayWeight, phaseOf, stepDirector,
   type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
 } from "@/lib/avatar/director";
+import { createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
+import {
+  EYE_RATE, EYE_WEIGHT, createGazeState, eyeAim, gazeTarget, stepSaccade, type GazeState,
+} from "@/lib/avatar/gaze";
 import { LOOK_RATE, LOOK_WEIGHT, aimAngles, damp, lookOffset, yawPitchOf } from "@/lib/avatar/look";
 import { headBoneOf, maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 
@@ -289,6 +292,17 @@ class ClipPackBoundary extends Component<{ url: string; children: ReactNode }, {
 
 // ─── Director plumbing ────────────────────────────────────────────────────────
 
+interface EyeBone {
+  bone:          Bone;
+  rest:          Quaternion;
+  /** The parent's bind-pose orientation, and its inverse. */
+  parentBind:    Quaternion;
+  parentBindInv: Quaternion;
+  /** Where the eye is turned now, in the teacher's axes. */
+  yaw:           number;
+  pitch:         number;
+}
+
 interface LivePlay {
   seq:       number;
   action:    AnimationAction;
@@ -324,7 +338,8 @@ function signalsOf(
 // Scratch objects for the look layer; it runs every frame.
 const _qGroup = new Quaternion(), _qGroupInv = new Quaternion(), _qParent = new Quaternion();
 const _qParentInv = new Quaternion(), _qOffset = new Quaternion(), _qPitch = new Quaternion();
-const _vHead = new Vector3(), _vCur = new Vector3(), _vTarget = new Vector3();
+const _vHead = new Vector3(), _vCur = new Vector3(), _vTarget = new Vector3(), _vEye = new Vector3();
+const _qEye = new Quaternion(), _qEyePitch = new Quaternion(), _qEyeParent = new Quaternion();
 const _X = new Vector3(1, 0, 0), _Y = new Vector3(0, 1, 0);
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -445,7 +460,6 @@ export function Teacher({
 
   const isLoading  = useAristoStore((s) => s.isLoading);
   const isSpeaking = useAristoStore((s) => s.isSpeaking);
-  const [blink, setBlink]            = useState(false);
   const [thinkingDots, setThinkingDots] = useState(".");
 
   // Material handling
@@ -505,19 +519,6 @@ export function Teacher({
     });
   }, [scene, cfg.pbrMaterials]);
 
-  // Blink loop
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    const nextBlink = () => {
-      timeout = setTimeout(() => {
-        setBlink(true);
-        setTimeout(() => { setBlink(false); nextBlink(); }, 120);
-      }, randInt(1500, 5000));
-    };
-    nextBlink();
-    return () => clearTimeout(timeout);
-  }, []);
-
   // Thinking dots animation
   useEffect(() => {
     if (!isLoading) return;
@@ -570,7 +571,18 @@ export function Teacher({
     const maskSet = new Set<ClipMask>(["full"]);
     if (masks.upper) maskSet.add("upper");
     if (masks.head) maskSet.add("head");
-    return { masks, maskSet, head, headForward };
+    // The eyes (V9.4): the Canino rigs' CC_Base_L_Eye / R_Eye. No clip animates
+    // them, so the rest pose is the bind pose. An offset is turned about the
+    // teacher's own axes, then carried into the eye's parent frame by the
+    // parent's bind orientation (the eye bones' own axes are not aligned).
+    const eyes: EyeBone[] = [];
+    scene.updateMatrixWorld(true);
+    for (const b of byName.values()) {
+      if (!/^CC_Base_[LR]_Eye(_\d+)?$/.test(b.name) || !b.parent) continue;
+      const parentBind = b.parent.getWorldQuaternion(new Quaternion());
+      eyes.push({ bone: b, rest: b.quaternion.clone(), parentBind, parentBindInv: parentBind.clone().invert(), yaw: 0, pitch: 0 });
+    }
+    return { masks, maskSet, head, headForward, eyes };
   }, [scene]);
 
   // Masked copies of clips, by "<clip>@<mask>". three has no bone masks, so an
@@ -617,6 +629,22 @@ export function Teacher({
   const headRef        = useRef({ clip: new Quaternion(), written: new Quaternion(), wrote: false });
   const lookTargetsRef = useRef(lookTargets);
   lookTargetsRef.current = lookTargets;
+
+  // Face (V9.4): the director's hint, the smile it drives, the blink and the eyes' idle life.
+  const faceRef = useRef<{ hint: FaceHint; smile: number; blink: BlinkState; gaze: GazeState } | null>(null);
+  faceRef.current ??= {
+    hint: "neutral", smile: 0.15,
+    blink: createBlinkState(0, Math.random), gaze: createGazeState(0, Math.random),
+  };
+  // Every mesh with morph targets, once: the per-frame drive must not walk the scene.
+  const morphMeshes = useMemo(() => {
+    const list: SkinnedMesh[] = [];
+    scene.traverse((o) => {
+      const m = o as SkinnedMesh;
+      if (m.isSkinnedMesh && m.morphTargetDictionary && m.morphTargetInfluences) list.push(m);
+    });
+    return list;
+  }, [scene]);
 
   // Prime the mount clip so the bones are posed before the first frame.
   useLayoutEffect(() => {
@@ -677,6 +705,43 @@ export function Teacher({
     }
   };
 
+  // The world point a look target names: the scene's anchor, or the camera.
+  const worldTarget = (target: LookTarget, camera: Vector3, out: Vector3) => {
+    const t = lookTargetsRef.current;
+    const world = target === "board" || target === "model" || target === "desk" ? t?.[target] : undefined;
+    if (world) out.fromArray(world); else out.copy(camera);
+  };
+
+  // Turns the eyes toward `target` inside a small clamp, on top of the head,
+  // plus the saccades and drift (gaze.ts). Runs after applyLook so the head's
+  // final pose is what the eyes compensate for.
+  const applyEyes = (target: LookTarget, camera: Vector3, now: number, delta: number) => {
+    const { eyes } = rig;
+    const face = faceRef.current!;
+    face.gaze = stepSaccade(face.gaze, now, Math.random);
+    if (!eyes.length) return;
+    if (target !== "none") worldTarget(target, camera, _vTarget);
+    const thinking = face.hint === "thinking";
+    for (const e of eyes) {
+      let aim = null;
+      if (target !== "none") {
+        e.bone.parent!.updateWorldMatrix(true, false);
+        _vEye.copy(_vTarget);
+        e.bone.parent!.worldToLocal(_vEye);
+        _vEye.sub(e.bone.position).applyQuaternion(e.parentBind);
+        aim = eyeAim(_vEye);
+      }
+      const goal = gazeTarget(aim, EYE_WEIGHT[target], face.gaze, now, thinking);
+      e.yaw   = damp(e.yaw,   goal.yaw,   EYE_RATE, delta);
+      e.pitch = damp(e.pitch, goal.pitch, EYE_RATE, delta);
+      // Yaw about +Y, pitch up about -X, in the teacher's axes at bind; then
+      // into the parent's frame.
+      _qEye.setFromAxisAngle(_Y, e.yaw).multiply(_qEyePitch.setFromAxisAngle(_X, -e.pitch));
+      _qEye.premultiply(e.parentBindInv).multiply(_qEyeParent.copy(e.parentBind));
+      e.bone.quaternion.copy(_qEye).multiply(e.rest);
+    }
+  };
+
   // Turns the head toward `target` on top of the clip's own head motion.
   const applyLook = (target: LookTarget, camera: Vector3, delta: number) => {
     const { head, headForward } = rig;
@@ -697,9 +762,7 @@ export function Teacher({
 
     // The head's forward and the target, in the teacher's own space.
     _vCur.copy(headForward).applyQuaternion(hs.clip).applyQuaternion(_qParent).applyQuaternion(_qGroupInv);
-    const t = lookTargetsRef.current;
-    const world = target === "board" || target === "model" || target === "desk" ? t?.[target] : undefined;
-    if (world) _vTarget.fromArray(world); else _vTarget.copy(camera);
+    worldTarget(target, camera, _vTarget);
     _vTarget.sub(_vHead).applyQuaternion(_qGroupInv);
 
     const off = lookOffset(yawPitchOf(_vCur), aimAngles(_vTarget), LOOK_WEIGHT[target]);
@@ -735,52 +798,49 @@ export function Teacher({
     // The old auto-revert: hand a finished nod or shake back to the store.
     if (out.release && store.gesture === out.release) store.setGesture("idle");
     applyLook(out.look, state.camera.position, delta);
+    faceRef.current!.hint = out.face;
+    applyEyes(out.look, state.camera.position, now, delta);
   });
 
   // Morph targets per frame
   //
-  // For ARKit-rigged avatars (cfg.morphs.visemes === true), wawa-lipsync
-  // analyses the live TTS audio and emits a viseme name per frame; we drive
-  // the matching morph influence to ~`intensity` and fade all other visemes
-  // back to 0 so the mouth doesn't accumulate stuck shapes.
+  // For ARKit-rigged avatars (cfg.morphs.visemes === true), the timeline (or
+  // wawa-lipsync's FFT guess) gives a viseme name per frame; we drive the
+  // matching morph influence to ~`intensity` and fade all other visemes back
+  // to 0 so the mouth doesn't accumulate stuck shapes. The director's face
+  // hint (V9.4) sets the smile (face.ts): a real smile at rest, a small lift
+  // while speaking so it never fights the visemes.
   //
   // For legacy avatars without a viseme set, we keep the old binary
   // mouthSmile open/closed behaviour as a fallback.
-  useFrame(() => {
+  useFrame((_, delta) => {
+    const face = faceRef.current!;
     if (cfg.morphs.visemes) {
       const v = isSpeaking ? getCurrentViseme() : null;
       for (const name of AVATURN_VISEMES) {
         const target = (v && v.viseme === name) ? Math.min(1, v.intensity * 1.4) : 0;
         lerpMorphTarget(name, target, 0.4);
       }
-      // Subtle resting smile when idle so the face doesn't read as dead
-      if (cfg.morphs.mouthSmile && !isSpeaking) {
-        lerpMorphTarget(cfg.morphs.mouthSmile, 0.15, 0.2);
-      } else if (cfg.morphs.mouthSmile) {
-        lerpMorphTarget(cfg.morphs.mouthSmile, 0, 0.3);
-      }
+      face.smile = stepSmile(face.smile, face.hint, isSpeaking, delta);
+      if (cfg.morphs.mouthSmile) lerpMorphTarget(cfg.morphs.mouthSmile, face.smile, 1);
     } else if (cfg.morphs.mouthSmile) {
       lerpMorphTarget(cfg.morphs.mouthSmile, isSpeaking ? 0.5 : 0.2, isSpeaking ? 0.1 : 0.5);
     }
 
     if (cfg.morphs.eyeClose) {
+      const blink = stepBlink(face.blink, clockRef.current, Math.random);
+      face.blink = blink.state;
       const lids = typeof cfg.morphs.eyeClose === "string" ? [cfg.morphs.eyeClose] : cfg.morphs.eyeClose;
-      for (const lid of lids) lerpMorphTarget(lid, blink ? 1 : 0, 0.5);
+      for (const lid of lids) lerpMorphTarget(lid, blink.closure, 1);
     }
   });
 
   const lerpMorphTarget = (target: string, value: number, speed: number) => {
-    scene.traverse((child: any) => {
-      if (child.isSkinnedMesh && child.morphTargetDictionary) {
-        const index = child.morphTargetDictionary[target];
-        if (index === undefined || child.morphTargetInfluences[index] === undefined) return;
-        child.morphTargetInfluences[index] = MathUtils.lerp(
-          child.morphTargetInfluences[index],
-          value,
-          speed
-        );
-      }
-    });
+    for (const mesh of morphMeshes) {
+      const index = mesh.morphTargetDictionary![target];
+      if (index === undefined || mesh.morphTargetInfluences![index] === undefined) continue;
+      mesh.morphTargetInfluences![index] = MathUtils.lerp(mesh.morphTargetInfluences![index], value, speed);
+    }
   };
 
   return (
