@@ -82,7 +82,10 @@ All Anthropic / fal.ai endpoints require auth.
 **Three (3D scene):**
 - `AristoCanvas.tsx` — R3F Canvas + OrbitControls + lighting
 - `Experience.tsx` — scene composition
-- `Teacher.tsx` — Ryan / Sonia GLB
+- `Teacher.tsx` — teacher avatar (`AVATAR_ASSETS`; roster Jake / MJ). Each Canino teacher is
+  `Teacher_<T>.glb` (mesh + base clips Idle/Talking/Thinking) plus `Teacher_<T>_clips.glb`
+  (`clipPacks`: animation-only, meshopt, fetched after `sceneReady`, registered on the same
+  mixer). Built by `.claude/eval/2026-09-18-v9-bakeoff/scripts/v9_ship.sh` (V9.2)
 - `GeneratedModel.tsx` — loads generated GLB, float animation, annotation highlights
 
 ## Hooks

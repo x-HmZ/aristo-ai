@@ -2,6 +2,37 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-23 — V9.2: animation library for Jake and MJ (17 clips, base + lazy pack)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn rig is not.**
+
+- **Channel diet:** rest-value tracks dropped (MJ 765 → 61 channels per clip) and rotations
+  stored as int16. Checked against the raw export in three.js (`v9_verify_anim.mjs`): ≤ 0.016°
+  and ≤ 0.24 mm on all clips and crossfades.
+- **Shipping:**
+  - `Teacher_<T>.glb` (mesh + Idle/Talking/Thinking) plus `Teacher_<T>_clips.glb` (14 clips,
+    meshopt), fetched after `sceneReady` (`clipPacks` in `Teacher.tsx`).
+  - First load: Jake 2.96 → 2.28 MB, MJ 2.92 → 1.78 MB. The packs are 0.51 / 0.54 MB.
+- **Clips:** Idle2 and Idle4; Talking2, 3 and 4; mirrors Talking2M, Talking3M, Talking6M and
+  ThinkingM (`v9_mirror.py`). Idle3 and Talking6/6M ship unwired for the V9.3 director. Clapping
+  and Talking5 were rejected. Time-warp stays runtime.
+- **Checks:** pokes 0 or pushed ≤ 2 mm; one cuff false positive, checked by eye. `v9_qa.py`
+  covers deltas, soles and seams.
+- **App:** checked in `/dev/free-model` on both teachers and in `/demo` for MJ, including the
+  missing-pack fallback.
+  - Fixed: a nod falling back to Idle could freeze Idle clamped.
+  - Fixed: the talking cycler skipped variants.
+- **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85; `typescript-reviewer` pass.
+
+**Next:** V9.3 director (manifest, pools, runtime time-warp; wire Idle3 and the waves).
+**Waiting on Hmz:**
+- the Mixamo downloads (8 search terms in the report);
+- a yes or no on downloading Quaternius UAL (CC0, no login);
+- a look at Idle3 in motion.
+
+**Still open:** the Avaturn rig's packs (mirrors, diet); MJ's hair on her shoulder; the scalp
+seam.
+
 ## 2026-09-23 — V9.1e: MJ's wardrobe A shipped; six clips per teacher
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not built.**

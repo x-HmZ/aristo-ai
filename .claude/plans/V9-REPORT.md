@@ -564,3 +564,191 @@ motion, shake at 33-34°, Thinking at 30° (head up), on both teachers.
 - Hair clipping the shoulder and the forehead scalp seam are unchanged.
 - MJ was not re-checked in `/demo` or `/learn`. The GLB loads through the same path as
   `/dev/free-model`.
+
+## V9.2 — the animation library: channel diet, lazy clip packs, 17 clips per teacher (2026-09-23)
+
+**Verdict: both teachers now carry 17 clips, only 3 of them in the file that blocks first load,
+and that first load is smaller than with yesterday's 6.** Hmz approved the plan: base + lazy
+pack, four baked mirrors with runtime time-warp, and a Quaternius check. Scene backup before
+this session: `bakeoff_scene_pre_v92.blend`. Evidence: `v92_clapping_contact.png`,
+`v92_talking5_legs.png`.
+
+### Where the bytes went
+
+Measured on the shipped V9.1e GLBs. MJ's glTF rig exports 765 channels per clip, Jake's 303.
+Of those, 625-654 (MJ) and 210-218 (Jake) hold the node's rest value on every key: all scales,
+MJ's `_scaleCompensation` bones and her `_0`/`_1` leaf duplicates. Every non-hip translation
+that "moves" is float noise of at most 40 µm. In glTF each track costs a channel, a sampler and
+two accessors of JSON: **0.76 MB of MJ's 1.32 MB of animation was JSON.** Without the rest
+tracks, both rigs keep exactly the same 61 tracks per clip. Tracks holding an off-rest value
+(a curled finger) are kept.
+
+It is safe in three.js because a property no action drives is restored to the node's loaded
+value, and in a crossfade that value is blended in for the missing weight. So a missing rest
+track plays exactly like a kept one.
+
+`scripts/v9_verify_anim.mjs` proves it, using three's own `AnimationMixer` on node trees built
+the way GLTFLoader builds them:
+
+- the raw export against base + pack, every node at every half frame;
+- 40 crossfade pairs at weight 0.5/0.5, where a missing track would show.
+
+**All 17 clips, both teachers: ≤ 0.016° and ≤ 0.24 mm; crossfades ≤ 0.010°.**
+
+| Step (`v9_postprocess.mjs`) | Kept? | Why |
+|---|---|---|
+| Drop rest tracks (0.05°, 0.1 mm local) | yes | Exact. Removes 77-92% of channels |
+| Rotation keys as normalized int16 | yes | Core glTF allows it for rotations, GLTFLoader decodes it, and it costs about 0.004° per component. The base GLB is Draco, not meshopt, so this is its only animation compression |
+| `resample` | **no** (opt-in `--resample`) | 1e-4 saved 0.18 MB on MJ but moved bones 0.45° / 7 mm. 1e-5 saved 27 KB and *grew* the pack: resampled tracks lose the per-clip shared time accessor, which meshopt compresses well |
+| `--base Idle,Talking,Thinking --pack` split | yes | See Packaging |
+
+Two traps, both fixed:
+
+- **Leftover pack keyframes.** `Animation.dispose()` in gltf-transform leaves the samplers alive
+  and holding their accessors, so `prune()` kept them. The first 17-clip split carried 0.72 MB
+  of pack keyframes inside each base. `dropAnimation` now disposes channels and samplers.
+- **A false 0.7° error.** The verifier read int16 quaternions (unit length only to about 4e-5)
+  as a 0.7° error. It now normalizes before comparing; the position column bounds the real
+  effect.
+
+### Packaging
+
+- `Teacher_<T>.glb`: the mesh plus Idle, Talking and Thinking.
+- `Teacher_<T>_clips.glb`: the other 14 clips on the same node tree (no meshes, skins or
+  materials), with EXT_meshopt_compression. drei v9's `useGLTF` registers the meshopt decoder on
+  every loader, so no decoder bytes are added.
+- The CC BY credit travels in both files.
+
+| | V9.1e (6 clips, one file) | V9.2 base (3 clips) | V9.2 pack (14 clips) | Both |
+|---|---|---|---|---|
+| Jake | 2.96 MB (2,289 KiB on the wire) | **2.28 MB (1,916 KiB)** | 0.51 MB (277 KiB) | 2.80 MB |
+| MJ | 2.92 MB | **1.78 MB (1,409 KiB)** | 0.54 MB (284 KiB) | 2.32 MB |
+
+- The wire sizes are from the dev server, which gzips.
+- The pack starts once `sceneReady` is set: 0.8 s after the base on Jake, 1.9 s on MJ.
+- Animation per rig, all 17 clips: about 0.65 MB, against the 3 MB budget.
+
+**Loader (`Teacher.tsx`):**
+
+- **Mounting.** `AvatarConfig.clipPacks` lists the packs. Each is a `<ClipPack>` in its own
+  Suspense and `ClipPackBoundary`, mounted once `sceneReady` is true.
+  - Without the boundary, a failed pack would reach `TeacherErrorBoundary` and swap the teacher
+    for Ryan.
+  - On failure the boundary clears useGLTF's cache, so a remount retries.
+- **Same mixer, held in a ref.** Pack clips go on the same mixer through
+  `mixer.clipAction(clip, root)` and are not appended to `useAnimations`. drei runs
+  `stopAllAction()` whenever its clip list changes, which would snap the playing clip.
+- **Pools resolve at pick time** (`loaded(pool, fallback)`). Until the pack lands, pointing
+  falls back to talking, and nodding and shaking to idle.
+- **Fixed from `typescript-reviewer`.** A nod that fell back to Idle marked Idle as a one-shot,
+  which could freeze it clamped on its last frame. A clip is now a one-shot only if it is the
+  gesture's own clip.
+- **Fixed, pre-existing.** The cycler stepped from the updater's `cur` on every frame of the
+  fade window, so it skipped variants (Talking2 → Talking, missing Talking2M).
+
+### Clips
+
+New source actions `Talking2M`, `Talking3M`, `Talking6M` and `Thinking2M` are mirrored on
+`MarcusArma` by `scripts/v9_mirror.py`. It reflects each bone's armature-space delta from rest
+in x and gives it to the partner bone, and matches the reflected source to 0.87 mm (the rig's
+own rest asymmetry). The numbers below come from `scripts/v9_qa.py`, which is new and matches
+V9.1e's published values on the reference clips.
+
+| Clip (ships as) | Frames | Jake Δ | MJ Δ (clear_hands) | Sole Jake / MJ (mm) | Seam Jake / MJ (source) | Pokes |
+|---|---|---|---|---|---|---|
+| Idle2 | 267 | 0.000° | 5.1° | −0.6..1.1 / 2.0..3.7 | 0.19 / 0.19 (0.20) | 0 / 0 |
+| Idle3 (unwired) | 250 | 0.000° | 5.8° | 0..6.2 / 0..10.1 | 0.26 / 0.27 (0.27) | Jake: 2 vertices ≤ 0.7 mm, pushed |
+| Idle4 | 73 | 0.000° | 4.3° | −0.3..−0.2 / −0.4..−0.2 | 0.07 / 0.10 (0.06) | 0 / 0 |
+| Talking2 | 81 | 0.000° | 8.0° | −0.3..0 / 1.9..2.6 | 0.08 / 0.89 (0.07) | MJ: 1 vertex 0.3 mm, pushed |
+| Talking2M | 81 | 0.000° | 8.4° | −0.3..0 / 2.9..4.1 | 0.07 / 0.73 (0.08) | See below |
+| Talking3 | 71 | 0.000° | 3.9° | −0.5..0 / −0.4..4.6 | 0.21 / 0.67 (0.21) | 0 / 0 |
+| Talking3M | 71 | 0.000° | 4.1° | −0.5..0 / 1.7..3.7 | 0.22 / 0.24 (0.21) | MJ: 2 vertices ≤ 2.1 mm, pushed |
+| Talking4 | 250 | 0.000° | 1.5° | −0.8..0.3 / −1.5..0.9 | 127.8 = source (cycled, not looped) | 0 / 0 |
+| Talking6 (unwired) | 25 | 0.000° | 1.9° | 0.3..0.6 / 1.8..2.1 | 31.7 = source (one-shot wave) | 0 / 0 |
+| Talking6M (unwired) | 25 | 0.000° | 1.9° | 0.3..0.6 / 3.1..3.9 | 31.7 = source | 0 / 0 |
+| ThinkingM (from Thinking2M) | 99 | 0.000° | 8.1° | −0.4..0 / 1.2..3.9 | 0.17 / 0.52 (0.17) | 0 / 0 |
+
+- **`check_through`:** 0 on every frame of every shipped clip (hands in the skirt, legs out of
+  it). The `clear_hands` swings mirror correctly: Thinking2M swings 8.1/5.0°, Thinking 4.9/8.2°.
+- **Talking2M, MJ vertex 202 (20 mm in `find_pokes`):** a false positive at the sleeve's cuff.
+  - It is the first ring of skin past the hem, +1.9 mm *outside* the sleeve on every frame; the
+    ray catches the hem's lip.
+  - Close-ups from behind and from her left show the hem clean.
+  - `adopt_weights` on the left upper arm was tried, changed nothing there and was reverted from
+    the backup.
+- **Talking4:** one hand goes to the hip while the other rises in front of the chest. Measured
+  on MJ, her fingertips stay ≥ 25 cm off the tee and ≥ 28 cm off the skirt; the lesson camera
+  flattens depth. The three.js close-ups (front and side, frame 180) agree.
+- **Idle3 is not jitter**, but it is too restless for the attentive idle pool.
+  - Direction reverses 0.19 times/s (Talking: 0.26), but the hands move at 78 cm/s, faster than
+    Talking (46), with the elbows cocked out.
+  - It ships in the pack for V9.3's "long wait" row, for Hmz to judge in motion.
+- **Talking6 / Talking6M** (a one-second wave, right and left hand) ship for the "greeting" row.
+
+**Rejected:**
+
+- **Clapping** never closes, even on Marcus (`v92_clapping_contact.png`).
+- **Talking5** is a deep crouch that splits MJ's skirt to the thigh (`v92_talking5_legs.png`).
+
+**Pools (`CANINO_CLIPS`):**
+
+- idle: Idle, Idle2, Idle4
+- thinking: Thinking, ThinkingM
+- talking: Talking, Talking2, Talking2M, Talking3, Talking3M, Talking4
+- pointing, nodding, shaking: unchanged
+
+### Checked in the app
+
+`/dev/free-model` on both teachers, plus MJ in `/demo`:
+
+- Talking cycles every variant in order, Thinking cycles, and Idle rotates through its three.
+- Nod reverts at 2.17 s and shake at 2.60 s, as before.
+- With the pack missing (404): pointing plays Talking, a nod keeps Idle looping, the teacher
+  stays up.
+- The largest per-step bone change is inside Talking's own motion, not at a switch.
+- **MJ in `/demo`**, in her new outfit, which Hmz had not seen there:
+  - the credit shows;
+  - her pack loads 0.2 s after the avatar switch;
+  - she plays the talking pool, and Pointing from the pack.
+
+### Catalogue coverage and gaps (for Hmz)
+
+Rows 1, 3, 5, 7, 12, 17 and 19 have their minimum count. Short:
+
+| Row | Short by |
+|---|---|
+| 2 long wait | 1 (Idle3 waits on Hmz's call) |
+| 4 thinking | 1 |
+| 6 inviting | 1 |
+| 8 point at board | 2 real variants |
+| 9 present model | 2 |
+| 13 correct | 1-2 (no clap) |
+| 14 wrong, encouraging | 3 (ShakeNo is the scolding shake the catalogue rules out) |
+| 16 quiz finished | 2-3 |
+
+**Mixamo search terms.** Download *without skin*, with the same settings as the header of
+`scripts/build_avaturn_animations.py`, and avoid variants with hand-to-face or hand-to-body
+contact:
+
+1. Pointing (2 more)
+2. Waving
+3. Thumbs Up
+4. Agreeing, or Head Nod Yes
+5. Shrugging, or a Thoughtful variant without contact
+6. Looking Around, or Weight Shift
+7. Happy Idle
+8. Reaching Out (open palm)
+
+**Quaternius UAL:** CC0, 45 free animations, no login ("name your price" works at $0). Its pages
+don't list clip names, and the packs lean towards locomotion, combat and generic emotes.
+Nothing was downloaded; that needs Hmz's go.
+
+### Not done
+
+- **The Avaturn rig** (Marcus, Priya, custom teachers) is unchanged: no mirrors, no diet, still
+  one 1.98 MB pack. That is why the V9.2 checklist box stays open.
+- **The gap clips above**, whether from Mixamo, Quaternius or Tier 2 hand-keying.
+- **Sonnet for the bulk bakes.** A session cannot switch its own model, so this one stayed on
+  Opus; Hmz can pick Sonnet in the model menu next time.
+- **Unchanged:** MJ's hair clipping her shoulder, the forehead scalp seam, and the parked female
+  narration.
