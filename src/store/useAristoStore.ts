@@ -230,6 +230,13 @@ interface AristoState {
   sceneReady: boolean;
 
   /**
+   * Mirror of useLessonPlayback's `isComplete`, so the teacher in the R3F
+   * canvas can react to a finished lesson (V9.3). Not persisted; transport
+   * only, the hook stays the source of truth.
+   */
+  lessonComplete: boolean;
+
+  /**
    * True only inside the unauthenticated /demo route. Gates every network
    * call in the lesson-playback path (segment-visuals, generate-model,
    * challenge eval, quiz submit/complete, lesson-complete telemetry) and
@@ -306,6 +313,7 @@ interface AristoState {
 
   // Scene readiness (loading overlay)
   setSceneReady: (ready: boolean) => void;
+  setLessonComplete: (v: boolean) => void;
 
   // Demo mode (unauthenticated /demo route)
   setDemoMode: (v: boolean) => void;
@@ -368,6 +376,7 @@ export const useAristoStore = create<AristoState>()(
       activeQuiz:         null,
       quizResult:         null,
       sceneReady:         false,
+      lessonComplete:     false,
       demoMode:           false,
 
       setUserId:    (id) => set({ userId: id }),
@@ -448,6 +457,7 @@ export const useAristoStore = create<AristoState>()(
       setQuizResult: (r) => set({ quizResult: r }),
 
       setSceneReady: (ready) => set({ sceneReady: ready }),
+      setLessonComplete: (v) => set({ lessonComplete: v }),
 
       setDemoMode: (v) => set({ demoMode: v }),
     }),
