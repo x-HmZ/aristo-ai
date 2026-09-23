@@ -7,7 +7,7 @@
  * Found by structure, not by a per-rig name list, so the Canino rigs
  * (CC_Base_Hip > Waist > Spine01 > Spine02 > NeckTwist01 > ... > Head), the
  * Avaturn rig and custom Avaturn teachers (Hips > Spine > Spine1 > Spine2 >
- * Neck > Head) all resolve the same way:
+ * Neck > Head) all resolve the same way (MJ's numbered bones too, see HEAD):
  * - upper: the bone two below the hips on the way to the head (Spine01,
  *   Spine1) and everything under it -- chest, arms, neck, head. The hips
  *   and the lowest spine bone stay with the base, so the legs and the
@@ -24,8 +24,11 @@ export interface BoneInfo {
 
 export type SkeletonMasks = Partial<Record<Exclude<ClipMask, "full">, ReadonlySet<string>>>;
 
-const HEAD = /head$/i;
-const HIP  = /hips?$/i;
+// Some exports number their bones (MJ: CC_Base_Head_038, CC_Base_Hip_02) and
+// wrap them in "..._scaleCompensation" nodes; a numeric suffix is allowed, a
+// wrapper or a "_0" mesh child does not match.
+const HEAD = /head(_\d+)?$/i;
+const HIP  = /hips?(_\d+)?$/i;
 const NECK = /neck/i;
 
 /** The name of the head bone (the one whose chain passes through the hips), or null. */

@@ -23,6 +23,30 @@ const AVATURN = skeleton(
   ["Spine2", "LeftShoulder", "LeftArm", "LeftForeArm", "LeftHand"],
 );
 
+// MJ's export: numbered bones, "_scaleCompensation" wrappers, and "_0" mesh
+// children that GLTFLoader also reports as bones (seen in /dev/free-model).
+const MJ = skeleton(
+  ["_rootJoint", "CC_Base_BoneRoot_01", "CC_Base_Hip_02_scaleCompensation", "CC_Base_Hip_02", "CC_Base_Waist_033",
+   "CC_Base_Spine01_034_scaleCompensation", "CC_Base_Spine01_034", "CC_Base_Spine02_035_scaleCompensation", "CC_Base_Spine02_035",
+   "CC_Base_NeckTwist01_036", "CC_Base_NeckTwist02_037_scaleCompensation", "CC_Base_NeckTwist02_037",
+   "CC_Base_Head_038_scaleCompensation", "CC_Base_Head_038", "CC_Base_Head_038_0"],
+  ["CC_Base_Hip_02", "CC_Base_Pelvis_03", "CC_Base_L_Thigh_04_scaleCompensation", "CC_Base_L_Thigh_04"],
+  ["CC_Base_Spine02_035", "CC_Base_L_Clavicle_049", "CC_Base_L_Upperarm_050"],
+);
+
+describe("MJ's numbered bones", () => {
+  it("finds the head and both masks", () => {
+    expect(headBoneOf(MJ)).toBe("CC_Base_Head_038");
+    const masks = skeletonMasks(MJ);
+    expect(masks.upper).toContain("CC_Base_Spine01_034");
+    expect(masks.upper).toContain("CC_Base_L_Upperarm_050");
+    expect(masks.upper).not.toContain("CC_Base_Waist_033");
+    expect(masks.upper).not.toContain("CC_Base_L_Thigh_04");
+    expect(masks.head).toContain("CC_Base_Head_038");
+    expect(masks.head).not.toContain("CC_Base_L_Clavicle_049");
+  });
+});
+
 describe("skeletonMasks", () => {
   const cases: Array<[string, BoneInfo[], string[], string[], string[]]> = [
     ["Canino rigs", CANINO,
