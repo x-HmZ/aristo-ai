@@ -2,6 +2,15 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-24 - V9.6 authoring done, wiring next (Opus, then Sonnet)
+
+- **Done:** seven Tier 2 clips approved by Hmz in motion and in the packs (PresentModel, Encourage, Almost,
+  Exactly, WellDone, ThatsIt, GlanceBoard); LookAgain rejected (a nod says "yes"). PP viseme softened to 0.6 on
+  both teachers. `ClipSpec.look` in the director. Lab plays pack clips as overlays. Catalogue for future clips:
+  `.claude/plans/V96-GESTURE-CATALOGUE.md` (batch 1 done; batches 2-3 next, Opus).
+- **Next (Sonnet):** `.claude/plans/NEXT-SESSION-V96-WIRING.md`: manifest rows, tests, in-app checks, build,
+  push (nothing pushed yet), close-out docs.
+
 ## 2026-09-23 - V9.5 done: integration, budgets, docs, licences (Sonnet)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.5"). V9 is finished apart from the open items below. No escalation needed.
