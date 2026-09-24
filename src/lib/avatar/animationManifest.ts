@@ -159,9 +159,14 @@ export interface ClipSpec {
 const MIXAMO = "Mixamo (Adobe), retargeted in scripts/ (V9.1-V9.2)";
 const MIXAMO_MIRROR = "Mixamo (Adobe), mirrored by scripts/v9_mirror.py (V9.2)";
 const MIXAMO_LICENCE = "Mixamo terms: royalty-free, commercial use, not redistributable as raw files";
+const AUTHORED = "authored in Blender for Aristo (V9.6), scripts/v9_gesture.py";
+const AUTHORED_LICENCE = "Aristo's own";
 
 /** Talking and idle read as new beats at a slightly different rate. */
 const WARP = [0.92, 1.08] as const;
+
+/** The greeting wave plays slower than recorded; one fixed rate, not a range. */
+const GREETING_WARP = [0.75, 0.75] as const;
 
 export const CLIP_MANIFEST: readonly ClipSpec[] = [
   // Row 1: attentive idle
@@ -173,10 +178,13 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   // Row 2: long wait. Too restless for the attentive pool (hands at 78 cm/s,
   // V9.2); Hmz saw it in motion and called it fine for this row.
   { id: "Idle3", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["longWait"], layer: "upper", mask: "upper", play: "once", duration: 10.42, weight: 1, cooldown: 60, mirrorable: true, family: "Idle3" },
+  { id: "GlanceBoard", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["longWait"], layer: "upper", mask: "upper", play: "once", duration: 2.83, weight: 1, cooldown: 30, mirrorable: false, family: "GlanceBoard", look: "board",
+    notes: "Turns to the board as if rereading it; `look` keeps the head there, the look layer would pull it back to the student" },
 
-  // Row 3: greeting, a one-second wave with either hand.
-  { id: "Talking6",  source: MIXAMO,        licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6" },
-  { id: "Talking6M", source: MIXAMO_MIRROR, licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6" },
+  // Row 3: greeting, a one-second wave with either hand, played at 0.75
+  // (Hmz: full speed felt too fast, V9.6).
+  { id: "Talking6",  source: MIXAMO,        licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6",  timeWarp: GREETING_WARP },
+  { id: "Talking6M", source: MIXAMO_MIRROR, licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6", timeWarp: GREETING_WARP },
 
   // Row 4: thinking. On the Canino rigs "Thinking" is baked from the pack's
   // Thinking2 (looking up); on the Avaturn pack it is hand-to-chin.
@@ -201,12 +209,25 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "Pointing", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["point"], layer: "base", mask: "full", play: "loop", duration: 3.75, weight: 1, cooldown: 0, mirrorable: true, family: "Pointing",
     notes: "Mirroring would point away from the board; variants need new clips (Tier 2)" },
 
-  // Rows 13, 14, 16, 18: reactions, head only so the body keeps talking or
-  // idling underneath.
+  // Row 9: a generated model appears. Left palm up and out towards where the
+  // model floats; the head is left to the look layer.
+  { id: "PresentModel", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["presentModel"], layer: "upper", mask: "upper", play: "once", duration: 2.63, weight: 1, cooldown: 0, mirrorable: false, family: "PresentModel" },
+
+  // Rows 13, 14, 16, 18: reactions. Nodding and ShakeNo are head only so the
+  // body keeps talking or idling underneath; the authored gestures use the
+  // upper body (the other arm keeps the base's motion).
   { id: "Nodding", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["correct", "quizGood"], layer: "upper", mask: "head", play: "once", duration: 2.63, weight: 1, cooldown: 0, mirrorable: false, family: "Nodding",
     notes: "Also the demo's scripted nod: /demo accepts any answer with an encouraging nod (useLessonPlayback submitAnswer, demoMode branch)" },
   { id: "ShakeNo", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["wrong"], layer: "upper", mask: "head", play: "once", duration: 3.08, weight: 1, cooldown: 0, mirrorable: false, family: "ShakeNo",
-    notes: "Kept so a wrong answer still reacts as before. The catalogue asks for a gentle 'let us look again' instead of a head shake; that clip is Tier 2 work" },
+    notes: "Kept at a third of Almost's weight, about one wrong answer in four (Hmz: lower, V9.6). For grade 6-8 a head shake reads as scolding" },
+
+  // V9.6 authored reactions, beside the shipped ones.
+  { id: "Almost", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["wrong"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 3, cooldown: 0, mirrorable: false, family: "Almost",
+    notes: "Warm tilt and a palm-down 'so-so' rock. LookAgain (tilt and nod) was rejected: a nod says yes" },
+  { id: "Exactly", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["correct"], layer: "upper", mask: "upper", play: "once", duration: 1.83, weight: 1, cooldown: 0, mirrorable: false, family: "Exactly" },
+  { id: "WellDone", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["quizGood"], layer: "upper", mask: "upper", play: "once", duration: 2.46, weight: 1, cooldown: 0, mirrorable: false, family: "WellDone" },
+  { id: "Encourage", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["quizSupportive"], layer: "upper", mask: "upper", play: "once", duration: 2.54, weight: 1, cooldown: 0, mirrorable: false, family: "Encourage" },
+  { id: "ThatsIt", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["lessonComplete"], layer: "upper", mask: "upper", play: "once", duration: 2.63, weight: 1, cooldown: 0, mirrorable: false, family: "ThatsIt" },
 
   // Shipped in animations_Avaturn.glb, never played.
   { id: "Clapping", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: [], layer: "upper", mask: "upper", play: "once", duration: 1.13, weight: 0, cooldown: 0, mirrorable: false, family: "Clapping",
@@ -224,6 +245,8 @@ export const CANINO_CLIP_SET = [
   "Talking", "Talking2", "Talking2M", "Talking3", "Talking3M", "Talking4",
   "Talking6", "Talking6M",
   "Pointing", "Nodding", "ShakeNo",
+  // Authored in Blender for the Canino rigs only (V9.6).
+  "PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard",
 ] as const;
 
 /** Marcus and Priya, on the shared Avaturn pack. */
