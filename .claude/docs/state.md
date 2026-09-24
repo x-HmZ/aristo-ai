@@ -2,14 +2,21 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-24 - V9.6 authoring done, wiring next (Opus, then Sonnet)
+## 2026-09-25 - V9.6 done: seven authored gestures wired (Opus authored, Sonnet wired)
 
-- **Done:** seven Tier 2 clips approved by Hmz in motion and in the packs (PresentModel, Encourage, Almost,
-  Exactly, WellDone, ThatsIt, GlanceBoard); LookAgain rejected (a nod says "yes"). PP viseme softened to 0.6 on
-  both teachers. `ClipSpec.look` in the director. Lab plays pack clips as overlays. Catalogue for future clips:
-  `.claude/plans/V96-GESTURE-CATALOGUE.md` (batch 1 done; batches 2-3 next, Opus).
-- **Next (Sonnet):** `.claude/plans/NEXT-SESSION-V96-WIRING.md`: manifest rows, tests, in-app checks, build,
-  push (nothing pushed yet), close-out docs.
+Detail in `.claude/plans/V9-REPORT.md` ("V9.6"). Gates: type-check clean, lint 10, tests 291, build green.
+
+- **Shipped:** PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard in the Jake and MJ clip packs
+  (500,280 to 577,352 B and 526,496 to 603,744 B), wired for rows 2, 9, 13, 14, 16 and 18. Each approved by Hmz in
+  motion. Checked in the app on Jake and MJ (`/dev/free-model` and `/demo`). `/learn` not opened (auth).
+- **Also:** greeting wave at 0.75; ShakeNo at a third of Almost's weight in the wrong-answer pool; PP viseme softened
+  to 0.6 on both teachers; `ClipSpec.look` (an overlay clip can own the head's look, used by GlanceBoard). LookAgain
+  rejected (a nod says yes).
+- **Question for Hmz:** the long wait now alternates Idle3 and GlanceBoard, about one gesture every 35 s of quiet
+  instead of every 70 s. Raise `LONG_WAIT_S` or lengthen both cooldowns (about 130 s) if it feels restless.
+- **Next:** the gesture catalogue's batches 2 (teaching moves by segment role) and 3 (event clips), Opus to author,
+  in `.claude/plans/V96-GESTURE-CATALOGUE.md`. V8.7 (landing re-capture) still waits on V8.4 and V8.5.
+- **Still open from V9.5:** LICENSES.md sources for the classroom and Ryan/Sonia, the Sony duck placeholder.
 
 ## 2026-09-23 - V9.5 done: integration, budgets, docs, licences (Sonnet)
 

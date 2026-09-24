@@ -384,6 +384,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for Hmz is in V9-REPORT)
 - [x] V9.4 face, expressions, gaze (2026-09-23; the Canino rigs have only a weak `mouthSmile` and blink, so expressions are smile levels plus eye gaze, see V9-REPORT "V9.4")
 - [x] V9.5 integrated, budgets measured, docs and LICENSES.md done (2026-09-23; Jake is the default, budgets not blown, LICENSES.md has open items for Hmz, see V9-REPORT "V9.5")
+- [x] V9.6 Tier 2 gestures (2026-09-25): seven hand-keyed clips (PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard) authored, approved by Hmz in motion, wired for Jake and MJ; ShakeNo kept at a lower weight; PP viseme softened; see V9-REPORT "V9.6". Next: the catalogue's batches 2 and 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
 
 ## Sources (checked 2026-09-11)
 

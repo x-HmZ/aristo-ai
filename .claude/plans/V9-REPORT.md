@@ -1144,3 +1144,163 @@ licence.
   its pack after the scene appears (0.28 s in the check above).
 - Not exercised: `/learn` end to end (needs your login), the face hints in a real quiz (still covered by the
   director tests only), a phone.
+
+## V9.6 - Tier 2 gestures: seven hand-keyed clips (2026-09-24/25)
+
+Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (a session cannot switch its own model, so Hmz
+switched at the hand-off). Scene backup before the session: `bakeoff_scene_pre_v96.blend`. Brief:
+`.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`; the catalogue that came out of Hmz's review of the first round:
+`.claude/plans/V96-GESTURE-CATALOGUE.md`; the hand-off: `.claude/plans/NEXT-SESSION-V96-WIRING.md`.
+
+**Verdict: seven authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+`/dev/avatar-lab`.** Gates: type-check clean, lint 10 (unchanged), tests 291 (was 267), build green (temporary
+distDir, reverted). `typescript-reviewer` on the director change and again on the whole V9.6 source diff: no defects.
+
+### What shipped
+
+| Clip | Scenario (row) | Length | What it is |
+|---|---|---|---|
+| PresentModel | `presentModel` (9) | 2.63 s | Left palm up and out towards the model. The head is left to the look layer |
+| Almost | `wrong` (14), weight 3 | 2.04 s | A warm sideways tilt and the right hand palm down, rocking "so-so" twice. No nod |
+| Exactly | `correct` (13), beside Nodding | 1.83 s | A crisp open left palm forward to the student, one small nod |
+| WellDone | `quizGood` (16), beside Nodding | 2.46 s | Both arms open, palms up, a small lift on the beat |
+| Encourage | `quizSupportive` (16) | 2.54 s | Right palm offered forward at the waist, a soft nod |
+| ThatsIt | `lessonComplete` (18) | 2.63 s | Both hands gather in front, then open outward palms up |
+| GlanceBoard | `longWait` (2), beside Idle3 | 2.83 s | Turns head and chest to the board as if rereading it, then back |
+
+All are upper-mask overlays played once (the other arm and the legs keep the base), for the Canino rigs only.
+Also, from Hmz's review: the greeting wave (Talking6 and Talking6M) plays at 0.75, ShakeNo stays in the
+wrong-answer pool at a third of Almost's weight (about one wrong answer in four), and Jake's mouth was fixed.
+
+### What was rejected, and why
+
+**LookAgain** (a slow tilt and a soft nod) and **LookAgainHand** (the same with a hand towards the desk).
+Hmz: "doesn't give the look again vibe" and "I don't get what pointing to it would achieve". Both were wrong on
+meaning, which no frame check could catch:
+
+- a nod reads as "yes", the opposite of a wrong answer;
+- a challenge answer is typed in the answer panel, not on the desk. The desk matters when the quiz is handed
+  out (catalogue row 18 of the new list), not here;
+- on a wrong answer the reveal starts talking at once, usually with the lesson image still on the board, so a
+  real "let's look again" is short and looks at the board.
+
+Almost is the replacement. The catalogue file lists 22 situations (what a teacher physically does, which clip,
+which signal) in three batches; batch 1 is this session, batches 2 and 3 (teaching moves by segment role, and
+event clips such as "one moment" and "over to you") are next, on Opus.
+
+### Authoring (`scripts/v9_gesture.py`, new)
+
+- A gesture is a spec of offsets over the rig's own Idle pose, in body axes (his left, forward, up) or about the
+  bone itself, composed down the chain like FK. One spec plays on Jake and on MJ; her numbered names and
+  `_scaleCompensation` wrappers need no special case because the local basis is solved against the real parent.
+- Keys are interpolated as rotation vectors with a monotone cubic (no overshoot, zero speed at both ends). First
+  and last pose equal Idle, so an overlay fades in and out without a pop. Twist and share helpers are driven and
+  fingers relaxed as for every other clip; rest curves are dropped so the base drives those bones.
+- **24 fps, not the brief's 30.** The scene and all 17 existing clips are 24; changing it would retime them.
+- Drafts before the shape read at the classroom camera: PresentModel 3, Almost 2, Exactly 2, Encourage 2, the rest
+  1. Typical faults: an arm straight out to the side (reads as a wave or "ta-da"), a hand pointed at the camera
+  so a rock is invisible, and a return path that dropped a hand 0.7 to 14 mm into MJ's flared skirt (fixed by
+  lifting the forearm before the arm turns in, and untwisting it before it drops).
+
+### Checks in Blender (both teachers, over Idle)
+
+| Check | Result |
+|---|---|
+| `find_pokes` skin through shirt, trousers, shoes; MJ's arm skin, body skin and legs against tee and skirt | 0 for every clip (MJ's one leg point of 0.2 mm is in her Idle base with no gesture) |
+| `check_through` hands and skirt (MJ), Idle, Idle2, Idle4, Talking, Talking4 | 0 for every clip |
+| Hand clearance from trousers and shirt (Jake) | at least 60 mm from the trousers and 169 mm from the shirt, across the final seven clips |
+| Hands against each other in ThatsIt | never closer than 306 mm (Jake), 319 mm (MJ) |
+| Export against the raw file in three.js (`v9_verify_anim.mjs`) | worst clip 0.0156 deg / 0.119 mm (Jake), 0.0166 deg / 0.242 mm (MJ); crossfades 0.009 deg / 0.056 mm and 0.007 deg / 0.092 mm. Limits 0.02 deg and 0.3 mm |
+
+The dark marks on MJ's cheek in the Blender viewport also appear with no gesture playing and not in the browser:
+a viewport display artefact, not part of this work.
+
+### Sizes
+
+| | Before | After |
+|---|---|---|
+| Jake clip pack | 500,280 B | 577,352 B |
+| MJ clip pack | 526,496 B | 603,744 B |
+| Jake base GLB | 2,284,132 B | 2,284,136 B (the viseme fix only) |
+| MJ base GLB | 1,776,860 B | 1,776,860 B (same size, different bytes: the viseme fix) |
+
+About 77 KB more per pack for seven clips; still about 0.6 MB of animation per rig against the 3 MB budget. Gzip on
+the wire was not re-measured. The clips are in the pack, not the base file, as briefed.
+
+### Jake's mouth (Hmz: "closes a bit too much, creepy")
+
+At full weight the baked `viseme_PP` (`Explosive` plus `Mouth_Lips_Tight`) rolls both lips inward into a thin
+pinched line, and lipsync drives it to 1 on every m, b and p, which is why it only showed sometimes. MJ has the
+same recipe and the same flaw, so both were fixed: `v9_face.scale_shapes` scales the baked key to 0.6 in place
+(idempotent; the source shapes were dropped after the V9.1 bake). PP against U went from 0.50 to 0.30 in the shipped
+GLBs, read back with gltf-transform. Hmz: "visemes look better on Jake". Close-ups:
+`v96_jake_mouth_closing.png`, `v96_mj_mouth_pp.png` in the bake-off folder.
+
+### Director: a clip can say where the head looks
+
+`ClipSpec.look` (optional): while an overlay clip that has one plays, until its fade-out starts, the head aims
+there instead of at the base's target, quiz desk included. GlanceBoard needs it: the look layer otherwise pulls the
+head back to the student at weight 0.5 and halves the glance. Measured in the app, the head goes from -2.6 deg
+(facing the student) to 41-43 deg and holds, which is the 40 deg clamp toward the board and more than the 30 deg
+the clip authors on its own, then returns to -2.3 deg; MJ the same (-2.5, 43.4, -2.3). Tests: before, during and
+after the clip, over the quiz desk, and that a clip without `look` leaves the target alone.
+
+### Coverage (Jake and MJ; other rigs unchanged)
+
+| Row | Before | After |
+|---|---|---|
+| 2 long wait | 1 | 2 (Idle3, GlanceBoard) |
+| 9 present model | 0 | 1 (PresentModel) |
+| 13 correct | 1 | 2 (Nodding, Exactly) |
+| 14 wrong | 1 | 2 (ShakeNo, Almost) |
+| 16 quiz good | 1 | 2 (Nodding, WellDone) |
+| 16 quiz supportive | 0 | 1 (Encourage) |
+| 18 lesson complete | 1 via quizGood | 1 (ThatsIt) |
+
+Marcus, Priya, custom teachers, Ryan and Sonia are untouched (a test asserts none of the seven is in their sets).
+A rig with no upper mask falls back to the head clips (nod, shake), as before.
+
+### Checked in the app (Jake and MJ on `/dev/free-model`; both on `/demo`, Volcanoes lesson)
+
+The frame loop was driven by hand (see Tooling), the store was forced through each scenario, and per-frame bone
+motion was recorded. `/learn` needs a login and was not opened.
+
+| Check | Result |
+|---|---|
+| Each scenario plays its clip | Jake and MJ: Almost and ShakeNo (both seen) on a wrong answer, Exactly and Nodding on a right one, WellDone and Nodding on a passed quiz, Encourage on a failed one, ThatsIt at lesson complete, PresentModel when a model appears, GlanceBoard on the long wait. Lengths 2.07, 1.87, 2.47, 2.57, 2.63, 2.63 s, GlanceBoard 2.83 s |
+| Nothing else moves | Legs, spine, head and the other arm stay at the base's per-frame motion (about 0.8 deg per frame over Idle). Only the gesture's arm, or the head for a head clip, moves |
+| No pop | Almost over Idle: the arm ramps from 0.8 to 8 deg per frame in about 9 frames (the 0.3 s fade), eases back the same way, largest frame-to-frame change 6.8 deg per frame, no isolated spike. The fade curve is the director's, unchanged |
+| The base keeps playing | Over Talking2, Talking4 and the live lesson's `talkExplain` base the base clip kept cycling; the other arm's motion was unchanged (Exactly: 0.89 deg average during, 0.87 before) |
+| Greeting wave at 0.75 | On `/demo` the wave's `timeScale` was 0.75 and the overlay was Talking6 |
+| Release | The store's gesture returned to idle after each nod and shake, including over the lesson |
+| Frames for Hmz | Jake in the classroom at the peak of Almost, Exactly, WellDone, Encourage, ThatsIt, PresentModel and GlanceBoard, and MJ in ThatsIt, were captured in the browser pane (screenshots are not stored in the repo) |
+
+### Tooling notes for next time
+
+- **R3F's manual `advance(timestamp)` takes seconds.** `advance(performance.now())` (milliseconds) gave 30 s
+  steps and nonsense numbers for an hour. Use `three.setFrameloop("never")` and a synthetic clock,
+  `t += 1/30; three.advance(t)`. The pane does not run `requestAnimationFrame` while a script runs.
+- **The temporary hook pattern** (reverted before committing, grep `__v96`): `window.__v96 = { three, store }` in
+  `RendererConfig`, and `window.__v96t = { mixer, group, livePlays, directorRef, rig, clockRef }` in
+  `Teacher.tsx` after the `lookRef`. `directorRef.current.quietSince` can be set to force the long wait.
+- The first screenshot after a script often times out; the second works. A new tab needs to be fronted.
+- A multi-line node script in a Bash heredoc did not parse in this shell; write it to a file and run it.
+- **The lab has no look layer.** Head turns look bigger there than in lessons, and PresentModel's head stays still.
+
+### Known edges and one question for Hmz
+
+- **Long-wait rate doubled.** With two clips in the pool the director alternates them, and a simulated hour of
+  quiet gave 102 long-wait gestures (one about every 35 s), against about one every 70 s with Idle3 alone. Each clip
+  still honours its own cooldown; it is the alternation that doubles the rate. GlanceBoard has the 30 s cooldown the
+  brief suggested. If it feels restless: raise `LONG_WAIT_S` in `director.ts`, or give both clips a cooldown near
+  130 s. A data or one-line change; not done without Hmz.
+- **Events do not preempt a running overlay for a model.** A model appearing while GlanceBoard is 1.4 s in does not
+  play PresentModel (the director's existing `!overlay` rule); the head still turns to it. Rare.
+- GlanceBoard's head turn wins over the desk during a quiz for its 2.5 s (by design, see above).
+- Not verified: `/learn` (auth), the face hints in a real quiz, a phone, frame rate. The manifest durations match
+  the GLBs to 0.01 s (checked with gltf-transform for both packs), but no test compares them; the director times
+  from the loaded clip, so a mismatch would only affect tests and the reference field.
+- Parked, unchanged: the Avaturn rig's pack, female narration for MJ, MJ's hair and scalp seam, mesh-level
+  expressions, the FFT viseme fallback.
+- V8.7 (re-capture the landing footage) is no longer blocked by V9 but still waits on V8.4 and V8.5; the plan gives
+  it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal.

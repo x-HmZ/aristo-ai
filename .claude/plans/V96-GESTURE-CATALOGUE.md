@@ -5,6 +5,12 @@ surroundings and situations that can rise up and that make sense overall". This 
 row names what is physically around the teacher, what is happening in the lesson at that moment, and the
 signal that already exists for it. Nothing here needs a new app signal or a lesson-schema change.
 
+## Status (2026-09-25)
+
+**Batch 1 is done and wired** (Almost, Exactly, WellDone, ThatsIt, GlanceBoard, plus the approved PresentModel and
+Encourage); see V9-REPORT "V9.6". Batches 2 and 3 are next, on Opus. Batch 2 needs the director to read segment
+roles (`hook`, `demo_step`, `transition`, `challenge_setup`) and phases, which it does not do yet.
+
 ## Settled so far in V9.6 (Hmz)
 
 - PresentModel and Encourage: approved in motion.
@@ -88,7 +94,7 @@ manifest, presentational only, with tests and a `typescript-reviewer` pass).
 
 ## Suggested batches
 
-1. **Finish V9.6 (manifest data only, no director change):** Almost (replaces LookAgain in `wrong`, ShakeNo
+1. **Finish V9.6 (manifest data, plus the clip-level `look` for GlanceBoard):** Almost (replaces LookAgain in `wrong`, ShakeNo
    at the lower weight), Exactly, WellDone, ThatsIt, GlanceBoard. Five overlay clips, all on scenarios that
    exist today.
 2. **V9.7, role-aware teaching (director wiring from existing signals):** Imagine, HoldIdea, StepBeat,
