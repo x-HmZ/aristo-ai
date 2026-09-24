@@ -204,3 +204,39 @@ def drop_source_shapes(meshes):
             o.shape_key_remove(kb)
             removed += 1
     return removed
+
+
+# V9.6: at full weight the PP recipe (Explosive plus Mouth_Lips_Tight) rolls
+# both lips inward into a thin pinched line, on Jake and on MJ; lipsync drives
+# it to full on every m, b and p. 0.6 still closes the lips and keeps their
+# shape (v96_jake_mouth_closing.png, v96_mj_mouth_pp.png). The source shapes
+# were dropped after the V9.1 bake, so the baked key is scaled in place.
+SHAPE_SCALES = {"viseme_PP": 0.6}
+
+
+def scale_shapes(meshes, scales=SHAPE_SCALES):
+    """
+    Scale baked keys' deltas from Basis. Idempotent: the applied factor is
+    stored on the mesh, and a re-run only applies the remainder.
+    """
+    out = []
+    for o in meshes:
+        me = o.data
+        if not me.shape_keys:
+            continue
+        n = len(me.vertices)
+        kbs = me.shape_keys.key_blocks
+        basis = _co(kbs[0], n)
+        for name, f in scales.items():
+            kb = kbs.get(name)
+            if kb is None:
+                continue
+            done = float(me.get(f"v96_scale_{name}", 1.0))
+            step = f / done
+            if abs(step - 1.0) < 1e-9:
+                continue
+            kb.data.foreach_set("co", (basis + (_co(kb, n) - basis) * step).ravel())
+            me[f"v96_scale_{name}"] = f
+            out.append((o.name, name, round(step, 4)))
+        me.update()
+    return out
