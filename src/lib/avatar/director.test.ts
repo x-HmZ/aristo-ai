@@ -5,6 +5,7 @@ import {
   CUSTOM_CLIP_SET,
   LEGACY_CLIP_SET,
   type ClipMask,
+  type ClipSpec,
   type Scenario,
 } from "@/lib/avatar/animationManifest";
 import {
@@ -72,6 +73,7 @@ function run(opts: {
   state?:     DirectorState;
   from?:      number;
   seed?:      number;
+  manifest?:  readonly ClipSpec[];
 }): { state: DirectorState; outputs: Array<DirectorOutput & { t: number }> } {
   const dt = 1 / 60;
   const rng = seededRng(opts.seed ?? 7);
@@ -85,7 +87,7 @@ function run(opts: {
       available: opts.available?.(t) ?? CANINO,
       masks: opts.masks ?? ALL_MASKS,
       rng,
-    });
+    }, opts.manifest);
     state = step.state;
     outputs.push({ ...step.output, t });
   }
@@ -452,6 +454,29 @@ describe("look target", () => {
   it.each(cases)("%s", (_name, over, at, expected) => {
     const out = run({ seconds: at, signalsAt: () => sig(over) }).outputs;
     expect(out.at(-1)!.look).toBe(expected);
+  });
+
+  it("follows an overlay clip's own look until it fades out (V9.6 GlanceBoard)", () => {
+    const manifest = CLIP_MANIFEST.map((c) => (c.id === "Idle3" ? { ...c, look: "board" as const } : c));
+    const out = run({ seconds: 40, signalsAt: () => sig(), manifest }).outputs;
+    const playing = out.find((o) => o.overlay?.clip === "Idle3")!;
+    const { startedAt, fadeOutAt } = playing.overlay!;
+    expect(out.find((o) => o.t > startedAt + 0.1)!.look).toBe("board");
+    expect(out.find((o) => o.t > fadeOutAt + 0.02)!.look).toBe("camera");
+    expect(out.find((o) => o.t < startedAt - 0.1 && o.t > startedAt - 0.2)!.look).toBe("camera");
+  });
+
+  it("an overlay clip's own look wins over the quiz desk while it plays", () => {
+    const manifest = CLIP_MANIFEST.map((c) => (c.id === "Idle3" ? { ...c, look: "board" as const } : c));
+    const out = run({ seconds: 40, signalsAt: () => sig({ quizActive: true }), manifest }).outputs;
+    const playing = out.find((o) => o.overlay?.clip === "Idle3")!;
+    expect(out.find((o) => o.t > playing.overlay!.startedAt + 0.1)!.look).toBe("board");
+    expect(out.find((o) => o.t > playing.overlay!.fadeOutAt + 0.02)!.look).toBe("desk");
+  });
+
+  it("keeps the base's target for an overlay clip without a look", () => {
+    const out = run({ seconds: 30, signalsAt: () => sig() }).outputs;
+    expect(out.find((o) => o.overlay?.clip === "Idle3")!.look).toBe("camera");
   });
 
   it("turns to a new model for a moment, then back (row 9)", () => {

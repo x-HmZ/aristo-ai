@@ -8,7 +8,8 @@
  * - base: one full-body clip, always looping, crossfaded on change;
  * - overlay: at most one upper-body or head clip over the base, played once
  *   (greeting, long wait, answer reactions), blended in and out by weight;
- * - look: where the head aims (camera, board, model, desk, or nowhere);
+ * - look: where the head aims (camera, board, model, desk, or nowhere); an
+ *   overlay clip with its own `look` (a glance at the board) takes it over;
  * - face: an expression hint the renderer turns into a smile level and eye gaze (face.ts, gaze.ts).
  *
  * The rules that each fixed a real regression before this module existed,
@@ -469,6 +470,8 @@ export function stepDirector(
 
   const lastOverlay = overlay?.clip && overlay.seq !== state.overlay?.seq ? overlay.clip : state.lastOverlay;
   const face: FaceHint = (overlay && SCENARIOS[overlay.scenario].face) || SCENARIOS[scenario].face || "neutral";
+  // A clip that looks somewhere on purpose keeps its target until it fades out.
+  const clipLook = overlay?.clip && now < overlay.fadeOutAt ? specOf(manifest, overlay.clip)?.look : undefined;
 
   const next: DirectorState = {
     seq, base, overlay, lastEnded, lastOverlay, greeting, greetingSince, quietSince, presentUntil,
@@ -481,7 +484,7 @@ export function stepDirector(
   };
   return {
     state: next,
-    output: { base, overlay, look: lookFor(sig, scenario, now, presentUntil), face, release },
+    output: { base, overlay, look: clipLook ?? lookFor(sig, scenario, now, presentUntil), face, release },
   };
 }
 

@@ -145,6 +145,14 @@ export interface ClipSpec {
   family:      string;
   /** Playback-rate range, picked per play (Tier 1 runtime time-warp). */
   timeWarp?:   readonly [number, number];
+  /**
+   * Overlays only: where the head aims while this clip plays, until it starts
+   * fading out, over any other target (the quiz desk included). Unset: the
+   * base scenario's target. For a gesture whose meaning is where it looks
+   * (a glance at the board): the look layer would otherwise pull the head
+   * back toward the base's target, the student.
+   */
+  look?:       LookTarget;
   notes?:      string;
 }
 
