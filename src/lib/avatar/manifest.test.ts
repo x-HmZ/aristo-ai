@@ -65,6 +65,21 @@ describe("manifest integrity", () => {
     expect(new Set(set).size).toBe(set.length);
   });
 
+  it("only an overlay clip has its own look, and GlanceBoard looks at the board", () => {
+    for (const c of CLIP_MANIFEST) {
+      if (c.look !== undefined) expect(c.layer, c.id).toBe("upper");
+    }
+    expect(CLIPS_BY_ID.get("GlanceBoard")?.look).toBe("board");
+  });
+
+  it("the greeting wave plays at a fixed 0.75", () => {
+    for (const id of ["Talking6", "Talking6M"]) expect(CLIPS_BY_ID.get(id)?.timeWarp, id).toEqual([0.75, 0.75]);
+  });
+
+  it("ShakeNo weighs a third of Almost in the wrong-answer pool", () => {
+    expect(CLIPS_BY_ID.get("Almost")!.weight / CLIPS_BY_ID.get("ShakeNo")!.weight).toBe(3);
+  });
+
   it("clip ids are unique", () => {
     expect(new Set(CLIP_MANIFEST.map((c) => c.id)).size).toBe(CLIP_MANIFEST.length);
   });
@@ -132,23 +147,23 @@ describe("coverage", () => {
     expect(table(CANINO_CLIP_SET)).toMatchInlineSnapshot(`
       {
         "01 idle": "3",
-        "02 longWait": "1",
+        "02 longWait": "2",
         "03 greeting": "2",
         "04 thinking": "2",
         "05 talking": "6",
         "06 talkActivate": "6 via talking",
         "07 talkExplain": "6 via talking",
         "08 point": "1",
-        "09 presentModel": "0",
+        "09 presentModel": "1",
         "11 talkChallenge": "6 via talking",
         "12 listen": "3",
-        "13 correct": "1",
-        "14 wrong": "1",
+        "13 correct": "2",
+        "14 wrong": "2",
         "15 quizLook": "3",
-        "16 quizGood": "1",
-        "16 quizSupportive": "0",
+        "16 quizGood": "2",
+        "16 quizSupportive": "1",
         "17 talkConnect": "6 via talking",
-        "18 lessonComplete": "1 via quizGood",
+        "18 lessonComplete": "1",
         "19 explaining": "6 via talking",
       }
     `);

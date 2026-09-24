@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  AVATURN_CLIP_SET,
   CANINO_CLIP_SET,
   CLIP_MANIFEST,
   CUSTOM_CLIP_SET,
@@ -41,6 +42,11 @@ function availableFor(set: readonly string[], packLoaded = true): Map<string, nu
   );
 }
 const CANINO = availableFor(CANINO_CLIP_SET);
+/** Canino minus some clips, to make a scenario's pick deterministic. */
+const canineWithout = (...ids: string[]) =>
+  new Map([...CANINO].filter(([id]) => !ids.includes(id)));
+/** The V9.6 authored gestures. */
+const AUTHORED = ["PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard"];
 const CANINO_NO_PACK = availableFor(CANINO_CLIP_SET, false);
 const ALL_MASKS: ReadonlySet<ClipMask> = new Set<ClipMask>(["full", "upper", "head"]);
 
@@ -143,15 +149,19 @@ describe("resolvePool", () => {
     ["pointing with its pack",                "point",          CANINO,         ALL_MASKS, { scenario: "point", clips: ["Pointing"] }],
     ["pointing before its pack: talking",     "point",          CANINO_NO_PACK, ALL_MASKS, { scenario: "talking", clips: ["Talking"] }],
     ["listening uses the idles",              "listen",         CANINO,         ALL_MASKS, { scenario: "listen", clips: ["Idle", "Idle2", "Idle4"] }],
-    ["long wait (row 2)",                     "longWait",       CANINO,         ALL_MASKS, { scenario: "longWait", clips: ["Idle3"] }],
+    ["long wait (row 2)",                     "longWait",       CANINO,         ALL_MASKS, { scenario: "longWait", clips: ["Idle3", "GlanceBoard"] }],
     ["greeting (row 3), either hand",         "greeting",       CANINO,         ALL_MASKS, { scenario: "greeting", clips: ["Talking6", "Talking6M"] }],
-    ["correct (row 13)",                      "correct",        CANINO,         ALL_MASKS, { scenario: "correct", clips: ["Nodding"] }],
-    ["wrong (row 14)",                        "wrong",          CANINO,         ALL_MASKS, { scenario: "wrong", clips: ["ShakeNo"] }],
-    ["quiz passed (row 16)",                  "quizGood",       CANINO,         ALL_MASKS, { scenario: "quizGood", clips: ["Nodding"] }],
-    ["quiz not passed: no clip yet (row 16)", "quizSupportive", CANINO,         ALL_MASKS, null],
-    ["lesson complete falls back to a nod",   "lessonComplete", CANINO,         ALL_MASKS, { scenario: "quizGood", clips: ["Nodding"] }],
-    ["present model: no clip yet (row 9)",    "presentModel",   CANINO,         ALL_MASKS, null],
-    ["a rig without a head mask cannot nod",  "correct",        CANINO,         new Set<ClipMask>(["full"]), null],
+    ["correct (row 13)",                      "correct",        CANINO,         ALL_MASKS, { scenario: "correct", clips: ["Nodding", "Exactly"] }],
+    ["wrong (row 14)",                        "wrong",          CANINO,         ALL_MASKS, { scenario: "wrong", clips: ["ShakeNo", "Almost"] }],
+    ["quiz passed (row 16)",                  "quizGood",       CANINO,         ALL_MASKS, { scenario: "quizGood", clips: ["Nodding", "WellDone"] }],
+    ["quiz not passed (row 16)",              "quizSupportive", CANINO,         ALL_MASKS, { scenario: "quizSupportive", clips: ["Encourage"] }],
+    ["lesson complete has its own clip",      "lessonComplete", CANINO,         ALL_MASKS, { scenario: "lessonComplete", clips: ["ThatsIt"] }],
+    ["present model (row 9)",                 "presentModel",   CANINO,         ALL_MASKS, { scenario: "presentModel", clips: ["PresentModel"] }],
+    ["a rig without head or upper masks cannot react", "correct", CANINO,       new Set<ClipMask>(["full"]), null],
+    ["no upper mask: the head clips still react", "wrong",      CANINO,         new Set<ClipMask>(["full", "head"]), { scenario: "wrong", clips: ["ShakeNo"] }],
+    ["no upper mask: lesson complete falls back to a nod", "lessonComplete", CANINO, new Set<ClipMask>(["full", "head"]), { scenario: "quizGood", clips: ["Nodding"] }],
+    ["Marcus still nods at lesson complete",  "lessonComplete", availableFor(AVATURN_CLIP_SET), ALL_MASKS, { scenario: "quizGood", clips: ["Nodding"] }],
+    ["Marcus has no authored gestures",       "wrong",          availableFor(AVATURN_CLIP_SET), ALL_MASKS, { scenario: "wrong", clips: ["ShakeNo"] }],
     ["custom teachers keep their short list", "talking",        availableFor(CUSTOM_CLIP_SET), ALL_MASKS, { scenario: "talking", clips: ["Talking", "Talking2"] }],
     ["custom teachers have no wave",          "greeting",       availableFor(CUSTOM_CLIP_SET), ALL_MASKS, null],
     ["Ryan has no pointing: talking",         "point",          availableFor(LEGACY_CLIP_SET), ALL_MASKS, { scenario: "talking", clips: ["Talking", "Talking2"] }],
@@ -194,6 +204,19 @@ describe("pickClip", () => {
     expect(pickClip(["Idle", "Idle2", "Idle4"], { ...opts, rng: () => 0.49 })).toBe("Idle");
     expect(pickClip(["Idle", "Idle2", "Idle4"], { ...opts, rng: () => 0.51 })).toBe("Idle2");
     expect(pickClip(["Idle", "Idle2", "Idle4"], { ...opts, rng: () => 0.99 })).toBe("Idle4");
+  });
+});
+
+describe("the wrong-answer pool (V9.6)", () => {
+  it("plays Almost about three times as often as ShakeNo", () => {
+    const rng = seededRng(3);
+    const counts: Record<string, number> = { ShakeNo: 0, Almost: 0 };
+    for (let i = 0; i < 4000; i++) {
+      counts[pickClip(["ShakeNo", "Almost"], { current: null, lastEnded: {}, now: 0, rng })!]++;
+    }
+    expect(counts.Almost / counts.ShakeNo).toBeGreaterThan(2.6);
+    expect(counts.Almost / counts.ShakeNo).toBeLessThan(3.4);
+    expect(counts.ShakeNo).toBeGreaterThan(0);
   });
 });
 
@@ -311,27 +334,35 @@ describe("reactions (rows 13, 14)", () => {
       signalsAt: (t) => sig({ isSpeaking: t > 1, reaction: t > 1 ? { kind, id: 1 } : null }),
     }).outputs;
 
-  const cases: Array<[string, "nodding" | "shaking", ReadonlyMap<string, number>, ReadonlySet<ClipMask>, string | null, number]> = [
-    ["correct nods",                        "nodding", CANINO,         ALL_MASKS,                   "Nodding", DURATIONS.get("Nodding")!],
-    ["wrong shakes",                        "shaking", CANINO,         ALL_MASKS,                   "ShakeNo", DURATIONS.get("ShakeNo")!],
+  // The clips a reaction may pick, or null when it has none and only times out.
+  const cases: Array<[string, "nodding" | "shaking", ReadonlyMap<string, number>, ReadonlySet<ClipMask>, string[] | null, number | null]> = [
+    ["correct: a nod or Exactly",           "nodding", CANINO,         ALL_MASKS,                   ["Nodding", "Exactly"], null],
+    ["wrong: Almost or a shake",            "shaking", CANINO,         ALL_MASKS,                   ["ShakeNo", "Almost"],  null],
+    ["correct without upper: the nod",      "nodding", CANINO,         new Set<ClipMask>(["full", "head"]), ["Nodding"],     DURATIONS.get("Nodding")!],
+    ["wrong without upper: the shake",      "shaking", CANINO,         new Set<ClipMask>(["full", "head"]), ["ShakeNo"],     DURATIONS.get("ShakeNo")!],
     ["nod before the pack: timing only",    "nodding", CANINO_NO_PACK, ALL_MASKS,                   null,      REACTION_FALLBACK_S.nodding],
     ["shake before the pack: timing only",  "shaking", CANINO_NO_PACK, ALL_MASKS,                   null,      REACTION_FALLBACK_S.shaking],
     ["no head mask: timing only",           "nodding", CANINO,         new Set<ClipMask>(["full"]), null,      REACTION_FALLBACK_S.nodding],
   ];
-  it.each(cases)("%s", (_name, kind, available, masks, clip, length) => {
+  it.each(cases)("%s", (_name, kind, available, masks, clips, length) => {
     const out = reactionRun(kind, available, masks);
     const first = out.find((o) => o.overlay)!;
-    expect(first.overlay!.clip).toBe(clip);
+    if (clips) expect(clips).toContain(first.overlay!.clip);
+    else expect(first.overlay!.clip).toBeNull();
     expect(first.overlay!.release).toBe(kind);
-    if (clip) expect(first.overlay!.mask).toBe("head");
+    if (first.overlay!.clip) {
+      const spec = CLIP_MANIFEST.find((c) => c.id === first.overlay!.clip)!;
+      expect(first.overlay!.mask).toBe(spec.mask);
+    }
     const released = out.filter((o) => o.release === kind);
     expect(released).toHaveLength(1);
-    expect(released[0].t - first.t).toBeCloseTo(length, 1);
+    const expected = length ?? DURATIONS.get(first.overlay!.clip!)! / first.overlay!.timeScale;
+    expect(released[0].t - first.t).toBeCloseTo(expected, 1);
   });
 
-  it("the body keeps talking under a nod", () => {
+  it("the body keeps talking under a right-answer gesture", () => {
     const out = reactionRun("nodding");
-    const during = out.filter((o) => o.overlay?.clip === "Nodding");
+    const during = out.filter((o) => o.overlay?.scenario === "correct");
     expect(during.length).toBeGreaterThan(0);
     expect(during.every((o) => o.base.scenario === "talking")).toBe(true);
   });
@@ -341,7 +372,7 @@ describe("reactions (rows 13, 14)", () => {
       seconds: 3,
       signalsAt: (t) => sig({ reaction: t < 1 ? { kind: "nodding", id: 1 } : { kind: "shaking", id: 2 } }),
     }).outputs;
-    expect(out.find((o) => o.t > 1.1)!.overlay!.clip).toBe("ShakeNo");
+    expect(out.find((o) => o.t > 1.1)!.overlay!.scenario).toBe("wrong");
   });
 });
 
@@ -357,6 +388,15 @@ describe("greeting (row 3)", () => {
     expect(waves[0].t).toBeGreaterThanOrEqual(1.5);
     expect(["Talking6", "Talking6M"]).toContain(waves[0].overlay!.clip);
     expect(waves[0].overlay!.mask).toBe("upper");
+  });
+
+  it("plays the wave at 0.75 (Hmz, V9.6)", () => {
+    for (const seed of [1, 2, 3]) {
+      const out = run({ seconds: 10, seed, signalsAt: () => sig({ sceneReady: true }) }).outputs;
+      const wave = out.find((o) => o.overlay?.scenario === "greeting")!;
+      expect(wave.overlay!.timeScale).toBeCloseTo(0.75, 5);
+      expect(wave.overlay!.endsAt - wave.overlay!.startedAt).toBeCloseTo(DURATIONS.get(wave.overlay!.clip!)! / 0.75, 5);
+    }
   });
 
   it("gives up if the pack never arrives", () => {
@@ -382,7 +422,7 @@ describe("long wait (row 2)", () => {
     const out = run({ seconds: 40, signalsAt: () => sig() }).outputs;
     const first = out.find((o) => o.overlay?.scenario === "longWait")!;
     expect(first.t).toBeCloseTo(LONG_WAIT_S, 1);
-    expect(first.overlay!.clip).toBe("Idle3");
+    expect(["Idle3", "GlanceBoard"]).toContain(first.overlay!.clip);
     expect(first.overlay!.mask).toBe("upper");
     expect(first.base.scenario).toBe("idle");
   });
@@ -404,7 +444,7 @@ describe("long wait (row 2)", () => {
 
   it("respects Idle3's cooldown", () => {
     const out = run({ seconds: 200, signalsAt: () => sig() }).outputs;
-    const starts = out.filter((o, i) => o.overlay?.scenario === "longWait" && out[i - 1]?.overlay?.seq !== o.overlay.seq).map((o) => o.t);
+    const starts = out.filter((o, i) => o.overlay?.clip === "Idle3" && out[i - 1]?.overlay?.seq !== o.overlay.seq).map((o) => o.t);
     expect(starts.length).toBeGreaterThan(1);
     const cooldown = CLIP_MANIFEST.find((c) => c.id === "Idle3")!.cooldown;
     for (let i = 1; i < starts.length; i++) {
@@ -419,23 +459,72 @@ describe("long wait (row 2)", () => {
 });
 
 describe("quiz and lesson events (rows 16, 18)", () => {
-  const cases: Array<[string, Partial<DirectorSignals>, Scenario | null, string | null]> = [
-    ["quiz passed nods",                    { quizResult: { score: 3, total: 5 } }, "quizGood",       "Nodding"],
-    ["quiz not passed: no clip yet",  { quizResult: { score: 2, total: 5 } }, null,             null],
-    ["lesson complete nods",                { lessonComplete: true },               "quizGood",       "Nodding"],
+  const cases: Array<[string, Partial<DirectorSignals>, Scenario, string[]]> = [
+    ["quiz passed: a nod or WellDone",      { quizResult: { score: 3, total: 5 } }, "quizGood",       ["Nodding", "WellDone"]],
+    ["quiz not passed: Encourage",          { quizResult: { score: 2, total: 5 } }, "quizSupportive", ["Encourage"]],
+    ["lesson complete: ThatsIt",            { lessonComplete: true },               "lessonComplete",  ["ThatsIt"]],
   ];
-  it.each(cases)("%s", (_name, over, scenario, clip) => {
+  it.each(cases)("%s", (_name, over, scenario, clips) => {
     const out = run({ seconds: 2, signalsAt: (t) => sig(t > 0.5 ? over : {}) }).outputs;
-    const hit = out.find((o) => o.overlay);
-    if (!scenario) { expect(hit).toBeUndefined(); return; }
-    expect(hit!.overlay!.scenario).toBe(scenario);
-    expect(hit!.overlay!.clip).toBe(clip);
+    const hit = out.find((o) => o.overlay)!;
+    expect(hit.overlay!.scenario).toBe(scenario);
+    expect(clips).toContain(hit.overlay!.clip);
+  });
+
+  it("on a rig without the authored clips, a passed quiz nods and a failed one stays still", () => {
+    const set = availableFor(AVATURN_CLIP_SET);
+    const runs: Array<[Partial<DirectorSignals>, string | null]> = [
+      [{ quizResult: { score: 3, total: 5 } }, "Nodding"],
+      [{ lessonComplete: true }, "Nodding"],
+      [{ quizResult: { score: 2, total: 5 } }, null],
+    ];
+    for (const [over, clip] of runs) {
+      const out = run({ seconds: 2, available: () => set, signalsAt: (t) => sig(t > 0.5 ? over : {}) }).outputs;
+      expect(out.find((o) => o.overlay)?.overlay?.clip ?? null).toBe(clip);
+    }
   });
 
   it("a teacher mounted after the result does not react to it", () => {
     const seed = sig({ quizResult: { score: 5, total: 5 }, lessonComplete: true });
     const out = run({ seconds: 2, state: createDirectorState("Idle", seed), signalsAt: () => seed }).outputs;
     expect(out.some((o) => o.overlay)).toBe(false);
+  });
+});
+
+// ─── The authored gestures (V9.6): each scenario plays its clip ──────────────
+
+describe("authored gestures play in their scenarios", () => {
+  type Over = Partial<DirectorSignals> | ((t: number) => Partial<DirectorSignals>);
+  // [what happens, the clip, the signals, the clips to take out so it is the only pick, seconds, scenario]
+  const cases: Array<[string, string, Over, string[], number, Scenario]> = [
+    ["a right answer",       "Exactly",      (t) => ({ reaction: t > 1 ? { kind: "nodding", id: 1 } : null }), ["Nodding"], 3,  "correct"],
+    ["a wrong answer",       "Almost",       (t) => ({ reaction: t > 1 ? { kind: "shaking", id: 1 } : null }), ["ShakeNo"], 3,  "wrong"],
+    ["a passed quiz",        "WellDone",     { quizResult: { score: 4, total: 5 } },                          ["Nodding"], 3,  "quizGood"],
+    ["a failed quiz",        "Encourage",    { quizResult: { score: 1, total: 5 } },                          [],          3,  "quizSupportive"],
+    ["the lesson finishing", "ThatsIt",      { lessonComplete: true },                                        [],          3,  "lessonComplete"],
+    ["a model appearing",    "PresentModel", (t) => ({ modelShown: t > 1 }),                                  [],          3,  "presentModel"],
+    ["a long quiet wait",    "GlanceBoard",  {},                                                              ["Idle3"],   40, "longWait"],
+  ];
+  it.each(cases)("%s plays %s", (_name, clip, over, without, seconds, scenario) => {
+    const signalsAt = (t: number) => sig(typeof over === "function" ? over(t) : over);
+    const out = run({ seconds, signalsAt, available: () => canineWithout(...without) }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === clip);
+    expect(hit, clip).toBeDefined();
+    expect(hit!.overlay!.scenario).toBe(scenario);
+    expect(hit!.overlay!.mask).toBe("upper");
+    expect(hit!.overlay!.endsAt - hit!.overlay!.startedAt).toBeCloseTo(DURATIONS.get(clip)!, 5);
+  });
+
+  it("every authored clip is Aristo's own and ships on the Canino rigs only", () => {
+    for (const id of AUTHORED) {
+      const spec = CLIP_MANIFEST.find((c) => c.id === id)!;
+      expect(spec.licence, id).toBe("Aristo's own");
+      expect(spec.source, id).toMatch(/^authored in Blender for Aristo/);
+      expect(CANINO_CLIP_SET as readonly string[], id).toContain(id);
+      for (const set of [AVATURN_CLIP_SET, CUSTOM_CLIP_SET, LEGACY_CLIP_SET] as const) {
+        expect(set as readonly string[], id).not.toContain(id);
+      }
+    }
   });
 });
 
@@ -456,27 +545,39 @@ describe("look target", () => {
     expect(out.at(-1)!.look).toBe(expected);
   });
 
-  it("follows an overlay clip's own look until it fades out (V9.6 GlanceBoard)", () => {
-    const manifest = CLIP_MANIFEST.map((c) => (c.id === "Idle3" ? { ...c, look: "board" as const } : c));
-    const out = run({ seconds: 40, signalsAt: () => sig(), manifest }).outputs;
-    const playing = out.find((o) => o.overlay?.clip === "Idle3")!;
-    const { startedAt, fadeOutAt } = playing.overlay!;
+  // GlanceBoard is the only clip with its own look. Idle3 is taken out of the
+  // pool so it is the one the long wait plays.
+  const glance = (over: Partial<DirectorSignals>) =>
+    run({ seconds: 40, signalsAt: () => sig(over), available: () => canineWithout("Idle3") }).outputs;
+
+  it("GlanceBoard turns the head to the board until it fades out (V9.6)", () => {
+    const out = glance({});
+    const { startedAt, fadeOutAt } = out.find((o) => o.overlay?.clip === "GlanceBoard")!.overlay!;
+    expect(out.find((o) => o.t > startedAt - 0.2 && o.t < startedAt - 0.1)!.look).toBe("camera");
     expect(out.find((o) => o.t > startedAt + 0.1)!.look).toBe("board");
+    expect(out.find((o) => o.t > fadeOutAt - 0.1 && o.t < fadeOutAt)!.look).toBe("board");
     expect(out.find((o) => o.t > fadeOutAt + 0.02)!.look).toBe("camera");
-    expect(out.find((o) => o.t < startedAt - 0.1 && o.t > startedAt - 0.2)!.look).toBe("camera");
   });
 
-  it("an overlay clip's own look wins over the quiz desk while it plays", () => {
-    const manifest = CLIP_MANIFEST.map((c) => (c.id === "Idle3" ? { ...c, look: "board" as const } : c));
-    const out = run({ seconds: 40, signalsAt: () => sig({ quizActive: true }), manifest }).outputs;
-    const playing = out.find((o) => o.overlay?.clip === "Idle3")!;
-    expect(out.find((o) => o.t > playing.overlay!.startedAt + 0.1)!.look).toBe("board");
-    expect(out.find((o) => o.t > playing.overlay!.fadeOutAt + 0.02)!.look).toBe("desk");
+  it("GlanceBoard's look wins over the quiz desk while it plays", () => {
+    const out = glance({ quizActive: true });
+    const { startedAt, fadeOutAt } = out.find((o) => o.overlay?.clip === "GlanceBoard")!.overlay!;
+    expect(out.find((o) => o.t > startedAt + 0.1)!.look).toBe("board");
+    expect(out.find((o) => o.t > fadeOutAt + 0.02)!.look).toBe("desk");
   });
 
-  it("keeps the base's target for an overlay clip without a look", () => {
-    const out = run({ seconds: 30, signalsAt: () => sig() }).outputs;
+  it("a clip without its own look leaves the base's target alone", () => {
+    const out = run({ seconds: 40, signalsAt: () => sig(), available: () => canineWithout("GlanceBoard") }).outputs;
     expect(out.find((o) => o.overlay?.clip === "Idle3")!.look).toBe("camera");
+    const hit = run({ seconds: 3, signalsAt: (t) => sig({ reaction: t > 1 ? { kind: "shaking", id: 1 } : null }) }).outputs;
+    expect(hit.find((o) => o.overlay)!.look).toBe("camera");
+  });
+
+  it("an overlay clip's look comes from the manifest, so a fixture manifest can give one to any clip", () => {
+    const manifest = CLIP_MANIFEST.map((c) => (c.id === "Idle3" ? { ...c, look: "model" as const } : c));
+    const out = run({ seconds: 40, signalsAt: () => sig(), available: () => canineWithout("GlanceBoard"), manifest }).outputs;
+    const { startedAt } = out.find((o) => o.overlay?.clip === "Idle3")!.overlay!;
+    expect(out.find((o) => o.t > startedAt + 0.1)!.look).toBe("model");
   });
 
   it("turns to a new model for a moment, then back (row 9)", () => {
