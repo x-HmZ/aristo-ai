@@ -487,11 +487,35 @@ PRESENT_MODEL = {
     "fingers": {"L": [(0, 0), (0.8, 0.85), (1.9, 0.85), (2.6, 0)]},
 }
 
-# "Let's look at that again": a slow tilt, one soft nod and a smaller echo.
+# "Let's look at that again": lean in and look down at the student's work,
+# hold a thoughtful beat, come back up with a warm tilt. No nod: the first
+# version's nod read as "yes, right" (Hmz). Upper mask: the spine leans, the
+# arms are unkeyed and stay on the base.
+_LEAN = [(0, 0, 0), (0.55, -5, 14), (1.15, -8, 15), (1.7, -6, 3), (2.3, 0, 0)]
+_SPINE = {"CC_Base_Spine01": [(0, []), (0.6, [("L", 2)]), (1.2, [("L", 2.5)]), (1.8, [("L", 0.5)]), (2.3, [])],
+          "CC_Base_Spine02": [(0, []), (0.6, [("L", 4)]), (1.2, [("L", 4.5)]), (1.8, [("L", 1)]), (2.3, [])]}
 LOOK_AGAIN = {
-    "name": "LookAgain", "length": 2.0,
-    "bones": _neck([(0, 0, 0), (0.5, -12, 6), (0.85, -12, 15), (1.1, -11, 5),
-                    (1.3, -11, 9), (2.0, 0, 0)]),
+    "name": "LookAgain", "length": 2.3,
+    "bones": {**_SPINE, **_neck(_LEAN)},
+}
+
+# The same lean, plus the right hand held out towards the student's desk,
+# palm down, with two small taps: "this bit, here".
+LOOK_AGAIN_HAND = {
+    "name": "LookAgainHand", "length": 2.4,
+    "bones": {
+        **{k: v[:-1] + [(2.4, [])] for k, v in _SPINE.items()},
+        **_neck(_LEAN[:-1] + [(2.4, 0, 0)]),
+        "CC_Base_R_Upperarm": [(0, []), (0.25, [("L", -10)]), (0.7, [("F", 4), ("L", -42)]),
+                               (1.55, [("F", 4), ("L", -41)]), (2.0, [("L", -10)]), (2.4, [])],
+        "CC_Base_R_Forearm": [(0, []), (0.25, [("L", -20)]), (0.75, [("L", -38), ("A", -60)]),
+                              (0.97, [("L", -31), ("A", -60)]), (1.1, [("L", -38), ("A", -60)]),
+                              (1.22, [("L", -31), ("A", -60)]), (1.4, [("L", -37), ("A", -60)]),
+                              (1.6, [("L", -37), ("A", -58)]), (2.0, [("L", -15), ("A", -20)]), (2.4, [])],
+        "CC_Base_R_Hand": [(0, []), (0.8, [("F", -10)]), (0.97, [("F", 6)]), (1.1, [("F", -8)]),
+                           (1.22, [("F", 6)]), (1.4, [("F", -6)]), (1.6, [("F", -6)]), (2.4, [])],
+    },
+    "fingers": {"R": [(0, 0), (0.7, 0.7), (1.6, 0.7), (2.4, 0)]},
 }
 
 # "You're getting there": right palm offered forward at the waist, a small
@@ -517,7 +541,7 @@ ENCOURAGE = {
     "fingers": {"R": [(0, 0), (0.65, 0.65), (1.7, 0.65), (2.5, 0)]},
 }
 
-V96 = (PRESENT_MODEL, LOOK_AGAIN, ENCOURAGE)
+V96 = (PRESENT_MODEL, LOOK_AGAIN, LOOK_AGAIN_HAND, ENCOURAGE)
 
 
 def build_all(teachers=("Jake", "MJ")):
