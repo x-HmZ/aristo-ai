@@ -22,6 +22,10 @@ Two tiers:
 | V5 motivation loop | Server-authoritative XP/levels + in-scene celebration (teacher claps, confetti, spoken praise). The retention loop the app has zero of today. | sonnet | M |
 | V6 parent weekly digest | Weekly progress email to the parent — the person who will actually pay. All ingredients exist. | sonnet | S-M |
 | V7 alignment lipsync | Drive the avatar's mouth from ElevenLabs character timings instead of an FFT guess. Free on /learn (same characters); the demo uses Forced Alignment, billed as STT, so it costs no TTS quota. | sonnet | M |
+| V8 brand and experience redesign | Whole-product visual redesign toward "the future of teaching": story, mark, design system v2, landing v3 (living teacher, five-phase story, KG map), classroom UI, room, app pages. Presentation only; no functional change. | opus + sonnet | XL (8 sub-tasks) |
+| V9 teacher avatar + animation library | A new-looking teacher at $0, plus a scenario-driven animation library (manifest + tested director) triggered by signals the app already emits. | opus + sonnet | XL (6 phases) |
+
+Estimates, models, skills and setup for V8 and V9: `V8-V9-estimates-models-tooling.md`.
 
 Recommended V order: **V2 -> V1 -> V5 -> V4 -> V3 -> V6.** (V2 first: it makes everything
 else demoable to real people; V1 is the flagship but bigger. V6 waits on T10's Resend wiring.)
@@ -119,6 +123,8 @@ Tasks 2-5 and 9 are independent of each other and can run in parallel sessions.
 - [~] V7 alignment-driven lipsync (2026-09-08 — both paths code-complete + unit-tested,
       neither exercised against the live API. /learn needs nothing run. /demo is blocked on
       enabling the key's `forced_alignment` permission, then `--align`.)
+- [ ] V8 brand and experience redesign (briefed 2026-09-11; 8 sub-tasks, checklist in the brief)
+- [ ] V9 teacher avatar + scenario animation library (briefed 2026-09-11; 6 phases)
 - [ ] UX polish backlog (batched — see UX-POLISH-BACKLOG.md)
 - [x] T01 repo + docs consolidation (2026-07-12 — master promotion still pending Vercel dashboard switch)
 - [x] T02 3D asset diet

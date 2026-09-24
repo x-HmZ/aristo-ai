@@ -1,17 +1,17 @@
 "use client";
 
-import { useAristoStore } from "@/store/useAristoStore";
+import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
 import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
 import { Component, Suspense, useEffect, useRef, useMemo, type ErrorInfo, type ReactNode } from "react";
 import { Group, MeshBasicMaterial, SRGBColorSpace } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { GeneratedModel } from "./GeneratedModel";
-import { Teacher } from "./Teacher";
+import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
 import { CameraController } from "./CameraController";
-import { DeskQuiz } from "./DeskQuiz";
+import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 
 // Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
 function RendererConfig() {
@@ -25,7 +25,7 @@ function RendererConfig() {
 // half-image (~0.73) left and up moves the plane towards the avatar's head
 // so "pointing" gestures actually land on the diagram instead of empty air.
 const SCENE_X = 0.37;   // was 1.1 — half-width left
-const SCENE_Y = 0.33;   // was -0.4 — half-height up (head/shoulder level)
+const SCENE_Y = 0.18;   // was 0.33, then -0.035 for the 2.2-2.3 m halfway pass — re-tuned again for standScale 10-15% taller still (V9.2b, Hmz)
 const SCENE_Z = -3;
 
 // 3D model anchor. This used to sit at the original chest-height spot
@@ -37,6 +37,15 @@ const SCENE_Z = -3;
 const MODEL_X = SCENE_X;
 const MODEL_Y = SCENE_Y;
 const MODEL_Z = SCENE_Z;
+
+// Legacy rigs (Ryan/Sonia/Marcus/Priya/custom Avaturn) never got measured
+// against the classroom furniture — only Jake and MJ, the shipped roster,
+// have a `standScale`. Keep the old flat 1.5 for everything else (V9.2b).
+const LEGACY_STAND_SCALE = 1.5;
+function standScaleFor(teacher: TeacherAvatar): number {
+  if (teacher === "custom") return LEGACY_STAND_SCALE;
+  return AVATAR_ASSETS[teacher]?.standScale ?? LEGACY_STAND_SCALE;
+}
 
 function Floor() {
   return (
@@ -300,8 +309,8 @@ function TeachingImagePanel({ imageUrl }: { imageUrl: string }) {
 }
 
 // ─── Teacher error boundary ───────────────────────────────────────────────────
-// Catches GLB 404s / parse errors from useGLTF and resets the avatar to Ryan
-// so the scene never stays blank when an optional avatar GLB is missing.
+// Catches GLB 404s / parse errors from useGLTF and resets the avatar to the default
+// (Jake) so the scene never stays blank when an optional avatar GLB is missing.
 
 interface TeacherBoundaryProps { children: ReactNode; onError: () => void }
 interface TeacherBoundaryState { hasError: boolean }
@@ -332,8 +341,15 @@ function AvatarLoadingPlaceholder({ position, scale, rotationY }: { position: [n
 function SafeTeacher(props: React.ComponentProps<typeof Teacher>) {
   const setTeacher = useAristoStore((s) => s.setTeacher);
   const { position = [-1, -1.7, -3], scale = 1.5, rotationY = 0.35 } = props;
+  // A teacher that fails to load is swapped for the default. Keyed by avatar so
+  // the boundary resets with the switch (an errored boundary renders nothing
+  // and would otherwise stay blank), and a default that itself fails stays put
+  // rather than looping.
   return (
-    <TeacherErrorBoundary onError={() => setTeacher("ryan")}>
+    <TeacherErrorBoundary
+      key={props.teacher}
+      onError={() => { if (props.teacher !== DEFAULT_TEACHER) setTeacher(DEFAULT_TEACHER); }}
+    >
       <Suspense fallback={<AvatarLoadingPlaceholder position={position as [number,number,number]} scale={scale} rotationY={rotationY} />}>
         {/* Keyed by avatar so a switch fully remounts the rig: new group, new
             mixer, new actions. Without this, switching between two avatars that
@@ -377,7 +393,10 @@ function FloatingModel({
         modelUrl={modelUrl}
         modelAnnotations={modelAnnotations}
         position={[MODEL_X, MODEL_Y, MODEL_Z]}
-        scale={1.5}
+        // Was 1.5 — Hmz called the initial spawn size too big (V9.2b, 2026-09-23):
+        // 45% smaller (middle of his 40-50% ask), 1.5 * 0.55 = 0.825. The user's
+        // own scroll-to-resize (GeneratedModel's onWheel) is unaffected.
+        scale={0.825}
       />
     </Float>
   );
@@ -389,9 +408,10 @@ function FloatingModel({
 // visual cue — the actual interactive input is the AnswerInputPanel in the
 // right panel where typing/dictation makes sense.
 //
-// The avatar sits at [-1, -1.7, -3] with scale 1.5; head ≈ (avatarY + 1.4 * scale).
+// Re-tuned for standScale 10-15% taller still (V9.2b, Hmz — see SCENE_Y).
+// Jake and MJ differ by ~5 cm at this scale but share one bubble anchor.
 const TEACHER_HEAD_X = -0.25;
-const TEACHER_HEAD_Y = 0.55;
+const TEACHER_HEAD_Y = 0.65;
 const TEACHER_HEAD_Z = -3;
 
 function YourTurnBubble() {
@@ -457,6 +477,15 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const showModel = !!activeModelUrl && viewMode3d;
   const showImage = !showModel && !!activePreviewImageUrl;
 
+  // Where the teacher's head looks (V9.3): the board and a shown model share
+  // the scene anchor; the desk is the quiz paper.
+  const paperAnchor = devOverrides?.paperAnchor;
+  const lookTargets = useMemo<LookTargets>(() => ({
+    board: [SCENE_X, SCENE_Y, SCENE_Z],
+    model: [SCENE_X, SCENE_Y, SCENE_Z],
+    desk:  paperAnchor ?? PAPER_ANCHOR,
+  }), [paperAnchor]);
+
   return (
     <>
       <RendererConfig />
@@ -479,8 +508,9 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       <SafeTeacher
         teacher={teacher}
         position={[-1, -1.7, SCENE_Z]}
-        scale={1.5}
+        scale={standScaleFor(teacher)}
         rotationY={0.3}
+        lookTargets={lookTargets}
       />
 
       {/* Awaiting-answer cue — avatar speech bubble */}
@@ -489,7 +519,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       {/* In-scene quiz on the desk paper.  Self-gated on store.activeQuiz —
           renders nothing when no quiz is active. */}
       <Suspense fallback={null}>
-        <DeskQuiz paperAnchor={devOverrides?.paperAnchor} />
+        <DeskQuiz paperAnchor={paperAnchor} />
       </Suspense>
 
       {showModel ? (

@@ -2,6 +2,313 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-25 - V9.6 done: seven authored gestures wired (Opus authored, Sonnet wired)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.6"). Gates: type-check clean, lint 10, tests 291, build green.
+
+- **Shipped:** PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard in the Jake and MJ clip packs
+  (500,280 to 577,352 B and 526,496 to 603,744 B), wired for rows 2, 9, 13, 14, 16 and 18. Each approved by Hmz in
+  motion. Checked in the app on Jake and MJ (`/dev/free-model` and `/demo`). `/learn` not opened (auth).
+- **Also:** greeting wave at 0.75; ShakeNo at a third of Almost's weight in the wrong-answer pool; PP viseme softened
+  to 0.6 on both teachers; `ClipSpec.look` (an overlay clip can own the head's look, used by GlanceBoard). LookAgain
+  rejected (a nod says yes).
+- **Question for Hmz:** the long wait now alternates Idle3 and GlanceBoard, about one gesture every 35 s of quiet
+  instead of every 70 s. Raise `LONG_WAIT_S` or lengthen both cooldowns (about 130 s) if it feels restless.
+- **Next:** the gesture catalogue's batches 2 (teaching moves by segment role) and 3 (event clips), Opus to author,
+  in `.claude/plans/V96-GESTURE-CATALOGUE.md`. V8.7 (landing re-capture) still waits on V8.4 and V8.5.
+- **Still open from V9.5:** LICENSES.md sources for the classroom and Ryan/Sonia, the Sony duck placeholder.
+
+## 2026-09-23 - V9.5 done: integration, budgets, docs, licences (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.5"). V9 is finished apart from the open items below. No escalation needed.
+
+- **Done:** Jake confirmed as the default (recorded in decisions.md; CLAUDE.md, architecture.md and the code comments
+  say so; nothing preloads or prefetches anything else). Fallbacks fixed: `custom` with no URL, an unknown key and a
+  teacher that fails to load now land on Jake (they went to Ryan, or to a blank slot). Persisted Marcus/Priya/Ryan/Sonia
+  already fell back through the store. Picker, Jake/MJ switching mid-lesson, credit for both, and custom URLs checked
+  on `/demo` and `/dev/free-model`. 267 tests, type-check clean, lint 22, build green.
+- **Budget (cold `/demo`, before = branch start with Marcus, after = Jake):** GLBs 6.95 MB to 3.23 MB, everything 9.2 MB
+  to 5.5 MB, posed at 9 Mbps 14.7 s to 9.4 s, warm unchanged. T02's 12 MB bar met; nothing to re-export.
+- **Docs:** `LICENSES.md` (new), `.claude/docs/architecture.md` ("Teacher avatar subsystem"), CLAUDE.md avatar notes.
+- **Blocked on Hmz / open questions:** (1) ShakeNo: Hmz decided to keep it for now; (2) the Tier 2 clips (hand-keyed gestures: present a model, "let's look again", supportive quiz);
+  (3) `LICENSES.md`: classroom and Ryan/Sonia are open source from a YouTuber per Hmz (creator, licence, URL still to record), the Sony duck `dev_placeholder.glb` still open; (4) done: the unreferenced V1 JSX tree and its images are deleted (lint is now 10 warnings, not 22).
+- **Not verified:** `/learn` end to end (needs auth), face hints in a real quiz, a phone, frame rate.
+- **Next:** V8.7 re-capture is no longer blocked by V9; the plan also waits on V8.4 and V8.5 (both still unticked).
+  The plan assigns it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal once you confirm.
+
+## 2026-09-23 - V9.4 done: face and gaze (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.4"). No escalation to Opus needed.
+
+- **Done:** `face.ts` and `gaze.ts` (pure, tested) plus `Teacher.tsx`: the director's face hint drives the
+  smile, blink runs from a scheduler in `useFrame`, and the eyes follow camera/board/model/desk with
+  saccades and drift. 267 tests, type-check clean, lint 22, build green. Checked in the browser on Jake
+  and MJ (all four expressions, eye tracking, blink, visemes by timeline and by FFT). T08's gaze item ticked.
+- **Found:** the Canino rigs have only a weak `mouthSmile` and blink shapes (no brows), so expressions are
+  smile levels (1.6 for a smile, over 1 on purpose) plus eye gaze. `smileGain` scales the hint per rig;
+  unset rigs get 0.4. The FFT viseme fallback pins the mouth at full (volume 0.56-0.73 into
+  `min(1, volume*4)`); not fixed, the timeline path is the real one.
+- **Not verified visually:** the face hints in a real quiz (correct, wrong, lesson complete), covered by
+  the director tests only; Marcus/Priya/custom teachers (archived, gain 0.4); `/learn` (needs auth).
+- **Blocked on Hmz:** still the ShakeNo question from V9.3 (recommendation: silence it).
+- **Next:** V9.5 integration (budgets, `AVATAR_ASSETS`, picker and `/create-teacher`, docs,
+  `LICENSES.md`). The Tier 2 clips are still open.
+
+## 2026-09-23 — V9.3 done: the animation director is wired (Sonnet)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.3", with the coverage table and the ShakeNo question).
+
+- **Done:** `Teacher.tsx` runs on `src/lib/avatar/` (base, masked overlays, latched reactions, look).
+  `lessonComplete` mirrored into the store. `Experience.tsx` passes `lookTargets`. 237 tests, type-check
+  clean, lint 22, build green. Checked in the browser on Jake, MJ, Ryan, a custom teacher, pack
+  blocked, and `/demo`.
+- **Found in the app:** MJ's numbered bone names (`CC_Base_Head_038`) defeated the structural masks, so
+  she had no greeting or head overlays until `HEAD`/`HIP` accepted a numeric suffix. Fixed and tested.
+- **Not verified visually:** head-to-desk in a real quiz, `lessonComplete` and quiz-result reactions,
+  Marcus/Priya on their own GLBs, `/learn` (needs auth).
+- **Blocked on Hmz:** the ShakeNo question (keep, or silence a wrong-answer head shake until a
+  "let's look again" clip exists). Recommendation: silence.
+- **Next:** V9.4 face and gaze (expressions from the director's `face` hint, eyes, drift and
+  saccades). The Tier 2 clips (present model, wrong answer, quiz supportive) are still open.
+- **Tooling note:** another session's `next dev` holds `.next` on Windows, so `yarn build` fails
+  with EPERM; build with a temporary `distDir` and revert the config and `tsconfig.json`.
+
+## 2026-09-23 — V9.3 director: design half done, wiring next (Sonnet) — superseded above
+
+- **Done (Opus):** `src/lib/avatar/` — `animationManifest.ts` (clips, scenario table, clip sets
+  per avatar), `director.ts` (pure step function: base/overlay/look/face, no repeats,
+  cooldowns, latched reactions, greeting, long wait, fallbacks), `skeletonMasks.ts`, `look.ts`.
+  122 table-driven tests; suite 207/207, type-check clean. Nothing in the app uses them yet.
+- **Next:** wire `Teacher.tsx` to it, per `.claude/plans/V93-WIRING.md`. That brief holds
+  the settled decisions (Pointing stays base, nod/shake head-only overlays, reactions latched,
+  weight-dominance overlays, `lessonComplete` store mirror) — execute it, don't re-derive.
+
+## 2026-09-23 — V9.2b: scale, fingers, trousers — all three fixed
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.2b"). Ran against `NEXT-SESSION-V92B-FIXES.md`.
+
+- **Scale:** three live rounds with Hmz. True real height (Jake 1.78 m) read as a dwarf; halfway
+  to the old 2.79 m giant still read short; landed on **halfway × 1.125 — Jake 2.57 m
+  (`standScale` 1.3824), MJ 2.51 m (1.3521)**, taller than the brief's original "believable
+  adult" target, by Hmz's explicit choice after seeing it live. New `AvatarConfig.standScale` in
+  `Teacher.tsx`, read via `standScaleFor(teacher)` in `Experience.tsx`; legacy avatars keep the
+  old flat 1.5. `SCENE_Y`/`TEACHER_HEAD_Y` re-tuned to match (final: 0.18 / 0.65). Generated-model
+  initial spawn size also cut 45% (1.5 → 0.825) — the student's own scroll-to-resize is
+  untouched. All numbers, including the two superseded intermediate passes, are in
+  `decisions.md` — don't re-derive them.
+- **Fingers:** not a retarget bug (deltas were already 0.000° vs Marcus) — the same Mixamo
+  rotation values read as a tighter clench on the Canino rigs' shorter fingers. Fixed with a new
+  `scripts/v9_fingers.py`: `relax_fingers` slerps baked finger rotations 35% toward rest, per
+  clip, for both teachers; Pointing's index untouched. Re-shipped, `v9_verify_anim.mjs` still
+  passes.
+- **Jake's trousers:** not the normal map (there isn't one) and not a skinning bug (the crease
+  survives `mixer.stopAllAction()` — true bind pose). It's a fold sculpted into the source
+  mesh's rest geometry. Fixed with a feathered Laplacian smooth on `Pants_14249_Shape` at both
+  knees, edited directly on the rest mesh. `v9_mask.find_pokes`: 0 pokes on trousers/shirt/shoes
+  across all 17 clips after the edit. MJ's skirt/legs checked, no equivalent issue.
+- **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85.
+- **New tooling** (documented in V9-REPORT.md "V9.2b Tooling"): a `window.__v92` mixer-freeze
+  hook for exact-frame close-ups with the real R3F camera — needs
+  `scene.updateMatrixWorld(true)` right after `mixer.update()` or camera aim reads stale bone
+  transforms. Reverted before this commit, same as `__v91d`/`__v91dStore`.
+
+**Next:** V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
+waves). Start prompt: `.claude/plans/NEXT-SESSION-V93-DIRECTOR.md` (Opus 5 to design, Sonnet 5 to
+grind — see "Model discipline" in the programme plan).
+
+**Still open:** the Avaturn rig's packs (mirrors, diet); the gap clips (Mixamo exhausted, see
+"Clip sources" below); MJ's hair on her shoulder; the scalp seam; female narration for MJ
+(parked, needs Hmz's go).
+
+## 2026-09-23 — V9.2: animation library for Jake and MJ (17 clips, base + lazy pack)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn rig is not.**
+
+- **Channel diet:** rest-value tracks dropped (MJ 765 → 61 channels per clip) and rotations
+  stored as int16. Checked against the raw export in three.js (`v9_verify_anim.mjs`): ≤ 0.016°
+  and ≤ 0.24 mm on all clips and crossfades.
+- **Shipping:**
+  - `Teacher_<T>.glb` (mesh + Idle/Talking/Thinking) plus `Teacher_<T>_clips.glb` (14 clips,
+    meshopt), fetched after `sceneReady` (`clipPacks` in `Teacher.tsx`).
+  - First load: Jake 2.96 → 2.28 MB, MJ 2.92 → 1.78 MB. The packs are 0.51 / 0.54 MB.
+- **Clips:** Idle2 and Idle4; Talking2, 3 and 4; mirrors Talking2M, Talking3M, Talking6M and
+  ThinkingM (`v9_mirror.py`). Idle3 and Talking6/6M ship unwired for the V9.3 director. Clapping
+  and Talking5 were rejected. Time-warp stays runtime.
+- **Checks:** pokes 0 or pushed ≤ 2 mm; one cuff false positive, checked by eye. `v9_qa.py`
+  covers deltas, soles and seams.
+- **App:** checked in `/dev/free-model` on both teachers and in `/demo` for MJ, including the
+  missing-pack fallback.
+  - Fixed: a nod falling back to Idle could freeze Idle clamped.
+  - Fixed: the talking cycler skipped variants.
+- **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85; `typescript-reviewer` pass.
+
+**Next:** **V9.2b** fixes Hmz found in the app. Start prompt:
+`.claude/plans/NEXT-SESSION-V92B-FIXES.md` (Sonnet).
+- The teachers stand 2.79 m in a real-size classroom (`scale={1.5}`), so a desk reaches the
+  knee.
+- The fingers look bent.
+- Jake's trousers deform at the knees.
+
+Then V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
+waves), then Tier 2 hand-keyed gestures for the gaps (decisions.md "Clip sources"). Hmz saw
+Idle3: fine.
+
+**Still open:** the Avaturn rig's packs (mirrors, diet); MJ's hair on her shoulder; the scalp
+seam.
+
+## 2026-09-23 — V9.1e: MJ's wardrobe A shipped; six clips per teacher
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not built.**
+
+- **Tee** rebuilt below the old crop hem (`scripts/v9_tee.py`): cut above the hem's
+  normal-map folds, re-grown loose and tucked, 0 zero-area UV faces.
+- **Skirt** `MJ_skirt`: pleated navy A-line with waistband and lip, hem 0.52, parented to her
+  rig. The old skirt is hidden via `v9_strip.HIDE`.
+- **Missed by V9.1d, now fixed:**
+  - arm skin through MJ's sleeve, 18 mm, fixed with `v9_mask.adopt_weights`;
+  - MJ's fingers inside any eased skirt, fixed by `v9_skirt.clear_hands`, which swings
+    hanging arms 3-10° (a deliberate deviation from the source; Pointing untouched).
+  - MJ's broken left elbow (spotted by Hmz): a sculpt defect in the source mesh, rebuilt
+    as a mirror of her right arm with `v9_mask.mirror_region`.
+- Zero pokes on every frame of all six clips for both teachers. The new `check_through`
+  covers the hands and knees that `find_pokes` cannot see.
+- **Clips:** Thinking (baked from the pack's Thinking2; the pack's Thinking put the hand on
+  the chest), Nodding and ShakeNo, on both teachers. The `Teacher.tsx` nod/shake revert now
+  follows clip length.
+- Sizes: Jake 2.96 MB, MJ 2.92 MB. Gates: type-check clean, lint 22 (pre-existing), tests
+  85/85.
+
+**Next:** V9.2, the animation library. Plan-mode first: channel diet (MJ carries 765 channels
+per clip) and how packs ship, then the remaining 10 source clips. Start prompt:
+`.claude/plans/NEXT-SESSION-V92-ANIMATION-LIBRARY.md`. Still open: MJ in `/demo` (not
+re-checked), her hair clipping the shoulder, the forehead scalp seam, and the parked female
+narration.
+
+## 2026-09-23 — V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on Hmz
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1d"). **V9.1c's motion was wrong in ways three
+sampled frames could not show.**
+
+- **Fixed, re-baked, re-shipped** (Jake 2.54 MB, MJ 2.27 MB): arms/hands were 13–20° off the
+  source (bake ran with the teachers turned 17°, world deltas rotated with them), now ≤ 0.1°;
+  feet stood toe-down (anatomy swing), then floated (source pins hips), now flat and grounded;
+  Jake stood 30 mm up and 8 cm behind Marcus's mark (normalise measured a posed frame); MJ's
+  elbow stepped (share bone undriven); skin through Jake's cuff (mislabelled vertex group).
+- **`Teacher.tsx`:** a gesture change reset the playing clip (33° arm pop on Talking → Pointing),
+  and a nod froze Idle for good on every avatar without a Nodding clip. Fixed; measured in app.
+- **Passing:** wrists, fingers, shoulders, loop seams, transitions, face; Pointing lands inside
+  the image's upper-left for both (Marcus lands just outside it).
+- Gates: type-check clean, lint 22 (pre-existing), tests 85/85.
+
+**MJ's wardrobe:** her extended tee and skirt fail the bar (slits showing her legs, stretched
+dark blotches, jagged hem, crop-hem ridge on the tee). Options in
+`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`. **Hmz picked A** (rebuilt
+pleated skirt, `scripts/v9_skirt.py`, plus a tee repair) **with B (CC0 MPFB trousers) as the
+fallback** if A cannot pass. Until it ships, students who pick MJ see the failing skirt.
+
+**Next:** V9.1e — build A (B only if A fails), judge in three.js, re-ship; then Thinking, Nodding,
+ShakeNo. Start prompt: `.claude/plans/NEXT-SESSION-V91E-MJ-SKIRT-AND-CLIPS.md`.
+Scene backup before this session: `bakeoff_scene_pre_v91d.blend`.
+
+## 2026-09-22 — V9.1c: V9.1b audited, rebuilt, and wired into the app
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1c"). **V9.1b was overstated**: arms were buried behind
+the back in every clip (T-pose vs A-pose rest mismatch), 5 of 6 clips were frozen stills (the export
+hid the source rig), and MJ's 32k tris came from decimation that shattered her teeth and hair.
+
+- **Fixed and re-shipped**: rest-aligned retarget (`v9_retarget.rest_alignment`, guard raises on a
+  frozen source), MJ rebuilt from undecimated meshes, hidden skin masked instead of decimating
+  (`v9_mask.py`), material pass (`v9_postprocess.mjs` via `v9_ship.sh`), SS and I recipes corrected.
+  Jake 42.8k tris / 2.49 MB, MJ 53.3k / 2.21 MB. Accepted, no simplify.
+- **Wired**: `jake` / `mj` in the union, `AVATAR_ASSETS` (label 1.4, by looking), switcher, voice map,
+  dev harness (`/dev/free-model?avatar=&state=`). Blink now drives both eyes (all ARKit rigs winked).
+- **CC BY credit** on each avatar's config → `<AvatarCredit>` in the `/learn` and `/demo` panels, plus
+  `asset.copyright` in each GLB.
+- Gates: type-check clean, lint 22 (pre-existing), tests 85/85. Checked in `/dev/free-model` and in
+  `/demo`, then `/learn` once Hmz signed in (see follow-up).
+
+**Follow-up (same day, Hmz):** Jake and MJ are the roster. `ACTIVE_TEACHERS` in the store drives both
+pickers; Ryan/Sonia/Marcus/Priya archived (config + GLBs kept), `DEFAULT_TEACHER` = jake, persisted
+old choices remap to it. `/demo` opens on Jake with a Jake/MJ switcher. `/learn` checked signed in
+(switcher only). The /learn switcher had been hiding Jake/MJ in a clipped 260 px row.
+
+**Next:** V9.1d — motion QA of all clips frame by frame, MJ's wardrobe held to a written quality bar,
+then more clips (Thinking, Nodding, ShakeNo). Start prompt:
+`.claude/plans/NEXT-SESSION-V91D-MOTION-WARDROBE-QA.md`. Motion was only checked at 3 sampled frames
+per clip; wrist twist, fingers, feet and where Pointing lands are unverified.
+
+**TODO, parked by Hmz (2026-09-22):** female narration for MJ in `/demo` (she lip-syncs the male
+pre-rendered voice). 6,856 ElevenLabs chars for both topics, plus per-voice folders in the player.
+Do not start without Hmz's go.
+
+## 2026-09-21 — V9.1b: the Canino pair is shippable
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.1b"). Renders and the working scene are in
+`.claude/eval/2026-09-18-v9-bakeoff/`; reusable Blender scripts in its `scripts/`.
+
+**The face-rig blocker is solved — L3 is back on, and it beats the Rocketbox fallback.**
+
+- The woman's FBX is only broken in the **forearm chain** (92/101 bones fit at zero residual). Her
+  head matches the clean GLB to **0.66 mm**, so all 68 face shapes transferred exactly. No sculpting.
+- The 15 Oculus visemes are **baked as real shape keys** from CC's 68 face shapes, so
+  `Teacher.tsx` drives both rigs **with no code change**. CC's `Open` moves lips 3.3 mm; the jaw
+  drop is `Mouth_Open` at 16.3 mm — which is why a 15 → 8 name map would have failed.
+- Retarget works: rotation **delta** relative to each rig's own rest pose (not world directions).
+  52/52 bones mapped; Idle, Talking, Pointing baked for both.
+- She is re-clothed (hip-length tee, knee-length skirt) by extending her own garments.
+- Shipped: `public/models/Teacher_Jake.glb` **2.69 MB** and `Teacher_MJ.glb` **1.87 MB** — both
+  smaller than Marcus (9.18 MB). Normalised to Marcus's height so the lesson camera is unchanged.
+- Verified in the browser at `/dev/avatar-lab`: Draco decodes, all 17 morph targets present with
+  the right names, all 3 clips play, lipsync tracks the demo narration.
+
+**Next:** add `jake` / `mj` to `AVATAR_ASSETS` in `src/components/three/Teacher.tsx`
+(`visemes: true`, `animFile` = their own GLB, set `spawnLabelHeight`), then add the **CC-BY 4.0
+attribution for Canino3d** — required wherever these ship. Cosmetic: MJ's skirt shows faint seams
+between its 139 pleat panels; her forehead has a scalp seam from the source asset.
+
+Rocketbox F01/M04 remain the fallback, rendered and ready, but are no longer the plan.
+
+
+## 2026-09-18 (later) — V9.1 bake-off, round 1 renders
+
+Findings, numbers and licences are in `.claude/plans/V9-REPORT.md`; renders are in `.claude/eval/2026-09-18-v9-bakeoff/`.
+
+- Blender 5.1.1 via MCP (the add-on is outdated but works). Scene `V9_bakeoff` matches the app's lesson camera, placement and lights.
+- Rendered: Marcus control; L2-a MPFB female; L2-b Rocketbox F17 and M12; L3-a the same MPFB female with cel shading and an outline. Each at lesson framing and in close-up.
+- **Face rig is not the blocker any more:** MPFB (CC0) and Rocketbox (MIT) both ship 52 ARKit shapes + 15 visemes.
+- Quaternius free tier dropped (Superhero bodies only, no clothes, no face). The generate-and-rig run was skipped by Hmz.
+- Installed into Blender: the MPFB 2.0.17 extension + 13 CC0 asset packs. Sources are git-ignored under `sources/`.
+
+### 2026-09-20 (later) — L3 reopened: the Canino pair goes first next session
+
+The GLB test changed the picture. `sources/canino/MJ_sketchfab.glb` has **clean geometry and rig** (the author's FBX is the broken one) but **zero morph targets**; the FBX has the 69 shapes and a broken body. Neither file has both, so the next session's first job is to get one that does. Start prompt: `.claude/plans/NEXT-SESSION-CANINO.md`.
+
+Rocketbox F01/M04 stay as the fallback, fully rendered and ready.
+
+### 2026-09-20 — casting settled, L3 abandoned
+
+- **Teachers: Rocketbox Female_Adult_01 + Male_Adult_04** (MIT). Rendered at lesson framing and close-up. Known defect: M04's hair seams where alpha cards overlap.
+- **L3 dropped after testing.** Canino3d's set: the man (`Jake`) is excellent, but the woman's arms are melted in the rest mesh and the young man explodes; their GLB conversion has no shape keys. No matching free stylised female exists (~250 models searched, CC tags are fan art of copyrighted characters). `Jake` is parked in the report as a one-teacher or paid-pair option.
+- Measured, against the claim that these avatars are low-res: Rocketbox ships 2048² colour/normal/specular vs Marcus's 1024²-and-below. See `quality_check.png`.
+
+### Next
+- V9.2 retarget: Rocketbox Biped -> the existing Mixamo clips (note both import traps in the report), then GLB export + compressed sizes.
+- Fix M04's hair material; rename Rocketbox shapes (`AA_VI_10_aa` -> `viseme_aa`, `AK_*` -> ARKit) for `Teacher.tsx`.
+- `pages/dev/avatar-lab.tsx` with demo narration for lipsync judging.
+
+## 2026-09-18 — Wave 1 direction (V8.0, V8.0b, V9.0), no code
+
+Branch `docs/v8-v9-programme`. Canvas: https://claude.ai/artifact/CNqx2JxQMkpyyeWXhc36HP (positioning, marks, casing, name screen, landing wireframes, classroom UI over the real scene, teacher looks).
+
+- **Decided** (rows in decisions.md): positioning P1 "One teacher. One student. Every kid."; wide caps for hero and close only, Title Case Geist elsewhere; **keep the name Aristo**; classroom UI A (caption first); landing becomes a live 3D introduction with a pinned-scroll five-phase section; L2 and L3 teacher looks both go to the V9.1 bake-off with younger, casual casting; two new teachers; Marcus/Priya retired from the picker later; $0 animation plan.
+- **Name screen:** 12 candidates, six died on specific findings (a live AI tutor on Bloom, Chiron, Hypatia; Lantern is a VPN school filters block). The full table is on the canvas.
+- **V9.0 had no renders:** Blender was not running and no candidate meshes exist yet. Renders move to V9.1, where they belong anyway.
+
+### Next
+- **Mark decided:** R1 The Column, from Hmz's own pillar reference (round two on the canvas). V8.1 draws the final vector wordmark.
+- **V9.1 bake-off** (wave 2): L2 and L3 candidates with L5 casting, rendered in the classroom at the real framing. Needs Blender running with the MCP add-on.
+- **V8.3 now needs a plan-mode pass** before anything: 3D on `/` means a Pages Router move and a new performance plan.
+
 ## 2026-09-11 — T04b landing visual identity ("Night Class")
 
 Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.

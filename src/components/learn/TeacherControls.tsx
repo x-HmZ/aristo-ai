@@ -1,8 +1,9 @@
 "use client";
 
 import { useGLTF } from "@react-three/drei";
-import { useAristoStore, type TeacherAvatar, type Classroom } from "@/store/useAristoStore";
+import { useAristoStore, ACTIVE_TEACHERS, type TeacherAvatar, type Classroom } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
+import { AvatarCredit } from "@/components/learn/AvatarCredit";
 
 // T02 — 3D asset diet: only the default avatar + classroom preload at module
 // scope (see Teacher.tsx / Classroom.tsx). Everything else lazy-loads via
@@ -22,39 +23,14 @@ function preloadClassroom(variant: Classroom) {
 }
 
 // ─── Avatar catalog ───────────────────────────────────────────────────────────
-// To add a new avatar: drop Teacher_<key>.glb + animations_<key>.glb into
-// public/models/ then add an entry here. Animations must use the Mixamo
-// humanoid rig (idle, Talking, Talking2, Thinking). Use mixamo2gltf.com or
-// Blender + Expy-Kit addon for retargeting.
-
-// To enable a slot: drop the GLB pair in public/models/ then set readyToUse: true.
-//
-// Recommended FREE, commercial-OK, photorealistic sources:
-//
-//   marcus (adult male, ~8–9/10 realism):
-//     Option A — CC4 "Aaron" photoscanned base:
-//       https://www.reallusion.com/character-creator/free-3d-character-base.html
-//     Option B — ActorCore free scanned male:
-//       https://actorcore.reallusion.com/3d-character/free
-//     Option C — CGTrader Realistic Male Rigged (native GLB):
-//       https://www.cgtrader.com/free-3d-models/character/man/realistic-male-character-rigged
-//
-//   priya (adult female, ~8–9/10 realism):
-//     Option A — CC4 "Ariana" photoscanned base (same URL as above)
-//     Option B — ActorCore free scanned female (same URL as above)
-//
-//   Export workflow for CC4/ActorCore:
-//     CC4 FBX → Blender + CC/iC Tools add-on (github.com/soupday/cc_blender_tools)
-//     → Build Basic Materials → Bake Textures → Export GLB (no animations)
-//     Then: upload FBX to mixamo.com → auto-rig → download Idle/Talking/Thinking
-//     as FBX → Blender NLA editor (rename strips to "Idle"/"Talking"/"Talking2"/"Thinking")
-//     → Export GLB with animations → animations_Marcus.glb
-const AVATARS: { value: TeacherAvatar; label: string; readyToUse: boolean }[] = [
-  { value: "ryan",   label: "Ryan",   readyToUse: true  },
-  { value: "sonia",  label: "Sonia",  readyToUse: true  },
-  { value: "marcus", label: "Marcus", readyToUse: true  },
-  { value: "priya",  label: "Priya",  readyToUse: true  },
-];
+// Only the active teachers (ACTIVE_TEACHERS in the store) are offered. To add
+// one: give it an AVATAR_ASSETS entry in Teacher.tsx (with a `credit` if its
+// licence needs one) and list it in ACTIVE_TEACHERS. Ryan, Sonia, Marcus and
+// Priya are archived there, not deleted.
+const AVATARS: { value: TeacherAvatar; label: string }[] = ACTIVE_TEACHERS.map((value) => ({
+  value,
+  label: AVATAR_ASSETS[value].label,
+}));
 
 const ENVIRONMENTS: { value: Classroom; label: string }[] = [
   { value: "default",     label: "Classroom"   },
@@ -87,7 +63,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
   // Merge custom avatar into the list if the user has created one
   const visibleAvatars = [
     ...(customTeacherGlbUrl
-      ? [{ value: "custom" as TeacherAvatar, label: "My Teacher", readyToUse: true }]
+      ? [{ value: "custom" as TeacherAvatar, label: "My Teacher" }]
       : []),
     ...AVATARS,
   ];
@@ -97,8 +73,8 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
 
       {/* Row 1: Avatar selector + generating badge + clear */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1 bg-white/60 rounded-full p-0.5 border border-white/60 overflow-x-auto max-w-[260px]" style={{ scrollbarWidth: "none" }}>
-          {visibleAvatars.filter((a) => a.readyToUse).map((a) => (
+        <div className="flex items-center gap-1 bg-white/60 rounded-full p-0.5 border border-white/60 overflow-x-auto min-w-0" style={{ scrollbarWidth: "none" }}>
+          {visibleAvatars.map((a) => (
             <button
               key={a.value}
               onClick={() => setTeacher(a.value)}
@@ -137,6 +113,10 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
           </button>
         </div>
       </div>
+
+      {/* Licence credit for third-party avatars (CC BY) — sits with the switcher
+          because this panel is on screen whenever the avatar is. */}
+      <AvatarCredit avatar={teacher} className="-mt-1 px-1" />
 
       {/* Row 2: Environment switcher */}
       <div className="flex items-center gap-2">

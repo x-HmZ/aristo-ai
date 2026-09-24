@@ -31,7 +31,7 @@ import { QuizView } from "@/components/quiz/QuizView";
 
 // Centre of the student-desk surface (probed: y=-0.888), nudged 1 cm up to
 // avoid z-fighting with the desktop mesh.
-const PAPER_ANCHOR: [number, number, number] = [0, -0.878, -0.5];
+export const PAPER_ANCHOR: [number, number, number] = [0, -0.878, -0.5];
 
 // CSS-pixel → world scale for the transformed DOM.  The paper wrapper is
 // 520 px wide; the desk is ~0.93 world units wide.  distanceFactor in drei's

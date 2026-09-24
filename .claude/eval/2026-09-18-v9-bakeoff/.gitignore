@@ -1,0 +1,9 @@
+# Working scene, ~140 MB; rebuilt from the steps in V9-REPORT.md
+*.blend
+*.blend1
+
+# Intermediate GLBs. The raw Blender exports are 18-34 MB; the shipped,
+# Draco+WebP compressed pair lives in public/models/ instead.
+export/
+
+__pycache__/
