@@ -51,14 +51,18 @@ const CLIPS = ["Idle", "Talking", "Pointing"] as const;
  */
 const GESTURES = [
   { name: "PresentModel", mask: "upper", note: "V9.6" },
-  { name: "LookAgain",    mask: "head",  note: "V9.6" },
+  { name: "LookAgain",    mask: "upper", note: "V9.6, lean in and look, no hand" },
+  { name: "LookAgainHand", mask: "upper", note: "V9.6, lean in with a hand toward the desk" },
   { name: "Encourage",    mask: "upper", note: "V9.6" },
   { name: "Nodding",      mask: "head",  note: "shipped" },
   { name: "ShakeNo",      mask: "head",  note: "shipped" },
   { name: "Talking6M",    mask: "upper", note: "shipped (greeting)" },
 ] as const;
 type GestureName = (typeof GESTURES)[number]["name"];
-interface GestureCue { name: GestureName; id: number; loop: boolean }
+interface GestureCue { name: GestureName; id: number; loop: boolean; speed: number }
+
+/** Playback rates to try; the one Hmz picks becomes the clip's `timeWarp`. */
+const SPEEDS = [1, 0.85, 0.75, 0.65] as const;
 
 /** Where the generated 3D model appears in the classroom (Experience.tsx SCENE_X/Y/Z). */
 const MODEL_SPOT: [number, number, number] = [0.37, 0.18, -3];
@@ -116,7 +120,7 @@ function Teacher({
   } | null>(null);
   const masked = useRef(new Map<string, THREE.AnimationAction>());
 
-  const startGesture = useCallback((name: GestureName) => {
+  const startGesture = useCallback((name: GestureName, speed: number) => {
     const spec = GESTURES.find((g) => g.name === name)!;
     const source = packClips.find((c) => c.name === name);
     const bones = masks[spec.mask];
@@ -137,12 +141,13 @@ function Teacher({
     const head = spec.mask === "head";
     const fadeOut = head ? FADE.headOut : FADE.upperOut;
     const now = clock.current;
-    action.reset().setEffectiveWeight(0).play();
+    const length = source.duration / speed;
+    action.reset().setEffectiveTimeScale(speed).setEffectiveWeight(0).play();
     play.current = {
       action, startedAt: now, fadeIn: head ? FADE.headIn : FADE.upperIn,
-      fadeOutAt: now + Math.max(0, source.duration - fadeOut), endsAt: now + source.duration,
+      fadeOutAt: now + Math.max(0, length - fadeOut), endsAt: now + length,
     };
-    onGesture(`${name}@${spec.mask}: ${action.getClip().tracks.length} tracks, ${source.duration.toFixed(2)} s`);
+    onGesture(`${name}@${spec.mask}: ${action.getClip().tracks.length} tracks, ${length.toFixed(2)} s at x${speed}`);
   }, [packClips, masks, mixer, onGesture]);
 
   // A new cue plays at once; a looping cue replays 1 s after it ends.
@@ -151,7 +156,7 @@ function Teacher({
   useEffect(() => {
     cue.current = gesture;
     replayAt.current = null;
-    if (gesture) startGesture(gesture.name);
+    if (gesture) startGesture(gesture.name, gesture.speed);
     else { play.current?.action.stop(); play.current = null; }
   }, [gesture, startGesture]);
   const [timeline, setTimeline] = useState<VisemeSpan[]>([]);
@@ -235,7 +240,7 @@ function Teacher({
     }
     if (replayAt.current !== null && clock.current >= replayAt.current && cue.current) {
       replayAt.current = null;
-      startGesture(cue.current.name);
+      startGesture(cue.current.name, cue.current.speed);
     }
 
     const t = audio && !audio.paused ? audio.currentTime : NaN;
@@ -324,6 +329,7 @@ export default function AvatarLab() {
   const [spans, setSpans] = useState(0);
   const [gesture, setGesture] = useState<GestureCue | null>(null);
   const [loop, setLoop] = useState(true);
+  const [speed, setSpeed] = useState<number>(1);
   const [gestureStatus, setGestureStatus] = useState("—");
   // Stable identity: Teacher calls this from an effect, so a new function
   // every render would re-run that effect in a loop.
@@ -394,7 +400,7 @@ export default function AvatarLab() {
         <Section title="Gesture review (over the clip above)">
           {GESTURES.map((g) => (
             <button key={g.name} title={`${g.mask} mask, ${g.note}`}
-              onClick={() => setGesture({ name: g.name, id: Date.now(), loop })}
+              onClick={() => setGesture({ name: g.name, id: Date.now(), loop, speed })}
               style={{ ...btn, marginBottom: 6, background: gesture?.name === g.name ? "#F97B2F" : "#F3E7DA", color: gesture?.name === g.name ? "#fff" : "#4A3A2C" }}>
               {g.name}
             </button>
@@ -406,6 +412,16 @@ export default function AvatarLab() {
               replay every time it ends
             </label>{" "}
             <button style={btn} onClick={() => setGesture(null)}>stop</button>
+          </div>
+          <div style={{ marginTop: 6, fontSize: 13 }}>
+            speed{" "}
+            {SPEEDS.map((s) => (
+              <button key={s}
+                onClick={() => { setSpeed(s); setGesture((g) => g && { ...g, speed: s, id: Date.now() }); }}
+                style={{ ...btn, padding: "3px 8px", background: speed === s ? "#F97B2F" : "#F3E7DA", color: speed === s ? "#fff" : "#4A3A2C" }}>
+                x{s}
+              </button>
+            ))}
           </div>
           <div style={{ ...mono, marginTop: 6 }}>{gestureStatus}</div>
           <div style={{ fontSize: 11, color: "#9A8574", marginTop: 4 }}>
