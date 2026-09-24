@@ -50,10 +50,13 @@ const CLIPS = ["Idle", "Talking", "Pointing"] as const;
  * are shipped overlays, for comparison.
  */
 const GESTURES = [
-  { name: "PresentModel", mask: "upper", note: "V9.6" },
-  { name: "LookAgain",    mask: "upper", note: "V9.6, lean in and look, no hand" },
-  { name: "LookAgainHand", mask: "upper", note: "V9.6, lean in with a hand toward the desk" },
-  { name: "Encourage",    mask: "upper", note: "V9.6" },
+  { name: "PresentModel", mask: "upper", note: "V9.6, approved: the model appears" },
+  { name: "Encourage",    mask: "upper", note: "V9.6, approved: quiz not passed" },
+  { name: "Almost",       mask: "upper", note: "V9.6: wrong answer" },
+  { name: "Exactly",      mask: "upper", note: "V9.6: right answer" },
+  { name: "WellDone",     mask: "upper", note: "V9.6: quiz passed" },
+  { name: "ThatsIt",      mask: "upper", note: "V9.6: lesson complete" },
+  { name: "GlanceBoard",  mask: "upper", note: "V9.6: long quiet wait" },
   { name: "Nodding",      mask: "head",  note: "shipped" },
   { name: "ShakeNo",      mask: "head",  note: "shipped" },
   { name: "Talking6M",    mask: "upper", note: "shipped (greeting)" },
