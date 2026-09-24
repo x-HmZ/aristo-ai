@@ -487,35 +487,106 @@ PRESENT_MODEL = {
     "fingers": {"L": [(0, 0), (0.8, 0.85), (1.9, 0.85), (2.6, 0)]},
 }
 
-# "Let's look at that again": lean in and look down at the student's work,
-# hold a thoughtful beat, come back up with a warm tilt. No nod: the first
-# version's nod read as "yes, right" (Hmz). Upper mask: the spine leans, the
-# arms are unkeyed and stay on the base.
-_LEAN = [(0, 0, 0), (0.55, -5, 14), (1.15, -8, 15), (1.7, -6, 3), (2.3, 0, 0)]
-_SPINE = {"CC_Base_Spine01": [(0, []), (0.6, [("L", 2)]), (1.2, [("L", 2.5)]), (1.8, [("L", 0.5)]), (2.3, [])],
-          "CC_Base_Spine02": [(0, []), (0.6, [("L", 4)]), (1.2, [("L", 4.5)]), (1.8, [("L", 1)]), (2.3, [])]}
-LOOK_AGAIN = {
-    "name": "LookAgain", "length": 2.3,
-    "bones": {**_SPINE, **_neck(_LEAN)},
+# "Hmm, almost" (wrong answer, V9.6 batch 1). The reveal starts talking at
+# once, so this is short: a warm tilt to the side (roll survives the look
+# layer) and the right hand held palm down, rocking "so-so" twice. The
+# forearm lifts before it turns palm down, which keeps the hand out of MJ's
+# skirt. No nod: a nod says "yes" (LookAgain v1, rejected).
+_WOBBLE = [(0.5, -75), (0.66, -50), (0.84, -100), (1.02, -52), (1.2, -98), (1.36, -75)]
+ALMOST = {
+    "name": "Almost", "length": 2.0,
+    "bones": {
+        "CC_Base_R_Upperarm": [(0, []), (0.25, [("L", -10)]), (0.5, [("F", -8), ("L", -25), ("A", 12)]),
+                               (1.4, [("F", -8), ("L", -25), ("A", 12)]), (1.7, [("L", -10)]), (2.0, [])],
+        "CC_Base_R_Forearm": [(0, []), (0.25, [("L", -35)])]
+                             + [(t, [("L", -82), ("A", a)]) for t, a in _WOBBLE]
+                             + [(1.7, [("L", -35), ("A", -25)]), (2.0, [])],
+        "CC_Base_R_Hand": [(0, []), (0.5, [("F", -5)]), (1.4, [("F", -5)]), (2.0, [])],
+        **_neck([(0, 0, 0), (0.45, 6, 3), (1.4, 8, 3), (2.0, 0, 0)]),
+    },
+    "fingers": {"R": [(0, 0), (0.5, 0.6), (1.4, 0.6), (2.0, 0)]},
 }
 
-# The same lean, plus the right hand held out towards the student's desk,
-# palm down, with two small taps: "this bit, here".
-LOOK_AGAIN_HAND = {
-    "name": "LookAgainHand", "length": 2.4,
+# "Exactly!" (right answer): a crisp open left palm forward to the student,
+# chest high, arriving with a small settle and one small nod on the accent.
+EXACTLY = {
+    "name": "Exactly", "length": 1.8,
     "bones": {
-        **{k: v[:-1] + [(2.4, [])] for k, v in _SPINE.items()},
-        **_neck(_LEAN[:-1] + [(2.4, 0, 0)]),
-        "CC_Base_R_Upperarm": [(0, []), (0.25, [("L", -10)]), (0.7, [("F", 4), ("L", -42)]),
-                               (1.55, [("F", 4), ("L", -41)]), (2.0, [("L", -10)]), (2.4, [])],
-        "CC_Base_R_Forearm": [(0, []), (0.25, [("L", -20)]), (0.75, [("L", -38), ("A", -60)]),
-                              (0.97, [("L", -31), ("A", -60)]), (1.1, [("L", -38), ("A", -60)]),
-                              (1.22, [("L", -31), ("A", -60)]), (1.4, [("L", -37), ("A", -60)]),
-                              (1.6, [("L", -37), ("A", -58)]), (2.0, [("L", -15), ("A", -20)]), (2.4, [])],
-        "CC_Base_R_Hand": [(0, []), (0.8, [("F", -10)]), (0.97, [("F", 6)]), (1.1, [("F", -8)]),
-                           (1.22, [("F", 6)]), (1.4, [("F", -6)]), (1.6, [("F", -6)]), (2.4, [])],
+        "CC_Base_L_Clavicle": [(0, []), (0.3, [("F", 3)]), (1.2, [("F", 3)]), (1.8, [])],
+        "CC_Base_L_Upperarm": [(0, []), (0.3, [("F", 6), ("L", -42), ("A", 8)]),
+                               (0.42, [("F", 6), ("L", -39), ("A", 8)]),
+                               (1.2, [("F", 6), ("L", -38), ("A", 8)]), (1.5, [("F", 6), ("L", -16)]), (1.8, [])],
+        "CC_Base_L_Forearm": [(0, []), (0.3, [("L", -52), ("A", -70)]), (0.42, [("L", -47), ("A", -70)]),
+                              (1.2, [("L", -46), ("A", -70)]), (1.5, [("L", -30), ("A", -20)]), (1.8, [])],
+        "CC_Base_L_Hand": [(0, []), (0.32, [("F", 14)]), (1.2, [("F", 14)]), (1.8, [])],
+        **_neck([(0, 0, 0), (0.3, 0, 6), (0.5, 0, 1), (1.2, 0, 1), (1.8, 0, 0)]),
     },
-    "fingers": {"R": [(0, 0), (0.7, 0.7), (1.6, 0.7), (2.4, 0)]},
+    "fingers": {"L": [(0, 0), (0.3, 0.9), (1.2, 0.9), (1.8, 0)]},
+}
+
+
+def _both(left, right_sign=-1):
+    """Mirror a left-arm key list to the right: F and A flip sign, L stays."""
+    return [(t, [(ax, d * (right_sign if ax in ("F", "A") else 1)) for ax, d in ops]) for t, ops in left]
+
+
+# "Well done!" (quiz passed): both arms open outward at chest height, palms
+# up, a small lift on the beat, a warm tilt.
+_WD = {
+    "Clavicle": [(0, []), (0.5, [("F", 5)]), (0.9, [("F", 7)]), (1.7, [("F", 5)]), (2.4, [])],
+    "Upperarm": [(0, []), (0.5, [("F", 35), ("L", -25), ("A", -20)]), (0.9, [("F", 38), ("L", -30), ("A", -20)]),
+                 (1.1, [("F", 36), ("L", -26), ("A", -20)]), (1.7, [("F", 35), ("L", -25), ("A", -20)]), (2.4, [])],
+    "Forearm": [(0, []), (0.55, [("L", -55), ("A", -60)]), (1.7, [("L", -52), ("A", -62)]), (2.4, [])],
+    "Hand": [(0, []), (0.6, [("F", 10)]), (1.7, [("F", 10)]), (2.4, [])],
+}
+WELL_DONE = {
+    "name": "WellDone", "length": 2.4,
+    "bones": {
+        **{f"CC_Base_L_{b}": k for b, k in _WD.items()},
+        **{f"CC_Base_R_{b}": _both(k) for b, k in _WD.items()},
+        **_neck([(0, 0, 0), (0.5, -4, 0), (1.7, -5, 0), (2.4, 0, 0)]),
+    },
+    "fingers": {s: [(0, 0), (0.5, 0.9), (1.7, 0.9), (2.4, 0)] for s in "LR"},
+}
+
+# "And that's it!" (lesson complete): both hands gather in front, palms
+# facing and apart, then open outward palms up, "so, that's it".
+_TI = {
+    "Clavicle": [(0, []), (0.9, [("F", 4)]), (1.9, [("F", 4)]), (2.6, [])],
+    "Upperarm": [(0, []), (0.25, [("L", -12)]), (0.55, [("F", -4), ("L", -30), ("A", 18)]),
+                 (1.0, [("F", 14), ("L", -26), ("A", -25)]), (1.9, [("F", 15), ("L", -26), ("A", -25)]), (2.6, [])],
+    "Forearm": [(0, []), (0.25, [("L", -30)]), (0.55, [("L", -72), ("A", -10)]),
+                (1.05, [("L", -62), ("A", -65)]), (1.9, [("L", -60), ("A", -66)]), (2.6, [])],
+    "Hand": [(0, []), (1.05, [("F", 8)]), (1.9, [("F", 8)]), (2.6, [])],
+}
+THATS_IT = {
+    "name": "ThatsIt", "length": 2.6,
+    "bones": {
+        **{f"CC_Base_L_{b}": k for b, k in _TI.items()},
+        **{f"CC_Base_R_{b}": _both(k) for b, k in _TI.items()},
+        **_neck([(0, 0, 0), (0.55, 0, 2), (1.0, -4, 6), (1.3, -4, 2), (1.9, -3, 2), (2.6, 0, 0)]),
+    },
+    "fingers": {s: [(0, 0), (0.55, 0.7), (1.05, 0.9), (1.9, 0.9), (2.6, 0)] for s in "LR"},
+}
+
+
+def _neck3(keys, w=(0.3, 0.3, 0.4)):
+    """Like _neck with a turn: (t, yaw about U, tilt about F, pitch about L)."""
+    return {bone: [(t, [("U", y * k), ("F", r * k), ("L", p * k)]) for t, y, r, p in keys]
+            for bone, k in zip(("CC_Base_NeckTwist01", "CC_Base_NeckTwist02", "CC_Base_Head"), w)}
+
+
+# A long quiet wait: turns to the board (on his left) as if rereading it,
+# a small thoughtful tilt, then back. The chest turns a little too. In the
+# app the look layer takes its target from the base (camera, weight 0.5), so
+# the head turn only reads fully if longWait gets its own look target.
+GLANCE_BOARD = {
+    "name": "GlanceBoard", "length": 2.8,
+    "bones": {
+        "CC_Base_Spine01": [(0, []), (0.8, [("U", 4)]), (1.9, [("U", 4)]), (2.8, [])],
+        "CC_Base_Spine02": [(0, []), (0.8, [("U", 7)]), (1.9, [("U", 8)]), (2.8, [])],
+        **_neck3([(0, 0, 0, 0), (0.8, 30, -2, 4), (1.9, 32, -6, 5), (2.8, 0, 0, 0)]),
+    },
 }
 
 # "You're getting there": right palm offered forward at the waist, a small
@@ -541,7 +612,7 @@ ENCOURAGE = {
     "fingers": {"R": [(0, 0), (0.65, 0.65), (1.7, 0.65), (2.5, 0)]},
 }
 
-V96 = (PRESENT_MODEL, LOOK_AGAIN, LOOK_AGAIN_HAND, ENCOURAGE)
+V96 = (PRESENT_MODEL, ENCOURAGE, ALMOST, EXACTLY, WELL_DONE, THATS_IT, GLANCE_BOARD)
 
 
 def build_all(teachers=("Jake", "MJ")):
