@@ -1291,3 +1291,49 @@ def build_v98(teachers=("Jake", "MJ"), names=None):
             act, s, e = build(t, spec)
             out.append((act.name, s, e, finish(t, act.name, relax=0 if spec.get("life") else 0.35)))
     return out
+
+
+# ─── Pointing's hand (V9.8) ──────────────────────────────────────────────────
+# The shipped Pointing clip (Mixamo) extends the right index but leaves the
+# middle finger half out and the others loose and splayed: a claw at the
+# classroom camera (Hmz, V9.8). V9.2b kept the index out of the finger relax
+# and did nothing else to the hand. This folds the three fingers a point does
+# not use, and the thumb, to PointNear's shape while the hand is up, and
+# leaves the index alone so the aim on the panel does not move.
+
+def tuck_point(teacher, action_name, side="R", curl=-0.9, thumb=-0.6, full_at=0.75):
+    """
+    Blend the `side` hand's Mid, Ring, Pinky and Thumb keys of `action_name`
+    towards a tuck (`_curl` of the Idle hand, as PointNear's `digits`). The
+    blend follows the hand's height: 0 at its lowest in the clip, full once it
+    is `full_at` of the way to its highest, smoothstepped. Rewrites the keys
+    in place; returns (frames, bones touched).
+    """
+    arm = bpy.data.objects[TEACHERS[teacher][0]]
+    _P, B_idle = idle_pose(arm, f"{teacher}_Idle", 1)
+    act = bpy.data.actions[action_name]
+    s, e = (int(round(v)) for v in act.frame_range)
+    reset_pose(arm)
+    _use_action(arm, act)
+    hand = rt.resolve(arm, f"CC_Base_{side}_Hand")
+    names = [b.name for b in arm.data.bones
+             if (m := FINGER_JOINT_RE.match(b.name)) and m.group(1) == side and m.group(2) in ("Mid", "Ring", "Pinky", "Thumb")]
+    zs, cur = [], []
+    for f in range(s, e + 1):
+        bpy.context.scene.frame_set(f)
+        zs.append((arm.matrix_world @ arm.pose.bones[hand].head).z)
+        cur.append({n: arm.pose.bones[n].rotation_quaternion.copy() for n in names})
+    lo, hi = min(zs), max(zs)
+    for i, f in enumerate(range(s, e + 1)):
+        x = max(0.0, min(1.0, (zs[i] - lo) / max(1e-6, (hi - lo) * full_at)))
+        w = x * x * (3 - 2 * x)
+        for n in names:
+            m = FINGER_JOINT_RE.match(n)
+            is_thumb = m.group(2) == "Thumb"
+            target = _curl(B_idle[n], thumb if is_thumb else curl, side, int(m.group(3)), is_thumb)
+            q = cur[i][n].slerp(target, w) if cur[i][n].dot(target) >= 0 else (-cur[i][n]).slerp(target, w)
+            pb = arm.pose.bones[n]
+            pb.rotation_mode = "QUATERNION"
+            pb.rotation_quaternion = q
+            pb.keyframe_insert("rotation_quaternion", frame=f)
+    return e - s + 1, len(names)
