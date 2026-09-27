@@ -43,6 +43,19 @@ TEACHERS = {"Jake": ("Armature.002", "ROOT_canino_man"),
             "MJ": ("Object_4.001", "ROOT_canino_girl_GLB")}
 FPS = 24  # the scene's rate; every shipped clip is baked at it
 FINGER_RE = re.compile(r"^CC_Base_([LR])_(Index|Mid|Ring|Pinky|Thumb)\d(_\d+)?$")
+FINGER_JOINT_RE = re.compile(r"^CC_Base_([LR])_(Index|Mid|Ring|Pinky|Thumb)(\d)(_\d+)?$")
+
+# Hand life (V9.7, a spec with "life": True). Hmz on the first V9.7 drafts:
+# the hands stayed flat and rigid. A real open hand is not flat: the index
+# opens most and the pinky least (the cascade), the fingertips keep a bend,
+# the fingers unfurl one after another, a held hand never freezes, and the
+# wrist is carried by the forearm rather than welded to it.
+# Per finger: (share of the openness, delay in s, drift phase).
+FINGER_LIFE = {"Index": (1.0, 0.0, 0.0), "Mid": (0.88, 0.03, 1.1), "Ring": (0.74, 0.06, 2.3),
+               "Pinky": (0.6, 0.09, 3.4), "Thumb": (0.6, 0.02, 0.6)}
+FINGER_JOINT = {1: 1.0, 2: 0.8, 3: 0.6}  # knuckle to fingertip: the tips stay bent
+FINGER_DRIFT = 0.05  # openness, a slow wave while the hand is held
+WRIST_LAG, WRIST_K = 0.1, 0.5  # the hand trails the forearm by 0.1 s, half way
 
 
 # ─── Pose reading ────────────────────────────────────────────────────────────
@@ -181,17 +194,60 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
         vs = [_log(_offset(k[1], axes, arm, b, P_idle)) for k in keys]
         offs.setdefault(b, (ts, vs))
 
+    life = spec.get("life", False)
+    length = spec["length"]
     fingers = {}
     for side, keys in spec.get("fingers", {}).items():
         for b in bones:
-            m = FINGER_RE.match(b.name)
+            m = FINGER_JOINT_RE.match(b.name)
             if m and m.group(1) == side:
-                fingers[b.name] = ([k[0] for k in keys], [k[1] for k in keys])
+                w, delay, phase = (FINGER_LIFE[m.group(2)] if life else (1.0, 0.0, 0.0))
+                jscale = FINGER_JOINT[int(m.group(3))] if life else 1.0
+                fingers[b.name] = ([k[0] for k in keys], [k[1] for k in keys], w * jscale, delay, phase)
+
+    # Wrist follow-through (life): the hand trails its forearm by WRIST_LAG
+    # seconds at WRIST_K strength, so it is carried rather than welded on.
+    lag = set()
+    if life:
+        for side in "LR":
+            fa = rt.resolve(arm, f"CC_Base_{side}_Forearm")
+            if fa in offs:
+                h = rt.resolve(arm, f"CC_Base_{side}_Hand")
+                offs.setdefault(h, ([0.0, length], [Vector((0, 0, 0))] * 2))
+                lag.add(h)
 
     keyed = set(offs) | set(fingers)
     order = sorted(bones, key=lambda b: len(b.parent_recursive))
     rel = {b.name: (b.parent.matrix_local.to_3x3().inverted() @ b.matrix_local.to_3x3())
            if b.parent else b.matrix_local.to_3x3() for b in bones}
+
+    def chain(t, delayed=None):
+        """Offsets down the chain at `t`; with `delayed`, lagged hands."""
+        O = {}
+        for b in order:
+            n = b.name
+            O_par = O.get(b.parent.name if b.parent else None, Quaternion())
+            if n in offs:
+                ts, vs = offs[n]
+                own = _exp(Vector([pchip(ts, [vv[c] for vv in vs], t) for c in range(3)]))
+                if delayed is not None and n in lag:
+                    k = WRIST_K * min(1.0, t / 0.2, (length - t) / 0.2)
+                    O_par = O_par.slerp(delayed[b.parent.name], max(0.0, k))
+                O[n] = O_par @ own
+            else:
+                O[n] = O_par
+        return O
+
+    def openness(n, t):
+        ts, ys, w, delay, phase = fingers[n]
+        if not life:
+            return min(1.0, max(0.0, pchip(ts, ys, t) * w))
+        # The stagger and the drift both fade out at the ends, so the first and
+        # last frames are exactly the keyed values.
+        edge = max(0.0, min(1.0, t / 0.2, (length - t) / 0.2))
+        a = pchip(ts, ys, t - delay * edge)
+        a += FINGER_DRIFT * edge * min(1.0, pchip(ts, ys, t) / 0.3) * math.sin(2 * math.pi * 0.55 * t + phase)
+        return min(1.0, max(0.0, a * w))
 
     n_frames = int(round(spec["length"] * FPS)) + 1
     act_name = name or f"{teacher}_{spec['name']}"
@@ -206,22 +262,16 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
     prev = {}
     for i in range(n_frames):
         t = i / FPS
-        P, O = {}, {}
+        O = chain(t, chain(t - WRIST_LAG) if lag else None)
+        P = {}
         for b in order:
             n = b.name
             par = b.parent.name if b.parent else None
-            O_par = O.get(par, Quaternion())
             if n in offs:
-                ts, vs = offs[n]
-                v = Vector([pchip(ts, [vv[c] for vv in vs], t) for c in range(3)])
-                O[n] = O_par @ _exp(v)
                 P[n] = O[n].to_matrix() @ P_idle[n]
                 continue
-            O[n] = O_par
             if n in fingers:
-                ts, ys = fingers[n]
-                a = min(1.0, max(0.0, pchip(ts, ys, t)))
-                basis = B_idle[n].slerp(Quaternion(), a)
+                basis = B_idle[n].slerp(Quaternion(), openness(n, t))
             else:
                 basis = B_idle[n]
             P[n] = (P[par] @ rel[n] if par else rel[n]) @ basis.to_matrix()
@@ -438,6 +488,44 @@ def clearance(teacher, action_name, garments, side, base="Idle", step=1):
     return {k: (round(v[0] * 1000, 1), v[1]) for k, v in worst.items()}
 
 
+def hands(teacher, action_name, frames=None, base="Idle", fingers_gap=False):
+    """
+    Where the hands are, in world mm along his body axes (left, forward, up):
+    each hand's middle knuckle from the chest (Spine02 head), and the gap
+    between the two knuckles, with the gesture over `base`. For reading a
+    pose by numbers before looking at it.
+    """
+    arm = composite(teacher, base, action_name)
+    act = bpy.data.actions[action_name]
+    s, e = (int(round(v)) for v in act.frame_range)
+    frames = frames or range(s, e + 1)
+    root = bpy.data.objects[TEACHERS[teacher][1]].matrix_world.to_3x3().normalized()
+    axes = [(root @ Vector(v)).normalized() for v in ((1, 0, 0), (0, -1, 0), (0, 0, 1))]
+    mw = arm.matrix_world
+    pick = {side: rt.resolve(arm, f"CC_Base_{side}_Mid1") for side in "LR"}
+    chest = rt.resolve(arm, "CC_Base_Spine02")
+    out = []
+    for f in frames:
+        bpy.context.scene.frame_set(f)
+        c = mw @ arm.pose.bones[chest].head
+        row = {"f": f}
+        P = {side: mw @ arm.pose.bones[b].head for side, b in pick.items()}
+        for side, p in P.items():
+            row[side] = tuple(round((p - c).dot(a) * 1000) for a in axes)
+            h, i, k = (mw @ arm.pose.bones[rt.resolve(arm, f"CC_Base_{side}_{j}")].head
+                       for j in ("Hand", "Index1", "Pinky1"))
+            n = (i - h).cross(k - h).normalized() * (-1 if side == "L" else 1)  # out of the palm
+            row[side + "palm"] = tuple(round(n.dot(a), 1) for a in axes)
+        row["gap"] = round((P["L"] - P["R"]).length * 1000)
+        if fingers_gap:
+            pts = {side: [mw @ pb.head for pb in arm.pose.bones
+                          if re.match(rf"^CC_Base_{side}_(Hand|Index\d|Mid\d|Ring\d|Pinky\d|Thumb\d)(_\d+)?$", pb.name)]
+                   for side in "LR"}
+            row["near"] = round(min((a - b).length for a in pts["L"] for b in pts["R"]) * 1000)
+        out.append(row)
+    return out
+
+
 def close_camera(teacher, bone, dist=1.1, side=0.0, up=0.0, name="V96Close"):
     """A 50 mm camera on a bone, from the lesson camera's direction, for detail."""
     arm = bpy.data.objects[TEACHERS[teacher][0]]
@@ -484,7 +572,8 @@ PRESENT_MODEL = {
                               (1.9, [("L", -72), ("A", -75)]), (2.6, [])],
         "CC_Base_L_Hand": [(0, []), (0.82, [("F", 10)]), (1.9, [("F", 12)]), (2.6, [])],
     },
-    "fingers": {"L": [(0, 0), (0.8, 0.85), (1.9, 0.85), (2.6, 0)]},
+    "life": True,
+    "fingers": {"L": [(0, 0), (0.8, 0.85), (1.9, 0.82), (2.6, 0)]},
 }
 
 # "Hmm, almost" (wrong answer, V9.6 batch 1). The reveal starts talking at
@@ -504,7 +593,8 @@ ALMOST = {
         "CC_Base_R_Hand": [(0, []), (0.5, [("F", -5)]), (1.4, [("F", -5)]), (2.0, [])],
         **_neck([(0, 0, 0), (0.45, 6, 3), (1.4, 8, 3), (2.0, 0, 0)]),
     },
-    "fingers": {"R": [(0, 0), (0.5, 0.6), (1.4, 0.6), (2.0, 0)]},
+    "life": True,
+    "fingers": {"R": [(0, 0), (0.5, 0.7), (1.4, 0.68), (2.0, 0)]},
 }
 
 # "Exactly!" (right answer): a crisp open left palm forward to the student,
@@ -521,7 +611,10 @@ EXACTLY = {
         "CC_Base_L_Hand": [(0, []), (0.32, [("F", 14)]), (1.2, [("F", 14)]), (1.8, [])],
         **_neck([(0, 0, 0), (0.3, 0, 6), (0.5, 0, 1), (1.2, 0, 1), (1.8, 0, 0)]),
     },
-    "fingers": {"L": [(0, 0), (0.3, 0.9), (1.2, 0.9), (1.8, 0)]},
+    "life": True,
+    # Starts and ends a little open: MJ's Idle curl put her fingertips 3-4 mm
+    # into the skirt over Idle2 and Talking at the first and last frames.
+    "fingers": {"L": [(0, 0.3), (0.3, 0.85), (1.2, 0.82), (1.8, 0.3)]},
 }
 
 
@@ -546,7 +639,8 @@ WELL_DONE = {
         **{f"CC_Base_R_{b}": _both(k) for b, k in _WD.items()},
         **_neck([(0, 0, 0), (0.5, -4, 0), (1.7, -5, 0), (2.4, 0, 0)]),
     },
-    "fingers": {s: [(0, 0), (0.5, 0.9), (1.7, 0.9), (2.4, 0)] for s in "LR"},
+    "life": True,
+    "fingers": {s: [(0, 0), (0.5, 0.85), (1.7, 0.82), (2.4, 0)] for s in "LR"},
 }
 
 # "And that's it!" (lesson complete): both hands gather in front, palms
@@ -566,7 +660,8 @@ THATS_IT = {
         **{f"CC_Base_R_{b}": _both(k) for b, k in _TI.items()},
         **_neck([(0, 0, 0), (0.55, 0, 2), (1.0, -4, 6), (1.3, -4, 2), (1.9, -3, 2), (2.6, 0, 0)]),
     },
-    "fingers": {s: [(0, 0), (0.55, 0.7), (1.05, 0.9), (1.9, 0.9), (2.6, 0)] for s in "LR"},
+    "life": True,
+    "fingers": {s: [(0, 0), (0.55, 0.55), (1.05, 0.85), (1.9, 0.82), (2.6, 0)] for s in "LR"},
 }
 
 
@@ -609,7 +704,8 @@ ENCOURAGE = {
         "CC_Base_R_Hand": [(0, []), (0.7, [("F", -8)]), (1.7, [("F", -10)]), (2.5, [])],
         **_neck([(0, 0, 0), (0.6, -2, 2), (0.95, -4, 10), (1.25, -4, 3), (1.7, -3, 2), (2.5, 0, 0)]),
     },
-    "fingers": {"R": [(0, 0), (0.65, 0.65), (1.7, 0.65), (2.5, 0)]},
+    "life": True,
+    "fingers": {"R": [(0, 0), (0.65, 0.75), (1.7, 0.72), (2.5, 0)]},
 }
 
 V96 = (PRESENT_MODEL, ENCOURAGE, ALMOST, EXACTLY, WELL_DONE, THATS_IT, GLANCE_BOARD)
@@ -621,5 +717,216 @@ def build_all(teachers=("Jake", "MJ")):
     for t in teachers:
         for spec in V96:
             act, s, e = build(t, spec)
-            out.append((act.name, s, e, finish(t, act.name)))
+            out.append((act.name, s, e, finish(t, act.name, relax=0 if spec.get("life") else 0.35)))
+    return out
+
+
+# ─── The V9.7 clips (catalogue batch 2: teaching moves) ──────────────────────
+# Each plays once per segment role or phase (catalogue rows 5, 6, 9, 12, 13,
+# 14), so each has to read as its own move and not as a batch 1 clip: no nod
+# (Exactly and Encourage own it) and no wide palms-up opening (WellDone and
+# ThatsIt own it). Where a row has two plausible gestures there is an "A" and
+# a "B" for Hmz to pick from.
+
+def _pair(left):
+    """Both arms from left-arm keys, the right one mirrored."""
+    out = {}
+    for b, k in left.items():
+        out[f"CC_Base_L_{b}"] = k
+        out[f"CC_Base_R_{b}"] = _both(k)
+    return out
+
+
+def _right(left):
+    """The right arm only, authored as if it were the left (mirrored)."""
+    return {f"CC_Base_R_{b}": _both(k) for b, k in left.items()}
+
+
+# "Picture this" (hook): both hands come up in front, palms down and close,
+# then glide apart level, as if laying out a scene in the air. A curious
+# tilt, the chin a little up. (Palms to the student read as "hands up".)
+IMAGINE_A = {
+    "name": "Imagine", "length": 2.2,
+    "bones": {
+        **_pair({
+            "Upperarm": [(0, []), (0.25, [("L", -16)]), (0.6, [("F", -5), ("L", -46), ("A", 16)]),
+                         (1.35, [("F", 36), ("L", -44), ("A", -4)]), (1.7, [("F", 37), ("L", -43), ("A", -4)]),
+                         (2.2, [])],
+            "Forearm": [(0, []), (0.25, [("L", -40)]), (0.6, [("L", -72), ("A", 70)]),
+                        (1.35, [("L", -54), ("A", 72)]), (1.7, [("L", -52), ("A", 70)]), (2.2, [])],
+            "Hand": [(0, []), (0.6, [("F", -25)]), (1.7, [("F", -20)]), (2.2, [])],
+        }),
+        **_neck([(0, 0, 0), (0.6, 4, -2), (1.35, 7, -4), (1.7, 7, -4), (2.2, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {s: [(0, 0), (0.6, 0.75), (1.35, 0.8), (1.7, 0.75), (2.2, 0)] for s in "LR"},
+}
+
+# "What if..." (hook): one hand rises in front of him, palm up, and the
+# fingers open as it lifts, as if letting an idea out into the air; the chin
+# lifts a little with it. It stays in his own space: a hand out to the side
+# pointed at nothing (draft 2, like LookAgainHand).
+IMAGINE_B = {
+    "name": "ImagineB", "length": 2.2,
+    "bones": {
+        **_right({
+            "Upperarm": [(0, []), (0.3, [("F", -2), ("L", -16), ("A", 6)]), (0.9, [("F", 4), ("L", -40), ("A", -10)]),
+                         (1.6, [("F", 6), ("L", -44), ("A", -12)]), (2.2, [])],
+            "Forearm": [(0, []), (0.3, [("L", -60), ("A", -40)]), (0.9, [("L", -80), ("A", -90)]),
+                        (1.6, [("L", -76), ("A", -92)]), (2.2, [])],
+            "Hand": [(0, []), (0.9, [("F", 12)]), (1.6, [("F", 16)]), (2.2, [])],
+        }),
+        **_neck([(0, 0, 0), (0.9, -3, -3), (1.6, -5, -5), (2.2, 0, 0)]),
+    },
+    "fingers": {"R": [(0, 0), (0.35, 0.05), (1.0, 1.0), (1.6, 1.0), (2.2, 0)]},
+}
+
+# Holding the idea (explain): hands in front of the chest, palms facing, a
+# ball's width apart, with one small shaping beat. No contact.
+HOLD_IDEA = {
+    "name": "HoldIdea", "length": 2.5,
+    "bones": {
+        **_pair({
+            "Clavicle": [(0, []), (0.55, [("F", -2)]), (1.9, [("F", -2)]), (2.5, [])],
+            "Upperarm": [(0, []), (0.22, [("L", -12)]), (0.55, [("F", -5), ("L", -34), ("A", 18)]),
+                         (0.95, [("F", -6), ("L", -31), ("A", 19)]), (1.25, [("F", -5), ("L", -34), ("A", 18)]),
+                         (1.9, [("F", -5), ("L", -33), ("A", 18)]), (2.2, [("F", 5), ("L", -13)]), (2.5, [])],
+            "Forearm": [(0, []), (0.22, [("L", -30)]), (0.55, [("L", -82), ("A", -12)]),
+                        (0.95, [("L", -74), ("A", -12)]), (1.25, [("L", -82), ("A", -12)]),
+                        (1.9, [("L", -80), ("A", -12)]), (2.2, [("L", -36), ("A", -5)]), (2.5, [])],
+        }),
+        **_neck([(0, 0, 0), (0.55, 2, 1), (0.95, 3, 4), (1.25, 3, 1), (2.5, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {s: [(0, 0), (0.55, 0.3), (0.95, 0.22), (1.25, 0.3), (1.9, 0.3), (2.5, 0)] for s in "LR"},
+}
+
+# One step (demo_step): the right hand comes up as a flat blade, palm to
+# the side, and chops down once on the step. Short, so it lands on each.
+STEP_BEAT = {
+    "name": "StepBeat", "length": 1.4,
+    "bones": {
+        **_right({
+            "Upperarm": [(0, []), (0.3, [("F", 6), ("L", -32), ("A", 6)]), (0.5, [("F", 6), ("L", -34), ("A", 6)]),
+                         (0.62, [("F", 6), ("L", -30), ("A", 6)]), (0.9, [("F", 6), ("L", -30), ("A", 6)]),
+                         (1.4, [])],
+            "Forearm": [(0, []), (0.3, [("L", -82), ("A", -5)]), (0.5, [("L", -92), ("A", -5)]),
+                        (0.62, [("L", -64), ("A", -5)]), (0.9, [("L", -66), ("A", -5)]), (1.4, [])],
+        }),
+        **_neck([(0, 0, 0), (0.5, 0, 0), (0.64, 0, 3), (0.9, 0, 1), (1.4, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"R": [(0, 0), (0.3, 0.85), (0.9, 0.82), (1.4, 0)]},
+}
+
+# "Now, next" (transition): the right hand, palm down, brushes the last idea
+# aside, from in front of him out to his right.
+MOVE_ON_A = {
+    "name": "MoveOnA", "length": 1.6,
+    "bones": {
+        **_right({
+            "Upperarm": [(0, []), (0.3, [("F", -4), ("L", -26), ("A", 14)]),
+                         (0.85, [("F", 30), ("L", -24), ("A", -4)]), (1.1, [("F", 31), ("L", -22), ("A", -4)]),
+                         (1.6, [])],
+            "Forearm": [(0, []), (0.3, [("L", -82), ("A", 70)]), (0.85, [("L", -42), ("A", 70)]),
+                        (1.1, [("L", -40), ("A", 60)]), (1.6, [])],
+        }),
+        **_neck([(0, 0, 0), (0.3, 0, 2), (0.85, -3, 0), (1.6, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"R": [(0, 0), (0.3, 0.6), (0.85, 0.75), (1.1, 0.7), (1.6, 0)]},
+}
+
+# "And so, on to..." (transition): the right hand rolls forward once in
+# front of him and opens palm up ahead, the "moving along" roll.
+MOVE_ON_B = {
+    "name": "MoveOn", "length": 1.6,
+    "bones": {
+        **_right({
+            "Upperarm": [(0, []), (0.12, [("F", 5), ("L", -8)]), (0.3, [("F", -2), ("L", -20), ("A", 10)]), (0.55, [("F", -2), ("L", -22), ("A", 10)]),
+                         (0.8, [("F", 2), ("L", -32), ("A", 4)]), (1.05, [("F", 4), ("L", -36), ("A", 0)]),
+                         (1.35, [("F", 7), ("L", -16)]), (1.6, [])],
+            "Forearm": [(0, []), (0.12, [("L", -28)]), (0.3, [("L", -80), ("A", -55)]), (0.55, [("L", -102), ("A", -60)]),
+                        (0.8, [("L", -72), ("A", -70)]), (1.05, [("L", -55), ("A", -78)]), (1.35, [("L", -34), ("A", -30)]), (1.6, [])],
+        }),
+    },
+    "life": True,
+    "fingers": {"R": [(0, 0.3), (0.3, 0.45), (0.8, 0.6), (1.05, 0.8), (1.6, 0.3)]},
+}
+
+# "Your turn" (challenge_setup): the right hand, palm up, sweeps in from his
+# side to the front, towards the student (who is straight ahead of him); a
+# questioning tilt, no nod. Draft 1 carried the left hand out to his left,
+# which ended where Exactly ends and pointed at the board side.
+YOUR_TURN_A = {
+    "name": "YourTurnA", "length": 2.0,
+    "bones": {
+        **_right({
+            "Upperarm": [(0, []), (0.35, [("F", 24), ("L", -16), ("A", -20)]),
+                         (0.95, [("F", -10), ("L", -48), ("A", 6)]), (1.5, [("F", -10), ("L", -47), ("A", 6)]),
+                         (1.75, [("F", 8), ("L", -16), ("A", -2)]), (2.0, [])],
+            "Forearm": [(0, []), (0.35, [("L", -48), ("A", -80)]), (0.95, [("L", -50), ("A", -88)]),
+                        (1.5, [("L", -52), ("A", -88)]), (1.75, [("L", -34), ("A", -30)]), (2.0, [])],
+            "Hand": [(0, []), (0.95, [("F", 8)]), (1.5, [("F", 8)]), (2.0, [])],
+        }),
+        "CC_Base_Spine02": [(0, []), (0.95, [("L", 3)]), (1.5, [("L", 3)]), (2.0, [])],
+        **_neck([(0, 0, 0), (0.35, -2, 0), (0.95, 6, -2), (1.5, 7, -2), (2.0, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"R": [(0, 0), (0.35, 0.55), (0.95, 0.78), (1.5, 0.74), (2.0, 0)]},
+}
+
+# "Over to you" (challenge_setup): both hands offered forward to the
+# student, elbows in front and hands close, palms up, with a small lift at
+# the end like a question. Draft 1 had the elbows at his sides and the hands
+# out wide, which is a shrug.
+YOUR_TURN_B = {
+    "name": "YourTurn", "length": 2.0,
+    "bones": {
+        **_pair({
+            "Upperarm": [(0, []), (0.2, [("F", 5), ("L", -10)]), (0.5, [("F", -5), ("L", -39), ("A", 6)]), (1.1, [("F", -5), ("L", -42), ("A", 6)]),
+                         (1.5, [("F", -5), ("L", -41), ("A", 6)]), (1.75, [("F", 6), ("L", -14)]), (2.0, [])],
+            "Forearm": [(0, []), (0.2, [("L", -35), ("A", -25)]), (0.5, [("L", -42), ("A", -85)]), (1.1, [("L", -48), ("A", -85)]),
+                        (1.5, [("L", -47), ("A", -85)]), (1.75, [("L", -32), ("A", -30)]), (2.0, [])],
+            "Hand": [(0, []), (0.5, [("F", 6)]), (1.5, [("F", 6)]), (2.0, [])],
+        }),
+        "CC_Base_Spine02": [(0, []), (0.5, [("L", 2)]), (1.1, [("L", 4)]), (1.5, [("L", 4)]), (2.0, [])],
+        **_neck([(0, 0, 0), (0.5, 0, 0), (1.1, 0, -3), (1.5, 0, -3), (2.0, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {s: [(0, 0), (0.5, 0.7), (1.1, 0.78), (1.5, 0.74), (2.0, 0)] for s in "LR"},
+}
+
+# "It all fits" (connect): the hands start wide, palms facing, and come
+# together in front, close but not touching; a small satisfied settle.
+BRING_TOGETHER = {
+    "name": "BringTogether", "length": 2.4,
+    "bones": {
+        **_pair({
+            "Upperarm": [(0, []), (0.2, [("L", -12)]), (0.6, [("F", 32), ("L", -32), ("A", -4)]),
+                         (1.3, [("F", -6), ("L", -36), ("A", 22)]), (1.9, [("F", -5), ("L", -35), ("A", 21)]),
+                         (2.4, [])],
+            "Forearm": [(0, []), (0.2, [("L", -30)]), (0.6, [("L", -62), ("A", -15)]),
+                        (1.3, [("L", -84), ("A", -10)]), (1.9, [("L", -82), ("A", -10)]), (2.4, [])],
+        }),
+        **_neck([(0, 0, 0), (0.6, 0, -1), (1.3, 2, 4), (1.9, 2, 2), (2.4, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {s: [(0, 0), (0.6, 0.6), (1.3, 0.45), (1.9, 0.48), (2.4, 0)] for s in "LR"},
+}
+
+# Hmz picked MoveOn B and YourTurn B (2026-09-26); ImagineB never converged.
+V97 = (IMAGINE_A, HOLD_IDEA, STEP_BEAT, MOVE_ON_B, YOUR_TURN_B, BRING_TOGETHER)
+V97_NOT_SHIPPED = (IMAGINE_B, MOVE_ON_A, YOUR_TURN_A)
+
+
+def build_v97(teachers=("Jake", "MJ"), names=None):
+    """Key, drive helpers and relax fingers for the V9.7 clips (or `names`)."""
+    out = []
+    for t in teachers:
+        for spec in V97:
+            if names and spec["name"] not in names:
+                continue
+            act, s, e = build(t, spec)
+            out.append((act.name, s, e, finish(t, act.name, relax=0 if spec.get("life") else 0.35)))
     return out
