@@ -82,6 +82,7 @@ does not add a row. `scripts/v9_gesture.py` gained `digits`, `on`/`passes`, `fit
 | File | Source | Licence |
 |---|---|---|
 | `public/models/classroom_default.glb`, `classroom_alternative.glb` | Open-source model from a YouTuber's tutorial (Hmz, 2026-09-23), added in the "AI Module" commit of 2024-05-04. Compressed by Aristo (Draco, WebP) in 2026. **Not recorded:** creator, exact licence, source URL | Open source per Hmz; the exact licence is **unrecorded** |
+| `public/models/classroom_default.glb` since V8.5 (2026-09-27) | **Modified by Aristo** (`scripts/room/build_studio_room.py`). The geometry is the original's, with the lockers, wall clock, cork boards and chalk tray deleted. The materials, palette and baked lighting are Aristo's own. **No third-party assets were added** (no Poly Haven, Sketchfab or generated geometry) | The original's licence still governs the geometry, and it is **unrecorded**. It now also has to allow modification (an "ND" licence would not). See Open items |
 
 ## Demo lessons (`public/demo/`)
 
@@ -104,7 +105,8 @@ does not add a row. `scripts/v9_gesture.py` gained `digits`, `on`/`passes`, `fit
 ## Open items
 
 1. **Ryan, Sonia and the classroom GLBs**: open source from a YouTuber, per Hmz. Add the creator's name, the
-   exact licence and the URL to the rows above. The classroom is on screen in every lesson, so it matters most.
+   exact licence and the URL to the rows above. The classroom is on screen in every lesson, so it matters most. Since
+   V8.5 the default room is a modified version, so also confirm that the licence allows derivatives.
 3. **`dev_placeholder.glb`**: the Khronos/Sony Duck, under a licence that is not a plain open licence.
    It is dev-only; the cleanest fix is to drop it from `public/` or swap it for a CC0 model.
 4. **Mixamo, Avaturn, ElevenLabs, Tripo3D and fal.ai terms**: Hmz has read them (2026-09-23), but the fetch
