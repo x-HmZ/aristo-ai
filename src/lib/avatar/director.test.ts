@@ -47,12 +47,14 @@ const canineWithout = (...ids: string[]) =>
   new Map([...CANINO].filter(([id]) => !ids.includes(id)));
 /** The V9.6 authored gestures. */
 const AUTHORED = ["PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard"];
+/** The V9.7 teaching moves. */
+const AUTHORED_V97 = ["Imagine", "HoldIdea", "StepBeat", "MoveOn", "YourTurn", "BringTogether"];
 const CANINO_NO_PACK = availableFor(CANINO_CLIP_SET, false);
 const ALL_MASKS: ReadonlySet<ClipMask> = new Set<ClipMask>(["full", "upper", "head"]);
 
 const quiet: DirectorSignals = {
-  gesture: "idle", isLoading: false, isSpeaking: false, phase: null,
-  awaitingAnswer: false, modelShown: false, modelInteracting: false,
+  gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
+  awaitingAnswer: false, modelShown: false, modelInteracting: false, previewImage: null,
   quizActive: false, quizResult: null, lessonComplete: false,
   sceneReady: false, reaction: null,
 };
@@ -516,7 +518,7 @@ describe("authored gestures play in their scenarios", () => {
   });
 
   it("every authored clip is Aristo's own and ships on the Canino rigs only", () => {
-    for (const id of AUTHORED) {
+    for (const id of [...AUTHORED, ...AUTHORED_V97]) {
       const spec = CLIP_MANIFEST.find((c) => c.id === id)!;
       expect(spec.licence, id).toBe("Aristo's own");
       expect(spec.source, id).toMatch(/^authored in Blender for Aristo/);
@@ -525,6 +527,121 @@ describe("authored gestures play in their scenarios", () => {
         expect(set as readonly string[], id).not.toContain(id);
       }
     }
+  });
+});
+
+// ─── Teaching moves (V9.7): segment role and phase beats ─────────────────────
+
+describe("teaching moves play in their scenarios", () => {
+  // A lesson narrating one segment, starting at t > 1.
+  const narrating = (segmentId: string, extra: Partial<DirectorSignals>) => (t: number) =>
+    sig(t > 1 ? { isSpeaking: true, segmentId, ...extra } : { isSpeaking: true });
+
+  const cases: Array<[string, string, Scenario, Partial<DirectorSignals>]> = [
+    ["a hook segment starts",            "Imagine",       "hook",           { phase: "activate",    role: "hook" }],
+    ["a demo-step segment starts",       "StepBeat",      "demoStep",       { phase: "demonstrate", role: "demo_step" }],
+    ["a transition segment starts",      "MoveOn",        "transition",     { phase: "demonstrate", role: "transition" }],
+    ["a challenge-setup segment starts", "YourTurn",      "challengeSetup", { phase: "challenge",   role: "challenge_setup" }],
+    ["an explain segment starts",        "HoldIdea",      "explainBeat",    { phase: "explain",     role: "narrate" }],
+    ["a connect segment starts",         "BringTogether", "connectBeat",    { phase: "connect",     role: "narrate" }],
+  ];
+  it.each(cases)("%s: plays %s", (_name, clip, scenario, extra) => {
+    const out = run({ seconds: 2, signalsAt: narrating("seg_1", extra) }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === clip);
+    expect(hit, clip).toBeDefined();
+    expect(hit!.overlay!.scenario).toBe(scenario);
+    expect(hit!.overlay!.mask).toBe("upper");
+    expect(hit!.overlay!.endsAt - hit!.overlay!.startedAt).toBeCloseTo(DURATIONS.get(clip)! / hit!.overlay!.timeScale, 5);
+  });
+
+  it("YourTurn plays at a fixed 0.85, like the greeting wave (Hmz)", () => {
+    const out = run({
+      seconds: 2,
+      signalsAt: narrating("seg_1", { phase: "challenge", role: "challenge_setup" }),
+    }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === "YourTurn")!;
+    expect(hit.overlay!.timeScale).toBeCloseTo(0.85, 5);
+  });
+
+  it("the explain and connect beats fire once per phase, not on every segment", () => {
+    const out = run({
+      seconds: 20,
+      signalsAt: (t) => {
+        const n = Math.floor(t);
+        return sig({ isSpeaking: true, phase: "explain", role: "narrate", segmentId: n > 0 ? `seg_${n}` : null });
+      },
+    }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "HoldIdea" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(1);
+  });
+
+  it("a beat plays again in a later lesson, once segmentId has gone back to null", () => {
+    const first = run({
+      seconds: 3,
+      signalsAt: (t) => sig({ isSpeaking: true, phase: "explain", role: "narrate", segmentId: t > 1 ? "seg_1" : null }),
+    });
+    expect(first.outputs.some((o) => o.overlay?.clip === "HoldIdea")).toBe(true);
+
+    const cleared = run({
+      seconds: 1, from: 3, state: first.state,
+      signalsAt: () => sig({ isSpeaking: true, phase: "explain", role: "narrate", segmentId: null }),
+    });
+    const second = run({
+      seconds: 3, from: 4, state: cleared.state,
+      signalsAt: (t) => sig({ isSpeaking: true, phase: "explain", role: "narrate", segmentId: t > 4.5 ? "seg_9" : null }),
+    });
+    expect(second.outputs.some((o) => o.overlay?.clip === "HoldIdea")).toBe(true);
+  });
+
+  it("a blocked attempt does not burn the phase's one shot: the next segment still gets it", () => {
+    // The first explain segment starts while pointing (blocks overlayAllowed);
+    // the beat must not be marked done, so the second explain segment (idle
+    // base) still gets to play it.
+    const out = run({
+      seconds: 4,
+      signalsAt: (t) => {
+        if (t <= 1) return sig({ isSpeaking: true });
+        if (t <= 2) return sig({ gesture: "pointing", isSpeaking: true, phase: "explain", role: "narrate", segmentId: "seg_1" });
+        return sig({ isSpeaking: true, phase: "explain", role: "narrate", segmentId: "seg_2" });
+      },
+    }).outputs;
+    expect(out.some((o) => o.overlay?.clip === "HoldIdea")).toBe(true);
+  });
+
+  it("does not play over Pointing or while loading", () => {
+    for (const over of [{ gesture: "pointing" as const }, { isLoading: true }]) {
+      const out = run({
+        seconds: 2,
+        signalsAt: narrating("seg_1", { phase: "activate", role: "hook", ...over }),
+      }).outputs;
+      expect(out.some((o) => o.overlay?.clip === "Imagine")).toBe(false);
+    }
+  });
+});
+
+describe("a new image on the board (V9.7)", () => {
+  it("plays PresentModel, like a model appearing", () => {
+    const out = run({ seconds: 3, signalsAt: (t) => sig({ previewImage: t > 1 ? "img-1" : null }) }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === "PresentModel");
+    expect(hit).toBeDefined();
+    expect(hit!.overlay!.scenario).toBe("presentModel");
+  });
+
+  it("does not move the look target -- there is no model position for an image", () => {
+    const out = run({ seconds: 3, signalsAt: (t) => sig({ previewImage: t > 1 ? "img-1" : null }) }).outputs;
+    expect(out.find((o) => o.t > 1.1)!.look).toBe("camera");
+  });
+
+  it("plays again for a new image, not for the same one twice", () => {
+    // A gap wide enough that the first PresentModel (2.63 s) has finished
+    // before the second image lands: a running overlay is not preempted
+    // (the same rule a model appearing follows).
+    const out = run({
+      seconds: 8,
+      signalsAt: (t) => sig({ previewImage: t < 1 ? null : t < 5 ? "img-1" : "img-2" }),
+    }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "PresentModel" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(2);
   });
 });
 

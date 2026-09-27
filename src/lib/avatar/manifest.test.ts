@@ -11,7 +11,7 @@ import {
   type ClipMask,
   type Scenario,
 } from "@/lib/avatar/animationManifest";
-import { phaseOf, resolvePool } from "@/lib/avatar/director";
+import { phaseOf, resolvePool, roleOf } from "@/lib/avatar/director";
 
 const CLIP_SETS = {
   canino:  CANINO_CLIP_SET,
@@ -52,6 +52,41 @@ describe("phaseOf", () => {
   });
   it("is null for a legacy lesson without segments", () => {
     expect(phaseOf({}, "seg_001")).toBeNull();
+  });
+});
+
+describe("roleOf", () => {
+  const lesson = {
+    segments: [
+      { id: "seg_001", role: "hook" as const },
+      { id: "seg_002", role: "demo_step" as const },
+      { id: "seg_003", role: "transition" as const },
+      { id: "seg_004", role: "challenge_setup" as const },
+      { id: "seg_005", role: "narrate" as const },
+    ],
+  };
+  it.each([
+    ["seg_001", "hook"],
+    ["seg_002", "demo_step"],
+    ["seg_003", "transition"],
+    ["seg_004", "challenge_setup"],
+    ["seg_005", "narrate"],
+  ])("%s is %s", (id, role) => {
+    expect(roleOf(lesson, id)).toBe(role);
+  });
+  it("is null with no lesson", () => {
+    expect(roleOf(null, "seg_001")).toBeNull();
+    expect(roleOf(undefined, "seg_001")).toBeNull();
+  });
+  it("is null with no segment id", () => {
+    expect(roleOf(lesson, null)).toBeNull();
+    expect(roleOf(lesson, undefined)).toBeNull();
+  });
+  it("is null for an unknown id", () => {
+    expect(roleOf(lesson, "seg_999")).toBeNull();
+  });
+  it("is null for a legacy lesson without segments", () => {
+    expect(roleOf({}, "seg_001")).toBeNull();
   });
 });
 
@@ -165,6 +200,12 @@ describe("coverage", () => {
         "17 talkConnect": "6 via talking",
         "18 lessonComplete": "1",
         "19 explaining": "6 via talking",
+        "20 hook": "1",
+        "21 explainBeat": "1",
+        "22 demoStep": "1",
+        "23 transition": "1",
+        "24 connectBeat": "1",
+        "25 challengeSetup": "1",
       }
     `);
   });
@@ -190,6 +231,12 @@ describe("coverage", () => {
         "17 talkConnect": "5 via talking",
         "18 lessonComplete": "1 via quizGood",
         "19 explaining": "5 via talking",
+        "20 hook": "0",
+        "21 explainBeat": "0",
+        "22 demoStep": "0",
+        "23 transition": "0",
+        "24 connectBeat": "0",
+        "25 challengeSetup": "0",
       }
     `);
   });
@@ -215,6 +262,12 @@ describe("coverage", () => {
         "17 talkConnect": "2 via talking",
         "18 lessonComplete": "1 via quizGood",
         "19 explaining": "2 via talking",
+        "20 hook": "0",
+        "21 explainBeat": "0",
+        "22 demoStep": "0",
+        "23 transition": "0",
+        "24 connectBeat": "0",
+        "25 challengeSetup": "0",
       }
     `);
   });
@@ -240,6 +293,12 @@ describe("coverage", () => {
         "17 talkConnect": "2 via talking",
         "18 lessonComplete": "0",
         "19 explaining": "2 via talking",
+        "20 hook": "0",
+        "21 explainBeat": "0",
+        "22 demoStep": "0",
+        "23 transition": "0",
+        "24 connectBeat": "0",
+        "25 challengeSetup": "0",
       }
     `);
   });

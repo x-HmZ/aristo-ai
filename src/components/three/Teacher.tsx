@@ -16,7 +16,7 @@ import {
   type ClipMask, type FaceHint, type LookTarget,
 } from "@/lib/avatar/animationManifest";
 import {
-  createDirectorState, overlayBlend, overlayWeight, phaseOf, stepDirector,
+  createDirectorState, overlayBlend, overlayWeight, phaseOf, roleOf, stepDirector,
   type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
 } from "@/lib/avatar/director";
 import { SMILE_GAIN_UNTUNED, createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
@@ -335,10 +335,13 @@ function signalsOf(
     isLoading:        s.isLoading,
     isSpeaking:       s.isSpeaking,
     phase:            phaseOf(s.activeLesson, s.currentSegmentId),
+    role:             roleOf(s.activeLesson, s.currentSegmentId),
+    segmentId:        s.currentSegmentId,
     awaitingAnswer:   s.awaitingAnswer,
     // The condition Experience.tsx uses to show the model.
     modelShown:       !!s.activeModelUrl && s.viewMode3d,
     modelInteracting: s.modelInteracting,
+    previewImage:     s.activePreviewImageUrl,
     quizActive:       !!s.activeQuiz,
     quizResult:       s.quizResult,
     lessonComplete:   s.lessonComplete,

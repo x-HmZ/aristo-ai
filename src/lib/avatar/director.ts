@@ -62,6 +62,8 @@ export const QUIZ_PASS_RATIO = 0.6;
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type Phase = "activate" | "explain" | "demonstrate" | "challenge" | "connect";
+/** Mirrors `SegmentRole` in `src/lib/agents/teaching.ts`, kept local like `Phase`. */
+type Role = "narrate" | "hook" | "demo_step" | "callout" | "challenge_setup" | "challenge_reveal" | "transition";
 export type ReactionKind = "nodding" | "shaking";
 
 export interface DirectorSignals {
@@ -71,10 +73,24 @@ export interface DirectorSignals {
   isSpeaking:       boolean;
   /** Phase of the segment being narrated, if a lesson is playing. */
   phase:            Phase | null;
+  /** Role of the segment being narrated, alongside `phase` (V9.7). */
+  role:             Role | null;
+  /**
+   * Id of the segment being narrated, null with no lesson or no segment
+   * playing. A role- or phase-based teaching move (V9.7) fires once when
+   * this changes, not on every frame the role or phase stays the same.
+   */
+  segmentId:        string | null;
   awaitingAnswer:   boolean;
   /** A generated model is on screen (activeModelUrl set and in 3D view). */
   modelShown:       boolean;
   modelInteracting: boolean;
+  /**
+   * The board's current image (the store's `activePreviewImageUrl`). A new
+   * one plays PresentModel too (V9.7), the same spot a model appears in --
+   * unlike a model, it does not move the look target.
+   */
+  previewImage:     string | null;
   quizActive:       boolean;
   quizResult:       { score: number; total: number } | null;
   lessonComplete:   boolean;
@@ -149,6 +165,14 @@ export interface DirectorState {
     quizKey:        string | null;
     lessonComplete: boolean;
     modelShown:     boolean;
+    /** The last board image an overlay was played for (V9.7). */
+    previewImage:   string | null;
+    segmentId:      string | null;
+    /**
+     * Phases whose sparse teaching-move beat (V9.7) has already played since
+     * `segmentId` was last null -- i.e. since the current lesson started.
+     */
+    beatDone:       { explain: boolean; connect: boolean };
   };
 }
 
@@ -311,6 +335,9 @@ export function createDirectorState(mountClip: string = MOUNT_CLIP, seed?: Direc
       quizKey:        seed ? quizKeyOf(seed.quizResult) : null,
       lessonComplete: seed?.lessonComplete ?? false,
       modelShown:     seed?.modelShown ?? false,
+      previewImage:   seed?.previewImage ?? null,
+      segmentId:      seed?.segmentId ?? null,
+      beatDone:       { explain: false, connect: false },
     },
   };
 }
@@ -435,11 +462,45 @@ export function stepDirector(
     }
   }
 
-  // ── Row 9: a model appears, the head turns to it for a moment ──
+  // ── Row 9: a model appears, the head turns to it for a moment. A new image
+  // landing on the board (V9.7) plays the same clip, but does not move the
+  // look target -- there is no model position for it to turn to. ──
   let presentUntil = state.presentUntil;
-  if (sig.modelShown && !state.prev.modelShown) {
-    presentUntil = now + PRESENT_LOOK_S;
+  if (sig.modelShown && !state.prev.modelShown) presentUntil = now + PRESENT_LOOK_S;
+  const imageLanded = sig.previewImage !== null && sig.previewImage !== state.prev.previewImage;
+  if ((sig.modelShown && !state.prev.modelShown) || imageLanded) {
     if (!overlay && overlayAllowed("presentModel", scenario)) overlay = startOverlay("presentModel");
+  }
+
+  // ── Teaching moves (V9.7): a segment role or a sparse phase beat adds a
+  // wordless gesture while the base keeps talking underneath. Role-based
+  // moves fire on every matching segment (a step, a transition); the phase
+  // beats (explain, connect) are sparse by design, so they fire once per
+  // phase per lesson -- `beatDone` resets when `segmentId` returns to null,
+  // which happens between lessons. `overlayAllowed` already keeps every one
+  // of these off Pointing and Thinking (they are not in `over`).
+  const segmentChanged = sig.segmentId !== null && sig.segmentId !== state.prev.segmentId;
+  let beatDone = sig.segmentId === null ? { explain: false, connect: false } : state.prev.beatDone;
+  let move: Scenario | null = null;
+  if (segmentChanged) {
+    if (sig.role === "hook") move = "hook";
+    else if (sig.role === "demo_step") move = "demoStep";
+    else if (sig.role === "transition") move = "transition";
+    else if (sig.role === "challenge_setup") move = "challengeSetup";
+    else if (sig.phase === "explain" && !beatDone.explain) move = "explainBeat";
+    else if (sig.phase === "connect" && !beatDone.connect) move = "connectBeat";
+  }
+  if (move && !overlay && overlayAllowed(move, scenario)) {
+    const started = startOverlay(move);
+    // Only spend the sparse phase beat once it actually plays: blocked by
+    // overlayAllowed, a busy overlay, or a clip not loaded yet must not burn
+    // the one shot HoldIdea/BringTogether get for the rest of the phase --
+    // the next qualifying segment should retry instead.
+    if (started) {
+      overlay = started;
+      if (move === "explainBeat") beatDone = { ...beatDone, explain: true };
+      else if (move === "connectBeat") beatDone = { ...beatDone, connect: true };
+    }
   }
 
   // ── Row 3: greeting, once per mount, when the scene is up and a wave is loaded ──
@@ -480,6 +541,9 @@ export function stepDirector(
       quizKey,
       lessonComplete: sig.lessonComplete,
       modelShown:     sig.modelShown,
+      previewImage:   sig.previewImage,
+      segmentId:      sig.segmentId,
+      beatDone,
     },
   };
   return {
@@ -532,4 +596,13 @@ export function phaseOf(
 ): Phase | null {
   if (!lesson?.segments || !segmentId) return null;
   return lesson.segments.find((s) => s.id === segmentId)?.phase ?? null;
+}
+
+/** Same as `phaseOf`, for the segment's role (V9.7). */
+export function roleOf(
+  lesson: { segments?: readonly { id: string; role: Role }[] } | null | undefined,
+  segmentId: string | null | undefined,
+): Role | null {
+  if (!lesson?.segments || !segmentId) return null;
+  return lesson.segments.find((s) => s.id === segmentId)?.role ?? null;
 }

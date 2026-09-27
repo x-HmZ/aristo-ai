@@ -22,7 +22,11 @@
 /**
  * One tag per catalogue row that plays clips. Rows 10, 20 and 21 have no
  * clips (look target, blink, eye contact) and live in the director and the
- * renderer instead.
+ * renderer instead. The row numbers in the comments below and in
+ * `ScenarioSpec.row` are this original V9 catalogue's; the six V9.7 entries
+ * did not exist in it, so they cite `.claude/plans/V96-GESTURE-CATALOGUE.md`
+ * instead (its own, unrelated row numbering) and are given fresh `row`
+ * numbers (20-25) rather than reusing either catalogue's.
  */
 export type Scenario =
   | "idle"           // 1  attentive idle
@@ -43,7 +47,16 @@ export type Scenario =
   | "talkChallenge"  // 11 isSpeaking in the challenge phase
   | "talkConnect"    // 17 isSpeaking in the connect phase
   | "lessonComplete" // 18 lessonComplete
-  | "explaining";    // 19 gesture === "explaining" (free mode)
+  | "explaining"     // 19 gesture === "explaining" (free mode)
+  // V9.7 teaching moves (V96-GESTURE-CATALOGUE.md rows 5, 6, 9, 12, 13, 14):
+  // upper-body beats keyed off the narrating segment's role or phase, on top
+  // of whatever base scenario above is already playing.
+  | "hook"            // segment role "hook"
+  | "explainBeat"     // phase "explain", sparse (once per phase per lesson)
+  | "demoStep"        // segment role "demo_step"
+  | "transition"      // segment role "transition"
+  | "connectBeat"     // phase "connect", sparse (once per phase per lesson)
+  | "challengeSetup"; // segment role "challenge_setup"
 
 /**
  * Which bones a clip drives when it plays over the base layer. `full` is the
@@ -115,6 +128,16 @@ export const SCENARIOS: Record<Scenario, ScenarioSpec> = {
   talkConnect:    { row: 17, layer: "base",  play: "cycle", fallback: "talking", look: "camera" },
   lessonComplete: { row: 18, layer: "upper", play: "once",  fallback: "quizGood", face: "smile" },
   explaining:     { row: 19, layer: "base",  play: "cycle", fallback: "talking", look: "camera" },
+
+  // V9.7 teaching moves. All wire from a segment role or phase (director.ts),
+  // play once over the same bases as presentModel and the greeting, and
+  // never over Pointing or Thinking (neither is in TALKING_BASES/QUIET_BASES).
+  hook:           { row: 20, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+  explainBeat:    { row: 21, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+  demoStep:       { row: 22, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+  transition:     { row: 23, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+  connectBeat:    { row: 24, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+  challengeSetup: { row: 25, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
 };
 
 // ─── Clips ────────────────────────────────────────────────────────────────────
@@ -160,6 +183,7 @@ const MIXAMO = "Mixamo (Adobe), retargeted in scripts/ (V9.1-V9.2)";
 const MIXAMO_MIRROR = "Mixamo (Adobe), mirrored by scripts/v9_mirror.py (V9.2)";
 const MIXAMO_LICENCE = "Mixamo terms: royalty-free, commercial use, not redistributable as raw files";
 const AUTHORED = "authored in Blender for Aristo (V9.6), scripts/v9_gesture.py";
+const AUTHORED_V97 = "authored in Blender for Aristo (V9.7), scripts/v9_gesture.py";
 const AUTHORED_LICENCE = "Aristo's own";
 
 /** Talking and idle read as new beats at a slightly different rate. */
@@ -167,6 +191,9 @@ const WARP = [0.92, 1.08] as const;
 
 /** The greeting wave plays slower than recorded; one fixed rate, not a range. */
 const GREETING_WARP = [0.75, 0.75] as const;
+
+/** YourTurn plays slower too, the same choice Hmz made for the wave (V9.7). */
+const YOUR_TURN_WARP = [0.85, 0.85] as const;
 
 export const CLIP_MANIFEST: readonly ClipSpec[] = [
   // Row 1: attentive idle
@@ -229,6 +256,22 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "Encourage", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["quizSupportive"], layer: "upper", mask: "upper", play: "once", duration: 2.54, weight: 1, cooldown: 0, mirrorable: false, family: "Encourage" },
   { id: "ThatsIt", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["lessonComplete"], layer: "upper", mask: "upper", play: "once", duration: 2.63, weight: 1, cooldown: 0, mirrorable: false, family: "ThatsIt" },
 
+  // V9.7 teaching moves: wordless beats keyed off the narrating segment's
+  // role or phase (director.ts). Durations read from the shipped packs with
+  // gltf-transform; both packs bake to the same lengths.
+  { id: "Imagine", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["hook"], layer: "upper", mask: "upper", play: "once", duration: 2.25, weight: 1, cooldown: 0, mirrorable: false, family: "Imagine",
+    notes: "Both palms open outward and slightly apart, a curious head tilt. The hook, 'imagine if...'" },
+  { id: "HoldIdea", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["explainBeat"], layer: "upper", mask: "upper", play: "once", duration: 2.54, weight: 1, cooldown: 0, mirrorable: false, family: "HoldIdea",
+    notes: "Hands in front of the chest, palms facing with a gap, as if holding the idea. Fires once per explain phase, not every segment" },
+  { id: "StepBeat", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["demoStep"], layer: "upper", mask: "upper", play: "once", duration: 1.46, weight: 1, cooldown: 0, mirrorable: false, family: "StepBeat",
+    notes: "One chop of the right hand, lands about 0.6 s in: 'first... then...'" },
+  { id: "MoveOn", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["transition"], layer: "upper", mask: "upper", play: "once", duration: 1.63, weight: 1, cooldown: 0, mirrorable: false, family: "MoveOn",
+    notes: "Forward roll of the right hand, opens palm up: 'now, next'. Hmz picked this over a palm-down brush" },
+  { id: "YourTurn", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["challengeSetup"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 1, cooldown: 0, mirrorable: false, family: "YourTurn", timeWarp: YOUR_TURN_WARP,
+    notes: "Both palms offered forward, a small lean: 'your turn'. Plays at 0.85, like the greeting wave (Hmz)" },
+  { id: "BringTogether", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["connectBeat"], layer: "upper", mask: "upper", play: "once", duration: 2.46, weight: 1, cooldown: 0, mirrorable: false, family: "BringTogether",
+    notes: "Wide to close, never nearer than 182 mm: 'it all fits'. Fires once per connect phase, not every segment" },
+
   // Shipped in animations_Avaturn.glb, never played.
   { id: "Clapping", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: [], layer: "upper", mask: "upper", play: "once", duration: 1.13, weight: 0, cooldown: 0, mirrorable: false, family: "Clapping",
     notes: "Rejected: the hands never meet, even on Marcus (V9.2)" },
@@ -247,6 +290,8 @@ export const CANINO_CLIP_SET = [
   "Pointing", "Nodding", "ShakeNo",
   // Authored in Blender for the Canino rigs only (V9.6).
   "PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard",
+  // Authored in Blender for the Canino rigs only (V9.7).
+  "Imagine", "HoldIdea", "StepBeat", "MoveOn", "YourTurn", "BringTogether",
 ] as const;
 
 /** Marcus and Priya, on the shared Avaturn pack. */
