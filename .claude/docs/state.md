@@ -2,6 +2,30 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-28 - V8.5 done: the room is a warm, minimal studio (Opus)
+
+Branch `dev/v8-5-studio-room`, taken off `docs/v8-v9-programme` and not off `deploy-prep`. The brief says to branch off
+`deploy-prep`, but that branch has none of V9 (Jake/MJ, the director), and the room had to be verified against the real
+scene. Merge it after the V8/V9 programme lands, or rebase the commits then. Evidence and numbers are in
+`.claude/eval/2026-09-27-v8-5-room/README.md`. Gates: type-check clean, lint 10 (unchanged), tests 337, build green.
+
+- **Shipped:** `classroom_default.glb`, restyled and re-baked headless by `scripts/room/build_studio_room.py` (no new
+  sources, so `LICENSES.md` only notes the modification). The lockers, wall clock, cork boards and chalk tray are gone,
+  and the chalkboard is now a dark display. The palette is warm plaster, a pale floor, pale oak, charcoal frames and
+  terracotta chairs. Same three meshes and one 4096 atlas; 1.12 to 1.07 MB. The raw export and atlas are in the
+  git-ignored `assets-src/models/` (the old uncompressed source was renamed `classroom_default.pre-v8-5.glb`).
+- **Anchors:** unchanged by construction, and probed before and after with `scripts/room/verify-room.mjs probe`: desks
+  y -0.888, floor y -1.694, display z -5.574. No constant changed in `Experience.tsx`, `CameraController.tsx`,
+  `DeskQuiz.tsx` or `Classroom.tsx`. There is no app code diff at all: the GLB, scripts and docs only.
+- **Perf:** 32 draw calls per frame before and after. Uncapped headless fps averaged 126 before and 153 after, over 9 runs
+  each (noisy); it is 60 with vsync in both.
+- **Found:** the `Blackboard` canvas plane (z -6) sits behind the front wall and has never been visible. It is recorded
+  in decisions.md with the display's probed rectangle, for V3 / T08.
+- **For Hmz to judge:** whether the look clears the bar (the before/after sheets are in the eval folder). The rows of
+  desks stay, because they are the quiz anchors. The quiz card is now cream on pale oak, so its contrast is lower than on
+  the old orange desk; worth a look in V8.4b. `classroom_alternative.glb` (the "Alt. Room") is untouched.
+- **Next:** V8.4a/b/c (classroom UI), then V8.7 re-capture. `verify-room.mjs shots` can drive the captures.
+
 ## 2026-09-27 - V9.8 done: batch 3 wired (Opus authored, Sonnet wired)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.8"). Gates: type-check clean, lint 10 (unchanged), tests 337 (was
