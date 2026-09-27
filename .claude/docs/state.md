@@ -2,6 +2,30 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-27 - V9.8 authoring half done (Opus); wiring half next (Sonnet)
+
+Hand-off with every detail: `.claude/plans/NEXT-SESSION-V98-WIRING.md`. Nothing is wired yet; the director and
+manifest are unchanged, so tests and gates are as V9.7 left them.
+
+- **Approved by Hmz in motion, in both packs:** OneMoment (row 4), PointNear (row 8, a full-body base clip),
+  PatientTilt (row 15, head only), BackToBoard (row 17b). Pointing's hand fixed too (other fingers folded, index
+  straightened; it had been bent back 9 deg and splayed 12.5 deg), aim still at the panel's near edge; approved.
+- **Dropped:** OverToYou (row 18) after three rejected rounds; the look layer turning the head to the desk is the
+  whole "over to you". Specs kept in `V98_NOT_SHIPPED`, not exported.
+- **Decided by Hmz:** PatientTilt plays once per question, about 4 s after the teacher stops talking while the
+  student has not answered; PointNear and Pointing: one hand per pointing stretch, about half and half.
+- **Tool (`v9_gesture.py`):** per-finger `digits`, full-body clips on a base loop (`on`, `passes`), `fit`,
+  `panel_hit`, `hand_frame`, `tuck_point`.
+- **Checks:** 0 pokes and 0 skirt hits on both teachers; export worst 0.0166 deg / 0.242 mm. Packs: Jake 676,368 to
+  739,804 B, MJ 703,156 to 767,240 B; base files +8 B.
+- **Found:** MJ's armpit skin comes through her tee whenever the upper arm is pulled in without swinging forward, and
+  pushing the skin in makes it worse (it sits between two tee panels): shape arm paths around it. One vertex of her
+  right arm pokes 2.7 mm in her own Idle (pre-existing, not fixed).
+- **Next (Sonnet):** wire the four, tests, `typescript-reviewer`, in-app checks on `/demo` and `/dev/free-model`,
+  gates, close-out (V9-REPORT "V9.8", LICENSES, decisions, plan checklist, batch 3 done in the catalogue).
+- **Tooling note:** the dev server's `.next` was wiped mid-session (possibly by another process); fix: stop the
+  server, delete `.next`, restart.
+
 ## 2026-09-27 - V9.7 done: six teaching-move clips wired (Opus authored, Sonnet wired)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.7"). Gates: type-check clean, lint 10, tests 314 (was 291), build green.
