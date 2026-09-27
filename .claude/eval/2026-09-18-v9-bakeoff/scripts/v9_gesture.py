@@ -1277,8 +1277,10 @@ OVER_TO_YOU = {
     "fingers": {"L": [(0, 0), (0.2, 0.3), (0.6, 0.8), (1.15, 0.85), (1.85, 0.82), (2.4, 0)]},
 }
 
-V98 = (ONE_MOMENT, POINT_NEAR, PATIENT_TILT, BACK_TO_BOARD, OVER_TO_YOU)
-V98_NOT_SHIPPED = (OVER_TO_YOU_R2,)
+# Hmz rejected all three OverToYou rounds (the sweep: "the arm movement is
+# very unnatural"), so none ships.
+V98 = (ONE_MOMENT, POINT_NEAR, PATIENT_TILT, BACK_TO_BOARD)
+V98_NOT_SHIPPED = (OVER_TO_YOU_R2, OVER_TO_YOU)
 
 
 def build_v98(teachers=("Jake", "MJ"), names=None):
@@ -1298,16 +1300,23 @@ def build_v98(teachers=("Jake", "MJ"), names=None):
 # middle finger half out and the others loose and splayed: a claw at the
 # classroom camera (Hmz, V9.8). V9.2b kept the index out of the finger relax
 # and did nothing else to the hand. This folds the three fingers a point does
-# not use, and the thumb, to PointNear's shape while the hand is up, and
-# leaves the index alone so the aim on the panel does not move.
+# not use, and the thumb, to PointNear's shape while the hand is up.
+# The index itself was bent back about 9 deg at the knuckle and splayed 12
+# deg towards the thumb (Hmz, second look: "the angle of the pointing finger
+# looks unnatural"), so `index` sets it to a small forward bend in line with
+# the hand. That moves the aim a little; check it with `panel_hit`.
 
-def tuck_point(teacher, action_name, side="R", curl=-0.9, thumb=-0.6, full_at=0.75):
+def tuck_point(teacher, action_name, side="R", curl=-0.9, thumb=-0.6, full_at=0.75, index=(8, 4, 2), splay=0):
     """
     Blend the `side` hand's Mid, Ring, Pinky and Thumb keys of `action_name`
-    towards a tuck (`_curl` of the Idle hand, as PointNear's `digits`). The
-    blend follows the hand's height: 0 at its lowest in the clip, full once it
-    is `full_at` of the way to its highest, smoothstepped. Rewrites the keys
-    in place; returns (frames, bones touched).
+    towards a tuck (`_curl` of the Idle hand, as PointNear's `digits`), and
+    with `index` (degrees of forward bend per joint, knuckle to tip; None
+    leaves it) the index towards that bend, with `splay` degrees of lean
+    towards the thumb at the knuckle (the clip had 12.5; 4 moved the aim off
+    the panel, so the default is none). The blend
+    follows the hand's height: 0 at its lowest in the clip, full once it is
+    `full_at` of the way to its highest, smoothstepped. Rewrites the keys in
+    place; returns (frames, bones touched).
     """
     arm = bpy.data.objects[TEACHERS[teacher][0]]
     _P, B_idle = idle_pose(arm, f"{teacher}_Idle", 1)
@@ -1316,8 +1325,9 @@ def tuck_point(teacher, action_name, side="R", curl=-0.9, thumb=-0.6, full_at=0.
     reset_pose(arm)
     _use_action(arm, act)
     hand = rt.resolve(arm, f"CC_Base_{side}_Hand")
+    digits = ("Mid", "Ring", "Pinky", "Thumb") + (("Index",) if index else ())
     names = [b.name for b in arm.data.bones
-             if (m := FINGER_JOINT_RE.match(b.name)) and m.group(1) == side and m.group(2) in ("Mid", "Ring", "Pinky", "Thumb")]
+             if (m := FINGER_JOINT_RE.match(b.name)) and m.group(1) == side and m.group(2) in digits]
     zs, cur = [], []
     for f in range(s, e + 1):
         bpy.context.scene.frame_set(f)
@@ -1330,7 +1340,14 @@ def tuck_point(teacher, action_name, side="R", curl=-0.9, thumb=-0.6, full_at=0.
         for n in names:
             m = FINGER_JOINT_RE.match(n)
             is_thumb = m.group(2) == "Thumb"
-            target = _curl(B_idle[n], thumb if is_thumb else curl, side, int(m.group(3)), is_thumb)
+            if m.group(2) == "Index":
+                z = -1.0 if side == "L" else 1.0
+                j = int(m.group(3))
+                target = Quaternion(Vector((0, 0, z)), math.radians(index[j - 1]))
+                if j == 1 and splay:
+                    target = Quaternion(Vector((1, 0, 0)), math.radians(splay)) @ target
+            else:
+                target = _curl(B_idle[n], thumb if is_thumb else curl, side, int(m.group(3)), is_thumb)
             q = cur[i][n].slerp(target, w) if cur[i][n].dot(target) >= 0 else (-cur[i][n]).slerp(target, w)
             pb = arm.pose.bones[n]
             pb.rotation_mode = "QUATERNION"
