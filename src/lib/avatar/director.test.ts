@@ -12,6 +12,7 @@ import {
 import {
   FADE,
   GREETING_WINDOW_S,
+  LISTEN_TILT_S,
   LONG_WAIT_S,
   OVERLAY_DOMINANCE,
   PRESENT_LOOK_S,
@@ -49,6 +50,8 @@ const canineWithout = (...ids: string[]) =>
 const AUTHORED = ["PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard"];
 /** The V9.7 teaching moves. */
 const AUTHORED_V97 = ["Imagine", "HoldIdea", "StepBeat", "MoveOn", "YourTurn", "BringTogether"];
+/** The V9.8 batch-3 clips. */
+const AUTHORED_V98 = ["OneMoment", "PointNear", "PatientTilt", "BackToBoard"];
 const CANINO_NO_PACK = availableFor(CANINO_CLIP_SET, false);
 const ALL_MASKS: ReadonlySet<ClipMask> = new Set<ClipMask>(["full", "upper", "head"]);
 
@@ -148,7 +151,7 @@ describe("resolvePool", () => {
     ["talking on Canino",                     "talking",        CANINO,         ALL_MASKS, { scenario: "talking", clips: ["Talking", "Talking2", "Talking2M", "Talking3", "Talking3M", "Talking4"] }],
     ["explain phase falls back to talking",   "talkExplain",    CANINO,         ALL_MASKS, { scenario: "talking", clips: ["Talking", "Talking2", "Talking2M", "Talking3", "Talking3M", "Talking4"] }],
     ["thinking on Canino",                    "thinking",       CANINO,         ALL_MASKS, { scenario: "thinking", clips: ["Thinking", "ThinkingM"] }],
-    ["pointing with its pack",                "point",          CANINO,         ALL_MASKS, { scenario: "point", clips: ["Pointing"] }],
+    ["pointing with its pack",                "point",          CANINO,         ALL_MASKS, { scenario: "point", clips: ["Pointing", "PointNear"] }],
     ["pointing before its pack: talking",     "point",          CANINO_NO_PACK, ALL_MASKS, { scenario: "talking", clips: ["Talking"] }],
     ["listening uses the idles",              "listen",         CANINO,         ALL_MASKS, { scenario: "listen", clips: ["Idle", "Idle2", "Idle4"] }],
     ["long wait (row 2)",                     "longWait",       CANINO,         ALL_MASKS, { scenario: "longWait", clips: ["Idle3", "GlanceBoard"] }],
@@ -159,6 +162,10 @@ describe("resolvePool", () => {
     ["quiz not passed (row 16)",              "quizSupportive", CANINO,         ALL_MASKS, { scenario: "quizSupportive", clips: ["Encourage"] }],
     ["lesson complete has its own clip",      "lessonComplete", CANINO,         ALL_MASKS, { scenario: "lessonComplete", clips: ["ThatsIt"] }],
     ["present model (row 9)",                 "presentModel",   CANINO,         ALL_MASKS, { scenario: "presentModel", clips: ["PresentModel"] }],
+    ["one moment (row 26)",                   "oneMoment",      CANINO,         ALL_MASKS, { scenario: "oneMoment", clips: ["OneMoment"] }],
+    ["patient tilt (row 27)",                 "listenBeat",     CANINO,         ALL_MASKS, { scenario: "listenBeat", clips: ["PatientTilt"] }],
+    ["wrong with the board (row 28)",         "wrongBoard",     CANINO,         ALL_MASKS, { scenario: "wrongBoard", clips: ["BackToBoard"] }],
+    ["wrong with the board, no BackToBoard: plain wrong", "wrongBoard", availableFor(AVATURN_CLIP_SET), ALL_MASKS, { scenario: "wrong", clips: ["ShakeNo"] }],
     ["a rig without head or upper masks cannot react", "correct", CANINO,       new Set<ClipMask>(["full"]), null],
     ["no upper mask: the head clips still react", "wrong",      CANINO,         new Set<ClipMask>(["full", "head"]), { scenario: "wrong", clips: ["ShakeNo"] }],
     ["no upper mask: lesson complete falls back to a nod", "lessonComplete", CANINO, new Set<ClipMask>(["full", "head"]), { scenario: "quizGood", clips: ["Nodding"] }],
@@ -270,7 +277,12 @@ describe("variety over a long run", () => {
       expect(o.base.timeScale).toBeGreaterThanOrEqual(0.92);
       expect(o.base.timeScale).toBeLessThanOrEqual(1.08);
     }
-    const point = run({ seconds: 30, signalsAt: () => sig({ gesture: "pointing", isSpeaking: true }) }).outputs;
+    // PointNear excluded: this test is about time-warp range, not which hand
+    // the V9.8 pool picks (see "point: one hand per pointing stretch" below).
+    const point = run({
+      seconds: 30, signalsAt: () => sig({ gesture: "pointing", isSpeaking: true }),
+      available: () => canineWithout("PointNear"),
+    }).outputs;
     expect(point.at(-1)!.base.clip).toBe("Pointing");
     expect(point.at(-1)!.base.timeScale).toBe(1);
   });
@@ -293,9 +305,13 @@ describe("transitions", () => {
   });
 
   it("crossfades to Pointing when the pack has it", () => {
-    const talking = run({ seconds: 2, signalsAt: () => sig({ isSpeaking: true }) });
+    // PointNear excluded so the pick is deterministic: this test is about the
+    // pack-arrival crossfade, not the V9.8 hand pick (see "point: one hand
+    // per pointing stretch" below).
+    const withoutPointNear = () => canineWithout("PointNear");
+    const talking = run({ seconds: 2, signalsAt: () => sig({ isSpeaking: true }), available: withoutPointNear });
     const out = run({
-      seconds: 20, from: 2, state: talking.state,
+      seconds: 20, from: 2, state: talking.state, available: withoutPointNear,
       signalsAt: () => sig({ isSpeaking: true, gesture: "pointing" }),
     }).outputs;
     expect(out[0].base.clip).toBe("Pointing");
@@ -305,10 +321,15 @@ describe("transitions", () => {
   });
 
   it("upgrades to Pointing at the next clip boundary once the pack lands", () => {
+    // 30s, not 15: "point" now dwells (V9.8, for PointNear's stretch), so the
+    // pre-pack Talking fallback also holds for a Talking-length dwell (~20s)
+    // before the next re-check notices the pack has landed, not at Talking's
+    // own ~3.5s loop boundary as it did under the old "cycle" mode.
     const out = run({
-      seconds: 15,
+      seconds: 30,
       signalsAt: () => sig({ isSpeaking: true, gesture: "pointing" }),
-      available: (t) => (t < 1 ? CANINO_NO_PACK : CANINO),
+      // PointNear excluded, same reason as above.
+      available: (t) => (t < 1 ? CANINO_NO_PACK : canineWithout("PointNear")),
     }).outputs;
     expect(out[0].base.clip).toBe("Talking");
     expect(out.at(-1)!.base.clip).toBe("Pointing");
@@ -430,8 +451,10 @@ describe("long wait (row 2)", () => {
   });
 
   it("counts awaiting an answer and the quiz as quiet", () => {
+    // 40s, not 30: awaitingAnswer also plays PatientTilt around 4s in (V9.8),
+    // which resets the quiet clock when it ends, pushing longWait out past 30s.
     for (const over of [{ awaitingAnswer: true }, { quizActive: true }]) {
-      const out = run({ seconds: 30, signalsAt: () => sig(over) }).outputs;
+      const out = run({ seconds: 40, signalsAt: () => sig(over) }).outputs;
       expect(out.some((o) => o.overlay?.scenario === "longWait")).toBe(true);
     }
   });
@@ -518,7 +541,7 @@ describe("authored gestures play in their scenarios", () => {
   });
 
   it("every authored clip is Aristo's own and ships on the Canino rigs only", () => {
-    for (const id of [...AUTHORED, ...AUTHORED_V97]) {
+    for (const id of [...AUTHORED, ...AUTHORED_V97, ...AUTHORED_V98]) {
       const spec = CLIP_MANIFEST.find((c) => c.id === id)!;
       expect(spec.licence, id).toBe("Aristo's own");
       expect(spec.source, id).toMatch(/^authored in Blender for Aristo/);
@@ -642,6 +665,194 @@ describe("a new image on the board (V9.7)", () => {
     }).outputs;
     const starts = out.filter((o, i) => o.overlay?.clip === "PresentModel" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
     expect(starts).toHaveLength(2);
+  });
+});
+
+// ─── V9.8 batch 3 ─────────────────────────────────────────────────────────────
+
+describe("point: one hand per pointing stretch (V9.8)", () => {
+  it("holds the picked hand for the whole stretch, not swapped clip to clip", () => {
+    // Both Pointing (3.75s) and PointNear (6.04s) loop several times over 15s;
+    // the scenario's "dwell" mode (not "cycle") means only one crossfade the
+    // whole time -- whichever hand was picked when the stretch began.
+    const out = run({ seconds: 15, signalsAt: () => sig({ gesture: "pointing", isSpeaking: true }) }).outputs;
+    expect(new Set(out.map((o) => o.base.seq)).size).toBe(1);
+    expect(["Pointing", "PointNear"]).toContain(out[0].base.clip);
+  });
+
+  it("never time-warps either hand: the aim is the point", () => {
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const out = run({ seconds: 0.1, seed, signalsAt: () => sig({ gesture: "pointing", isSpeaking: true }) }).outputs;
+      expect(out[0].base.timeScale).toBe(1);
+    }
+  });
+
+  it("both hands turn up about half and half over many stretches (weight 1 each)", () => {
+    const rng = seededRng(11);
+    const counts: Record<string, number> = { Pointing: 0, PointNear: 0 };
+    for (let i = 0; i < 4000; i++) {
+      counts[pickClip(["Pointing", "PointNear"], { current: null, lastEnded: {}, now: 0, rng })!]++;
+    }
+    expect(counts.Pointing / counts.PointNear).toBeGreaterThan(0.85);
+    expect(counts.Pointing / counts.PointNear).toBeLessThan(1.15);
+  });
+});
+
+describe("one moment (row 26, V9.8)", () => {
+  it("plays as isLoading rises, over the thinking base", () => {
+    const out = run({ seconds: 3, signalsAt: (t) => sig({ isLoading: t > 1 }) }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === "OneMoment");
+    expect(hit).toBeDefined();
+    expect(hit!.overlay!.scenario).toBe("oneMoment");
+    expect(hit!.overlay!.mask).toBe("upper");
+    expect(hit!.base.scenario).toBe("thinking");
+  });
+
+  it("does not replay while isLoading stays true", () => {
+    const out = run({ seconds: 6, signalsAt: (t) => sig({ isLoading: t > 1 }) }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "OneMoment" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(1);
+  });
+
+  it("fires again the next time isLoading rises", () => {
+    const out = run({
+      seconds: 6,
+      signalsAt: (t) => sig({ isLoading: (t > 1 && t < 2.5) || t > 4 }),
+    }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "OneMoment" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(2);
+  });
+
+  it("a reaction on the same tick wins over one moment", () => {
+    const out = run({
+      seconds: 0.5,
+      signalsAt: (t) => sig({ isLoading: t > 0.2, reaction: t > 0.2 ? { kind: "nodding", id: 1 } : null }),
+    }).outputs;
+    const first = out.find((o) => o.overlay)!;
+    expect(first.overlay!.scenario).toBe("correct");
+  });
+
+  it("still gets its turn once a reaction that blocked it finishes, isLoading still true", () => {
+    // isLoading rises at the same moment a nod starts (Almost/Exactly-length
+    // reactions run 1.83-2.63s): the rising edge is blocked that instant, but
+    // must not be lost for the rest of the loading stretch -- it should play
+    // as soon as the reaction overlay ends.
+    const out = run({
+      seconds: 4,
+      signalsAt: (t) => sig({ isLoading: t > 0.2, reaction: t > 0.2 ? { kind: "nodding", id: 1 } : null }),
+    }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === "OneMoment");
+    expect(hit).toBeDefined();
+    expect(hit!.base.scenario).toBe("thinking");
+  });
+
+  it("is cancelled if isLoading drops before it gets a turn -- no stale fire later", () => {
+    // Blocked by a nod for its whole run, then isLoading drops before the nod
+    // ends: one moment must not fire once the nod finally frees the overlay.
+    const out = run({
+      seconds: 4,
+      signalsAt: (t) => sig({
+        isLoading: t > 0.2 && t < 1,
+        reaction: t > 0.2 ? { kind: "nodding", id: 1 } : null,
+      }),
+    }).outputs;
+    expect(out.some((o) => o.overlay?.clip === "OneMoment")).toBe(false);
+  });
+});
+
+describe("patient tilt (row 27, V9.8)", () => {
+  it("plays about LISTEN_TILT_S into listen, while the question is unanswered", () => {
+    const out = run({ seconds: 10, signalsAt: () => sig({ awaitingAnswer: true, segmentId: "seg_1" }) }).outputs;
+    const hit = out.find((o) => o.overlay?.clip === "PatientTilt");
+    expect(hit).toBeDefined();
+    expect(hit!.t).toBeCloseTo(LISTEN_TILT_S, 1);
+    expect(hit!.overlay!.scenario).toBe("listenBeat");
+    expect(hit!.overlay!.mask).toBe("head");
+    expect(hit!.base.scenario).toBe("listen");
+  });
+
+  it("does not play again for the same question", () => {
+    const out = run({ seconds: 30, signalsAt: () => sig({ awaitingAnswer: true, segmentId: "seg_1" }) }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "PatientTilt" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(1);
+  });
+
+  it("the long wait takes over once PatientTilt ends", () => {
+    const out = run({ seconds: 40, signalsAt: () => sig({ awaitingAnswer: true, segmentId: "seg_1" }) }).outputs;
+    expect(out.some((o) => o.overlay?.scenario === "longWait")).toBe(true);
+  });
+
+  it("re-arms on a new question: awaitingAnswer false then true", () => {
+    const out = run({
+      seconds: 20,
+      signalsAt: (t) => {
+        if (t < 6) return sig({ awaitingAnswer: true, segmentId: "seg_1" });
+        if (t < 7) return sig({ awaitingAnswer: false, segmentId: "seg_1" });
+        return sig({ awaitingAnswer: true, segmentId: "seg_2" });
+      },
+    }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "PatientTilt" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(2);
+  });
+
+  it("re-arms on a new segment even if the base never leaves listen", () => {
+    const out = run({
+      seconds: 20,
+      signalsAt: (t) => sig({ awaitingAnswer: true, segmentId: t < 6 ? "seg_1" : "seg_2" }),
+    }).outputs;
+    const starts = out.filter((o, i) => o.overlay?.clip === "PatientTilt" && out[i - 1]?.overlay?.seq !== o.overlay.seq);
+    expect(starts).toHaveLength(2);
+  });
+
+  it("does not play while pointing or loading (not `listen`, so no timer runs)", () => {
+    for (const over of [{ gesture: "pointing" as const }, { isLoading: true }]) {
+      const out = run({ seconds: 10, signalsAt: () => sig({ awaitingAnswer: true, segmentId: "seg_1", ...over }) }).outputs;
+      expect(out.some((o) => o.overlay?.clip === "PatientTilt")).toBe(false);
+    }
+  });
+});
+
+describe("wrong answer with the board (row 28, V9.8)", () => {
+  it("turns back to the board when the lesson image is still up", () => {
+    const out = run({
+      seconds: 3,
+      signalsAt: (t) => sig({ previewImage: "img-1", reaction: t > 1 ? { kind: "shaking", id: 1 } : null }),
+    }).outputs;
+    const hit = out.find((o) => o.overlay?.scenario === "wrongBoard");
+    expect(hit).toBeDefined();
+    expect(hit!.overlay!.clip).toBe("BackToBoard");
+    expect(hit!.overlay!.mask).toBe("upper");
+    expect(hit!.overlay!.release).toBe("shaking");
+  });
+
+  it("plays the plain wrong reaction with no image on the board", () => {
+    const out = run({
+      seconds: 3,
+      signalsAt: (t) => sig({ reaction: t > 1 ? { kind: "shaking", id: 1 } : null }),
+    }).outputs;
+    const hit = out.find((o) => o.overlay)!;
+    expect(hit.overlay!.scenario).toBe("wrong");
+  });
+
+  it("falls back to the plain wrong-answer pool on a rig without BackToBoard", () => {
+    const out = run({
+      seconds: 3,
+      available: () => availableFor(AVATURN_CLIP_SET),
+      signalsAt: (t) => sig({ previewImage: "img-1", reaction: t > 1 ? { kind: "shaking", id: 1 } : null }),
+    }).outputs;
+    const hit = out.find((o) => o.overlay)!;
+    expect(hit.overlay!.scenario).toBe("wrong");
+    expect(hit.overlay!.clip).toBe("ShakeNo");
+  });
+
+  it("keeps the head at the board like GlanceBoard, until it fades out", () => {
+    const out = run({
+      seconds: 3,
+      signalsAt: (t) => sig({ previewImage: "img-1", reaction: t > 1 ? { kind: "shaking", id: 1 } : null }),
+    }).outputs;
+    const { startedAt, fadeOutAt } = out.find((o) => o.overlay?.clip === "BackToBoard")!.overlay!;
+    expect(out.find((o) => o.t > startedAt + 0.1)!.look).toBe("board");
+    expect(out.find((o) => o.t > fadeOutAt + 0.02)!.look).toBe("camera");
   });
 });
 

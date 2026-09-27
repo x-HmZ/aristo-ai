@@ -52,6 +52,11 @@ export const GREETING_WINDOW_S = 8;
 /** The head turns to a newly shown model for this long (row 9). */
 export const PRESENT_LOOK_S = 4;
 /**
+ * PatientTilt (row 27, V9.8): plays this long after the base settles into
+ * `listen`, once per question, while the student still has not answered.
+ */
+export const LISTEN_TILT_S = 4;
+/**
  * How long a reaction without a clip holds its gesture before release. The
  * store's nod and shake auto-revert used these before V9.3.
  */
@@ -160,6 +165,17 @@ export interface DirectorState {
   /** Start of the current quiet stretch, null while not quiet. */
   quietSince:     number | null;
   presentUntil:   number;
+  /**
+   * Start of the current `listen` stretch, null while the base is not
+   * `listen` (V9.8). Distinct from `quietSince`: this one is scoped to a
+   * single question, so it resets whenever a new question starts even if the
+   * base never left `listen` in between.
+   */
+  listenSince:     number | null;
+  /** PatientTilt's one shot for the current question (V9.8), see `listenSince`. */
+  patientTiltDone: boolean;
+  /** OneMoment (V9.8) is armed by `isLoading`'s rising edge and retried until it plays or `isLoading` drops. */
+  oneMomentPending: boolean;
   prev: {
     reactionId:     number | null;
     quizKey:        string | null;
@@ -173,6 +189,13 @@ export interface DirectorState {
      * `segmentId` was last null -- i.e. since the current lesson started.
      */
     beatDone:       { explain: boolean; connect: boolean };
+    /** For the isLoading rising edge (oneMoment, V9.8). */
+    isLoading:      boolean;
+    /**
+     * For PatientTilt's re-arm (V9.8): a new question is `awaitingAnswer`
+     * turning true, or a new segment while it is already true.
+     */
+    awaitingAnswer: boolean;
   };
 }
 
@@ -330,6 +353,9 @@ export function createDirectorState(mountClip: string = MOUNT_CLIP, seed?: Direc
     greetingSince: 0,
     quietSince:    null,
     presentUntil:  -Infinity,
+    listenSince:     null,
+    patientTiltDone: false,
+    oneMomentPending: false,
     prev: {
       reactionId:     seed?.reaction?.id ?? null,
       quizKey:        seed ? quizKeyOf(seed.quizResult) : null,
@@ -338,6 +364,8 @@ export function createDirectorState(mountClip: string = MOUNT_CLIP, seed?: Direc
       previewImage:   seed?.previewImage ?? null,
       segmentId:      seed?.segmentId ?? null,
       beatDone:       { explain: false, connect: false },
+      isLoading:      seed?.isLoading ?? false,
+      awaitingAnswer: seed?.awaitingAnswer ?? false,
     },
   };
 }
@@ -441,7 +469,10 @@ export function stepDirector(
   let event: Scenario | null = null;
   let eventRelease: ReactionKind | undefined;
   if (sig.reaction && sig.reaction.id !== state.prev.reactionId) {
-    event = sig.reaction.kind === "nodding" ? "correct" : "wrong";
+    // A wrong answer with the lesson image still up turns back to the board
+    // instead of the plain reaction (V9.8, row 28); wrongBoard falls back to
+    // wrong on a rig without BackToBoard, so this preempts the same way either way.
+    event = sig.reaction.kind === "nodding" ? "correct" : sig.previewImage ? "wrongBoard" : "wrong";
     eventRelease = sig.reaction.kind;
   } else if (sig.quizResult && quizKey !== state.prev.quizKey) {
     const { score, total } = sig.quizResult;
@@ -460,6 +491,23 @@ export function stepDirector(
       if (overlay?.release) release = overlay.release;
       overlay = started;
     }
+  }
+
+  // ── Row 26: one moment, isLoading's rising edge (V9.8). Plays over the
+  // thinking base it hands off to (oneMoment's own `over`, since thinking is
+  // not in QUIET_BASES/TALKING_BASES). Armed on the rising edge, but retried
+  // every tick until it actually plays, not just attempted once on that exact
+  // tick: a still-fading reaction overlay (wrong/correct/wrongBoard) or the
+  // gesture still being "pointing" when loading starts would otherwise burn
+  // the one chance for the whole loading stretch, the same failure `beatDone`
+  // had in V9.7 before it was fixed to only spend on an actual play. Cancelled
+  // if isLoading drops before it gets a turn (no stale fire once thinking ends).
+  let oneMomentPending = state.oneMomentPending;
+  if (sig.isLoading && !state.prev.isLoading) oneMomentPending = true;
+  else if (!sig.isLoading) oneMomentPending = false;
+  if (oneMomentPending && !overlay && overlayAllowed("oneMoment", scenario)) {
+    const started = startOverlay("oneMoment");
+    if (started) { overlay = started; oneMomentPending = false; }
   }
 
   // ── Row 9: a model appears, the head turns to it for a moment. A new image
@@ -518,6 +566,29 @@ export function stepDirector(
     }
   }
 
+  // ── Row 27: PatientTilt, once per question, about LISTEN_TILT_S into the
+  // `listen` base while the student still has not answered (V9.8). A new
+  // question -- `awaitingAnswer` turning true, or a new segment while it
+  // already is -- both re-arms the one shot and restarts the timer, even if
+  // the base never left `listen` in between. The existing long wait
+  // (`quietSince`, below) takes over once this overlay ends, as usual. ──
+  const questionChanged = sig.awaitingAnswer && (!state.prev.awaitingAnswer || sig.segmentId !== state.prev.segmentId);
+  let patientTiltDone = questionChanged ? false : state.patientTiltDone;
+  let listenSince = state.listenSince;
+  if (scenario !== "listen" || questionChanged) {
+    listenSince = scenario === "listen" ? now : null;
+  } else if (listenSince === null) {
+    listenSince = now;
+  }
+  if (
+    scenario === "listen" && !patientTiltDone && !overlay &&
+    listenSince !== null && now - listenSince >= LISTEN_TILT_S &&
+    overlayAllowed("listenBeat", scenario)
+  ) {
+    const started = startOverlay("listenBeat");
+    if (started) { overlay = started; patientTiltDone = true; }
+  }
+
   // ── Row 2: long wait ──
   if (overlayAllowed("longWait", scenario)) {
     if (quietSince === null) quietSince = now;
@@ -536,6 +607,7 @@ export function stepDirector(
 
   const next: DirectorState = {
     seq, base, overlay, lastEnded, lastOverlay, greeting, greetingSince, quietSince, presentUntil,
+    listenSince, patientTiltDone, oneMomentPending,
     prev: {
       reactionId:     sig.reaction?.id ?? state.prev.reactionId,
       quizKey,
@@ -544,6 +616,8 @@ export function stepDirector(
       previewImage:   sig.previewImage,
       segmentId:      sig.segmentId,
       beatDone,
+      isLoading:      sig.isLoading,
+      awaitingAnswer: sig.awaitingAnswer,
     },
   };
   return {

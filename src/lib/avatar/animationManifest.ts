@@ -26,7 +26,10 @@
  * `ScenarioSpec.row` are this original V9 catalogue's; the six V9.7 entries
  * did not exist in it, so they cite `.claude/plans/V96-GESTURE-CATALOGUE.md`
  * instead (its own, unrelated row numbering) and are given fresh `row`
- * numbers (20-25) rather than reusing either catalogue's.
+ * numbers (20-25) rather than reusing either catalogue's. V9.8 adds three
+ * more this same way (26-28), citing `.claude/plans/NEXT-SESSION-V98-WIRING.md`
+ * (its own row numbers 4, 15, 17b). PointNear (V9.8) needs no new scenario:
+ * it is a second base clip in the existing "point" pool (row 8).
  */
 export type Scenario =
   | "idle"           // 1  attentive idle
@@ -56,7 +59,11 @@ export type Scenario =
   | "demoStep"        // segment role "demo_step"
   | "transition"      // segment role "transition"
   | "connectBeat"     // phase "connect", sparse (once per phase per lesson)
-  | "challengeSetup"; // segment role "challenge_setup"
+  | "challengeSetup"  // segment role "challenge_setup"
+  // V9.8 batch 3 (V96-GESTURE-CATALOGUE.md rows 4, 15, 17b):
+  | "oneMoment"       // 26 isLoading rising edge, over thinking (the base it hands off to)
+  | "listenBeat"      // 27 PatientTilt: once per question, ~4s into listen, re-armed by a new question
+  | "wrongBoard";     // 28 wrong while previewImage is set: turn back to the board instead
 
 /**
  * Which bones a clip drives when it plays over the base layer. `full` is the
@@ -115,8 +122,11 @@ export const SCENARIOS: Record<Scenario, ScenarioSpec> = {
   talkExplain:    { row: 7,  layer: "base",  play: "cycle", fallback: "talking", look: "camera" },
   // Pointing stays a full-body base clip, not the catalogue's upper overlay:
   // its fingertip was placed on the panel edge with the clip's own hips
-  // (V9.2b), and a talking base's hips would swing that aim.
-  point:          { row: 8,  layer: "base",  play: "cycle", fallback: "talking", look: "board" },
+  // (V9.2b), and a talking base's hips would swing that aim. `play: "dwell"`
+  // (V9.8, was "cycle"): PointNear joins the pool beside it, and Hmz wants one
+  // hand picked per pointing stretch, not swapped at every clip loop -- dwell
+  // holds the pick for DWELL_S (20s), longer than a pointing stretch runs.
+  point:          { row: 8,  layer: "base",  play: "dwell", fallback: "talking", look: "board" },
   presentModel:   { row: 9,  layer: "upper", play: "once",  over: [...QUIET_BASES, ...TALKING_BASES] },
   listen:         { row: 12, layer: "base",  play: "dwell", fallback: "idle", look: "camera" },
   correct:        { row: 13, layer: "upper", play: "once",  face: "smile" },
@@ -138,6 +148,17 @@ export const SCENARIOS: Record<Scenario, ScenarioSpec> = {
   transition:     { row: 23, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
   connectBeat:    { row: 24, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
   challengeSetup: { row: 25, layer: "upper", play: "once", over: [...QUIET_BASES, ...TALKING_BASES] },
+
+  // V9.8 batch 3.
+  // Thinking is not in QUIET_BASES/TALKING_BASES (it has its own look/face),
+  // so oneMoment needs its own `over`: it plays right as isLoading flips the
+  // base to thinking.
+  oneMoment:      { row: 26, layer: "upper", play: "once", over: ["thinking"] },
+  // Head only, over the listen base only -- director.ts times the 4s wait.
+  listenBeat:     { row: 27, layer: "upper", play: "once", over: ["listen"] },
+  // Falls back to the plain wrong-answer pool (ShakeNo/Almost) on a rig
+  // without BackToBoard, the same pattern lessonComplete uses for quizGood.
+  wrongBoard:     { row: 28, layer: "upper", play: "once", fallback: "wrong", face: "warm" },
 };
 
 // ─── Clips ────────────────────────────────────────────────────────────────────
@@ -184,6 +205,7 @@ const MIXAMO_MIRROR = "Mixamo (Adobe), mirrored by scripts/v9_mirror.py (V9.2)";
 const MIXAMO_LICENCE = "Mixamo terms: royalty-free, commercial use, not redistributable as raw files";
 const AUTHORED = "authored in Blender for Aristo (V9.6), scripts/v9_gesture.py";
 const AUTHORED_V97 = "authored in Blender for Aristo (V9.7), scripts/v9_gesture.py";
+const AUTHORED_V98 = "authored in Blender for Aristo (V9.8), scripts/v9_gesture.py";
 const AUTHORED_LICENCE = "Aristo's own";
 
 /** Talking and idle read as new beats at a slightly different rate. */
@@ -234,7 +256,9 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   // Row 8: pointing at the board. Never time-warped: its peak is what lands
   // the fingertip on the panel.
   { id: "Pointing", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["point"], layer: "base", mask: "full", play: "loop", duration: 3.75, weight: 1, cooldown: 0, mirrorable: true, family: "Pointing",
-    notes: "Mirroring would point away from the board; variants need new clips (Tier 2)" },
+    notes: "Mirroring would point away from the board; variants need new clips (Tier 2). Hand fixed in V9.8: the other fingers folded, index straightened (was bent back 9deg, splayed 12.5deg)" },
+  { id: "PointNear", source: AUTHORED_V98, licence: AUTHORED_LICENCE, scenarios: ["point"], layer: "base", mask: "full", play: "loop", duration: 6.04, weight: 1, cooldown: 0, mirrorable: false, family: "PointNear",
+    notes: "Left index into the near third of the panel, chest and head turned to it; two passes of Idle4, loop seam 0.00deg. Never time-warped, like Pointing: the aim is the point. Half the point pool, picked once per stretch by the scenario's dwell mode" },
 
   // Row 9: a generated model appears. Left palm up and out towards where the
   // model floats; the head is left to the look layer.
@@ -272,6 +296,15 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "BringTogether", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["connectBeat"], layer: "upper", mask: "upper", play: "once", duration: 2.46, weight: 1, cooldown: 0, mirrorable: false, family: "BringTogether",
     notes: "Wide to close, never nearer than 182 mm: 'it all fits'. Fires once per connect phase, not every segment" },
 
+  // V9.8 batch 3: event clips (isLoading, listen, a wrong answer with an
+  // image on the board). Durations read from the shipped packs the same way.
+  { id: "OneMoment", source: AUTHORED_V98, licence: AUTHORED_LICENCE, scenarios: ["oneMoment"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 1, cooldown: 0, mirrorable: false, family: "OneMoment",
+    notes: "Right index raised in front of the shoulder, palm to the student, other fingers folded: 'one moment'. Plays as isLoading rises, over the thinking base it hands off to" },
+  { id: "PatientTilt", source: AUTHORED_V98, licence: AUTHORED_LICENCE, scenarios: ["listenBeat"], layer: "upper", mask: "head", play: "once", duration: 3.04, weight: 1, cooldown: 0, mirrorable: false, family: "PatientTilt",
+    notes: "Head tilts ~12deg to his left, chin a touch down. Neck and head only on purpose: a chest lean put MJ's hip hand 12mm into her skirt over Talking4. Once per question, ~4s after the teacher stops talking (director.ts), re-armed by a new question" },
+  { id: "BackToBoard", source: AUTHORED_V98, licence: AUTHORED_LICENCE, scenarios: ["wrongBoard"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 1, cooldown: 0, mirrorable: false, family: "BackToBoard", look: "board",
+    notes: "Chest and head turn back to the board, a light open left hand to it, on a wrong answer while the lesson image is still up. `look: board` keeps the head there, like GlanceBoard" },
+
   // Shipped in animations_Avaturn.glb, never played.
   { id: "Clapping", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: [], layer: "upper", mask: "upper", play: "once", duration: 1.13, weight: 0, cooldown: 0, mirrorable: false, family: "Clapping",
     notes: "Rejected: the hands never meet, even on Marcus (V9.2)" },
@@ -292,6 +325,8 @@ export const CANINO_CLIP_SET = [
   "PresentModel", "Encourage", "Almost", "Exactly", "WellDone", "ThatsIt", "GlanceBoard",
   // Authored in Blender for the Canino rigs only (V9.7).
   "Imagine", "HoldIdea", "StepBeat", "MoveOn", "YourTurn", "BringTogether",
+  // Authored in Blender for the Canino rigs only (V9.8).
+  "OneMoment", "PointNear", "PatientTilt", "BackToBoard",
 ] as const;
 
 /** Marcus and Priya, on the shared Avaturn pack. */

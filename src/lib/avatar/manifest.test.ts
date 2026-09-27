@@ -188,7 +188,7 @@ describe("coverage", () => {
         "05 talking": "6",
         "06 talkActivate": "6 via talking",
         "07 talkExplain": "6 via talking",
-        "08 point": "1",
+        "08 point": "2",
         "09 presentModel": "1",
         "11 talkChallenge": "6 via talking",
         "12 listen": "3",
@@ -206,6 +206,9 @@ describe("coverage", () => {
         "23 transition": "1",
         "24 connectBeat": "1",
         "25 challengeSetup": "1",
+        "26 oneMoment": "1",
+        "27 listenBeat": "1",
+        "28 wrongBoard": "1",
       }
     `);
   });
@@ -237,6 +240,9 @@ describe("coverage", () => {
         "23 transition": "0",
         "24 connectBeat": "0",
         "25 challengeSetup": "0",
+        "26 oneMoment": "0",
+        "27 listenBeat": "0",
+        "28 wrongBoard": "1 via wrong",
       }
     `);
   });
@@ -268,6 +274,9 @@ describe("coverage", () => {
         "23 transition": "0",
         "24 connectBeat": "0",
         "25 challengeSetup": "0",
+        "26 oneMoment": "0",
+        "27 listenBeat": "0",
+        "28 wrongBoard": "1 via wrong",
       }
     `);
   });
@@ -299,6 +308,9 @@ describe("coverage", () => {
         "23 transition": "0",
         "24 connectBeat": "0",
         "25 challengeSetup": "0",
+        "26 oneMoment": "0",
+        "27 listenBeat": "0",
+        "28 wrongBoard": "0",
       }
     `);
   });
