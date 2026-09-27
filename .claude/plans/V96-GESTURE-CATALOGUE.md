@@ -87,7 +87,7 @@ manifest, presentational only, with tests and a `typescript-reviewer` pass).
 
 | # | Situation | What a good teacher does | Clip | Trigger |
 |---|---|---|---|---|
-| 18 | The quiz is handed out | An open hand down towards the student's desk: "over to you" (the desk gesture belongs here) | **OverToYou** (new) | wire: `activeQuiz` rising edge |
+| 18 | The quiz is handed out | An open hand down towards the student's desk: "over to you" | **Dropped** (V9.8, rejected in three rounds -- "the arm movement is very unnatural"). The look layer turning the head to the desk (`quizLook`) is the whole gesture; no `quizHandout` scenario wired | now: `quizLook`'s existing look-only |
 | 19 | Student working on the quiz | Looks at the desk, patient | look layer + idle (have) | now: `quizLook` |
 | 20 | Quiz passed | "Well done": both hands open outward, a smile | Nodding (have); **WellDone** (new) | now: `quizGood` |
 | 21 | Quiz not passed | "You're getting there" | Encourage (approved) | now: `quizSupportive` |
@@ -100,7 +100,8 @@ manifest, presentational only, with tests and a `typescript-reviewer` pass).
    exist today.
 2. **V9.7, role-aware teaching (director wiring from existing signals):** Imagine, HoldIdea, StepBeat,
    MoveOn, YourTurn, BringTogether, plus PresentModel reused when a new image lands.
-3. **V9.7b, events and base clips:** OneMoment, BackToBoard, OverToYou, PatientTilt, PointNear.
+3. **V9.7b, events and base clips (done, V9.8):** OneMoment, BackToBoard, PatientTilt, PointNear shipped and wired.
+   OverToYou dropped after three rejected rounds (row 18, above). Batch 3 is closed out.
 
 The tool needs two small additions for batch 3: per-finger control (an extended index with the others
 curled, for PointNear and OneMoment), and building a full-body clip on top of a base loop (PointNear).

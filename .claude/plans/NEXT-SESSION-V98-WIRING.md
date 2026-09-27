@@ -40,4 +40,14 @@ All: source "authored in Blender for Aristo (V9.8), scripts/v9_gesture.py", lice
 ## Still open
 
 - Nothing for Hmz.
-- Close-out per the brief: V9-REPORT "V9.8", LICENSES.md, decisions.md (the two decisions above; OverToYou rejected in three rounds; Pointing's hand; MJ's armpit), state.md, plan checklist, batch 3 marked done in `V96-GESTURE-CATALOGUE.md` (row 18: dropped, look layer only).
+- **Done (Sonnet, this session):** the four clips wired (`oneMoment`, `listenBeat`, `wrongBoard` scenarios;
+  `point` gains PointNear and switched to `play: "dwell"`); manifest + director tests (337, was 314);
+  `typescript-reviewer` on the diff found one real bug (OneMoment's rising edge could be silently lost for a
+  whole loading stretch if blocked at that exact tick), fixed with an `oneMomentPending` retry flag and covered
+  by two regression tests; type-check clean, lint 10 (unchanged), build green;
+  checked in the app on Jake and MJ (`/dev/free-model`, forced through the store) -- `/demo` needs a real
+  wrong-answer/quiz flow to see BackToBoard and OneMoment fire from real signals rather than forced ones,
+  not separately re-checked there this session; `/learn` not opened (auth). Close-out done: V9-REPORT
+  "V9.8", LICENSES.md, decisions.md (five rows: PatientTilt trigger, one hand per point, OverToYou dropped,
+  Pointing's hand, MJ's armpit), state.md, `V96-GESTURE-CATALOGUE.md` (row 18: dropped, look layer only;
+  batch 3 marked done).

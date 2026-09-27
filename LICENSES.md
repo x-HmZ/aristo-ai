@@ -57,6 +57,17 @@ The six V9.6 hand-keyed clips above were also re-exported this session with the 
 drift, wrist lag) the six V9.7 clips use, replacing their previously flatter hands; Hmz approved both sets in motion.
 That is a re-bake of existing clips, not a new authored work, so it does not add a row.
 
+## Authored animation clips (Aristo's own, V9.8)
+
+| Clips | Author | Licence | Source | Modified |
+|---|---|---|---|---|
+| `OneMoment`, `PointNear`, `PatientTilt`, `BackToBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6/V9.7 clips above | Authored 2026-09-27 | Not applicable, as the rows above. `OverToYou` (row 18 of the catalogue) was rejected after three rounds and dropped; its two rejected concepts are kept as `OVER_TO_YOU_R2` and `OVER_TO_YOU` in `V98_NOT_SHIPPED`, never exported |
+
+Also this session: `Pointing`'s hand fixed in the base GLBs (the other fingers folded, index straightened; it had been
+bent back 9deg and splayed 12.5deg) -- a fix to an existing Mixamo-derived clip's keys, not a new authored work, so it
+does not add a row. `scripts/v9_gesture.py` gained `digits`, `on`/`passes`, `fit`, `panel_hit`, `hand_frame` and
+`tuck_point`, used to author the four rows above and to fix Pointing.
+
 ## Legacy and archived teachers (not offered in the picker; still in `public/models`)
 
 | File | What it is | Author and licence | Status |

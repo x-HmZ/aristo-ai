@@ -2,29 +2,29 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-27 - V9.8 authoring half done (Opus); wiring half next (Sonnet)
+## 2026-09-27 - V9.8 done: batch 3 wired (Opus authored, Sonnet wired)
 
-Hand-off with every detail: `.claude/plans/NEXT-SESSION-V98-WIRING.md`. Nothing is wired yet; the director and
-manifest are unchanged, so tests and gates are as V9.7 left them.
+Detail in `.claude/plans/V9-REPORT.md` ("V9.8"). Gates: type-check clean, lint 10 (unchanged), tests 337 (was
+314), build green. `typescript-reviewer` caught a real bug (OneMoment losing its rising edge for good if
+blocked at that exact tick); fixed and covered by two regression tests before this was reported done.
 
-- **Approved by Hmz in motion, in both packs:** OneMoment (row 4), PointNear (row 8, a full-body base clip),
-  PatientTilt (row 15, head only), BackToBoard (row 17b). Pointing's hand fixed too (other fingers folded, index
-  straightened; it had been bent back 9 deg and splayed 12.5 deg), aim still at the panel's near edge; approved.
-- **Dropped:** OverToYou (row 18) after three rejected rounds; the look layer turning the head to the desk is the
-  whole "over to you". Specs kept in `V98_NOT_SHIPPED`, not exported.
-- **Decided by Hmz:** PatientTilt plays once per question, about 4 s after the teacher stops talking while the
-  student has not answered; PointNear and Pointing: one hand per pointing stretch, about half and half.
-- **Tool (`v9_gesture.py`):** per-finger `digits`, full-body clips on a base loop (`on`, `passes`), `fit`,
-  `panel_hit`, `hand_frame`, `tuck_point`.
-- **Checks:** 0 pokes and 0 skirt hits on both teachers; export worst 0.0166 deg / 0.242 mm. Packs: Jake 676,368 to
-  739,804 B, MJ 703,156 to 767,240 B; base files +8 B.
-- **Found:** MJ's armpit skin comes through her tee whenever the upper arm is pulled in without swinging forward, and
-  pushing the skin in makes it worse (it sits between two tee panels): shape arm paths around it. One vertex of her
-  right arm pokes 2.7 mm in her own Idle (pre-existing, not fixed).
-- **Next (Sonnet):** wire the four, tests, `typescript-reviewer`, in-app checks on `/demo` and `/dev/free-model`,
-  gates, close-out (V9-REPORT "V9.8", LICENSES, decisions, plan checklist, batch 3 done in the catalogue).
-- **Tooling note:** the dev server's `.next` was wiped mid-session (possibly by another process); fix: stop the
-  server, delete `.next`, restart.
+- **Shipped:** OneMoment (`oneMoment`, over `thinking`, isLoading rising edge), PointNear (beside Pointing in
+  `point`, half the pool, `point` now `play: "dwell"` so one hand holds for the whole stretch), PatientTilt
+  (`listenBeat`, once per question ~4s into `listen`, re-armed by a new question), BackToBoard (`wrongBoard`, a
+  wrong answer with the lesson image still up, falls back to plain `wrong`) -- all in the Jake and MJ clip packs
+  (739,804 B and 767,240 B). Pointing's hand also fixed (other fingers folded, index straightened; was bent back
+  9 deg and splayed 12.5 deg): approved, "pointing looks good now". Checked in `/dev/free-model` (Jake and MJ,
+  forced through the store via a temporary `three.setFrameloop("never")` + synthetic-clock hook, reverted); not
+  separately re-walked in `/demo`'s live lesson flow this session (its own controller fights manual signal
+  forcing) -- same `director.ts` already covered by the unit tests and the free-model checks. `/learn` not opened
+  (auth).
+- **Dropped:** OverToYou (row 18) after three rejected rounds ("the arm movement is very unnatural"); the look
+  layer turning the head to the desk is the whole "over to you". Batch 3 of `V96-GESTURE-CATALOGUE.md` is now
+  fully closed out (shipped or explicitly dropped).
+- **Known edge:** `point`'s `"dwell"` mode also slows the *pre-pack* Talking fallback's re-check cadence (~20s
+  instead of ~3.5s before noticing the clip pack has landed) -- accepted, the pack almost always loads before a
+  lesson's first point.
+- **Next:** nothing queued from the gesture catalogue. V8.7 (landing re-capture) still waits on V8.4 and V8.5.
 
 ## 2026-09-27 - V9.7 done: six teaching-move clips wired (Opus authored, Sonnet wired)
 

@@ -1464,3 +1464,155 @@ waiting for a real new image) and gone on a clean reload. `/learn` needs a login
 - Parked, unchanged: batch 3 of the catalogue (OneMoment, BackToBoard, OverToYou, PatientTilt, PointNear), the
   Avaturn rig's pack, female narration for MJ, MJ's hair and scalp seam, mesh-level expressions, the FFT viseme
   fallback.
+
+## V9.8 - Batch 3: event and base clips (2026-09-27)
+
+Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (hand-off: `.claude/plans/NEXT-SESSION-V98-WIRING.md`,
+brief: Hmz's V9.8 prompt). Rules for every clip: `.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`. Scene backup
+before the Opus half: not recorded in the hand-off (see its own session for the bake-off folder).
+
+**Verdict: four authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+`/dev/avatar-lab`, all four confirmed firing through the real director in `/dev/free-model` (forced through
+the store).** Gates: type-check clean, lint 10 (unchanged), tests 337 (was 314), build green (default `.next`,
+dev server stopped for the run -- see Tooling notes). `typescript-reviewer` on the director diff found one real
+bug (below), fixed and covered by two regression tests before this report was written.
+
+### What shipped
+
+| Clip | Scenario (row) | Trigger | Length | What it is |
+|---|---|---|---|---|
+| OneMoment | `oneMoment` (26) | `isLoading` rising edge, over `thinking` | 2.04 s | Right index raised in front of the shoulder, palm to the student, other fingers folded: "one moment" |
+| PointNear | `point` (8), beside Pointing | `gesture: "pointing"`, half the pool | 6.04 s, loops | Left index into the near third of the panel, chest and head turned to it. Base clip, full mask, never time-warped |
+| PatientTilt | `listenBeat` (27), over `listen` | Once per question, ~4 s after the teacher stops talking while unanswered | 3.04 s | Head tilts ~12 deg to his left, chin a touch down. Head mask only |
+| BackToBoard | `wrongBoard` (28), falls back to `wrong` | A wrong answer while `previewImage` is set | 2.04 s | Chest and head turn back to the board, a light open left hand to it. `look: "board"`, like GlanceBoard |
+
+All four: source "authored in Blender for Aristo (V9.8), scripts/v9_gesture.py", licence "Aristo's own",
+`mirrorable: false`, own `family`, `CANINO_CLIP_SET` only (Marcus, Priya, custom and legacy sets unaffected --
+`manifest.test.ts`'s coverage snapshot shows 0 for all three new rows on every other rig, and `director.test.ts`
+asserts none of the four is in their clip sets). Durations read from both shipped packs with
+`@gltf-transform/core` + `meshoptimizer` (they bake identically on Jake and MJ, matching the Opus hand-off's
+own numbers): 2.042, 6.042, 3.042, 2.042 s.
+
+### What was rejected, and why (Opus half)
+
+**OverToYou** (row 18, an open hand down towards the student's desk as the quiz is handed out) was rejected in
+all three authored rounds -- Hmz: "the arm movement is very unnatural". Dropped: no `quizHandout` scenario
+wired, no clip exported. The look layer turning the head to the desk (`quizLook`, already shipped) is the
+whole "over to you"; batch 3 of `V96-GESTURE-CATALOGUE.md` is now closed out (row 18 marked dropped). The two
+rejected rounds are kept as `OVER_TO_YOU_R2` and `OVER_TO_YOU` in `v9_gesture.py`'s `V98_NOT_SHIPPED`, never
+exported.
+
+**Pointing's hand fixed** (not a new clip, a fix to the existing Mixamo-derived base clip): the other fingers
+folded to PointNear's shape and the index reset to a small forward bend (8/4/2 deg) with no splay, weighted by
+hand height (`tuck_point`). Was bent back ~9 deg at the knuckle and splayed ~12.5 deg towards the thumb (a
+claw) -- Hmz had flagged it twice before this session ("this looks so wrong", then "the angle of the pointing
+finger looks unnatural"); after: "pointing looks good now". Confirmed visually this session on both Jake and
+MJ in `/dev/free-model` (clean straight index, no claw).
+
+### The director change (Sonnet half)
+
+- Three new scenarios in `animationManifest.ts`: `oneMoment` (row 26, `over: ["thinking"]` -- Thinking is not
+  in `QUIET_BASES`/`TALKING_BASES`, so it needs its own), `listenBeat` (row 27, `over: ["listen"]`, head mask),
+  `wrongBoard` (row 28, `fallback: "wrong"`, the same fallback pattern `lessonComplete` uses for `quizGood`).
+  `point` (row 8) gains `PointNear` as a second base clip and its `play` changed from `"cycle"` to `"dwell"`.
+- Edges in `director.ts`: `sig.isLoading && !state.prev.isLoading` starts `oneMoment` (guarded by `!overlay`,
+  like the teaching-move beats); a wrong-answer reaction picks `wrongBoard` instead of `wrong` when
+  `sig.previewImage` is set, still preempting any running overlay the same way `wrong` always has; a new
+  `listenSince`/`patientTiltDone` pair in `DirectorState` times PatientTilt -- separate from the existing
+  `quietSince` (long wait), since PatientTilt is scoped to one question while `quietSince` spans the whole
+  quiet stretch. A `questionChanged` edge (`awaitingAnswer` turning true, or `segmentId` changing while it
+  already is) re-arms the one shot even if the base never left `listen` in between.
+- `PointNear` needed no new scenario or director edge at all -- it is just a second `ClipSpec` in the existing
+  `point` pool, picked the same way any base-scenario pool already picks a variant. The only change is the
+  scenario's own cadence (`"dwell"` instead of `"cycle"`), which makes the pick hold for a whole pointing
+  stretch instead of swapping hands at every clip loop.
+
+**Bug found and fixed (typescript-reviewer, HIGH):** `oneMoment`'s trigger was edge-only -- attempted the
+instant `isLoading` rose, never again for the rest of that loading stretch. A reaction overlay still fading
+(`correct`/`wrong`/`wrongBoard`, 1.5-3s) at that exact tick, or the gesture still being `"pointing"` when
+loading starts (so `scenario` is `"point"`, not `"thinking"`), would silently and permanently lose "one moment"
+for the whole stretch -- the same shape of bug `beatDone` had in V9.7 before it was fixed to only spend its
+shot on an actual play. Fixed with a `oneMomentPending` flag (armed on the rising edge, cleared either once the
+overlay actually starts or once `isLoading` drops back to false with no play, so a stale request from an
+earlier stretch can never fire late): it now keeps trying every tick while `isLoading` stays true, the same way
+`listenBeat`'s timer already does. Two regression tests: it gets its turn once a blocking reaction ends while
+still loading, and it is cancelled (never fires later) if `isLoading` drops before it gets a turn.
+
+### Tests
+
+`manifest.test.ts`: the coverage snapshot gained three rows (26-28); row 8 (`point`) went from 1 clip to 2 on
+Jake/MJ, unchanged everywhere else. `director.test.ts`: `resolvePool` cases for all three new scenarios plus
+`wrongBoard`'s fallback; a "point: one hand per pointing stretch" block (holds one `base.seq` for 15 s across
+both clips' own loop boundaries, never time-warped, and a direct `pickClip` weight check -- run through the
+full `stepDirector`/`run()` harness gave a skewed sample with this test file's small-seed LCG, so the split
+mirrors the existing "wrong-answer pool" test's own pattern of advancing one shared `rng` many times instead);
+"one moment", "patient tilt" (timing, no replay for the same question, re-arm on a new question two ways, the
+long wait taking over after) and "wrong answer with the board" (falls back on a rig without BackToBoard, keeps
+the look at the board) blocks. Two pre-existing point tests ("crossfades to Pointing when the pack has it",
+"upgrades to Pointing at the next clip boundary once the pack lands") pinned `available` to exclude PointNear
+so they stay deterministic -- they test the pack-arrival crossfade mechanic, not the V9.8 hand pick. One
+(`upgrades to Pointing...`) needed a longer window (30 s, was 15): `"dwell"` means the pre-pack Talking
+fallback also holds for a Talking-length dwell (~20 s) before its next re-check, not at Talking's own ~3.5 s
+loop boundary as `"cycle"` did -- see "Known edges". `"counts awaiting an answer and the quiz as quiet"` also
+needed longer (40 s, was 30): PatientTilt now plays partway through an `awaitingAnswer` quiet stretch and
+resets `quietSince` when it ends, pushing the long wait out past the old window. Plus the `oneMomentPending` regression pair above. 314 -> 337 tests.
+
+### Checked in the app (Jake and MJ, `/dev/free-model`)
+
+A temporary `window.__v98`/`__v98t` hook (`three`/`store` in `Experience.tsx`'s `RendererConfig`; `mixer`,
+`livePlays`, `directorRef`, `rig`, `clockRef` in `Teacher.tsx`, both reverted before committing, grep `__v98`
+finds nothing) exposed the director's live state. Real-time `setTimeout` waits worked for a first pass
+(OneMoment confirmed playing over `thinking`, arm visibly raised in a screenshot) but proved unreliable for
+anything timing-sensitive -- the V9.6 tooling notes' warning about the pane not running `requestAnimationFrame`
+reliably while backgrounded held again here. Switched to the same fix: `three.setFrameloop("never")` plus a
+synthetic clock (`three.advance(t)`), which gave clean, deterministic results for the rest:
+
+| Check | Result |
+|---|---|
+| OneMoment plays on `isLoading`'s rising edge, over `thinking` | Confirmed via `directorRef` and a screenshot (Jake's arm raised, palm out) |
+| PatientTilt: timing, no replay, re-arm | Fired at listenSince + ~4.02 s (`LISTEN_TILT_S` 4); did not replay for 6 s more of the same question; re-armed correctly by a new segment id while still `awaitingAnswer` |
+| Long wait takes over after PatientTilt | `quietSince` reset when the overlay ended, confirmed via state (not separately re-timed to 25 s further in the app; covered by the unit test) |
+| Wrong answer: BackToBoard with an image up, ShakeNo/Almost without | Confirmed via `directorRef` on both branches, same session, before a page reload |
+| PointNear/Pointing: picks once, holds for a 15 s stretch, both hands turn up over several stretches | `base.seq` unchanged across 15 s (longer than either clip's own loop); 6 fresh stretches gave both `Pointing` and `PointNear`. Screenshots confirm both poses render cleanly (fingers folded, straightened index, no visible clipping) |
+| MJ spot-check | Switched `teacher` to `mj` in the same session: PointNear renders with no visible armpit/skirt clipping in the pose reached (arm extended, not pulled in against the body -- the pose the armpit fix avoids) |
+
+**Not separately re-checked in `/demo`'s real lesson flow this session.** An early attempt to force signals
+through `/demo`'s own Volcanoes lesson fought its live lesson controller (which kept advancing its own
+segments/images/loading state on its own timers) and once crashed the Canvas's error boundary on a forced,
+non-existent image path -- an artefact of manual testing, not a code defect (the controller's own real image
+loads are unaffected). Given the director-level behaviour above is what actually decides what plays, and
+`/demo` exercises the exact same `director.ts`/`animationManifest.ts` already covered by both the unit tests
+and the `/dev/free-model` checks, this was judged sufficient rather than fighting the live controller further.
+`/learn` needs a login and was not opened.
+
+### Tooling notes for next time
+
+- **A production build racing a live `next dev` server over a shared `distDir` corrupts the build.** Setting
+  `next.config.mjs`'s `distDir` to a scratch value so `yarn build` would not collide with the running dev
+  server's `.next` did not work as hoped: `next dev` picks up the config change and restarts onto the *same*
+  scratch `distDir`, so the build and the dev server end up racing each other in one directory (`EPERM` on
+  `trace`, then later a missing `middleware-manifest.json` after an unrelated file edit raced the build's own
+  "Collecting page data" phase). Fix: stop the dev server first, run `yarn build` against the plain default
+  `.next` (no config change needed at all), then restart the dev server afterward with `preview_start`. Simpler
+  and more reliable than the distDir dance for a build gate that only needs to run once.
+- The V9.6/V9.7 tooling notes about the browser pane not running `requestAnimationFrame` reliably while
+  backgrounded or mid-script still apply; `three.setFrameloop("never")` plus manual `three.advance(t)` is the
+  fix, not real-time waits.
+
+### Known edges
+
+- **`point`'s `"dwell"` mode also slows the pre-pack Talking fallback's own re-check cadence,** not just the
+  picked-hand hold time. Before a rig's clip pack has loaded, `point` falls back to the `talking` pool and used
+  to re-evaluate whether the real pool has arrived at every Talking clip's own loop boundary (~3.5 s, under the
+  old `"cycle"` mode); under `"dwell"` it now waits out a Talking-length dwell (~20 s) before the next check.
+  Accepted (decisions.md): the clip pack almost always finishes loading well before a lesson's first pointing
+  gesture, so this only lengthens an already-rare cold-start window, not the steady-state behaviour Hmz asked
+  for.
+- **BackToBoard's fallback (`wrong`) was verified in the director, not by pulling a clip from a rig that
+  actually lacks it in the running app** (Marcus/Priya were checked via `resolvePool` and the coverage
+  snapshot, not by switching to Marcus in `/dev/free-model` this session).
+- Not verified: `/learn` (auth), a phone, frame rate, PatientTilt/BackToBoard against a lesson with more or
+  fewer questions/images than Volcanoes provides.
+- Parked, unchanged: the Avaturn rig's pack, female narration for MJ, MJ's hair and scalp seam, mesh-level
+  expressions, the FFT viseme fallback. This closes out the V96-GESTURE-CATALOGUE.md batches (1, 2 and 3 all
+  shipped or explicitly dropped); nothing further is queued from that catalogue.
