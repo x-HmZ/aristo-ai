@@ -40,7 +40,12 @@ const CANDIDATES = {
 } as const;
 type CandidateKey = keyof typeof CANDIDATES;
 
-const CLIPS = ["Idle", "Talking", "Pointing"] as const;
+/**
+ * Base clips. Thinking is here so OneMoment can be judged over the loop it
+ * hands over to; PointNear (V9.8) is a full-body base clip that lives in the
+ * pack, not the base GLB, so the base player looks there too.
+ */
+const CLIPS = ["Idle", "Talking", "Thinking", "Pointing", "PointNear"] as const;
 
 /**
  * Overlay gestures to review in motion (V9.6), with the mask each plays under.
@@ -63,6 +68,10 @@ const GESTURES = [
   { name: "MoveOn",        mask: "upper", note: "V9.7, picked (was B): transition" },
   { name: "YourTurn",      mask: "upper", note: "V9.7, picked (was B), play at 0.85: challenge" },
   { name: "BringTogether", mask: "upper", note: "V9.7: connect" },
+  { name: "OneMoment",     mask: "upper", note: "V9.8: preparing (try over Thinking)" },
+  { name: "PatientTilt",   mask: "head",  note: "V9.8: waiting for the answer" },
+  { name: "BackToBoard",   mask: "upper", note: "V9.8: wrong answer, image up" },
+  { name: "OverToYou",     mask: "upper", note: "V9.8, not converged: quiz handed out" },
   { name: "Nodding",      mask: "head",  note: "shipped" },
   { name: "ShakeNo",      mask: "head",  note: "shipped" },
   { name: "Talking6M",    mask: "upper", note: "shipped (greeting)" },
@@ -195,11 +204,12 @@ function Teacher({
   }, [morphMeshes, animations, onReport]);
 
   useEffect(() => {
-    const a = actions[clip];
+    const packClip = packClips.find((c) => c.name === clip);
+    const a = actions[clip] ?? (packClip && root.current ? mixer.clipAction(packClip, root.current) : null);
     if (!a) return;
     a.reset().fadeIn(0.25).play();
     return () => { a.fadeOut(0.25); };
-  }, [actions, clip]);
+  }, [actions, packClips, mixer, clip]);
 
   // Pull the alignment sidecar for whatever the audio element is playing.
   useEffect(() => {
