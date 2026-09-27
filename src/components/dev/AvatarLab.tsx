@@ -71,7 +71,7 @@ const GESTURES = [
   { name: "OneMoment",     mask: "upper", note: "V9.8: preparing (try over Thinking)" },
   { name: "PatientTilt",   mask: "head",  note: "V9.8: waiting for the answer" },
   { name: "BackToBoard",   mask: "upper", note: "V9.8: wrong answer, image up" },
-  { name: "OverToYou",     mask: "upper", note: "V9.8, not converged: quiz handed out" },
+  { name: "OverToYou",     mask: "upper", note: "V9.8, sideways sweep (round 3): quiz handed out" },
   { name: "Nodding",      mask: "head",  note: "shipped" },
   { name: "ShakeNo",      mask: "head",  note: "shipped" },
   { name: "Talking6M",    mask: "upper", note: "shipped (greeting)" },

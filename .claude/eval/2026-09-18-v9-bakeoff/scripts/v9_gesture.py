@@ -1224,8 +1224,8 @@ BACK_TO_BOARD = {
 # reach was foreshortened and read as a low palm at the hip, a shrug.
 _OY_GATHER = ([("F", -58), ("L", 0), ("A", -10)], [("L", -130), ("A", -42)], [("L", 30), ("F", 10)])
 _OY_OFFER = ([("F", -54), ("L", -35), ("A", -23)], [("L", -65), ("A", -26)], [("L", 20), ("F", 5)])
-OVER_TO_YOU = {
-    "name": "OverToYou", "length": 2.4,
+OVER_TO_YOU_R2 = {
+    "name": "OverToYouR2", "length": 2.4,
     "bones": {
         "CC_Base_Spine02": [(0, []), (0.55, [("L", 2)]), (1.0, [("L", 6)]), (1.8, [("L", 6)]), (2.4, [])],
         "CC_Base_L_Upperarm": [(0, []), (0.2, [("L", -10)]), (0.55, _OY_GATHER[0]), (1.0, _OY_OFFER[0]),
@@ -1240,7 +1240,45 @@ OVER_TO_YOU = {
     "fingers": {"L": [(0, 0), (0.2, 0.3), (0.55, 0.7), (1.0, 0.85), (1.8, 0.82), (2.4, 0)]},
 }
 
+# Round 3 (Hmz picked the sideways sweep over round 2): the left hand comes
+# up palm up out at his side, then sweeps in across the front and down,
+# palm tilted to the student and fingers angled at the desk, with a lean and
+# the head down to it. The sideways travel is what the student's camera can
+# see; a reach towards the camera is foreshortened (rounds 1 and 2).
+# MJ's tee sets the limits. Her armpit skin sits between the tee's arm and
+# chest panels and comes through when the upper arm is pulled in to the body
+# without swinging forward (17 mm mid-sweep in the first sweep draft, which
+# also landed the palm in front of his groin; round 2 had the same fault).
+# Pushing that skin further in drives it into the chest panel, so the path
+# avoids it instead. And with the upper arm not turned out, her sleeve lets
+# upper-arm skin show at the camera. So: out wide with the arm lifted away
+# from the body (51 cm to his side, like PresentModel's start), swung
+# forward (0.9 s) before it comes in, ending front-left with the upper arm
+# turned out, palm to the student and fingers down at the desk. 18 cm of
+# sideways travel.
+_OY_OUT = ([("F", 10), ("L", 14), ("A", -30)], [("L", -80), ("A", -104)], [("L", -12), ("F", 8)])
+_OY_IN = ([("F", -15), ("L", -38), ("A", -35)], [("L", -54), ("A", -40)], [("L", 29), ("F", 32)])
+OVER_TO_YOU = {
+    "name": "OverToYou", "length": 2.4,
+    "bones": {
+        "CC_Base_Spine02": [(0, []), (0.6, []), (1.15, [("L", 5)]), (1.85, [("L", 5)]), (2.4, [])],
+        "CC_Base_L_Upperarm": [(0, []), (0.2, [("L", -8)]), (0.35, [("F", 8), ("L", 0), ("A", -15)]),
+                               (0.6, _OY_OUT[0]), (0.9, [("F", 6), ("L", -34), ("A", -34)]), (1.15, _OY_IN[0]),
+                               (1.85, _OY_IN[0]), (2.0, [("F", -2), ("L", -32), ("A", -25)]),
+                               (2.15, [("F", 10), ("L", -18)]), (2.4, [])],
+        "CC_Base_L_Forearm": [(0, []), (0.2, [("L", -45)]), (0.35, [("L", -70), ("A", -60)]), (0.6, _OY_OUT[1]),
+                              (0.9, [("L", -68), ("A", -70)]), (1.15, _OY_IN[1]), (1.85, _OY_IN[1]),
+                              (2.1, [("L", -45), ("A", -15)]), (2.4, [])],
+        "CC_Base_L_Hand": [(0, []), (0.6, _OY_OUT[2]), (1.15, _OY_IN[2]), (1.3, [("L", 33), ("F", 32)]),
+                           (1.85, [("L", 31), ("F", 32)]), (2.4, [])],
+        **_neck([(0, 0, 0), (0.6, 0, 1), (1.15, 0, 7), (1.85, 0, 6), (2.4, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"L": [(0, 0), (0.2, 0.3), (0.6, 0.8), (1.15, 0.85), (1.85, 0.82), (2.4, 0)]},
+}
+
 V98 = (ONE_MOMENT, POINT_NEAR, PATIENT_TILT, BACK_TO_BOARD, OVER_TO_YOU)
+V98_NOT_SHIPPED = (OVER_TO_YOU_R2,)
 
 
 def build_v98(teachers=("Jake", "MJ"), names=None):
