@@ -163,6 +163,56 @@ def _offset(ops, axes, arm, bone, P_idle_all):
     return q
 
 
+# A full tuck (openness -1) per joint, knuckle to tip, added to the reference
+# pose. The Canino finger bones flex about their local Z (-Z on the left
+# hand, +Z on the right), measured on both rigs; Idle is only about 10 deg a
+# joint, which is why scaling Idle could not close a hand.
+CURL_DEG = {1: 70, 2: 85, 3: 55}
+
+
+def _curl(basis, a, side="L", joint=1, thumb=False):
+    """
+    A finger's local basis at openness `a`: 0 is the reference pose (Idle, or
+    the base loop's frame), 1 is rest (flat). Below 0 it curls past the
+    reference towards a tuck at -1 (the fingers a point folds away; V9.8):
+    a bend about the bone's own Z by `CURL_DEG`. The thumb's axes differ per
+    joint, so it carries on along its reference bend instead (-1 is twice it).
+    """
+    if a >= 0 or thumb:
+        return _exp(_log(basis) * (1.0 - a))
+    z = -1.0 if side == "L" else 1.0
+    return basis @ Quaternion(Vector((0, 0, z)), math.radians(CURL_DEG[joint] * -a))
+
+
+def _base_frames(arm, action_name, n_frames):
+    """Every bone's armature-space rotation, local basis and location on each frame of a base loop, wrapping."""
+    act = bpy.data.actions[action_name]
+    s, e = (int(round(v)) for v in act.frame_range)
+    reset_pose(arm)
+    _use_action(arm, act)
+    out = []
+    for i in range(n_frames):
+        bpy.context.scene.frame_set(s + i % (e - s))
+        out.append(({pb.name: pb.matrix.to_3x3().normalized() for pb in arm.pose.bones},
+                    {pb.name: pb.matrix_basis.to_quaternion().normalized() for pb in arm.pose.bones},
+                    {pb.name: pb.location.copy() for pb in arm.pose.bones}))
+    return out
+
+
+def _loc_bones(arm, action_name):
+    """Bones the base action keys a location on (the hips)."""
+    import v9_fingers
+    cb = v9_fingers._channelbag(arm, bpy.data.actions[action_name])
+    return {m.group(1) for fc in cb.fcurves
+            for m in [re.match(r'pose\.bones\["(.+)"\]\.location', fc.data_path)] if m}
+
+
+def base_length(teacher, base):
+    """Seconds of one pass of the base loop `<Teacher>_<base>`, frame count - 1."""
+    s, e = bpy.data.actions[f"{teacher}_{base}"].frame_range
+    return (int(round(e)) - int(round(s))) / FPS
+
+
 def build(teacher, spec, idle="Idle", name=None, frame=1):
     """
     Key `spec` on `teacher` as the action `<Teacher>_<spec name>`.
@@ -171,14 +221,32 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
       "name": "PresentModel", "length": 2.6,
       "bones": {logical CC name: [(t, [(axis, deg), ...]), ...]},
       "fingers": {"L"|"R": [(t, openness 0..1), ...]},
-      "thumb": {"L"|"R": [(t, [(axis, deg), ...]), ...]}   # extra, on Thumb1
+      "digits": {"L"|"R": {"Index"|"Mid"|"Ring"|"Pinky"|"Thumb": [(t, openness -1..1), ...]}},
+      "thumb": {"L"|"R": [(t, [(axis, deg), ...]), ...]},  # extra, on Thumb1
+      "on": "Idle4", "passes": 2,                           # optional, see below
     }
+
+    `digits` (V9.8) keys one finger on its own, over `fingers` for that
+    finger: an extended index with the others curled. Its openness is exact
+    (no life cascade share and no bent fingertips, so a pointing index is
+    straight) and may go below 0 to curl past the reference pose (`_curl`).
+    Life's stagger and a smaller drift still apply.
+
+    `on` (V9.8) builds a full-body clip for the base layer: every bone plays
+    the named base loop (`<Teacher>_<on>`) frame by frame, hips included, and
+    the spec's offsets and fingers ride on top of it instead of on a still
+    Idle pose. The clip takes the loop's length (times `passes`, the loop
+    played that many times over), so it loops wherever the base does; keep the first and last keys of every offset equal (the specs keep
+    them identity) and the seam is the base's own.
     """
     arm_name, root_name = TEACHERS[teacher]
     arm = bpy.data.objects[arm_name]
     P_idle, B_idle = idle_pose(arm, f"{teacher}_{idle}", frame)
     axes = body_axes(arm, root_name)
     bones = arm.data.bones
+    on = spec.get("on")
+    if on:
+        spec = {**spec, "length": base_length(teacher, on) * spec.get("passes", 1)}
 
     offs = {}
     for logical, keys in spec.get("bones", {}).items():
@@ -204,6 +272,15 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
                 w, delay, phase = (FINGER_LIFE[m.group(2)] if life else (1.0, 0.0, 0.0))
                 jscale = FINGER_JOINT[int(m.group(3))] if life else 1.0
                 fingers[b.name] = ([k[0] for k in keys], [k[1] for k in keys], w * jscale, delay, phase)
+    digit = set()
+    for side, per in spec.get("digits", {}).items():
+        for b in bones:
+            m = FINGER_JOINT_RE.match(b.name)
+            if m and m.group(1) == side and m.group(2) in per:
+                keys = per[m.group(2)]
+                _w, delay, phase = FINGER_LIFE[m.group(2)] if life else (1.0, 0.0, 0.0)
+                fingers[b.name] = ([k[0] for k in keys], [k[1] for k in keys], 1.0, delay, phase)
+                digit.add(b.name)
 
     # Wrist follow-through (life): the hand trails its forearm by WRIST_LAG
     # seconds at WRIST_K strength, so it is carried rather than welded on.
@@ -240,16 +317,22 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
 
     def openness(n, t):
         ts, ys, w, delay, phase = fingers[n]
+        lo = -1.0 if n in digit else 0.0
         if not life:
-            return min(1.0, max(0.0, pchip(ts, ys, t) * w))
+            return min(1.0, max(lo, pchip(ts, ys, t) * w))
         # The stagger and the drift both fade out at the ends, so the first and
         # last frames are exactly the keyed values.
         edge = max(0.0, min(1.0, t / 0.2, (length - t) / 0.2))
         a = pchip(ts, ys, t - delay * edge)
-        a += FINGER_DRIFT * edge * min(1.0, pchip(ts, ys, t) / 0.3) * math.sin(2 * math.pi * 0.55 * t + phase)
-        return min(1.0, max(0.0, a * w))
+        drift = FINGER_DRIFT * (0.5 if n in digit else 1.0)
+        a += drift * edge * min(1.0, abs(pchip(ts, ys, t)) / 0.3) * math.sin(2 * math.pi * 0.55 * t + phase)
+        return min(1.0, max(lo, a * w))
 
     n_frames = int(round(spec["length"] * FPS)) + 1
+    on_frames = _base_frames(arm, f"{teacher}_{on}", n_frames) if on else None
+    loc_keyed = _loc_bones(arm, f"{teacher}_{on}") if on else set()
+    if on:
+        keyed |= {b.name for b in bones}
     act_name = name or f"{teacher}_{spec['name']}"
     old = bpy.data.actions.get(act_name)
     if old is not None:
@@ -262,19 +345,25 @@ def build(teacher, spec, idle="Idle", name=None, frame=1):
     prev = {}
     for i in range(n_frames):
         t = i / FPS
+        P_ref, B_ref, L_ref = on_frames[i] if on else (P_idle, B_idle, None)
         O = chain(t, chain(t - WRIST_LAG) if lag else None)
         P = {}
         for b in order:
             n = b.name
             par = b.parent.name if b.parent else None
             if n in offs:
-                P[n] = O[n].to_matrix() @ P_idle[n]
+                P[n] = O[n].to_matrix() @ P_ref[n]
                 continue
             if n in fingers:
-                basis = B_idle[n].slerp(Quaternion(), openness(n, t))
+                m = FINGER_JOINT_RE.match(n)
+                basis = _curl(B_ref[n], openness(n, t), m.group(1), int(m.group(3)), m.group(2) == "Thumb")
             else:
-                basis = B_idle[n]
+                basis = B_ref[n]
             P[n] = (P[par] @ rel[n] if par else rel[n]) @ basis.to_matrix()
+        for n in loc_keyed:
+            pb = arm.pose.bones[n]
+            pb.location = L_ref[n]
+            pb.keyframe_insert("location", frame=frame + i)
         for n in keyed:
             par = bones[n].parent.name if bones[n].parent else None
             base = (P[par] @ rel[n]) if par else rel[n]
@@ -524,6 +613,106 @@ def hands(teacher, action_name, frames=None, base="Idle", fingers_gap=False):
             row["near"] = round(min((a - b).length for a in pts["L"] for b in pts["R"]) * 1000)
         out.append(row)
     return out
+
+
+STAND = {"Jake": 1.3824, "MJ": 1.3521}  # standScale, AVATAR_ASSETS
+TEACHER_POS, TEACHER_RY = Vector((-1.0, -1.7, -3.0)), 0.3  # Experience.tsx
+PANEL_CENTER, PANEL_SIZE = Vector((0.37, 0.18, -3.0)), 1.455  # SCENE_X/Y/Z, IMG_SIZE
+
+
+def _to_teacher(teacher, v3, point=True):
+    """A three.js world point (or direction) in the teacher's Blender space."""
+    d = (v3 - TEACHER_POS) / STAND[teacher] if point else v3
+    c, sn = math.cos(-TEACHER_RY), math.sin(-TEACHER_RY)
+    x, y, z = c * d.x + sn * d.z, d.y, -sn * d.x + c * d.z
+    return Vector((x, -z, y))
+
+
+def panel_hit(teacher, action_name, frames, side="L", base=None):
+    """
+    Where the `side` index finger points on the image panel (V9.8, for
+    PointNear): the ray from the index knuckle through its tip, met with the
+    panel plane. `u` runs from the panel's near edge (his side, 0) to the far
+    one (1), `v` from its bottom (0) to its top (1); inside is 0..1 on both.
+    Also the fingertip's distance to the plane in mm.
+    """
+    arm = composite(teacher, base, action_name) if base else bpy.data.objects[TEACHERS[teacher][0]]
+    if not base:
+        reset_pose(arm)
+        _use_action(arm, bpy.data.actions[action_name])
+    mw = arm.matrix_world
+    c = _to_teacher(teacher, PANEL_CENTER)
+    n = _to_teacher(teacher, Vector((0, 0, 1)), point=False).normalized()
+    u_ax = _to_teacher(teacher, Vector((1, 0, 0)), point=False).normalized()
+    v_ax = Vector((0, 0, 1))
+    half = PANEL_SIZE / STAND[teacher] / 2
+    k1, k3 = rt.resolve(arm, f"CC_Base_{side}_Index1"), rt.resolve(arm, f"CC_Base_{side}_Index3")
+    out = []
+    for f in frames:
+        bpy.context.scene.frame_set(f)
+        a = mw @ arm.pose.bones[k1].head
+        tip = mw @ arm.pose.bones[k3].tail
+        d = (tip - a).normalized()
+        den = d.dot(n)
+        row = {"f": f, "tip_mm": round((tip - c).dot(n) * 1000)}
+        if abs(den) > 1e-6:
+            p = a + d * ((c - a).dot(n) / den)
+            row["u"] = round(((p - c).dot(u_ax) + half) / (2 * half), 2)
+            row["v"] = round(((p - c).dot(v_ax) + half) / (2 * half), 2)
+            row["ahead"] = (p - a).dot(d) > 0
+        out.append(row)
+    return out
+
+
+def hand_frame(teacher, side="L"):
+    """
+    The `side` hand on the current frame, in mm and unit vectors along his
+    body axes (left, forward, up) from the chest (Spine02 head): the middle
+    knuckle, the index tip, the palm normal and the index direction.
+    """
+    arm = bpy.data.objects[TEACHERS[teacher][0]]
+    mw = arm.matrix_world
+    root = bpy.data.objects[TEACHERS[teacher][1]].matrix_world.to_3x3().normalized()
+    axes = [(root @ Vector(v)).normalized() for v in ((1, 0, 0), (0, -1, 0), (0, 0, 1))]
+    j = lambda n: mw @ arm.pose.bones[rt.resolve(arm, n)].head
+    c = j("CC_Base_Spine02")
+    h, i1, k1 = j(f"CC_Base_{side}_Hand"), j(f"CC_Base_{side}_Index1"), j(f"CC_Base_{side}_Pinky1")
+    tip = mw @ arm.pose.bones[rt.resolve(arm, f"CC_Base_{side}_Index3")].tail
+    palm = (i1 - h).cross(k1 - h).normalized() * (-1 if side == "L" else 1)
+    ax = lambda v: Vector([v.dot(a) for a in axes])
+    return {"knuckle": ax(j(f"CC_Base_{side}_Mid1") - c) * 1000, "tip": ax(tip - c) * 1000,
+            "palm": ax(palm), "index": ax((tip - i1).normalized())}
+
+
+def fit(teacher, make_spec, params, cost, base="Idle", seconds=40, step=12, min_step=2):
+    """
+    Coordinate descent on a static pose (V9.8): `make_spec(params)` returns a
+    short constant spec, `cost(teacher, action_name)` scores it with the pose
+    composited over `base` on frame 2. Returns (cost, params). For aiming a
+    hand by numbers before looking at it; the result still gets judged by eye.
+    """
+    import time
+    def ev(p):
+        spec = make_spec(p)
+        build(teacher, spec)
+        composite(teacher, base, f"{teacher}_{spec['name']}")
+        bpy.context.scene.frame_set(2)
+        return cost(teacher, f"{teacher}_{spec['name']}")
+    t0 = time.time()
+    p = dict(params)
+    best = ev(p)
+    while time.time() - t0 < seconds and step >= min_step:
+        better = False
+        for k in p:
+            for d in (step, -step):
+                q = dict(p)
+                q[k] += d
+                c = ev(q)
+                if c < best:
+                    best, p, better = c, q, True
+        if not better:
+            step //= 2
+    return best, p
 
 
 def close_camera(teacher, bone, dist=1.1, side=0.0, up=0.0, name="V96Close"):
@@ -925,6 +1114,140 @@ def build_v97(teachers=("Jake", "MJ"), names=None):
     out = []
     for t in teachers:
         for spec in V97:
+            if names and spec["name"] not in names:
+                continue
+            act, s, e = build(t, spec)
+            out.append((act.name, s, e, finish(t, act.name, relax=0 if spec.get("life") else 0.35)))
+    return out
+
+
+# ─── The V9.8 clips (catalogue batch 3: events and base clips) ───────────────
+# Rows 4, 8, 15, 17b and 18. Arm poses at the hold were aimed by numbers with
+# `fit` (and `panel_hit` for PointNear), then judged at the lesson camera.
+# OneMoment's right arm was fitted on the right bones directly, so its keys
+# are raw (not mirrored through `_right`).
+
+def _tuck(keys):
+    """The three fingers a pointing hand folds away, all on the same keys."""
+    return {f: keys for f in ("Mid", "Ring", "Pinky")}
+
+
+# "One moment" (isLoading rising edge, then the Thinking loop takes over): the
+# right index raised gently in front of the shoulder, palm to the student,
+# the other fingers folded, held briefly. The forearm lifts before it turns.
+_OM_UA = [("F", 21), ("L", -23), ("A", -7)]
+_OM_HAND = [("L", -30), ("F", -32)]
+ONE_MOMENT = {
+    "name": "OneMoment", "length": 2.0,
+    "bones": {
+        "CC_Base_R_Upperarm": [(0, []), (0.2, [("L", -10)]), (0.55, _OM_UA), (1.4, _OM_UA),
+                               (1.7, [("F", 6), ("L", -12)]), (2.0, [])],
+        "CC_Base_R_Forearm": [(0, []), (0.2, [("L", -45), ("A", -30)]), (0.55, [("L", -112), ("A", -94)]),
+                              (0.72, [("L", -108), ("A", -94)]), (1.4, [("L", -108), ("A", -94)]),
+                              (1.7, [("L", -50), ("A", -40)]), (2.0, [])],
+        "CC_Base_R_Hand": [(0, []), (0.55, _OM_HAND), (1.4, _OM_HAND), (2.0, [])],
+        **_neck([(0, 0, 0), (0.55, 3, 0), (1.4, 3, 0), (2.0, 0, 0)]),
+    },
+    "life": True,
+    "digits": {"R": {"Index": [(0, 0), (0.2, 0.3), (0.5, 1), (1.4, 1), (1.75, 0.3), (2.0, 0)],
+                     **_tuck([(0, 0), (0.2, -0.2), (0.5, -0.9), (1.4, -0.9), (1.75, -0.2), (2.0, 0)]),
+                     "Thumb": [(0, 0), (0.5, -0.7), (1.4, -0.7), (2.0, 0)]}},
+}
+
+# Calling out a nearby part of the image (point): the near (left) hand, index
+# into the near third of the panel (u 0.27, v 0.46 on Jake), the chest and
+# head turned to it. Full body for the base layer, riding two passes of Idle4
+# (6 s): up by 0.75 s, one small push towards the image (3 deg of elbow: at
+# 6 deg MJ's fingertip came within 2 mm of the panel), held, down by 5.3 s.
+_PN_UA = [("U", -8), ("F", 53), ("A", -24)]
+_PN_FA = [("L", -42), ("A", -6)]
+POINT_NEAR = {
+    "name": "PointNear", "on": "Idle4", "passes": 2,
+    "bones": {
+        "CC_Base_Spine02": [(0, []), (0.75, [("U", 12)]), (4.3, [("U", 12)]), (5.3, []), (6.0, [])],
+        "CC_Base_L_Upperarm": [(0, []), (0.25, [("L", -12)]), (0.75, _PN_UA), (4.3, _PN_UA),
+                               (4.8, [("F", 20), ("L", -18)]), (5.3, []), (6.0, [])],
+        "CC_Base_L_Forearm": [(0, []), (0.25, [("L", -40)]), (0.75, _PN_FA), (1.0, [("L", -39), ("A", -6)]),
+                              (1.35, _PN_FA), (4.3, _PN_FA), (4.8, [("L", -55), ("A", -10)]), (5.3, []), (6.0, [])],
+        "CC_Base_L_Hand": [(0, []), (0.75, [("F", -12)]), (4.3, [("F", -12)]), (5.3, []), (6.0, [])],
+        **_neck3([(0, 0, 0, 0), (0.75, 30, 0, 0), (4.3, 30, 0, 0), (5.3, 0, 0, 0), (6.0, 0, 0, 0)]),
+    },
+    "life": True,
+    # The index straightens as the arm arrives, not on the way up (draft 1
+    # pointed at the floor mid-rise).
+    "digits": {"L": {"Index": [(0, 0), (0.4, 0.15), (0.75, 1), (4.3, 1), (4.9, 0.3), (5.3, 0), (6.0, 0)],
+                     **_tuck([(0, 0), (0.35, -0.3), (0.7, -0.9), (4.3, -0.9), (5.1, -0.1), (5.3, 0), (6.0, 0)]),
+                     "Thumb": [(0, 0), (0.7, -0.6), (4.3, -0.6), (5.3, 0), (6.0, 0)]}},
+}
+
+# Waiting for the answer (listen): a patient tilt of the head to his left,
+# the chin a touch down, listening. No nod (it says yes), no hands. Draft 1
+# tilted 7 deg, which the classroom camera did not show without a hand to
+# carry it. Neck and head only (a `head` mask): draft 2's small chest lean
+# carried the base's arms with it and put MJ's hip hand 12 mm into her skirt
+# over Talking4.
+PATIENT_TILT = {
+    "name": "PatientTilt", "length": 3.0,
+    "bones": _neck([(0, 0, 0), (0.9, -12, 4), (1.6, -13, 4), (2.2, -12, 3), (3.0, 0, 0)]),
+}
+
+# A wrong answer with an image still up (wrong + previewImage): turns back to
+# the board, chest and head, with a light open left hand towards it: "let's
+# look at that again". Short, because the reveal starts talking at once.
+# Draft 1 had the arm out nearly straight, a full PresentModel; the elbow now
+# stays bent and the hand close. The forearm lifts (0.2 s) before it turns
+# and untwists (1.65 s) before it drops: turning low swung the little finger
+# to 32-36 mm off the trousers, against 60-80 at rest.
+_BB = {
+    "Upperarm": [(0, []), (0.2, [("L", -8)]), (0.5, [("F", 8), ("L", -15), ("A", -35)]),
+                 (1.3, [("F", 9), ("L", -15), ("A", -37)]), (1.65, [("F", 3), ("L", -8), ("A", -8)]), (2.0, [])],
+    "Forearm": [(0, []), (0.2, [("L", -40)]), (0.5, [("L", -80), ("A", -65)]), (1.3, [("L", -78), ("A", -66)]),
+                (1.65, [("L", -40), ("A", -15)]), (2.0, [])],
+    "Hand": [(0, []), (0.55, [("F", 8)]), (1.3, [("F", 8)]), (2.0, [])],
+}
+BACK_TO_BOARD = {
+    "name": "BackToBoard", "length": 2.0,
+    "bones": {
+        "CC_Base_Spine01": [(0, []), (0.45, [("U", 4)]), (1.3, [("U", 4)]), (2.0, [])],
+        "CC_Base_Spine02": [(0, []), (0.45, [("U", 8)]), (1.3, [("U", 8)]), (2.0, [])],
+        **{f"CC_Base_L_{b}": k for b, k in _BB.items()},
+        **_neck3([(0, 0, 0, 0), (0.45, 28, -2, 2), (1.3, 30, -3, 3), (2.0, 0, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"L": [(0, 0), (0.5, 0.65), (1.3, 0.62), (2.0, 0)]},
+}
+
+# The quiz is handed out (activeQuiz rising edge): "from me to you". The left
+# hand gathers in front of the chest palm up, then sweeps forward and down
+# towards the student's desk, fingers angled at it, with a lean and the head
+# down to it. Draft 1 went straight to the offer: seen from the front the
+# reach was foreshortened and read as a low palm at the hip, a shrug.
+_OY_GATHER = ([("F", -58), ("L", 0), ("A", -10)], [("L", -130), ("A", -42)], [("L", 30), ("F", 10)])
+_OY_OFFER = ([("F", -54), ("L", -35), ("A", -23)], [("L", -65), ("A", -26)], [("L", 20), ("F", 5)])
+OVER_TO_YOU = {
+    "name": "OverToYou", "length": 2.4,
+    "bones": {
+        "CC_Base_Spine02": [(0, []), (0.55, [("L", 2)]), (1.0, [("L", 6)]), (1.8, [("L", 6)]), (2.4, [])],
+        "CC_Base_L_Upperarm": [(0, []), (0.2, [("L", -10)]), (0.55, _OY_GATHER[0]), (1.0, _OY_OFFER[0]),
+                               (1.8, _OY_OFFER[0]), (2.1, [("L", -10)]), (2.4, [])],
+        "CC_Base_L_Forearm": [(0, []), (0.2, [("L", -50), ("A", -20)]), (0.55, _OY_GATHER[1]), (1.0, _OY_OFFER[1]),
+                              (1.8, _OY_OFFER[1]), (2.1, [("L", -50), ("A", -20)]), (2.4, [])],
+        "CC_Base_L_Hand": [(0, []), (0.55, _OY_GATHER[2]), (1.0, _OY_OFFER[2]), (1.15, [("L", 26), ("F", 5)]),
+                           (1.8, [("L", 24), ("F", 5)]), (2.4, [])],
+        **_neck([(0, 0, 0), (0.55, 0, 2), (1.0, 0, 8), (1.8, 0, 7), (2.4, 0, 0)]),
+    },
+    "life": True,
+    "fingers": {"L": [(0, 0), (0.2, 0.3), (0.55, 0.7), (1.0, 0.85), (1.8, 0.82), (2.4, 0)]},
+}
+
+V98 = (ONE_MOMENT, POINT_NEAR, PATIENT_TILT, BACK_TO_BOARD, OVER_TO_YOU)
+
+
+def build_v98(teachers=("Jake", "MJ"), names=None):
+    """Key, drive helpers and relax fingers for the V9.8 clips (or `names`)."""
+    out = []
+    for t in teachers:
+        for spec in V98:
             if names and spec["name"] not in names:
                 continue
             act, s, e = build(t, spec)
