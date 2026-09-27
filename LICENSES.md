@@ -15,8 +15,8 @@ and inside each GLB as `asset.copyright`.
 
 | File | Work | Author | Licence | Source | Modified |
 |---|---|---|---|---|---|
-| `public/models/Teacher_Jake.glb`, `Teacher_Jake_clips.glb` | "Free Cartoon Game Man Character (Rigged)" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411 | Yes: retargeted animation, 14 baked visemes (the m/b/p shape softened to 60%, V9.6), materials rebuilt, hidden skin masked, knee smoothing, finger relax, 7 hand-keyed gestures (see "Authored animation clips") |
-| `public/models/Teacher_MJ.glb`, `Teacher_MJ_clips.glb` | "Free Stylized Cartoon Girl Rigged Character" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4 | Yes: as Jake, plus a new skirt and a re-grown tee built in-house |
+| `public/models/Teacher_Jake.glb`, `Teacher_Jake_clips.glb` | "Free Cartoon Game Man Character (Rigged)" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411 | Yes: retargeted animation, 14 baked visemes (the m/b/p shape softened to 60%, V9.6), materials rebuilt, hidden skin masked, knee smoothing, finger relax, 13 hand-keyed gestures (see "Authored animation clips") |
+| `public/models/Teacher_MJ.glb`, `Teacher_MJ_clips.glb` | "Free Stylized Cartoon Girl Rigged Character" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4 | Yes: as Jake, plus a new skirt and a re-grown tee built in-house, and the base file's collar and sleeves fixed (V9.7, arm and head skin pushed clear of the cloth) |
 
 Licence text: https://creativecommons.org/licenses/by/4.0/
 
@@ -33,7 +33,7 @@ Licence text: https://creativecommons.org/licenses/by/4.0/
 
 | Files | Author | Licence | Source | Modified |
 |---|---|---|---|---|
-| The 17 Mixamo clips inside `Teacher_Jake.glb` / `Teacher_Jake_clips.glb` and `Teacher_MJ.glb` / `Teacher_MJ_clips.glb` (the packs also carry 7 authored clips, next section); all 16 in `public/models/animations_Avaturn.glb` | Adobe Mixamo (Y Bot motions; clip names are in `scripts/build_avaturn_animations.py`) | Mixamo terms: free for personal and commercial projects, not for resale of the motions themselves. **Unverified today**: Adobe's FAQ returned 403 to the fetch tool; the wording is as recorded in the V9 plan's sources | https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html | Yes: retargeted to the CC4 and Avaturn rigs, root motion removed, resampled to 30 fps, left-right mirrors (`...M`), finger relax, compressed |
+| The 17 Mixamo clips inside `Teacher_Jake.glb` / `Teacher_Jake_clips.glb` and `Teacher_MJ.glb` / `Teacher_MJ_clips.glb` (the packs also carry 13 authored clips, next two sections); all 16 in `public/models/animations_Avaturn.glb` | Adobe Mixamo (Y Bot motions; clip names are in `scripts/build_avaturn_animations.py`) | Mixamo terms: free for personal and commercial projects, not for resale of the motions themselves. **Unverified today**: Adobe's FAQ returned 403 to the fetch tool; the wording is as recorded in the V9 plan's sources | https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html | Yes: retargeted to the CC4 and Avaturn rigs, root motion removed, resampled to 30 fps, left-right mirrors (`...M`), finger relax, compressed |
 
 A note on redistribution: the clips are served as ordinary GLBs, so they are fetchable. They are bound
 to a character skeleton and shipped as part of the app rather than as a downloadable library, which is
@@ -46,6 +46,16 @@ the use Mixamo's terms describe, but nobody has confirmed that reading with Adob
 | `PresentModel`, `Almost`, `Exactly`, `WellDone`, `Encourage`, `ThatsIt`, `GlanceBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source. **Not Mixamo-derived**: the keys are written by hand from poses (`.claude/eval/2026-09-18-v9-bakeoff/scripts/v9_gesture.py`), not retargeted from any captured or purchased motion | Authored 2026-09-24 | Not applicable. They play on the CC BY 4.0 characters above and are packed inside the same GLB files, so the file as a whole stays under the attribution requirement of its character |
 
 The two clips tried and rejected in the same session (`LookAgain`, `LookAgainHand`) were never shipped.
+
+## Authored animation clips (Aristo's own, V9.7)
+
+| Clips | Author | Licence | Source | Modified |
+|---|---|---|---|---|
+| `Imagine`, `HoldIdea`, `StepBeat`, `MoveOn`, `YourTurn`, `BringTogether` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6 clips above | Authored 2026-09-27 | Not applicable, as the V9.6 row above. `Imagine`, `MoveOn` and `YourTurn` each replace a rejected alternate concept, kept as `V97_NOT_SHIPPED` specs, never exported |
+
+The six V9.6 hand-keyed clips above were also re-exported this session with the same finger life (cascade, stagger,
+drift, wrist lag) the six V9.7 clips use, replacing their previously flatter hands; Hmz approved both sets in motion.
+That is a re-bake of existing clips, not a new authored work, so it does not add a row.
 
 ## Legacy and archived teachers (not offered in the picker; still in `public/models`)
 

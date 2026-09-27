@@ -1304,3 +1304,163 @@ motion was recorded. `/learn` needs a login and was not opened.
   expressions, the FFT viseme fallback.
 - V8.7 (re-capture the landing footage) is no longer blocked by V9 but still waits on V8.4 and V8.5; the plan gives
   it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal.
+
+## V9.7 - Teaching moves: six role- and phase-aware clips (2026-09-27)
+
+Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (hand-off: `.claude/plans/NEXT-SESSION-V97-WIRING.md`,
+brief: `.claude/plans/NEXT-SESSION-V97-TEACHING-MOVES.md`). Scene backup before the session: `bakeoff_scene_pre_v97.blend`.
+
+**Verdict: six authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+`/dev/avatar-lab`, all six confirmed playing through the real director in the app.** Gates: type-check clean,
+lint 10 (unchanged), tests 314 (was 291), build green. `typescript-reviewer` on the director/Teacher.tsx diff
+found one real bug (below), fixed and covered by a regression test before this report was written.
+
+### What shipped
+
+| Clip | Scenario | Trigger | Length | What it is |
+|---|---|---|---|---|
+| Imagine | `hook` | segment role `hook` | 2.25 s | Both palms open outward and slightly apart, a curious head tilt |
+| HoldIdea | `explainBeat` | phase `explain`, once per phase | 2.54 s | Hands in front of the chest, palms facing with a gap, as if holding the idea |
+| StepBeat | `demoStep` | segment role `demo_step` | 1.46 s | One chop of the right hand, lands about 0.6 s in: "first... then..." |
+| MoveOn | `transition` | segment role `transition` | 1.63 s | Forward roll, opens palm up. Hmz picked this over a palm-down brush |
+| YourTurn | `challengeSetup` | segment role `challenge_setup` | 2.04 s, plays at **0.85** | Both palms offered forward, a small lean. Hmz picked this over the other draft, and its speed, like the greeting wave |
+| BringTogether | `connectBeat` | phase `connect`, once per phase | 2.46 s | Wide to close, never nearer than 182 mm: "it all fits" |
+
+Also wired (data only, no new clip): a new image landing on the board (`activePreviewImageUrl` changes) plays the
+existing PresentModel, the same as a model appearing -- it does not move the look target, since there is no scene
+position for an image to turn to.
+
+All six are upper-mask overlays played once, Canino rigs only, `mirrorable: false`, source "authored in Blender
+for Aristo (V9.7)", licence "Aristo's own". Durations are the real GLB lengths, read from both shipped packs with
+`@gltf-transform/core` (they bake identically on Jake and MJ). None play over Pointing or Thinking (`over` is the
+same `QUIET_BASES`/`TALKING_BASES` list PresentModel and the greeting already use).
+
+### What was rejected, and why (Opus half)
+
+Two concepts were built for each of Imagine, MoveOn and YourTurn; Hmz judged each pair in motion and picked one:
+
+- **Imagine**: shipped the palms-open-outward concept. Its alternate (pointing at empty space) read as a wave and
+  did not converge in three drafts.
+- **MoveOn**: shipped the forward roll, opens palm up ("B" in the wiring notes). Its alternate, a palm-down brush,
+  was rejected.
+- **YourTurn**: shipped both palms offered forward ("B"). Its alternate was rejected.
+
+Every rejected concept is kept as a `V97_NOT_SHIPPED` spec in `v9_gesture.py`, never exported.
+
+### Hands get a "life" pass (Opus half, Hmz: "the hands remain flat... rigid and not life like")
+
+`v9_gesture.py` specs can now set `"life": True`: a finger cascade (index most open, pinky least), bent
+fingertips, a staggered unfurl, a slow drift while held, and 0.1 s of wrist follow-through at half strength,
+built with `finish(..., relax=0)`. All six V9.7 clips use it, and so do the six V9.6 hand clips (PresentModel,
+Encourage, Almost, Exactly, WellDone, ThatsIt), re-baked into the packs this session. Exactly and MoveOn start
+and end slightly open, and MoveOn lifts before it drops, to keep MJ's fingertips clear of her skirt. Hmz approved
+both the new and re-baked sets in motion.
+
+### MJ's shirt fixed (Opus half, Hmz: "looks a bit chopped")
+
+Arm-skin triangles under her sleeves and one head-mesh face under the collar showed through as skin patches;
+`find_pokes` (vertex-only) missed both, because it skips skin within 1 cm of a garment edge and a face can cross
+the cloth between vertices that are under it. Fixed in the mesh: the head face pushed 3 mm under, the
+sleeve-covered arm skin pushed 3 mm further in, the cuffs flared 5 mm off the arm. A camera-ray test (skin within
+6 mm of the sleeve or collar, three views, every clip) went from 422 hits on Idle to 0. MJ keeps her 17 visemes
+and three base clips; this is a base-file mesh edit, not an animation change.
+
+### Checks in Blender (Opus half, both teachers, over Idle)
+
+| Check | Result |
+|---|---|
+| `find_pokes` (shirt, trousers, skin) | 0 across all 13 hand-keyed clips, both teachers |
+| MJ `check_through` over Idle, Idle2, Idle4, Talking, Talking4 | 0 |
+| Hand clearance from shirt/trousers | Never closer than at rest |
+| Export against the raw file (`v9_verify_anim.mjs`) | Worst clip 0.0166 deg / 0.242 mm (limits 0.02 deg / 0.3 mm) |
+
+### Sizes
+
+| | Before (V9.6) | After (V9.7, verified on disk) |
+|---|---|---|
+| Jake clip pack | 577,352 B | 676,368 B |
+| MJ clip pack | 603,744 B | 703,156 B |
+| Jake base GLB | 2,284,136 B | 2,284,136 B (unchanged) |
+| MJ base GLB | 1,776,860 B | 1,776,880 B (the collar/sleeve fix) |
+
+About 99 KB more per pack for six clips plus the re-baked hands on the existing seven; still well inside the 3 MB
+per-rig animation budget.
+
+### The director change (Sonnet half)
+
+- `roleOf` added beside `phaseOf` in `director.ts`: the current segment's role (`narrate`, `hook`, `demo_step`,
+  `callout`, `challenge_setup`, `challenge_reveal`, `transition`, from `src/lib/agents/teaching.ts`), read the
+  same way `phaseOf` reads phase. `Teacher.tsx`'s `signalsOf` passes `role`, `segmentId` and `previewImage`
+  (the store's `activePreviewImageUrl`) into `DirectorSignals`.
+- Six new scenarios in `animationManifest.ts` (`hook`, `explainBeat`, `demoStep`, `transition`, `connectBeat`,
+  `challengeSetup`), all upper overlays, `over: [...QUIET_BASES, ...TALKING_BASES]` like PresentModel and the
+  greeting so none plays over Pointing or Thinking. Given fresh `row` numbers (20-25): the six situations are new
+  to `V96-GESTURE-CATALOGUE.md`'s numbering, which does not otherwise line up with the original `SCENARIOS.row`
+  scheme already in the file (documented in a header comment so a future session does not try to reconcile them).
+- A "segment changed" edge (`sig.segmentId !== state.prev.segmentId`) drives four role-based moves (Imagine,
+  StepBeat, MoveOn, YourTurn), which fire on every matching segment, and two sparse phase beats (HoldIdea,
+  BringTogether), gated by a `beatDone` flag per phase that resets when `segmentId` returns to null (between
+  lessons).
+- The image-landing trigger extends the existing "Row 9" block: `sig.previewImage` changing to a new non-null
+  value starts PresentModel the same way `modelShown` flipping true does, without touching `presentUntil` (an
+  image has no scene position for the look layer to turn to).
+
+**Bug found and fixed (typescript-reviewer, HIGH):** `beatDone.{explain,connect}` was being set to `true` the
+instant a qualifying segment was picked, before it was known whether the overlay actually started. Any of three
+ordinary situations -- the segment's own gesture resolves to `pointing` or `thinking` (blocking `overlayAllowed`),
+an overlay already busy from a higher-priority event on the same frame, or the clip pack not loaded yet -- would
+silently and permanently burn the one shot HoldIdea or BringTogether get for the rest of the lesson. Fixed by only
+setting the flag once `startOverlay` actually returns a play (the same pattern the greeting's `greeting = "done"`
+already uses three rows down). Verified with a new test: a hook segment blocked by pointing no longer prevents
+the *next* qualifying segment from playing HoldIdea. Caught before this report was written, so nothing shipped
+with it.
+
+**Known, not fixed (low priority):** `beatDone` is not seeded from `seed` in `createDirectorState`, unlike the
+other `prev` fields. A teacher swapped in mid-lesson, after the explain beat already played once, has no memory
+of that and could replay it. `DirectorSignals` would need a `beatDone`-shaped field to fix properly; avatar
+switches mid-lesson are presumably rare, so this was left as a known edge rather than widening the signal
+interface for it.
+
+### Tests
+
+`manifest.test.ts`: `roleOf` gets the same coverage `phaseOf` already had; the coverage snapshot gained six rows
+(20-25), 1 on Canino, 0 on every other rig (the six clips are Canino-only). `director.test.ts`: one case per new
+scenario (`it.each`, mirroring the V9.6 "authored gestures" block), YourTurn's fixed 0.85 speed, the sparse beat
+firing once per phase and resetting between lessons, the beatDone regression above, three cases for the new-image
+trigger (fires, does not move the look target, fires again for a different image not the same one twice), and one
+that a move does not play over Pointing or while loading. 291 -> 314 tests.
+
+### Checked in the app (Jake and MJ)
+
+`/dev/avatar-lab`: all six clips played in isolation with the right track count and duration (2.25, 2.54, 1.46,
+1.63, 2.04, 2.46 s), on both Jake and MJ, no visible clipping through cloth.
+
+`/demo` (Volcanoes lesson, real segment roles), with a temporary `window.__v97` hook exposing the director's
+state (reverted before committing, grep `__v97` finds nothing): stepping through the real lesson with the
+transcript's own Next control, five of the six moves fired on their own from the lesson's real segment data --
+**Imagine** on the hook (seg_001), **HoldIdea** once during the explain phase, **StepBeat** on a demo-step segment,
+**YourTurn** on the challenge-setup segment, **MoveOn** on the connect-phase segment (tagged `transition` in this
+lesson's data, so it takes MoveOn over BringTogether -- expected, see below). **BringTogether** never gets a
+matching segment in this particular lesson (its one connect-phase segment is role `transition`, which the
+role-based check takes first), so it was confirmed instead by forcing a `connect`/`narrate` segment through the
+store directly: it played, at the manifest's 2.46 s. The image-landing trigger was confirmed the same way -- the
+lesson's own two image-bearing segments both resolve to `gesture: "pointing"` (one explicitly, one by
+`useLessonPlayback`'s default for a segment with its own visual), which correctly blocks the overlay the same way
+Pointing blocks any of these moves, so a clean confirmation needed a segment with a non-pointing gesture, forced
+the same way. No console errors from the director/manifest/Teacher.tsx change; the errors seen mid-session were
+self-inflicted (a forced `previewImage` pointed at a file that does not exist, to trigger the signal without
+waiting for a real new image) and gone on a clean reload. `/learn` needs a login and was not opened.
+
+### Known edges
+
+- **BringTogether may rarely see daylight.** Its trigger needs a `connect`-phase segment whose role is not
+  `hook`/`demo_step`/`transition`/`challenge_setup` -- exactly the Volcanoes lesson's situation, where the only
+  connect-phase segment is a `transition`. Whether this is common across generated lessons was not checked beyond
+  this one demo; if BringTogether turns out to be rare in practice, the fix is data (loosen the role priority, or
+  ask the teaching agent to emit more `narrate`-role connect segments), not a code change.
+- **The `beatDone` seeding gap** above: low priority, not fixed.
+- Not verified: `/learn` (auth), a phone, frame rate, the six clips against a lesson with more or fewer segments
+  per phase than Volcanoes.
+- Parked, unchanged: batch 3 of the catalogue (OneMoment, BackToBoard, OverToYou, PatientTilt, PointNear), the
+  Avaturn rig's pack, female narration for MJ, MJ's hair and scalp seam, mesh-level expressions, the FFT viseme
+  fallback.

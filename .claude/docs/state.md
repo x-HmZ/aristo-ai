@@ -2,6 +2,28 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-27 - V9.7 done: six teaching-move clips wired (Opus authored, Sonnet wired)
+
+Detail in `.claude/plans/V9-REPORT.md` ("V9.7"). Gates: type-check clean, lint 10, tests 314 (was 291), build green.
+
+- **Shipped:** Imagine (hook), HoldIdea (explain, sparse), StepBeat (demo_step), MoveOn (transition), YourTurn
+  (challenge_setup, plays at 0.85), BringTogether (connect, sparse) in the Jake and MJ clip packs (676,368 B and
+  703,156 B). A new board image now also plays PresentModel. The director reads a segment's role via the new
+  `roleOf` (beside `phaseOf`). Approved by Hmz in motion on `/dev/avatar-lab`; five of six confirmed playing from
+  the real Volcanoes lesson's own segment data on `/demo`, BringTogether confirmed by forcing a matching segment
+  (its lesson has none) -- both via a temporary, reverted debug hook.
+- **Also:** all 13 hand-keyed clips (the new six plus the six V9.6 ones) got a "life" pass on the fingers (Hmz:
+  the old hands were "flat... rigid"); MJ's collar and sleeves fixed (arm/head skin was showing through).
+- **Bug caught and fixed before shipping:** `typescript-reviewer` found `beatDone` (the sparse-beat gate) was
+  latching even when the overlay never actually played (blocked by Pointing/Thinking, a busy overlay, or a clip
+  not yet loaded), permanently losing HoldIdea/BringTogether for the rest of the lesson. Fixed and covered by a
+  regression test.
+- **Question for Hmz:** none blocking. Two low-priority items are recorded in V9-REPORT's "Known edges": whether
+  BringTogether is rare across real lessons (its Volcanoes trigger only fires via a forced segment), and that
+  `beatDone` isn't seeded on a mid-lesson avatar swap.
+- **Next:** batch 3 of the gesture catalogue (OneMoment, BackToBoard, OverToYou, PatientTilt, PointNear), Opus to
+  author, in `.claude/plans/V96-GESTURE-CATALOGUE.md`. V8.7 (landing re-capture) still waits on V8.4 and V8.5.
+
 ## 2026-09-25 - V9.6 done: seven authored gestures wired (Opus authored, Sonnet wired)
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.6"). Gates: type-check clean, lint 10, tests 291, build green.

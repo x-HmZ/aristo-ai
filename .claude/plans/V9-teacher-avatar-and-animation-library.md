@@ -385,6 +385,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.4 face, expressions, gaze (2026-09-23; the Canino rigs have only a weak `mouthSmile` and blink, so expressions are smile levels plus eye gaze, see V9-REPORT "V9.4")
 - [x] V9.5 integrated, budgets measured, docs and LICENSES.md done (2026-09-23; Jake is the default, budgets not blown, LICENSES.md has open items for Hmz, see V9-REPORT "V9.5")
 - [x] V9.6 Tier 2 gestures (2026-09-25): seven hand-keyed clips (PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard) authored, approved by Hmz in motion, wired for Jake and MJ; ShakeNo kept at a lower weight; PP viseme softened; see V9-REPORT "V9.6". Next: the catalogue's batches 2 and 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
+- [x] V9.7 teaching moves (2026-09-27): catalogue batch 2 -- six role/phase-aware clips (Imagine, HoldIdea, StepBeat, MoveOn, YourTurn, BringTogether) authored, approved by Hmz in motion, wired for Jake and MJ via new `roleOf`/segment-edge signals in the director; a new board image reuses PresentModel; hands on all 13 authored clips got a "life" pass and MJ's collar/sleeves were fixed. See V9-REPORT "V9.7". Next: batch 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
 
 ## Sources (checked 2026-09-11)
 

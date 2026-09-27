@@ -5,11 +5,12 @@ surroundings and situations that can rise up and that make sense overall". This 
 row names what is physically around the teacher, what is happening in the lesson at that moment, and the
 signal that already exists for it. Nothing here needs a new app signal or a lesson-schema change.
 
-## Status (2026-09-25)
+## Status (2026-09-27)
 
 **Batch 1 is done and wired** (Almost, Exactly, WellDone, ThatsIt, GlanceBoard, plus the approved PresentModel and
-Encourage); see V9-REPORT "V9.6". Batches 2 and 3 are next, on Opus. Batch 2 needs the director to read segment
-roles (`hook`, `demo_step`, `transition`, `challenge_setup`) and phases, which it does not do yet.
+Encourage); see V9-REPORT "V9.6". **Batch 2 is done and wired** (Imagine, HoldIdea, StepBeat, MoveOn, YourTurn,
+BringTogether, plus PresentModel reused for a new board image); see V9-REPORT "V9.7". The director now reads
+segment roles and phases (`roleOf`/`phaseOf` in `director.ts`). Batch 3 is next, on Opus.
 
 ## Settled so far in V9.6 (Hmz)
 
