@@ -357,6 +357,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       {/* Top nav */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
         <AristoMark
+          decorative={false}
           className="h-[17px] text-aristo-brown-main"
           litClassName="text-aristo-orange-main"
         />

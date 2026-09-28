@@ -91,6 +91,7 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <AristoMark
+            decorative={false}
             className="h-[20px] text-aristo-brown-main"
             litClassName="text-aristo-orange-main"
           />

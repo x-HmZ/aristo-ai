@@ -65,6 +65,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
       <div className="relative flex flex-col items-center gap-6 px-8 py-10 rounded-3xl glass shadow-aristo-lg w-[min(90vw,360px)]">
         {/* Wordmark */}
         <AristoMark
+          decorative={false}
           className="h-[22px] text-aristo-brown-main"
           litClassName="text-aristo-orange"
         />
