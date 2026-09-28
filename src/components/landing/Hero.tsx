@@ -49,7 +49,7 @@ export function Hero() {
                 SHAPE.control,
                 PRESS,
                 FOCUS,
-                "inline-flex min-h-[56px] items-center justify-center gap-2.5 bg-accent px-6 text-base font-bold text-accent-ink hover:-translate-y-0.5 hover:bg-accent/90"
+                "inline-flex min-h-[56px] items-center justify-center gap-2.5 bg-accent px-6 text-base font-bold text-accent-ink hover:-translate-y-0.5 hover:bg-accent-hover"
               )}
             >
               <Play className="size-4 fill-current" strokeWidth={0} />

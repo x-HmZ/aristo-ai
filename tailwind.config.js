@@ -28,6 +28,7 @@ module.exports = {
         muted: "rgb(var(--muted) / <alpha-value>)",
         line: "rgb(var(--line) / <alpha-value>)",
         accent: "rgb(var(--accent) / <alpha-value>)",
+        "accent-hover": "rgb(var(--accent-hover) / <alpha-value>)",
         "accent-ink": "rgb(var(--accent-ink) / <alpha-value>)",
         "accent-text": "rgb(var(--accent-text) / <alpha-value>)",
         tint: "rgb(var(--tint) / <alpha-value>)",

@@ -38,7 +38,7 @@ export function FinalCta() {
                 SHAPE.control,
                 PRESS,
                 FOCUS,
-                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-accent px-7 text-base font-bold text-accent-ink hover:-translate-y-0.5 hover:bg-accent/90 sm:w-auto"
+                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-accent px-7 text-base font-bold text-accent-ink hover:-translate-y-0.5 hover:bg-accent-hover sm:w-auto"
               )}
             >
               Try a lesson

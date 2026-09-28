@@ -69,8 +69,12 @@
  *   3. prefers-color-scheme.
  * The dark values appear twice, once per route in. Keep them equal.
  *
- * The lock is read with :has(). A browser without it drops both dark rules
- * and renders light everywhere, which is safe. */
+ * The lock is read with :has(). A browser without it (Chrome < 105, Safari
+ * < 15.4, Firefox < 121) drops both dark rules and the lock rules below, so
+ * it renders light everywhere; locked surfaces then lose their old cream page
+ * defaults but stay readable. The first selector in each scrollbar pair
+ * below is the viewport scrollbar (the root itself); the second is nested
+ * scroll containers. */
 @layer base {
   :root {
     --bg: 243 244 246; /* #F3F4F6  page */
@@ -81,12 +85,13 @@
     --muted: 90 97 112; /* #5A6170  labels, captions; 5.7:1 on bg */
     --line: 220 223 229; /* #DCDFE5  hairlines and borders */
     --accent: 180 83 31; /* #B4531F  solid fills: primary actions; 4.9:1 under accent-ink */
+    --accent-hover: 154 74 30; /* #9A4A1E  hover on accent fills; 6.1:1 under accent-ink */
     --accent-ink: 252 252 253; /* #FCFCFD  text on any solid fill (accent or status) */
     --accent-text: 169 76 27; /* #A94C1B  accent as text or icon; 5.1:1 on bg */
     --tint: 244 234 227; /* #F4EAE3  warm wash, one surface per section */
     --tint-line: 230 211 198; /* #E6D3C6 */
-    --success: 21 128 61; /* #15803D  4.6:1 on bg, 4.9:1 on surface */
-    --warning: 180 83 9; /* #B45309  4.6:1 on bg, 4.9:1 on surface */
+    --success: 22 101 52; /* #166534  6.5 on bg, 7.0 on surface, 6.0 on sunk and tint */
+    --warning: 146 64 14; /* #92400E  6.4 on bg, 6.9 on surface, 6.0 on sunk and tint */
     --danger: 185 28 28; /* #B91C1C  5.9:1 on bg, 6.3:1 on surface */
     --info: 29 78 216; /* #1D4ED8  6.1:1 on bg, 6.5:1 on surface */
     --glow: 180 83 31; /* the classroom's light spill, see .glow-* */
@@ -135,6 +140,7 @@
       --muted: 143 151 164; /* #8F97A4  6.4:1 on bg */
       --line: 37 43 54; /* #252B36 */
       --accent: 233 138 82; /* #E98A52  7.4:1 under accent-ink */
+      --accent-hover: 240 160 112; /* #F0A070  9.0:1 under accent-ink */
       --accent-ink: 14 17 23;
       --accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
       --tint: 33 26 23; /* #211A17 */
@@ -161,6 +167,7 @@
     --muted: 143 151 164;
     --line: 37 43 54;
     --accent: 233 138 82;
+    --accent-hover: 240 160 112;
     --accent-ink: 14 17 23;
     --accent-text: 239 154 102;
     --tint: 33 26 23;
@@ -229,15 +236,18 @@
     border-color: hsl(35 35% 86%); /* #E8DDCF, the old shadcn border */
   }
 
+  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-track,
   :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-track {
     background: hsl(35 35% 91%); /* #F0E9E0, the old shadcn muted */
     border-radius: 9999px;
   }
 
+  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-thumb,
   :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb {
     background: hsl(var(--aristo-orange-light));
   }
 
+  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-thumb:hover,
   :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--aristo-orange-main));
   }

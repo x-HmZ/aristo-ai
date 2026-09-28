@@ -60,7 +60,7 @@ export function LandingNav() {
               SHAPE.control,
               PRESS,
               FOCUS,
-              "inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap bg-accent px-4 text-sm font-semibold text-accent-ink hover:bg-accent/90 sm:px-[18px]"
+              "inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap bg-accent px-4 text-sm font-semibold text-accent-ink hover:bg-accent-hover sm:px-[18px]"
             )}
           >
             Try a lesson
