@@ -179,8 +179,8 @@ export function GeneratedModel({
               px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer
               transition-all duration-200 select-none
               ${hoveredAnnotation === label
-                ? "bg-primary text-primary-foreground shadow-aristo scale-110"
-                : "bg-white/90 text-foreground shadow-warm border border-border"
+                ? "bg-aristo-orange-main text-aristo-cream shadow-aristo scale-110"
+                : "bg-white/90 text-aristo-brown-main shadow-warm border border-aristo-beige-dark"
               }
             `}
             onMouseEnter={() => setHoveredAnnotation(label)}
