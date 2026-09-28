@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <style>
+    .ink { fill: #0e1117; }
+    .lit { fill: #b4521f; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #ecedef; }
+      .lit { fill: #e98a52; }
+    }
+  </style>
+  <path class="ink" d="M2 1h12v2H2ZM4 4h2v8H4ZM10 4h2v8h-2ZM2 13h12v2H2Z"/>
+  <path class="lit" d="M7 4h2v8H7Z"/>
+</svg>

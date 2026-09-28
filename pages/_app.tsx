@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import "@/app/globals.css";
 import { geistSans, geistMono } from "@/lib/fonts";
 
@@ -27,6 +28,14 @@ import { geistSans, geistMono } from "@/lib/fonts";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      {/* The App Router's metadata (src/app/layout.tsx) never reaches these
+          pages, so without this the tab has no title. The icon links point at
+          the same files the App Router emits (src/app/icon.svg, favicon.ico). */}
+      <Head>
+        <title>Aristo</title>
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
+      </Head>
       <style jsx global>{`
         :root {
           --font-geist-sans: ${geistSans.style.fontFamily};
