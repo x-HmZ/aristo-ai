@@ -84,7 +84,7 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
           background:    "#fffef8",
           borderRadius:  "16px",
           padding:       "18px 20px",
-          boxShadow:     "0 32px 90px rgba(30,14,6,0.65), 0 0 0 1px rgba(249,123,47,0.12)",
+          boxShadow:     "0 32px 90px rgba(30,14,6,0.65), 0 0 0 1px hsl(var(--aristo-orange) / 0.12)",
           color:         "#1a1a2e",
           fontFamily:    "system-ui, sans-serif",
           // Subtle paper-on-desk drop tone — soft warm shadow under the

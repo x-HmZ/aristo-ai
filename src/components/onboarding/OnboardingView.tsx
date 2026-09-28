@@ -84,7 +84,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gradient mb-2">Aristo</h1>
-          <p className="text-[#8B6E5A] text-sm">
+          <p className="text-aristo-brown-muted text-sm">
             {userName ? `Welcome, ${userName}!` : "Welcome!"} Let&apos;s personalise your experience.
           </p>
         </div>
@@ -96,9 +96,9 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               key={n}
               className={`h-2 rounded-full transition-all duration-300 ${
                 n === step
-                  ? "w-6 bg-[#F97B2F]"
+                  ? "w-6 bg-aristo-orange"
                   : n < step
-                  ? "w-2 bg-[#F97B2F]/40"
+                  ? "w-2 bg-aristo-orange/40"
                   : "w-2 bg-[#E5D5CB]"
               }`}
             />
@@ -111,8 +111,8 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
           {/* Step 1 — Goal */}
           {step === 1 && (
             <div>
-              <h2 className="text-lg font-bold text-[#3D2110] mb-1">What&apos;s your goal?</h2>
-              <p className="text-sm text-[#8B6E5A] mb-6">This shapes how we pace and structure your lessons.</p>
+              <h2 className="text-lg font-bold text-aristo-brown mb-1">What&apos;s your goal?</h2>
+              <p className="text-sm text-aristo-brown-muted mb-6">This shapes how we pace and structure your lessons.</p>
               <div className="space-y-3">
                 {GOALS.map((g) => (
                   <button
@@ -120,12 +120,12 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
                     onClick={() => setGoal(g.value)}
                     className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
                       goal === g.value
-                        ? "border-[#F97B2F] bg-[#FFF0E4]"
-                        : "border-white/60 bg-white/50 hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4]"
+                        ? "border-aristo-orange bg-aristo-wash"
+                        : "border-white/60 bg-white/50 hover:border-aristo-orange/40 hover:bg-aristo-wash-faint"
                     }`}
                   >
-                    <div className="font-semibold text-[#3D2110] text-sm">{g.label}</div>
-                    <div className="text-xs text-[#8B6E5A] mt-0.5">{g.description}</div>
+                    <div className="font-semibold text-aristo-brown text-sm">{g.label}</div>
+                    <div className="text-xs text-aristo-brown-muted mt-0.5">{g.description}</div>
                   </button>
                 ))}
               </div>
@@ -135,8 +135,8 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
           {/* Step 2 — Daily time */}
           {step === 2 && (
             <div>
-              <h2 className="text-lg font-bold text-[#3D2110] mb-1">How much time can you commit daily?</h2>
-              <p className="text-sm text-[#8B6E5A] mb-6">We&apos;ll size lessons and reviews to fit your schedule.</p>
+              <h2 className="text-lg font-bold text-aristo-brown mb-1">How much time can you commit daily?</h2>
+              <p className="text-sm text-aristo-brown-muted mb-6">We&apos;ll size lessons and reviews to fit your schedule.</p>
               <div className="grid grid-cols-2 gap-3">
                 {TIMES.map((t) => (
                   <button
@@ -144,11 +144,11 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
                     onClick={() => setTime(t.value)}
                     className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${
                       time === t.value
-                        ? "border-[#F97B2F] bg-[#FFF0E4]"
-                        : "border-white/60 bg-white/50 hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4]"
+                        ? "border-aristo-orange bg-aristo-wash"
+                        : "border-white/60 bg-white/50 hover:border-aristo-orange/40 hover:bg-aristo-wash-faint"
                     }`}
                   >
-                    <div className="font-semibold text-[#3D2110] text-sm">{t.label}</div>
+                    <div className="font-semibold text-aristo-brown text-sm">{t.label}</div>
                   </button>
                 ))}
               </div>
@@ -158,8 +158,8 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
           {/* Step 3 — Domain */}
           {step === 3 && (
             <div>
-              <h2 className="text-lg font-bold text-[#3D2110] mb-1">What do you want to learn?</h2>
-              <p className="text-sm text-[#8B6E5A] mb-6">We&apos;ll load a curated knowledge graph for your subject.</p>
+              <h2 className="text-lg font-bold text-aristo-brown mb-1">What do you want to learn?</h2>
+              <p className="text-sm text-aristo-brown-muted mb-6">We&apos;ll load a curated knowledge graph for your subject.</p>
               <div className="space-y-3">
                 {DOMAINS.map((d) => (
                   <button
@@ -167,12 +167,12 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
                     onClick={() => setDomain(d.value)}
                     className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 ${
                       domain === d.value
-                        ? "border-[#F97B2F] bg-[#FFF0E4]"
-                        : "border-white/60 bg-white/50 hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4]"
+                        ? "border-aristo-orange bg-aristo-wash"
+                        : "border-white/60 bg-white/50 hover:border-aristo-orange/40 hover:bg-aristo-wash-faint"
                     }`}
                   >
                     <span className="text-2xl">{d.emoji}</span>
-                    <span className="font-semibold text-[#3D2110] text-sm">{d.label}</span>
+                    <span className="font-semibold text-aristo-brown text-sm">{d.label}</span>
                   </button>
                 ))}
               </div>
@@ -191,7 +191,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
             {step > 1 ? (
               <button
                 onClick={() => setStep((s) => (s - 1) as 1 | 2)}
-                className="text-sm text-[#8B6E5A] hover:text-[#3D2110] transition-colors"
+                className="text-sm text-aristo-brown-muted hover:text-aristo-brown transition-colors"
               >
                 ← Back
               </button>
@@ -203,7 +203,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               <button
                 onClick={advance}
                 disabled={!canAdvance}
-                className="px-6 py-2.5 rounded-xl bg-[#F97B2F] text-white font-semibold text-sm shadow-aristo-sm hover:bg-[#C45A10] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-xl bg-aristo-orange text-white font-semibold text-sm shadow-aristo-sm hover:bg-aristo-orange-ink transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Continue →
               </button>
@@ -211,7 +211,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               <button
                 onClick={handleSubmit}
                 disabled={!canAdvance || submitting}
-                className="px-6 py-2.5 rounded-xl bg-[#F97B2F] text-white font-semibold text-sm shadow-aristo-sm hover:bg-[#C45A10] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-xl bg-aristo-orange text-white font-semibold text-sm shadow-aristo-sm hover:bg-aristo-orange-ink transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting ? "Setting up…" : "Start learning →"}
               </button>
@@ -220,7 +220,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
         </div>
 
         {/* Step label */}
-        <p className="text-center text-xs text-[#8B6E5A] mt-4">
+        <p className="text-center text-xs text-aristo-brown-muted mt-4">
           Step {step} of 3
         </p>
       </div>

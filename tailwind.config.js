@@ -50,16 +50,26 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Aristo brand colors
+        // Aristo brand colors. Values live in src/app/globals.css.
         aristo: {
           orange: "hsl(var(--aristo-orange))",
+          "orange-hover": "hsl(var(--aristo-orange-hover))",
+          "orange-ink": "hsl(var(--aristo-orange-ink))",
+          "orange-deep": "hsl(var(--aristo-orange-deep))",
           "orange-light": "hsl(var(--aristo-orange-light))",
           "orange-pale": "hsl(var(--aristo-orange-pale))",
-          "orange-deep": "hsl(var(--aristo-orange-deep))",
+          wash: "hsl(var(--aristo-wash))",
+          "wash-light": "hsl(var(--aristo-wash-light))",
+          "wash-faint": "hsl(var(--aristo-wash-faint))",
+          backdrop: "hsl(var(--aristo-backdrop))",
           beige: "hsl(var(--aristo-beige))",
           "beige-dark": "hsl(var(--aristo-beige-dark))",
           cream: "hsl(var(--aristo-cream))",
           brown: "hsl(var(--aristo-brown))",
+          "brown-soft": "hsl(var(--aristo-brown-soft))",
+          "brown-muted": "hsl(var(--aristo-brown-muted))",
+          "brown-faint": "hsl(var(--aristo-brown-faint))",
+          tan: "hsl(var(--aristo-tan))",
         },
       },
       borderRadius: {

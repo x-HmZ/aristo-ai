@@ -71,12 +71,12 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-white/60">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[#F97B2F] font-bold text-lg">✦</span>
-            <h2 className="text-lg font-bold text-[#3D2110]">
+            <span className="text-aristo-orange font-bold text-lg">✦</span>
+            <h2 className="text-lg font-bold text-aristo-brown">
               What would you like to do?
             </h2>
           </div>
-          <p className="text-xs text-[#8B6E5A]">
+          <p className="text-xs text-aristo-brown-muted">
             Start a course or explore any topic freely.
           </p>
         </div>
@@ -87,15 +87,15 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
           {/* Free explore */}
           <button
             onClick={onExplore}
-            className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-[#FFF0E4] to-[#FFDBB8] border border-[#F97B2F]/20 hover:border-[#F97B2F]/50 hover:shadow-aristo-sm transition-all duration-200 group"
+            className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-aristo-wash to-[#FFDBB8] border border-aristo-orange/20 hover:border-aristo-orange/50 hover:shadow-aristo-sm transition-all duration-200 group"
           >
             <div className="flex items-start gap-3">
               <span className="text-2xl mt-0.5">🌐</span>
               <div>
-                <div className="font-bold text-[#3D2110] text-sm group-hover:text-[#F97B2F] transition-colors">
+                <div className="font-bold text-aristo-brown text-sm group-hover:text-aristo-orange transition-colors">
                   Explore Freely
                 </div>
-                <div className="text-xs text-[#8B6E5A] mt-0.5 leading-relaxed">
+                <div className="text-xs text-aristo-brown-muted mt-0.5 leading-relaxed">
                   Ask Aristo about any topic — no set path.
                 </div>
               </div>
@@ -127,7 +127,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
 
           {/* Published courses */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B6E5A] mb-2 px-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-brown-muted mb-2 px-1">
               Courses
             </p>
 
@@ -137,7 +137,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
                   {[0, 1, 2].map((i) => (
                     <span
                       key={i}
-                      className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-bounce"
+                      className="w-1.5 h-1.5 rounded-full bg-aristo-orange animate-bounce"
                       style={{ animationDelay: `${i * 0.15}s` }}
                     />
                   ))}
@@ -146,7 +146,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
             ) : courses.length === 0 ? (
               <div className="text-center py-6">
                 <div className="text-3xl mb-2">📚</div>
-                <p className="text-xs text-[#8B6E5A]">
+                <p className="text-xs text-aristo-brown-muted">
                   No published courses yet. Generate one above!
                 </p>
               </div>
@@ -156,19 +156,19 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
                   <button
                     key={c.id}
                     onClick={() => onStartCourse(c)}
-                    className="w-full text-left p-4 rounded-2xl bg-white/70 border border-white/60 hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4] hover:shadow-aristo-sm transition-all duration-200 group"
+                    className="w-full text-left p-4 rounded-2xl bg-white/70 border border-white/60 hover:border-aristo-orange/40 hover:bg-aristo-wash-faint hover:shadow-aristo-sm transition-all duration-200 group"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-[#3D2110] text-sm group-hover:text-[#F97B2F] transition-colors truncate">
+                        <div className="font-semibold text-aristo-brown text-sm group-hover:text-aristo-orange transition-colors truncate">
                           {c.title}
                         </div>
                         {c.description && (
-                          <div className="text-xs text-[#8B6E5A] mt-0.5 leading-relaxed line-clamp-2">
+                          <div className="text-xs text-aristo-brown-muted mt-0.5 leading-relaxed line-clamp-2">
                             {c.description}
                           </div>
                         )}
-                        <div className="text-[10px] text-[#B8A99A] mt-1.5 flex items-center gap-2">
+                        <div className="text-[10px] text-aristo-brown-faint mt-1.5 flex items-center gap-2">
                           <span>{conceptCount(c)} concepts</span>
                           {c.estimated_hours && (
                             <>
@@ -178,7 +178,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
                           )}
                         </div>
                       </div>
-                      <span className="text-[#F97B2F] text-lg mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                      <span className="text-aristo-orange text-lg mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                         →
                       </span>
                     </div>

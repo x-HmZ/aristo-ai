@@ -85,8 +85,8 @@ function ConceptNode({
       title={meta?.name ?? conceptId}
       className={`group relative flex flex-col items-start gap-1 px-3 py-2 rounded-xl border transition-all duration-200 text-left w-full ${
         isCurrent
-          ? "border-[#F97B2F] bg-[#FFF0E4] shadow-[0_0_0_2px_rgba(249,123,47,0.3)]"
-          : "border-white/60 bg-white/60 hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4]"
+          ? "border-aristo-orange bg-aristo-wash shadow-[0_0_0_2px_hsl(var(--aristo-orange)/0.3)]"
+          : "border-white/60 bg-white/60 hover:border-aristo-orange/40 hover:bg-aristo-wash-faint"
       }`}
     >
       <div className="flex items-center gap-2 w-full">
@@ -94,16 +94,16 @@ function ConceptNode({
           className="w-2 h-2 rounded-full shrink-0"
           style={{ backgroundColor: color }}
         />
-        <span className="text-[11px] font-semibold text-[#3D2110] truncate flex-1">
+        <span className="text-[11px] font-semibold text-aristo-brown truncate flex-1">
           {meta?.name ?? conceptId}
         </span>
         {isCurrent && (
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[#F97B2F] shrink-0">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-aristo-orange shrink-0">
             Now
           </span>
         )}
       </div>
-      <span className="text-[9px] text-[#8B6E5A]" style={{ color }}>
+      <span className="text-[9px] text-aristo-brown-muted" style={{ color }}>
         {masteryLabel(score)}
       </span>
     </button>
@@ -164,20 +164,20 @@ export function CourseMapView({
         <div className="px-6 pt-5 pb-4 border-b border-white/60 flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[#F97B2F] font-bold">✦</span>
-              <h2 className="text-base font-bold text-[#3D2110] truncate">
+              <span className="text-aristo-orange font-bold">✦</span>
+              <h2 className="text-base font-bold text-aristo-brown truncate">
                 {data?.course.title ?? "Course Map"}
               </h2>
             </div>
             {data?.course.description && (
-              <p className="text-xs text-[#8B6E5A] leading-relaxed line-clamp-2">
+              <p className="text-xs text-aristo-brown-muted leading-relaxed line-clamp-2">
                 {data.course.description}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 text-[#8B6E5A] hover:text-[#3D2110] text-lg font-medium"
+            className="shrink-0 text-aristo-brown-muted hover:text-aristo-brown text-lg font-medium"
           >
             ✕
           </button>
@@ -187,16 +187,16 @@ export function CourseMapView({
         {data && (
           <div className="px-6 py-3 border-b border-white/60">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-semibold text-[#3D2110]">
+              <span className="text-[11px] font-semibold text-aristo-brown">
                 {masteredCount} / {totalConcepts} concepts learned
               </span>
-              <span className="text-[11px] text-[#8B6E5A]">
+              <span className="text-[11px] text-aristo-brown-muted">
                 ~{data.course.estimated_hours}h
               </span>
             </div>
             <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#F97B2F] rounded-full transition-all duration-500"
+                className="h-full bg-aristo-orange rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -213,7 +213,7 @@ export function CourseMapView({
           ].map(({ color, label }) => (
             <div key={label} className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-[9px] text-[#8B6E5A] font-medium">{label}</span>
+              <span className="text-[9px] text-aristo-brown-muted font-medium">{label}</span>
             </div>
           ))}
         </div>
@@ -226,7 +226,7 @@ export function CourseMapView({
                 {[0, 1, 2].map((i) => (
                   <span
                     key={i}
-                    className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-bounce"
+                    className="w-1.5 h-1.5 rounded-full bg-aristo-orange animate-bounce"
                     style={{ animationDelay: `${i * 0.15}s` }}
                   />
                 ))}
@@ -237,16 +237,16 @@ export function CourseMapView({
           {fetchError && (
             <div className="text-center py-10">
               <div className="text-3xl mb-2">⚠️</div>
-              <p className="text-sm font-semibold text-[#3D2110] mb-1">Course unavailable</p>
-              <p className="text-xs text-[#8B6E5A]">Could not load course data. Please go back and try again.</p>
+              <p className="text-sm font-semibold text-aristo-brown mb-1">Course unavailable</p>
+              <p className="text-xs text-aristo-brown-muted">Could not load course data. Please go back and try again.</p>
             </div>
           )}
 
           {!loading && !fetchError && modules.length === 0 && (
             <div className="text-center py-10">
               <div className="text-3xl mb-2">📭</div>
-              <p className="text-sm font-semibold text-[#3D2110] mb-1">No concepts in this course</p>
-              <p className="text-xs text-[#8B6E5A]">The knowledge graph for this domain hasn&apos;t been seeded yet. Ask an admin to add concepts.</p>
+              <p className="text-sm font-semibold text-aristo-brown mb-1">No concepts in this course</p>
+              <p className="text-xs text-aristo-brown-muted">The knowledge graph for this domain hasn&apos;t been seeded yet. Ask an admin to add concepts.</p>
             </div>
           )}
 
@@ -266,14 +266,14 @@ export function CourseMapView({
                   {/* Module header */}
                   <div className="flex items-center justify-between mb-2">
                     <div>
-                      <h3 className="text-xs font-bold text-[#3D2110]">{mod.title}</h3>
+                      <h3 className="text-xs font-bold text-aristo-brown">{mod.title}</h3>
                       {mod.description && (
-                        <p className="text-[10px] text-[#8B6E5A] leading-tight">
+                        <p className="text-[10px] text-aristo-brown-muted leading-tight">
                           {mod.description}
                         </p>
                       )}
                     </div>
-                    <span className="text-[10px] text-[#8B6E5A] tabular-nums shrink-0 ml-2">
+                    <span className="text-[10px] text-aristo-brown-muted tabular-nums shrink-0 ml-2">
                       {modMastered}/{modConceptIds.length} · {modPct}%
                     </span>
                   </div>
@@ -282,7 +282,7 @@ export function CourseMapView({
                   <div className="space-y-3 pl-3 border-l-2 border-white/50">
                     {mod.lessons.map((lesson) => (
                       <div key={lesson.id}>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#B8A99A] mb-1.5 ml-1">
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-aristo-brown-faint mb-1.5 ml-1">
                           {lesson.title}
                         </p>
                         <div className="space-y-1">
@@ -314,14 +314,14 @@ export function CourseMapView({
         <div className="px-6 py-4 border-t border-white/60 flex items-center justify-between gap-3">
           <button
             onClick={onClose}
-            className="text-sm text-[#8B6E5A] hover:text-[#3D2110] font-medium"
+            className="text-sm text-aristo-brown-muted hover:text-aristo-brown font-medium"
           >
             Back
           </button>
           <button
             onClick={handleContinue}
             disabled={loading || !data}
-            className="px-6 py-2.5 rounded-2xl text-sm font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] shadow-[0_4px_16px_rgba(249,123,47,0.35)] disabled:opacity-50 transition-all"
+            className="px-6 py-2.5 rounded-2xl text-sm font-semibold bg-aristo-orange text-white hover:bg-aristo-orange-hover shadow-[0_4px_16px_hsl(var(--aristo-orange)/0.35)] disabled:opacity-50 transition-all"
           >
             {masteredCount === 0 ? "Start Learning →" : "Continue →"}
           </button>

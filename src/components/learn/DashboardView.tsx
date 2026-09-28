@@ -43,7 +43,7 @@ function fmtMinutes(seconds: number): string {
 function StatPill({
   label,
   value,
-  color = "#F97B2F",
+  color = "hsl(var(--aristo-orange))",
 }: {
   label: string;
   value: string | number;
@@ -54,7 +54,7 @@ function StatPill({
       <div className="text-2xl font-bold tabular-nums" style={{ color }}>
         {value}
       </div>
-      <div className="text-[11px] text-[#8B6E5A] mt-0.5 text-center leading-tight">
+      <div className="text-[11px] text-aristo-brown-muted mt-0.5 text-center leading-tight">
         {label}
       </div>
     </div>
@@ -65,7 +65,7 @@ function MasteryBar({ score }: { score: number }) {
   const pct   = Math.round(score * 100);
   const color =
     pct >= 80 ? "#22C55E" :
-    pct >= 50 ? "#F97B2F" : "#EF4444";
+    pct >= 50 ? "hsl(var(--aristo-orange))" : "#EF4444";
   return (
     <div className="flex items-center gap-2 w-28 flex-shrink-0">
       <div className="flex-1 bg-white/40 rounded-full h-1.5 overflow-hidden">
@@ -105,23 +105,23 @@ export function DashboardView({ onClose }: DashboardViewProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
           <div>
-            <h2 className="text-lg font-bold text-[#3D2110]">Your Progress</h2>
-            <p className="text-xs text-[#8B6E5A]">How you're doing across all topics</p>
+            <h2 className="text-lg font-bold text-aristo-brown">Your Progress</h2>
+            <p className="text-xs text-aristo-brown-muted">How you're doing across all topics</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/70 text-[#8B6E5A] hover:text-[#3D2110] hover:bg-white transition-all text-sm font-bold"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/70 text-aristo-brown-muted hover:text-aristo-brown hover:bg-white transition-all text-sm font-bold"
           >
             ×
           </button>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center h-48 text-[#8B6E5A] text-sm">
+          <div className="flex items-center justify-center h-48 text-aristo-brown-muted text-sm">
             Loading…
           </div>
         ) : !analytics ? (
-          <div className="flex items-center justify-center h-48 text-[#8B6E5A] text-sm">
+          <div className="flex items-center justify-center h-48 text-aristo-brown-muted text-sm">
             Failed to load analytics.
           </div>
         ) : (
@@ -131,7 +131,7 @@ export function DashboardView({ onClose }: DashboardViewProps) {
               <StatPill
                 label="Day streak"
                 value={analytics.streak === 0 ? "—" : String(analytics.streak)}
-                color="#F97B2F"
+                color="hsl(var(--aristo-orange))"
               />
               <StatPill
                 label="This week"
@@ -150,14 +150,14 @@ export function DashboardView({ onClose }: DashboardViewProps) {
               <StatPill
                 label="Reviews due"
                 value={analytics.reviews_due || "—"}
-                color={analytics.reviews_due > 0 ? "#EF4444" : "#8B6E5A"}
+                color={analytics.reviews_due > 0 ? "#EF4444" : "hsl(var(--aristo-brown-muted))"}
               />
             </div>
 
             {/* Learner profile badges */}
             {analytics.learner_profile && (
               <div className="bg-white/60 rounded-2xl border border-white/50 px-5 py-4 space-y-3">
-                <h3 className="text-xs font-semibold text-[#8B6E5A] uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-aristo-brown-muted uppercase tracking-wider">
                   Your Learning Profile
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -168,12 +168,12 @@ export function DashboardView({ onClose }: DashboardViewProps) {
                   ].map(({ tag, label }) => (
                     <div
                       key={tag}
-                      className="flex items-center gap-1.5 bg-[#FFF0E4] border border-[#F97B2F]/20 rounded-full px-3 py-1"
+                      className="flex items-center gap-1.5 bg-aristo-wash border border-aristo-orange/20 rounded-full px-3 py-1"
                     >
-                      <span className="text-[10px] text-[#B8A99A] font-medium uppercase tracking-wide">
+                      <span className="text-[10px] text-aristo-brown-faint font-medium uppercase tracking-wide">
                         {tag}
                       </span>
-                      <span className="text-xs font-semibold text-[#C45A10] capitalize">
+                      <span className="text-xs font-semibold text-aristo-orange-ink capitalize">
                         {label}
                       </span>
                     </div>
@@ -185,7 +185,7 @@ export function DashboardView({ onClose }: DashboardViewProps) {
                   <div className="flex gap-5 text-xs">
                     {analytics.learner_profile.strongest_bloom_level && (
                       <span>
-                        <span className="text-[#8B6E5A]">Strongest: </span>
+                        <span className="text-aristo-brown-muted">Strongest: </span>
                         <span className="font-semibold text-[#16A34A] capitalize">
                           {analytics.learner_profile.strongest_bloom_level}
                         </span>
@@ -193,7 +193,7 @@ export function DashboardView({ onClose }: DashboardViewProps) {
                     )}
                     {analytics.learner_profile.weakest_bloom_level && (
                       <span>
-                        <span className="text-[#8B6E5A]">Needs work: </span>
+                        <span className="text-aristo-brown-muted">Needs work: </span>
                         <span className="font-semibold text-[#DC2626] capitalize">
                           {analytics.learner_profile.weakest_bloom_level}
                         </span>
@@ -207,16 +207,16 @@ export function DashboardView({ onClose }: DashboardViewProps) {
             {/* Weak concepts */}
             {analytics.weak_concepts.length > 0 && (
               <div className="bg-white/60 rounded-2xl border border-white/50 px-5 py-4 space-y-3">
-                <h3 className="text-xs font-semibold text-[#8B6E5A] uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-aristo-brown-muted uppercase tracking-wider">
                   Needs More Practice
                 </h3>
                 <div className="space-y-2.5">
                   {analytics.weak_concepts.map((c) => (
                     <div key={c.concept_id} className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#3D2110] truncate">{c.name}</p>
+                        <p className="text-sm font-medium text-aristo-brown truncate">{c.name}</p>
                         {c.domain && (
-                          <p className="text-[10px] text-[#B8A99A]">
+                          <p className="text-[10px] text-aristo-brown-faint">
                             {c.domain.replace(/_/g, " ")}
                           </p>
                         )}
@@ -230,7 +230,7 @@ export function DashboardView({ onClose }: DashboardViewProps) {
 
             {/* Empty state */}
             {analytics.total_concepts_seen === 0 && (
-              <div className="text-center py-6 text-[#8B6E5A] text-sm">
+              <div className="text-center py-6 text-aristo-brown-muted text-sm">
                 Complete your first lesson to see progress here.
               </div>
             )}

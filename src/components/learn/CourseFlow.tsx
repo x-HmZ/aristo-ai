@@ -20,12 +20,12 @@ export function CourseLoadingBar() {
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-bounce"
+            className="w-1.5 h-1.5 rounded-full bg-aristo-orange animate-bounce"
             style={{ animationDelay: `${i * 0.15}s` }}
           />
         ))}
       </div>
-      <span className="text-xs text-[#8B6E5A]">Loading your lesson…</span>
+      <span className="text-xs text-aristo-brown-muted">Loading your lesson…</span>
     </div>
   );
 }
@@ -42,13 +42,13 @@ export function CourseTakeQuizBar({
   return (
     <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-[#8B6E5A] font-medium">
+        <p className="text-xs text-aristo-brown-muted font-medium">
           Lesson complete — ready to test your knowledge?
         </p>
         <button
           onClick={onTakeQuiz}
           disabled={isLoading}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] disabled:opacity-50 shadow-aristo-sm transition-all"
+          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange text-white hover:bg-aristo-orange-hover disabled:opacity-50 shadow-aristo-sm transition-all"
         >
           {isLoading ? "Loading quiz…" : "Take Quiz →"}
         </button>
@@ -74,7 +74,7 @@ export function CourseAdvanceBar({
 }) {
   const pct        = total > 0 ? Math.round((score / total) * 100) : 0;
   const passed     = score >= Math.ceil(total * 0.6);
-  const scoreColor = passed ? "#16A34A" : pct >= 40 ? "#C45A10" : "#DC2626";
+  const scoreColor = passed ? "#16A34A" : pct >= 40 ? "hsl(var(--aristo-orange-ink))" : "#DC2626";
 
   return (
     <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
@@ -85,14 +85,14 @@ export function CourseAdvanceBar({
             <span className="text-sm font-bold tabular-nums" style={{ color: scoreColor }}>
               {score}/{total}
             </span>
-            <span className="text-xs text-[#8B6E5A] ml-1.5">
+            <span className="text-xs text-aristo-brown-muted ml-1.5">
               {passed ? "Nice work!" : "Keep going!"}
             </span>
           </div>
         </div>
         <button
           onClick={isLastTopic ? onFinish : onAdvance}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] shadow-aristo-sm transition-all"
+          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange text-white hover:bg-aristo-orange-hover shadow-aristo-sm transition-all"
         >
           {isLastTopic ? "Finish Course ✓" : "Next Topic →"}
         </button>

@@ -84,7 +84,7 @@ export default function FreeModelPreview() {
             data-testid={`stage-${s}`}
             onClick={() => setStage(s)}
             style={{
-              background: stage === s ? "#F97B2F" : "#333",
+              background: stage === s ? "hsl(var(--aristo-orange))" : "#333",
               color: "white", border: "none", borderRadius: 6,
               padding: "4px 10px", fontSize: 12, fontWeight: 700,
               cursor: "pointer",

@@ -39,16 +39,16 @@ function CalloutsImpl({ callouts }: CalloutsProps) {
         <span
           key={`${label}-${i}`}
           style={{
-            background:    "rgba(255, 245, 236, 0.94)",
-            border:        "1px solid rgba(249, 123, 47, 0.4)",
-            color:         "#C05A1C",
+            background:    "hsl(var(--aristo-wash-light) / 0.94)",
+            border:        "1px solid hsl(var(--aristo-orange) / 0.4)",
+            color:         "hsl(var(--aristo-orange-deep))",
             borderRadius:  "20px",
             padding:       "3px 9px",
             fontSize:      "10px",
             fontWeight:    700,
             letterSpacing: "0.02em",
             whiteSpace:    "nowrap",
-            boxShadow:     "0 2px 8px rgba(249, 123, 47, 0.18)",
+            boxShadow:     "0 2px 8px hsl(var(--aristo-orange) / 0.18)",
           }}
         >
           {label}

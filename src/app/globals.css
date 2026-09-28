@@ -4,15 +4,33 @@
 
 @layer base {
   :root {
-    /* Aristo brand palette — pastel orange + off-white/beige */
-    --aristo-orange: 25 90% 62%;         /* #F97B2F — main orange */
-    --aristo-orange-light: 28 95% 74%;   /* #FBA962 — lighter orange */
-    --aristo-orange-pale: 30 100% 88%;   /* #FFDBB8 — pale pastel orange */
-    --aristo-beige: 38 60% 93%;          /* #F5ECD9 — warm beige */
-    --aristo-beige-dark: 35 40% 85%;     /* #E8D5BC — darker beige */
-    --aristo-cream: 42 70% 97%;          /* #FDF8EF — off-white cream */
-    --aristo-brown: 25 40% 18%;          /* #3D2110 — dark warm brown */
-    --aristo-orange-deep: 23 75% 43%;    /* #C05A1C — orange dark enough for body text on cream */
+    /* Aristo brand palette — pastel orange + off-white/beige.
+     *
+     * The classroom (/learn, /demo) is the reference: each value is the exact
+     * colour it renders, written as fractional HSL so it resolves to the hex in
+     * its comment. brandColors.test.ts checks every comment against its value,
+     * so the two cannot drift apart again (until 2026-09-11 --aristo-orange
+     * said #F97B2F and rendered #F59047). Change a colour here, not at a call
+     * site. JS that needs a resolved string (three.js, canvas) reads
+     * src/lib/brandColors.ts, which the same test keeps in step. */
+    --aristo-orange: 22.57 94.39% 58.04%;      /* #F97B2F  main orange: fills, links, borders */
+    --aristo-orange-hover: 23.13 75.59% 50.2%; /* #E06A20  hover on orange fills and links */
+    --aristo-orange-ink: 24.67 84.91% 41.57%;  /* #C45A10  orange as small text: eyebrows, labels */
+    --aristo-orange-deep: 22.68 74.55% 43.14%; /* #C05A1C  orange dark enough for body text on cream */
+    --aristo-orange-light: 28 95% 74%;         /* #FCB97E  lighter orange */
+    --aristo-orange-pale: 30 100% 88%;         /* #FFE0C2  pale pastel orange */
+    --aristo-wash: 26.67 100% 94.71%;          /* #FFF0E4  selected card, chip fill */
+    --aristo-wash-light: 28.42 100% 96.27%;    /* #FFF5EC  chip fill, hover fill */
+    --aristo-wash-faint: 21.82 100% 97.84%;    /* #FFF8F4  hover fill on white cards */
+    --aristo-backdrop: 28.8 86.21% 94.31%;     /* #FDF0E4  classroom scene background */
+    --aristo-beige: 38 60% 93%;                /* #F8F0E2  warm beige */
+    --aristo-beige-dark: 35 40% 85%;           /* #E8DBC9  darker beige */
+    --aristo-cream: 42 70% 97%;                /* #FDF9F2  off-white cream */
+    --aristo-brown: 22.67 58.44% 15.1%;        /* #3D2110  headings, primary text */
+    --aristo-brown-soft: 30 50.82% 23.92%;     /* #5C3D1E  body copy inside tinted cards */
+    --aristo-brown-muted: 24.49 21.4% 44.9%;   /* #8B6E5A  secondary text */
+    --aristo-brown-faint: 30 17.44% 66.27%;    /* #B8A99A  tertiary text, placeholders */
+    --aristo-tan: 26.13 30.39% 60%;            /* #B8957A  input placeholders */
 
     /* shadcn/ui tokens — mapped to Aristo palette */
     --background: 42 70% 97%;            /* cream off-white */

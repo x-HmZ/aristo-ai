@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Euler, Group } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 interface AnnotationPoint {
   label: string;
@@ -193,7 +194,7 @@ export function GeneratedModel({
       {/* Glow ring at base */}
       <mesh rotation-x={-Math.PI / 2} position-y={-0.01}>
         <ringGeometry args={[0.6, 0.8, 32]} />
-        <meshBasicMaterial color="#F97B2F" transparent opacity={0.15} />
+        <meshBasicMaterial color={BRAND_HEX.orange} transparent opacity={0.15} />
       </mesh>
     </group>
   );
