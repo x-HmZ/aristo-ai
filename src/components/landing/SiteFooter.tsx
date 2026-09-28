@@ -8,7 +8,7 @@ import { ThemeToggle } from "@/components/landing/ThemeToggle";
 const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
 const PRODUCT_LINKS = [
-  { href: "/demo", label: "Live demo" },
+  { href: "/demo", label: "Try a lesson" },
   { href: "/sign-in", label: "Sign in" },
   { href: "/sign-up", label: "Create an account" },
 ];
@@ -51,8 +51,7 @@ export function SiteFooter() {
             <Wordmark />
           </Link>
           <p className="max-w-[300px] text-sm leading-relaxed text-lp-muted">
-            An immersive AI teacher for middle school. Built by one person, in
-            the open.
+            A 3D AI teacher for grades 6 to 8. Built by one person, in the open.
           </p>
         </div>
 

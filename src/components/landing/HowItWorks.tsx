@@ -62,8 +62,8 @@ export function HowItWorks() {
       className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
     >
       <Reveal>
-        <h2 className="lp-display max-w-[920px] text-balance text-[26px] font-extrabold leading-[1.05] tracking-[-0.015em] sm:text-4xl lg:text-[40px]">
-          Four steps, and none of them are &ldquo;read this wall of text&rdquo;
+        <h2 className="max-w-[920px] text-balance text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-4xl lg:text-[44px]">
+          Pick It, Hear It, See It, Keep It
         </h2>
       </Reveal>
 
@@ -81,13 +81,12 @@ export function HowItWorks() {
             <div className="flex items-center gap-4 sm:shrink-0">
               <StepNumber n={1} />
               <h3 className="text-xl font-bold tracking-[-0.02em] text-lp-ink sm:text-2xl">
-                Pick anything you are curious about
+                Pick What You Want to Learn
               </h3>
             </div>
             <p className="text-base leading-relaxed text-lp-body sm:border-l sm:border-lp-line sm:pl-8">
-              Type a topic or follow a course Aristo lays out for you. It works
-              out what you already know first, so you are not sat through the
-              easy part again.
+              Type any topic, or follow a course Aristo maps out for you. In a
+              course, it picks up from what you have already mastered.
             </p>
           </div>
         </Reveal>
@@ -103,12 +102,11 @@ export function HowItWorks() {
             <div className="flex flex-col items-start gap-3.5">
               <StepNumber n={2} />
               <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
-                Your teacher explains it out loud
+                Your Teacher Explains It Out Loud
               </h3>
               <p className="text-base leading-relaxed text-lp-body">
-                Hook it to something you know, explain it, demonstrate it,
-                challenge you, connect it forward. Diagrams are generated as the
-                lesson goes, so what is on the board is what is being said.
+                Every lesson moves through five phases. The board shows a
+                diagram made for that lesson, in step with the words.
               </p>
               <ul className="flex flex-wrap gap-2 pt-1">
                 {PHASES.map((phase) => (
@@ -145,13 +143,12 @@ export function HowItWorks() {
               <div className="flex flex-col items-start gap-3.5 lg:max-w-[440px]">
                 <StepNumber n={3} />
                 <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
-                  See the thing itself, not a picture of it
+                  You Turn It Over in 3D
                 </h3>
               </div>
               <p className="text-base leading-relaxed text-lp-body lg:max-w-[420px]">
-                When a topic has a shape, Aristo builds a 3D model of it and
-                stands it in the room. Turn it, zoom in, and read the labels
-                where they actually sit.
+                When a topic has a shape, Aristo builds a 3D model and stands
+                it in the room. Turn it, zoom in, read its labels.
               </p>
             </div>
             <div className="px-6 pb-6 sm:px-9 sm:pb-9 lg:px-12 lg:pb-12">
@@ -180,13 +177,12 @@ export function HowItWorks() {
             <div className="flex flex-col items-start gap-3.5 lg:order-first">
               <StepNumber n={4} />
               <h3 className="text-2xl font-bold tracking-[-0.02em] text-lp-ink sm:text-[27px]">
-                Answer, and get it brought back later
+                You Answer. It Comes Back Later
               </h3>
               <p className="text-base leading-relaxed text-lp-body">
-                Look down and the quiz is on your desk. Aristo scores each
-                concept separately, notices the ones you half-know, and
-                schedules them to come round again just before you would have
-                forgotten them.
+                The quiz lies on your desk. Aristo marks each concept, spots
+                the ones you half-know, and brings them back before you would
+                forget.
               </p>
             </div>
           </div>

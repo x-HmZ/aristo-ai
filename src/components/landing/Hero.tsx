@@ -15,9 +15,9 @@ import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
  * reassurance line that used to sit under the buttons now lives in the closing
  * CTA, where it is the only thing competing for attention.
  *
- * Layout (T04b): the headline spans the full content width above the split.
- * Archivo at 125% width needs the room, and it is what holds the headline to
- * two lines at desktop; in a 480px column it ran to three.
+ * Layout: the headline spans the full content width above the split. It is
+ * the positioning line (messaging.md), one sentence per line, so it never
+ * depends on where a wrap happens to fall.
  */
 export function Hero() {
   return (
@@ -26,20 +26,20 @@ export function Hero() {
         Grades 6 to 8
       </span>
 
-      {/* Sizes are measured against the content width, not guessed: at lg
-          (960px) and xl (1088px) the second line "actually teaches you" fits
-          at 58 / 64px and wraps at anything much larger. "teaches you" is
-          bound so a near-miss drops both words rather than orphaning "you". */}
-      <h1 className="lp-display mt-4 text-[34px] font-extrabold leading-none tracking-[-0.02em] sm:text-5xl lg:text-[58px] xl:text-[64px]">
-        A teacher who <span className="text-lp-accent-text">actually</span>{" "}
-        <span className="whitespace-nowrap">teaches you</span>
+      {/* Three short sentences, one per line. "One teacher." is the widest
+          (about 9.7 em at the desktop width axis), so each size is chosen to
+          fit its column, down to 320px at 360. */}
+      <h1 className="lp-display mt-4 text-[33px] font-extrabold leading-[0.98] tracking-[-0.02em] sm:text-[52px] md:text-[64px] lg:text-[72px] xl:text-[84px]">
+        <span className="block">One teacher.</span>
+        <span className="block">One student.</span>
+        <span className="block text-lp-accent-text">Every kid.</span>
       </h1>
 
       <div className="mt-8 grid gap-12 lg:mt-12 lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:gap-16">
         <div className="flex flex-col gap-7 lg:pt-2">
           <p className="max-w-[440px] text-base leading-relaxed text-lp-body sm:text-lg lg:text-[19px]">
-            Aristo explains your topic out loud in a 3D classroom, draws it as it
-            goes, then checks that it stuck.
+            Your own AI teacher explains the topic you pick out loud, shows it
+            on the board, then checks that it stuck.
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -53,7 +53,7 @@ export function Hero() {
               )}
             >
               <Play className="size-4 fill-current" strokeWidth={0} />
-              Watch a live lesson
+              Try a lesson
             </Link>
             <Link
               href="/sign-up"
@@ -89,10 +89,10 @@ export function Hero() {
           >
             <div className="flex items-center gap-2.5 border-b border-lp-line px-4 py-2.5">
               <span className="text-[11px] font-semibold tracking-wide text-lp-muted">
-                aristo
+                Aristo
               </span>
               <span aria-hidden className="h-3 w-px bg-lp-line" />
-              <span className="text-[11px] text-lp-muted">live lesson</span>
+              <span className="text-[11px] text-lp-muted">Lesson: Volcanoes</span>
             </div>
 
             <Image
@@ -114,7 +114,7 @@ export function Hero() {
           >
             <AudioLines className="size-[18px] shrink-0 text-lp-accent-text" />
             <span className="text-xs font-semibold text-lp-ink sm:text-[12.5px]">
-              Narrating segment 3 of 5
+              Demonstrate, step 3 of 5
             </span>
           </div>
         </div>

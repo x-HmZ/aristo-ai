@@ -1,11 +1,10 @@
 import { Reveal } from "@/components/landing/Reveal";
 
 const CAPABILITIES = [
-  "Spoken narration",
-  "Generated visuals",
-  "Real 3D models",
-  "A quiz on your desk",
-  "Reviews that come back",
+  "Explained out loud",
+  "Shown on the board",
+  "Quizzed at your desk",
+  "Brought back before you forget",
 ];
 
 /**

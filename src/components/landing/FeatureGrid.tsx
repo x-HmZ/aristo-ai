@@ -69,17 +69,17 @@ export function FeatureGrid() {
       className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
     >
       <Reveal>
-        <h2 className="lp-display max-w-[900px] text-balance text-[26px] font-extrabold leading-[1.05] tracking-[-0.015em] sm:text-4xl lg:text-[40px]">
-          Built like a tutor, not like a search box
+        <h2 className="max-w-[900px] text-balance text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-4xl lg:text-[44px]">
+          Your Tutor Keeps Up With You
         </h2>
       </Reveal>
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
         <Reveal className="h-full sm:col-span-2">
-          <Cell icon={Waypoints} title="Adapts, without labelling you" tinted>
-            No &ldquo;visual learner&rdquo; box to be filed into. Aristo watches
-            how you actually answer, how fast, how deep, how many examples you
-            need, and rewrites the next lesson around it.
+          <Cell icon={Waypoints} title="Paced by Your Answers" tinted>
+            Aristo reads how you answer: how fast, how deep, how many examples
+            you need. The next lesson changes its pace, depth and examples to
+            match.
           </Cell>
         </Reveal>
 
@@ -100,11 +100,11 @@ export function FeatureGrid() {
                 <Box className="size-[21px] text-lp-accent-text" />
               </span>
               <h3 className="text-lg font-bold text-lp-ink">
-                Models made for the lesson
+                Models Made for Your Lesson
               </h3>
               <p className="text-[14.5px] leading-relaxed text-lp-body">
-                Topics with a shape get a 3D model generated on the spot and
-                placed in the classroom.
+                Topics with a shape get a 3D model, generated for the lesson
+                and placed in the classroom.
               </p>
             </div>
             <div className="mt-auto h-28 overflow-hidden border-t border-lp-line sm:h-32">
@@ -122,32 +122,30 @@ export function FeatureGrid() {
         </Reveal>
 
         <Reveal className="h-full">
-          <Cell icon={AudioLines} title="Spoken, and listening back">
-            Every segment is narrated with the teacher&rsquo;s mouth moving to
-            the words, and you can answer the challenge out loud instead of
-            typing.
+          <Cell icon={AudioLines} title="Spoken, and Listening">
+            Every step is spoken, with the teacher&rsquo;s mouth moving to the
+            words. Answer the challenge out loud, or type it.
           </Cell>
         </Reveal>
 
         <Reveal className="h-full sm:col-span-2">
-          <Cell icon={Network} title="A map, not a playlist" tinted>
-            Concepts are linked by what they depend on. Aristo teaches in an
-            order that holds together, and will not start you on the hard one
-            first.
+          <Cell icon={Network} title="A Map of What Leads to What" tinted>
+            Concepts are linked by what each one builds on, so Aristo teaches
+            them in an order that holds together.
           </Cell>
         </Reveal>
 
         <Reveal className="h-full">
-          <Cell icon={CalendarClock} title="Reviews timed to your forgetting">
-            Each concept comes back on its own schedule, set just before the
-            point you would have lost it.
+          <Cell icon={CalendarClock} title="Reviews Timed to Your Memory">
+            Each concept comes back on its own schedule, just before the point
+            you would lose it.
           </Cell>
         </Reveal>
 
         <Reveal className="h-full sm:col-span-2">
-          <Cell icon={ChartLine} title="Progress you can actually read" tinted>
-            Mastery per concept, every quiz answer, and what is due next, in one
-            dashboard rather than a streak counter.
+          <Cell icon={ChartLine} title="Progress You Can Read" tinted>
+            Mastery per concept, every quiz answer and what is due next, on one
+            dashboard.
           </Cell>
         </Reveal>
       </div>
