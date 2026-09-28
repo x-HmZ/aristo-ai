@@ -3,35 +3,35 @@
 import { useCallback, useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import {
   THEME_ATTRIBUTE,
   THEME_STORAGE_KEY,
-  isLandingTheme,
-  type LandingTheme,
-} from "@/components/landing/theme";
+  isTheme,
+  type Theme,
+} from "@/components/theme/theme";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
-function systemTheme(): LandingTheme {
+function systemTheme(): Theme {
   return window.matchMedia(DARK_QUERY).matches ? "dark" : "light";
 }
 
-function resolvedTheme(): LandingTheme {
+function resolvedTheme(): Theme {
   const chosen = document.documentElement.getAttribute(THEME_ATTRIBUTE);
-  return isLandingTheme(chosen) ? chosen : systemTheme();
+  return isTheme(chosen) ? chosen : systemTheme();
 }
 
-function readStored(): LandingTheme | null {
+function readStored(): Theme | null {
   try {
     const value = localStorage.getItem(THEME_STORAGE_KEY);
-    return isLandingTheme(value) ? value : null;
+    return isTheme(value) ? value : null;
   } catch {
     return null;
   }
 }
 
-function writeStored(value: LandingTheme | null) {
+function writeStored(value: Theme | null) {
   try {
     if (value) localStorage.setItem(THEME_STORAGE_KEY, value);
     else localStorage.removeItem(THEME_STORAGE_KEY);
@@ -42,9 +42,10 @@ function writeStored(value: LandingTheme | null) {
 }
 
 /**
- * Light/dark switch for the landing page.
+ * Light/dark switch. It renders on the landing page (nav and footer); the
+ * choice applies app-wide, except on surfaces that lock themselves light.
  *
- * Which icon shows is decided by CSS (`--lp-icon-sun` / `--lp-icon-moon`,
+ * Which icon shows is decided by CSS (`--theme-icon-sun` / `--theme-icon-moon`,
  * swapped with the rest of the theme tokens), not by state, so the server
  * render already shows the right one and nothing flips on hydration.
  *
@@ -53,7 +54,7 @@ function writeStored(value: LandingTheme | null) {
  * back to prefers-color-scheme.
  */
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<LandingTheme | null>(null);
+  const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
     // The pre-paint script only runs on a full page load. After a client-side
@@ -80,7 +81,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   }, []);
 
   const toggle = useCallback(() => {
-    const next: LandingTheme = resolvedTheme() === "dark" ? "light" : "dark";
+    const next: Theme = resolvedTheme() === "dark" ? "light" : "dark";
     const root = document.documentElement;
     if (next === systemTheme()) {
       root.removeAttribute(THEME_ATTRIBUTE);
@@ -102,12 +103,12 @@ export function ThemeToggle({ className }: { className?: string }) {
         SHAPE.control,
         PRESS,
         FOCUS,
-        "inline-flex size-11 items-center justify-center border border-lp-line text-lp-muted hover:border-lp-muted/50 hover:text-lp-ink",
+        "inline-flex size-11 items-center justify-center border border-line text-muted hover:border-muted/50 hover:text-ink",
         className
       )}
     >
-      <Sun aria-hidden className="size-[18px] [display:var(--lp-icon-sun)]" />
-      <Moon aria-hidden className="size-[18px] [display:var(--lp-icon-moon)]" />
+      <Sun aria-hidden className="size-[18px] [display:var(--theme-icon-sun)]" />
+      <Moon aria-hidden className="size-[18px] [display:var(--theme-icon-moon)]" />
     </button>
   );
 }

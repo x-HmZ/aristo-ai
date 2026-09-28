@@ -39,194 +39,160 @@
     --aristo-peach-pale: 29.58 100% 86.08%;    /* #FFDBB8  icon-chip and card gradient stop */
     --aristo-sand: 34.09 48.89% 82.35%;        /* #E8D5BC  hairline dividers in the classroom header */
 
-    /* Lesson-phase and status accents. Five hues survive from before the
-     * design system; V8.2 replaces them with numbering and one accent. */
+    /* Lesson-phase and status hues from before the design system. Deprecated:
+     * the system gives the five phases their identity through numbering, icon
+     * and position with one accent, and V8.4a moves the classroom off these.
+     * Kept only so /learn and /demo do not change before then. */
     --aristo-purple: 258.31 89.53% 66.27%;     /* #8B5CF6  Activate phase, learner analytics */
     --aristo-purple-hover: 262.12 83.26% 57.84%; /* #7C3AED  hover on purple text */
     --aristo-teal: 160.12 84.08% 39.41%;       /* #10B981  Demonstrate phase, mastered */
     --aristo-blue: 217.22 91.22% 59.8%;        /* #3B82F6  Connect phase, free-topic mode */
     --aristo-amber: 37.69 92.13% 50.2%;        /* #F59E0B  Challenge phase, in progress */
 
-    /* shadcn/ui tokens — mapped to Aristo palette */
-    --background: 42 70% 97%;            /* cream off-white */
-    --foreground: 25 40% 12%;            /* deep warm brown */
-
-    --card: 38 60% 99%;
-    --card-foreground: 25 40% 12%;
-
-    --popover: 38 60% 99%;
-    --popover-foreground: 25 40% 12%;
-
-    --primary: 25 90% 62%;               /* aristo orange */
-    --primary-foreground: 42 70% 97%;
-
-    --secondary: 38 50% 92%;             /* warm beige */
-    --secondary-foreground: 25 40% 20%;
-
-    --muted: 35 35% 91%;
-    --muted-foreground: 25 20% 48%;
-
-    --accent: 28 95% 88%;                /* pale orange accent */
-    --accent-foreground: 25 40% 15%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 35 35% 86%;
-    --input: 35 35% 86%;
-    --ring: 25 90% 62%;
-
+    /* The classroom's rounded-lg / md / sm. Not part of the shape system
+     * (src/lib/design/shape.ts); kept because /learn uses rounded-lg widely. */
     --radius: 0.75rem;
-  }
-
-  /* Dark mode — rich warm darks, not cold grays */
-  .dark {
-    --background: 25 30% 8%;
-    --foreground: 38 60% 93%;
-
-    --card: 25 28% 11%;
-    --card-foreground: 38 60% 93%;
-
-    --popover: 25 28% 11%;
-    --popover-foreground: 38 60% 93%;
-
-    --primary: 25 90% 62%;
-    --primary-foreground: 25 30% 8%;
-
-    --secondary: 25 25% 16%;
-    --secondary-foreground: 38 60% 93%;
-
-    --muted: 25 25% 16%;
-    --muted-foreground: 35 20% 58%;
-
-    --accent: 25 50% 20%;
-    --accent-foreground: 38 60% 93%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 25 25% 18%;
-    --input: 25 25% 18%;
-    --ring: 25 90% 62%;
   }
 }
 
-/* Landing page identity ("Night Class", T04b).
+/* The design system (V8.2). See .claude/docs/brand-system.md.
  *
- * Scoped to the landing page on purpose. The classroom, dashboard and auth
- * pages read the shared --aristo-* / shadcn tokens above, so restyling those
- * would move every product surface at once. The landing page gets its own
- * set instead; see .claude/docs/landing-design-system.md.
- *
- * Values are bare RGB channels so Tailwind's `lp-*` colours accept opacity
- * modifiers (`bg-lp-accent/10`).
+ * Semantic colour tokens, promoted from the landing page's "Night Class" set.
+ * Values are bare RGB channels so the Tailwind colours accept opacity
+ * modifiers (`bg-accent/90`, `bg-danger/10`). Every text pair is AA; the
+ * ratios are recorded in brand-system.md.
  *
  * Theme resolution, in order:
- *   1. html[data-landing-theme] set by ThemeToggle (an explicit choice), else
- *   2. prefers-color-scheme.
- * The dark values therefore appear twice, once per route in. Keep them equal.
+ *   1. a surface that is not on the system yet declares
+ *      <meta name="aristo-theme-lock" content="light"> and stays light;
+ *   2. html[data-theme] set by ThemeToggle (an explicit choice);
+ *   3. prefers-color-scheme.
+ * The dark values appear twice, once per route in. Keep them equal.
  *
- * Each rule matches both `.landing` and `:root` while a `.landing` is mounted,
- * so the page background behind overscroll follows the theme too. `:is()`
- * takes a forgiving selector list: a browser without `:has()` drops that arm
- * and still themes `.landing`. */
+ * The lock is read with :has(). A browser without it drops both dark rules
+ * and renders light everywhere, which is safe. */
 @layer base {
-  :is(:root:has(.landing), .landing) {
-    --lp-bg: 243 244 246; /* #F3F4F6 cool paper */
-    --lp-surface: 252 252 253; /* #FCFCFD */
-    --lp-sunk: 234 236 240; /* #EAECF0 footer */
-    --lp-ink: 14 17 23; /* #0E1117 */
-    --lp-body: 62 68 82; /* #3E4452  8.9:1 on bg */
-    --lp-muted: 90 97 112; /* #5A6170  5.7:1 on bg */
-    --lp-line: 220 223 229; /* #DCDFE5 */
-    --lp-accent: 180 83 31; /* #B4531F  71% sat; 4.9:1 under accent-ink */
-    --lp-accent-ink: 252 252 253;
-    --lp-accent-text: 169 76 27; /* #A94C1B  accent as text, 5.1:1 on bg */
-    --lp-tint: 244 234 227; /* #F4EAE3 warm wash */
-    --lp-tint-line: 230 211 198; /* #E6D3C6 */
-    --lp-glow: 180 83 31; /* the classroom's light spill, see .lp-glow-* */
-    --lp-glow-strength: 0.1;
-    --lp-shadow: 14 17 23 / 0.14; /* full colour incl. alpha, see .lp-shadow */
-    --lp-icon-sun: none; /* ThemeToggle shows the icon for the other mode */
-    --lp-icon-moon: block;
+  :root {
+    --bg: 243 244 246; /* #F3F4F6  page */
+    --surface: 252 252 253; /* #FCFCFD  cards, panels, popovers */
+    --sunk: 234 236 240; /* #EAECF0  footer, wells, secondary fills */
+    --ink: 14 17 23; /* #0E1117  headings, primary text; 17.2:1 on bg */
+    --body: 62 68 82; /* #3E4452  paragraphs; 8.9:1 on bg */
+    --muted: 90 97 112; /* #5A6170  labels, captions; 5.7:1 on bg */
+    --line: 220 223 229; /* #DCDFE5  hairlines and borders */
+    --accent: 180 83 31; /* #B4531F  solid fills: primary actions; 4.9:1 under accent-ink */
+    --accent-ink: 252 252 253; /* #FCFCFD  text on any solid fill (accent or status) */
+    --accent-text: 169 76 27; /* #A94C1B  accent as text or icon; 5.1:1 on bg */
+    --tint: 244 234 227; /* #F4EAE3  warm wash, one surface per section */
+    --tint-line: 230 211 198; /* #E6D3C6 */
+    --success: 21 128 61; /* #15803D  4.6:1 on bg, 4.9:1 on surface */
+    --warning: 180 83 9; /* #B45309  4.6:1 on bg, 4.9:1 on surface */
+    --danger: 185 28 28; /* #B91C1C  5.9:1 on bg, 6.3:1 on surface */
+    --info: 29 78 216; /* #1D4ED8  6.1:1 on bg, 6.5:1 on surface */
+    --glow: 180 83 31; /* the classroom's light spill, see .glow-* */
+    --glow-strength: 0.1;
+    --shadow: 14 17 23 / 0.14; /* full colour incl. alpha, see shadow-e1/e2 */
+    --theme-icon-sun: none; /* ThemeToggle shows the icon for the other mode */
+    --theme-icon-moon: block;
+
+    /* Motion. Durations collapse to zero under prefers-reduced-motion. */
+    --dur-fast: 120ms; /* press, hover, focus */
+    --dur-base: 200ms; /* menus, toggles, small moves */
+    --dur-slow: 360ms; /* dialogs, sheets, panels */
+    --dur-reveal: 550ms; /* scroll-in reveals */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* things arriving */
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* things moving across */
+
+    /* Type scale: size / line height pairs. Geist throughout; the landing's
+     * Archivo display face is scoped to `/` (.display-wide). */
+    --text-display: 3.5rem;
+    --leading-display: 1.02;
+    --text-h1: 2.25rem;
+    --leading-h1: 1.1;
+    --text-h2: 1.75rem;
+    --leading-h2: 1.15;
+    --text-h3: 1.25rem;
+    --leading-h3: 1.3;
+    --text-h4: 1.0625rem;
+    --leading-h4: 1.4;
+    --text-copy: 1rem;
+    --leading-copy: 1.6;
+    --text-caption: 0.8125rem;
+    --leading-caption: 1.45;
+    --text-mono: 0.875rem;
+    --leading-mono: 1.55;
+
     color-scheme: light;
-    background-color: rgb(var(--lp-bg));
   }
 
   @media (prefers-color-scheme: dark) {
-    :is(
-        :root:not([data-landing-theme="light"]):has(.landing),
-        :root:not([data-landing-theme="light"]) .landing
-      ) {
-      --lp-bg: 14 17 23; /* #0E1117 ink */
-      --lp-surface: 21 25 34; /* #151922 */
-      --lp-sunk: 11 13 18; /* #0B0D12 */
-      --lp-ink: 236 237 239; /* #ECEDEF */
-      --lp-body: 183 189 199; /* #B7BDC7  10:1 on bg */
-      --lp-muted: 143 151 164; /* #8F97A4  6.4:1 on bg */
-      --lp-line: 37 43 54; /* #252B36 */
-      --lp-accent: 233 138 82; /* #E98A52  77% sat; 7.4:1 under accent-ink */
-      --lp-accent-ink: 14 17 23;
-      --lp-accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
-      --lp-tint: 33 26 23; /* #211A17 */
-      --lp-tint-line: 58 44 36; /* #3A2C24 */
-      --lp-glow: 233 138 82;
-      --lp-glow-strength: 0.22;
-      --lp-shadow: 0 0 0 / 0.5;
-      --lp-icon-sun: block;
-      --lp-icon-moon: none;
+    :root:not([data-theme="light"]):not(:has(meta[name="aristo-theme-lock"])) {
+      --bg: 14 17 23; /* #0E1117 */
+      --surface: 21 25 34; /* #151922 */
+      --sunk: 11 13 18; /* #0B0D12 */
+      --ink: 236 237 239; /* #ECEDEF  16.1:1 on bg */
+      --body: 183 189 199; /* #B7BDC7  10:1 on bg */
+      --muted: 143 151 164; /* #8F97A4  6.4:1 on bg */
+      --line: 37 43 54; /* #252B36 */
+      --accent: 233 138 82; /* #E98A52  7.4:1 under accent-ink */
+      --accent-ink: 14 17 23;
+      --accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
+      --tint: 33 26 23; /* #211A17 */
+      --tint-line: 58 44 36; /* #3A2C24 */
+      --success: 74 222 128; /* #4ADE80  10.9:1 on bg */
+      --warning: 251 191 36; /* #FBBF24  11.3:1 on bg */
+      --danger: 248 113 113; /* #F87171  6.8:1 on bg */
+      --info: 96 165 250; /* #60A5FA  7.4:1 on bg */
+      --glow: 233 138 82;
+      --glow-strength: 0.22;
+      --shadow: 0 0 0 / 0.5;
+      --theme-icon-sun: block;
+      --theme-icon-moon: none;
       color-scheme: dark;
     }
   }
 
-  :is(
-      :root[data-landing-theme="dark"]:has(.landing),
-      :root[data-landing-theme="dark"] .landing
-    ) {
-    --lp-bg: 14 17 23;
-    --lp-surface: 21 25 34;
-    --lp-sunk: 11 13 18;
-    --lp-ink: 236 237 239;
-    --lp-body: 183 189 199;
-    --lp-muted: 143 151 164;
-    --lp-line: 37 43 54;
-    --lp-accent: 233 138 82;
-    --lp-accent-ink: 14 17 23;
-    --lp-accent-text: 239 154 102;
-    --lp-tint: 33 26 23;
-    --lp-tint-line: 58 44 36;
-    --lp-glow: 233 138 82;
-    --lp-glow-strength: 0.22;
-    --lp-shadow: 0 0 0 / 0.5;
-    --lp-icon-sun: block;
-    --lp-icon-moon: none;
+  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])) {
+    --bg: 14 17 23;
+    --surface: 21 25 34;
+    --sunk: 11 13 18;
+    --ink: 236 237 239;
+    --body: 183 189 199;
+    --muted: 143 151 164;
+    --line: 37 43 54;
+    --accent: 233 138 82;
+    --accent-ink: 14 17 23;
+    --accent-text: 239 154 102;
+    --tint: 33 26 23;
+    --tint-line: 58 44 36;
+    --success: 74 222 128;
+    --warning: 251 191 36;
+    --danger: 248 113 113;
+    --info: 96 165 250;
+    --glow: 233 138 82;
+    --glow-strength: 0.22;
+    --shadow: 0 0 0 / 0.5;
+    --theme-icon-sun: block;
+    --theme-icon-moon: none;
     color-scheme: dark;
   }
 
-  /* The global `* { border-color }` below resolves to the app's beige, which
-     would draw cream hairlines through the dark theme wherever a landing
-     element sets a border width without a colour. */
-  .landing * {
-    border-color: rgb(var(--lp-line));
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --dur-fast: 0ms;
+      --dur-base: 0ms;
+      --dur-slow: 0ms;
+      --dur-reveal: 0ms;
+    }
   }
 
-  /* The app-wide scrollbar is orange on a beige track; on the landing page it
-     follows the theme instead. */
-  :root:has(.landing)::-webkit-scrollbar-track {
-    background: rgb(var(--lp-bg));
-  }
-  :root:has(.landing)::-webkit-scrollbar-thumb {
-    background: rgb(var(--lp-muted) / 0.5);
-  }
-}
-
-@layer base {
   * {
-    @apply border-border;
+    border-color: rgb(var(--line));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: rgb(var(--bg));
+    color: rgb(var(--ink));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -237,15 +203,42 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-muted rounded-full;
+    background: rgb(var(--bg));
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--aristo-orange-light));
+    background: rgb(var(--muted) / 0.5);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--muted));
+  }
+
+  /* Surfaces not on the system yet (the classroom, admin, create-teacher)
+   * keep the page defaults they had before V8.2: cream page, warm near-black
+   * text, beige hairlines and an orange scrollbar. Zero specificity (:where)
+   * so any class on an element still wins, exactly as before. V8.4 and V8.6
+   * delete the lock surface by surface. */
+  :where(:root:has(meta[name="aristo-theme-lock"])) body {
+    background-color: hsl(var(--aristo-cream));
+    color: hsl(25 40% 12%); /* #2B1D12, the old shadcn foreground */
+  }
+
+  :where(:root:has(meta[name="aristo-theme-lock"])) * {
+    border-color: hsl(35 35% 86%); /* #E8DDCF, the old shadcn border */
+  }
+
+  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-track {
+    background: hsl(35 35% 91%); /* #F0E9E0, the old shadcn muted */
+    border-radius: 9999px;
+  }
+
+  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb {
+    background: hsl(var(--aristo-orange-light));
+  }
+
+  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--aristo-orange-main));
   }
 }
@@ -255,20 +248,56 @@
     text-wrap: balance;
   }
 
-  /* Glass morphism — warm tinted */
+  /* Type scale (V8.2): size, line height and tracking in one class. Named
+     `type-*` rather than `text-*` because tailwind-merge (cn) treats an
+     unknown `text-*` as a colour and would drop it beside `text-ink`.
+     Weight stays a separate utility. */
+  .type-display {
+    font-size: var(--text-display);
+    line-height: var(--leading-display);
+    letter-spacing: -0.02em;
+  }
+  .type-h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1);
+    letter-spacing: -0.015em;
+  }
+  .type-h2 {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
+    letter-spacing: -0.01em;
+  }
+  .type-h3 {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3);
+  }
+  .type-h4 {
+    font-size: var(--text-h4);
+    line-height: var(--leading-h4);
+  }
+  .type-copy {
+    font-size: var(--text-copy);
+    line-height: var(--leading-copy);
+  }
+  .type-caption {
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+  }
+  .type-mono {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: var(--text-mono);
+    line-height: var(--leading-mono);
+  }
+
+  /* Glass morphism — warm tinted. Classroom only (loading screen). */
   .glass {
     background: hsl(var(--aristo-cream) / 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid hsl(var(--aristo-orange-pale) / 0.5);
   }
 
-  .glass-dark {
-    background: hsl(var(--aristo-brown-main) / 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--aristo-orange-main) / 0.2);
-  }
-
-  /* Gradient text */
+  /* Gradient text. Classroom only (the onboarding title); the system has no
+     gradient text, see brand-system.md. */
   .text-gradient {
     background: linear-gradient(135deg, hsl(var(--aristo-orange-main)), hsl(var(--aristo-orange-light)));
     -webkit-background-clip: text;
@@ -276,34 +305,15 @@
     color: transparent;
   }
 
-  /* Shimmer loading state */
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--muted)) 0%,
-      hsl(var(--aristo-orange-pale)) 50%,
-      hsl(var(--muted)) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-  }
-
-  /* Dialog backdrop */
-  dialog::backdrop {
-    background: hsl(var(--aristo-brown-main) / 0.75);
-    backdrop-filter: blur(4px);
-  }
-
-
-  /* Landing-page scroll reveal. The class is toggled by
-     src/components/landing/Reveal.tsx; the motion itself lives here so that
-     prefers-reduced-motion is honoured without any JS involvement. */
+  /* Scroll reveal. The class is toggled by src/components/landing/Reveal.tsx;
+     the motion itself lives here so that prefers-reduced-motion is honoured
+     without any JS involvement. */
   .landing-reveal {
     opacity: 0;
     transform: translateY(18px);
     transition:
-      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity var(--dur-reveal) var(--ease-out),
+      transform var(--dur-reveal) var(--ease-out);
   }
 
   .landing-reveal.is-visible {
@@ -319,12 +329,11 @@
     }
   }
 
-  /* Landing display type: Archivo at its widest, set in capitals. Display
-     sizes only (H1, section H2s, the closing CTA); H3s and body stay sentence
-     case in Geist. `--font-display` is defined by the landing root only, so
-     this class means nothing outside it. The source copy stays sentence case;
-     casing is presentation. */
-  .lp-display {
+  /* Wide display type: Archivo at its widest, set in capitals. The hero line
+     and the closing line only. `--font-display` is defined by the landing
+     root only, so this class means nothing outside it. The source copy stays
+     sentence case; casing is presentation. */
+  .display-wide {
     font-family: var(--font-display), var(--font-geist-sans), system-ui,
       sans-serif;
     font-variation-settings: "wdth" 125;
@@ -334,40 +343,30 @@
   /* Below sm the widest cut turns a 7-word headline into five lines; a
      slightly narrower one keeps the character and saves a line. */
   @media (max-width: 639px) {
-    .lp-display {
+    .display-wide {
       font-variation-settings: "wdth" 112;
     }
   }
 
-  /* Landing elevation. One shadow colour per theme (--lp-shadow carries its
-     own alpha): soft ink on paper, a deep drop on ink. */
-  .lp-shadow {
-    box-shadow: 0 12px 30px rgb(var(--lp-shadow));
-  }
-  .lp-shadow-lg {
-    box-shadow:
-      0 30px 70px rgb(var(--lp-shadow)),
-      0 6px 18px rgb(var(--lp-shadow));
-  }
-
-  /* The classroom's warm light spilling onto the page: behind the hero shot
-     (pool) and up from the bottom of the closing band (rise). Atmosphere,
-     not a glow on a control. Strength is a theme token. */
-  .lp-glow-pool {
+  /* The classroom's warm light spilling onto a page: behind the hero shot
+     (pool) and up from the bottom of a closing band (rise). Atmosphere, not a
+     glow on a control. Strength is a theme token. */
+  .glow-pool {
     background: radial-gradient(
       55% 60% at 55% 55%,
-      rgb(var(--lp-glow) / var(--lp-glow-strength)) 0%,
-      rgb(var(--lp-glow) / calc(var(--lp-glow-strength) * 0.3)) 45%,
+      rgb(var(--glow) / var(--glow-strength)) 0%,
+      rgb(var(--glow) / calc(var(--glow-strength) * 0.3)) 45%,
       transparent 72%
     );
   }
-  .lp-glow-rise {
+  .glow-rise {
     background: radial-gradient(
       70% 120% at 50% 115%,
-      rgb(var(--lp-glow) / calc(var(--lp-glow-strength) * 1.25)) 0%,
+      rgb(var(--glow) / calc(var(--glow-strength) * 1.25)) 0%,
       transparent 62%
     );
   }
+
   /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
      Default WebKit scrollbars are invisible on the glass surfaces; this
      gives the student a clear scroll affordance without breaking the

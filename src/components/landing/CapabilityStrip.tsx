@@ -19,7 +19,7 @@ export function CapabilityStrip() {
   return (
     <section className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
       <Reveal>
-        <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2.5 border-y border-lp-line py-5 text-sm font-medium text-lp-muted sm:gap-x-10 lg:justify-between lg:gap-x-6 lg:py-6 lg:text-[14.5px]">
+        <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2.5 border-y border-line py-5 text-sm font-medium text-muted sm:gap-x-10 lg:justify-between lg:gap-x-6 lg:py-6 lg:text-[14.5px]">
           {CAPABILITIES.map((capability) => (
             <li key={capability}>{capability}</li>
           ))}

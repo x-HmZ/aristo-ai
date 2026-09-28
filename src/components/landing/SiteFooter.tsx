@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FOCUS } from "@/components/landing/shape";
+import { FOCUS } from "@/lib/design/shape";
 import { Wordmark } from "@/components/landing/Wordmark";
-import { ThemeToggle } from "@/components/landing/ThemeToggle";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
@@ -27,20 +27,20 @@ const LEGAL_LINKS: { href: string; label: string }[] = [];
  */
 function ColumnHeading({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[13px] font-semibold text-lp-muted">
+    <span className="text-[13px] font-semibold text-muted">
       {children}
     </span>
   );
 }
 
 const linkClass = cn(
-  "rounded-sm text-sm text-lp-body transition-colors hover:text-lp-ink",
+  "rounded-sm text-sm text-body transition-colors hover:text-ink",
   FOCUS
 );
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-lp-line bg-lp-sunk">
+    <footer className="relative z-10 border-t border-line bg-sunk">
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 pb-8 pt-12 sm:px-8 sm:pt-14 lg:grid-cols-[2fr_1fr_1fr] lg:gap-12">
         <div className="flex flex-col items-start gap-3">
           <Link
@@ -50,7 +50,7 @@ export function SiteFooter() {
           >
             <Wordmark />
           </Link>
-          <p className="max-w-[300px] text-sm leading-relaxed text-lp-muted">
+          <p className="max-w-[300px] text-sm leading-relaxed text-muted">
             A 3D AI teacher for grades 6 to 8. Built by one person, in the open.
           </p>
         </div>
@@ -70,13 +70,13 @@ export function SiteFooter() {
             href={`mailto:${CONTACT_EMAIL}`}
             className={cn(linkClass, "inline-flex items-center gap-2 break-all")}
           >
-            <Mail className="size-[15px] shrink-0 text-lp-muted" />
+            <Mail className="size-[15px] shrink-0 text-muted" />
             {CONTACT_EMAIL}
           </a>
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 border-t border-lp-line px-5 py-6 text-[13px] text-lp-muted sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 border-t border-line px-5 py-6 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-5">
         <div className="flex items-center justify-between gap-4">
           <span>© {new Date().getFullYear()} Aristo</span>
           {/* The nav hides its toggle below sm; this is where it lives there. */}

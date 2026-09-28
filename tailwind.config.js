@@ -17,39 +17,25 @@ module.exports = {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+        // The design system's semantic colours (V8.2), light and dark, in
+        // src/app/globals.css. See .claude/docs/brand-system.md. These replace
+        // shadcn's background / foreground / primary / muted / accent set.
+        bg: "rgb(var(--bg) / <alpha-value>)",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        sunk: "rgb(var(--sunk) / <alpha-value>)",
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        body: "rgb(var(--body) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        line: "rgb(var(--line) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
+        "accent-ink": "rgb(var(--accent-ink) / <alpha-value>)",
+        "accent-text": "rgb(var(--accent-text) / <alpha-value>)",
+        tint: "rgb(var(--tint) / <alpha-value>)",
+        "tint-line": "rgb(var(--tint-line) / <alpha-value>)",
+        success: "rgb(var(--success) / <alpha-value>)",
+        warning: "rgb(var(--warning) / <alpha-value>)",
+        danger: "rgb(var(--danger) / <alpha-value>)",
+        info: "rgb(var(--info) / <alpha-value>)",
         // Aristo brand colors. Values live in src/app/globals.css.
         aristo: {
           "orange-main": "hsl(var(--aristo-orange-main))",
@@ -79,24 +65,9 @@ module.exports = {
           blue: "hsl(var(--aristo-blue))",
           amber: "hsl(var(--aristo-amber))",
         },
-        // Landing page only (T04b). Defined under `.landing` in globals.css,
-        // with light and dark values; undefined anywhere else.
-        lp: {
-          bg: "rgb(var(--lp-bg) / <alpha-value>)",
-          surface: "rgb(var(--lp-surface) / <alpha-value>)",
-          sunk: "rgb(var(--lp-sunk) / <alpha-value>)",
-          ink: "rgb(var(--lp-ink) / <alpha-value>)",
-          body: "rgb(var(--lp-body) / <alpha-value>)",
-          muted: "rgb(var(--lp-muted) / <alpha-value>)",
-          line: "rgb(var(--lp-line) / <alpha-value>)",
-          accent: "rgb(var(--lp-accent) / <alpha-value>)",
-          "accent-ink": "rgb(var(--lp-accent-ink) / <alpha-value>)",
-          "accent-text": "rgb(var(--lp-accent-text) / <alpha-value>)",
-          tint: "rgb(var(--lp-tint) / <alpha-value>)",
-          "tint-line": "rgb(var(--lp-tint-line) / <alpha-value>)",
-          glow: "rgb(var(--lp-glow) / <alpha-value>)",
-        },
       },
+      // The classroom's radii. The shape system's roles (pill, control,
+      // surface, band) live in src/lib/design/shape.ts.
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -105,6 +76,20 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+      },
+      // The type scale is the `type-*` utilities in globals.css, not a
+      // fontSize entry: tailwind-merge (cn) reads any unknown `text-*` as a
+      // colour and would drop `text-h1` next to `text-ink`.
+      // Motion tokens (V8.2). Durations are zero under reduced motion.
+      transitionDuration: {
+        fast: "var(--dur-fast)",
+        base: "var(--dur-base)",
+        slow: "var(--dur-slow)",
+        reveal: "var(--dur-reveal)",
+      },
+      transitionTimingFunction: {
+        "out-soft": "var(--ease-out)",
+        "in-out-soft": "var(--ease-in-out)",
       },
       keyframes: {
         "accordion-down": {
@@ -160,6 +145,11 @@ module.exports = {
           "linear-gradient(135deg, hsl(var(--aristo-orange-light)), hsl(var(--aristo-beige)))",
       },
       boxShadow: {
+        // Elevation (V8.2): one shadow colour per theme, --shadow carries its
+        // own alpha. e1 for cards, popovers and menus; e2 for dialogs, sheets
+        // and hero media.
+        e1: "0 12px 30px rgb(var(--shadow))",
+        e2: "0 30px 70px rgb(var(--shadow)), 0 6px 18px rgb(var(--shadow))",
         "aristo-sm": "0 2px 8px hsl(var(--aristo-orange-main) / 0.15)",
         aristo: "0 4px 20px hsl(var(--aristo-orange-main) / 0.2)",
         "aristo-lg": "0 8px 40px hsl(var(--aristo-orange-main) / 0.25)",

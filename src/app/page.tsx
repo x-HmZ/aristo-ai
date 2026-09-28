@@ -7,7 +7,6 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { displayFont } from "@/components/landing/fonts";
-import { THEME_INIT_SCRIPT } from "@/components/landing/theme";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,21 +15,19 @@ import { cn } from "@/lib/utils";
  * here imports three / @react-three: the 3D classroom is shown as still
  * captures of /demo under public/images/landing, never as a live scene.
  *
- * `.landing` scopes the page's own palette (light and dark, see globals.css)
- * so /learn, /demo and the rest of the app keep the shared tokens.
+ * Colours are the app-wide semantic tokens (light and dark, see globals.css
+ * and .claude/docs/brand-system.md). The theme script lives in the root
+ * layout. No stylesheet rule reads `.landing` any more; it only names the
+ * page root.
  */
 export default function HomePage() {
   return (
     <div
       className={cn(
         displayFont.variable,
-        "landing relative min-h-screen overflow-x-hidden bg-lp-bg text-lp-ink"
+        "landing relative min-h-screen overflow-x-hidden bg-bg text-ink"
       )}
     >
-      {/* Runs before the markup below is parsed, so a stored theme choice is
-          in place for the first paint. See theme.ts. */}
-      <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-
       {/* Without JS the IntersectionObserver in Reveal never fires, so the
           scroll-reveal start state would leave the page blank. */}
       <noscript>

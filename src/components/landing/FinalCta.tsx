@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/landing/Reveal";
-import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 
 /**
  * T04b: this band used to be a full orange gradient, the single most
@@ -17,18 +17,18 @@ export function FinalCta() {
         <div
           className={cn(
             SHAPE.band,
-            "relative overflow-hidden border border-lp-tint-line bg-lp-surface px-6 py-12 text-center sm:px-10 sm:py-16 lg:px-14 lg:py-[72px]"
+            "relative overflow-hidden border border-tint-line bg-surface px-6 py-12 text-center sm:px-10 sm:py-16 lg:px-14 lg:py-[72px]"
           )}
         >
           <div
             aria-hidden
-            className="lp-glow-rise pointer-events-none absolute inset-0"
+            className="glow-rise pointer-events-none absolute inset-0"
           />
           <div className="relative flex flex-col items-center gap-5">
-            <h2 className="lp-display max-w-[760px] text-balance text-[30px] font-extrabold leading-none tracking-[-0.02em] sm:text-[40px] lg:text-[48px]">
+            <h2 className="display-wide max-w-[760px] text-balance text-[30px] font-extrabold leading-none tracking-[-0.02em] sm:text-[40px] lg:text-[48px]">
               Your teacher is ready
             </h2>
-            <p className="max-w-[460px] text-base leading-relaxed text-lp-body sm:text-[17.5px]">
+            <p className="max-w-[460px] text-base leading-relaxed text-body sm:text-[17.5px]">
               About five minutes, in your browser, with nothing to sign up for or
               install.
             </p>
@@ -38,7 +38,7 @@ export function FinalCta() {
                 SHAPE.control,
                 PRESS,
                 FOCUS,
-                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-lp-accent px-7 text-base font-bold text-lp-accent-ink hover:-translate-y-0.5 hover:bg-lp-accent/90 sm:w-auto"
+                "mt-2 inline-flex min-h-[56px] w-full items-center justify-center gap-2.5 bg-accent px-7 text-base font-bold text-accent-ink hover:-translate-y-0.5 hover:bg-accent/90 sm:w-auto"
               )}
             >
               Try a lesson

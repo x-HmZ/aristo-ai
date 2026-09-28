@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Wordmark } from "@/components/landing/Wordmark";
-import { ThemeToggle } from "@/components/landing/ThemeToggle";
-import { FOCUS, PRESS, SHAPE } from "@/components/landing/shape";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 
 const SECTIONS = [
   { href: "#how-it-works", label: "How it works" },
@@ -29,7 +29,7 @@ export function LandingNav() {
               key={section.href}
               href={section.href}
               className={cn(
-                "inline-flex min-h-[44px] items-center rounded-lg text-sm font-medium text-lp-muted transition-colors hover:text-lp-ink",
+                "inline-flex min-h-[44px] items-center rounded-lg text-sm font-medium text-muted transition-colors hover:text-ink",
                 FOCUS
               )}
             >
@@ -49,7 +49,7 @@ export function LandingNav() {
               SHAPE.control,
               PRESS,
               FOCUS,
-              "inline-flex min-h-[44px] items-center whitespace-nowrap px-3 text-sm font-semibold text-lp-muted hover:text-lp-ink sm:px-3.5"
+              "inline-flex min-h-[44px] items-center whitespace-nowrap px-3 text-sm font-semibold text-muted hover:text-ink sm:px-3.5"
             )}
           >
             Sign in
@@ -60,7 +60,7 @@ export function LandingNav() {
               SHAPE.control,
               PRESS,
               FOCUS,
-              "inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap bg-lp-accent px-4 text-sm font-semibold text-lp-accent-ink hover:bg-lp-accent/90 sm:px-[18px]"
+              "inline-flex min-h-[44px] items-center gap-1.5 whitespace-nowrap bg-accent px-4 text-sm font-semibold text-accent-ink hover:bg-accent/90 sm:px-[18px]"
             )}
           >
             Try a lesson
