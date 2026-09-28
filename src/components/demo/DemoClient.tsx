@@ -23,27 +23,23 @@ import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
-import { useAristoStore } from "@/store/useAristoStore";
+import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
+import { AvatarCredit } from "@/components/learn/AvatarCredit";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
 
 /**
- * The demo must use an avatar that can actually lipsync. Only the Avaturn
- * rigs (marcus, priya) carry the 15 ARKit viseme blend shapes wawa-lipsync
- * drives; Teacher.tsx gates the viseme path on cfg.morphs.visemes, which
- * they alone set. The store default (ryan) has 0 viseme morphs and only a
- * binary mouthSmile, so his mouth never moves while narrating -- on the one
- * page whose job is to show a talking 3D teacher.
+ * The avatar the demo opens on. It must lipsync (the page exists to show a
+ * talking 3D teacher), and it pairs with the pre-rendered narration, which is
+ * a male voice (ElevenLabs Antoni, public/demo/<slug>/audio.json). The visitor
+ * can switch to any ACTIVE_TEACHERS avatar; MJ then speaks with that same male
+ * narration until a female one is rendered.
  *
- * marcus pairs with the already-rendered narration voice (ElevenLabs Antoni).
- * Switching to priya would mean re-rendering every segment.
- *
- * This currently equals DEFAULT_TEACHER, but is set explicitly rather than
- * relying on that: /demo's narration files are baked against this avatar's
- * voice, and the demo is the one page that cannot tolerate a mute mouth, so a
- * future change to the global default must not silently retarget it.
+ * Set explicitly rather than read from DEFAULT_TEACHER: the narration files are
+ * baked against this voice, so a future change to the global default must not
+ * silently retarget the demo.
  */
-const DEMO_TEACHER = "marcus" as const;
+const DEMO_TEACHER = "jake" as const;
 
 // ─── Topic picker overlay ─────────────────────────────────────────────────────
 
@@ -131,6 +127,7 @@ export function DemoClient() {
   const setViewMode3d    = useAristoStore((s) => s.setViewMode3d);
   const stopAudio        = useAristoStore((s) => s.stopAudio);
   const setTeacher       = useAristoStore((s) => s.setTeacher);
+  const teacher          = useAristoStore((s) => s.teacher);
 
   const activeQuiz  = useAristoStore((s) => s.activeQuiz);
   const quizResult  = useAristoStore((s) => s.quizResult);
@@ -150,10 +147,9 @@ export function DemoClient() {
     const previousTeacher = useAristoStore.getState().teacher;
     setTeacher(DEMO_TEACHER);
 
-    // Warm the avatar while the topic picker is on screen. Teacher.tsx only
-    // module-preloads ryan (T02 trimmed the cold payload to default-only), and
-    // the Avaturn rig plus its shared animation pack is ~11.6 MB, so without
-    // this the download does not start until the visitor picks a topic.
+    // Warm the avatar while the topic picker is on screen: Teacher.tsx does not
+    // preload at module scope, so without this the download does not start
+    // until the visitor picks a topic.
     useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].sceneFile}`);
     useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].animFile}`);
 
@@ -258,6 +254,32 @@ export function DemoClient() {
             >
               Change topic
             </button>
+          </div>
+          {/* Teacher switcher, with the licence credit for the one on screen. */}
+          <div className="px-4 py-2 bg-white/55 backdrop-blur-xl border-b border-white/40 flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8957A] shrink-0">Teacher</span>
+              <div className="flex items-center gap-1 bg-white/60 rounded-full p-0.5 border border-white/60">
+                {ACTIVE_TEACHERS.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTeacher(t)}
+                    onMouseEnter={() => {
+                      useGLTF.preload(`/models/${AVATAR_ASSETS[t].sceneFile}`);
+                      useGLTF.preload(`/models/${AVATAR_ASSETS[t].animFile}`);
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
+                      teacher === t
+                        ? "bg-[#F97B2F] text-white shadow-sm"
+                        : "text-[#8B6E5A] hover:text-[#3D2110]"
+                    }`}
+                  >
+                    {AVATAR_ASSETS[t].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <AvatarCredit avatar={teacher} />
           </div>
           <div className="flex-1 overflow-hidden bg-white/25 backdrop-blur-xl">
             <LessonPlayer demoMode />

@@ -6,7 +6,7 @@ Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D ava
 
 ## Vision (do not redirect from this)
 
-- **Immersive 3D experience** — teacher avatar (Ryan / Sonia) in a real-time R3F scene; physical topics get a generated 3D model (FLUX → Tripo3D) in the scene.
+- **Immersive 3D experience** — teacher avatar (Jake, the default, or MJ) in a real-time R3F scene; physical topics get a generated 3D model (FLUX → Tripo3D) in the scene.
 - **Real teaching, not summarization** — strict 5-phase protocol: Activate → Explain → Demonstrate → Challenge → Connect.
 - **Adaptive** — no fixed learning-style buckets (FSLSM rejected); `DynamicProfile` (expertise / depth / pace / example preference) inferred from behavioral signals every session.
 - **Mastery-based, not time-based** — BKT per concept, FSRS spaced repetition; the KG decides what to teach next.
@@ -41,6 +41,17 @@ Next.js 15 App Router's `(app-pages-browser)` webpack layer aliases `react` to `
 
 Everything else lives in App Router.
 
+## Teacher avatars (V9)
+
+- **Jake is the default teacher** (`DEFAULT_TEACHER` in the store; only his scene is preloaded); **MJ** is the second. Ryan, Sonia,
+  Marcus and Priya are archived (kept in `AVATAR_ASSETS`, not offered, not tested). Both are Canino3d models, CC BY 4.0: the credit
+  renders via `AvatarCredit` from `AVATAR_ASSETS[*].credit`. Any new asset needs a `LICENSES.md` row.
+- Each teacher is a base GLB (mesh + Idle/Talking/Thinking) plus a lazy `_clips.glb` pack loaded after `sceneReady`. What plays is
+  decided by the pure director in `src/lib/avatar/` (manifest, director, masks, look, face, gaze); `Teacher.tsx` only renders it.
+  Clip names live in the manifest, never in `Teacher.tsx`. Detail: `.claude/docs/architecture.md` ("Teacher avatar subsystem").
+- A teacher that cannot load, a persisted archived choice, and `custom` with no URL all fall back to Jake. Custom teachers keep
+  `CUSTOM_CLIP_SET` and `smileGain` 0.4.
+
 ## Docs map (read on demand)
 
 | Doc | Contents |
@@ -49,6 +60,7 @@ Everything else lives in App Router.
 | `.claude/docs/architecture.md` | Agents, subsystems, all API routes, components, hooks, store, approval gate |
 | `.claude/docs/decisions.md` | Decision log — why things are the way they are |
 | `.claude/docs/landing-design-system.md` | Landing page tokens, type, shape, theme rules ("Night Class") |
+| `LICENSES.md` | Every shipped third-party asset: author, licence, source, modified, open items |
 | `AI_TEACHER_APP_SPEC.md` | Authoritative spec (use `spec_index.md` to navigate) |
 | `.claude/eval/2026-09-09-pipeline/README.md` | Real fal.ai output behind the image/3D model choices — comparison images, reference GLBs, and three decisions not to re-litigate |
 

@@ -393,7 +393,7 @@ function ChallengeCard({
       const data = await res.json();
       setFeedback(data.feedback ?? (data.is_correct ? "Great thinking! ✓" : "Not quite — here's what to consider:"));
       setShowAnswer(true);
-      // Gesture feedback — store auto-reverts after 2s (nod) / 1.5s (shake)
+      // Gesture feedback — Teacher reverts it when the nod / shake clip ends
       setGesture(data.is_correct ? "nodding" : "shaking");
     } catch {
       setShowAnswer(true);

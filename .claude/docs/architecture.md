@@ -82,8 +82,48 @@ All Anthropic / fal.ai endpoints require auth.
 **Three (3D scene):**
 - `AristoCanvas.tsx` — R3F Canvas + OrbitControls + lighting
 - `Experience.tsx` — scene composition
-- `Teacher.tsx` — Ryan / Sonia GLB
+- `Teacher.tsx` — teacher avatar (`AVATAR_ASSETS`; roster Jake / MJ). Each Canino teacher is
+  `Teacher_<T>.glb` (mesh + base clips Idle/Talking/Thinking) plus `Teacher_<T>_clips.glb`
+  (`clipPacks`: animation-only, meshopt, fetched after `sceneReady`, registered on the same
+  mixer). Built by `.claude/eval/2026-09-18-v9-bakeoff/scripts/v9_ship.sh` (V9.2)
 - `GeneratedModel.tsx` — loads generated GLB, float animation, annotation highlights
+
+## Teacher avatar subsystem (V9)
+
+Roster: **Jake (the default, `DEFAULT_TEACHER`) and MJ** (`ACTIVE_TEACHERS`, the picker order). Ryan, Sonia, Marcus
+and Priya are archived: configured in `AVATAR_ASSETS`, not offered, not tested. `custom` (Avaturn, from
+`/create-teacher`) is offered to a learner who has made one. Pure logic lives in `src/lib/avatar/` (three.js-free,
+unit-tested); `Teacher.tsx` only renders what it says.
+
+**Config and loading** (`AVATAR_ASSETS` in `Teacher.tsx`): per avatar a scene GLB, an `animFile`, optional `clipPacks`, a
+clip set, `standScale` (world height, read by `Experience.tsx`), `morphs` (`visemes`, `eyeClose`, `smileGain`), `credit`.
+- Jake and MJ: `Teacher_<T>.glb` = mesh + base clips (Idle, Talking, Thinking, the `MOUNT_CLIP`); `Teacher_<T>_clips.glb` =
+  14 animation-only clips (meshopt), mounted by `<ClipPack>` only once `sceneReady`, on the same mixer. A failed pack
+  (`ClipPackBoundary`) leaves the base clips playing.
+- Eager download is only the default's scene (`preloadDefaultAvatar()`, called by `LearnClient`; `/demo` preloads its own
+  `DEMO_TEACHER`; the picker warms a teacher's scene on hover). Packs are never preloaded.
+- Fallbacks to the default: a persisted choice that is not offered (store `merge`), `custom` with no GLB URL, an unknown
+  key, and a teacher whose GLB fails (`SafeTeacher` swaps in Jake; keyed by avatar so the boundary resets).
+
+**Director** (`director.ts`, `animationManifest.ts`): one pure step per frame from store signals (`gesture`, `isSpeaking`,
+`isLoading`, lesson phase, quiz state, `lessonComplete`, `sceneReady`) to four outputs: a looping **base** clip
+(crossfaded, no back-to-back repeats, cooldowns), one masked **overlay** (greeting, long wait, nod, shake, quiz reactions),
+a **look** target, a **face** hint. The manifest holds every clip's scenarios, layer, cooldown and mask, and the clip
+sets per rig (`CANINO`, `AVATURN`, `CUSTOM`, `LEGACY`); adding a clip is a data change.
+- **Masks** (`skeletonMasks.ts`): `upper` and `head` track sets found from the skeleton (walk from the hips; names may carry
+  a `_<digits>` suffix, as MJ's do). An overlay is a masked copy of the clip on the same mixer, weighted by dominance.
+- **Reactions** (nod, shake) are latched from store `gesture` changes and released back to `idle` by the director.
+
+**Look and face** (all applied in `useFrame` after the mixer): `look.ts` turns the head part-way toward camera, board,
+model or desk; `gaze.ts` turns both eye bones after it (saccades, drift, averted "thinking"); `face.ts` sets the smile
+level (`smileGain` per rig, 0.4 for an untuned rig) and runs the blink scheduler; visemes come from `useTTS`
+(alignment timeline, FFT fallback). The Canino rigs have only 14 visemes, `mouthSmile` and two blink shapes, so
+expressions are smile levels plus eyes. Rigs without `CC_Base_[LR]_Eye` bones (legacy, custom) get no eye layer.
+
+**Custom teachers** keep `CUSTOM_CLIP_SET`, `smileGain` 0.4 and the flat `LEGACY_STAND_SCALE` (1.5).
+**Credit:** `AvatarCredit` renders `AVATAR_ASSETS[*].credit` for both teachers on `/learn` and `/demo`; `LICENSES.md` lists
+every shipped asset.
+**Tests:** `director`, `manifest` (integrity and the coverage table), `skeletonMasks`, `look`, `face` (with `gaze`).
 
 ## Hooks
 - `useSessionFlush.ts` — signals ref pattern; `beforeunload` keepalive flush

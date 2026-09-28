@@ -298,6 +298,9 @@ const VOICE_BY_AVATAR: Record<TeacherAvatar, string> = {
   sonia:  "sonia",
   marcus: "marcus",
   priya:  "priya",
+  // No voices of their own yet: the existing male / female personas.
+  jake:   "marcus",
+  mj:     "priya",
   custom: "custom",
 };
 

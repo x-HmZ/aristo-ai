@@ -21,10 +21,11 @@ import { useEffect, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
 
-// Dev-only query overrides: ?avatar=ryan|sonia|marcus|priya and ?room=alt
+// Dev-only query overrides: ?avatar=ryan|sonia|marcus|priya|jake|mj, ?room=alt
+// and ?state=thinking|talking|pointing
 // let the harness exercise every teacher GLB / the alternative classroom
 // without auth. Parsed once on mount, before the first stage effect runs.
-const AVATAR_PARAMS: readonly TeacherAvatar[] = ["ryan", "sonia", "marcus", "priya"];
+const AVATAR_PARAMS: readonly TeacherAvatar[] = ["ryan", "sonia", "marcus", "priya", "jake", "mj"];
 
 const PLACEHOLDER_GLB = "/models/dev_placeholder.glb";
 // 1×1 orange PNG data-URI — stands in for the fal.ai teaching image so the
@@ -45,6 +46,13 @@ export default function FreeModelPreview() {
     const avatar = params.get("avatar") as TeacherAvatar | null;
     if (avatar && AVATAR_PARAMS.includes(avatar)) s.setTeacher(avatar);
     if (params.get("room") === "alt") s.setClassroom("alternative");
+
+    // ?state=thinking|talking|pointing holds the teacher in one state so its
+    // clip, spawn label and framing can be judged without a live lesson.
+    const state = params.get("state");
+    if (state === "thinking") s.setIsLoading(true);
+    if (state === "talking") s.setIsSpeaking(true);
+    if (state === "pointing") s.setGesture("pointing");
   }, []);
 
   useEffect(() => {

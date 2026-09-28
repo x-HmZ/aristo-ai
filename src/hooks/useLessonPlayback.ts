@@ -194,6 +194,7 @@ export function useLessonPlayback(
   const setActivePreviewImageUrl      = useAristoStore((s) => s.setActivePreviewImageUrl);
   const setCurrentSegmentId           = useAristoStore((s) => s.setCurrentSegmentId);
   const setAwaitingAnswer             = useAristoStore((s) => s.setAwaitingAnswer);
+  const setLessonComplete             = useAristoStore((s) => s.setLessonComplete);
   const setActiveModelUrl             = useAristoStore((s) => s.setActiveModelUrl);
   const setPending3dImageUrl          = useAristoStore((s) => s.setPending3dImageUrl);
   const setViewMode3d                 = useAristoStore((s) => s.setViewMode3d);
@@ -211,6 +212,13 @@ export function useLessonPlayback(
   useEffect(() => {
     setAwaitingAnswer(awaitingAnswer);
   }, [awaitingAnswer, setAwaitingAnswer]);
+
+  // Same for a finished lesson: the teacher reacts to it (V9.3). Every place
+  // that restarts or switches a lesson already resets isComplete, so the
+  // mirror follows.
+  useEffect(() => {
+    setLessonComplete(isComplete);
+  }, [isComplete, setLessonComplete]);
 
   // Resolved segment list — real or shimmed.
   const segments: NarrationSegment[] = useMemo(() => {
@@ -503,6 +511,7 @@ export function useLessonPlayback(
       setGesture("idle");
       setCurrentSegmentId(null);
       setAwaitingAnswer(false);
+      setLessonComplete(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
