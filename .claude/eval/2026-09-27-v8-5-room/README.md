@@ -42,3 +42,21 @@ changed.
 | fps, uncapped (9 x 8 s runs each, interleaved) | mean 126 (range 100 to 153) | mean 153 (range 136 to 174) |
 
 The uncapped runs are noisy on this laptop. The after runs are not slower, which meets the within-10% bar.
+
+## The "Evening" room (`classroom_alternative.glb`, 2026-09-28)
+
+`evening/` holds the same nine framings. The left of each image is the old alternative room (the anime-style
+classroom) and the right is the new evening study. Captured with `ROOM=alt node scripts/room/verify-room.mjs shots`.
+
+| Probe (`ROOM=alt ... probe`) | Old alt room | Evening |
+|---|---|---|
+| Student desk centre and corners | **no desk under the centre**: a chair seat at y -1.559, then floor y -1.7, so the quiz paper floated. One corner catches another desk at y -0.794, and the other hits only the floor | y -0.888 at all three (the pendant above the centre is hit first, at y 1.85) |
+| Second-row desk (0.3, -2.35) | floor y -1.7 (`DeskPaper` floated) | rug y -1.688 (no second-row desk by design; `DeskPaper` is not mounted) |
+| Floor below `SCENE_*` | y -1.7 | rug y -1.688, floor y -1.694 |
+| Display, clicked from the lesson framing | the old board, z -5.393, facing away (normal -z) | z -5.574, normal +z |
+
+| Budget | Old alt room | Evening |
+|---|---|---|
+| File | 1,473,680 B | 689,808 B |
+| Frame draw calls (`/dev/free-model?room=alt`) | 160 | 30 |
+| fps, uncapped (6 x 8 s runs each, interleaved) | about 32 (22 to 36) | about 163 (138 to 187) |

@@ -397,6 +397,6 @@ Per-phase choices are stated above. The rules behind them:
 - [ ] V8.4a lesson panel and controls
 - [ ] V8.4b quiz and answers
 - [ ] V8.4c free mode, pickers, loading
-- [x] V8.5 environment art direction (2026-09-27): the original room restyled and re-baked (`scripts/room/`), with lockers, clock, cork boards and chalk tray gone and the chalkboard now a display. All anchors unchanged, 1.07 MB, fps not lower. Evidence in `.claude/eval/2026-09-27-v8-5-room/`
+- [x] V8.5 environment art direction (2026-09-27): the original room restyled and re-baked (`scripts/room/`), with lockers, clock, cork boards and chalk tray gone and the chalkboard now a display. All anchors unchanged, 1.07 MB, fps not lower. Alt room replaced by "Evening", a one-to-one study on the same shell (2026-09-28). Evidence in `.claude/eval/2026-09-27-v8-5-room/`
 - [ ] V8.6 app pages
 - [ ] V8.7 re-capture, assets, cleanup

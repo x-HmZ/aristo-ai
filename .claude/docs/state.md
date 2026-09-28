@@ -2,7 +2,7 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-28 - V8.5 done: the room is a warm, minimal studio (Opus)
+## 2026-09-28 - V8.5 done: two rooms, "Classroom" (warm studio) and "Evening" (one-to-one study) (Opus)
 
 Branch `dev/v8-5-studio-room`, taken off `docs/v8-v9-programme` and not off `deploy-prep`. The brief says to branch off
 `deploy-prep`, but that branch has none of V9 (Jake/MJ, the director), and the room had to be verified against the real
@@ -23,8 +23,22 @@ scene. Merge it after the V8/V9 programme lands, or rebase the commits then. Evi
   in decisions.md with the display's probed rectangle, for V3 / T08.
 - **For Hmz to judge:** whether the look clears the bar (the before/after sheets are in the eval folder). The rows of
   desks stay, because they are the quiz anchors. The quiz card is now cream on pale oak, so its contrast is lower than on
-  the old orange desk; worth a look in V8.4b. `classroom_alternative.glb` (the "Alt. Room") is untouched.
-- **Next:** V8.4a/b/c (classroom UI), then V8.7 re-capture. `verify-room.mjs shots` can drive the captures.
+  the old orange desk; worth a look in V8.4b.
+- **Evening room (second pass, Hmz: "do something to replace the alt room as well... be a little creative"):**
+  `classroom_alternative.glb` is now built from the default room's shell (`--variant evening`). It is a one-to-one
+  study at dusk: only the learner's desk remains, with a reading nook (CC0 Poly Haven props, fetched by
+  `scripts/room/fetch-props.mjs`), pendant lamps, a rust rug, blue-ink walls, walnut and dusk windows. The picker
+  label is "Evening"; the store value is unchanged. The bake ships as an emissive texture, so the app's daylight rig
+  does not re-light it. The old alt room had **broken quiz anchors** (the paper floated over a chair) and cost 160 draw
+  calls per frame at about 32 fps. Evening: every anchor probed, 30 draw calls, about 163 fps, 1.47 to 0.69 MB.
+  `Classroom.tsx` shares one `ROOM_SHELL` transform and has no `DeskPaper` in Evening (`desk: null`).
+  The picker itself is only in `/learn` (auth, not opened); the same load path was checked through `?room=alt`.
+- **Code review:** the `code-reviewer` agent ran twice. The first pass found 0 critical or high issues and 1 medium
+  (`verify-room.mjs` did not always clean up Chrome), plus 4 lows. All were fixed: cleanup in `finally`, CDP
+  timeouts, a failing canvas wait, profile removal, a path guard in `fetch-props.mjs`, and the shared shell constant.
+  The indirect clamp is now evening-only, so the shipped day bake stays reproducible. The confirming pass approved.
+- **Next:** V8.4a/b/c (classroom UI), then V8.7 re-capture. `verify-room.mjs shots` (with `ROOM=alt` too) can drive
+  the captures.
 
 ## 2026-09-27 - V9.8 done: batch 3 wired (Opus authored, Sonnet wired)
 
