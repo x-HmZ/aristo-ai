@@ -21,6 +21,7 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import type { Concept } from "./types";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 // ─── Visual encoding ──────────────────────────────────────────────────────────
 
@@ -37,9 +38,9 @@ const BLOOM_BORDER: Record<string, string> = {
   remember:   "#94A3B8",
   understand: "#60A5FA",
   apply:      "#22C55E",
-  analyze:    "#F59E0B",
+  analyze:    BRAND_HEX.amber,
   evaluate:   "#F97316",
-  create:     "#8B5CF6",
+  create:     BRAND_HEX.purple,
 };
 
 interface ConceptNodeData extends Record<string, unknown> {
@@ -74,7 +75,7 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
       <Handle
         type="target"
         position={Position.Top}
-        style={{ background: "#F97B2F", width: 8, height: 8 }}
+        style={{ background: BRAND_HEX.orangeMain, width: 8, height: 8 }}
       />
       <div className="font-bold text-aristo-brown leading-snug line-clamp-2">
         {data.label}
@@ -99,7 +100,7 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
       <Handle
         type="source"
         position={Position.Bottom}
-        style={{ background: "#F97B2F", width: 8, height: 8 }}
+        style={{ background: BRAND_HEX.orangeMain, width: 8, height: 8 }}
       />
     </div>
   );
@@ -208,8 +209,8 @@ function KgGraphInner({ concepts, coverage, onNodeClick, onCreatePrereq }: Props
           id:     `${p}->${c.id}`,
           source: p,           // prerequisite is the source
           target: c.id,        // concept depending on it is the target
-          markerEnd: { type: MarkerType.ArrowClosed, color: "#F97B2F" },
-          style:  { stroke: "#F97B2F", strokeWidth: 1.5 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: BRAND_HEX.orangeMain },
+          style:  { stroke: BRAND_HEX.orangeMain, strokeWidth: 1.5 },
           animated: false,
         });
       }
@@ -256,7 +257,7 @@ function KgGraphInner({ concepts, coverage, onNodeClick, onCreatePrereq }: Props
       fitView
       proOptions={{ hideAttribution: true }}
     >
-      <Background gap={24} color="#F97B2F" style={{ opacity: 0.2 }} />
+      <Background gap={24} color={BRAND_HEX.orangeMain} style={{ opacity: 0.2 }} />
       <MiniMap
         nodeColor={(n) => BLOOM_BORDER[(n.data as ConceptNodeData)?.bloom] ?? "#94A3B8"}
         maskColor="rgba(253, 248, 239, 0.7)"

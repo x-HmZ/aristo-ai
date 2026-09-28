@@ -20,6 +20,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 interface Summary {
   range:                  "24h" | "7d" | "30d";
@@ -48,9 +49,9 @@ interface Summary {
 }
 
 const PROVIDER_COLOR: Record<string, string> = {
-  anthropic: "#F97B2F",
+  anthropic: BRAND_HEX.orangeMain,
   openai:    "#22C55E",
-  fal:       "#8B5CF6",
+  fal:       BRAND_HEX.purple,
 };
 
 export default function CostPage() {
@@ -114,7 +115,7 @@ export default function CostPage() {
         <StatCard
           label="API calls"
           value={data?.event_count ?? 0}
-          color="#3B82F6"
+          color={BRAND_HEX.blue}
           icon={<BarChart3 className="h-5 w-5" />}
         />
         <StatCard
@@ -124,7 +125,7 @@ export default function CostPage() {
               ? `$${(data.total_usd / data.event_count).toFixed(4)}`
               : "—"
           }
-          color="#8B5CF6"
+          color={BRAND_HEX.purple}
         />
         <StatCard
           label="Projected monthly"
@@ -145,17 +146,17 @@ export default function CostPage() {
               <AreaChart data={data.trend} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                 <defs>
                   <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%"   stopColor="#F97B2F" stopOpacity={0.6} />
-                    <stop offset="100%" stopColor="#F97B2F" stopOpacity={0.05} />
+                    <stop offset="0%"   stopColor={BRAND_HEX.orangeMain} stopOpacity={0.6} />
+                    <stop offset="100%" stopColor={BRAND_HEX.orangeMain} stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 10, fill: "#3D2110" }}
+                  tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
                   tickFormatter={(v) => v.slice(5)}
                 />
-                <YAxis tick={{ fontSize: 11, fill: "#3D2110" }} />
+                <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                 <Tooltip
                   contentStyle={{
                     background: "rgba(253, 248, 239, 0.95)",
@@ -167,7 +168,7 @@ export default function CostPage() {
                 <Area
                   type="monotone"
                   dataKey="usd"
-                  stroke="#F97B2F"
+                  stroke={BRAND_HEX.orangeMain}
                   strokeWidth={2}
                   fill="url(#costGrad)"
                 />
@@ -183,9 +184,9 @@ export default function CostPage() {
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={data.byProvider} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
-                <XAxis dataKey="provider" tick={{ fontSize: 11, fill: "#3D2110" }} />
-                <YAxis tick={{ fontSize: 11, fill: "#3D2110" }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                <XAxis dataKey="provider" tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                 <Tooltip
                   contentStyle={{
                     background: "rgba(253, 248, 239, 0.95)",
@@ -510,7 +511,7 @@ export default function CostPage() {
                                         {m.model}
                                       </span>
                                       <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
-                                        <div className="h-full bg-aristo-purple rounded-full" style={{ width: `${pct}%`, background: "#8B5CF6" }} />
+                                        <div className="h-full bg-aristo-purple rounded-full" style={{ width: `${pct}%`, background: BRAND_HEX.purple }} />
                                       </div>
                                       <span className="text-[10px] text-aristo-brown/60 tabular-nums w-8 text-right">
                                         {m.count}

@@ -13,6 +13,7 @@ import { SectionTitle }          from "@/components/admin/ui/SectionTitle";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,8 +33,8 @@ interface AnalyticsData {
 
 const EXPERTISE_META: Record<string, { label: string; color: string }> = {
   beginner:     { label: "Beginner",     color: "#22C55E" },
-  intermediate: { label: "Intermediate", color: "#F97B2F" },
-  advanced:     { label: "Advanced",     color: "#8B5CF6" },
+  intermediate: { label: "Intermediate", color: BRAND_HEX.orangeMain },
+  advanced:     { label: "Advanced",     color: BRAND_HEX.purple },
 };
 
 const BLOOM_ORDER = ["remember", "understand", "apply", "analyze", "evaluate", "create"];
@@ -110,7 +111,7 @@ export default function OverviewPage() {
             <StatCard
               label="Courses Published"
               value={data.stats.publishedCourses}
-              color="#8B5CF6"
+              color={BRAND_HEX.purple}
               icon={<BookOpen className="h-5 w-5" />}
             />
             <StatCard
@@ -119,7 +120,7 @@ export default function OverviewPage() {
               sub={`${data.stats.totalQuizAttempts} attempts`}
               color={
                 data.stats.avgQuizScore >= 70 ? "#22C55E" :
-                data.stats.avgQuizScore >= 50 ? "#F97B2F" : "#EF4444"
+                data.stats.avgQuizScore >= 50 ? BRAND_HEX.orangeMain : "#EF4444"
               }
               icon={<Target className="h-5 w-5" />}
             />
@@ -137,7 +138,7 @@ export default function OverviewPage() {
               ) : (
                 <div className="space-y-3">
                   {data.expertiseDistribution.map(({ level, count, pct }) => {
-                    const meta = EXPERTISE_META[level] ?? { label: level, color: "#8B6E5A" };
+                    const meta = EXPERTISE_META[level] ?? { label: level, color: BRAND_HEX.brownMuted };
                     return (
                       <BarRow
                         key={level}
@@ -166,7 +167,7 @@ export default function OverviewPage() {
                     .map(({ bloom, accuracy, count }) => {
                       const color =
                         accuracy >= 70 ? "#22C55E" :
-                        accuracy >= 50 ? "#F97B2F" : "#EF4444";
+                        accuracy >= 50 ? BRAND_HEX.orangeMain : "#EF4444";
                       return (
                         <BarRow
                           key={bloom}

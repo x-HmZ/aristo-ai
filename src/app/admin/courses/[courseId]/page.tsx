@@ -14,6 +14,7 @@ import { BrandButton }       from "@/components/admin/ui/BrandButton";
 import { BrandBadge }        from "@/components/admin/ui/BrandBadge";
 import { StatCard }          from "@/components/admin/ui/StatCard";
 import { SectionTitle }      from "@/components/admin/ui/SectionTitle";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 interface Analytics {
   course: {
@@ -103,7 +104,7 @@ export default function CourseDetailPage({
             <StatCard
               label="In progress"
               value={data.status_counts.in_progress}
-              color="#3B82F6"
+              color={BRAND_HEX.blue}
             />
             <StatCard
               label="Completed"
@@ -116,7 +117,7 @@ export default function CourseDetailPage({
               value={`${data.completion_pct}%`}
               color={
                 data.completion_pct >= 70 ? "#22C55E" :
-                data.completion_pct >= 40 ? "#F97B2F" : "#EF4444"
+                data.completion_pct >= 40 ? BRAND_HEX.orangeMain : "#EF4444"
               }
               icon={<Target className="h-5 w-5" />}
             />
@@ -133,15 +134,15 @@ export default function CourseDetailPage({
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.moduleDropoff} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
                     <XAxis
                       dataKey="module_title"
-                      tick={{ fontSize: 10, fill: "#3D2110" }}
+                      tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
                       angle={-30}
                       textAnchor="end"
                       interval={0}
                     />
-                    <YAxis tick={{ fontSize: 11, fill: "#3D2110" }} />
+                    <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                     <Tooltip
                       contentStyle={{
                         background: "rgba(253, 248, 239, 0.95)",
@@ -149,7 +150,7 @@ export default function CourseDetailPage({
                         borderRadius: 12,
                       }}
                     />
-                    <Bar dataKey="stalled" fill="#F97B2F" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="stalled" fill={BRAND_HEX.orangeMain} radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -165,12 +166,12 @@ export default function CourseDetailPage({
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.masteryDistribution} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
                     <XAxis
                       dataKey="bucket"
-                      tick={{ fontSize: 10, fill: "#3D2110" }}
+                      tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
                     />
-                    <YAxis tick={{ fontSize: 11, fill: "#3D2110" }} />
+                    <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                     <Tooltip
                       contentStyle={{
                         background: "rgba(253, 248, 239, 0.95)",
@@ -182,7 +183,7 @@ export default function CourseDetailPage({
                       {data.masteryDistribution.map((b, i) => {
                         const color =
                           b.min >= 0.8 ? "#22C55E" :
-                          b.min >= 0.5 ? "#F97B2F" :
+                          b.min >= 0.5 ? BRAND_HEX.orangeMain :
                                          "#EF4444";
                         return <Cell key={i} fill={color} />;
                       })}
@@ -217,7 +218,7 @@ export default function CourseDetailPage({
                           width: `${c.avg_mastery}%`,
                           background:
                             c.avg_mastery >= 80 ? "#22C55E" :
-                            c.avg_mastery >= 50 ? "#F97B2F" : "#EF4444",
+                            c.avg_mastery >= 50 ? BRAND_HEX.orangeMain : "#EF4444",
                         }}
                       />
                     </div>
