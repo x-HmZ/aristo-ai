@@ -22,6 +22,7 @@ import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
+import { AristoMark } from "@/components/brand/AristoMark";
 
 function flattenCourseConceptIds(structure: CourseStructure): string[] {
   return structure.modules.flatMap((m) =>
@@ -355,10 +356,11 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
       {/* Top nav */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold text-aristo-brown-main text-xl tracking-tight">aristo</span>
-          <span className="text-aristo-orange-main text-xl font-bold">✦</span>
-        </div>
+        <AristoMark
+          decorative={false}
+          className="h-[17px] text-aristo-brown-main"
+          litClassName="text-aristo-orange-main"
+        />
 
         <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-full px-4 py-1.5 shadow-sm">
           {/* Reviews-due chip — Phase 6 */}

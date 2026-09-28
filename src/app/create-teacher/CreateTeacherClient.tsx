@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AvaturnSDK } from "@avaturn/sdk";
+import { AristoMark } from "@/components/brand/AristoMark";
 
 // Set NEXT_PUBLIC_AVATURN_SUBDOMAIN in Vercel / .env.local after creating a
 // free project at https://developer.avaturn.dev — you'll receive a subdomain
@@ -89,8 +90,11 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="font-bold text-aristo-brown-main text-2xl tracking-tight">aristo</span>
-          <span className="text-aristo-orange-main text-2xl font-bold">✦</span>
+          <AristoMark
+            decorative={false}
+            className="h-[20px] text-aristo-brown-main"
+            litClassName="text-aristo-orange-main"
+          />
         </div>
         <h1 className="text-xl font-bold text-aristo-brown-main">Create Your Teacher</h1>
         <p className="text-sm text-aristo-brown-muted mt-1">

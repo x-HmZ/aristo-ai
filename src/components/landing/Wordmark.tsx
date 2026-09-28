@@ -1,16 +1,20 @@
+import { AristoMark } from "@/components/brand/AristoMark";
 import { cn } from "@/lib/utils";
 
 /**
- * The aristo wordmark, matching the one rendered over the 3D scene in
- * LearnClient / DemoClient so the landing page and the product agree.
+ * The Aristo wordmark on the landing page, drawn in the page's own tokens: ink
+ * for the letters, the accent for the lit middle flute. The same
+ * `AristoMark` draws it in /learn and /demo.
+ *
+ * Height is set here, not by the caller's font size: 14px caps below `sm` so
+ * "Sign in" and "Try a lesson" stay on one line at 360px, 18px caps from `sm`.
  */
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cn("flex items-baseline gap-1.5", className)}>
-      <span className="font-bold tracking-tight text-lp-ink">aristo</span>
-      <span aria-hidden className="text-[0.82em] font-bold text-lp-accent">
-        ✦
-      </span>
-    </span>
+    <AristoMark
+      variant="wordmark"
+      className={cn("h-[14.5px] text-lp-ink sm:h-[18.6px]", className)}
+      litClassName="text-lp-accent"
+    />
   );
 }

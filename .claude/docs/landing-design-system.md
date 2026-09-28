@@ -41,14 +41,15 @@ is atmosphere behind the hero shot and inside the closing band, and nowhere else
 
 ## Typography
 
-- **Display: Archivo, `wdth` 125, capitals** via `.lp-display`. H1, section H2s and the
-  closing CTA only. Loaded by `src/components/landing/fonts.ts` so it never preloads on
+- **Display: Archivo, `wdth` 125, capitals** via `.lp-display`. The H1 and the closing CTA
+  only (V8.1: section H2s are Title Case Geist, per the V8.0 casing decision). Loaded by `src/components/landing/fonts.ts` so it never preloads on
   `/learn` or `/demo`. Below `sm` the width drops to 112 to save a line.
-- **Everything else: Geist**, sentence case: H3s, body, buttons, nav.
+- **Everything else: Geist**: section H2s and card H3s in Title Case, body, buttons and nav in
+  sentence case. Copy comes from `.claude/docs/brand/messaging.md`.
 - Casing is presentation (`text-transform`), so the source copy stays sentence case.
-- H1 is 34 / 48 / 58 / 64 px (base / sm / lg / xl), sized to hold **two lines** at lg and xl.
-  "teaches you" is bound with `whitespace-nowrap` so "you" never orphans.
-- Section H2s are 26 / 36 / 40 px, `leading-[1.05]`, `text-balance`.
+- H1 is the positioning line, one sentence per line (three lines), 33 / 52 / 64 / 72 / 84 px
+  (base / sm / md / lg / xl), each sized so "One teacher." (about 9.7 em wide) fits its column.
+- Section H2s are Geist extrabold, 28 / 36 / 44 px, `leading-[1.08]`, `text-balance`.
 
 ## Shape and elevation
 
@@ -58,7 +59,8 @@ own alpha: soft ink on paper, a deep drop on ink).
 
 ## Components
 
-- **Nav:** wordmark (unchanged mark), section links at lg+, theme toggle at sm+, Sign in,
+- **Nav:** the Column wordmark (`AristoMark`, ink + accent flute; 14.5px tall below `sm`, 18.6px from
+  `sm`), section links at lg+, theme toggle at sm+, Sign in,
   "Try a lesson" (accent). 72px, one line at every width down to 360.
 - **Hero:** eyebrow, full-width display H1, then a 380px column (subtext + stacked CTAs)
   beside the classroom shot, which bleeds at xl/2xl. Not wrapped in `Reveal` (LCP).

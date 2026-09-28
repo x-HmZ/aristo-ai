@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { LoadingScreenVisual } from "@/components/learn/LoadingScreenVisual";
 
 // Same Pages Router treatment as /learn (see pages/learn.tsx) — R3F needs the
@@ -21,6 +22,29 @@ const DemoClient = dynamic(
   }
 );
 
+// /demo is where every "Try a lesson" button lands, so it is the URL most likely
+// to be pasted into a chat. Pages Router pages get no App Router metadata, and
+// have no metadataBase either, so the preview tags are written out absolute.
+const SITE_URL = "https://aristo-ai-ten.vercel.app";
+const TITLE = "Aristo | Try a lesson";
+const DESCRIPTION =
+  "Watch a live lesson from your own AI teacher: explained out loud in a 3D classroom, shown on the board, then quizzed at your desk. No account needed.";
+
 export default function DemoPage() {
-  return <DemoClient />;
+  return (
+    <>
+      <Head>
+        <title>{TITLE}</title>
+        <meta name="description" content={DESCRIPTION} />
+        <meta property="og:title" content={TITLE} />
+        <meta property="og:description" content={DESCRIPTION} />
+        <meta property="og:url" content={`${SITE_URL}/demo`} />
+        <meta property="og:site_name" content="Aristo" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={`${SITE_URL}/opengraph-image`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
+      <DemoClient />
+    </>
+  );
 }

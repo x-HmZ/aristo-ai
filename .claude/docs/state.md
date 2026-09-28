@@ -2,6 +2,31 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-28 - V8.1 done: brand foundation, mark and copy (Opus for the words and mark, Sonnet to apply)
+
+Branch `dev/v8-1-brand`, off `origin/deploy-prep`; PR into `deploy-prep`, not merged (Hmz merges). Gates and the code-review
+result are at the end of this entry. `/` is still static, first-load JS 122 kB, no three / R3F import.
+
+- **Shipped:** `.claude/docs/brand/messaging.md` (positioning, descriptions, pillars, voice, words to avoid, honesty rules,
+  approved landing copy deck). The Column mark, candidate D (Hmz's pick), as vectors from Archivo's own outlines
+  (`scripts/brand/build-mark.mjs` -> `src/components/brand/markPaths.ts`, `public/brand/*.svg`); one `AristoMark` component
+  in the landing nav and footer, /learn and /demo top bars, loading screen, create-teacher header, empty-state avatar. Zero
+  sparkle glyphs. Every landing string rewritten to the deck; section H2s are now Title Case Geist. Metadata fixed
+  (`aristo-ai-ten.vercel.app`, no em-dash, no "adapts to your style"), plus `opengraph-image.tsx`, `icon.svg`, `favicon.ico`,
+  `apple-icon.tsx`, and a title/icon `<Head>` in `pages/_app.tsx` for /learn and /demo.
+- **Honesty fix:** the parents section no longer says "learning, not behaviour"; it lists what the schema stores (time and
+  clicks per lesson, engagement profile, misconceptions, AI-request log). The speech-to-text line says it is the browser's own.
+- **Deferred:** V8.1 step 5, the in-app microcopy sweep. It was held back for `dev/v8-tokens`, which has now merged, so it is
+  unblocked: do it against messaging.md. (The rebase onto the token branch re-applied the mark with `aristo-*` classes.)
+- **Next:** V8.4a/b/c (classroom UI), then V8.3 landing v3 and V8.7 re-capture. Re-generate the mark with
+  `node scripts/brand/build-mark.mjs` after a `yarn build` (it reads Archivo from `.next/static/media`); the favicon with
+  `node scripts/brand/build-favicon.mjs`.
+- **Gates:** type-check clean, lint 10 (unchanged), tests 337, build green; `/` static, 122 kB first-load JS. Verified at
+  360 / 768 / 1280 in both themes (the hero line holds three lines at 360). `code-reviewer`: no critical or high; fixed
+  the medium (/demo had no link preview, now has og tags; apple-touch-icon added) and the accessible name on the top-bar
+  mark. Left as is: the middleware matcher still runs on the two metadata routes (auth file, harmless), and og:url is
+  the site root on /sign-in and /sign-up.
+
 ## 2026-09-28 - Hex-to-token refactor on deploy-prep, zero visual change (Sonnet)
 
 Branch `dev/v8-tokens` off `origin/deploy-prep` (V9 and the V8.5 rooms); PR into `deploy-prep`, not merged. It ports

@@ -165,7 +165,6 @@ export function CourseMapView({
         <div className="px-6 pt-5 pb-4 border-b border-white/60 flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-aristo-orange-main font-bold">✦</span>
               <h2 className="text-base font-bold text-aristo-brown-main truncate">
                 {data?.course.title ?? "Course Map"}
               </h2>

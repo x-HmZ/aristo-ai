@@ -71,7 +71,6 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-white/60">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-aristo-orange-main font-bold text-lg">✦</span>
             <h2 className="text-lg font-bold text-aristo-brown-main">
               What would you like to do?
             </h2>

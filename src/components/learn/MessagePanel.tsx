@@ -5,6 +5,7 @@ import { LessonView }                       from "@/components/learn/LessonView"
 import { LessonPlayer, ADAPTIVE_VISUALS_ENABLED } from "@/components/learn/LessonPlayer";
 import { FreeTopicCard, FreeUserBubble }    from "@/components/learn/FreeTopicCard";
 import { useEffect, useRef }                from "react";
+import { AristoMark } from "@/components/brand/AristoMark";
 
 // ─── Thinking indicator ───────────────────────────────────────────────────────
 
@@ -30,8 +31,12 @@ function ThinkingIndicator() {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center text-2xl shadow-sm">
-        ✦
+      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center shadow-sm">
+        <AristoMark
+          variant="column"
+          className="h-7 text-aristo-brown-main"
+          litClassName="text-aristo-orange-main"
+        />
       </div>
       <div>
         <p className="text-aristo-brown-main font-bold text-base mb-1">Ask Aristo anything!</p>
