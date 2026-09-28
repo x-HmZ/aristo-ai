@@ -2,6 +2,26 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-28 - V8.1 done: brand foundation, mark and copy (Opus for the words and mark, Sonnet to apply)
+
+Branch `dev/v8-1-brand`, off `origin/deploy-prep`; PR into `deploy-prep`, not merged (Hmz merges). Gates and the code-review
+result are at the end of this entry. `/` is still static, first-load JS 122 kB, no three / R3F import.
+
+- **Shipped:** `.claude/docs/brand/messaging.md` (positioning, descriptions, pillars, voice, words to avoid, honesty rules,
+  approved landing copy deck). The Column mark, candidate D (Hmz's pick), as vectors from Archivo's own outlines
+  (`scripts/brand/build-mark.mjs` -> `src/components/brand/markPaths.ts`, `public/brand/*.svg`); one `AristoMark` component
+  in the landing nav and footer, /learn and /demo top bars, loading screen, create-teacher header, empty-state avatar. Zero
+  sparkle glyphs. Every landing string rewritten to the deck; section H2s are now Title Case Geist. Metadata fixed
+  (`aristo-ai-ten.vercel.app`, no em-dash, no "adapts to your style"), plus `opengraph-image.tsx`, `icon.svg`, `favicon.ico`,
+  `apple-icon.tsx`, and a title/icon `<Head>` in `pages/_app.tsx` for /learn and /demo.
+- **Honesty fix:** the parents section no longer says "learning, not behaviour"; it lists what the schema stores (time and
+  clicks per lesson, engagement profile, misconceptions, AI-request log). The speech-to-text line says it is the browser's own.
+- **Deferred:** V8.1 step 5, the in-app microcopy sweep (`dev/v8-tokens` is editing the same learn and quiz components).
+  Do it against messaging.md after that merges.
+- **Next:** V8.4a/b/c (classroom UI), then V8.3 landing v3 and V8.7 re-capture. Re-generate the mark with
+  `node scripts/brand/build-mark.mjs` after a `yarn build` (it reads Archivo from `.next/static/media`); the favicon with
+  `node scripts/brand/build-favicon.mjs`.
+
 ## 2026-09-28 - Hex-to-token refactor on deploy-prep, zero visual change (Sonnet)
 
 Branch `dev/v8-tokens` off `origin/deploy-prep` (V9 and the V8.5 rooms); PR into `deploy-prep`, not merged. It ports

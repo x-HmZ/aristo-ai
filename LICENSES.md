@@ -107,6 +107,14 @@ credit; the authors are listed as a courtesy.
 | `volcano-eruption/seg_*.png` | The app's own image generator, run by `scripts/generate-demo-content.ts` | **Unverified**: which model and terms were not recorded |
 | `<slug>/seg_*.mp3`, `*.align.json`, `audio.json` | ElevenLabs text-to-speech (model `eleven_turbo_v2_5`, voice "Antoni"), with character timings | ElevenLabs terms depend on the plan that rendered them (commercial use needs a paid plan). **Unverified**: the plan at render time was not recorded |
 
+## The wordmark and OG image (Archivo outlines, SIL OFL 1.1)
+
+| Files | Work | Author | Licence | Source | Modified |
+|---|---|---|---|---|---|
+| `public/brand/aristo-wordmark-*.svg`, `src/components/brand/markPaths.ts`, `ogPaths.ts` | Letter shapes A, R, S, T, O and the OG image's words, as vector outlines | Omnibus-Type, "Archivo" (https://fonts.google.com/specimen/Archivo) | SIL Open Font License 1.1, which allows use and modification, including embedding outlines, with the name "Archivo" not used for a modified font | The same Archivo file next/font already serves on the landing page | Yes: instanced at wdth 112 / wght 600 (wordmark) and wdth 125 / wght 800 (OG headline), kerned, joined with the Aristo column, and converted to paths by `scripts/brand/build-mark.mjs` |
+
+The column itself is Aristo's own drawing. No font file is embedded in the mark or the OG image.
+
 ## Other files in `public/`
 
 | Files | Source | Licence |

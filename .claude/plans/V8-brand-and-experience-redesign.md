@@ -398,7 +398,7 @@ Per-phase choices are stated above. The rules behind them:
 
 - [x] V8.0 direction lock (2026-09-18): positioning P1, mark R1 The Column (pillar as the I), wide caps for hero and close only, 3D landing with pinned phases, classroom UI A
 - [x] V8.0b name decision: **keep Aristo** (2026-09-18, screen recorded in decisions.md)
-- [ ] V8.1 brand foundation (messaging doc, copy, metadata, mark in 3 places)
+- [x] V8.1 brand foundation (messaging doc, copy, metadata, mark in 3 places) - done 2026-09-28 on `dev/v8-1-brand`. **Step 5, the in-app microcopy sweep, is deferred** (a parallel session, `dev/v8-tokens`, is editing colours across the learn and quiz components): sweep buttons, empty states and loading lines against `.claude/docs/brand/messaging.md` once it merges. Mark is candidate D of four (decisions.md).
 - [ ] V8.2 design system v2 (unblocked 2026-09-28: the token refactor is `dev/v8-tokens`; merge it first)
 - [ ] V8.3 landing v3 (hero video pipeline, five-phase story, KG map)
 - [ ] V8.4a lesson panel and controls
