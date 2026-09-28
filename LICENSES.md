@@ -83,6 +83,19 @@ does not add a row. `scripts/v9_gesture.py` gained `digits`, `on`/`passes`, `fit
 |---|---|---|
 | `public/models/classroom_default.glb`, `classroom_alternative.glb` | Open-source model from a YouTuber's tutorial (Hmz, 2026-09-23), added in the "AI Module" commit of 2024-05-04. Compressed by Aristo (Draco, WebP) in 2026. **Not recorded:** creator, exact licence, source URL | Open source per Hmz; the exact licence is **unrecorded** |
 | `public/models/classroom_default.glb` since V8.5 (2026-09-27) | **Modified by Aristo** (`scripts/room/build_studio_room.py`). The geometry is the original's, with the lockers, wall clock, cork boards and chalk tray deleted. The materials, palette and baked lighting are Aristo's own. **No third-party assets were added** (no Poly Haven, Sketchfab or generated geometry) | The original's licence still governs the geometry, and it is **unrecorded**. It now also has to allow modification (an "ND" licence would not). See Open items |
+| `public/models/classroom_alternative.glb` since V8.5 (2026-09-28), the "Evening" room | **Rebuilt by Aristo** from the same original classroom's shell (`build_studio_room.py --variant evening`). The previous alternative room (an anime-style classroom from the same V1 tutorial source) is **no longer shipped**. The room shell is the original's, with every desk but the learner's removed and a new flat floor, a rug and pendant cords (Aristo's own, scripted). It also contains the four Poly Haven models below, all baked into one texture | The original classroom's licence for the shell (**unrecorded**, as above). The Poly Haven models are CC0 |
+
+### Poly Haven models in the "Evening" room (CC0)
+
+Fetched by `scripts/room/fetch-props.mjs` (1k glTF), placed and baked by `build_studio_room.py`. CC0 needs no
+credit; the authors are listed as a courtesy.
+
+| Model | Author (per api.polyhaven.com/info) | Source | Licence |
+|---|---|---|---|
+| Mid Century Lounge Chair (`mid_century_lounge_chair`) | Kuutti Siitonen | polyhaven.com/a/mid_century_lounge_chair | CC0 |
+| Side Table 01 (`side_table_01`) | James Ray Cock | polyhaven.com/a/side_table_01 | CC0 |
+| Potted Plant 04 (`potted_plant_04`), used twice | James Ray Cock | polyhaven.com/a/potted_plant_04 | CC0 |
+| Modern Ceiling Lamp 01 (`modern_ceiling_lamp_01`), used three times | James Ray Cock | polyhaven.com/a/modern_ceiling_lamp_01 | CC0 |
 
 ## Demo lessons (`public/demo/`)
 

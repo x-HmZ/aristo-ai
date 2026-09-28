@@ -284,10 +284,23 @@ interface ClassroomProps {
   variant: Exclude<ClassroomVariant, "none">;
 }
 
-const PLACEMENT = {
+type Vec3 = [number, number, number];
+
+// Both GLBs are built from the same shell (scripts/room/), so they share one
+// transform and one (hidden) board anchor; retune them here, once.
+const ROOM_SHELL = {
+  classroom: { position: [0.2, -1.7, -2] as Vec3, rotationY: 0, scale: 1 },
+  board:     { position: [0.45, 0.382, -6] as Vec3 },
+};
+
+const PLACEMENT: Record<ClassroomProps["variant"], {
+  classroom: { position: Vec3; rotationY: number; scale: number };
+  board:     { position: Vec3 };
+  /** Second-row desk for the ambient DeskPaper; null where the room has none. */
+  desk:      { position: Vec3 } | null;
+}> = {
   default: {
-    classroom: { position: [0.2, -1.7, -2]   as [number, number, number], rotationY: 0,             scale: 1   },
-    board:     { position: [0.45, 0.382, -6] as [number, number, number] },
+    ...ROOM_SHELL,
     // The V1-verbatim anchor [0.55,-1.3,-3.6] sits in EMPTY AIR in this GLB
     // (probed: nothing under it but floor at y=-1.694) — the paper visibly
     // floated beside the desks.  Re-anchored flat onto the second-row desk
@@ -295,10 +308,13 @@ const PLACEMENT = {
     // of the chair so the chair back doesn't occlude it from the camera.
     desk:      { position: [0.3, -0.886, -2.35] as [number, number, number] },
   },
+  // V8.5 "Evening": built from the default room's shell (scripts/room/), so it
+  // shares its transform and every probed anchor. It is a one-to-one study:
+  // the learner's own desk stays (the quiz anchor), the second-row desk does
+  // not, so there is no DeskPaper here.
   alternative: {
-    classroom: { position: [0.3, -1.7, -1.5] as [number, number, number], rotationY: -Math.PI / 2,  scale: 0.4 },
-    board:     { position: [1.4, 0.84, -8]   as [number, number, number] },
-    desk:      { position: [0.3, -0.886, -2.35] as [number, number, number] },
+    ...ROOM_SHELL,
+    desk:      null,
   },
 };
 
@@ -324,7 +340,7 @@ export function Classroom({ variant }: ClassroomProps) {
 
       <Blackboard position={cfg.board.position} />
 
-      {!activeQuiz && (
+      {!activeQuiz && cfg.desk && (
         <DeskPaper
           position={cfg.desk.position}
           rotation={[-Math.PI / 2, 0, 0.12]}
@@ -339,8 +355,8 @@ export function Classroom({ variant }: ClassroomProps) {
 }
 
 // T02 — 3D asset diet: preload only the default classroom. The alternative
-// (still ~1.5 MB post-compression) was previously preloaded unconditionally
-// even when never shown — it now lazy-loads through the Suspense boundary
-// in Experience.tsx the first time the user switches scenes;
-// TeacherControls.tsx also warms it on hover/click of the "Alt. Room" button.
+// was previously preloaded unconditionally even when never shown — it now
+// lazy-loads through the Suspense boundary in Experience.tsx the first time
+// the user switches scenes; TeacherControls.tsx also warms it on hover/click
+// of the "Evening" button.
 useGLTF.preload("/models/classroom_default.glb");
