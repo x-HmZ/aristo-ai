@@ -16,8 +16,8 @@ result are at the end of this entry. `/` is still static, first-load JS 122 kB, 
   `apple-icon.tsx`, and a title/icon `<Head>` in `pages/_app.tsx` for /learn and /demo.
 - **Honesty fix:** the parents section no longer says "learning, not behaviour"; it lists what the schema stores (time and
   clicks per lesson, engagement profile, misconceptions, AI-request log). The speech-to-text line says it is the browser's own.
-- **Deferred:** V8.1 step 5, the in-app microcopy sweep (`dev/v8-tokens` is editing the same learn and quiz components).
-  Do it against messaging.md after that merges.
+- **Deferred:** V8.1 step 5, the in-app microcopy sweep. It was held back for `dev/v8-tokens`, which has now merged, so it is
+  unblocked: do it against messaging.md. (The rebase onto the token branch re-applied the mark with `aristo-*` classes.)
 - **Next:** V8.4a/b/c (classroom UI), then V8.3 landing v3 and V8.7 re-capture. Re-generate the mark with
   `node scripts/brand/build-mark.mjs` after a `yarn build` (it reads Archivo from `.next/static/media`); the favicon with
   `node scripts/brand/build-favicon.mjs`.
