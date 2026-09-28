@@ -287,7 +287,12 @@ export function buildText(buf, text, { wdth, wght }) {
   };
 }
 
-/** Shifts absolute path data along x (only M/L/Q/C/H use absolute x here). */
+/**
+ * Shifts absolute path data along x. Only valid for the letter paths (absolute
+ * M/L/Q/Z) and for the column paths, where just each subpath's leading absolute
+ * M matches: rect() and circle() emit relative h/v/a after it, which this
+ * leaves alone. Keep those helpers relative-after-M or change this.
+ */
 function translate(d, dx) {
   if (!dx) return d;
   return d.replace(/([MLQCH])([^MLQCHZmlqchvaZ]*)/g, (_, cmd, body) => {

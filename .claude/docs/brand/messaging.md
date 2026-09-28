@@ -85,7 +85,8 @@ without being cute.
    your desk", "grades 6 to 8". Never "proven method", "cutting-edge AI".
 4. **Plain verbs.** explains, shows, builds, asks, checks, marks, remembers, brings back.
 5. **Short.** Headlines 8 words or fewer; a section's body 25 words or fewer
-   (`design-taste-frontend` §4.9). One idea per sentence.
+   (`design-taste-frontend` §4.9). One idea per sentence. The one exception is the parents
+   cards, which run to about 33 words because honesty rule 7 requires the full list of what is kept.
 6. **No em-dashes in rendered copy**, and no en-dash used as a pause. Use a full stop, comma or
    colon. Ranges are written "6 to 8". Code comments are exempt.
 7. **No exclamation marks, no emojis, no ✦ or any sparkle glyph**, in copy or as decoration.

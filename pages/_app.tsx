@@ -35,6 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Aristo</title>
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-icon" />
       </Head>
       <style jsx global>{`
         :root {
