@@ -52,6 +52,7 @@ Keep the two copies identical.
 | Token | Light | Dark | Use and ratio |
 |---|---|---|---|
 | `accent` | #B4531F | #E98A52 | solid fills: primary buttons, the lit flute, focus rings, progress |
+| `accent-hover` | #9A4A1E | #F0A070 | hover on accent fills (darker in light, lighter in dark): 6.07 / 8.97 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface drops the label to 4.1:1) |
 | `accent-ink` | #FCFCFD | #0E1117 | text on **any** solid fill: accent 4.88 / 7.40; status fills below |
 | `accent-text` | #A94C1B | #EF9A66 | accent as text or icon: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
 
@@ -62,15 +63,16 @@ gradient text and no coloured glow on a control.
 
 ### Semantic (status)
 
-Text-safe colours. Tints use opacity (`bg-danger/10`, `border-danger/25`). Status text belongs on `bg` or
-`surface`, never on `sunk` (success on sunk is 4.2:1).
+Text-safe colours on every ground (`bg`, `surface`, `sunk`, `tint`). Tints use opacity (`bg-danger/10`,
+`border-danger/25`). The light success and warning were darkened after review: the first cut (#15803D, #B45309)
+was 4.2:1 on `sunk` and `tint`.
 
-| Token | Light | on bg / surface | under accent-ink | Dark | on bg / surface | under accent-ink |
+| Token | Light | on bg / surface / sunk | under accent-ink | Dark | on bg / surface | under accent-ink |
 |---|---|---|---|---|---|---|
-| `success` | #15803D | 4.56 / 4.89 | 4.89 | #4ADE80 | 10.85 / 10.09 | 10.85 |
-| `warning` | #B45309 | 4.56 / 4.90 | 4.90 | #FBBF24 | 11.32 / 10.54 | 11.32 |
-| `danger` | #B91C1C | 5.88 / 6.31 | 6.31 | #F87171 | 6.83 / 6.36 | 6.83 |
-| `info` | #1D4ED8 | 6.09 / 6.54 | 6.54 | #60A5FA | 7.43 / 6.92 | 7.43 |
+| `success` | #166534 | 6.48 / 6.95 / 6.03 | 6.95 | #4ADE80 | 10.85 / 10.09 | 10.85 |
+| `warning` | #92400E | 6.44 / 6.92 / 5.99 | 6.92 | #FBBF24 | 11.32 / 10.54 | 11.32 |
+| `danger` | #B91C1C | 5.88 / 6.31 / 5.47 | 6.31 | #F87171 | 6.83 / 6.36 | 6.83 |
+| `info` | #1D4ED8 | 6.09 / 6.54 / 5.67 | 6.54 | #60A5FA | 7.43 / 6.92 | 7.43 |
 
 Danger text on its own 10% tint over surface is 5.35 light and 5.54 dark (the sign-in error box).
 
@@ -109,7 +111,12 @@ product UI uses the semantic tokens, not this palette.
 | `type-mono` | 14px / 1.55 | | code, IDs (sets Geist Mono) |
 
 The classes are `type-*` and not `text-*` on purpose: `cn()` (tailwind-merge) treats an unknown `text-*` as
-a colour and would silently drop `text-h1` next to `text-ink`. Weight is a separate utility. Controls keep
+a colour and would silently drop `text-h1` next to `text-ink`. Weight is a separate utility.
+
+**tailwind-merge caveat.** `cn()` is unconfigured, so it does not know that `type-*`, `shadow-e1/e2`,
+`duration-fast/base/slow/reveal` and `ease-*-soft` conflict with `text-lg`, `shadow-lg`, `duration-200` or
+`ease-in`. Both classes survive and CSS order picks the winner. When overriding a component that uses one
+of these, remove the system class rather than stacking a Tailwind one on top. Controls keep
 Tailwind's `text-sm`. The landing keeps its own tuned hero and H2 sizes (33 to 84px hero, 28 / 36 / 44px H2s).
 
 ## Layout
@@ -162,7 +169,7 @@ in place.
 
 - **Button** (`ui/button`): control radius, `PRESS`, `FOCUS`. Heights are 44 (default), 36 (sm) and 48 (lg),
   with a 44 square for icon buttons. Variants:
-  - `default`: accent fill with accent-ink text, one per view.
+  - `default`: accent fill with accent-ink text, one per view; hover is `accent-hover`.
   - `outline`: surface with a line border.
   - `secondary`: sunk.
   - `ghost`, and `link` (accent-text).
@@ -222,6 +229,11 @@ system's `accent`. After adding a component, translate:
   - `src/app/create-teacher/page.tsx`
 
   Remove the meta when a surface moves onto the tokens.
+- A browser without `:has()` (Chrome < 105, Safari < 15.4, Firefox < 121) gets light everywhere. Locked
+  pages then show the system's light neutrals instead of cream, but stay readable.
+- Unverified: /admin and /create-teacher are dynamic, so Next may stream their metadata after the first
+  flush. An OS-dark visitor could then see one dark frame before the lock meta arrives. It needs a signed-in
+  session to check; if it shows, make the pre-paint script set `data-theme="light"` for those paths.
 - The 3D scene's lighting and backdrop never follow the theme: the room is the lit window in both.
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
