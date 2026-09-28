@@ -184,8 +184,11 @@ export default function DeskQuizPreview() {
   // Stub userId once on mount so DeskQuiz's guard passes. Sync activeQuiz
   // every time the toggle flips so the camera transition can be inspected
   // both ways without a reload.
+  // ?room=alt probes the alternative classroom (same switch as /dev/free-model).
   useEffect(() => {
-    useAristoStore.getState().setUserId("dev-mock-user");
+    const s = useAristoStore.getState();
+    s.setUserId("dev-mock-user");
+    if (new URLSearchParams(window.location.search).get("room") === "alt") s.setClassroom("alternative");
   }, []);
   useEffect(() => {
     useAristoStore.getState().setActiveQuiz(

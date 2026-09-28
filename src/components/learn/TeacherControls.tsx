@@ -34,7 +34,7 @@ const AVATARS: { value: TeacherAvatar; label: string }[] = ACTIVE_TEACHERS.map((
 
 const ENVIRONMENTS: { value: Classroom; label: string }[] = [
   { value: "default",     label: "Classroom"   },
-  { value: "alternative", label: "Alt. Room"   },
+  { value: "alternative", label: "Evening"     },
   { value: "none",        label: "None"        },
 ];
 
