@@ -10,6 +10,7 @@ import { GeneratedModel } from "./GeneratedModel";
 import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
+import { BRAND_HEX } from "@/lib/brandColors";
 import { CameraController } from "./CameraController";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 
@@ -47,6 +48,9 @@ function standScaleFor(teacher: TeacherAvatar): number {
   return AVATAR_ASSETS[teacher]?.standScale ?? LEGACY_STAND_SCALE;
 }
 
+// Scene-material and light colours below are 3D constants, not brand tokens: none
+// of them mirrors an --aristo-* value (the floor grid and lights are warm
+// neutrals tuned against the room bake), so they stay literal on purpose.
 function Floor() {
   return (
     <Grid
@@ -214,7 +218,7 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
         {/* Soft orange border frame */}
         <mesh position={[0, 0, -0.001]}>
           <planeGeometry args={[FRAME_SIZE, FRAME_SIZE]} />
-          <meshBasicMaterial color="#F97B2F" transparent opacity={0.25} />
+          <meshBasicMaterial color={BRAND_HEX.orangeMain} transparent opacity={0.25} />
         </mesh>
 
         {/* Bottom toolbar — state-aware */}
@@ -223,15 +227,15 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
             {isGeneratingModel ? (
               <div style={{
                 display: "flex", alignItems: "center", gap: "8px",
-                background: "rgba(253,240,228,0.92)",
-                border: "1px solid rgba(249,123,47,0.3)",
+                background: "hsl(var(--aristo-backdrop) / 0.92)",
+                border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
                 borderRadius: "20px", padding: "3px 10px",
-                fontSize: "10px", fontWeight: 600, color: "#C05A1C",
+                fontSize: "10px", fontWeight: 600, color: "hsl(var(--aristo-orange-deep))",
                 whiteSpace: "nowrap", pointerEvents: "none",
               }}>
                 <span style={{
                   width: "5px", height: "5px", borderRadius: "50%",
-                  background: "#F97B2F", display: "inline-block",
+                  background: "hsl(var(--aristo-orange-main))", display: "inline-block",
                   animation: "aristoPulse 1.4s ease-in-out infinite",
                 }} />
                 Building 3D model…
@@ -243,12 +247,12 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
                     onClick={handleViewIn3d}
                     style={{
                       display: "inline-flex", alignItems: "center", gap: "6px",
-                      background: "#F97B2F", color: "white",
-                      border: "1px solid rgba(192,90,28,0.5)",
+                      background: "hsl(var(--aristo-orange-main))", color: "white",
+                      border: "1px solid hsl(var(--aristo-orange-deep) / 0.5)",
                       borderRadius: "20px", padding: "4px 11px",
                       fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em",
                       whiteSpace: "nowrap", cursor: "pointer",
-                      boxShadow: "0 4px 14px rgba(249,123,47,0.35)",
+                      boxShadow: "0 4px 14px hsl(var(--aristo-orange-main) / 0.35)",
                     }}
                   >
                     {activeModelUrl ? "Show 3D" : "View in 3D"}
@@ -256,10 +260,10 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
                 )}
                 <div style={{
                   display: "flex", alignItems: "center", gap: "6px",
-                  background: "rgba(253,240,228,0.92)",
-                  border: "1px solid rgba(249,123,47,0.3)",
+                  background: "hsl(var(--aristo-backdrop) / 0.92)",
+                  border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
                   borderRadius: "20px", padding: "3px 10px",
-                  fontSize: "10px", fontWeight: 600, color: "#C05A1C",
+                  fontSize: "10px", fontWeight: 600, color: "hsl(var(--aristo-orange-deep))",
                   whiteSpace: "nowrap", pointerEvents: "none",
                 }}>
                   scroll to resize · click to zoom
@@ -287,8 +291,8 @@ function ModelToolbar() {
         onClick={() => setViewMode3d(false)}
         style={{
           display: "inline-flex", alignItems: "center", gap: "6px",
-          background: "rgba(253,240,228,0.92)", color: "#C05A1C",
-          border: "1px solid rgba(249,123,47,0.4)",
+          background: "hsl(var(--aristo-backdrop) / 0.92)", color: "hsl(var(--aristo-orange-deep))",
+          border: "1px solid hsl(var(--aristo-orange-main) / 0.4)",
           borderRadius: "20px", padding: "4px 11px",
           fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em",
           whiteSpace: "nowrap", cursor: "pointer",
@@ -332,6 +336,7 @@ function AvatarLoadingPlaceholder({ position, scale, rotationY }: { position: [n
       {/* Capsule silhouette so the scene doesn't feel empty while the GLB downloads */}
       <mesh position={[0, 0.6, 0]}>
         <capsuleGeometry args={[0.28, 1.1, 6, 12]} />
+        {/* Warm neutral placeholder tint; no --aristo-* token mirrors it. */}
         <meshStandardMaterial color="#f0e4d4" transparent opacity={0.35} />
       </mesh>
     </group>
@@ -421,11 +426,11 @@ function YourTurnBubble() {
         style={{
           display: "flex", alignItems: "center", gap: "8px",
           background: "rgba(255,255,255,0.96)",
-          border: "1px solid rgba(249,123,47,0.45)",
+          border: "1px solid hsl(var(--aristo-orange-main) / 0.45)",
           borderRadius: "20px", padding: "6px 14px",
-          fontSize: "12px", fontWeight: 700, color: "#C45A10",
+          fontSize: "12px", fontWeight: 700, color: "hsl(var(--aristo-orange-ink))",
           whiteSpace: "nowrap",
-          boxShadow: "0 8px 28px rgba(249,123,47,0.35)",
+          boxShadow: "0 8px 28px hsl(var(--aristo-orange-main) / 0.35)",
           backdropFilter: "blur(6px)",
           animation: "aristoBubbleIn 0.3s ease-out, aristoBubblePulse 2.2s ease-in-out 0.3s infinite",
           pointerEvents: "none",
@@ -433,7 +438,7 @@ function YourTurnBubble() {
       >
         <span style={{
           width: "8px", height: "8px", borderRadius: "50%",
-          background: "#F97B2F",
+          background: "hsl(var(--aristo-orange-main))",
           animation: "aristoMicPulse 1.2s ease-in-out infinite",
         }} />
         🎙 Your turn
@@ -494,7 +499,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
         deskTarget={devOverrides?.deskTarget}
         lambda={devOverrides?.lambda}
       />
-      <color attach="background" args={["#FDF0E4"]} />
+      <color attach="background" args={[BRAND_HEX.backdrop]} />
       <SceneLights />
       <Environment preset="studio" environmentIntensity={0.5} />
       {classroom === "none" && <Floor />}

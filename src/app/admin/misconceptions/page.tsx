@@ -14,6 +14,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 interface AggregateRow {
   concept_id:        string;
@@ -180,7 +181,7 @@ export default function MisconceptionsPage() {
                               background:
                                 intensity > 80 ? "#DC2626" :
                                 intensity > 50 ? "#F97316" :
-                                intensity > 25 ? "#F59E0B" : "#94A3B8",
+                                intensity > 25 ? BRAND_HEX.amber : "#94A3B8",
                             }}
                           />
                         </div>

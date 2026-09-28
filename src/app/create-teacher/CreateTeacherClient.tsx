@@ -84,16 +84,16 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
   }, [userId]);
 
   return (
-    <div className="min-h-screen bg-[#FDF0E4] flex flex-col items-center justify-center p-6 gap-6">
+    <div className="min-h-screen bg-aristo-backdrop flex flex-col items-center justify-center p-6 gap-6">
 
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="font-bold text-[#3D2110] text-2xl tracking-tight">aristo</span>
-          <span className="text-[#F97B2F] text-2xl font-bold">✦</span>
+          <span className="font-bold text-aristo-brown-main text-2xl tracking-tight">aristo</span>
+          <span className="text-aristo-orange-main text-2xl font-bold">✦</span>
         </div>
-        <h1 className="text-xl font-bold text-[#3D2110]">Create Your Teacher</h1>
-        <p className="text-sm text-[#8B6E5A] mt-1">
+        <h1 className="text-xl font-bold text-aristo-brown-main">Create Your Teacher</h1>
+        <p className="text-sm text-aristo-brown-muted mt-1">
           Design a photorealistic 3D avatar — it will appear as your teacher in Aristo.
         </p>
       </div>
@@ -101,12 +101,12 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
       {/* Unconfigured state */}
       {!AVATURN_URL && (
         <div className="max-w-sm text-center px-6 py-8 rounded-2xl bg-white/60 border border-white/60 shadow-sm">
-          <p className="text-sm font-semibold text-[#3D2110] mb-2">Avatar creator not configured</p>
-          <p className="text-xs text-[#8B6E5A] leading-relaxed">
+          <p className="text-sm font-semibold text-aristo-brown-main mb-2">Avatar creator not configured</p>
+          <p className="text-xs text-aristo-brown-muted leading-relaxed">
             Create a free project at{" "}
-            <span className="font-mono text-[#F97B2F]">developer.avaturn.me</span>,
+            <span className="font-mono text-aristo-orange-main">developer.avaturn.me</span>,
             then set{" "}
-            <span className="font-mono text-[#F97B2F]">NEXT_PUBLIC_AVATURN_SUBDOMAIN</span>{" "}
+            <span className="font-mono text-aristo-orange-main">NEXT_PUBLIC_AVATURN_SUBDOMAIN</span>{" "}
             in your environment variables.
           </p>
         </div>
@@ -114,12 +114,12 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
 
       {/* Status bar */}
       {status === "saving" && (
-        <div className="px-4 py-2 rounded-full bg-[#F97B2F]/10 border border-[#F97B2F]/30 text-sm font-medium text-[#C45A10] animate-pulse">
+        <div className="px-4 py-2 rounded-full bg-aristo-orange-main/10 border border-aristo-orange-main/30 text-sm font-medium text-aristo-orange-ink animate-pulse">
           Saving your teacher…
         </div>
       )}
       {status === "saved" && (
-        <div className="max-w-md px-4 py-3 rounded-2xl bg-[#F0FDF4] border border-[#10B981]/30 text-sm font-medium text-[#059669]">
+        <div className="max-w-md px-4 py-3 rounded-2xl bg-[#F0FDF4] border border-aristo-teal/30 text-sm font-medium text-[#059669]">
           <div className="flex items-center gap-2 mb-1">
             <span>✓</span>
             <span>Avatar exported.</span>
@@ -146,7 +146,7 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
         </div>
       )}
       {existingUrl && status === "idle" && (
-        <div className="px-4 py-2 rounded-full bg-[#F0FDF4] border border-[#10B981]/30 text-xs text-[#059669]">
+        <div className="px-4 py-2 rounded-full bg-[#F0FDF4] border border-aristo-teal/30 text-xs text-[#059669]">
           You have an existing teacher. Completing the avatar below will replace it.
         </div>
       )}
@@ -154,7 +154,7 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
       {/* Avaturn editor container — SDK injects the iframe here */}
       {AVATURN_URL && (
         <div
-          className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(249,123,47,0.18)] border border-white/60"
+          className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-[0_8px_40px_hsl(var(--aristo-orange-main)/0.18)] border border-white/60"
         >
           <div
             ref={containerRef}
@@ -164,14 +164,14 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
       )}
 
       {savedUrl && (
-        <p className="text-[10px] text-[#B8957A] font-mono break-all max-w-lg text-center">
+        <p className="text-[10px] text-aristo-tan font-mono break-all max-w-lg text-center">
           {savedUrl}
         </p>
       )}
 
       <a
         href="/learn"
-        className="text-sm text-[#8B6E5A] hover:text-[#3D2110] font-medium transition-colors"
+        className="text-sm text-aristo-brown-muted hover:text-aristo-brown-main font-medium transition-colors"
       >
         ← Back to Aristo
       </a>

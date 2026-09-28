@@ -124,7 +124,7 @@ function Knob({
     <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11 }}>
       <span style={{ display: "flex", justifyContent: "space-between" }}>
         <span style={{ opacity: 0.85 }}>{label}</span>
-        <span style={{ fontVariantNumeric: "tabular-nums", color: "#F97B2F" }}>
+        <span style={{ fontVariantNumeric: "tabular-nums", color: "hsl(var(--aristo-orange-main))" }}>
           {value.toFixed(2)}
         </span>
       </span>
@@ -148,14 +148,14 @@ function TripleKnob({
 }) {
   return (
     <fieldset style={{
-      border: "1px solid rgba(249,123,47,0.3)",
+      border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
       borderRadius: 8,
       padding: "8px 10px",
       display: "flex",
       flexDirection: "column",
       gap: 6,
     }}>
-      <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "#F97B2F" }}>
+      <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "hsl(var(--aristo-orange-main))" }}>
         {label}
       </legend>
       <Knob label="x" value={value[0]} min={ranges.x[0]} max={ranges.x[1]} step={0.05}
@@ -225,7 +225,7 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
   };
 
   if (!hydrated) {
-    return <div style={{ width: "100vw", height: "100vh", background: "#FDF0E4" }} />;
+    return <div style={{ width: "100vw", height: "100vh", background: "hsl(var(--aristo-backdrop))" }} />;
   }
 
   return (
@@ -282,10 +282,10 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
           onChange={(v) => setTun((t) => ({ ...t, paperAnchor: v }))}
         />
         <fieldset style={{
-          border: "1px solid rgba(249,123,47,0.3)",
+          border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
           borderRadius: 8, padding: "8px 10px",
         }}>
-          <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "#F97B2F" }}>
+          <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "hsl(var(--aristo-orange-main))" }}>
             damping
           </legend>
           <Knob label="λ" value={tun.lambda} min={0.5} max={10} step={0.1}
@@ -293,7 +293,7 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
         </fieldset>
 
         <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-          <button onClick={save}  style={btnStyle("#F97B2F")}>Save</button>
+          <button onClick={save}  style={btnStyle("hsl(var(--aristo-orange-main))")}>Save</button>
           <button onClick={reset} style={btnStyle("#333")}>Reset</button>
           <button onClick={dump}  style={btnStyle("#333")}>Dump → console</button>
         </div>

@@ -81,8 +81,8 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
               onMouseEnter={() => preloadAvatar(a.value)}
               className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                 teacher === a.value
-                  ? "bg-[#F97B2F] text-white shadow-sm"
-                  : "text-[#8B6E5A] hover:text-[#3D2110]"
+                  ? "bg-aristo-orange-main text-white shadow-sm"
+                  : "text-aristo-brown-muted hover:text-aristo-brown-main"
               }`}
             >
               {a.label}
@@ -91,7 +91,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
           {/* Create your own teacher */}
           <a
             href="/create-teacher"
-            className="shrink-0 px-3 py-1 rounded-full text-xs font-semibold text-[#8B5CF6] hover:text-[#7C3AED] transition-colors whitespace-nowrap"
+            className="shrink-0 px-3 py-1 rounded-full text-xs font-semibold text-aristo-purple hover:text-aristo-purple-hover transition-colors whitespace-nowrap"
             title="Create your own 3D teacher avatar"
           >
             + Create
@@ -100,14 +100,14 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
 
         <div className="flex items-center gap-2 shrink-0">
           {isGeneratingModel && (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[#F97B2F] animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-ping" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-aristo-orange-main animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-ping" />
               Generating…
             </span>
           )}
           <button
             onClick={onClear}
-            className="text-xs text-[#8B6E5A] hover:text-[#3D2110] transition-colors font-medium px-2 py-1 rounded-lg hover:bg-white/60"
+            className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors font-medium px-2 py-1 rounded-lg hover:bg-white/60"
           >
             {inCourse ? "Exit Course" : "Clear"}
           </button>
@@ -120,7 +120,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
 
       {/* Row 2: Environment switcher */}
       <div className="flex items-center gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8957A] shrink-0">Scene</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-tan shrink-0">Scene</span>
         <div className="flex items-center gap-1 bg-white/60 rounded-full p-0.5 border border-white/60">
           {ENVIRONMENTS.map((e) => (
             <button
@@ -129,8 +129,8 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
               onMouseEnter={() => preloadClassroom(e.value)}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                 classroom === e.value
-                  ? "bg-[#8B5CF6] text-white shadow-sm"
-                  : "text-[#8B6E5A] hover:text-[#3D2110]"
+                  ? "bg-aristo-purple text-white shadow-sm"
+                  : "text-aristo-brown-muted hover:text-aristo-brown-main"
               }`}
             >
               {e.label}
@@ -143,17 +143,17 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
       {inCourse && (
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#C45A10] truncate max-w-[60%]">
+            <span className="text-[11px] font-bold text-aristo-orange-ink truncate max-w-[60%]">
               {course.title}
             </span>
-            <span className="text-[10px] text-[#8B6E5A] tabular-nums">
+            <span className="text-[10px] text-aristo-brown-muted tabular-nums">
               Topic {topicNum} of {topicTotal}
             </span>
           </div>
-          <p className="text-[11px] font-semibold text-[#3D2110] truncate">{topicName}</p>
+          <p className="text-[11px] font-semibold text-aristo-brown-main truncate">{topicName}</p>
           <div className="h-1.5 bg-white/50 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#F97B2F] rounded-full transition-all duration-500"
+              className="h-full bg-aristo-orange-main rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>

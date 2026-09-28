@@ -22,6 +22,7 @@ import type { ChatMessage } from "@/store/useAristoStore";
 import { useEffect, useMemo, useRef } from "react";
 import { useTTS } from "@/hooks/useTTS";
 import { useAristoStore } from "@/store/useAristoStore";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 // ─── Card shell (mirrors LessonView's PhaseCard) ─────────────────────────────
 
@@ -140,8 +141,8 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
   // information is never lost.
   if (parsed.fallback) {
     return (
-      <FreeCard label="Aristo says" accent="#F97B2F">
-        <p className="text-sm text-[#3D2110] leading-relaxed whitespace-pre-wrap">
+      <FreeCard label="Aristo says" accent={BRAND_HEX.orangeMain}>
+        <p className="text-sm text-aristo-brown-main leading-relaxed whitespace-pre-wrap">
           {parsed.fallback}
         </p>
       </FreeCard>
@@ -151,21 +152,21 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
   return (
     <div className="flex flex-col gap-3 animate-[fade-in_0.3s_ease-out]">
       {parsed.definition && (
-        <FreeCard label="Definition" accent="#F97B2F">
-          <p className="text-sm text-[#3D2110] leading-relaxed">{parsed.definition}</p>
+        <FreeCard label="Definition" accent={BRAND_HEX.orangeMain}>
+          <p className="text-sm text-aristo-brown-main leading-relaxed">{parsed.definition}</p>
         </FreeCard>
       )}
 
       {parsed.explanation && (
-        <FreeCard label="Explanation" accent="#F97B2F">
+        <FreeCard label="Explanation" accent={BRAND_HEX.orangeMain}>
           {/* Soft accent border that "lights up" while the avatar narrates
               this section — matches SegmentScript's active-segment style. */}
-          <p className="text-sm text-[#3D2110] leading-relaxed">{parsed.explanation}</p>
+          <p className="text-sm text-aristo-brown-main leading-relaxed">{parsed.explanation}</p>
         </FreeCard>
       )}
 
       {parsed.example && (
-        <FreeCard label="Example" accent="#10B981">
+        <FreeCard label="Example" accent={BRAND_HEX.teal}>
           <div className="px-3 py-2.5 rounded-xl bg-[#F0FDF4] border border-[#86EFAC]/35">
             <p className="text-sm text-[#15803D] leading-relaxed">{parsed.example}</p>
           </div>
@@ -173,7 +174,7 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
       )}
 
       {parsed.fun_fact && (
-        <FreeCard label="Fun fact" accent="#F59E0B">
+        <FreeCard label="Fun fact" accent={BRAND_HEX.amber}>
           <div className="flex gap-2 px-3 py-2 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
             <span className="text-base shrink-0">💡</span>
             <p className="text-sm text-[#92400E] leading-relaxed">{parsed.fun_fact}</p>
@@ -189,7 +190,7 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
 export function FreeUserBubble({ message }: { message: ChatMessage }) {
   return (
     <div className="flex justify-end animate-[fade-in_0.3s_ease-out]">
-      <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-tr-sm bg-[#F97B2F] text-white text-sm font-medium shadow-[0_2px_12px_rgba(249,123,47,0.3)]">
+      <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-tr-sm bg-aristo-orange-main text-white text-sm font-medium shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.3)]">
         {message.content}
       </div>
     </div>

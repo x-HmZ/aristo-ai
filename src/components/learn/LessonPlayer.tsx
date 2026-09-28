@@ -48,7 +48,7 @@ function PlaybackControls({
       <button
         onClick={onPrev}
         disabled={segmentIdx <= 0}
-        className="text-xs px-2 py-1 rounded-lg text-[#8B6E5A] hover:text-[#3D2110] hover:bg-[#FFF5EC] disabled:opacity-30 font-medium transition-all"
+        className="text-xs px-2 py-1 rounded-lg text-aristo-brown-muted hover:text-aristo-brown-main hover:bg-aristo-wash-light disabled:opacity-30 font-medium transition-all"
         aria-label="Previous segment"
       >
         ⏮ Prev
@@ -56,26 +56,26 @@ function PlaybackControls({
       {isPaused ? (
         <button
           onClick={onResume}
-          className="text-xs px-3 py-1 rounded-lg bg-[#F97B2F] text-white font-semibold hover:bg-[#E06A20] transition-all"
+          className="text-xs px-3 py-1 rounded-lg bg-aristo-orange-main text-white font-semibold hover:bg-aristo-orange-hover transition-all"
         >
           ▶ Resume
         </button>
       ) : (
         <button
           onClick={onPause}
-          className="text-xs px-3 py-1 rounded-lg bg-[#FFF5EC] text-[#C45A10] border border-[#F97B2F]/30 font-semibold hover:bg-[#FDE3CE] transition-all"
+          className="text-xs px-3 py-1 rounded-lg bg-aristo-wash-light text-aristo-orange-ink border border-aristo-orange-main/30 font-semibold hover:bg-[#FDE3CE] transition-all"
         >
           ⏸ Pause
         </button>
       )}
       <button
         onClick={onSkip}
-        className="text-xs px-2 py-1 rounded-lg text-[#8B6E5A] hover:text-[#3D2110] hover:bg-[#FFF5EC] font-medium transition-all"
+        className="text-xs px-2 py-1 rounded-lg text-aristo-brown-muted hover:text-aristo-brown-main hover:bg-aristo-wash-light font-medium transition-all"
         aria-label="Skip segment"
       >
         Next ⏭
       </button>
-      <span className="ml-auto text-[10px] tabular-nums text-[#8B6E5A]">
+      <span className="ml-auto text-[10px] tabular-nums text-aristo-brown-muted">
         seg {Math.min(segmentIdx + 1, segmentCount)} / {segmentCount}
       </span>
     </div>
@@ -86,14 +86,14 @@ function PlaybackControls({
 
 function PreparingVisualsOverlay() {
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#FDF0E4]/85 backdrop-blur-sm animate-[fade-in_0.3s_ease-out]">
+    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-aristo-backdrop/85 backdrop-blur-sm animate-[fade-in_0.3s_ease-out]">
       <div className="relative w-12 h-12">
-        <div className="absolute inset-0 rounded-full border-2 border-[#F97B2F]/25" />
-        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#F97B2F] animate-spin" />
+        <div className="absolute inset-0 rounded-full border-2 border-aristo-orange-main/25" />
+        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-aristo-orange-main animate-spin" />
       </div>
       <div className="text-center">
-        <p className="text-sm font-semibold text-[#C45A10]">Preparing your visuals…</p>
-        <p className="text-xs text-[#8B6E5A] mt-0.5">Aristo is sketching the diagrams for this lesson.</p>
+        <p className="text-sm font-semibold text-aristo-orange-ink">Preparing your visuals…</p>
+        <p className="text-xs text-aristo-brown-muted mt-0.5">Aristo is sketching the diagrams for this lesson.</p>
       </div>
     </div>
   );

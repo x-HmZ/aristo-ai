@@ -14,6 +14,7 @@ import { BrandCard }                 from "@/components/admin/ui/BrandCard";
 import { BrandButton }               from "@/components/admin/ui/BrandButton";
 import { StatCard }                  from "@/components/admin/ui/StatCard";
 import { SectionTitle }              from "@/components/admin/ui/SectionTitle";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 interface Analytics {
   summary: {
@@ -33,9 +34,9 @@ const BLOOM_COLOR_HEX: Record<string, string> = {
   remember:   "#94A3B8",
   understand: "#60A5FA",
   apply:      "#22C55E",
-  analyze:    "#F59E0B",
+  analyze:    BRAND_HEX.amber,
   evaluate:   "#F97316",
-  create:     "#8B5CF6",
+  create:     BRAND_HEX.purple,
 };
 
 export default function QuizAnalyticsPage() {
@@ -78,16 +79,16 @@ export default function QuizAnalyticsPage() {
           label="Overall accuracy"
           value={data ? `${data.summary.overall_accuracy}%` : "—"}
           color={
-            !data ? "#F97B2F" :
+            !data ? BRAND_HEX.orangeMain :
             data.summary.overall_accuracy >= 70 ? "#22C55E" :
-            data.summary.overall_accuracy >= 50 ? "#F97B2F" : "#EF4444"
+            data.summary.overall_accuracy >= 50 ? BRAND_HEX.orangeMain : "#EF4444"
           }
           icon={<Target className="h-5 w-5" />}
         />
         <StatCard
           label="Avg response time"
           value={data?.summary.avg_response_s != null ? `${data.summary.avg_response_s}s` : "—"}
-          color="#8B5CF6"
+          color={BRAND_HEX.purple}
           icon={<Clock className="h-5 w-5" />}
         />
       </div>
@@ -101,9 +102,9 @@ export default function QuizAnalyticsPage() {
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={sortedBloom} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
-                <XAxis dataKey="bloom" tick={{ fontSize: 11, fill: "#3D2110" }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#3D2110" }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                <XAxis dataKey="bloom" tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                 <Tooltip
                   contentStyle={{
                     background: "rgba(253, 248, 239, 0.95)",
@@ -116,7 +117,7 @@ export default function QuizAnalyticsPage() {
                 />
                 <Bar dataKey="accuracy" radius={[6, 6, 0, 0]}>
                   {sortedBloom.map((entry) => (
-                    <Cell key={entry.bloom} fill={BLOOM_COLOR_HEX[entry.bloom] ?? "#F97B2F"} />
+                    <Cell key={entry.bloom} fill={BLOOM_COLOR_HEX[entry.bloom] ?? BRAND_HEX.orangeMain} />
                   ))}
                 </Bar>
               </BarChart>
@@ -131,15 +132,15 @@ export default function QuizAnalyticsPage() {
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={data.byType} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
                 <XAxis
                   dataKey="type"
-                  tick={{ fontSize: 10, fill: "#3D2110" }}
+                  tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
                   angle={-30}
                   textAnchor="end"
                   interval={0}
                 />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#3D2110" }} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
                 <Tooltip
                   contentStyle={{
                     background: "rgba(253, 248, 239, 0.95)",
@@ -148,7 +149,7 @@ export default function QuizAnalyticsPage() {
                   }}
                   formatter={(value) => `${value}%`}
                 />
-                <Bar dataKey="accuracy" fill="#F97B2F" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="accuracy" fill={BRAND_HEX.orangeMain} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -168,20 +169,20 @@ export default function QuizAnalyticsPage() {
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <ScatterChart margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+              <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
               <XAxis
                 type="number"
                 dataKey="difficulty"
                 domain={[0, 1]}
-                tick={{ fontSize: 11, fill: "#3D2110" }}
-                label={{ value: "Declared difficulty", position: "insideBottom", offset: -5, fontSize: 11, fill: "#8B6E5A" }}
+                tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }}
+                label={{ value: "Declared difficulty", position: "insideBottom", offset: -5, fontSize: 11, fill: BRAND_HEX.brownMuted }}
               />
               <YAxis
                 type="number"
                 dataKey="accuracy"
                 domain={[0, 1]}
-                tick={{ fontSize: 11, fill: "#3D2110" }}
-                label={{ value: "Actual accuracy", angle: -90, position: "insideLeft", fontSize: 11, fill: "#8B6E5A" }}
+                tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }}
+                label={{ value: "Actual accuracy", angle: -90, position: "insideLeft", fontSize: 11, fill: BRAND_HEX.brownMuted }}
               />
               <ZAxis dataKey="n" range={[40, 400]} name="Sample size" />
               <Tooltip
@@ -203,12 +204,12 @@ export default function QuizAnalyticsPage() {
                   { x: 0, y: 1 },
                   { x: 1, y: 0 },
                 ]}
-                stroke="#8B5CF6"
+                stroke={BRAND_HEX.purple}
                 strokeDasharray="4 4"
                 strokeWidth={1.5}
                 ifOverflow="hidden"
               />
-              <Scatter data={data.calibration} fill="#F97B2F" />
+              <Scatter data={data.calibration} fill={BRAND_HEX.orangeMain} />
             </ScatterChart>
           </ResponsiveContainer>
         )}
@@ -222,13 +223,13 @@ export default function QuizAnalyticsPage() {
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={data.trend} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#FBA962" strokeOpacity={0.2} />
+              <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 10, fill: "#3D2110" }}
+                tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
                 tickFormatter={(v) => v.slice(5)}
               />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#3D2110" }} />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
               <Tooltip
                 contentStyle={{
                   background: "rgba(253, 248, 239, 0.95)",
@@ -242,9 +243,9 @@ export default function QuizAnalyticsPage() {
               <Line
                 type="monotone"
                 dataKey="accuracy"
-                stroke="#F97B2F"
+                stroke={BRAND_HEX.orangeMain}
                 strokeWidth={2}
-                dot={{ r: 3, fill: "#F97B2F" }}
+                dot={{ r: 3, fill: BRAND_HEX.orangeMain }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

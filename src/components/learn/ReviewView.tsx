@@ -64,8 +64,8 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
     return (
       <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-white/90 rounded-2xl px-8 py-7 shadow-xl flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-[#F97B2F] border-t-transparent animate-spin" />
-          <p className="text-sm font-medium text-[#3D2110]">Loading your review…</p>
+          <div className="w-8 h-8 rounded-full border-2 border-aristo-orange-main border-t-transparent animate-spin" />
+          <p className="text-sm font-medium text-aristo-brown-main">Loading your review…</p>
         </div>
       </div>
     );
@@ -77,11 +77,11 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
       <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-white/95 rounded-2xl px-8 py-7 shadow-xl flex flex-col items-center gap-4 max-w-sm text-center">
           <span className="text-3xl">🎉</span>
-          <p className="text-base font-semibold text-[#3D2110]">All caught up!</p>
-          <p className="text-sm text-[#8B6E5A]">No reviews are due right now. Come back later or keep learning.</p>
+          <p className="text-base font-semibold text-aristo-brown-main">All caught up!</p>
+          <p className="text-sm text-aristo-brown-muted">No reviews are due right now. Come back later or keep learning.</p>
           <button
             onClick={onClose}
-            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] transition-all"
+            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover transition-all"
           >
             Back to Learning
           </button>
@@ -102,16 +102,16 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
           <span className="text-4xl">{allCorrect ? "🏆" : mostRight ? "✅" : "💪"}</span>
 
           <div>
-            <p className="text-lg font-bold text-[#3D2110]">Review Complete</p>
-            <p className="text-sm text-[#8B6E5A] mt-0.5">
-              You reviewed <span className="font-semibold text-[#3D2110]">{conceptCount}</span>{" "}
+            <p className="text-lg font-bold text-aristo-brown-main">Review Complete</p>
+            <p className="text-sm text-aristo-brown-muted mt-0.5">
+              You reviewed <span className="font-semibold text-aristo-brown-main">{conceptCount}</span>{" "}
               concept{conceptCount !== 1 ? "s" : ""} —{" "}
-              <span className="font-semibold text-[#3D2110]">{result.score}</span> of{" "}
-              <span className="font-semibold text-[#3D2110]">{result.total}</span> correct ({pct}%)
+              <span className="font-semibold text-aristo-brown-main">{result.score}</span> of{" "}
+              <span className="font-semibold text-aristo-brown-main">{result.total}</span> correct ({pct}%)
             </p>
           </div>
 
-          <p className="text-xs text-[#B8A99A]">
+          <p className="text-xs text-aristo-brown-faint">
             {allCorrect
               ? "Perfect retention! Your review intervals have been extended."
               : mostRight
@@ -121,7 +121,7 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
 
           <button
             onClick={onClose}
-            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] transition-all"
+            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover transition-all"
           >
             Continue Learning
           </button>
@@ -136,17 +136,17 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 bg-white/90 backdrop-blur-md border-b border-white/50 shadow-sm">
         <div className="flex items-center gap-2">
-          <span className="text-[#F97B2F] font-bold text-lg">↻</span>
+          <span className="text-aristo-orange-main font-bold text-lg">↻</span>
           <div>
-            <p className="text-sm font-bold text-[#3D2110]">Daily Review</p>
-            <p className="text-[11px] text-[#8B6E5A]">
+            <p className="text-sm font-bold text-aristo-brown-main">Daily Review</p>
+            <p className="text-[11px] text-aristo-brown-muted">
               {conceptCount} concept{conceptCount !== 1 ? "s" : ""} due · {questions.length} question{questions.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="text-xs text-[#8B6E5A] hover:text-[#3D2110] transition-colors font-medium"
+          className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors font-medium"
         >
           Skip for now
         </button>

@@ -2,6 +2,39 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-28 - Hex-to-token refactor on deploy-prep, zero visual change (Sonnet)
+
+Branch `dev/v8-tokens` off `origin/deploy-prep` (V9 and the V8.5 rooms); PR into `deploy-prep`, not merged. It ports
+`dev/classroom-color-tokens` (a WIP off the pre-V9 `deploy-prep` of 2026-09-10; pushed as-is first, still there) and
+finishes the sweep. **V8.2 is unblocked.** Gates: type-check clean, tests 408 (was 337; the rest are per-token
+assertions in `brandColors.test.ts`), build green, lint 0 errors and 8 warnings (10 before; none new, none in colour code).
+
+- **Inventory:** 157 `#F97B2F` in 30 files on `deploy-prep`, 170 counting the brand and stray hues together. Of the 12
+  files both the WIP and V9 touched, git merged 11 cleanly and only `.claude/launch.json` conflicted (took production's).
+  Merged cleanly is not complete: V9 had added new literals to `LessonView`, `DemoClient` and `TeacherControls`.
+- **The WIP's one bad idea, reversed.** It re-pointed the old `--aristo-orange` and `--aristo-brown` at the classroom
+  values. Those tokens render #F59047 and #402B1C (their comments lied), and admin, sign-in and pending use them, so it
+  moved those pages. The classroom literals now live in new `--aristo-orange-main` / `--aristo-brown-main`, and the old
+  tokens are unchanged. **V8.2 decides which orange wins** (decisions.md). Do not "fix" the old two in passing.
+- **Swept:** brand palette, the three stray hues plus amber (the fourth phase), and the peach and sand near-misses.
+  Classes became `aristo-*`; strings that must be strings (recharts, React Flow, three.js, canvas, email) read
+  `BRAND_HEX`. Not swept, on purpose: status and data-viz colours, code themes, scene-material constants (now
+  commented). Landing untouched (V8.1). No rendered text and no brand mark changed.
+- **How zero change was checked:** each changed file diffed against `deploy-prep` after normalising every colour to one
+  canonical hex marker (`[#F97B2F]`, `aristo-orange-main`, `hsl(var(--..))`, `BRAND_HEX.x` and `rgba()` all collapse).
+  39 files compared; every difference left is the same colour written another way.
+- **Then measured in Chrome, before vs after, at 1280x720** (same code paths, two servers, animations frozen, every
+  element's computed colour, background, border, shadow, fill and pseudo-element hashed and compared): `/demo` idle,
+  narrating, teaching image, both lessons; the quiz and the answer panel; `/dev/free-model` empty, image and model in both
+  rooms (`?room=alt`); `/dev/desk-quiz` quiz and lesson framings in both rooms; `/sign-in` and `/sign-up` (screenshots
+  byte-identical). All identical, and all 28 `--aristo-*` tokens render their documented hex. **Not reachable without a
+  session:** `/create-teacher`, `/admin/*` and `/pending` redirect to `/sign-in`, so they rest on the file-diff proof, not
+  a browser check; the Challenge and Connect phase cards likewise (`/learn` only). Look at admin once by eye after merge.
+- **Gotcha:** `yarn dev` and `yarn start` share `.next`, so starting a dev server breaks a production server in the same
+  tree (500s). `/dev/*` pages 404 in production by design, so they need dev.
+- **Lint in a nested worktree** fails on a duplicate `@next/next` plugin from the parent `.eslintrc.json`. From a
+  worktree run `npx eslint --no-eslintrc -c .eslintrc.json --ext .ts,.tsx src pages`.
+
 ## 2026-09-28 - V8.5 done: two rooms, "Classroom" (warm studio) and "Evening" (one-to-one study) (Opus)
 
 Branch `dev/v8-5-studio-room`, taken off `docs/v8-v9-programme` and not off `deploy-prep`. The brief says to branch off

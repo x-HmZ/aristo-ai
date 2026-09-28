@@ -105,14 +105,14 @@ function MCQRenderer({
           "w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium border transition-all duration-200 ";
         if (!result) {
           cls += selected === opt
-            ? "bg-[#F97B2F] text-white border-[#F97B2F]"
-            : "bg-white/70 border-white/60 text-[#3D2110] hover:border-[#F97B2F]/40 hover:bg-[#FFF8F4]";
+            ? "bg-aristo-orange-main text-white border-aristo-orange-main"
+            : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40 hover:bg-aristo-wash-faint";
         } else if (opt === question.correct_answer) {
           cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
         } else if (opt === selected) {
           cls += "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]";
         } else {
-          cls += "bg-white/30 border-white/30 text-[#B8A99A]";
+          cls += "bg-white/30 border-white/30 text-aristo-brown-faint";
         }
         return (
           <button key={opt} onClick={() => handleClick(opt)} disabled={!!result} className={cls}>
@@ -150,14 +150,14 @@ function TrueFalseRenderer({
           "flex-1 py-3 rounded-xl text-sm font-bold border transition-all duration-200 ";
         if (!result) {
           cls += selected === val
-            ? "bg-[#F97B2F] text-white border-[#F97B2F]"
-            : "bg-white/70 border-white/60 text-[#3D2110] hover:border-[#F97B2F]/40";
+            ? "bg-aristo-orange-main text-white border-aristo-orange-main"
+            : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40";
         } else if (val === question.correct_answer) {
           cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
         } else if (val === selected) {
           cls += "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]";
         } else {
-          cls += "bg-white/30 border-white/30 text-[#B8A99A]";
+          cls += "bg-white/30 border-white/30 text-aristo-brown-faint";
         }
         return (
           <button key={val} onClick={() => handleClick(val)} disabled={!!result} className={cls}>
@@ -192,10 +192,10 @@ function FillBlankRenderer({
 
   return (
     <div className="space-y-3">
-      <div className="text-sm text-[#3D2110] leading-relaxed">
+      <div className="text-sm text-aristo-brown-main leading-relaxed">
         {parts[0]}
         <span
-          className="inline-block border-b-2 border-[#F97B2F] px-2 mx-1 min-w-[80px] text-center text-[#F97B2F] font-semibold"
+          className="inline-block border-b-2 border-aristo-orange-main px-2 mx-1 min-w-[80px] text-center text-aristo-orange-main font-semibold"
         >
           {result ? question.correct_answer : (value || "___")}
         </span>
@@ -209,12 +209,12 @@ function FillBlankRenderer({
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="Type your answer…"
-            className="flex-1 px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-[#3D2110] placeholder-[#B8A99A] focus:outline-none focus:border-[#F97B2F]"
+            className="flex-1 px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-aristo-brown-main placeholder-aristo-brown-faint focus:outline-none focus:border-aristo-orange-main"
           />
           <button
             onClick={handleSubmit}
             disabled={!value.trim()}
-            className="px-3 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] disabled:opacity-50 transition-all"
+            className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
           >
             Submit
           </button>
@@ -264,20 +264,20 @@ function ShortAnswerRenderer({
             onChange={(e) => setValue(e.target.value)}
             rows={isCode ? 4 : 3}
             placeholder={isCode ? "Write the corrected code here…" : "Type your answer here…"}
-            className={`w-full px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-[#3D2110] placeholder-[#B8A99A] focus:outline-none focus:border-[#F97B2F] resize-none ${isCode ? "font-mono" : ""}`}
+            className={`w-full px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-aristo-brown-main placeholder-aristo-brown-faint focus:outline-none focus:border-aristo-orange-main resize-none ${isCode ? "font-mono" : ""}`}
           />
           <div className="flex items-center gap-2">
             <button
               onClick={handleSubmit}
               disabled={!value.trim() || isEvaluating}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] disabled:opacity-50 transition-all"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
             >
               {isEvaluating ? "Evaluating…" : "Submit"}
             </button>
             {!revealed && (
               <button
                 onClick={() => { setRevealed(true); onAnswer("__skipped__"); }}
-                className="px-3 py-2 rounded-xl text-xs text-[#8B6E5A] hover:text-[#3D2110] transition-colors"
+                className="px-3 py-2 rounded-xl text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors"
               >
                 I don&apos;t know →
               </button>
@@ -288,8 +288,8 @@ function ShortAnswerRenderer({
 
       {result && (
         <div className="bg-white/50 rounded-xl p-3 space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B6E5A]">Model Answer</p>
-          <pre className={`text-xs text-[#3D2110] leading-relaxed whitespace-pre-wrap ${isCode ? "font-mono" : ""}`}>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-brown-muted">Model Answer</p>
+          <pre className={`text-xs text-aristo-brown-main leading-relaxed whitespace-pre-wrap ${isCode ? "font-mono" : ""}`}>
             {question.correct_answer}
           </pre>
         </div>
@@ -356,12 +356,12 @@ function OrderingRenderer({
                 : "bg-white/70 border-white/60"
             }`}
           >
-            <span className="text-[10px] font-bold text-[#B8A99A] w-4 tabular-nums">{idx + 1}.</span>
-            <span className="text-xs text-[#3D2110] flex-1">{item}</span>
+            <span className="text-[10px] font-bold text-aristo-brown-faint w-4 tabular-nums">{idx + 1}.</span>
+            <span className="text-xs text-aristo-brown-main flex-1">{item}</span>
             {!result && (
               <div className="flex flex-col gap-0.5">
-                <button onClick={() => moveUp(idx)} className="text-[#B8A99A] hover:text-[#F97B2F] text-xs leading-none">▲</button>
-                <button onClick={() => moveDown(idx)} className="text-[#B8A99A] hover:text-[#F97B2F] text-xs leading-none">▼</button>
+                <button onClick={() => moveUp(idx)} className="text-aristo-brown-faint hover:text-aristo-orange-main text-xs leading-none">▲</button>
+                <button onClick={() => moveDown(idx)} className="text-aristo-brown-faint hover:text-aristo-orange-main text-xs leading-none">▼</button>
               </div>
             )}
           </div>
@@ -370,13 +370,13 @@ function OrderingRenderer({
       {!result && !submitted && (
         <button
           onClick={handleSubmit}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] transition-all mt-1"
+          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover transition-all mt-1"
         >
           Submit Order
         </button>
       )}
       {result && (
-        <div className="text-[10px] text-[#8B6E5A] pt-1">
+        <div className="text-[10px] text-aristo-brown-muted pt-1">
           Correct order: {correctOrder.join(" → ")}
         </div>
       )}
@@ -429,7 +429,7 @@ function MatchingRenderer({
           const isWrong   = result && correctMap[term] !== chosen;
           return (
             <div key={term} className="space-y-1">
-              <span className="text-[10px] font-bold text-[#3D2110]">{term}</span>
+              <span className="text-[10px] font-bold text-aristo-brown-main">{term}</span>
               <select
                 value={chosen ?? ""}
                 onChange={(e) => handleSelect(term, e.target.value)}
@@ -441,7 +441,7 @@ function MatchingRenderer({
                       : isWrong
                       ? "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]"
                       : "bg-white/40 border-white/40"
-                    : "bg-white/70 border-white/60 text-[#3D2110] focus:border-[#F97B2F]"
+                    : "bg-white/70 border-white/60 text-aristo-brown-main focus:border-aristo-orange-main"
                 }`}
               >
                 <option value="">— select —</option>
@@ -457,13 +457,13 @@ function MatchingRenderer({
         <button
           onClick={handleSubmit}
           disabled={!allMatched}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] disabled:opacity-50 transition-all"
+          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
         >
           Submit Matches
         </button>
       )}
       {result && (
-        <div className="text-[10px] text-[#8B6E5A] space-y-0.5">
+        <div className="text-[10px] text-aristo-brown-muted space-y-0.5">
           {correctPairs.map(([t, d]) => (
             <div key={t}><span className="font-semibold">{t}</span> → {d}</div>
           ))}
@@ -629,7 +629,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       {/* Progress bar */}
       <div className="h-1 bg-white/30">
         <div
-          className="h-full bg-[#F97B2F] transition-all duration-500"
+          className="h-full bg-aristo-orange-main transition-all duration-500"
           style={{ width: `${progressPct}%` }}
         />
       </div>
@@ -639,13 +639,13 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
         {/* Header */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#F97B2F]">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-main">
               Question {currentIdx + 1} of {totalQs}
             </span>
             {bloomBadge(currentQ.bloom_level)}
-            <span className="text-[9px] text-[#B8A99A]">{typeLabel(currentQ.question_type)}</span>
+            <span className="text-[9px] text-aristo-brown-faint">{typeLabel(currentQ.question_type)}</span>
           </div>
-          <span className="text-[10px] text-[#B8A99A] tabular-nums">
+          <span className="text-[10px] text-aristo-brown-faint tabular-nums">
             {results.filter((r) => r?.is_correct).length} correct
           </span>
         </div>
@@ -653,13 +653,13 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
         {/* Question text — shown separately for code types */}
         {currentQ.question_type !== "code_debugging" &&
           currentQ.question_type !== "code_completion" && (
-          <p className="text-sm font-medium text-[#3D2110] leading-snug">
+          <p className="text-sm font-medium text-aristo-brown-main leading-snug">
             {currentQ.question}
           </p>
         )}
         {(currentQ.question_type === "code_debugging" ||
           currentQ.question_type === "code_completion") && (
-          <p className="text-sm font-medium text-[#3D2110] leading-snug">
+          <p className="text-sm font-medium text-aristo-brown-main leading-snug">
             {currentQ.question_type === "code_debugging"
               ? "Find and fix the bug in this code:"
               : "Complete the code:"}
@@ -698,15 +698,15 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           <div className="space-y-2">
             <FeedbackBanner result={currentR} />
             {isEvaluating && (
-              <div className="flex items-center gap-1.5 text-[11px] text-[#8B6E5A]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-bounce" />
+              <div className="flex items-center gap-1.5 text-[11px] text-aristo-brown-muted">
+                <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-bounce" />
                 Evaluating…
               </div>
             )}
             <div className="flex justify-end">
               <button
                 onClick={handleNext}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] shadow-sm transition-all"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-sm transition-all"
               >
                 {currentIdx < totalQs - 1 ? "Next →" : "See Results"}
               </button>

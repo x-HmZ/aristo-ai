@@ -20,6 +20,8 @@
 
 import { Resend } from "resend";
 
+import { BRAND_HEX } from "@/lib/brandColors";
+
 interface AdminSignupNotice {
   userId: string;
   email: string;
@@ -112,7 +114,7 @@ export async function sendAdminNewSignupEmail(
       subject: `Aristo AI — new signup awaiting approval: ${displayName}`,
       html: `
         <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 560px; margin: 0 auto; color: #1f1f1f;">
-          <h2 style="color: #F97B2F;">New signup awaiting approval</h2>
+          <h2 style="color: ${BRAND_HEX.orangeMain};">New signup awaiting approval</h2>
           <p>A new user has signed up and is waiting for you to approve their access.</p>
           <table style="border-collapse: collapse; margin: 20px 0; font-size: 14px;">
             <tr><td style="padding: 4px 12px 4px 0; color: #666;">Name</td><td>${escapeHtml(displayName)}</td></tr>
@@ -121,7 +123,7 @@ export async function sendAdminNewSignupEmail(
             <tr><td style="padding: 4px 12px 4px 0; color: #666;">Signed up</td><td>${notice.createdAt}</td></tr>
           </table>
           <p>
-            <a href="${approvalUrl}" style="display: inline-block; background: #F97B2F; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            <a href="${approvalUrl}" style="display: inline-block; background: ${BRAND_HEX.orangeMain}; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">
               Review in admin panel
             </a>
           </p>
@@ -160,11 +162,11 @@ export async function sendUserApprovedEmail(
       subject: "Welcome to Aristo AI — your account is ready",
       html: `
         <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 560px; margin: 0 auto; color: #1f1f1f;">
-          <h2 style="color: #F97B2F;">You're in!</h2>
+          <h2 style="color: ${BRAND_HEX.orangeMain};">You're in!</h2>
           <p>Hi ${escapeHtml(displayName)},</p>
           <p>Your Aristo AI account has been approved. Sign in to start learning.</p>
           <p>
-            <a href="${appUrl}/sign-in" style="display: inline-block; background: #F97B2F; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            <a href="${appUrl}/sign-in" style="display: inline-block; background: ${BRAND_HEX.orangeMain}; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">
               Open Aristo
             </a>
           </p>

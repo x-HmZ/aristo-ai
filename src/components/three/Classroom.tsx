@@ -5,7 +5,14 @@ import { useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useAristoStore } from "@/store/useAristoStore";
+import { BRAND_HEX, withAlpha } from "@/lib/brandColors";
 import type { Classroom as ClassroomVariant } from "@/store/useAristoStore";
+
+// Canvas-texture colours in this file are 3D-material constants (chalkboard
+// green, paper, ruled lines, ink), not brand colours: no --aristo-* token
+// mirrors them, so they stay literal. The orange accents are the exception and
+// come from BRAND_HEX, which brandColors.test.ts keeps equal to
+// --aristo-orange-main.
 
 // ─── Blackboard — ambient echo of current phase content ─────────────────────
 
@@ -50,13 +57,13 @@ function Blackboard({ position, rotation }: { position: [number, number, number]
 
     if (lesson) {
       // Topic label
-      ctx.fillStyle = "rgba(249,123,47,0.9)";
+      ctx.fillStyle = withAlpha(BRAND_HEX.orangeMain, 0.9);
       ctx.font = "bold 36px 'Arial', sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(lesson.concept_name, canvas.width / 2, 68);
 
       // Divider line
-      ctx.strokeStyle = "rgba(249,123,47,0.3)";
+      ctx.strokeStyle = withAlpha(BRAND_HEX.orangeMain, 0.3);
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(60, 86);

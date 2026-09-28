@@ -32,6 +32,7 @@ import {
 import { FADE, overlayBlend, overlayWeight } from "@/lib/avatar/director";
 import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 const CANDIDATES = {
   jake:   { file: "Teacher_Jake.glb",   label: "Jake (Canino, CC4)", pack: "Teacher_Jake_clips.glb" },
@@ -302,7 +303,7 @@ function Teacher({
       {classroom && (
         <mesh position={MODEL_SPOT}>
           <sphereGeometry args={[0.18, 24, 16]} />
-          <meshStandardMaterial color="#F97B2F" transparent opacity={0.45} />
+          <meshStandardMaterial color={BRAND_HEX.orangeMain} transparent opacity={0.45} />
         </mesh>
       )}
     </>
@@ -361,7 +362,7 @@ export default function AvatarLab() {
   const missing = expected.filter((v) => !report.morphs.includes(v));
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "system-ui", background: "#FDF0E4" }}>
+    <div style={{ display: "flex", height: "100vh", fontFamily: "system-ui", background: BRAND_HEX.backdrop }}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <Canvas camera={{ position: [0, 0, 0.9], fov: 40, near: 0.01 }} shadows={false}>
           <ambientLight intensity={0.9} />
@@ -400,7 +401,7 @@ export default function AvatarLab() {
         <Section title="Framing">
           {(Object.keys(VIEWS) as ViewKey[]).map((v) => (
             <button key={v} onClick={() => setView(v)}
-              style={{ ...btn, background: view === v ? "#F97B2F" : "#F3E7DA", color: view === v ? "#fff" : "#4A3A2C" }}>
+              style={{ ...btn, background: view === v ? BRAND_HEX.orangeMain : "#F3E7DA", color: view === v ? "#fff" : "#4A3A2C" }}>
               {v}
             </button>
           ))}
@@ -409,7 +410,7 @@ export default function AvatarLab() {
         <Section title="Clip">
           {CLIPS.map((c) => (
             <button key={c} onClick={() => setClip(c)}
-              style={{ ...btn, background: clip === c ? "#F97B2F" : "#F3E7DA", color: clip === c ? "#fff" : "#4A3A2C" }}>
+              style={{ ...btn, background: clip === c ? BRAND_HEX.orangeMain : "#F3E7DA", color: clip === c ? "#fff" : "#4A3A2C" }}>
               {c}
             </button>
           ))}
@@ -419,7 +420,7 @@ export default function AvatarLab() {
           {GESTURES.map((g) => (
             <button key={g.name} title={`${g.mask} mask, ${g.note}`}
               onClick={() => setGesture({ name: g.name, id: Date.now(), loop, speed })}
-              style={{ ...btn, marginBottom: 6, background: gesture?.name === g.name ? "#F97B2F" : "#F3E7DA", color: gesture?.name === g.name ? "#fff" : "#4A3A2C" }}>
+              style={{ ...btn, marginBottom: 6, background: gesture?.name === g.name ? BRAND_HEX.orangeMain : "#F3E7DA", color: gesture?.name === g.name ? "#fff" : "#4A3A2C" }}>
               {g.name}
             </button>
           ))}
@@ -436,7 +437,7 @@ export default function AvatarLab() {
             {SPEEDS.map((s) => (
               <button key={s}
                 onClick={() => { setSpeed(s); setGesture((g) => g && { ...g, speed: s, id: Date.now() }); }}
-                style={{ ...btn, padding: "3px 8px", background: speed === s ? "#F97B2F" : "#F3E7DA", color: speed === s ? "#fff" : "#4A3A2C" }}>
+                style={{ ...btn, padding: "3px 8px", background: speed === s ? BRAND_HEX.orangeMain : "#F3E7DA", color: speed === s ? "#fff" : "#4A3A2C" }}>
                 x{s}
               </button>
             ))}
@@ -464,7 +465,7 @@ export default function AvatarLab() {
         </Section>
 
         <Section title="Live viseme">
-          <div style={{ fontSize: 22, fontWeight: 600, color: "#F97B2F" }}>{live}</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: BRAND_HEX.orangeMain }}>{live}</div>
           <div style={{ fontSize: 12, color: spans ? "#2E7D32" : "#B23B2E" }}>
             {spans ? `alignment loaded — ${spans} spans` : "no alignment timeline"}
           </div>

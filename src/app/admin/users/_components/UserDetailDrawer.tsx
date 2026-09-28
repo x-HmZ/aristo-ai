@@ -18,6 +18,7 @@ import { BrandBadge, EXPERTISE_COLOR, BLOOM_COLOR } from "@/components/admin/ui/
 import { BrandButton }   from "@/components/admin/ui/BrandButton";
 import { BrandCard }     from "@/components/admin/ui/BrandCard";
 import { SectionTitle }  from "@/components/admin/ui/SectionTitle";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -563,7 +564,7 @@ function MasteryBar({ value }: { value: number }) {
   const pct = Math.round(value * 100);
   const color =
     pct >= 80 ? "#22C55E" :
-    pct >= 50 ? "#F97B2F" :
+    pct >= 50 ? BRAND_HEX.orangeMain :
                 "#EF4444";
   return (
     <div className="flex items-center gap-2 min-w-[140px]">
