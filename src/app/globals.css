@@ -4,15 +4,55 @@
 
 @layer base {
   :root {
-    /* Aristo brand palette — pastel orange + off-white/beige */
-    --aristo-orange: 25 90% 62%;         /* #F97B2F — main orange */
-    --aristo-orange-light: 28 95% 74%;   /* #FBA962 — lighter orange */
-    --aristo-orange-pale: 30 100% 88%;   /* #FFDBB8 — pale pastel orange */
-    --aristo-beige: 38 60% 93%;          /* #F5ECD9 — warm beige */
-    --aristo-beige-dark: 35 40% 85%;     /* #E8D5BC — darker beige */
-    --aristo-cream: 42 70% 97%;          /* #FDF8EF — off-white cream */
-    --aristo-brown: 25 40% 18%;          /* #3D2110 — dark warm brown */
-    --aristo-orange-deep: 23 75% 43%;    /* #C05A1C — orange dark enough for body text on cream */
+    /* Aristo brand palette — pastel orange + off-white/beige.
+     *
+     * Every value below carries the hex it renders in its comment, and
+     * src/lib/brandColors.test.ts fails if the two disagree. Change a colour
+     * here, never at a call site. JS that needs a resolved string (three.js,
+     * canvas) reads src/lib/brandColors.ts, which the same test keeps in step.
+     *
+     * Two families, on purpose:
+     *
+     * - The `-main` / hover / ink / wash / brown-* tokens hold the colours the
+     *   classroom (/learn, /demo), sign-in, create-teacher and admin used to
+     *   hardcode as hex literals. Moving them here changed no pixel.
+     * - `--aristo-orange` and `--aristo-brown` are the older tokens. Their
+     *   comments once said #F97B2F and #3D2110, but they render #F59047 and
+     *   #402B1C, and 53 and 241 class uses (admin, auth, some classroom text)
+     *   depend on what they actually render. They are left exactly as they
+     *   were so nothing moves. Deciding which orange wins is V8.2's job; it
+     *   is then one line here (see .claude/docs/decisions.md). */
+    --aristo-orange-main: 22.57 94.39% 58.04%; /* #F97B2F  the classroom orange: fills, links, borders */
+    --aristo-orange-hover: 23.13 75.59% 50.2%; /* #E06A20  hover on orange fills and links */
+    --aristo-orange-ink: 24.67 84.91% 41.57%;  /* #C45A10  orange as small text: eyebrows, labels */
+    --aristo-orange: 25 90% 62%;               /* #F59047  legacy orange, NOT the classroom orange */
+    --aristo-orange-deep: 22.68 74.55% 43.14%; /* #C05A1C  orange dark enough for body text on cream */
+    --aristo-orange-light: 28 95% 74%;         /* #FCB97E  lighter orange */
+    --aristo-orange-pale: 30 100% 88%;         /* #FFE0C2  pale pastel orange */
+    --aristo-wash: 26.67 100% 94.71%;          /* #FFF0E4  selected card, chip fill */
+    --aristo-wash-light: 28.42 100% 96.27%;    /* #FFF5EC  chip fill, hover fill */
+    --aristo-wash-faint: 21.82 100% 97.84%;    /* #FFF8F4  hover fill on white cards */
+    --aristo-backdrop: 28.8 86.21% 94.31%;     /* #FDF0E4  classroom scene background */
+    --aristo-beige: 38 60% 93%;                /* #F8F0E2  warm beige */
+    --aristo-beige-dark: 35 40% 85%;           /* #E8DBC9  darker beige */
+    --aristo-cream: 42 70% 97%;                /* #FDF9F2  off-white cream */
+    --aristo-brown-main: 22.67 58.44% 15.1%;   /* #3D2110  the classroom brown: headings, primary text */
+    --aristo-brown: 25 40% 18%;                /* #402B1C  legacy brown, NOT the classroom brown */
+    --aristo-brown-soft: 30 50.82% 23.92%;     /* #5C3D1E  body copy inside tinted cards */
+    --aristo-brown-muted: 24.49 21.4% 44.9%;   /* #8B6E5A  secondary text */
+    --aristo-brown-faint: 30 17.44% 66.27%;    /* #B8A99A  tertiary text, placeholders */
+    --aristo-tan: 26.13 30.39% 60%;            /* #B8957A  input placeholders */
+    --aristo-peach: 27.84 95.03% 68.43%;       /* #FBA962  avatar-chip gradient end, chart grid lines */
+    --aristo-peach-pale: 29.58 100% 86.08%;    /* #FFDBB8  icon-chip and card gradient stop */
+    --aristo-sand: 34.09 48.89% 82.35%;        /* #E8D5BC  hairline dividers in the classroom header */
+
+    /* Lesson-phase and status accents. Five hues survive from before the
+     * design system; V8.2 replaces them with numbering and one accent. */
+    --aristo-purple: 258.31 89.53% 66.27%;     /* #8B5CF6  Activate phase, learner analytics */
+    --aristo-purple-hover: 262.12 83.26% 57.84%; /* #7C3AED  hover on purple text */
+    --aristo-teal: 160.12 84.08% 39.41%;       /* #10B981  Demonstrate phase, mastered */
+    --aristo-blue: 217.22 91.22% 59.8%;        /* #3B82F6  Connect phase, free-topic mode */
+    --aristo-amber: 37.69 92.13% 50.2%;        /* #F59E0B  Challenge phase, in progress */
 
     /* shadcn/ui tokens — mapped to Aristo palette */
     --background: 42 70% 97%;            /* cream off-white */
@@ -80,10 +120,10 @@
 
 /* Landing page identity ("Night Class", T04b).
  *
- * Scoped to the landing page on purpose. /learn and /demo hardcode #F97B2F
- * in ~87 places, so changing the shared --aristo-* / shadcn tokens would
- * restyle the dashboard and auth pages but not the classroom. The landing
- * page gets its own set instead; see .claude/docs/landing-design-system.md.
+ * Scoped to the landing page on purpose. The classroom, dashboard and auth
+ * pages read the shared --aristo-* / shadcn tokens above, so restyling those
+ * would move every product surface at once. The landing page gets its own
+ * set instead; see .claude/docs/landing-design-system.md.
  *
  * Values are bare RGB channels so Tailwind's `lp-*` colours accept opacity
  * modifiers (`bg-lp-accent/10`).
