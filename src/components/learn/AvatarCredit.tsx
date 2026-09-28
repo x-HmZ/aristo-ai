@@ -18,9 +18,9 @@ export function AvatarCredit({ avatar, className = "" }: { avatar: TeacherAvatar
   const credit = AVATAR_ASSETS[avatar]?.credit;
   if (!credit) return null;
 
-  const link = "underline decoration-dotted underline-offset-2 hover:text-[#3D2110]";
+  const link = "underline decoration-dotted underline-offset-2 hover:text-aristo-brown-main";
   return (
-    <p className={`text-[10px] leading-snug text-[#8B6E5A] ${className}`}>
+    <p className={`text-[10px] leading-snug text-aristo-brown-muted ${className}`}>
       Teacher model:{" "}
       <a href={credit.sourceUrl} target="_blank" rel="noopener noreferrer" className={link}>
         &ldquo;{credit.title}&rdquo;

@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 // uses the exact same React/Three setup as production /learn.
 const DeskQuizPreview = dynamic(
   () => import("@/components/dev/DeskQuizPreview"),
-  { ssr: false, loading: () => <div style={{ minHeight: "100vh", background: "#FDF0E4" }} /> }
+  { ssr: false, loading: () => <div style={{ minHeight: "100vh", background: "hsl(var(--aristo-backdrop))" }} /> }
 );
 
 export default function DevDeskQuizPage() {

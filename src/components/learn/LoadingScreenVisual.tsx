@@ -64,7 +64,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
       <div className="relative flex flex-col items-center gap-6 px-8 py-10 rounded-3xl glass shadow-aristo-lg w-[min(90vw,360px)]">
         {/* Wordmark */}
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-[#3D2110] text-2xl tracking-tight">aristo</span>
+          <span className="font-bold text-aristo-brown-main text-2xl tracking-tight">aristo</span>
           <span className="text-aristo-orange text-2xl font-bold animate-pulse-soft">✦</span>
         </div>
 
@@ -86,7 +86,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-xs text-[#8B6E5A] text-center"
+                  className="text-xs text-aristo-brown-muted text-center"
                 >
                   Taking longer than usual — check your connection.
                 </motion.span>
@@ -97,7 +97,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.3 }}
-                  className="text-xs text-[#8B6E5A] text-center"
+                  className="text-xs text-aristo-brown-muted text-center"
                 >
                   {MICROCOPY[lineIndex]}
                 </motion.span>
@@ -109,7 +109,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
         {stalled && (
           <button
             onClick={handleReload}
-            className="text-xs font-semibold text-white bg-aristo-orange hover:bg-[#E06A20] rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
+            className="text-xs font-semibold text-white bg-aristo-orange hover:bg-aristo-orange-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
           >
             Reload
           </button>

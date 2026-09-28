@@ -23,6 +23,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS } from "@/hooks/useTTS";
+import { BRAND_HEX } from "@/lib/brandColors";
 
 // ─── Shared card shell ────────────────────────────────────────────────────────
 
@@ -77,7 +78,7 @@ function SegmentScript({
             style={{
               borderLeft:      `3px solid ${active ? accent : "transparent"}`,
               background:      active ? `${accent}12` : "transparent",
-              color:           active ? "#3D2110" : "#5C3D1E",
+              color:           active ? "hsl(var(--aristo-brown-main))" : "hsl(var(--aristo-brown-soft))",
               fontWeight:      active ? 600 : 400,
             }}
           >
@@ -129,12 +130,12 @@ function ExplainMoreBtn({
         <button
           onClick={handleClick}
           disabled={loading}
-          className="text-[11px] font-semibold text-[#F97B2F] hover:text-[#E06A20] flex items-center gap-1 disabled:opacity-50"
+          className="text-[11px] font-semibold text-aristo-orange-main hover:text-aristo-orange-hover flex items-center gap-1 disabled:opacity-50"
         >
           {loading ? "Loading…" : "Explain more ↓"}
         </button>
       ) : (
-        <div className="mt-2 px-3 py-2 rounded-xl bg-[#FFF5EC] border border-[#F97B2F]/20 text-sm text-[#5C3D1E] leading-relaxed animate-[fade-in_0.3s_ease-out]">
+        <div className="mt-2 px-3 py-2 rounded-xl bg-aristo-wash-light border border-aristo-orange-main/20 text-sm text-aristo-brown-soft leading-relaxed animate-[fade-in_0.3s_ease-out]">
           {expanded}
         </div>
       )}
@@ -158,21 +159,21 @@ function ActivateCard({
   phase, conceptName, playbackMode, segmentsForPhase, currentSegmentId,
 }: PhaseCardCommon & { phase: LessonPayload["phases"]["activate"] }) {
   return (
-    <PhaseCard label="1 · Activate prior knowledge" accent="#8B5CF6">
+    <PhaseCard label="1 · Activate prior knowledge" accent={BRAND_HEX.purple}>
       {playbackMode && segmentsForPhase && (
         <SegmentScript
           segments={segmentsForPhase}
           currentSegmentId={currentSegmentId ?? null}
-          accent="#8B5CF6"
+          accent={BRAND_HEX.purple}
         />
       )}
       {!playbackMode && (
-        <p className="text-sm text-[#3D2110] leading-relaxed">{phase.content}</p>
+        <p className="text-sm text-aristo-brown-main leading-relaxed">{phase.content}</p>
       )}
       {phase.prerequisites_referenced && phase.prerequisites_referenced.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {phase.prerequisites_referenced.map((p) => (
-            <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-[#8B5CF6]/10 text-[#8B5CF6] border border-[#8B5CF6]/20 font-medium">
+            <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-aristo-purple/10 text-aristo-purple border border-aristo-purple/20 font-medium">
               {p}
             </span>
           ))}
@@ -189,21 +190,21 @@ function ExplainCard({
   phase, conceptName, playbackMode, segmentsForPhase, currentSegmentId,
 }: PhaseCardCommon & { phase: LessonPayload["phases"]["explain"] }) {
   return (
-    <PhaseCard label="2 · Explain" accent="#F97B2F">
+    <PhaseCard label="2 · Explain" accent={BRAND_HEX.orangeMain}>
       {playbackMode && segmentsForPhase && (
         <SegmentScript
           segments={segmentsForPhase}
           currentSegmentId={currentSegmentId ?? null}
-          accent="#F97B2F"
+          accent={BRAND_HEX.orangeMain}
         />
       )}
       {/* Analogy */}
-      <div className="mb-3 px-3 py-2.5 rounded-xl bg-[#FFF5EC] border border-[#F97B2F]/20">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#C45A10] mb-1">Analogy</p>
-        <p className="text-sm text-[#5C3D1E] leading-relaxed italic">{phase.analogy}</p>
+      <div className="mb-3 px-3 py-2.5 rounded-xl bg-aristo-wash-light border border-aristo-orange-main/20">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-ink mb-1">Analogy</p>
+        <p className="text-sm text-aristo-brown-soft leading-relaxed italic">{phase.analogy}</p>
       </div>
       {!playbackMode && (
-        <p className="text-sm text-[#3D2110] leading-relaxed mb-2">{phase.formal_explanation}</p>
+        <p className="text-sm text-aristo-brown-main leading-relaxed mb-2">{phase.formal_explanation}</p>
       )}
       {/* Key insight */}
       <div className="flex gap-2 px-3 py-2 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
@@ -286,16 +287,16 @@ function DemonstrateCard({
   }, [activePreviewImageUrl, playbackMode]);
 
   return (
-    <PhaseCard label="3 · Demonstrate" accent="#10B981">
+    <PhaseCard label="3 · Demonstrate" accent={BRAND_HEX.teal}>
       {playbackMode && segmentsForPhase && (
         <SegmentScript
           segments={segmentsForPhase}
           currentSegmentId={currentSegmentId ?? null}
-          accent="#10B981"
+          accent={BRAND_HEX.teal}
         />
       )}
       {!playbackMode && (
-        <p className="text-sm text-[#3D2110] mb-2">{phase.example_description}</p>
+        <p className="text-sm text-aristo-brown-main mb-2">{phase.example_description}</p>
       )}
 
       {/* Code block */}
@@ -309,8 +310,8 @@ function DemonstrateCard({
       {phase.step_by_step.length > 0 && (
         <ol className="space-y-1.5 mb-2">
           {phase.step_by_step.map((step, i) => (
-            <li key={i} className="flex gap-2 text-sm text-[#3D2110]">
-              <span className="shrink-0 w-5 h-5 rounded-full bg-[#10B981]/15 text-[#10B981] text-[10px] font-bold flex items-center justify-center mt-0.5">
+            <li key={i} className="flex gap-2 text-sm text-aristo-brown-main">
+              <span className="shrink-0 w-5 h-5 rounded-full bg-aristo-teal/15 text-aristo-teal text-[10px] font-bold flex items-center justify-center mt-0.5">
                 {i + 1}
               </span>
               <span className="leading-relaxed">{step}</span>
@@ -331,28 +332,28 @@ function DemonstrateCard({
       {!playbackMode && shouldGenerateModel && (
         <div className="mt-2 flex items-center gap-1.5">
           {isGeneratingModel && !activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[#F97B2F] animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-ping" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-aristo-orange-main animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-ping" />
               Generating image…
             </span>
           ) : isGeneratingModel && activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-[#F97B2F] animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-ping" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-aristo-orange-main animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-ping" />
               Building 3D model…
             </span>
           ) : activeModelUrl && viewMode3d ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-[#10B981] bg-[#F0FDF4] border border-[#10B981]/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-teal bg-[#F0FDF4] border border-aristo-teal/25 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-teal" />
               3D model in scene
             </span>
           ) : activePreviewImageUrl && pending3dImageUrl && !activeModelUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-[#F97B2F] bg-[#FFF5EC] border border-[#F97B2F]/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F]" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-orange-main bg-aristo-wash-light border border-aristo-orange-main/25 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main" />
               Image ready · tap “View in 3D” in the scene
             </span>
           ) : activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-[#10B981] bg-[#F0FDF4] border border-[#10B981]/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-teal bg-[#F0FDF4] border border-aristo-teal/25 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-aristo-teal" />
               Image in scene
             </span>
           ) : null}
@@ -403,15 +404,15 @@ function ChallengeCard({
   }, [answer, isEvaluating, phase, conceptName, setGesture]);
 
   return (
-    <PhaseCard label="4 · Challenge" accent="#F59E0B">
+    <PhaseCard label="4 · Challenge" accent={BRAND_HEX.amber}>
       {playbackMode && segmentsForPhase && (
         <SegmentScript
           segments={segmentsForPhase}
           currentSegmentId={currentSegmentId ?? null}
-          accent="#F59E0B"
+          accent={BRAND_HEX.amber}
         />
       )}
-      <p className="text-sm font-medium text-[#3D2110] leading-relaxed mb-3">{phase.question}</p>
+      <p className="text-sm font-medium text-aristo-brown-main leading-relaxed mb-3">{phase.question}</p>
 
       {!showAnswer && (
         <>
@@ -420,25 +421,25 @@ function ChallengeCard({
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Type your answer…"
             rows={3}
-            className="w-full px-3 py-2 rounded-xl bg-white border border-white/60 text-sm text-[#3D2110] placeholder:text-[#B8957A] focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/30 resize-none mb-2"
+            className="w-full px-3 py-2 rounded-xl bg-white border border-white/60 text-sm text-aristo-brown-main placeholder:text-aristo-tan focus:outline-none focus:ring-2 focus:ring-aristo-amber/30 resize-none mb-2"
           />
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={handleSubmit}
               disabled={!answer.trim() || isEvaluating}
-              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#F59E0B] text-white hover:bg-[#D97706] disabled:opacity-40 transition-all"
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-aristo-amber text-white hover:bg-[#D97706] disabled:opacity-40 transition-all"
             >
               {isEvaluating ? "Evaluating…" : "Submit answer"}
             </button>
             <button
               onClick={() => setShowHint(true)}
-              className="text-xs text-[#8B6E5A] hover:text-[#3D2110] underline underline-offset-2"
+              className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
             >
               Show hint
             </button>
             <button
               onClick={() => setShowAnswer(true)}
-              className="text-xs text-[#8B6E5A] hover:text-[#3D2110] underline underline-offset-2"
+              className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
             >
               {"I don't know"}
             </button>
@@ -455,7 +456,7 @@ function ChallengeCard({
       {showAnswer && (
         <div className="space-y-2 animate-[fade-in_0.3s_ease-out]">
           {feedback && (
-            <p className="text-sm font-medium text-[#F59E0B]">{feedback}</p>
+            <p className="text-sm font-medium text-aristo-amber">{feedback}</p>
           )}
           <div className="px-3 py-2.5 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] mb-1">Full answer</p>
@@ -473,21 +474,21 @@ function ConnectCard({
   phase, playbackMode, segmentsForPhase, currentSegmentId,
 }: Omit<PhaseCardCommon, "conceptName"> & { phase: LessonPayload["phases"]["connect"] }) {
   return (
-    <PhaseCard label="5 · Connect" accent="#3B82F6">
+    <PhaseCard label="5 · Connect" accent={BRAND_HEX.blue}>
       {playbackMode && segmentsForPhase && (
         <SegmentScript
           segments={segmentsForPhase}
           currentSegmentId={currentSegmentId ?? null}
-          accent="#3B82F6"
+          accent={BRAND_HEX.blue}
         />
       )}
       {!playbackMode && (
-        <p className="text-sm text-[#3D2110] leading-relaxed">{phase.content}</p>
+        <p className="text-sm text-aristo-brown-main leading-relaxed">{phase.content}</p>
       )}
       {phase.next_concept && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-[#3B82F6] font-semibold">
+        <div className="mt-2 flex items-center gap-2 text-xs text-aristo-blue font-semibold">
           <span>→ Up next:</span>
-          <span className="px-2 py-0.5 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/20">
+          <span className="px-2 py-0.5 rounded-full bg-aristo-blue/10 border border-aristo-blue/20">
             {phase.next_concept}
           </span>
         </div>
@@ -716,9 +717,9 @@ export function LessonView({
 
         {/* Lesson header */}
         <div className="flex items-center gap-2">
-          <span className="text-[#F97B2F] font-bold">✦</span>
-          <h2 className="text-sm font-bold text-[#3D2110] truncate">{lesson.concept_name}</h2>
-          <span className="ml-auto text-[10px] text-[#8B6E5A] tabular-nums shrink-0">
+          <span className="text-aristo-orange-main font-bold">✦</span>
+          <h2 className="text-sm font-bold text-aristo-brown-main truncate">{lesson.concept_name}</h2>
+          <span className="ml-auto text-[10px] text-aristo-brown-muted tabular-nums shrink-0">
             {phaseIdx + 1} / {PHASES.length}
           </span>
         </div>
@@ -729,7 +730,7 @@ export function LessonView({
             <div
               key={i}
               className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i <= phaseIdx ? "bg-[#F97B2F]" : "bg-white/40"
+                i <= phaseIdx ? "bg-aristo-orange-main" : "bg-white/40"
               }`}
             />
           ))}
@@ -788,20 +789,20 @@ export function LessonView({
           <button
             onClick={goPrev}
             disabled={isFirst}
-            className="text-xs text-[#8B6E5A] hover:text-[#3D2110] disabled:opacity-30 font-medium px-2 py-1"
+            className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main disabled:opacity-30 font-medium px-2 py-1"
           >
             ← Back
           </button>
           {!isLast && (
             <button
               onClick={goNext}
-              className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#F97B2F] text-white hover:bg-[#E06A20] shadow-sm transition-all"
+              className="px-5 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-sm transition-all"
             >
               Next →
             </button>
           )}
           {isLast && (
-            <span className="text-xs text-[#10B981] font-semibold">Lesson complete ✓</span>
+            <span className="text-xs text-aristo-teal font-semibold">Lesson complete ✓</span>
           )}
         </div>
       </div>

@@ -154,13 +154,13 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
   const handleSubmit = () => { doSubmit(answer); };
 
   return (
-    <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-[#F97B2F]/30 rounded-b-2xl shadow-[inset_0_1px_0_rgba(249,123,47,0.18)]">
+    <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl shadow-[inset_0_1px_0_hsl(var(--aristo-orange-main)/0.18)]">
       {/* Avatar prompt strip */}
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#C45A10]">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-ink">
           Your turn
         </span>
-        <span className="text-[10px] text-[#8B6E5A]">
+        <span className="text-[10px] text-aristo-brown-muted">
           {isListening
             ? "Listening… pause when you're done"
             : micError === "mic-unsupported"
@@ -170,7 +170,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
         {onSkip && (
           <button
             onClick={onSkip}
-            className="ml-auto text-[10px] text-[#8B6E5A] hover:text-[#3D2110] underline underline-offset-2"
+            className="ml-auto text-[10px] text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
             title="Skip this question"
           >
             Skip
@@ -186,8 +186,8 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           title={isListening ? "Stop listening" : "Speak"}
           className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 border ${
             isListening
-              ? "bg-[#F97B2F] border-[#F97B2F] text-white shadow-[0_0_18px_rgba(249,123,47,0.55)] animate-pulse"
-              : "bg-white/70 border-white/60 text-[#8B6E5A] hover:border-[#F97B2F]/40 hover:text-[#F97B2F] hover:bg-[#FFF5EC]"
+              ? "bg-aristo-orange-main border-aristo-orange-main text-white shadow-[0_0_18px_hsl(var(--aristo-orange-main)/0.55)] animate-pulse"
+              : "bg-white/70 border-white/60 text-aristo-brown-muted hover:border-aristo-orange-main/40 hover:text-aristo-orange-main hover:bg-aristo-wash-light"
           } disabled:opacity-40 disabled:cursor-not-allowed`}
         >
           {isListening ? (
@@ -224,7 +224,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           placeholder={isListening ? "Listening…" : "Type your answer…"}
           rows={2}
           disabled={submitting}
-          className="aristo-scroll flex-1 px-3 py-2 rounded-2xl bg-white/85 border border-white/60 text-sm text-[#3D2110] placeholder:text-[#B8957A] focus:outline-none focus:ring-2 focus:ring-[#F97B2F]/35 focus:border-[#F97B2F]/50 disabled:opacity-50 transition-all resize-none"
+          className="aristo-scroll flex-1 px-3 py-2 rounded-2xl bg-white/85 border border-white/60 text-sm text-aristo-brown-main placeholder:text-aristo-tan focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/35 focus:border-aristo-orange-main/50 disabled:opacity-50 transition-all resize-none"
         />
 
         {/* Send button */}
@@ -232,7 +232,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           onClick={handleSubmit}
           disabled={submitting || !answer.trim()}
           title="Submit answer"
-          className="shrink-0 h-9 px-3 rounded-full bg-[#F97B2F] flex items-center justify-center text-white text-xs font-semibold shadow-[0_2px_12px_rgba(249,123,47,0.35)] hover:bg-[#E06A20] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          className="shrink-0 h-9 px-3 rounded-full bg-aristo-orange-main flex items-center justify-center text-white text-xs font-semibold shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.35)] hover:bg-aristo-orange-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {submitting ? (
             <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

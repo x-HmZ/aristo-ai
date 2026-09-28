@@ -15,12 +15,12 @@ function ThinkingIndicator() {
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-[#F97B2F]"
+            className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main"
             style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
           />
         ))}
       </div>
-      <span className="text-sm text-[#8B6E5A]">Aristo is thinking…</span>
+      <span className="text-sm text-aristo-brown-muted">Aristo is thinking…</span>
     </div>
   );
 }
@@ -30,12 +30,12 @@ function ThinkingIndicator() {
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#FFDBB8] to-[#FFF0E4] border border-[#F97B2F]/20 flex items-center justify-center text-2xl shadow-sm">
+      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center text-2xl shadow-sm">
         ✦
       </div>
       <div>
-        <p className="text-[#3D2110] font-bold text-base mb-1">Ask Aristo anything!</p>
-        <p className="text-[#8B6E5A] text-sm leading-relaxed">
+        <p className="text-aristo-brown-main font-bold text-base mb-1">Ask Aristo anything!</p>
+        <p className="text-aristo-brown-muted text-sm leading-relaxed">
           Type a topic below or tap the mic — Aristo will explain it clearly, and may even show a 3D model.
         </p>
       </div>
@@ -70,10 +70,10 @@ export function MessagePanel() {
   if (mode === "course" && isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-8">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#FFDBB8] to-[#FFF0E4] border border-[#F97B2F]/20 flex items-center justify-center text-2xl shadow-sm">
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center text-2xl shadow-sm">
           📖
         </div>
-        <p className="text-[#8B6E5A] text-sm">Preparing your lesson…</p>
+        <p className="text-aristo-brown-muted text-sm">Preparing your lesson…</p>
       </div>
     );
   }

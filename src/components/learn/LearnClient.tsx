@@ -310,8 +310,8 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     // here; QuizView owns its own controls.
     if (activeQuiz) {
       return (
-        <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-[#F97B2F]/30 rounded-b-2xl flex items-center justify-center gap-2 text-xs text-[#8B6E5A]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#F97B2F] animate-pulse" />
+        <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl flex items-center justify-center gap-2 text-xs text-aristo-brown-muted">
+          <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-pulse" />
           <span>Quiz on your desk — look down</span>
         </div>
       );
@@ -356,8 +356,8 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       {/* Top nav */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-1.5">
-          <span className="font-bold text-[#3D2110] text-xl tracking-tight">aristo</span>
-          <span className="text-[#F97B2F] text-xl font-bold">✦</span>
+          <span className="font-bold text-aristo-brown-main text-xl tracking-tight">aristo</span>
+          <span className="text-aristo-orange-main text-xl font-bold">✦</span>
         </div>
 
         <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-full px-4 py-1.5 shadow-sm">
@@ -365,7 +365,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           {localOnboarded && overdueCount > 0 && (
             <button
               onClick={() => setShowReview(true)}
-              className="flex items-center gap-1 text-xs font-semibold text-white bg-[#F97B2F] hover:bg-[#E06A20] rounded-full px-2.5 py-0.5 transition-all shadow-sm"
+              className="flex items-center gap-1 text-xs font-semibold text-white bg-aristo-orange-main hover:bg-aristo-orange-hover rounded-full px-2.5 py-0.5 transition-all shadow-sm"
               title="Start your daily review"
             >
               ↻ {overdueCount} due
@@ -375,7 +375,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           {localOnboarded && (
             <button
               onClick={() => setShowDashboard(true)}
-              className="text-xs text-[#8B6E5A] hover:text-[#F97B2F] transition-colors font-medium"
+              className="text-xs text-aristo-brown-muted hover:text-aristo-orange-main transition-colors font-medium"
               title="View your progress"
             >
               ⊞ Progress
@@ -385,20 +385,20 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           {mode === "course" && course.structure && (
             <button
               onClick={handleViewMap}
-              className="text-xs text-[#8B6E5A] hover:text-[#F97B2F] transition-colors font-medium"
+              className="text-xs text-aristo-brown-muted hover:text-aristo-orange-main transition-colors font-medium"
               title="View course map"
             >
               🗺 Map
             </button>
           )}
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#F97B2F] to-[#FBA962] flex items-center justify-center text-white text-xs font-bold">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-aristo-orange-main to-aristo-peach flex items-center justify-center text-white text-xs font-bold">
             {userName[0]?.toUpperCase()}
           </div>
-          <span className="text-sm font-medium text-[#3D2110]">{userName}</span>
-          <span className="w-px h-3 bg-[#E8D5BC]" />
+          <span className="text-sm font-medium text-aristo-brown-main">{userName}</span>
+          <span className="w-px h-3 bg-aristo-sand" />
           <button
             onClick={handleSignOut}
-            className="text-xs text-[#8B6E5A] hover:text-[#3D2110] transition-colors font-medium"
+            className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors font-medium"
           >
             Sign out
           </button>
@@ -406,7 +406,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       </div>
 
       {/* Right panel */}
-      <div className="absolute right-5 top-[68px] bottom-5 z-10 w-[400px] flex flex-col rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(249,123,47,0.18)] border border-white/40">
+      <div className="absolute right-5 top-[68px] bottom-5 z-10 w-[400px] flex flex-col rounded-2xl overflow-hidden shadow-[0_8px_40px_hsl(var(--aristo-orange-main)/0.18)] border border-white/40">
         <TeacherControls onClear={handleClear} />
         <div className="flex-1 overflow-hidden bg-white/25 backdrop-blur-xl">
           <MessagePanel />
@@ -475,7 +475,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
               maxHeight: "80vh",
               borderRadius: "16px",
               boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
-              border: "2px solid rgba(249,123,47,0.4)",
+              border: "2px solid hsl(var(--aristo-orange-main) / 0.4)",
               objectFit: "contain",
             }}
           />
@@ -483,7 +483,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
             onClick={() => setPreviewZoomUrl(null)}
             style={{
               position: "absolute", top: "20px", right: "24px",
-              background: "rgba(253,240,228,0.15)", border: "1px solid rgba(255,255,255,0.2)",
+              background: "hsl(var(--aristo-backdrop) / 0.15)", border: "1px solid rgba(255,255,255,0.2)",
               borderRadius: "50%", width: "36px", height: "36px",
               display: "flex", alignItems: "center", justifyContent: "center",
               color: "#fff", fontSize: "18px", cursor: "pointer",
