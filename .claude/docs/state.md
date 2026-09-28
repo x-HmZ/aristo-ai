@@ -21,6 +21,11 @@ result are at the end of this entry. `/` is still static, first-load JS 122 kB, 
 - **Next:** V8.4a/b/c (classroom UI), then V8.3 landing v3 and V8.7 re-capture. Re-generate the mark with
   `node scripts/brand/build-mark.mjs` after a `yarn build` (it reads Archivo from `.next/static/media`); the favicon with
   `node scripts/brand/build-favicon.mjs`.
+- **Gates:** type-check clean, lint 10 (unchanged), tests 337, build green; `/` static, 122 kB first-load JS. Verified at
+  360 / 768 / 1280 in both themes (the hero line holds three lines at 360). `code-reviewer`: no critical or high; fixed
+  the medium (/demo had no link preview, now has og tags; apple-touch-icon added) and the accessible name on the top-bar
+  mark. Left as is: the middleware matcher still runs on the two metadata routes (auth file, harmless), and og:url is
+  the site root on /sign-in and /sign-up.
 
 ## 2026-09-28 - Hex-to-token refactor on deploy-prep, zero visual change (Sonnet)
 
