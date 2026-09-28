@@ -511,7 +511,7 @@ export default function CostPage() {
                                         {m.model}
                                       </span>
                                       <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
-                                        <div className="h-full bg-aristo-purple rounded-full" style={{ width: `${pct}%`, background: BRAND_HEX.purple }} />
+                                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: BRAND_HEX.purple }} />
                                       </div>
                                       <span className="text-[10px] text-aristo-brown/60 tabular-nums w-8 text-right">
                                         {m.count}

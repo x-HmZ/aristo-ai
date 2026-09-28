@@ -1,7 +1,8 @@
-import { BRAND_HEX } from "@/lib/brandColors";
 // ============================================================
 // Mastery score thresholds (spec §3.5)
 // ============================================================
+
+import { BRAND_HEX } from "@/lib/brandColors";
 
 export type MasteryTier = "not_learned" | "in_progress" | "learned" | "mastered";
 
