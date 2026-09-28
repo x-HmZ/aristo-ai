@@ -69,7 +69,7 @@ touched (V8.3's KG snapshot script).
 
 | Task | Size | Sessions | Risk | Model | Skills to load | MCP / tools | Needs from Hmz | Spend |
 |---|---|---|---|---|---|---|---|---|
-| Token refactor (running now) | M | 1 | Low | Sonnet | design-system | Browser, puppeteer | Review /demo before and after | $0 |
+| Token refactor (done 2026-09-28, PR pending merge) | M | 1 | Low | Sonnet | design-system | Browser, puppeteer | Review /demo before and after | $0 |
 | **V8.0** Direction lock | M | 1 | Low | **Opus** | design-taste-frontend, design | none | Five picks on the canvas | $0 |
 | **V8.0b** The name (keep or change) | M | 1 | Med | **Opus** decides, Sonnet screens | none specific | WebSearch (domain, trademark, handles) | The decision; professional clearance search before filing | $0 (registration/clearance is later, if he changes it) |
 | **V8.1** Brand foundation | M | 1–2 | Med | Opus decides, Sonnet applies | design-taste-frontend, brand-voice (ref lib), seo (ref lib) | none | Approve positioning line and mark | $0 (fal only if approved for mark references) |

@@ -203,10 +203,17 @@ doc exists; every landing string passes the copy self-audit in `design-taste-fro
 **Model:** **`/model opusplan`**: Opus plans the token structure and theme migration, Sonnet edits. The risk here is a missed surface, not hard reasoning, so Fable is not worth 2x.
 
 **Goal:** one brand system for the whole app, promoted from the landing page's scoped
-`--lp-*` tokens. **Wait until the hex-to-token refactor has merged:** it moves the ~87
-hardcoded `#F97B2F` values (plus the browns, creams and the stray `#10B981` teal, `#8B5CF6`
-purple and `#3B82F6` blue) onto tokens, which is what makes this sub-task a token edit
-instead of a sweep.
+`--lp-*` tokens. **Wait until the hex-to-token refactor has merged** (done: branch `dev/v8-tokens`, PR into
+`deploy-prep`, unblocked 2026-09-28). It moved the hardcoded `#F97B2F` (157 on `deploy-prep`, plus
+the browns, creams and the stray `#10B981` teal, `#8B5CF6` purple and `#3B82F6` blue) onto
+tokens, which is what makes this sub-task a token edit instead of a sweep.
+
+**Two things V8.2 inherits from that refactor.** (1) `--aristo-orange` (#F59047) and
+`--aristo-brown` (#402B1C) are the old tokens and are not the classroom colours; the classroom
+ones are `--aristo-orange-main` and `--aristo-brown-main`. Pick one of each, change the loser's
+value, delete the alias: the visible change then happens once, on purpose. (2) Status and
+data-viz colours (greens, reds, ambers, slates) were left literal for your `success` /
+`warning` / `danger` / `info` tokens; see the "not swept" row in decisions.md.
 
 1. Define semantic tokens app-wide in `globals.css` + `tailwind.config.js`: `bg`, `surface`,
    `sunk`, `ink`, `body`, `muted`, `line`, `accent`, `accent-ink`, `accent-text`, `tint`,
@@ -392,7 +399,7 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V8.0 direction lock (2026-09-18): positioning P1, mark R1 The Column (pillar as the I), wide caps for hero and close only, 3D landing with pinned phases, classroom UI A
 - [x] V8.0b name decision: **keep Aristo** (2026-09-18, screen recorded in decisions.md)
 - [ ] V8.1 brand foundation (messaging doc, copy, metadata, mark in 3 places)
-- [ ] V8.2 design system v2 (after the token refactor merges)
+- [ ] V8.2 design system v2 (unblocked 2026-09-28: the token refactor is `dev/v8-tokens`; merge it first)
 - [ ] V8.3 landing v3 (hero video pipeline, five-phase story, KG map)
 - [ ] V8.4a lesson panel and controls
 - [ ] V8.4b quiz and answers
