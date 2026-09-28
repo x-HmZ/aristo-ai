@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { fontVariables } from "@/lib/fonts";
+import { THEME_INIT_SCRIPT } from "@/components/theme/theme";
 
 // The real deployment (Vercel), so link previews and canonical URLs resolve.
 // Copy comes from .claude/docs/brand/messaging.md; the OG image is
@@ -32,6 +33,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Runs before the body is parsed, so a stored theme choice is in
+            place for the first paint on every App Router page. See theme.ts.
+            suppressHydrationWarning above covers the attribute it sets. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className={`${fontVariables} font-sans antialiased`}>
         {children}
       </body>

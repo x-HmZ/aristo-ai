@@ -1,8 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { CreateTeacherClient } from "./CreateTeacherClient";
+import { THEME_LOCK_META } from "@/components/theme/theme";
 
-export const metadata = { title: "Create Your Teacher · Aristo" };
+// Not on the design system yet (V8.6): the lock keeps it light. See theme.ts.
+export const metadata = {
+  title: "Create Your Teacher · Aristo",
+  other: { [THEME_LOCK_META]: "light" },
+};
 
 export default async function CreateTeacherPage() {
   const supabase = await createClient();
