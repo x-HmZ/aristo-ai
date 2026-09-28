@@ -717,7 +717,6 @@ export function LessonView({
 
         {/* Lesson header */}
         <div className="flex items-center gap-2">
-          <span className="text-aristo-orange-main font-bold">✦</span>
           <h2 className="text-sm font-bold text-aristo-brown-main truncate">{lesson.concept_name}</h2>
           <span className="ml-auto text-[10px] text-aristo-brown-muted tabular-nums shrink-0">
             {phaseIdx + 1} / {PHASES.length}

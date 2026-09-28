@@ -18,6 +18,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { AristoMark } from "@/components/brand/AristoMark";
 
 const MICROCOPY = [
   "Setting up your classroom...",
@@ -63,10 +64,10 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
 
       <div className="relative flex flex-col items-center gap-6 px-8 py-10 rounded-3xl glass shadow-aristo-lg w-[min(90vw,360px)]">
         {/* Wordmark */}
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold text-aristo-brown-main text-2xl tracking-tight">aristo</span>
-          <span className="text-aristo-orange text-2xl font-bold animate-pulse-soft">✦</span>
-        </div>
+        <AristoMark
+          className="h-[22px] text-aristo-brown-main"
+          litClassName="text-aristo-orange"
+        />
 
         {/* Progress bar — slim, single element, no spinner stacked on top */}
         <div className="w-full flex flex-col gap-2">

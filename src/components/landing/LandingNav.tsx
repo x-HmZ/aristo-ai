@@ -15,7 +15,7 @@ export function LandingNav() {
   return (
     <nav className="relative z-10 mx-auto flex h-[72px] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
       <Link href="/" aria-label="Aristo home" className={cn("rounded-sm", FOCUS)}>
-        <Wordmark className="text-2xl" />
+        <Wordmark />
       </Link>
 
       <div className="flex items-center gap-1 sm:gap-6 lg:gap-8">

@@ -99,7 +99,7 @@ function Blackboard({ position, rotation }: { position: [number, number, number]
       ctx.fillStyle = "rgba(255,255,255,0.25)";
       ctx.font = "italic 28px 'Arial', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Aristo ✦", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("Aristo", canvas.width / 2, canvas.height / 2);
     }
 
     texture.needsUpdate = true;

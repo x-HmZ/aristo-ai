@@ -26,6 +26,7 @@ import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
 import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
+import { AristoMark } from "@/components/brand/AristoMark";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
 
 /**
@@ -222,10 +223,10 @@ export function DemoClient() {
 
       {/* Top nav */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold text-aristo-brown-main text-xl tracking-tight">aristo</span>
-          <span className="text-aristo-orange-main text-xl font-bold">✦</span>
-        </div>
+        <AristoMark
+          className="h-[17px] text-aristo-brown-main"
+          litClassName="text-aristo-orange-main"
+        />
 
         {/* Persistent, unobtrusive demo banner + soft CTA */}
         <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-full px-4 py-1.5 shadow-sm">

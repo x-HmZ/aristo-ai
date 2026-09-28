@@ -48,7 +48,7 @@ export function SiteFooter() {
             aria-label="Aristo home"
             className={cn("rounded-sm", FOCUS)}
           >
-            <Wordmark className="text-xl" />
+            <Wordmark />
           </Link>
           <p className="max-w-[300px] text-sm leading-relaxed text-lp-muted">
             An immersive AI teacher for middle school. Built by one person, in
