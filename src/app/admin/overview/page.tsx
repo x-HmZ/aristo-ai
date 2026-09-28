@@ -134,7 +134,7 @@ export default function OverviewPage() {
                 description="Inferred from behavioral signals (not self-reported)."
               />
               {data.expertiseDistribution.every((e) => e.count === 0) ? (
-                <p className="text-xs text-aristo-brown/50">No learner profiles yet.</p>
+                <p className="text-xs text-aristo-brown-main/50">No learner profiles yet.</p>
               ) : (
                 <div className="space-y-3">
                   {data.expertiseDistribution.map(({ level, count, pct }) => {
@@ -159,7 +159,7 @@ export default function OverviewPage() {
                 description="Accuracy by cognitive level across recent quiz attempts."
               />
               {data.bloomPerformance.length === 0 ? (
-                <p className="text-xs text-aristo-brown/50">No quiz data yet.</p>
+                <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
               ) : (
                 <div className="space-y-3">
                   {[...data.bloomPerformance]
@@ -190,7 +190,7 @@ export default function OverviewPage() {
               description="Lowest accuracy among concepts with ≥2 attempts. Investigate the lesson quality or prerequisite chain."
             />
             {data.strugglingTopics.length === 0 ? (
-              <p className="text-xs text-aristo-brown/50">
+              <p className="text-xs text-aristo-brown-main/50">
                 Not enough data yet — needs at least 2 attempts per topic.
               </p>
             ) : (
@@ -201,11 +201,11 @@ export default function OverviewPage() {
                     avgScore >= 50 ? "orange" : "red";
                   return (
                     <div key={topic} className="flex items-center justify-between py-2">
-                      <span className="text-xs font-medium text-aristo-brown truncate pr-3 flex-1">
+                      <span className="text-xs font-medium text-aristo-brown-main truncate pr-3 flex-1">
                         {topic}
                       </span>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs text-aristo-brown/50">{attempts}×</span>
+                        <span className="text-xs text-aristo-brown-main/50">{attempts}×</span>
                         <BrandBadge variant={variant} size="md">
                           {avgScore}%
                         </BrandBadge>
@@ -238,7 +238,7 @@ export default function OverviewPage() {
                 <TableBody>
                   {data.recentAttempts.map((a, i) => (
                     <TableRow key={i}>
-                      <TableCell className="font-medium text-aristo-brown max-w-[260px] truncate">
+                      <TableCell className="font-medium text-aristo-brown-main max-w-[260px] truncate">
                         {a.topic}
                       </TableCell>
                       <TableCell>
@@ -251,7 +251,7 @@ export default function OverviewPage() {
                           {a.is_correct ? "✓ correct" : "✗ wrong"}
                         </BrandBadge>
                       </TableCell>
-                      <TableCell className="text-xs text-aristo-brown/60">
+                      <TableCell className="text-xs text-aristo-brown-main/60">
                         {new Date(a.at).toLocaleString()}
                       </TableCell>
                     </TableRow>
@@ -281,7 +281,7 @@ function BarRow({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-32 text-xs font-semibold text-aristo-brown truncate">
+      <div className="w-32 text-xs font-semibold text-aristo-brown-main truncate">
         {label}
       </div>
       <div className="flex-1 bg-white/60 rounded-full h-2.5 overflow-hidden">
@@ -290,7 +290,7 @@ function BarRow({
           style={{ width: `${Math.max(pct, 2)}%`, backgroundColor: color }}
         />
       </div>
-      <div className="w-16 text-right text-xs text-aristo-brown/60 tabular-nums">
+      <div className="w-16 text-right text-xs text-aristo-brown-main/60 tabular-nums">
         {pct}% ({count})
       </div>
     </div>

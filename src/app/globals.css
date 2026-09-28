@@ -11,21 +11,15 @@
      * here, never at a call site. JS that needs a resolved string (three.js,
      * canvas) reads src/lib/brandColors.ts, which the same test keeps in step.
      *
-     * Two families, on purpose:
-     *
-     * - The `-main` / hover / ink / wash / brown-* tokens hold the colours the
-     *   classroom (/learn, /demo), sign-in, create-teacher and admin used to
-     *   hardcode as hex literals. Moving them here changed no pixel.
-     * - `--aristo-orange` and `--aristo-brown` are the older tokens. Their
-     *   comments once said #F97B2F and #3D2110, but they render #F59047 and
-     *   #402B1C, and 53 and 241 class uses (admin, auth, some classroom text)
-     *   depend on what they actually render. They are left exactly as they
-     *   were so nothing moves. Deciding which orange wins is V8.2's job; it
-     *   is then one line here (see .claude/docs/decisions.md). */
+     * One orange and one brown (V8.2): `--aristo-orange-main` #F97B2F and
+     * `--aristo-brown-main` #3D2110. The older #F59047 / #402B1C pair is gone;
+     * see .claude/docs/decisions.md. This palette is the classroom's and is
+     * not themed. Product UI reads the semantic tokens further down, whose
+     * accent is this orange darkened until it passes AA
+     * (.claude/docs/brand-system.md). */
     --aristo-orange-main: 22.57 94.39% 58.04%; /* #F97B2F  the classroom orange: fills, links, borders */
     --aristo-orange-hover: 23.13 75.59% 50.2%; /* #E06A20  hover on orange fills and links */
     --aristo-orange-ink: 24.67 84.91% 41.57%;  /* #C45A10  orange as small text: eyebrows, labels */
-    --aristo-orange: 25 90% 62%;               /* #F59047  legacy orange, NOT the classroom orange */
     --aristo-orange-deep: 22.68 74.55% 43.14%; /* #C05A1C  orange dark enough for body text on cream */
     --aristo-orange-light: 28 95% 74%;         /* #FCB97E  lighter orange */
     --aristo-orange-pale: 30 100% 88%;         /* #FFE0C2  pale pastel orange */
@@ -37,7 +31,6 @@
     --aristo-beige-dark: 35 40% 85%;           /* #E8DBC9  darker beige */
     --aristo-cream: 42 70% 97%;                /* #FDF9F2  off-white cream */
     --aristo-brown-main: 22.67 58.44% 15.1%;   /* #3D2110  the classroom brown: headings, primary text */
-    --aristo-brown: 25 40% 18%;                /* #402B1C  legacy brown, NOT the classroom brown */
     --aristo-brown-soft: 30 50.82% 23.92%;     /* #5C3D1E  body copy inside tinted cards */
     --aristo-brown-muted: 24.49 21.4% 44.9%;   /* #8B6E5A  secondary text */
     --aristo-brown-faint: 30 17.44% 66.27%;    /* #B8A99A  tertiary text, placeholders */
@@ -253,7 +246,7 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--aristo-orange));
+    background: hsl(var(--aristo-orange-main));
   }
 }
 
@@ -270,14 +263,14 @@
   }
 
   .glass-dark {
-    background: hsl(var(--aristo-brown) / 0.6);
+    background: hsl(var(--aristo-brown-main) / 0.6);
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--aristo-orange) / 0.2);
+    border: 1px solid hsl(var(--aristo-orange-main) / 0.2);
   }
 
   /* Gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, hsl(var(--aristo-orange)), hsl(var(--aristo-orange-light)));
+    background: linear-gradient(135deg, hsl(var(--aristo-orange-main)), hsl(var(--aristo-orange-light)));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -297,7 +290,7 @@
 
   /* Dialog backdrop */
   dialog::backdrop {
-    background: hsl(var(--aristo-brown) / 0.75);
+    background: hsl(var(--aristo-brown-main) / 0.75);
     backdrop-filter: blur(4px);
   }
 
@@ -381,7 +374,7 @@
      pastel aesthetic. */
   .aristo-scroll {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--aristo-orange) / 0.45) transparent;
+    scrollbar-color: hsl(var(--aristo-orange-main) / 0.45) transparent;
   }
   .aristo-scroll::-webkit-scrollbar {
     width: 6px;
@@ -390,10 +383,10 @@
     background: transparent;
   }
   .aristo-scroll::-webkit-scrollbar-thumb {
-    background: hsl(var(--aristo-orange) / 0.35);
+    background: hsl(var(--aristo-orange-main) / 0.35);
     border-radius: 6px;
   }
   .aristo-scroll::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--aristo-orange) / 0.6);
+    background: hsl(var(--aristo-orange-main) / 0.6);
   }
 }

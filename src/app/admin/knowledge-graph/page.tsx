@@ -25,7 +25,7 @@ import { ConceptEditor }             from "./_components/ConceptEditor";
 const KgGraph = dynamic(() => import("./_components/KgGraph").then((m) => m.KgGraph), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-[500px] text-aristo-brown/40">
+    <div className="flex items-center justify-center h-[500px] text-aristo-brown-main/40">
       <Loader2 className="h-5 w-5 animate-spin mr-2" />
       Loading graph…
     </div>
@@ -36,7 +36,7 @@ const KgGraph = dynamic(() => import("./_components/KgGraph").then((m) => m.KgGr
 
 export default function KnowledgeGraphPage() {
   return (
-    <Suspense fallback={<div className="text-xs text-aristo-brown/50">Loading…</div>}>
+    <Suspense fallback={<div className="text-xs text-aristo-brown-main/50">Loading…</div>}>
       <KgPageInner />
     </Suspense>
   );
@@ -192,7 +192,7 @@ function KgPageInner() {
               onBlur={() => setDomainAndUrl(domain)}
               onKeyDown={(e) => e.key === "Enter" && setDomainAndUrl(domain)}
               placeholder="domain"
-              className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-56 font-mono text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40"
+              className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-56 font-mono text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
             />
             <BrandButton variant="outline" size="sm" onClick={() => load(domain)}>
               Load
@@ -211,15 +211,15 @@ function KgPageInner() {
           </>
         }
         meta={
-          <div className="flex flex-wrap items-center gap-3 text-xs text-aristo-brown/60">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-aristo-brown-main/60">
             {concepts !== null && (
               <span>
-                <span className="font-bold text-aristo-brown">{concepts.length}</span> concepts
+                <span className="font-bold text-aristo-brown-main">{concepts.length}</span> concepts
               </span>
             )}
             {Object.keys(coverage).length > 0 && (
               <span>·
-                <span className="ml-1.5 font-bold text-aristo-brown">
+                <span className="ml-1.5 font-bold text-aristo-brown-main">
                   {Object.values(coverage).reduce((s, c) => s + c.chunkCount, 0)}
                 </span> RAG chunks linked to concepts
               </span>
@@ -256,7 +256,7 @@ function KgPageInner() {
             value={customSubject}
             onChange={(e) => setCustomSubject(e.target.value)}
             placeholder={`Subject label (default: "${domain.replace(/_/g, " ")}")`}
-            className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-80 text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40"
+            className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-80 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
           />
           <BrandButton
             variant="purple"
@@ -272,7 +272,7 @@ function KgPageInner() {
         {genResult && (
           <div className="mt-4 space-y-3">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm text-aristo-brown font-semibold">
+              <span className="text-sm text-aristo-brown-main font-semibold">
                 {genResult.count} concepts generated. Review below, then commit.
               </span>
               <BrandButton
@@ -285,7 +285,7 @@ function KgPageInner() {
                 {committing ? "Committing…" : "Commit to DB"}
               </BrandButton>
             </div>
-            <pre className="max-h-64 overflow-y-auto rounded-xl bg-white/60 border border-white/40 p-3 text-[11px] font-mono text-aristo-brown">
+            <pre className="max-h-64 overflow-y-auto rounded-xl bg-white/60 border border-white/40 p-3 text-[11px] font-mono text-aristo-brown-main">
               {JSON.stringify(genResult.concepts.slice(0, 5), null, 2)}{"\n…"}
             </pre>
           </div>
@@ -300,19 +300,19 @@ function KgPageInner() {
         <TabsList className="bg-white/60 border border-white/40 rounded-xl p-1 mb-3">
           <TabsTrigger
             value="graph"
-            className="data-[state=active]:bg-aristo-orange data-[state=active]:text-white rounded-lg"
+            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Network className="h-3.5 w-3.5 mr-1.5" />Graph
           </TabsTrigger>
           <TabsTrigger
             value="table"
-            className="data-[state=active]:bg-aristo-orange data-[state=active]:text-white rounded-lg"
+            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <ListTree className="h-3.5 w-3.5 mr-1.5" />Table
           </TabsTrigger>
           <TabsTrigger
             value="validation"
-            className="data-[state=active]:bg-aristo-orange data-[state=active]:text-white rounded-lg"
+            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <ShieldAlert className="h-3.5 w-3.5 mr-1.5" />Validation
           </TabsTrigger>
@@ -320,11 +320,11 @@ function KgPageInner() {
 
         <TabsContent value="graph">
           {concepts === null ? (
-            <BrandCard><p className="text-xs text-aristo-brown/60">Loading…</p></BrandCard>
+            <BrandCard><p className="text-xs text-aristo-brown-main/60">Loading…</p></BrandCard>
           ) : concepts.length === 0 ? (
             <BrandCard className="flex flex-col items-center justify-center py-10 gap-3">
-              <Network className="h-10 w-10 text-aristo-brown/30" />
-              <p className="text-sm text-aristo-brown/60">
+              <Network className="h-10 w-10 text-aristo-brown-main/30" />
+              <p className="text-sm text-aristo-brown-main/60">
                 No concepts for this domain yet. Generate or seed one above.
               </p>
             </BrandCard>
@@ -351,9 +351,9 @@ function KgPageInner() {
               />
             </div>
             {concepts === null ? (
-              <p className="px-5 pb-5 text-xs text-aristo-brown/50">Loading…</p>
+              <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">Loading…</p>
             ) : concepts.length === 0 ? (
-              <p className="px-5 pb-5 text-xs text-aristo-brown/50">
+              <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">
                 No concepts in this domain.
               </p>
             ) : (
@@ -378,10 +378,10 @@ function KgPageInner() {
                         className="cursor-pointer"
                         onClick={() => setEditing(c)}
                       >
-                        <TableCell className="font-mono text-aristo-brown/60 text-[11px] max-w-[180px] truncate">
+                        <TableCell className="font-mono text-aristo-brown-main/60 text-[11px] max-w-[180px] truncate">
                           {c.id}
                         </TableCell>
-                        <TableCell className="font-medium text-aristo-brown max-w-[240px] truncate">
+                        <TableCell className="font-medium text-aristo-brown-main max-w-[240px] truncate">
                           {c.name}
                         </TableCell>
                         <TableCell>
@@ -402,7 +402,7 @@ function KgPageInner() {
                             {c.bloom_level}
                           </BrandBadge>
                         </TableCell>
-                        <TableCell className="text-aristo-brown/60 tabular-nums text-xs">
+                        <TableCell className="text-aristo-brown-main/60 tabular-nums text-xs">
                           {c.estimated_minutes}m
                         </TableCell>
                         <TableCell>
@@ -410,7 +410,7 @@ function KgPageInner() {
                             {cov}
                           </BrandBadge>
                         </TableCell>
-                        <TableCell className="text-aristo-brown/60 text-xs max-w-[200px] truncate">
+                        <TableCell className="text-aristo-brown-main/60 text-xs max-w-[200px] truncate">
                           {c.prerequisites?.length ? c.prerequisites.join(", ") : "—"}
                         </TableCell>
                       </TableRow>
@@ -429,7 +429,7 @@ function KgPageInner() {
               description="Run validate to check this domain for cycles, orphans, and missing prerequisites."
             />
             {!validation ? (
-              <p className="text-xs text-aristo-brown/50">
+              <p className="text-xs text-aristo-brown-main/50">
                 Not validated yet. Click <span className="font-semibold">Validate</span> in the page header.
               </p>
             ) : validation.valid ? (

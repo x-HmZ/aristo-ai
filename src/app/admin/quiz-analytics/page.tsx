@@ -98,7 +98,7 @@ export default function QuizAnalyticsPage() {
         <BrandCard>
           <SectionTitle title="Accuracy by Bloom level" description="How learners perform across cognitive complexity." />
           {sortedBloom.length === 0 ? (
-            <p className="text-xs text-aristo-brown/50">No quiz data yet.</p>
+            <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={sortedBloom} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
@@ -128,7 +128,7 @@ export default function QuizAnalyticsPage() {
         <BrandCard>
           <SectionTitle title="Accuracy by question type" description="Which formats trip learners up most?" />
           {data?.byType.length === 0 || !data ? (
-            <p className="text-xs text-aristo-brown/50">No quiz data yet.</p>
+            <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={data.byType} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
@@ -163,7 +163,7 @@ export default function QuizAnalyticsPage() {
           description="X: declared difficulty (0–1) · Y: observed accuracy. The diagonal is perfect calibration (50% accuracy at 0.5 difficulty). Buckets with <20 attempts are hidden to avoid noise."
         />
         {!data || data.calibration.length === 0 ? (
-          <p className="text-xs text-aristo-brown/50">
+          <p className="text-xs text-aristo-brown-main/50">
             Not enough data — need at least 20 attempts per 0.1-wide difficulty bucket.
           </p>
         ) : (
@@ -219,7 +219,7 @@ export default function QuizAnalyticsPage() {
       <BrandCard>
         <SectionTitle title="Daily accuracy trend" description="Are recent lesson + curriculum changes moving the needle?" />
         {!data || data.trend.length === 0 ? (
-          <p className="text-xs text-aristo-brown/50">No quiz data yet.</p>
+          <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={data.trend} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>

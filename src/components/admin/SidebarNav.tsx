@@ -79,7 +79,7 @@ export function SidebarNav() {
     <nav className="px-3 py-4 space-y-6">
       {SECTIONS.map((section) => (
         <div key={section.title}>
-          <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-aristo-brown/40">
+          <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/40">
             {section.title}
           </div>
           <ul className="space-y-0.5">
@@ -95,13 +95,13 @@ export function SidebarNav() {
                     <div
                       className={cn(
                         baseClass,
-                        "text-aristo-brown/30 cursor-not-allowed select-none"
+                        "text-aristo-brown-main/30 cursor-not-allowed select-none"
                       )}
                       title="Shipping in a later phase"
                     >
                       <Icon className="h-4 w-4 flex-shrink-0" />
                       <span className="truncate">{item.label}</span>
-                      <span className="ml-auto text-[9px] uppercase tracking-wider font-bold text-aristo-brown/30">
+                      <span className="ml-auto text-[9px] uppercase tracking-wider font-bold text-aristo-brown-main/30">
                         Soon
                       </span>
                     </div>
@@ -116,14 +116,14 @@ export function SidebarNav() {
                     className={cn(
                       baseClass,
                       active
-                        ? "bg-aristo-orange text-white shadow-aristo-sm"
-                        : "text-aristo-brown/70 hover:bg-white/70 hover:text-aristo-brown"
+                        ? "bg-aristo-orange-main text-white shadow-aristo-sm"
+                        : "text-aristo-brown-main/70 hover:bg-white/70 hover:text-aristo-brown-main"
                     )}
                   >
                     <Icon
                       className={cn(
                         "h-4 w-4 flex-shrink-0",
-                        active ? "text-white" : "text-aristo-brown/50 group-hover:text-aristo-orange"
+                        active ? "text-white" : "text-aristo-brown-main/50 group-hover:text-aristo-orange-main"
                       )}
                     />
                     <span className="truncate">{item.label}</span>

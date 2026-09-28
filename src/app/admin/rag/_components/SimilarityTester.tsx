@@ -70,7 +70,7 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && run()}
           placeholder="What is a for-loop and when do I use it?"
-          className="flex-1 min-w-[300px] text-sm bg-white/70 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40"
+          className="flex-1 min-w-[300px] text-sm bg-white/70 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
         />
         <Select value={domain} onValueChange={setDomain}>
           <SelectTrigger className="w-44 bg-white/70 border-white/60">
@@ -103,7 +103,7 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
       {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
 
       {matches !== null && matches.length === 0 && (
-        <p className="text-xs text-aristo-brown/50">No chunks matched.</p>
+        <p className="text-xs text-aristo-brown-main/50">No chunks matched.</p>
       )}
       {matches !== null && matches.length > 0 && (
         <div className="space-y-2">
@@ -113,7 +113,7 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
               className="bg-white/70 border border-white/60 rounded-xl px-3 py-2"
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold text-aristo-brown/40">
+                <span className="text-[10px] font-bold text-aristo-brown-main/40">
                   #{i + 1}
                 </span>
                 <BrandBadge variant={scoreColor(m.score)}>
@@ -121,10 +121,10 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
                 </BrandBadge>
                 <BrandBadge variant="orange">{m.domain}</BrandBadge>
                 {m.source_title && (
-                  <span className="text-[11px] text-aristo-brown/60">{m.source_title}</span>
+                  <span className="text-[11px] text-aristo-brown-main/60">{m.source_title}</span>
                 )}
               </div>
-              <p className="text-xs text-aristo-brown leading-snug line-clamp-3">
+              <p className="text-xs text-aristo-brown-main leading-snug line-clamp-3">
                 {m.content}
               </p>
             </div>

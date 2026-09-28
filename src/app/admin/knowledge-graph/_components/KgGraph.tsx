@@ -61,7 +61,7 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
   return (
     <div
       className={`rounded-xl px-3 py-2 text-[11px] shadow-md transition-all ${
-        selected ? "ring-2 ring-aristo-orange ring-offset-1" : ""
+        selected ? "ring-2 ring-aristo-orange-main ring-offset-1" : ""
       }`}
       style={{
         background: bg,
@@ -77,7 +77,7 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
         position={Position.Top}
         style={{ background: BRAND_HEX.orangeMain, width: 8, height: 8 }}
       />
-      <div className="font-bold text-aristo-brown leading-snug line-clamp-2">
+      <div className="font-bold text-aristo-brown-main leading-snug line-clamp-2">
         {data.label}
       </div>
       <div className="flex items-center gap-1 mt-1 flex-wrap">
@@ -87,8 +87,8 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
         >
           L{data.difficulty}
         </span>
-        <span className="text-[9px] text-aristo-brown/60 capitalize">{bloom}</span>
-        <span className="text-[9px] text-aristo-brown/40 tabular-nums">
+        <span className="text-[9px] text-aristo-brown-main/60 capitalize">{bloom}</span>
+        <span className="text-[9px] text-aristo-brown-main/40 tabular-nums">
           {data.minutes}m
         </span>
         {data.chunkCount > 0 && (

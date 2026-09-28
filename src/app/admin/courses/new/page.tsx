@@ -61,14 +61,14 @@ export default function NewCoursePage() {
         <TabsList className="bg-white/60 border border-white/40 rounded-xl p-1">
           <TabsTrigger
             value="manual"
-            className="data-[state=active]:bg-aristo-orange data-[state=active]:text-white rounded-lg"
+            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
             Manual
           </TabsTrigger>
           <TabsTrigger
             value="from-kg"
-            className="data-[state=active]:bg-aristo-orange data-[state=active]:text-white rounded-lg"
+            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Wand2 className="h-3.5 w-3.5 mr-1.5" />
             From knowledge graph
@@ -201,10 +201,10 @@ function ManualForm({ onCreated }: { onCreated: () => void }) {
           <ol className="space-y-1.5 mb-3">
             {lessons.map((t, i) => (
               <li key={i} className="flex items-center gap-2 group">
-                <span className="w-5 text-xs text-aristo-brown/40 text-right flex-shrink-0">
+                <span className="w-5 text-xs text-aristo-brown-main/40 text-right flex-shrink-0">
                   {i + 1}.
                 </span>
-                <span className="flex-1 text-sm text-aristo-brown bg-white/60 rounded-lg px-2.5 py-1.5">
+                <span className="flex-1 text-sm text-aristo-brown-main bg-white/60 rounded-lg px-2.5 py-1.5">
                   {t}
                 </span>
                 <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -404,14 +404,14 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
             <button
               type="button"
               onClick={toggleAll}
-              className="underline hover:text-aristo-orange"
+              className="underline hover:text-aristo-orange-main"
             >
               {selected.size === concepts.length ? "Clear all" : "Select all"}
             </button>
           }
         >
           {concepts.length === 0 ? (
-            <p className="text-xs text-aristo-brown/50">No concepts in this domain.</p>
+            <p className="text-xs text-aristo-brown-main/50">No concepts in this domain.</p>
           ) : (
             <div className="max-h-72 overflow-y-auto rounded-xl bg-white/40 border border-white/40 divide-y divide-white/60">
               {concepts.map((c) => (
@@ -423,19 +423,19 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
                     type="checkbox"
                     checked={selected.has(c.id)}
                     onChange={() => toggle(c.id)}
-                    className="h-3.5 w-3.5 accent-aristo-orange"
+                    className="h-3.5 w-3.5 accent-aristo-orange-main"
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-aristo-brown font-medium truncate">
+                    <div className="text-sm text-aristo-brown-main font-medium truncate">
                       {c.name}
                     </div>
-                    <div className="text-[10px] text-aristo-brown/40 font-mono truncate">
+                    <div className="text-[10px] text-aristo-brown-main/40 font-mono truncate">
                       {c.id}
                     </div>
                   </div>
                   <BrandBadge variant="orange">L{c.difficulty}</BrandBadge>
                   <BrandBadge variant="purple">{c.bloom_level}</BrandBadge>
-                  <span className="text-[10px] text-aristo-brown/40 w-10 text-right">
+                  <span className="text-[10px] text-aristo-brown-main/40 w-10 text-right">
                     {c.estimated_minutes}m
                   </span>
                 </label>
@@ -462,7 +462,7 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
 // ─── Internals ────────────────────────────────────────────────────────────────
 
 const inputCls =
-  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40 w-full";
+  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 w-full";
 
 function Field({
   label,
@@ -478,12 +478,12 @@ function Field({
   return (
     <div>
       <div className="flex items-end justify-between mb-1.5 gap-3">
-        <label className="block text-xs font-semibold text-aristo-brown/70 uppercase tracking-wider">
+        <label className="block text-xs font-semibold text-aristo-brown-main/70 uppercase tracking-wider">
           {label}
-          {required && <span className="text-aristo-orange ml-0.5">*</span>}
+          {required && <span className="text-aristo-orange-main ml-0.5">*</span>}
         </label>
         {hint && (
-          <span className="text-[10px] text-aristo-brown/50 normal-case">
+          <span className="text-[10px] text-aristo-brown-main/50 normal-case">
             {hint}
           </span>
         )}
@@ -512,7 +512,7 @@ function IconBtn({
         "px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 " +
         (variant === "danger"
           ? "text-red-400 hover:bg-red-50"
-          : "text-aristo-brown/60 hover:bg-white/80")
+          : "text-aristo-brown-main/60 hover:bg-white/80")
       }
     >
       {children}

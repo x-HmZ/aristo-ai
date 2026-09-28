@@ -52,7 +52,6 @@ module.exports = {
         },
         // Aristo brand colors. Values live in src/app/globals.css.
         aristo: {
-          orange: "hsl(var(--aristo-orange))",
           "orange-main": "hsl(var(--aristo-orange-main))",
           "orange-hover": "hsl(var(--aristo-orange-hover))",
           "orange-ink": "hsl(var(--aristo-orange-ink))",
@@ -66,7 +65,6 @@ module.exports = {
           beige: "hsl(var(--aristo-beige))",
           "beige-dark": "hsl(var(--aristo-beige-dark))",
           cream: "hsl(var(--aristo-cream))",
-          brown: "hsl(var(--aristo-brown))",
           "brown-main": "hsl(var(--aristo-brown-main))",
           "brown-soft": "hsl(var(--aristo-brown-soft))",
           "brown-muted": "hsl(var(--aristo-brown-muted))",
@@ -162,9 +160,9 @@ module.exports = {
           "linear-gradient(135deg, hsl(var(--aristo-orange-light)), hsl(var(--aristo-beige)))",
       },
       boxShadow: {
-        "aristo-sm": "0 2px 8px hsl(var(--aristo-orange) / 0.15)",
-        aristo: "0 4px 20px hsl(var(--aristo-orange) / 0.2)",
-        "aristo-lg": "0 8px 40px hsl(var(--aristo-orange) / 0.25)",
+        "aristo-sm": "0 2px 8px hsl(var(--aristo-orange-main) / 0.15)",
+        aristo: "0 4px 20px hsl(var(--aristo-orange-main) / 0.2)",
+        "aristo-lg": "0 8px 40px hsl(var(--aristo-orange-main) / 0.25)",
         warm: "0 4px 20px hsl(25 50% 50% / 0.12)",
       },
     },
