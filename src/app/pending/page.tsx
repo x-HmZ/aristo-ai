@@ -67,7 +67,7 @@ export default async function PendingPage() {
               </p>
               <Link
                 href="/demo"
-                className="block mb-6 rounded-[10px] border border-tint-line bg-tint px-4 py-3 text-sm text-ink transition-colors duration-fast hover:border-accent-text/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                className="block mb-6 rounded-[10px] border border-tint-line bg-tint px-4 py-3 text-sm text-ink transition-colors duration-fast hover:border-accent-text/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
               >
                 While you wait, <span className="font-semibold text-accent-text">try a live demo lesson</span> — no approval needed.
               </Link>

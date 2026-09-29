@@ -1,0 +1,1621 @@
+{
+ "label": "after",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-360-light.jpg",
+  "demo-1-activate-narrating-360-light.jpg",
+  "demo-2-explain-360-light.jpg",
+  "demo-2-image-pointing-360-light.jpg",
+  "demo-2-model-360-light.jpg",
+  "demo-3-demonstrate-360-light.jpg",
+  "demo-4-challenge-360-light.jpg",
+  "demo-5-connect-360-light.jpg",
+  "demo-quiz-desk-360-light.jpg",
+  "demo-picker-768-light.jpg",
+  "demo-1-activate-narrating-768-light.jpg",
+  "demo-2-explain-768-light.jpg",
+  "demo-2-image-pointing-768-light.jpg",
+  "demo-2-model-768-light.jpg",
+  "demo-3-demonstrate-768-light.jpg",
+  "demo-4-challenge-768-light.jpg",
+  "demo-5-connect-768-light.jpg",
+  "demo-quiz-desk-768-light.jpg",
+  "demo-picker-1024x768-light.jpg",
+  "demo-1-activate-narrating-1024x768-light.jpg",
+  "demo-2-explain-1024x768-light.jpg",
+  "demo-2-image-pointing-1024x768-light.jpg",
+  "demo-2-model-1024x768-light.jpg",
+  "demo-3-demonstrate-1024x768-light.jpg",
+  "demo-4-challenge-1024x768-light.jpg",
+  "demo-5-connect-1024x768-light.jpg",
+  "demo-quiz-desk-1024x768-light.jpg",
+  "demo-picker-1280-light.jpg",
+  "demo-1-activate-narrating-1280-light.jpg",
+  "demo-2-explain-1280-light.jpg",
+  "demo-2-image-pointing-1280-light.jpg",
+  "demo-2-model-1280-light.jpg",
+  "demo-3-demonstrate-1280-light.jpg",
+  "demo-4-challenge-1280-light.jpg",
+  "demo-5-connect-1280-light.jpg",
+  "demo-quiz-desk-1280-light.jpg",
+  "demo-picker-1280x600-light.jpg",
+  "demo-1-activate-narrating-1280x600-light.jpg",
+  "demo-2-explain-1280x600-light.jpg",
+  "demo-2-image-pointing-1280x600-light.jpg",
+  "demo-2-model-1280x600-light.jpg",
+  "demo-3-demonstrate-1280x600-light.jpg",
+  "demo-4-challenge-1280x600-light.jpg",
+  "demo-5-connect-1280x600-light.jpg",
+  "demo-quiz-desk-1280x600-light.jpg",
+  "demo-picker-360-dark.jpg",
+  "demo-1-activate-narrating-360-dark.jpg",
+  "demo-2-explain-360-dark.jpg",
+  "demo-2-image-pointing-360-dark.jpg",
+  "demo-2-model-360-dark.jpg",
+  "demo-3-demonstrate-360-dark.jpg",
+  "demo-4-challenge-360-dark.jpg",
+  "demo-5-connect-360-dark.jpg",
+  "demo-quiz-desk-360-dark.jpg",
+  "demo-picker-768-dark.jpg",
+  "demo-1-activate-narrating-768-dark.jpg",
+  "demo-2-explain-768-dark.jpg",
+  "demo-2-image-pointing-768-dark.jpg",
+  "demo-2-model-768-dark.jpg",
+  "demo-3-demonstrate-768-dark.jpg",
+  "demo-4-challenge-768-dark.jpg",
+  "demo-5-connect-768-dark.jpg",
+  "demo-quiz-desk-768-dark.jpg",
+  "demo-picker-1024x768-dark.jpg",
+  "demo-1-activate-narrating-1024x768-dark.jpg",
+  "demo-2-explain-1024x768-dark.jpg",
+  "demo-2-image-pointing-1024x768-dark.jpg",
+  "demo-2-model-1024x768-dark.jpg",
+  "demo-3-demonstrate-1024x768-dark.jpg",
+  "demo-4-challenge-1024x768-dark.jpg",
+  "demo-5-connect-1024x768-dark.jpg",
+  "demo-quiz-desk-1024x768-dark.jpg",
+  "demo-picker-1280-dark.jpg",
+  "demo-1-activate-narrating-1280-dark.jpg",
+  "demo-2-explain-1280-dark.jpg",
+  "demo-2-image-pointing-1280-dark.jpg",
+  "demo-2-model-1280-dark.jpg",
+  "demo-3-demonstrate-1280-dark.jpg",
+  "demo-4-challenge-1280-dark.jpg",
+  "demo-5-connect-1280-dark.jpg",
+  "demo-quiz-desk-1280-dark.jpg",
+  "demo-picker-1280x600-dark.jpg",
+  "demo-1-activate-narrating-1280x600-dark.jpg",
+  "demo-2-explain-1280x600-dark.jpg",
+  "demo-2-image-pointing-1280x600-dark.jpg",
+  "demo-2-model-1280x600-dark.jpg",
+  "demo-3-demonstrate-1280x600-dark.jpg",
+  "demo-4-challenge-1280x600-dark.jpg",
+  "demo-5-connect-1280x600-dark.jpg",
+  "demo-quiz-desk-1280x600-dark.jpg"
+ ],
+ "paid": [],
+ "rects": {
+  "demo-picker-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-1-activate-narrating-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "CALLOUTS": [
+    225,
+    46,
+    343,
+    168
+   ],
+   "View in 3D": [
+    116,
+    551,
+    253,
+    595
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    119,
+    557,
+    244,
+    601
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    121,
+    559,
+    247,
+    603
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    123,
+    558,
+    249,
+    602
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-lg",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    201,
+    -709,
+    327,
+    -665
+   ]
+  },
+  "demo-picker-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-1-activate-narrating-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "CALLOUTS": [
+    462,
+    80,
+    580,
+    202
+   ],
+   "View in 3D": [
+    353,
+    731,
+    489,
+    775
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    352,
+    737,
+    478,
+    781
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    356,
+    740,
+    481,
+    784
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    358,
+    741,
+    484,
+    785
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-lg",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    462,
+    -920,
+    587,
+    -876
+   ]
+  },
+  "demo-picker-1024x768-light": {
+   "vw": 1024,
+   "vh": 768
+  },
+  "demo-1-activate-narrating-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "BAND": [
+    20,
+    640,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "CALLOUTS": [
+    556,
+    45,
+    674,
+    167
+   ],
+   "View in 3D": [
+    447,
+    543,
+    583,
+    587
+   ],
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "Show image": [
+    538,
+    546,
+    686,
+    590
+   ],
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    451,
+    550,
+    576,
+    594
+   ],
+   "BAND": [
+    20,
+    632,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    453,
+    550,
+    579,
+    594
+   ],
+   "BAND": [
+    20,
+    618,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    454,
+    548,
+    580,
+    592
+   ],
+   "BAND": [
+    20,
+    634,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-sm",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    530,
+    -704,
+    656,
+    -660
+   ]
+  },
+  "demo-picker-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-1-activate-narrating-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    584,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    584,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "CALLOUTS": [
+    672,
+    37,
+    790,
+    159
+   ],
+   "View in 3D": [
+    564,
+    506,
+    701,
+    550
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    573,
+    506,
+    699,
+    550
+   ],
+   "BAND": [
+    20,
+    609,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    571,
+    505,
+    696,
+    549
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    569,
+    506,
+    695,
+    550
+   ],
+   "BAND": [
+    20,
+    594,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-base",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    636,
+    -663,
+    761,
+    -619
+   ]
+  },
+  "demo-picker-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "demo-1-activate-narrating-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    494,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "CALLOUTS": [
+    656,
+    25,
+    774,
+    147
+   ],
+   "View in 3D": [
+    549,
+    422,
+    686,
+    466
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    554,
+    420,
+    679,
+    464
+   ],
+   "BAND": [
+    20,
+    489,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    555,
+    423,
+    680,
+    467
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    556,
+    424,
+    682,
+    468
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-sm",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    617,
+    -546,
+    742,
+    -502
+   ]
+  },
+  "demo-picker-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-1-activate-narrating-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "CALLOUTS": [
+    219,
+    51,
+    337,
+    173
+   ],
+   "View in 3D": [
+    112,
+    556,
+    248,
+    600
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    120,
+    558,
+    246,
+    602
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    122,
+    559,
+    248,
+    603
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    124,
+    558,
+    249,
+    602
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-lg",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    201,
+    -713,
+    327,
+    -669
+   ]
+  },
+  "demo-picker-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-1-activate-narrating-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "CALLOUTS": [
+    462,
+    80,
+    580,
+    202
+   ],
+   "View in 3D": [
+    353,
+    731,
+    489,
+    775
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    355,
+    729,
+    481,
+    773
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    352,
+    729,
+    478,
+    773
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    351,
+    731,
+    477,
+    775
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-lg",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    447,
+    -928,
+    573,
+    -884
+   ]
+  },
+  "demo-picker-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768
+  },
+  "demo-1-activate-narrating-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "BAND": [
+    20,
+    640,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "CALLOUTS": [
+    557,
+    48,
+    676,
+    170
+   ],
+   "View in 3D": [
+    448,
+    546,
+    585,
+    590
+   ],
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "Show image": [
+    538,
+    546,
+    686,
+    590
+   ],
+   "BAND": [
+    20,
+    629,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    450,
+    549,
+    576,
+    593
+   ],
+   "BAND": [
+    20,
+    632,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    452,
+    550,
+    578,
+    594
+   ],
+   "BAND": [
+    20,
+    618,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    454,
+    549,
+    579,
+    593
+   ],
+   "BAND": [
+    20,
+    634,
+    584,
+    752
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-sm",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "Show 3D": [
+    530,
+    -702,
+    656,
+    -658
+   ]
+  },
+  "demo-picker-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-1-activate-narrating-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    584,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    584,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "CALLOUTS": [
+    675,
+    37,
+    793,
+    159
+   ],
+   "View in 3D": [
+    567,
+    506,
+    703,
+    550
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    573,
+    514,
+    698,
+    558
+   ],
+   "BAND": [
+    20,
+    609,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    575,
+    514,
+    700,
+    558
+   ],
+   "BAND": [
+    20,
+    592,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    576,
+    512,
+    701,
+    556
+   ],
+   "BAND": [
+    20,
+    594,
+    840,
+    704
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-base",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    647,
+    -662,
+    772,
+    -618
+   ]
+  },
+  "demo-picker-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "demo-1-activate-narrating-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    494,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-base",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "CALLOUTS": [
+    658,
+    20,
+    776,
+    142
+   ],
+   "View in 3D": [
+    550,
+    418,
+    687,
+    462
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-model-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    559,
+    424,
+    685,
+    468
+   ],
+   "BAND": [
+    20,
+    489,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    559,
+    421,
+    685,
+    465
+   ],
+   "BAND": [
+    20,
+    480,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-sm",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    558,
+    419,
+    684,
+    463
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-sm",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    614,
+    -563,
+    740,
+    -519
+   ]
+  }
+ }
+}

@@ -99,7 +99,7 @@ function DemoResultBar({
       <div className="flex items-center gap-2">
         <Link
           href="/sign-up"
-          className="flex-1 text-center px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-aristo-sm transition-all"
+          className="flex-1 text-center px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-aristo-sm transition-all"
         >
           Create your free account →
         </Link>
@@ -221,8 +221,9 @@ export function DemoClient() {
 
       <SceneLoadingOverlay />
 
-      {/* Top nav */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
+      {/* Top nav. Above the topic picker's blur (z-40) so the wordmark stays sharp
+          on the first screen. */}
+      <div className="absolute top-0 left-0 right-0 z-[45] flex items-center justify-between px-6 py-4">
         <AristoMark
           decorative={false}
           className="h-[17px] text-aristo-brown-main"
@@ -237,7 +238,7 @@ export function DemoClient() {
           <span className="w-px h-3 bg-aristo-sand" />
           <Link
             href="/sign-up"
-            className="text-xs font-semibold text-aristo-orange-main hover:text-aristo-orange-hover transition-colors"
+            className="text-xs font-semibold text-accent-text underline-offset-2 transition-colors hover:underline"
           >
             Create an account →
           </Link>
@@ -272,7 +273,7 @@ export function DemoClient() {
                     }}
                     className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                       teacher === t
-                        ? "bg-aristo-orange-main text-white shadow-sm"
+                        ? "bg-aristo-orange-main text-accent-ink shadow-sm"
                         : "text-aristo-brown-muted hover:text-aristo-brown-main"
                     }`}
                   >

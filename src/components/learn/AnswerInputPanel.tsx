@@ -186,7 +186,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           title={isListening ? "Stop listening" : "Speak"}
           className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 border ${
             isListening
-              ? "bg-aristo-orange-main border-aristo-orange-main text-white shadow-[0_0_18px_hsl(var(--aristo-orange-main)/0.55)] animate-pulse"
+              ? "bg-aristo-orange-main border-aristo-orange-main text-accent-ink shadow-[0_0_18px_hsl(var(--aristo-orange-main)/0.55)] animate-pulse"
               : "bg-white/70 border-white/60 text-aristo-brown-muted hover:border-aristo-orange-main/40 hover:text-aristo-orange-main hover:bg-aristo-wash-light"
           } disabled:opacity-40 disabled:cursor-not-allowed`}
         >
@@ -232,7 +232,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           onClick={handleSubmit}
           disabled={submitting || !answer.trim()}
           title="Submit answer"
-          className="shrink-0 h-9 px-3 rounded-full bg-aristo-orange-main flex items-center justify-center text-white text-xs font-semibold shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.35)] hover:bg-aristo-orange-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          className="shrink-0 h-9 px-3 rounded-full bg-aristo-orange-main flex items-center justify-center text-accent-ink text-xs font-semibold shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.35)] hover:bg-accent-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
         >
           {submitting ? (
             <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

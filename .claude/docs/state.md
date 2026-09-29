@@ -2,6 +2,56 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-29 - V8.4a done: lesson panel and controls, caption first (Opus plan, then execution)
+
+Branch `dev/v8-4a-lesson-panel` off `origin/deploy-prep` (7d457c3, #10 merged); PR into `deploy-prep`. Plan approved by Hmz
+with two scope additions: the Experience.tsx toolbars, and one read-only `activeQuiz` selector. Decisions are the eight V8.4a
+rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4a)", Theme, register, AA gaps).
+
+- **Shipped:**
+  - Caption band: the spoken sentence in ink glass over the scene, portalled, left of the panel, top edge at or below
+    80% of the height, lg and up, hidden on the desk quiz.
+  - The band fits the whole sentence (18/16/14px, then without the next line) rather than cutting it.
+  - Below lg the caption leads the panel instead.
+  - Phase rail and the system's phase label in one accent. No phase hues anywhere in these files.
+  - Transcript drawer for the whole lesson.
+  - Panel, TeacherControls and message-panel states on the semantic tokens. They follow the theme and render light
+    under the lock.
+  - Callouts and in-scene toolbars in `.theme-ink`. View in 3D / Show image are the secondary button.
+  - "seg N / M" only on `yarn dev`.
+  - Microcopy (V8.1 step 5) for these files.
+  - `src/lib`, `src/app/api`, `src/hooks`, `src/store` untouched; no prop, handler or effect changed.
+- **Measured** (evidence, scripts and numbers in `.claude/eval/2026-09-29-v8-4a/`):
+  - No band vs toolbar overlap in 42 band shots (16px at the closest).
+  - Every demo sentence (127 to 358 characters) shows in full.
+  - AA: 1812 text nodes over 8 states, 4 widths and 2 themes, 0 failures (min 4.71 / 5.24, scene pixels taken as
+    white and black).
+  - All targets are at least 44px, and nothing animates under reduced motion.
+  - The open transcript keeps the spoken sentence in view.
+  - `/demo` cold scene-ready median 2124 → 1903 ms, not slower. JS +5.5 kB compressed (lazy classroom chunk; `/learn`
+    450.8 → 456.7 kB); first load unchanged at 134 kB.
+  - `/learn` was checked signed in, read-only, with only its three GET calls.
+- **One orange (Hmz, after review):** every filled button is #F97B2F with brand-brown labels (#3D2110, 5.55:1; near-black read too harsh), app-wide (light `accent` changed; `status-ink` for danger; focus rings on `accent-text`; the classroom's leftover white-on-orange fills too). Landing and auth re-checked, 0 AA failures both themes.
+- **Wordmark sharp on the first screen:** the /demo and /learn top bars sit above the picker scrims (the blur made the letters look low-res).
+- **Gates:** type-check clean; lint 0 errors / 10 warnings (unchanged); tests 404; build green; `/` static at 122 kB.
+- **code-reviewer:** no critical or high.
+  - Fixed the three mediums: the band cut long sentences (now fits them, and shows from lg); the transcript did not
+    follow the spoken sentence; `.theme-ink` sat in a `:has()` selector list that old browsers drop whole (now `:is()`).
+  - Also fixed: a region label, a stable `aria-controls` target, and the import order.
+  - Left as is:
+    - TeacherControls is about 60px taller with the 44px rows.
+    - The toolbar at 768 sits partly under the panel, as before (host layout, V8.4c).
+    - For a legacy lesson without `segments`, the panel caption below lg is empty; the band uses the playback shim.
+      Fixing it needs a new prop.
+- **Tooling note:** the browser pane throttles to about 5 fps when hidden, so the 3D scene never finishes loading there.
+  Headless Playwright on the GPU (`--use-angle=d3d11`) works; the scripts are in the eval folder. `/dev/*` returns 404 on a
+  production build.
+- **Next:**
+  - V8.4b (quiz, desk quiz card, AnswerInputPanel, InputBox) on Sonnet.
+  - V8.4c (free mode, pickers, loading, the LearnClient / DemoClient shells including the 400px panel overflowing
+    below 440px, then delete the lock in `pages/_app.tsx`).
+  - Remaining AA gaps are listed in brand-system.md.
+
 ## 2026-09-29 - V8.2 done: design system v2, one orange, app-wide theme (Opus plan, then execution)
 
 Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens and #9 V8.1); PR into

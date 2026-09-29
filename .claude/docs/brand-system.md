@@ -18,10 +18,14 @@ spark, never a fill: primary actions, one word of a headline, icons, step number
 - **One accent.** No second hue competes with it. Status colours (success, warning, danger, info) are for
   status only.
 - **The five lesson phases have no colours.** Activate, Explain, Demonstrate, Challenge and Connect get their
-  identity from their number (1 to 5), their icon and their position in the sequence, all in the one accent.
-  The classroom still uses the five legacy hues until V8.4a moves it over.
-- **Not on the system yet:** /learn, /demo and /dev/* (V8.4), and /admin/* and /create-teacher (V8.6). They
-  declare the theme lock (see Theme) and keep the `aristo-*` palette.
+  identity from their number (1 to 5), their icon and their position in the sequence, all in the one accent
+  (the phase rail and phase label, below). The lesson panel moved over in V8.4a; the quiz still uses the legacy
+  hues until V8.4b.
+- **Partly on the system:** /learn and /demo. The lesson panel, TeacherControls, the message panel's own states,
+  the caption band, the callouts and the in-scene toolbars are on the tokens (V8.4a). The quiz and inputs (V8.4b)
+  and free mode, pickers, loading and the page shells in `LearnClient` / `DemoClient` (V8.4c) are not.
+- **Not on the system yet:** /dev/* (V8.7), and /admin/* and /create-teacher (V8.6). They declare the theme lock
+  (see Theme) and keep the `aristo-*` palette.
 
 ## Colours
 
@@ -51,15 +55,20 @@ Keep the two copies identical.
 
 | Token | Light | Dark | Use and ratio |
 |---|---|---|---|
-| `accent` | #B4531F | #E98A52 | solid fills: primary buttons, the lit flute, focus rings, progress |
-| `accent-hover` | #9A4A1E | #F0A070 | hover on accent fills (darker in light, lighter in dark): 6.07 / 8.97 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface drops the label to 4.1:1) |
-| `accent-ink` | #FCFCFD | #0E1117 | text on **any** solid fill: accent 4.88 / 7.40; status fills below |
-| `accent-text` | #A94C1B | #EF9A66 | accent as text or icon: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
+| `accent` | #F97B2F | #E98A52 | solid fills: primary buttons, the lit flute, progress, the current phase |
+| `accent-hover` | #FA8C47 | #F0A070 | hover on accent fills, lighter in both themes: 6.26 / 8.19 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface washes the fill out) |
+| `accent-ink` | #3D2110 | #2A160A | text on accent fills, the brand brown: 5.55 / 6.75 |
+| `status-ink` | #FCFCFD | #0E1117 | text on status fills (danger button, badge, toast): danger 6.31 / 6.83 |
+| `accent-text` | #A94C1B | #EF9A66 | accent as text, icon or focus ring: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
 
-The accent is the classroom orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees), darkened in light mode
-and lightened in dark mode until it clears AA. #F97B2F itself fails as text and as a UI colour (2.66:1 on
-white, 2.53 on cream), so it never carries text in the system. Saturation stays under 80%. There is no
-gradient text and no coloured glow on a control.
+The accent is the brand orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees) in light mode, lightened to
+#E98A52 in dark mode. Since V8.4a it is one orange on every filled button, app-wide (Hmz's choice). White fails
+on it (2.66:1), so labels on it are the brand brown (#3D2110, 5.55:1; #2A160A on the dark accent, 6.75). Near-black
+passed too (7.11) but read harsh against the saturated orange, so the brown won (Hmz, V8.4a, from four options
+rendered in context: terracotta + cream, orange + brown, tonal peach, slate). As text or as a focus ring #F97B2F fails too
+(2.66 on white, 2.59 against the page, under the 3:1 a focus indicator needs), so orange text and focus rings
+use `accent-text`. Before V8.4a the light accent was #B4531F with white labels (4.88), and the classroom still
+showed #F97B2F beside it. There is no gradient text and no coloured glow on a control.
 
 ### Semantic (status)
 
@@ -67,7 +76,7 @@ Text-safe colours on every ground (`bg`, `surface`, `sunk`, `tint`). Tints use o
 `border-danger/25`). The light success and warning were darkened after review: the first cut (#15803D, #B45309)
 was 4.2:1 on `sunk` and `tint`.
 
-| Token | Light | on bg / surface / sunk | under accent-ink | Dark | on bg / surface | under accent-ink |
+| Token | Light | on bg / surface / sunk | under status-ink | Dark | on bg / surface | under status-ink |
 |---|---|---|---|---|---|---|
 | `success` | #166534 | 6.48 / 6.95 / 6.03 | 6.95 | #4ADE80 | 10.85 / 10.09 | 10.85 |
 | `warning` | #92400E | 6.44 / 6.92 / 5.99 | 6.92 | #FBBF24 | 11.32 / 10.54 | 11.32 |
@@ -173,7 +182,7 @@ in place.
   - `outline`: surface with a line border.
   - `secondary`: sunk.
   - `ghost`, and `link` (accent-text).
-  - `destructive`: danger fill with accent-ink.
+  - `destructive`: danger fill with status-ink.
 - **Input / Select trigger:** 44px, control radius, surface fill, line border that darkens to `muted/50` on
   hover, accent focus ring offset against the page.
 - **Card:** surface, line border, 16px radius, no shadow. Titles use `type-h3`.
@@ -184,12 +193,37 @@ in place.
 - **Toast:** surface (or a danger fill), 16px, `shadow-e2`.
 - **Message boxes** (auth): errors are `bg-danger/10 border-danger/25 text-danger`; notices are
   `bg-tint border-tint-line text-ink`. Both use the 10px radius.
-- **Focus:** `FOCUS` from `shape.ts`, a 2px accent ring offset 2px against `bg`. Every interactive element
+- **Focus:** `FOCUS` from `shape.ts`, a 2px `accent-text` ring offset 2px against `bg` (5.11 light, 8.53 dark). Every interactive element
   gets it.
 - **Mark:** `AristoMark`: ink letters, accent flute. A standalone mark passes `decorative={false}` so it is
   named "Aristo".
 - **Nav, hero, capability strip, cards, closing band:** the landing's own components, unchanged from
   T04b / V8.1.
+- **Segmented control** (TeacherControls; the Tabs pattern for buttons): a 10px `sunk` rail with 4px padding,
+  44px items with a 6px radius, the chosen one `bg-surface text-ink shadow-e1` and `aria-pressed`.
+
+### Classroom (V8.4a)
+
+- **Phase label** (`PhaseLabel` in `LessonView.tsx`): the phase icon in `accent-text`, then "Explain, step 2 of 5"
+  in `text-xs` semibold ink. The landing hero chip reads the same.
+- **Phase rail** (`PhaseRail`): five steps, each a number and an icon (Activate `History`, Explain `AudioLines`,
+  Demonstrate `Presentation`, Challenge `Target`, Connect `Waypoints`), joined by hairlines. The current step is
+  an accent pill with its name; done steps and their connectors are `accent-text` / `accent`; upcoming ones are
+  `muted`. Not interactive.
+- **Caption band** (`CaptionBand` in `LessonPlayer.tsx`): the sentence being spoken in medium ink, and the next one
+  in `body`. It fits the whole sentence: 18, then 16, then 14px, then without the next line, and a whole-line clamp
+  only as a last resort. It is ink glass: `.theme-ink`, `bg-bg/[0.86]`, `backdrop-blur-md`, `shadow-e2`, 16px
+  radius. It has fixed geometry and hide rules (decisions.md) and shows from lg; below lg the panel shows the
+  caption instead.
+- **Panel ground:** the lesson scroll is `bg-bg/95` over the scene, cards are opaque `bg-surface` with `border-line`,
+  and the bars (TeacherControls, playback row) are `bg-surface/95` with blur. At `/85` muted text fails over a
+  dark scene pixel.
+- **Transcript drawer:** a 44px disclosure (`aria-expanded`) holding the whole lesson by phase. The spoken sentence
+  has a 3px `border-accent` on `bg-tint` in ink; the others are `body`.
+- **In-scene controls:** "View in 3D" / "Show image" are `Button variant="secondary"` inside `.theme-ink`;
+  status and hint chips and the callouts are `bg-bg/[0.86]` pills with `text-body` / `text-ink`.
+- **Status in lesson cards:** key insight `warning` on `warning/10` with a Lightbulb icon; output and "in the room"
+  chips `success` on `success/10`; code `ink` on `sunk`; hint and analogy on `tint`.
 
 ### shadcn mapping (for `npx shadcn add`)
 
@@ -206,9 +240,9 @@ system's `accent`. After adding a component, translate:
 | `bg-secondary`, `bg-muted` | `bg-sunk` |
 | `text-muted-foreground` | `text-muted` |
 | `bg-accent` / `hover:bg-accent` (hover tint), `text-accent-foreground` | `bg-sunk`, `text-ink` |
-| `bg-destructive`, `text-destructive-foreground`, `text-destructive` | `bg-danger`, `text-accent-ink`, `text-danger` |
+| `bg-destructive`, `text-destructive-foreground`, `text-destructive` | `bg-danger`, `text-status-ink`, `text-danger` |
 | `border`, `border-input`, `bg-border` | `border-line`, `bg-line` |
-| `ring-ring`, `ring-offset-background` | `ring-accent`, `ring-offset-bg` |
+| `ring-ring`, `ring-offset-background` | `ring-accent-text`, `ring-offset-bg` |
 | `rounded-md` / `rounded-sm` / `rounded-lg` | a `SHAPE` role (control, surface), 6px for nested items |
 | `shadow-md` / `shadow-lg` | `shadow-e1` / `shadow-e2` |
 
@@ -234,6 +268,12 @@ system's `accent`. After adding a component, translate:
 - Checked signed in (2026-09-29): /admin and /create-teacher get the lock meta in `<head>` with the first
   response, so an OS-dark visitor sees no dark frame. Both render light under OS-dark, as does /learn.
 - The 3D scene's lighting and backdrop never follow the theme: the room is the lit window in both.
+- **`.theme-ink`** (V8.4a) resolves the dark tokens on a subtree, whatever the page theme and through the lock.
+  It shares the explicit dark rule through a forgiving `:is()` list, so the values exist once per route in and it
+  survives browsers without `:has()`. Use it for anything placed on the lit room: the caption band, the callouts,
+  the image and model toolbars. The classroom panel itself follows the theme.
+- The Pages Router lock stays until V8.4b and V8.4c are on the tokens; V8.4c deletes it from `pages/_app.tsx`.
+  The V8.4a surfaces need no edit then (dark checked by removing the meta in the browser).
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
 ## Responsive behaviour
@@ -251,7 +291,7 @@ with an owner:
 
 | Where | What | Why kept | Owner |
 |---|---|---|---|
-| `QuizView`, `LessonView`, `DashboardView`, `CreateTeacherClient`, `FreeTopicCard`, `CourseMapView`, `ModePicker` | quiz right/wrong greens and reds, key-insight ambers, code-block themes, Bloom-level colours | moving them would change /learn and /demo, which V8.2 must not do | V8.4a / V8.4b |
+| `QuizView`, `DashboardView`, `CreateTeacherClient`, `FreeTopicCard`, `CourseMapView`, `ModePicker` | quiz right/wrong greens and reds, key-insight ambers, code-block themes, Bloom-level colours | moving them would change /learn and /demo, which V8.2 must not do. `LessonView`'s went in V8.4a (none left in the five V8.4a files or the Experience toolbars) | V8.4b / V8.4c |
 | `src/app/admin/*` (cost, overview, courses, quiz-analytics, misconceptions, knowledge graph) | data-viz and provider colours, status literals | internal; categorical data-viz is not a semantic colour | V8.6 (admin token pass) |
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
 | `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
@@ -259,11 +299,24 @@ with an owner:
 
 ## Known AA gaps (inside locked surfaces)
 
-These are recorded, not fixed, because the classroom look must not change before V8.4:
+Fixed in V8.4a inside the lesson panel, TeacherControls, the message panel, the callouts and the in-scene toolbars:
+white on #F97B2F (Next, Submit, Resume, the teacher pill, View in 3D; now `accent` with ink, 7.11, or the
+secondary button), `aristo-orange-ink` on cream (the analogy label, Pause, the course title, the diagrams overlay),
+#F97B2F as text (Explain more, 2.66), amber feedback text (2.15), the tan Scene label (2.76), the callouts'
+orange-deep on wash (4.14) and the licence credit in the controls bar (4.1, now `muted` 5.3). Measured: 1812 text
+nodes, minimum 4.71 light and 5.24 dark (`.claude/eval/2026-09-29-v8-4a/`).
 
-- White on #F97B2F buttons (2.66:1).
-- `aristo-orange-ink` #C45A10 as small text on cream (4.15:1).
-- The loading screen's grey caption.
+Also in V8.4a, with the one-orange change: every remaining white-on-#F97B2F fill in the classroom carries ink
+instead of white (Take Quiz, the demo teacher pills, the quiz's buttons and chosen options, the answer and input send and
+mic buttons, review, the course map, loading retry, the reviews chip, the avatar initial: brand brown, 5.55,
+hovering to `accent-hover` 6.26), and the demo banner's Create an account link is `accent-text` (5.1).
+
+Still open:
+
+- Orange as text: the quiz labels ("Question 1 of 2", V8.4b), the /learn top nav hovers and `FreeTopicCard`
+  (V8.4c).
+- The loading screen's grey caption (V8.4c).
+- `AvatarCredit` on its own (the /demo teacher row) keeps brown-muted #8B6E5A (4.69 on white, lower over glass).
 
 Admin, also V8.6: the sidebar's section labels (orange on beige, about 2.35:1), the active nav item (white on
 #F97B2F, 2.66:1) and the "Aristo Admin" header (about 2.5:1). All were lower before V8.2 (#F59047).

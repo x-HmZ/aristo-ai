@@ -354,8 +354,10 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           actually ready. */}
       <SceneLoadingOverlay />
 
-      {/* Top nav */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4">
+      {/* Top nav. Above the mode picker's blur (z-30) so the wordmark stays sharp
+          on the first screen; dialogs (map z-40, dashboard, review, onboarding and
+          the lightbox at z-50) still cover it. */}
+      <div className="absolute top-0 left-0 right-0 z-[35] flex items-center justify-between px-6 py-4">
         <AristoMark
           decorative={false}
           className="h-[17px] text-aristo-brown-main"
@@ -367,7 +369,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           {localOnboarded && overdueCount > 0 && (
             <button
               onClick={() => setShowReview(true)}
-              className="flex items-center gap-1 text-xs font-semibold text-white bg-aristo-orange-main hover:bg-aristo-orange-hover rounded-full px-2.5 py-0.5 transition-all shadow-sm"
+              className="flex items-center gap-1 text-xs font-semibold text-accent-ink bg-aristo-orange-main hover:bg-accent-hover rounded-full px-2.5 py-0.5 transition-all shadow-sm"
               title="Start your daily review"
             >
               ↻ {overdueCount} due
@@ -393,7 +395,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
               🗺 Map
             </button>
           )}
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-aristo-orange-main to-aristo-peach flex items-center justify-center text-white text-xs font-bold">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-aristo-orange-main to-aristo-peach flex items-center justify-center text-accent-ink text-xs font-bold">
             {userName[0]?.toUpperCase()}
           </div>
           <span className="text-sm font-medium text-aristo-brown-main">{userName}</span>
