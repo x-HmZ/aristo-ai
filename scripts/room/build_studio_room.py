@@ -53,6 +53,7 @@ ap.add_argument("--atlas", default="")
 ap.add_argument("--classes", action="store_true", help="stop before the bake (debug)")
 ap.add_argument("--blend", default="", help="save the pre-bake scene here (debug)")
 ap.add_argument("--wall", default="", help="override the palette's wall colour (sRGB hex), to try options")
+ap.add_argument("--wall-side", default="", help="override the side and back wall colour (day)")
 args = ap.parse_args(argv)
 EVENING = args.variant == "evening"
 if EVENING and not args.props:
@@ -71,7 +72,8 @@ def lin(h):
 PALETTES = {
     # Blue-grey walls, pale oak, one orange spark.
     "day": {
-        "wall":       ("#6B8196", 0.9),   # blue-grey: white shirts read against it (V8.5b)
+        "wall":       ("#6B8196", 0.9),   # front wall, behind the teacher: white shirts read against it (V8.5b)
+        "wall_side":  ("#D6DDE3", 0.9),   # side and back walls: lighter, they only get bounced light (V8.5b)
         "ceiling":    ("#F3EEE7", 0.9),
         "floor":      ("#CDBBA5", 0.55),
         "panel":      ("#C9A47A", 0.6),   # front-wall lower panelling, pale oak
@@ -113,6 +115,8 @@ PALETTES = {
 PALETTE = dict(PALETTES[args.variant])
 if args.wall:
     PALETTE["wall"] = (args.wall, PALETTE["wall"][1])
+if args.wall_side and "wall_side" in PALETTE:
+    PALETTE["wall_side"] = (args.wall_side, PALETTE["wall_side"][1])
 
 # Bake light levels. Day is calibrated so the plaster lands near the old
 # atlas's brightness: three.js lights the baked colour again at runtime.
@@ -271,6 +275,21 @@ for k in sorted(report):
 dead = [f for k, fs in classes.items() if k.startswith("remove:") for f in fs]
 bmesh.ops.delete(bm, geom=dead, context="FACES")
 classes = {k: v for k, v in classes.items() if not k.startswith("remove:")}
+
+# The walls are one connected part, so split them per face: the front wall
+# (behind the teacher and the display: faces that point along y, at y > 3.1
+# like the front panelling) keeps "wall"; the side and back walls, lit only
+# by bounce, take "wall_side". Testing the normal keeps each flat surface in
+# one class; a centroid test alone split the corner returns into a sawtooth.
+def front_wall(f):
+    return abs(f.normal.y) > 0.7 and f.calc_center_median().y > 3.1
+
+
+if "wall_side" in PALETTE and "wall" in classes:
+    front = [f for f in classes["wall"] if f.is_valid and front_wall(f)]
+    side = [f for f in classes["wall"] if f.is_valid and not front_wall(f)]
+    classes["wall"], classes["wall_side"] = front, side
+    print(f"CLASS wall split: front {len(front)}, side and back {len(side)}")
 
 # ─── Materials ───────────────────────────────────────────────────────────────
 
