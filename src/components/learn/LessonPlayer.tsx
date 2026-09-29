@@ -45,10 +45,13 @@ const SHOW_DEBUG = process.env.NODE_ENV === "development";
 // because the panel's backdrop-blur would otherwise contain a fixed child.
 //
 // Geometry (checked against the /dev probes, V8.4a): it keeps to the left of
-// the 400px panel (right-5 + 20px gap) and its top edge stays at or below 78%
-// of the viewport height, under the image and model toolbars, whose lowest
-// edge is 75.8% at any size (the projection scales with height). md and up
-// only: below md the panel covers the screen and LessonView shows the caption.
+// the 400px panel (right-5 + 20px gap) and its top edge stays at or below 80%
+// of the viewport height, under the image and model toolbars: their centre
+// sits near 74% of the height at every size (the projection scales with
+// height) and the 44px buttons reach 78.0% at 1280x600, 77.4% at 1280x720 and
+// 76.1% at 768x1024. Short viewports clamp the sentence to two lines so it
+// fits. md and up only: below md the panel covers the screen and LessonView
+// shows the caption.
 // `.theme-ink` keeps it ink in both themes; the room never follows the theme.
 
 function CaptionBand({
@@ -66,7 +69,7 @@ function CaptionBand({
       data-caption-band
       className={cn(
         SHAPE.surface,
-        "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 hidden max-h-[calc(22vh-16px)] items-start gap-4 overflow-hidden",
+        "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 hidden max-h-[calc(20vh-16px)] items-start gap-4 overflow-hidden",
         "border border-line bg-bg/[0.86] px-5 py-3 shadow-e2 backdrop-blur-md md:flex",
       )}
     >
@@ -80,7 +83,7 @@ function CaptionBand({
         </span>
       </div>
       <div className="min-w-0">
-        <p key={current} className="line-clamp-3 text-lg font-medium leading-snug text-ink motion-safe:animate-[fade-in_0.3s_ease-out]">
+        <p key={current} className="line-clamp-3 text-lg font-medium leading-snug text-ink motion-safe:animate-[fade-in_0.3s_ease-out] [@media(max-height:680px)]:line-clamp-2">
           {current}
         </p>
         {next && (
@@ -106,7 +109,7 @@ function PlaybackControls({
   segmentCount: number;
 }) {
   return (
-    <div className={cn(SHAPE.surface, "flex items-center gap-1 border border-line bg-surface/95 p-1.5 shadow-e1 backdrop-blur-md")}>
+    <div data-playback className={cn(SHAPE.surface, "flex items-center gap-1 border border-line bg-surface/95 p-1.5 shadow-e1 backdrop-blur-md")}>
       <Button
         variant="ghost"
         size="icon"
