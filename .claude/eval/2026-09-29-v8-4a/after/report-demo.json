@@ -1,0 +1,957 @@
+{
+ "label": "after",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-360-light.jpg",
+  "demo-1-activate-narrating-360-light.jpg",
+  "demo-2-explain-360-light.jpg",
+  "demo-2-image-pointing-360-light.jpg",
+  "demo-2-model-360-light.jpg",
+  "demo-3-demonstrate-360-light.jpg",
+  "demo-4-challenge-360-light.jpg",
+  "demo-5-connect-360-light.jpg",
+  "demo-quiz-desk-360-light.jpg",
+  "demo-picker-768-light.jpg",
+  "demo-1-activate-narrating-768-light.jpg",
+  "demo-2-explain-768-light.jpg",
+  "demo-2-image-pointing-768-light.jpg",
+  "demo-2-model-768-light.jpg",
+  "demo-3-demonstrate-768-light.jpg",
+  "demo-4-challenge-768-light.jpg",
+  "demo-5-connect-768-light.jpg",
+  "demo-quiz-desk-768-light.jpg",
+  "demo-picker-1280-light.jpg",
+  "demo-1-activate-narrating-1280-light.jpg",
+  "demo-2-explain-1280-light.jpg",
+  "demo-2-image-pointing-1280-light.jpg",
+  "demo-2-model-1280-light.jpg",
+  "demo-3-demonstrate-1280-light.jpg",
+  "demo-4-challenge-1280-light.jpg",
+  "demo-5-connect-1280-light.jpg",
+  "demo-quiz-desk-1280-light.jpg",
+  "demo-picker-1280x600-light.jpg",
+  "demo-1-activate-narrating-1280x600-light.jpg",
+  "demo-2-explain-1280x600-light.jpg",
+  "demo-2-image-pointing-1280x600-light.jpg",
+  "demo-2-model-1280x600-light.jpg",
+  "demo-3-demonstrate-1280x600-light.jpg",
+  "demo-4-challenge-1280x600-light.jpg",
+  "demo-5-connect-1280x600-light.jpg",
+  "demo-quiz-desk-1280x600-light.jpg",
+  "demo-picker-360-dark.jpg",
+  "demo-1-activate-narrating-360-dark.jpg",
+  "demo-2-explain-360-dark.jpg",
+  "demo-2-image-pointing-360-dark.jpg",
+  "demo-2-model-360-dark.jpg",
+  "demo-3-demonstrate-360-dark.jpg",
+  "demo-4-challenge-360-dark.jpg",
+  "demo-5-connect-360-dark.jpg",
+  "demo-quiz-desk-360-dark.jpg",
+  "demo-picker-768-dark.jpg",
+  "demo-1-activate-narrating-768-dark.jpg",
+  "demo-2-explain-768-dark.jpg",
+  "demo-2-image-pointing-768-dark.jpg",
+  "demo-2-model-768-dark.jpg",
+  "demo-3-demonstrate-768-dark.jpg",
+  "demo-4-challenge-768-dark.jpg",
+  "demo-5-connect-768-dark.jpg",
+  "demo-quiz-desk-768-dark.jpg",
+  "demo-picker-1280-dark.jpg",
+  "demo-1-activate-narrating-1280-dark.jpg",
+  "demo-2-explain-1280-dark.jpg",
+  "demo-2-image-pointing-1280-dark.jpg",
+  "demo-2-model-1280-dark.jpg",
+  "demo-3-demonstrate-1280-dark.jpg",
+  "demo-4-challenge-1280-dark.jpg",
+  "demo-5-connect-1280-dark.jpg",
+  "demo-quiz-desk-1280-dark.jpg",
+  "demo-picker-1280x600-dark.jpg",
+  "demo-1-activate-narrating-1280x600-dark.jpg",
+  "demo-2-explain-1280x600-dark.jpg",
+  "demo-2-image-pointing-1280x600-dark.jpg",
+  "demo-2-model-1280x600-dark.jpg",
+  "demo-3-demonstrate-1280x600-dark.jpg",
+  "demo-4-challenge-1280x600-dark.jpg",
+  "demo-5-connect-1280x600-dark.jpg",
+  "demo-quiz-desk-1280x600-dark.jpg"
+ ],
+ "paid": [],
+ "rects": {
+  "demo-picker-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-1-activate-narrating-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-explain-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-image-pointing-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "CALLOUTS": [
+    218,
+    50,
+    337,
+    172
+   ],
+   "View in 3D": [
+    111,
+    555,
+    248,
+    599
+   ]
+  },
+  "demo-2-model-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "demo-3-demonstrate-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    118,
+    557,
+    244,
+    601
+   ]
+  },
+  "demo-4-challenge-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    121,
+    559,
+    247,
+    603
+   ]
+  },
+  "demo-5-connect-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    123,
+    559,
+    248,
+    603
+   ]
+  },
+  "demo-quiz-desk-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    201,
+    -709,
+    327,
+    -665
+   ]
+  },
+  "demo-picker-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-1-activate-narrating-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-explain-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-image-pointing-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "CALLOUTS": [
+    454,
+    78,
+    572,
+    200
+   ],
+   "View in 3D": [
+    347,
+    729,
+    483,
+    773
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-model-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-3-demonstrate-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    359,
+    732,
+    485,
+    776
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-4-challenge-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    356,
+    729,
+    482,
+    773
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-5-connect-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    353,
+    728,
+    479,
+    772
+   ],
+   "BAND": [
+    20,
+    908,
+    328,
+    1008
+   ]
+  },
+  "demo-quiz-desk-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    447,
+    -940,
+    573,
+    -896
+   ]
+  },
+  "demo-picker-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-1-activate-narrating-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-explain-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-image-pointing-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "CALLOUTS": [
+    679,
+    44,
+    797,
+    166
+   ],
+   "View in 3D": [
+    570,
+    513,
+    707,
+    557
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-3-demonstrate-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    574,
+    514,
+    700,
+    558
+   ],
+   "BAND": [
+    20,
+    605,
+    840,
+    704
+   ]
+  },
+  "demo-4-challenge-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    576,
+    513,
+    701,
+    557
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-5-connect-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    576,
+    510,
+    701,
+    554
+   ],
+   "BAND": [
+    20,
+    604,
+    840,
+    704
+   ]
+  },
+  "demo-quiz-desk-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    645,
+    -667,
+    770,
+    -623
+   ]
+  },
+  "demo-picker-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "demo-1-activate-narrating-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-explain-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-image-pointing-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "CALLOUTS": [
+    660,
+    21,
+    778,
+    143
+   ],
+   "View in 3D": [
+    552,
+    418,
+    688,
+    462
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-model-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-3-demonstrate-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    554,
+    421,
+    680,
+    465
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-4-challenge-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    555,
+    424,
+    681,
+    468
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-5-connect-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    557,
+    425,
+    683,
+    469
+   ],
+   "BAND": [
+    20,
+    509,
+    840,
+    584
+   ]
+  },
+  "demo-quiz-desk-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    618,
+    -546,
+    743,
+    -502
+   ]
+  },
+  "demo-picker-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-1-activate-narrating-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-explain-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-image-pointing-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "CALLOUTS": [
+    224,
+    54,
+    342,
+    176
+   ],
+   "View in 3D": [
+    116,
+    559,
+    252,
+    603
+   ]
+  },
+  "demo-2-model-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "demo-3-demonstrate-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    123,
+    554,
+    249,
+    598
+   ]
+  },
+  "demo-4-challenge-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    122,
+    551,
+    247,
+    595
+   ]
+  },
+  "demo-5-connect-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    120,
+    550,
+    245,
+    594
+   ]
+  },
+  "demo-quiz-desk-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    191,
+    -724,
+    317,
+    -680
+   ]
+  },
+  "demo-picker-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-1-activate-narrating-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-explain-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-image-pointing-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "CALLOUTS": [
+    462,
+    80,
+    580,
+    202
+   ],
+   "View in 3D": [
+    353,
+    731,
+    490,
+    775
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-2-model-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-3-demonstrate-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    352,
+    735,
+    477,
+    779
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-4-challenge-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    354,
+    739,
+    480,
+    783
+   ],
+   "BAND": [
+    20,
+    884,
+    328,
+    1008
+   ]
+  },
+  "demo-5-connect-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    357,
+    740,
+    483,
+    784
+   ],
+   "BAND": [
+    20,
+    908,
+    328,
+    1008
+   ]
+  },
+  "demo-quiz-desk-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    461,
+    -918,
+    586,
+    -874
+   ]
+  },
+  "demo-picker-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-1-activate-narrating-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-explain-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-image-pointing-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "CALLOUTS": [
+    679,
+    41,
+    797,
+    163
+   ],
+   "View in 3D": [
+    570,
+    510,
+    706,
+    554
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-2-model-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-3-demonstrate-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    575,
+    510,
+    701,
+    554
+   ],
+   "BAND": [
+    20,
+    605,
+    840,
+    704
+   ]
+  },
+  "demo-4-challenge-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    574,
+    507,
+    700,
+    551
+   ],
+   "BAND": [
+    20,
+    580,
+    840,
+    704
+   ]
+  },
+  "demo-5-connect-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    571,
+    506,
+    697,
+    550
+   ],
+   "BAND": [
+    20,
+    604,
+    840,
+    704
+   ]
+  },
+  "demo-quiz-desk-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    637,
+    -669,
+    763,
+    -625
+   ]
+  },
+  "demo-picker-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "demo-1-activate-narrating-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-explain-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-image-pointing-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "CALLOUTS": [
+    657,
+    25,
+    775,
+    147
+   ],
+   "View in 3D": [
+    549,
+    422,
+    686,
+    466
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-2-model-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-3-demonstrate-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    554,
+    421,
+    680,
+    465
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-4-challenge-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    555,
+    423,
+    681,
+    467
+   ],
+   "BAND": [
+    20,
+    485,
+    840,
+    584
+   ]
+  },
+  "demo-5-connect-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    557,
+    425,
+    682,
+    469
+   ],
+   "BAND": [
+    20,
+    509,
+    840,
+    584
+   ]
+  },
+  "demo-quiz-desk-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show 3D": [
+    617,
+    -546,
+    743,
+    -502
+   ]
+  }
+ }
+}
