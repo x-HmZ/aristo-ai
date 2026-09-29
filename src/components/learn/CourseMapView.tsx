@@ -321,7 +321,7 @@ export function CourseMapView({
           <button
             onClick={handleContinue}
             disabled={loading || !data}
-            className="px-6 py-2.5 rounded-2xl text-sm font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-[0_4px_16px_hsl(var(--aristo-orange-main)/0.35)] disabled:opacity-50 transition-all"
+            className="px-6 py-2.5 rounded-2xl text-sm font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover shadow-[0_4px_16px_hsl(var(--aristo-orange-main)/0.35)] disabled:opacity-50 transition-all"
           >
             {masteredCount === 0 ? "Start Learning →" : "Continue →"}
           </button>

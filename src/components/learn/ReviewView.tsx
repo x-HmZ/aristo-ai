@@ -81,7 +81,7 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
           <p className="text-sm text-aristo-brown-muted">No reviews are due right now. Come back later or keep learning.</p>
           <button
             onClick={onClose}
-            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover transition-all"
+            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover transition-all"
           >
             Back to Learning
           </button>
@@ -121,7 +121,7 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
 
           <button
             onClick={onClose}
-            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover transition-all"
+            className="mt-1 px-5 py-2.5 rounded-xl text-sm font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover transition-all"
           >
             Continue Learning
           </button>

@@ -48,7 +48,7 @@ export function CourseTakeQuizBar({
         <button
           onClick={onTakeQuiz}
           disabled={isLoading}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover disabled:opacity-50 shadow-aristo-sm transition-all"
+          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover disabled:opacity-50 shadow-aristo-sm transition-all"
         >
           {isLoading ? "Loading quiz…" : "Take Quiz →"}
         </button>
@@ -92,7 +92,7 @@ export function CourseAdvanceBar({
         </div>
         <button
           onClick={isLastTopic ? onFinish : onAdvance}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-aristo-sm transition-all"
+          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover shadow-aristo-sm transition-all"
         >
           {isLastTopic ? "Finish Course ✓" : "Next Topic →"}
         </button>
