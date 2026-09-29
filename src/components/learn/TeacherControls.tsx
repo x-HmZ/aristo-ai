@@ -130,8 +130,10 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
       </div>
 
       {/* Licence credit for third-party avatars (CC BY) — sits with the switcher
-          because this panel is on screen whenever the avatar is. */}
-      <AvatarCredit avatar={teacher} className="-mt-1 px-1" />
+          because this panel is on screen whenever the avatar is. `!text-muted`
+          because AvatarCredit joins its classes without cn(), and its own
+          brown-muted is 4.1:1 on this bar over a dark scene; muted is 5.3. */}
+      <AvatarCredit avatar={teacher} className="-mt-1 px-1 !text-muted" />
 
       {/* Row 2: Environment switcher */}
       <div className="flex items-center gap-3">
