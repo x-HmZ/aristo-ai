@@ -31,9 +31,10 @@ Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens an
   success/warning on sunk/tint (4.2:1, darkened), the lock missing the viewport scrollbar. Documented, not
   changed: tailwind-merge does not know `type-*` / `shadow-e*` / `duration-*`; browsers without `:has()` lose
   the lock's cream defaults.
-- **Not checked, needs a session:** /admin/* and /create-teacher by eye (they rest on the diff and the build
-  output, where the lock meta is present); whether their streamed metadata lets one dark frame through for an
-  OS-dark visitor (brand-system.md, Theme).
+- **Checked signed in** (Hmz signed in; free mode, read-only calls only, nothing generated): /learn,
+  /admin (overview, users, courses, cost, audit-log) and /create-teacher all stay light under OS-dark with their
+  old page defaults; the lock meta is in `<head>` on the first response, so no dark first frame. Admin contrast
+  gaps are old ones, slightly better now: sidebar labels ~2.35, active nav white on #F97B2F 2.66 (V8.6).
 - **Hex literals left, each with an owner** (brand-system.md register): classroom status colours (V8.4a/b),
   admin data-viz (V8.6). Known AA gaps inside the locked classroom: white on #F97B2F (2.66), `orange-ink` on
   cream (4.15), the loading caption, all V8.4.

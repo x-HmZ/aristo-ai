@@ -231,9 +231,8 @@ system's `accent`. After adding a component, translate:
   Remove the meta when a surface moves onto the tokens.
 - A browser without `:has()` (Chrome < 105, Safari < 15.4, Firefox < 121) gets light everywhere. Locked
   pages then show the system's light neutrals instead of cream, but stay readable.
-- Unverified: /admin and /create-teacher are dynamic, so Next may stream their metadata after the first
-  flush. An OS-dark visitor could then see one dark frame before the lock meta arrives. It needs a signed-in
-  session to check; if it shows, make the pre-paint script set `data-theme="light"` for those paths.
+- Checked signed in (2026-09-29): /admin and /create-teacher get the lock meta in `<head>` with the first
+  response, so an OS-dark visitor sees no dark frame. Both render light under OS-dark, as does /learn.
 - The 3D scene's lighting and backdrop never follow the theme: the room is the lit window in both.
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
@@ -265,3 +264,6 @@ These are recorded, not fixed, because the classroom look must not change before
 - White on #F97B2F buttons (2.66:1).
 - `aristo-orange-ink` #C45A10 as small text on cream (4.15:1).
 - The loading screen's grey caption.
+
+Admin, also V8.6: the sidebar's section labels (orange on beige, about 2.35:1), the active nav item (white on
+#F97B2F, 2.66:1) and the "Aristo Admin" header (about 2.5:1). All were lower before V8.2 (#F59047).
