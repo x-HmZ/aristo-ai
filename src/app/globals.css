@@ -103,8 +103,6 @@
     --glow: 180 83 31; /* the classroom's light spill, see .glow-* */
     --glow-strength: 0.1;
     --shadow: 14 17 23 / 0.14; /* full colour incl. alpha, see shadow-e1/e2 */
-    --theme-icon-sun: none; /* ThemeToggle shows the icon for the other mode */
-    --theme-icon-moon: block;
 
     /* Motion. Durations collapse to zero under prefers-reduced-motion. */
     --dur-fast: 120ms; /* press, hover, focus */
@@ -134,6 +132,15 @@
     --leading-mono: 1.55;
 
     color-scheme: light;
+  }
+
+  /* ThemeToggle shows the icon for the other mode. These two follow the page
+   * theme only: they are not in the rules .theme-paper and .theme-ink share,
+   * so a toggle placed on ink glass (the classroom top bar) still shows the
+   * page's icon. */
+  :root {
+    --theme-icon-sun: none;
+    --theme-icon-moon: block;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -192,9 +199,12 @@
     --glow: 233 138 82;
     --glow-strength: 0.22;
     --shadow: 0 0 0 / 0.5;
+    color-scheme: dark;
+  }
+
+  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])) {
     --theme-icon-sun: block;
     --theme-icon-moon: none;
-    color-scheme: dark;
   }
 
   @media (prefers-reduced-motion: reduce) {
