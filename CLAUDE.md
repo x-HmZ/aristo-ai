@@ -10,7 +10,7 @@ Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D ava
 - **Real teaching, not summarization** — strict 5-phase protocol: Activate → Explain → Demonstrate → Challenge → Connect.
 - **Adaptive** — no fixed learning-style buckets (FSLSM rejected); `DynamicProfile` (expertise / depth / pace / example preference) inferred from behavioral signals every session.
 - **Mastery-based, not time-based** — BKT per concept, FSRS spaced repetition; the KG decides what to teach next.
-- **Visual direction** — product (classroom, `/learn`, `/demo`): pastel orange (#F97B2F) + cream/beige, soft glassmorphism; not childish, not corporate. Landing page (`/`): "Night Class" since T04b, dark-first ink with orange as a spark, Archivo wide caps for display, light variant, follows the OS with a toggle; its tokens are scoped to `.landing` (`.claude/docs/landing-design-system.md`).
+- **Visual direction** — one brand system since V8.2 (`.claude/docs/brand-system.md`): "Night Class", dark-first ink with orange as a spark, a real light variant, follows the OS with a toggle, one accent (#F97B2F darkened/lightened for AA). Semantic tokens (`bg`, `surface`, `ink`, `accent`...) app-wide; landing, auth and `ui/*` are on them. The classroom (`/learn`, `/demo`), admin and create-teacher keep the pastel orange + cream `aristo-*` palette under a light lock until V8.4 / V8.6. Not childish, not corporate.
 
 ## Stack
 
@@ -59,7 +59,7 @@ Everything else lives in App Router.
 | `.claude/docs/state.md` | Phase status, what's next, migration state |
 | `.claude/docs/architecture.md` | Agents, subsystems, all API routes, components, hooks, store, approval gate |
 | `.claude/docs/decisions.md` | Decision log — why things are the way they are |
-| `.claude/docs/landing-design-system.md` | Landing page tokens, type, shape, theme rules ("Night Class") |
+| `.claude/docs/brand-system.md` | The design system: tokens and AA ratios, type, shape, elevation, motion, components, theme and lock, shadcn mapping, hex-literal register |
 | `LICENSES.md` | Every shipped third-party asset: author, licence, source, modified, open items |
 | `AI_TEACHER_APP_SPEC.md` | Authoritative spec (use `spec_index.md` to navigate) |
 | `.claude/eval/2026-09-09-pipeline/README.md` | Real fal.ai output behind the image/3D model choices — comparison images, reference GLBs, and three decisions not to re-litigate |
