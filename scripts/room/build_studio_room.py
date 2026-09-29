@@ -52,6 +52,7 @@ ap.add_argument("--samples", type=int, default=64)
 ap.add_argument("--atlas", default="")
 ap.add_argument("--classes", action="store_true", help="stop before the bake (debug)")
 ap.add_argument("--blend", default="", help="save the pre-bake scene here (debug)")
+ap.add_argument("--wall", default="", help="override the palette's wall colour (sRGB hex), to try options")
 args = ap.parse_args(argv)
 EVENING = args.variant == "evening"
 if EVENING and not args.props:
@@ -68,9 +69,9 @@ def lin(h):
 
 # class -> (base colour, roughness).
 PALETTES = {
-    # Warm plaster, pale oak, one orange spark.
+    # Blue-grey walls, pale oak, one orange spark.
     "day": {
-        "wall":       ("#E9DFD1", 0.9),
+        "wall":       ("#6B8196", 0.9),   # blue-grey: white shirts read against it (V8.5b)
         "ceiling":    ("#F3EEE7", 0.9),
         "floor":      ("#CDBBA5", 0.55),
         "panel":      ("#C9A47A", 0.6),   # front-wall lower panelling, pale oak
@@ -109,7 +110,9 @@ PALETTES = {
         "cord":       ("#141414", 0.5),
     },
 }
-PALETTE = PALETTES[args.variant]
+PALETTE = dict(PALETTES[args.variant])
+if args.wall:
+    PALETTE["wall"] = (args.wall, PALETTE["wall"][1])
 
 # Bake light levels. Day is calibrated so the plaster lands near the old
 # atlas's brightness: three.js lights the baked colour again at runtime.
