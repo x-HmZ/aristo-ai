@@ -13,6 +13,8 @@ import { Callouts } from "@/components/learn/Callouts";
 import { BRAND_HEX } from "@/lib/brandColors";
 import { Box, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CameraController } from "./CameraController";
+import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 
 // In-scene controls (the image and model toolbars): the system's secondary
 // button and a status chip, inside `.theme-ink`. Classes only; the <Html>
@@ -20,8 +22,6 @@ import { Button } from "@/components/ui/button";
 const SCENE_BUTTON = "whitespace-nowrap border border-line shadow-e1";
 const SCENE_CHIP =
   "pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
-import { CameraController } from "./CameraController";
-import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 
 // Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
 function RendererConfig() {
