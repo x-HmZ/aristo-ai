@@ -144,7 +144,7 @@ function PhaseRail({ current }: { current: number }) {
 // ─── Caption (playback mode) ──────────────────────────────────────────────────
 //
 // The sentence being spoken and the one after it. The band over the scene
-// (LessonPlayer, md and up) and the in-panel caption below md both show it.
+// (LessonPlayer, lg and up) and the in-panel caption below lg both show it.
 
 export function captionAt(
   segments: Array<{ id: string; text: string }> | undefined,
@@ -627,8 +627,22 @@ export function LessonView({
   const activeModelUrl           = useAristoStore((s) => s.activeModelUrl);
 
   const [internalPhaseIdx, setInternalPhaseIdx] = useState(0);
-  // Presentation only: whether the transcript drawer is open.
+  // Presentation only: whether the transcript drawer is open, and keeping the
+  // spoken sentence in view inside the panel's scroll while it is.
   const [transcriptOpen, setTranscriptOpen] = useState(false);
+  const transcriptRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!transcriptOpen) return;
+    const active   = transcriptRef.current?.querySelector<HTMLElement>('[aria-current="true"]');
+    const scroller = active?.closest<HTMLElement>(".aristo-scroll");
+    if (!active || !scroller) return;
+    const a = active.getBoundingClientRect();
+    const s = scroller.getBoundingClientRect();
+    const covered  = 96; // the playback row floats over the bottom of the scroll
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    if (a.top < s.top) scroller.scrollBy({ top: a.top - s.top - 8, behavior });
+    else if (a.bottom > s.bottom - covered) scroller.scrollBy({ top: a.bottom - (s.bottom - covered) + 8, behavior });
+  }, [transcriptOpen, currentSegmentId]);
 
   // When controlledPhase is provided (playback mode), derive phaseIdx from it.
   const phaseIdx = controlledPhase
@@ -805,9 +819,10 @@ export function LessonView({
           <PhaseRail current={phaseIdx} />
         </header>
 
-        {/* In-panel caption below md, where the band over the scene is hidden */}
+        {/* In-panel caption below lg, where the band over the scene is hidden.
+            The min height keeps the card below from jumping on most sentences. */}
         {playbackMode && caption.current && (
-          <div className={cn(SHAPE.surface, "shrink-0 border border-line bg-surface px-4 py-3 md:hidden")}>
+          <div className={cn(SHAPE.surface, "min-h-[9rem] shrink-0 border border-line bg-surface px-4 py-3 lg:hidden")}>
             <p className="type-h4 font-semibold text-ink">{caption.current}</p>
             {caption.next && (
               <p className="mt-1.5 line-clamp-2 text-sm text-muted">{caption.next}</p>
@@ -876,9 +891,14 @@ export function LessonView({
                 className={cn("size-4 text-muted transition-transform duration-base", transcriptOpen && "rotate-180")}
               />
             </button>
-            {transcriptOpen && (
-              <div id="lesson-transcript" className="space-y-3 px-2 pb-3">
-                {PHASES.map((p) =>
+            <div
+              id="lesson-transcript"
+              ref={transcriptRef}
+              hidden={!transcriptOpen}
+              className="space-y-3 px-2 pb-3"
+            >
+              {transcriptOpen &&
+                PHASES.map((p) =>
                   segmentsByPhase[p].length > 0 ? (
                     <div key={p} className="space-y-1">
                       <PhaseLabel phase={p} className="px-2 py-1" />
@@ -886,8 +906,7 @@ export function LessonView({
                     </div>
                   ) : null,
                 )}
-              </div>
-            )}
+            </div>
           </section>
         )}
 
