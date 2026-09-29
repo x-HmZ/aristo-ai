@@ -4,7 +4,7 @@ Both classroom GLBs are built from the pre-V8.5 classroom by a headless Blender 
 
 | Variant | Ships as | Picker label | What it is |
 |---|---|---|---|
-| `day` | `public/models/classroom_default.glb` | Classroom | The original room restyled in place: warm plaster, pale oak, a display for the chalkboard. The same UV and atlas, three draw calls |
+| `day` | `public/models/classroom_default.glb` | Classroom | The original room restyled in place: a blue-grey front wall behind the teacher (V8.5b) with light grey side walls, pale oak, a display for the chalkboard. The same UV and atlas, three draw calls |
 | `evening` | `public/models/classroom_alternative.glb` | Evening | The same shell as a one-to-one study at dusk: only the learner's desk, a reading nook, pendant lamps, CC0 Poly Haven props. A regenerated lightmap UV, everything joined into one mesh, and the bake exported as an emissive texture so the app shows it as-is |
 
 Decisions and before/after: `.claude/docs/decisions.md` (search "V8.5") and `.claude/eval/2026-09-27-v8-5-room/`.
@@ -44,7 +44,7 @@ and `<out>_atlas.png` next to it.
 - Exports one baked material.
 
 Nothing structural moves, so the anchors the app reads (desk plane, floor, display plane) are the same in both rooms.
-To change a look, edit `PALETTES`, `LIGHTS` or `SKY` near the top of the script. Everything else is wiring.
+To change a look, edit `PALETTES`, `LIGHTS` or `SKY` near the top of the script (or try a wall colour with `--wall` / `--wall-side`). Everything else is wiring.
 
 Props must be real geometry: most Poly Haven plants are alpha-cut leaf cards, which one opaque baked atlas cannot show.
 

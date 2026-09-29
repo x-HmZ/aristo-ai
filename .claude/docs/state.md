@@ -2,6 +2,20 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-29 - V8.5b: day room walls the teachers read against
+
+Branch `dev/v8-5b-day-walls` off `origin/deploy-prep`; PR into `deploy-prep`. It is independent of V8.4a (#11).
+
+- Both teachers wear white against warm plaster: 1.1:1 shirt to wall. Hmz picked deep blue-grey from six baked
+  options.
+- `classroom_default.glb` was re-baked at full quality. The front wall behind the teacher is #6B8196, and the side and
+  back walls are #D6DDE3. All-blue-grey baked the bounce-lit walls near-black.
+- Result: Jake 1.57, MJ 1.51. The 12 anchor probes are identical, draw calls unchanged, fps median 158 → 156 (noise),
+  and the file is 1.05 MB.
+- `build_studio_room.py` gains `--wall` / `--wall-side` and a per-face `wall_side` split.
+- Evidence and the option sheets are in `.claude/eval/2026-09-29-v8-5b-walls/`.
+- Blender 5.1 is installed locally at `C:/Program Files/Blender Foundation/Blender 5.1/`. A preview bake takes about
+  1 minute, a full one about 30.
 ## 2026-09-29 - V8.4a done: lesson panel and controls, caption first (Opus plan, then execution)
 
 Branch `dev/v8-4a-lesson-panel` off `origin/deploy-prep` (7d457c3, #10 merged); PR into `deploy-prep`. Plan approved by Hmz
