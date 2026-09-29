@@ -18,11 +18,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight, CircleCheck, TrendingUp } from "lucide-react";
 import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
+import { Button } from "@/components/ui/button";
 import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
@@ -87,28 +89,26 @@ function DemoResultBar({
   onTryAnother: () => void;
 }) {
   const passed = score >= Math.ceil(total * 0.6);
+  const Icon = passed ? CircleCheck : TrendingUp;
   return (
-    <div className="px-4 py-3 bg-white/50 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl space-y-2.5">
-      <div className="flex items-center gap-2">
-        <span className="text-sm">{passed ? "🎉" : "💪"}</span>
-        <span className="text-sm font-bold text-aristo-brown-main tabular-nums">{score}/{total} correct</span>
+    <div className="space-y-2.5 rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 backdrop-blur-md">
+      <div className="flex items-center gap-2 text-ink">
+        <Icon aria-hidden className={passed ? "size-5 text-success" : "size-5 text-warning"} />
+        <span className="text-sm font-bold tabular-nums">{score}/{total} correct</span>
       </div>
-      <p className="text-xs text-aristo-brown-muted leading-relaxed">
-        Aristo remembers what you learn and adjusts every lesson to your pace. Sign up to keep this progress and start your own course.
+      <p className="type-caption text-body">
+        Aristo remembers what you know and paces each lesson to your answers. Create an account to keep this progress.
       </p>
-      <div className="flex items-center gap-2">
-        <Link
-          href="/sign-up"
-          className="flex-1 text-center px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-aristo-sm transition-all"
-        >
-          Create your free account →
-        </Link>
-        <button
-          onClick={onTryAnother}
-          className="shrink-0 px-3 py-2 rounded-xl text-xs font-medium text-aristo-brown-muted hover:text-aristo-brown-main transition-colors"
-        >
+      <div className="flex flex-wrap items-center gap-2">
+        <Button asChild className="flex-1">
+          <Link href="/sign-up">
+            Create an account
+            <ArrowRight aria-hidden />
+          </Link>
+        </Button>
+        <Button variant="ghost" onClick={onTryAnother} className="shrink-0 text-body">
           Try another topic
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -198,9 +198,9 @@ export function DemoClient() {
     if (!topic) return null;
     if (activeQuiz) {
       return (
-        <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl flex items-center justify-center gap-2 text-xs text-aristo-brown-muted">
-          <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-pulse" />
-          <span>Quiz on your desk — look down</span>
+        <div className="flex items-center justify-center gap-2 rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
+          <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-pulse" />
+          <span>Your quiz is on the desk. Look down.</span>
         </div>
       );
     }

@@ -8,24 +8,33 @@
  *
  *   CourseLoadingBar   — while the auto-teach API call is in flight
  *   CourseTakeQuizBar  — lesson loaded, quiz not yet started
- *   CourseAdvanceBar   — quiz done, shows "Next Topic" or "Finish Course"
+ *   CourseAdvanceBar   — quiz done, shows "Next topic" or "Finish course"
+ *
+ * On the design system since V8.4b: they follow the theme like the lesson panel
+ * above them (light under the Pages Router lock until V8.4c removes it).
  */
+
+import { ArrowRight, CircleCheck, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const BAR = "rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 backdrop-blur-md";
 
 // ─── Loading bar (auto-teach in flight) ──────────────────────────────────────
 
 export function CourseLoadingBar() {
   return (
-    <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl flex items-center gap-2">
+    <div className={cn(BAR, "flex items-center gap-2")}>
       <div className="flex gap-1">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-bounce"
+            className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce"
             style={{ animationDelay: `${i * 0.15}s` }}
           />
         ))}
       </div>
-      <span className="text-xs text-aristo-brown-muted">Loading your lesson…</span>
+      <span className="text-sm text-muted">Loading your lesson…</span>
     </div>
   );
 }
@@ -40,18 +49,14 @@ export function CourseTakeQuizBar({
   isLoading:  boolean;
 }) {
   return (
-    <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-aristo-brown-muted font-medium">
-          Lesson complete — ready to test your knowledge?
+    <div className={BAR}>
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <p className="text-sm font-medium text-body">
+          Ready for the quiz?
         </p>
-        <button
-          onClick={onTakeQuiz}
-          disabled={isLoading}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 shadow-aristo-sm transition-all"
-        >
-          {isLoading ? "Loading quiz…" : "Take Quiz →"}
-        </button>
+        <Button onClick={onTakeQuiz} disabled={isLoading} className="shrink-0">
+          {isLoading ? "Loading quiz…" : (<>Take the quiz<ArrowRight aria-hidden /></>)}
+        </Button>
       </div>
     </div>
   );
@@ -74,28 +79,27 @@ export function CourseAdvanceBar({
 }) {
   const pct        = total > 0 ? Math.round((score / total) * 100) : 0;
   const passed     = score >= Math.ceil(total * 0.6);
-  const scoreColor = passed ? "#16A34A" : pct >= 40 ? "hsl(var(--aristo-orange-ink))" : "#DC2626";
+  // Colour is never the only cue: the icon and the words change with it.
+  const scoreColor = passed ? "text-success" : pct >= 40 ? "text-warning" : "text-danger";
+  const Icon       = passed ? CircleCheck : TrendingUp;
 
   return (
-    <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-sm">{passed ? "🎉" : "💪"}</span>
+    <div className={BAR}>
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className={cn("flex items-center gap-2", scoreColor)}>
+          <Icon aria-hidden className="size-5 shrink-0" />
           <div>
-            <span className="text-sm font-bold tabular-nums" style={{ color: scoreColor }}>
+            <span className="text-sm font-bold tabular-nums">
               {score}/{total}
             </span>
-            <span className="text-xs text-aristo-brown-muted ml-1.5">
-              {passed ? "Nice work!" : "Keep going!"}
+            <span className="ml-1.5 text-sm text-body">
+              {passed ? "Nice work." : "Keep going."}
             </span>
           </div>
         </div>
-        <button
-          onClick={isLastTopic ? onFinish : onAdvance}
-          className="shrink-0 px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-aristo-sm transition-all"
-        >
-          {isLastTopic ? "Finish Course ✓" : "Next Topic →"}
-        </button>
+        <Button onClick={isLastTopic ? onFinish : onAdvance} className="shrink-0">
+          {isLastTopic ? "Finish course" : (<>Next topic<ArrowRight aria-hidden /></>)}
+        </Button>
       </div>
     </div>
   );
