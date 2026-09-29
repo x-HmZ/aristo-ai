@@ -2,6 +2,44 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-29 - V8.2 done: design system v2, one orange, app-wide theme (Opus plan, then execution)
+
+Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens and #9 V8.1); PR into
+`deploy-prep`, not merged (Hmz merges). The system is written down in `.claude/docs/brand-system.md`;
+`landing-design-system.md` is now a pointer. Decisions are in decisions.md (seven V8.2 rows).
+
+- **Orange decision:** `aristo-orange-main` #F97B2F and `aristo-brown-main` #3D2110 win; the legacy
+  #F59047 / #402B1C tokens are deleted and their uses renamed. Visible on purpose in admin, the loading
+  screen, `.aristo-scroll`, the `shadow-aristo*` tint and two scene chips. `src/lib` is untouched except the
+  new `src/lib/design/shape.ts` (moved from `components/landing`).
+- **Semantic tokens app-wide** (bg ... info, plus `accent-hover`), the landing's Night Class values 1:1;
+  shadcn's colour names are gone (mapping table in brand-system.md). Motion tokens (`duration-fast/base/slow/
+  reveal`, `ease-out-soft`) and a `type-*` scale.
+- **Theme:** `data-theme` + key `aristo-theme` (the old `aristo-landing-theme` is carried over once), script in
+  the root layout head. **Light lock** meta on /learn, /demo, /dev (`pages/_app.tsx`), admin and create-teacher,
+  which also keeps their old page defaults. Remove it per surface in V8.4 / V8.6.
+- **Moved onto the system:** `ui/*` (control radius, 44px heights, press, focus ring, e1/e2), sign-in, sign-up,
+  pending (Column mark instead of gradient text), not-found (was near-invisible).
+- **How no-change was checked:** computed styles of every element hashed before and after in the browser.
+  `/` identical in both themes (inside the landing root). `/demo` under OS-dark identical to the light
+  baseline (the lock holds); the lesson state differed only by the planned `shadow-aristo-sm` tint. The AA
+  checker (each text node against its composited background) passed every pair on `/`, `/sign-in` and
+  `/sign-up` at 360 / 768 / 1280 in both themes (min 4.74 light, 5.97 dark), with no horizontal scroll.
+- **Gates:** type-check clean; lint 0 errors / 10 warnings (unchanged); tests **404** (408 minus the four
+  per-token assertions for the two deleted tokens); build green; `/` static, 122 kB, no three import.
+- **code-reviewer:** no critical or high. Fixed: alpha hover on accent fills (4.1:1, now `accent-hover`), light
+  success/warning on sunk/tint (4.2:1, darkened), the lock missing the viewport scrollbar. Documented, not
+  changed: tailwind-merge does not know `type-*` / `shadow-e*` / `duration-*`; browsers without `:has()` lose
+  the lock's cream defaults.
+- **Not checked, needs a session:** /admin/* and /create-teacher by eye (they rest on the diff and the build
+  output, where the lock meta is present); whether their streamed metadata lets one dark frame through for an
+  OS-dark visitor (brand-system.md, Theme).
+- **Hex literals left, each with an owner** (brand-system.md register): classroom status colours (V8.4a/b),
+  admin data-viz (V8.6). Known AA gaps inside the locked classroom: white on #F97B2F (2.66), `orange-ink` on
+  cream (4.15), the loading caption, all V8.4.
+- **Next:** V8.4a/b/c (classroom UI; drop the lock from `pages/_app.tsx` when it is on the tokens), V8.1 step 5
+  microcopy sweep, V8.3, V8.6 (admin token pass, Haiku).
+
 ## 2026-09-28 - V8.1 done: brand foundation, mark and copy (Opus for the words and mark, Sonnet to apply)
 
 Branch `dev/v8-1-brand`, off `origin/deploy-prep`; PR into `deploy-prep`, not merged (Hmz merges). Gates and the code-review
