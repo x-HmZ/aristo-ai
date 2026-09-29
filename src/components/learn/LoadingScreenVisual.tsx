@@ -67,14 +67,14 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
         <AristoMark
           decorative={false}
           className="h-[22px] text-aristo-brown-main"
-          litClassName="text-aristo-orange"
+          litClassName="text-aristo-orange-main"
         />
 
         {/* Progress bar — slim, single element, no spinner stacked on top */}
         <div className="w-full flex flex-col gap-2">
           <div className="w-full h-1.5 rounded-full bg-aristo-beige-dark/60 overflow-hidden">
             <div
-              className="h-full rounded-full bg-aristo-orange transition-[width] duration-300 ease-out"
+              className="h-full rounded-full bg-aristo-orange-main transition-[width] duration-300 ease-out"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -111,7 +111,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
         {stalled && (
           <button
             onClick={handleReload}
-            className="text-xs font-semibold text-white bg-aristo-orange hover:bg-aristo-orange-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
+            className="text-xs font-semibold text-white bg-aristo-orange-main hover:bg-aristo-orange-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
           >
             Reload
           </button>

@@ -12,8 +12,8 @@ const brandBadgeVariants = cva(
   {
     variants: {
       variant: {
-        neutral:  "bg-white/70 border-white/60 text-aristo-brown/70",
-        orange:   "bg-aristo-orange/15 border-aristo-orange/30 text-aristo-orange",
+        neutral:  "bg-white/70 border-white/60 text-aristo-brown-main/70",
+        orange:   "bg-aristo-orange-main/15 border-aristo-orange-main/30 text-aristo-orange-main",
         purple:   "bg-violet-100 border-violet-200 text-violet-700",
         green:    "bg-green-100 border-green-200 text-green-700",
         red:      "bg-red-100 border-red-200 text-red-700",

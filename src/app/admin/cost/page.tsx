@@ -140,7 +140,7 @@ export default function CostPage() {
         <BrandCard>
           <SectionTitle title="Daily spend trend" description={`USD per day over the last ${range}.`} />
           {!data || data.trend.length === 0 ? (
-            <p className="text-xs text-aristo-brown/50">No spend recorded in this range.</p>
+            <p className="text-xs text-aristo-brown-main/50">No spend recorded in this range.</p>
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={data.trend} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
@@ -180,7 +180,7 @@ export default function CostPage() {
         <BrandCard>
           <SectionTitle title="Spend by provider" description="Which providers account for most cost?" />
           {!data || data.byProvider.length === 0 ? (
-            <p className="text-xs text-aristo-brown/50">No spend recorded in this range.</p>
+            <p className="text-xs text-aristo-brown-main/50">No spend recorded in this range.</p>
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={data.byProvider} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
@@ -215,7 +215,7 @@ export default function CostPage() {
           />
         </div>
         {!data || data.byFeature.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown/50">No spend recorded.</p>
+          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No spend recorded.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -229,12 +229,12 @@ export default function CostPage() {
             <TableBody>
               {data.byFeature.map((f) => (
                 <TableRow key={f.feature}>
-                  <TableCell className="font-mono text-xs text-aristo-brown">{f.feature}</TableCell>
-                  <TableCell className="text-xs text-aristo-brown/70 tabular-nums">{f.count}</TableCell>
-                  <TableCell className="text-right text-xs font-bold text-aristo-brown tabular-nums">
+                  <TableCell className="font-mono text-xs text-aristo-brown-main">{f.feature}</TableCell>
+                  <TableCell className="text-xs text-aristo-brown-main/70 tabular-nums">{f.count}</TableCell>
+                  <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
                     ${f.usd.toFixed(4)}
                   </TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown/70 tabular-nums">
+                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
                     ${(f.usd / Math.max(1, f.count)).toFixed(4)}
                   </TableCell>
                 </TableRow>
@@ -253,7 +253,7 @@ export default function CostPage() {
           />
         </div>
         {!data || data.byModel.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown/50">No data.</p>
+          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No data.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -267,12 +267,12 @@ export default function CostPage() {
             <TableBody>
               {data.byModel.map((m) => (
                 <TableRow key={m.model}>
-                  <TableCell className="font-mono text-[11px] text-aristo-brown">{m.model}</TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown/70 tabular-nums">{m.count}</TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown/70 tabular-nums">
+                  <TableCell className="font-mono text-[11px] text-aristo-brown-main">{m.model}</TableCell>
+                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">{m.count}</TableCell>
+                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
                     ${(m.usd / Math.max(1, m.count)).toFixed(4)}
                   </TableCell>
-                  <TableCell className="text-right text-xs font-bold text-aristo-brown tabular-nums">
+                  <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
                     ${m.usd.toFixed(4)}
                   </TableCell>
                 </TableRow>
@@ -289,7 +289,7 @@ export default function CostPage() {
           description="Cost partitioned by API provider AND by the feature it powers. Use this to spot which service is driving spend on which provider."
         />
         {!data || data.providerFeatureMatrix.length === 0 ? (
-          <p className="text-xs text-aristo-brown/50">No spend recorded.</p>
+          <p className="text-xs text-aristo-brown-main/50">No spend recorded.</p>
         ) : (
           <div className="space-y-4">
             {data.providerFeatureMatrix.map((p) => (
@@ -300,11 +300,11 @@ export default function CostPage() {
                       className="h-2.5 w-2.5 rounded-full"
                       style={{ background: PROVIDER_COLOR[p.provider] ?? "#94A3B8" }}
                     />
-                    <span className="font-mono text-xs font-bold text-aristo-brown uppercase">
+                    <span className="font-mono text-xs font-bold text-aristo-brown-main uppercase">
                       {p.provider}
                     </span>
                   </div>
-                  <span className="text-xs font-bold text-aristo-brown tabular-nums">
+                  <span className="text-xs font-bold text-aristo-brown-main tabular-nums">
                     ${p.usd.toFixed(4)}
                   </span>
                 </div>
@@ -313,7 +313,7 @@ export default function CostPage() {
                     const pct = (f.usd / Math.max(0.0001, p.usd)) * 100;
                     return (
                       <div key={f.feature} className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] text-aristo-brown/70 w-40 truncate">
+                        <span className="font-mono text-[10px] text-aristo-brown-main/70 w-40 truncate">
                           {f.feature}
                         </span>
                         <div className="flex-1 h-1.5 rounded-full bg-white/60 overflow-hidden">
@@ -325,10 +325,10 @@ export default function CostPage() {
                             }}
                           />
                         </div>
-                        <span className="text-[10px] text-aristo-brown/60 tabular-nums w-12 text-right">
+                        <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-12 text-right">
                           {f.count}
                         </span>
-                        <span className="text-[10px] font-bold text-aristo-brown tabular-nums w-16 text-right">
+                        <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
                           ${f.usd.toFixed(4)}
                         </span>
                       </div>
@@ -353,7 +353,7 @@ export default function CostPage() {
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
               placeholder="Filter by email…"
-              className="w-56 text-xs bg-white/60 border border-white/60 rounded-xl px-3 py-1.5 text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40"
+              className="w-56 text-xs bg-white/60 border border-white/60 rounded-xl px-3 py-1.5 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
             />
             <BrandBadge variant="neutral" size="md">
               {data ? `${filteredUsers.length} / ${data.userBreakdown.length}` : "—"}
@@ -361,9 +361,9 @@ export default function CostPage() {
           </div>
         </div>
         {!data || data.userBreakdown.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown/50">No spend tied to users yet.</p>
+          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No spend tied to users yet.</p>
         ) : filteredUsers.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown/50">No users match that filter.</p>
+          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No users match that filter.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -390,21 +390,21 @@ export default function CostPage() {
                     >
                       <TableCell>
                         {isOpen
-                          ? <ChevronDown   className="h-3.5 w-3.5 text-aristo-brown/50" />
-                          : <ChevronRight  className="h-3.5 w-3.5 text-aristo-brown/50" />}
+                          ? <ChevronDown   className="h-3.5 w-3.5 text-aristo-brown-main/50" />
+                          : <ChevronRight  className="h-3.5 w-3.5 text-aristo-brown-main/50" />}
                       </TableCell>
                       <TableCell>
-                        <div className="text-xs font-medium text-aristo-brown truncate max-w-[260px]">
+                        <div className="text-xs font-medium text-aristo-brown-main truncate max-w-[260px]">
                           {u.email ?? "—"}
                         </div>
-                        <div className="font-mono text-[10px] text-aristo-brown/40 truncate max-w-[260px]">
+                        <div className="font-mono text-[10px] text-aristo-brown-main/40 truncate max-w-[260px]">
                           {u.user_id}
                         </div>
                       </TableCell>
-                      <TableCell className="font-mono text-[11px] text-aristo-brown/70">
+                      <TableCell className="font-mono text-[11px] text-aristo-brown-main/70">
                         {topFeat ? `${topFeat.feature} ($${topFeat.usd.toFixed(4)})` : "—"}
                       </TableCell>
-                      <TableCell className="text-[11px] text-aristo-brown/70">
+                      <TableCell className="text-[11px] text-aristo-brown-main/70">
                         {topProv ? (
                           <span className="inline-flex items-center gap-1.5">
                             <span
@@ -415,10 +415,10 @@ export default function CostPage() {
                           </span>
                         ) : "—"}
                       </TableCell>
-                      <TableCell className="text-right text-xs text-aristo-brown/70 tabular-nums">
+                      <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
                         {u.count}
                       </TableCell>
-                      <TableCell className="text-right text-xs font-bold text-aristo-brown tabular-nums">
+                      <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
                         ${u.usd.toFixed(4)}
                       </TableCell>
                       <TableCell className="text-right">
@@ -426,7 +426,7 @@ export default function CostPage() {
                           href={`/admin/users?userId=${u.user_id}`}
                           onClick={(e) => e.stopPropagation()}
                           title="Open user drawer"
-                          className="inline-flex p-1.5 rounded-lg hover:bg-white/70 text-aristo-brown/60 hover:text-aristo-orange transition-colors"
+                          className="inline-flex p-1.5 rounded-lg hover:bg-white/70 text-aristo-brown-main/60 hover:text-aristo-orange-main transition-colors"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
@@ -437,7 +437,7 @@ export default function CostPage() {
                         <TableCell colSpan={7} className="bg-aristo-cream/40">
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-3">
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
                                 Per service
                               </div>
                               <div className="space-y-1">
@@ -445,16 +445,16 @@ export default function CostPage() {
                                   const pct = (f.usd / Math.max(0.0001, u.usd)) * 100;
                                   return (
                                     <div key={f.feature} className="flex items-center gap-2">
-                                      <span className="font-mono text-[10px] text-aristo-brown/70 w-32 truncate">
+                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-32 truncate">
                                         {f.feature}
                                       </span>
                                       <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
-                                        <div className="h-full bg-aristo-orange rounded-full" style={{ width: `${pct}%` }} />
+                                        <div className="h-full bg-aristo-orange-main rounded-full" style={{ width: `${pct}%` }} />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
                                         {f.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
                                         ${f.usd.toFixed(4)}
                                       </span>
                                     </div>
@@ -463,7 +463,7 @@ export default function CostPage() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
                                 Per API
                               </div>
                               <div className="space-y-1">
@@ -475,7 +475,7 @@ export default function CostPage() {
                                         className="h-2 w-2 rounded-full"
                                         style={{ background: PROVIDER_COLOR[p.provider] ?? "#94A3B8" }}
                                       />
-                                      <span className="font-mono text-[10px] text-aristo-brown/70 w-24 truncate uppercase">
+                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-24 truncate uppercase">
                                         {p.provider}
                                       </span>
                                       <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
@@ -487,10 +487,10 @@ export default function CostPage() {
                                           }}
                                         />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
                                         {p.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
                                         ${p.usd.toFixed(4)}
                                       </span>
                                     </div>
@@ -499,7 +499,7 @@ export default function CostPage() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
                                 Per model
                               </div>
                               <div className="space-y-1">
@@ -507,16 +507,16 @@ export default function CostPage() {
                                   const pct = (m.usd / Math.max(0.0001, u.usd)) * 100;
                                   return (
                                     <div key={m.model} className="flex items-center gap-2">
-                                      <span className="font-mono text-[10px] text-aristo-brown/70 w-36 truncate">
+                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-36 truncate">
                                         {m.model}
                                       </span>
                                       <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
                                         <div className="h-full rounded-full" style={{ width: `${pct}%`, background: BRAND_HEX.purple }} />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
                                         {m.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
                                         ${m.usd.toFixed(4)}
                                       </span>
                                     </div>

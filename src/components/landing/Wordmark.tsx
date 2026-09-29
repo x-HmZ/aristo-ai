@@ -13,8 +13,8 @@ export function Wordmark({ className }: { className?: string }) {
   return (
     <AristoMark
       variant="wordmark"
-      className={cn("h-[14.5px] text-lp-ink sm:h-[18.6px]", className)}
-      litClassName="text-lp-accent"
+      className={cn("h-[14.5px] text-ink sm:h-[18.6px]", className)}
+      litClassName="text-accent"
     />
   );
 }

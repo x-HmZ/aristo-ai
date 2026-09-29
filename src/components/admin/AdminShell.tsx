@@ -22,7 +22,7 @@ export interface AdminShellProps {
  */
 export function AdminShell({ children, admin }: AdminShellProps) {
   return (
-    <div className="min-h-screen bg-aristo-gradient text-aristo-brown">
+    <div className="min-h-screen bg-aristo-gradient text-aristo-brown-main">
       <div className="flex">
         {/* ── Sidebar ─────────────────────────────────────────────────── */}
         <aside
@@ -34,11 +34,11 @@ export function AdminShell({ children, admin }: AdminShellProps) {
           {/* Brand */}
           <div className="h-14 px-5 flex items-center border-b border-aristo-beige-dark/40">
             <Link href="/admin/overview" className="flex items-center gap-2 group">
-              <div className="h-7 w-7 rounded-xl bg-aristo-orange grid place-items-center shadow-aristo-sm">
+              <div className="h-7 w-7 rounded-xl bg-aristo-orange-main grid place-items-center shadow-aristo-sm">
                 <span className="text-white text-sm font-bold">A</span>
               </div>
-              <span className="text-sm font-bold text-aristo-brown tracking-tight">
-                Aristo <span className="text-aristo-orange">Admin</span>
+              <span className="text-sm font-bold text-aristo-brown-main tracking-tight">
+                Aristo <span className="text-aristo-orange-main">Admin</span>
               </span>
             </Link>
           </div>
@@ -52,7 +52,7 @@ export function AdminShell({ children, admin }: AdminShellProps) {
           <div className="border-t border-aristo-beige-dark/40 p-3 space-y-1">
             <Link
               href="/learn"
-              className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-aristo-brown/70 hover:bg-white/70 hover:text-aristo-brown transition-colors"
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-aristo-brown-main/70 hover:bg-white/70 hover:text-aristo-brown-main transition-colors"
             >
               <Home className="h-3.5 w-3.5" />
               Back to /learn
@@ -60,7 +60,7 @@ export function AdminShell({ children, admin }: AdminShellProps) {
             <form action={signOut}>
               <button
                 type="submit"
-                className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-aristo-brown/70 hover:bg-red-50 hover:text-red-600 transition-colors"
+                className="w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-aristo-brown-main/70 hover:bg-red-50 hover:text-red-600 transition-colors"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 Sign out
@@ -73,19 +73,19 @@ export function AdminShell({ children, admin }: AdminShellProps) {
         <div className="flex-1 ml-60 min-w-0">
           {/* Topbar */}
           <header className="sticky top-0 z-20 h-14 flex items-center justify-between gap-4 px-6 bg-white/60 backdrop-blur-xl border-b border-white/40">
-            <div className="text-xs font-semibold text-aristo-brown/50 uppercase tracking-wider">
+            <div className="text-xs font-semibold text-aristo-brown-main/50 uppercase tracking-wider">
               Admin Console
             </div>
             <div className="flex items-center gap-3 text-xs">
               {admin?.email && (
-                <div className="text-aristo-brown/70">
-                  <span className="hidden sm:inline text-aristo-brown/40">
+                <div className="text-aristo-brown-main/70">
+                  <span className="hidden sm:inline text-aristo-brown-main/40">
                     Signed in as{" "}
                   </span>
                   <span className="font-semibold">{admin.email}</span>
                 </div>
               )}
-              <div className="h-7 w-7 rounded-full bg-aristo-orange-pale grid place-items-center text-aristo-orange font-bold text-xs">
+              <div className="h-7 w-7 rounded-full bg-aristo-orange-pale grid place-items-center text-aristo-orange-main font-bold text-xs">
                 {(admin?.full_name ?? admin?.email ?? "?")[0]?.toUpperCase()}
               </div>
             </div>

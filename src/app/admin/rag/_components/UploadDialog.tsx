@@ -84,8 +84,8 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="bg-aristo-cream max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-aristo-brown flex items-center gap-2">
-            <Upload className="h-4 w-4 text-aristo-orange" />
+          <DialogTitle className="text-aristo-brown-main flex items-center gap-2">
+            <Upload className="h-4 w-4 text-aristo-orange-main" />
             Upload reference material
           </DialogTitle>
           <DialogDescription>
@@ -132,7 +132,7 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
             />
           </Field>
 
-          <div className="text-center text-[10px] text-aristo-brown/40">— OR —</div>
+          <div className="text-center text-[10px] text-aristo-brown-main/40">— OR —</div>
 
           <Field label="File upload" hint=".txt or .md only">
             <input
@@ -155,7 +155,7 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
               <button
                 type="button"
                 onClick={() => { setFile(null); if (fileRef.current) fileRef.current.value = ""; }}
-                className="ml-2 text-xs text-aristo-brown/50 hover:text-red-500"
+                className="ml-2 text-xs text-aristo-brown-main/50 hover:text-red-500"
               >
                 clear
               </button>
@@ -181,7 +181,7 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
 }
 
 const inputCls =
-  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown placeholder:text-aristo-brown/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange/40 w-full";
+  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 w-full";
 
 function Field({
   label, required, hint, children,
@@ -191,10 +191,10 @@ function Field({
   return (
     <div>
       <div className="flex items-end justify-between mb-1.5 gap-3">
-        <label className="block text-xs font-semibold text-aristo-brown/70 uppercase tracking-wider">
-          {label}{required && <span className="text-aristo-orange ml-0.5">*</span>}
+        <label className="block text-xs font-semibold text-aristo-brown-main/70 uppercase tracking-wider">
+          {label}{required && <span className="text-aristo-orange-main ml-0.5">*</span>}
         </label>
-        {hint && <span className="text-[10px] text-aristo-brown/50 normal-case">{hint}</span>}
+        {hint && <span className="text-[10px] text-aristo-brown-main/50 normal-case">{hint}</span>}
       </div>
       {children}
     </div>

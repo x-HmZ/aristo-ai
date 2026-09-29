@@ -17,7 +17,7 @@ const brandCardVariants = cva(
       variant: {
         default: "bg-white/70 border-white/40 shadow-aristo-sm",
         cream:   "bg-aristo-cream/80 border-aristo-beige-dark/60",
-        accent:  "bg-aristo-orange-pale/50 border-aristo-orange/30 shadow-aristo-sm",
+        accent:  "bg-aristo-orange-pale/50 border-aristo-orange-main/30 shadow-aristo-sm",
         success: "bg-green-50/80 border-green-200",
         warning: "bg-amber-50/80 border-amber-200",
         danger:  "bg-red-50/80 border-red-200",

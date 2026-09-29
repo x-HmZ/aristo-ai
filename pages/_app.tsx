@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import "@/app/globals.css";
 import { geistSans, geistMono } from "@/lib/fonts";
+import { THEME_LOCK_META } from "@/components/theme/theme";
 
 /**
  * The Pages Router entry (/learn, /demo, /dev/*).
@@ -36,6 +37,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-icon" />
+        {/* The classroom is not on the design system yet (V8.4): the lock
+            keeps these pages light whatever the theme. See theme.ts. */}
+        <meta name={THEME_LOCK_META} content="light" />
       </Head>
       <style jsx global>{`
         :root {

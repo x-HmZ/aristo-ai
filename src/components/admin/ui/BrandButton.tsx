@@ -9,14 +9,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const brandButtonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aristo-orange/50 disabled:opacity-50 disabled:cursor-not-allowed",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aristo-orange-main/50 disabled:opacity-50 disabled:cursor-not-allowed",
   {
     variants: {
       variant: {
         primary:
-          "bg-aristo-orange text-white hover:bg-aristo-orange/90 shadow-aristo-sm",
+          "bg-aristo-orange-main text-white hover:bg-aristo-orange-main/90 shadow-aristo-sm",
         secondary:
-          "bg-white/80 border border-white/60 text-aristo-brown hover:bg-white",
+          "bg-white/80 border border-white/60 text-aristo-brown-main hover:bg-white",
         purple:
           "bg-violet-500 text-white hover:bg-violet-600 shadow-sm",
         success:
@@ -24,9 +24,9 @@ const brandButtonVariants = cva(
         destructive:
           "bg-red-500 text-white hover:bg-red-600 shadow-sm",
         ghost:
-          "text-aristo-brown/70 hover:text-aristo-brown hover:bg-white/60",
+          "text-aristo-brown-main/70 hover:text-aristo-brown-main hover:bg-white/60",
         outline:
-          "border border-aristo-orange/40 text-aristo-orange hover:bg-aristo-orange/10",
+          "border border-aristo-orange-main/40 text-aristo-orange-main hover:bg-aristo-orange-main/10",
       },
       size: {
         sm: "text-xs px-3 py-1.5",

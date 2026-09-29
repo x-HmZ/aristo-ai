@@ -88,7 +88,7 @@ export default function CourseDetailPage({
 
       {!data ? (
         <BrandCard>
-          <p className="text-xs text-aristo-brown/60 flex items-center gap-2">
+          <p className="text-xs text-aristo-brown-main/60 flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             Loading analytics…
           </p>
@@ -130,7 +130,7 @@ export default function CourseDetailPage({
                 description="Learners currently stalled at each module (status ≠ completed)."
               />
               {data.moduleDropoff.length === 0 ? (
-                <p className="text-xs text-aristo-brown/50">No module data.</p>
+                <p className="text-xs text-aristo-brown-main/50">No module data.</p>
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.moduleDropoff} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
@@ -162,7 +162,7 @@ export default function CourseDetailPage({
                 description="Histogram of mastery_score across the course's concepts (all enrolled learners)."
               />
               {data.masteryDistribution.every((b) => b.count === 0) ? (
-                <p className="text-xs text-aristo-brown/50">No mastery data yet.</p>
+                <p className="text-xs text-aristo-brown-main/50">No mastery data yet.</p>
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.masteryDistribution} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
@@ -200,15 +200,15 @@ export default function CourseDetailPage({
               description="Course-concepts with the lowest average mastery. Candidates for lesson review."
             />
             {data.conceptStats.length === 0 ? (
-              <p className="text-xs text-aristo-brown/50">No assessed concepts yet.</p>
+              <p className="text-xs text-aristo-brown-main/50">No assessed concepts yet.</p>
             ) : (
               <div className="divide-y divide-white/60">
                 {data.conceptStats.slice(0, 10).map((c) => (
                   <div key={c.concept_id} className="flex items-center justify-between py-2 gap-3">
-                    <span className="font-mono text-[11px] text-aristo-brown/60 truncate flex-1">
+                    <span className="font-mono text-[11px] text-aristo-brown-main/60 truncate flex-1">
                       {c.concept_id}
                     </span>
-                    <span className="text-xs text-aristo-brown/50 tabular-nums w-16 text-right">
+                    <span className="text-xs text-aristo-brown-main/50 tabular-nums w-16 text-right">
                       n={c.learner_count}
                     </span>
                     <div className="w-40 bg-white/60 rounded-full h-2 overflow-hidden">
@@ -222,7 +222,7 @@ export default function CourseDetailPage({
                         }}
                       />
                     </div>
-                    <span className="text-xs text-aristo-brown/70 tabular-nums w-10 text-right">
+                    <span className="text-xs text-aristo-brown-main/70 tabular-nums w-10 text-right">
                       {c.avg_mastery}%
                     </span>
                   </div>

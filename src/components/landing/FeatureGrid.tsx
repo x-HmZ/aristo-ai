@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/landing/Reveal";
-import { SHAPE } from "@/components/landing/shape";
+import { SHAPE } from "@/lib/design/shape";
 
 /**
  * A bento, not three equal cards.
@@ -40,8 +40,8 @@ function Cell({
         SHAPE.surface,
         "flex h-full flex-col items-start gap-3 border p-6 sm:p-7",
         tinted
-          ? "border-lp-tint-line bg-gradient-to-br from-lp-tint to-lp-surface"
-          : "border-lp-line bg-lp-surface",
+          ? "border-tint-line bg-gradient-to-br from-tint to-surface"
+          : "border-line bg-surface",
         className
       )}
     >
@@ -49,13 +49,13 @@ function Cell({
         className={cn(
           SHAPE.control,
           "inline-flex size-11 items-center justify-center",
-          tinted ? "bg-lp-surface/70" : "border border-lp-line bg-lp-bg"
+          tinted ? "bg-surface/70" : "border border-line bg-bg"
         )}
       >
-        <Icon className="size-[21px] text-lp-accent-text" />
+        <Icon className="size-[21px] text-accent-text" />
       </span>
-      <h3 className="text-lg font-bold text-lp-ink">{title}</h3>
-      <p className="text-[14.5px] leading-relaxed text-lp-body">
+      <h3 className="text-lg font-bold text-ink">{title}</h3>
+      <p className="text-[14.5px] leading-relaxed text-body">
         {children}
       </p>
     </div>
@@ -87,27 +87,27 @@ export function FeatureGrid() {
           <div
             className={cn(
               SHAPE.surface,
-              "flex h-full flex-col overflow-hidden border border-lp-line bg-lp-surface"
+              "flex h-full flex-col overflow-hidden border border-line bg-surface"
             )}
           >
             <div className="flex flex-col items-start gap-3 p-6 sm:p-7">
               <span
                 className={cn(
                   SHAPE.control,
-                  "inline-flex size-11 items-center justify-center border border-lp-line bg-lp-bg"
+                  "inline-flex size-11 items-center justify-center border border-line bg-bg"
                 )}
               >
-                <Box className="size-[21px] text-lp-accent-text" />
+                <Box className="size-[21px] text-accent-text" />
               </span>
-              <h3 className="text-lg font-bold text-lp-ink">
+              <h3 className="text-lg font-bold text-ink">
                 Models Made for Your Lesson
               </h3>
-              <p className="text-[14.5px] leading-relaxed text-lp-body">
+              <p className="text-[14.5px] leading-relaxed text-body">
                 Topics with a shape get a 3D model, generated for the lesson
                 and placed in the classroom.
               </p>
             </div>
-            <div className="mt-auto h-28 overflow-hidden border-t border-lp-line sm:h-32">
+            <div className="mt-auto h-28 overflow-hidden border-t border-line sm:h-32">
               <Image
                 src="/images/landing/classroom-3d-model.webp"
                 alt=""

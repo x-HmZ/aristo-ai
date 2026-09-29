@@ -133,13 +133,13 @@ export default function MisconceptionsPage() {
           />
         </div>
         {data === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown/50">
+          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
             Loading…
           </div>
         ) : data.rows.length === 0 ? (
           <div className="p-10 text-center">
             <CheckCircle2 className="h-10 w-10 text-green-500 mx-auto mb-2" />
-            <p className="text-sm text-aristo-brown/60">No matching misconceptions.</p>
+            <p className="text-sm text-aristo-brown-main/60">No matching misconceptions.</p>
           </div>
         ) : (
           <Table>
@@ -161,14 +161,14 @@ export default function MisconceptionsPage() {
                 return (
                   <TableRow key={key}>
                     <TableCell className="max-w-[200px]">
-                      <div className="text-aristo-brown font-medium truncate">
+                      <div className="text-aristo-brown-main font-medium truncate">
                         {r.concept_name ?? r.concept_id}
                       </div>
                       {r.domain && (
                         <BrandBadge variant="neutral" size="sm" className="mt-1">{r.domain}</BrandBadge>
                       )}
                     </TableCell>
-                    <TableCell className="text-xs text-aristo-brown/80 max-w-[420px]">
+                    <TableCell className="text-xs text-aristo-brown-main/80 max-w-[420px]">
                       <span className="line-clamp-2">{r.misconception}</span>
                     </TableCell>
                     <TableCell>
@@ -185,7 +185,7 @@ export default function MisconceptionsPage() {
                             }}
                           />
                         </div>
-                        <span className="text-xs text-aristo-brown/70 tabular-nums w-8 text-right">
+                        <span className="text-xs text-aristo-brown-main/70 tabular-nums w-8 text-right">
                           {r.occurrence_count}
                         </span>
                       </div>
@@ -195,7 +195,7 @@ export default function MisconceptionsPage() {
                         {r.user_count - r.resolved_count} / {r.user_count}
                       </BrandBadge>
                     </TableCell>
-                    <TableCell className="text-[11px] text-aristo-brown/50">
+                    <TableCell className="text-[11px] text-aristo-brown-main/50">
                       {r.last_seen ? new Date(r.last_seen).toLocaleDateString() : "—"}
                     </TableCell>
                     <TableCell className="text-right">

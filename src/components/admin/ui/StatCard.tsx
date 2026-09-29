@@ -24,7 +24,7 @@ export function StatCard({
   value,
   sub,
   icon,
-  color = "hsl(var(--aristo-orange))",
+  color = "hsl(var(--aristo-orange-main))",
   trend,
   loading,
   className,
@@ -48,15 +48,15 @@ export function StatCard({
           >
             {value}
           </div>
-          <div className="text-sm font-semibold text-aristo-brown mt-0.5 truncate">
+          <div className="text-sm font-semibold text-aristo-brown-main mt-0.5 truncate">
             {label}
           </div>
           {sub && (
-            <div className="text-xs text-aristo-brown/60 mt-1">{sub}</div>
+            <div className="text-xs text-aristo-brown-main/60 mt-1">{sub}</div>
           )}
         </div>
         {icon && (
-          <div className="flex-shrink-0 text-aristo-brown/40">{icon}</div>
+          <div className="flex-shrink-0 text-aristo-brown-main/40">{icon}</div>
         )}
       </div>
       {trend && (
