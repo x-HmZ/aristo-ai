@@ -21,69 +21,172 @@
  */
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  AudioLines,
+  ChevronDown,
+  CircleCheck,
+  History,
+  Lightbulb,
+  Presentation,
+  ScrollText,
+  Target,
+  Waypoints,
+  type LucideIcon,
+} from "lucide-react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS } from "@/hooks/useTTS";
-import { BRAND_HEX } from "@/lib/brandColors";
+import { Button } from "@/components/ui/button";
+import { FOCUS, SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
+
+// ─── The five phases (brand-system.md: no colours) ───────────────────────────
+//
+// A phase is told apart by its number, its icon and its place in the rail,
+// all in the one accent. Exported for the caption band in LessonPlayer.
+
+type Phase = keyof LessonPayload["phases"];
+
+export const PHASE_META: Record<Phase, { n: number; name: string; icon: LucideIcon }> = {
+  activate:    { n: 1, name: "Activate",    icon: History },
+  explain:     { n: 2, name: "Explain",     icon: AudioLines },
+  demonstrate: { n: 3, name: "Demonstrate", icon: Presentation },
+  challenge:   { n: 4, name: "Challenge",   icon: Target },
+  connect:     { n: 5, name: "Connect",     icon: Waypoints },
+};
+
+/** The system's phase label (the landing hero chip): icon, name, step N of 5. */
+export function PhaseLabel({ phase, className }: { phase: Phase; className?: string }) {
+  const { n, name, icon: Icon } = PHASE_META[phase];
+  return (
+    <span className={cn("inline-flex items-center gap-2 text-xs font-semibold text-ink", className)}>
+      <Icon aria-hidden className="size-[18px] shrink-0 text-accent-text" />
+      {name}, step {n} of 5
+    </span>
+  );
+}
 
 // ─── Shared card shell ────────────────────────────────────────────────────────
 
 function PhaseCard({
-  label,
-  accent,
+  phase,
   children,
 }: {
-  label:    string;
-  accent:   string;
+  phase:    Phase;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm overflow-hidden animate-[fade-in_0.4s_ease-out]">
-      <div
-        className="px-4 py-2 flex items-center gap-2"
-        style={{ backgroundColor: `${accent}18`, borderBottom: `1px solid ${accent}30` }}
-      >
-        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: accent }}>
-          {label}
-        </span>
+    <section
+      className={cn(
+        SHAPE.surface,
+        "shrink-0 overflow-hidden border border-line bg-surface motion-safe:animate-[fade-in_0.4s_ease-out]",
+      )}
+    >
+      <div className="px-4 pt-3.5 pb-1">
+        <PhaseLabel phase={phase} />
       </div>
-      <div className="px-4 py-3">{children}</div>
-    </div>
+      <div className="px-4 pt-2 pb-4">{children}</div>
+    </section>
   );
 }
 
-// ─── Segment script (playback mode only) ──────────────────────────────────────
+// ─── Phase rail ───────────────────────────────────────────────────────────────
+//
+// The five phases as one brand element: number and icon for each, the current
+// one lit in the accent with its name. Not interactive; Back / Next move.
+
+function PhaseRail({ current }: { current: number }) {
+  return (
+    <ol aria-label="Lesson phases" className="flex items-center">
+      {PHASES.map((p, i) => {
+        const { n, name, icon: Icon } = PHASE_META[p];
+        const isCurrent = i === current;
+        const isDone    = i < current;
+        return (
+          <li
+            key={p}
+            aria-current={isCurrent ? "step" : undefined}
+            className={cn("flex items-center", i < PHASES.length - 1 && "flex-1")}
+          >
+            <span
+              className={cn(
+                SHAPE.pill,
+                "flex h-8 shrink-0 items-center gap-1.5 text-xs font-semibold tabular-nums transition-colors duration-base ease-out-soft",
+                isCurrent ? "bg-accent px-3 text-accent-ink" : "px-1",
+                isDone && "text-accent-text",
+                !isCurrent && !isDone && "text-muted",
+              )}
+            >
+              <span>{n}</span>
+              <Icon aria-hidden className="size-4 shrink-0" />
+              <span className={isCurrent ? undefined : "sr-only"}>
+                {name}
+                {isDone && <span className="sr-only">, done</span>}
+              </span>
+            </span>
+            {i < PHASES.length - 1 && (
+              <span
+                aria-hidden
+                className={cn(
+                  "mx-1.5 h-px flex-1 transition-colors duration-base",
+                  i < current ? "bg-accent" : "bg-line",
+                )}
+              />
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+// ─── Caption (playback mode) ──────────────────────────────────────────────────
+//
+// The sentence being spoken and the one after it. The band over the scene
+// (LessonPlayer, md and up) and the in-panel caption below md both show it.
+
+export function captionAt(
+  segments: Array<{ id: string; text: string }> | undefined,
+  currentSegmentId: string | null,
+): { current: string | null; next: string | null } {
+  if (!segments || !currentSegmentId) return { current: null, next: null };
+  const i = segments.findIndex((s) => s.id === currentSegmentId);
+  if (i < 0) return { current: null, next: null };
+  return { current: segments[i].text, next: segments[i + 1]?.text ?? null };
+}
+
+// ─── Segment script (the transcript drawer) ──────────────────────────────────
 //
 // Renders the segment texts that belong to a phase, with the currently-narrating
-// segment highlighted via a soft accent border + background tint so the student
-// can follow exactly which sentence the avatar is on.
+// segment highlighted so the student can follow which sentence the avatar is on.
 
 function SegmentScript({
   segments,
   currentSegmentId,
-  accent,
 }: {
   segments:         Array<{ id: string; text: string }>;
   currentSegmentId: string | null;
-  accent:           string;
 }) {
   if (segments.length === 0) return null;
   return (
-    <div className="mb-3 space-y-1.5">
+    <div className="space-y-1">
       {segments.map((s) => {
         const active = s.id === currentSegmentId;
         return (
-          <div
+          <p
             key={s.id}
-            className="rounded-lg px-3 py-1.5 text-sm leading-relaxed transition-all duration-200"
-            style={{
-              borderLeft:      `3px solid ${active ? accent : "transparent"}`,
-              background:      active ? `${accent}12` : "transparent",
-              color:           active ? "hsl(var(--aristo-brown-main))" : "hsl(var(--aristo-brown-soft))",
-              fontWeight:      active ? 600 : 400,
-            }}
+            aria-current={active ? "true" : undefined}
+            className={cn(
+              SHAPE.control,
+              "border-l-[3px] px-3 py-1.5 text-sm leading-relaxed transition-colors duration-base",
+              active
+                ? "border-accent bg-tint font-semibold text-ink"
+                : "border-transparent text-body",
+            )}
           >
             {s.text}
-          </div>
+          </p>
         );
       })}
     </div>
@@ -127,15 +230,22 @@ function ExplainMoreBtn({
   return (
     <div className="mt-2">
       {!expanded ? (
-        <button
+        <Button
+          variant="ghost"
           onClick={handleClick}
           disabled={loading}
-          className="text-[11px] font-semibold text-aristo-orange-main hover:text-aristo-orange-hover flex items-center gap-1 disabled:opacity-50"
+          className="-ml-3 px-3 text-accent-text hover:bg-tint"
         >
-          {loading ? "Loading…" : "Explain more ↓"}
-        </button>
+          {loading ? "Loading…" : "Explain more"}
+          {!loading && <ChevronDown aria-hidden />}
+        </Button>
       ) : (
-        <div className="mt-2 px-3 py-2 rounded-xl bg-aristo-wash-light border border-aristo-orange-main/20 text-sm text-aristo-brown-soft leading-relaxed animate-[fade-in_0.3s_ease-out]">
+        <div
+          className={cn(
+            SHAPE.control,
+            "mt-2 border border-tint-line bg-tint px-3 py-2 text-sm leading-relaxed text-body motion-safe:animate-[fade-in_0.3s_ease-out]",
+          )}
+        >
           {expanded}
         </div>
       )}
@@ -147,33 +257,28 @@ function ExplainMoreBtn({
 
 interface PhaseCardCommon {
   conceptName:          string;
-  /** Playback mode props — when present, render the segment script + skip own TTS */
+  /** Playback mode: the narration lives in the caption and the transcript drawer,
+   *  and the view skips its own TTS. */
   playbackMode?:        boolean;
-  segmentsForPhase?:    Array<{ id: string; text: string }>;
-  currentSegmentId?:    string | null;
 }
 
 // ─── Phase 1: Activate ────────────────────────────────────────────────────────
 
 function ActivateCard({
-  phase, conceptName, playbackMode, segmentsForPhase, currentSegmentId,
+  phase, conceptName, playbackMode,
 }: PhaseCardCommon & { phase: LessonPayload["phases"]["activate"] }) {
   return (
-    <PhaseCard label="1 · Activate prior knowledge" accent={BRAND_HEX.purple}>
-      {playbackMode && segmentsForPhase && (
-        <SegmentScript
-          segments={segmentsForPhase}
-          currentSegmentId={currentSegmentId ?? null}
-          accent={BRAND_HEX.purple}
-        />
-      )}
+    <PhaseCard phase="activate">
       {!playbackMode && (
-        <p className="text-sm text-aristo-brown-main leading-relaxed">{phase.content}</p>
+        <p className="text-sm leading-relaxed text-ink">{phase.content}</p>
       )}
       {phase.prerequisites_referenced && phase.prerequisites_referenced.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {phase.prerequisites_referenced.map((p) => (
-            <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-aristo-purple/10 text-aristo-purple border border-aristo-purple/20 font-medium">
+            <span
+              key={p}
+              className={cn(SHAPE.pill, "border border-line bg-sunk px-2.5 py-1 text-xs font-medium text-body")}
+            >
               {p}
             </span>
           ))}
@@ -187,29 +292,25 @@ function ActivateCard({
 // ─── Phase 2: Explain ─────────────────────────────────────────────────────────
 
 function ExplainCard({
-  phase, conceptName, playbackMode, segmentsForPhase, currentSegmentId,
+  phase, conceptName, playbackMode,
 }: PhaseCardCommon & { phase: LessonPayload["phases"]["explain"] }) {
   return (
-    <PhaseCard label="2 · Explain" accent={BRAND_HEX.orangeMain}>
-      {playbackMode && segmentsForPhase && (
-        <SegmentScript
-          segments={segmentsForPhase}
-          currentSegmentId={currentSegmentId ?? null}
-          accent={BRAND_HEX.orangeMain}
-        />
-      )}
+    <PhaseCard phase="explain">
       {/* Analogy */}
-      <div className="mb-3 px-3 py-2.5 rounded-xl bg-aristo-wash-light border border-aristo-orange-main/20">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-ink mb-1">Analogy</p>
-        <p className="text-sm text-aristo-brown-soft leading-relaxed italic">{phase.analogy}</p>
+      <div className={cn(SHAPE.control, "mb-3 border border-tint-line bg-tint px-3 py-2.5")}>
+        <p className="mb-1 text-xs font-semibold text-accent-text">Analogy</p>
+        <p className="text-sm italic leading-relaxed text-body">{phase.analogy}</p>
       </div>
       {!playbackMode && (
-        <p className="text-sm text-aristo-brown-main leading-relaxed mb-2">{phase.formal_explanation}</p>
+        <p className="mb-2 text-sm leading-relaxed text-ink">{phase.formal_explanation}</p>
       )}
       {/* Key insight */}
-      <div className="flex gap-2 px-3 py-2 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
-        <span className="text-base shrink-0">💡</span>
-        <p className="text-sm text-[#92400E] leading-relaxed">{phase.key_insight}</p>
+      <div className={cn(SHAPE.control, "flex gap-2 border border-warning/25 bg-warning/10 px-3 py-2.5")}>
+        <Lightbulb aria-hidden className="mt-0.5 size-4 shrink-0 text-warning" />
+        <p className="text-sm leading-relaxed text-warning">
+          <span className="sr-only">Key insight: </span>
+          {phase.key_insight}
+        </p>
       </div>
       <ExplainMoreBtn phase="explain" phaseContent={phase.formal_explanation} conceptName={conceptName} />
     </PhaseCard>
@@ -223,8 +324,6 @@ function DemonstrateCard({
   conceptName,
   shouldGenerateModel,
   playbackMode,
-  segmentsForPhase,
-  currentSegmentId,
 }: PhaseCardCommon & {
   phase:               LessonPayload["phases"]["demonstrate"];
   shouldGenerateModel: boolean;
@@ -287,31 +386,24 @@ function DemonstrateCard({
   }, [activePreviewImageUrl, playbackMode]);
 
   return (
-    <PhaseCard label="3 · Demonstrate" accent={BRAND_HEX.teal}>
-      {playbackMode && segmentsForPhase && (
-        <SegmentScript
-          segments={segmentsForPhase}
-          currentSegmentId={currentSegmentId ?? null}
-          accent={BRAND_HEX.teal}
-        />
-      )}
+    <PhaseCard phase="demonstrate">
       {!playbackMode && (
-        <p className="text-sm text-aristo-brown-main mb-2">{phase.example_description}</p>
+        <p className="mb-2 text-sm text-ink">{phase.example_description}</p>
       )}
 
       {/* Code block */}
       {phase.code && (
-        <pre className="mb-3 px-3 py-2.5 rounded-xl bg-[#1E1E2E] text-[#CDD6F4] text-xs leading-relaxed overflow-x-auto font-mono">
+        <pre className={cn(SHAPE.control, "mb-3 overflow-x-auto border border-line bg-sunk px-3 py-2.5 font-mono text-xs leading-relaxed text-ink")}>
           {phase.code}
         </pre>
       )}
 
       {/* Step by step */}
       {phase.step_by_step.length > 0 && (
-        <ol className="space-y-1.5 mb-2">
+        <ol className="mb-2 space-y-1.5">
           {phase.step_by_step.map((step, i) => (
-            <li key={i} className="flex gap-2 text-sm text-aristo-brown-main">
-              <span className="shrink-0 w-5 h-5 rounded-full bg-aristo-teal/15 text-aristo-teal text-[10px] font-bold flex items-center justify-center mt-0.5">
+            <li key={i} className="flex gap-2 text-sm text-ink">
+              <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-tint-line bg-tint text-[11px] font-bold text-accent-text">
                 {i + 1}
               </span>
               <span className="leading-relaxed">{step}</span>
@@ -322,9 +414,9 @@ function DemonstrateCard({
 
       {/* Output */}
       {phase.output && (
-        <div className="px-3 py-2 rounded-xl bg-[#F0FDF4] border border-[#86EFAC]/40">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#16A34A] mb-1">Output</p>
-          <pre className="text-xs text-[#15803D] font-mono">{phase.output}</pre>
+        <div className={cn(SHAPE.control, "border border-success/25 bg-success/10 px-3 py-2")}>
+          <p className="mb-1 text-xs font-semibold text-success">Output</p>
+          <pre className="font-mono text-xs text-ink">{phase.output}</pre>
         </div>
       )}
 
@@ -332,29 +424,29 @@ function DemonstrateCard({
       {!playbackMode && shouldGenerateModel && (
         <div className="mt-2 flex items-center gap-1.5">
           {isGeneratingModel && !activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-aristo-orange-main animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-ping" />
-              Generating image…
+            <span className="flex items-center gap-1.5 text-xs font-medium text-accent-text motion-safe:animate-pulse">
+              <span className="size-1.5 rounded-full bg-accent motion-safe:animate-ping" />
+              Drawing the image…
             </span>
           ) : isGeneratingModel && activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-medium text-aristo-orange-main animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-ping" />
+            <span className="flex items-center gap-1.5 text-xs font-medium text-accent-text motion-safe:animate-pulse">
+              <span className="size-1.5 rounded-full bg-accent motion-safe:animate-ping" />
               Building 3D model…
             </span>
           ) : activeModelUrl && viewMode3d ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-teal bg-[#F0FDF4] border border-aristo-teal/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-aristo-teal" />
-              3D model in scene
+            <span className={cn(SHAPE.pill, "flex items-center gap-1.5 border border-success/25 bg-success/10 px-3 py-1 text-xs font-semibold text-success")}>
+              <span className="size-1.5 rounded-full bg-success" />
+              3D model in the room
             </span>
           ) : activePreviewImageUrl && pending3dImageUrl && !activeModelUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-orange-main bg-aristo-wash-light border border-aristo-orange-main/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main" />
-              Image ready · tap “View in 3D” in the scene
+            <span className={cn(SHAPE.pill, "flex items-center gap-1.5 border border-tint-line bg-tint px-3 py-1 text-xs font-semibold text-accent-text")}>
+              <span className="size-1.5 rounded-full bg-accent" />
+              The image is on the board. Tap View in 3D to turn it over.
             </span>
           ) : activePreviewImageUrl ? (
-            <span className="flex items-center gap-1.5 text-xs font-semibold text-aristo-teal bg-[#F0FDF4] border border-aristo-teal/25 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-aristo-teal" />
-              Image in scene
+            <span className={cn(SHAPE.pill, "flex items-center gap-1.5 border border-success/25 bg-success/10 px-3 py-1 text-xs font-semibold text-success")}>
+              <span className="size-1.5 rounded-full bg-success" />
+              Image on the board
             </span>
           ) : null}
         </div>
@@ -368,7 +460,7 @@ function DemonstrateCard({
 // ─── Phase 4: Challenge ───────────────────────────────────────────────────────
 
 function ChallengeCard({
-  phase, conceptName, playbackMode, segmentsForPhase, currentSegmentId,
+  phase, conceptName,
 }: PhaseCardCommon & { phase: LessonPayload["phases"]["challenge"] }) {
   const [answer,      setAnswer]      = useState("");
   const [showHint,    setShowHint]    = useState(false);
@@ -392,7 +484,7 @@ function ChallengeCard({
         }),
       });
       const data = await res.json();
-      setFeedback(data.feedback ?? (data.is_correct ? "Great thinking! ✓" : "Not quite — here's what to consider:"));
+      setFeedback(data.feedback ?? (data.is_correct ? "That's it." : "Not quite. Here is what to consider:"));
       setShowAnswer(true);
       // Gesture feedback — Teacher reverts it when the nod / shake clip ends
       setGesture(data.is_correct ? "nodding" : "shaking");
@@ -404,15 +496,8 @@ function ChallengeCard({
   }, [answer, isEvaluating, phase, conceptName, setGesture]);
 
   return (
-    <PhaseCard label="4 · Challenge" accent={BRAND_HEX.amber}>
-      {playbackMode && segmentsForPhase && (
-        <SegmentScript
-          segments={segmentsForPhase}
-          currentSegmentId={currentSegmentId ?? null}
-          accent={BRAND_HEX.amber}
-        />
-      )}
-      <p className="text-sm font-medium text-aristo-brown-main leading-relaxed mb-3">{phase.question}</p>
+    <PhaseCard phase="challenge">
+      <p className="mb-3 text-sm font-medium leading-relaxed text-ink">{phase.question}</p>
 
       {!showAnswer && (
         <>
@@ -420,33 +505,28 @@ function ChallengeCard({
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             placeholder="Type your answer…"
+            aria-label="Your answer"
             rows={3}
-            className="w-full px-3 py-2 rounded-xl bg-white border border-white/60 text-sm text-aristo-brown-main placeholder:text-aristo-tan focus:outline-none focus:ring-2 focus:ring-aristo-amber/30 resize-none mb-2"
+            className={cn(
+              SHAPE.control,
+              "mb-2 w-full resize-none border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted hover:border-muted/50",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+            )}
           />
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={handleSubmit}
-              disabled={!answer.trim() || isEvaluating}
-              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-aristo-amber text-white hover:bg-[#D97706] disabled:opacity-40 transition-all"
-            >
-              {isEvaluating ? "Evaluating…" : "Submit answer"}
-            </button>
-            <button
-              onClick={() => setShowHint(true)}
-              className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
-            >
+          <div className="flex flex-wrap items-center gap-1">
+            <Button onClick={handleSubmit} disabled={!answer.trim() || isEvaluating}>
+              {isEvaluating ? "Checking…" : "Submit answer"}
+            </Button>
+            <Button variant="ghost" onClick={() => setShowHint(true)} className="text-body">
               Show hint
-            </button>
-            <button
-              onClick={() => setShowAnswer(true)}
-              className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
-            >
+            </Button>
+            <Button variant="ghost" onClick={() => setShowAnswer(true)} className="text-body">
               {"I don't know"}
-            </button>
+            </Button>
           </div>
 
           {showHint && (
-            <div className="mt-3 px-3 py-2 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40 text-sm text-[#92400E] animate-[fade-in_0.3s_ease-out]">
+            <div className={cn(SHAPE.control, "mt-3 border border-tint-line bg-tint px-3 py-2 text-sm text-ink motion-safe:animate-[fade-in_0.3s_ease-out]")}>
               <span className="font-semibold">Hint: </span>{phase.hint}
             </div>
           )}
@@ -454,13 +534,13 @@ function ChallengeCard({
       )}
 
       {showAnswer && (
-        <div className="space-y-2 animate-[fade-in_0.3s_ease-out]">
+        <div className="space-y-2 motion-safe:animate-[fade-in_0.3s_ease-out]">
           {feedback && (
-            <p className="text-sm font-medium text-aristo-amber">{feedback}</p>
+            <p className="text-sm font-medium text-ink">{feedback}</p>
           )}
-          <div className="px-3 py-2.5 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#B45309] mb-1">Full answer</p>
-            <p className="text-sm text-[#92400E] leading-relaxed">{phase.answer}</p>
+          <div className={cn(SHAPE.control, "border border-line bg-sunk px-3 py-2.5")}>
+            <p className="mb-1 text-xs font-semibold text-muted">Full answer</p>
+            <p className="text-sm leading-relaxed text-ink">{phase.answer}</p>
           </div>
         </div>
       )}
@@ -471,24 +551,17 @@ function ChallengeCard({
 // ─── Phase 5: Connect ─────────────────────────────────────────────────────────
 
 function ConnectCard({
-  phase, playbackMode, segmentsForPhase, currentSegmentId,
+  phase, playbackMode,
 }: Omit<PhaseCardCommon, "conceptName"> & { phase: LessonPayload["phases"]["connect"] }) {
   return (
-    <PhaseCard label="5 · Connect" accent={BRAND_HEX.blue}>
-      {playbackMode && segmentsForPhase && (
-        <SegmentScript
-          segments={segmentsForPhase}
-          currentSegmentId={currentSegmentId ?? null}
-          accent={BRAND_HEX.blue}
-        />
-      )}
+    <PhaseCard phase="connect">
       {!playbackMode && (
-        <p className="text-sm text-aristo-brown-main leading-relaxed">{phase.content}</p>
+        <p className="text-sm leading-relaxed text-ink">{phase.content}</p>
       )}
       {phase.next_concept && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-aristo-blue font-semibold">
-          <span>→ Up next:</span>
-          <span className="px-2 py-0.5 rounded-full bg-aristo-blue/10 border border-aristo-blue/20">
+        <div className={cn("flex flex-wrap items-center gap-2 text-xs", !playbackMode && "mt-3")}>
+          <span className="font-semibold text-muted">Up next</span>
+          <span className={cn(SHAPE.pill, "border border-tint-line bg-tint px-2.5 py-1 font-semibold text-accent-text")}>
             {phase.next_concept}
           </span>
         </div>
@@ -554,6 +627,8 @@ export function LessonView({
   const activeModelUrl           = useAristoStore((s) => s.activeModelUrl);
 
   const [internalPhaseIdx, setInternalPhaseIdx] = useState(0);
+  // Presentation only: whether the transcript drawer is open.
+  const [transcriptOpen, setTranscriptOpen] = useState(false);
 
   // When controlledPhase is provided (playback mode), derive phaseIdx from it.
   const phaseIdx = controlledPhase
@@ -684,6 +759,8 @@ export function LessonView({
   const phase      = PHASES[phaseIdx];
   const isFirst    = phaseIdx === 0;
   const isLast     = phaseIdx === PHASES.length - 1;
+  const caption       = captionAt(lesson.segments, currentSegmentId);
+  const hasTranscript = PHASES.some((p) => segmentsByPhase[p].length > 0);
 
   const goNext = () => {
     const nextPhase = PHASES[phaseIdx + 1];
@@ -713,27 +790,30 @@ export function LessonView({
         }
       `}</style>
 
-      <div className="aristo-scroll flex flex-col gap-3 px-4 py-4 overflow-y-auto h-full">
+      {/* The panel ground: the system's page colour at 95% over the scene, so
+          every text pair below has a known background (brand-system.md). */}
+      <div
+        className={cn(
+          "aristo-scroll flex h-full flex-col gap-3 overflow-y-auto bg-bg/95 px-4 pt-4",
+          playbackMode ? "pb-24" : "pb-4",
+        )}
+      >
 
-        {/* Lesson header */}
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-aristo-brown-main truncate">{lesson.concept_name}</h2>
-          <span className="ml-auto text-[10px] text-aristo-brown-muted tabular-nums shrink-0">
-            {phaseIdx + 1} / {PHASES.length}
-          </span>
-        </div>
+        {/* Lesson header: title and the phase rail */}
+        <header className="flex shrink-0 flex-col gap-2.5">
+          <h2 className="truncate text-sm font-bold text-ink">{lesson.concept_name}</h2>
+          <PhaseRail current={phaseIdx} />
+        </header>
 
-        {/* Progress dots */}
-        <div className="flex gap-1.5">
-          {PHASES.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i <= phaseIdx ? "bg-aristo-orange-main" : "bg-white/40"
-              }`}
-            />
-          ))}
-        </div>
+        {/* In-panel caption below md, where the band over the scene is hidden */}
+        {playbackMode && caption.current && (
+          <div className={cn(SHAPE.surface, "shrink-0 border border-line bg-surface px-4 py-3 md:hidden")}>
+            <p className="type-h4 font-semibold text-ink">{caption.current}</p>
+            {caption.next && (
+              <p className="mt-1.5 line-clamp-2 text-sm text-muted">{caption.next}</p>
+            )}
+          </div>
+        )}
 
         {/* Active phase card */}
         {phase === "activate" && (
@@ -741,8 +821,6 @@ export function LessonView({
             phase={lesson.phases.activate}
             conceptName={lesson.concept_name}
             playbackMode={playbackMode}
-            segmentsForPhase={segmentsByPhase.activate}
-            currentSegmentId={currentSegmentId}
           />
         )}
         {phase === "explain" && (
@@ -750,8 +828,6 @@ export function LessonView({
             phase={lesson.phases.explain}
             conceptName={lesson.concept_name}
             playbackMode={playbackMode}
-            segmentsForPhase={segmentsByPhase.explain}
-            currentSegmentId={currentSegmentId}
           />
         )}
         {phase === "demonstrate" && (
@@ -761,8 +837,6 @@ export function LessonView({
             conceptName={lesson.concept_name}
             shouldGenerateModel={lesson.metadata.should_generate_model}
             playbackMode={playbackMode}
-            segmentsForPhase={segmentsByPhase.demonstrate}
-            currentSegmentId={currentSegmentId}
           />
         )}
         {phase === "challenge" && (
@@ -770,38 +844,70 @@ export function LessonView({
             phase={lesson.phases.challenge}
             conceptName={lesson.concept_name}
             playbackMode={playbackMode}
-            segmentsForPhase={segmentsByPhase.challenge}
-            currentSegmentId={currentSegmentId}
           />
         )}
         {phase === "connect" && (
           <ConnectCard
             phase={lesson.phases.connect}
             playbackMode={playbackMode}
-            segmentsForPhase={segmentsByPhase.connect}
-            currentSegmentId={currentSegmentId}
           />
         )}
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-1">
-          <button
-            onClick={goPrev}
-            disabled={isFirst}
-            className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main disabled:opacity-30 font-medium px-2 py-1"
-          >
-            ← Back
-          </button>
-          {!isLast && (
+        {/* Transcript drawer: the whole lesson, the spoken sentence marked */}
+        {playbackMode && hasTranscript && (
+          <section className={cn(SHAPE.surface, "shrink-0 border border-line bg-surface")}>
             <button
-              onClick={goNext}
-              className="px-5 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-white hover:bg-aristo-orange-hover shadow-sm transition-all"
+              type="button"
+              aria-expanded={transcriptOpen}
+              aria-controls="lesson-transcript"
+              onClick={() => setTranscriptOpen((o) => !o)}
+              className={cn(
+                SHAPE.surface,
+                FOCUS,
+                "flex h-11 w-full items-center justify-between px-4 text-sm font-semibold text-ink transition-colors duration-fast hover:bg-sunk",
+              )}
             >
-              Next →
+              <span className="inline-flex items-center gap-2">
+                <ScrollText aria-hidden className="size-4 text-muted" />
+                Transcript
+              </span>
+              <ChevronDown
+                aria-hidden
+                className={cn("size-4 text-muted transition-transform duration-base", transcriptOpen && "rotate-180")}
+              />
             </button>
+            {transcriptOpen && (
+              <div id="lesson-transcript" className="space-y-3 px-2 pb-3">
+                {PHASES.map((p) =>
+                  segmentsByPhase[p].length > 0 ? (
+                    <div key={p} className="space-y-1">
+                      <PhaseLabel phase={p} className="px-2 py-1" />
+                      <SegmentScript segments={segmentsByPhase[p]} currentSegmentId={currentSegmentId} />
+                    </div>
+                  ) : null,
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Navigation */}
+        <div className="mt-1 flex shrink-0 items-center justify-between">
+          <Button variant="ghost" onClick={goPrev} disabled={isFirst} className="-ml-3 text-body">
+            <ArrowLeft aria-hidden />
+            Back
+          </Button>
+          {!isLast && (
+            <Button onClick={goNext}>
+              Next
+              <ArrowRight aria-hidden />
+            </Button>
           )}
           {isLast && (
-            <span className="text-xs text-aristo-teal font-semibold">Lesson complete ✓</span>
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-success">
+              <CircleCheck aria-hidden className="size-4" />
+              Lesson complete
+            </span>
           )}
         </div>
       </div>
