@@ -47,6 +47,7 @@ rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4a
   - `/learn` was checked signed in, read-only, with only its three GET calls.
 - **One orange (Hmz, after review):** every filled button is #F97B2F with brand-brown labels (#3D2110, 5.55:1; near-black read too harsh), app-wide (light `accent` changed; `status-ink` for danger; focus rings on `accent-text`; the classroom's leftover white-on-orange fills too). Landing and auth re-checked, 0 AA failures both themes.
 - **Wordmark sharp on the first screen:** the /demo and /learn top bars sit above the picker scrims (the blur made the letters look low-res).
+- **Follow-up (#13):** Back / Next is sticky to the bottom of the lesson scroll, which now stops above the playback row (on a short screen the row had slid under the controls).
 - **Gates:** type-check clean; lint 0 errors / 10 warnings (unchanged); tests 404; build green; `/` static at 122 kB.
 - **code-reviewer:** no critical or high.
   - Fixed the three mediums: the band cut long sentences (now fits them, and shows from lg); the transcript did not
