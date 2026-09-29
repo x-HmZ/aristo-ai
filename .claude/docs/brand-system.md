@@ -56,14 +56,16 @@ Keep the two copies identical.
 | Token | Light | Dark | Use and ratio |
 |---|---|---|---|
 | `accent` | #F97B2F | #E98A52 | solid fills: primary buttons, the lit flute, progress, the current phase |
-| `accent-hover` | #E8702A | #F0A070 | hover on accent fills: 6.10 / 8.97 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface washes the fill out) |
-| `accent-ink` | #0E1117 | #0E1117 | text on accent fills: 7.11 / 7.40 |
+| `accent-hover` | #FA8C47 | #F0A070 | hover on accent fills, lighter in both themes: 6.26 / 8.19 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface washes the fill out) |
+| `accent-ink` | #3D2110 | #2A160A | text on accent fills, the brand brown: 5.55 / 6.75 |
 | `status-ink` | #FCFCFD | #0E1117 | text on status fills (danger button, badge, toast): danger 6.31 / 6.83 |
 | `accent-text` | #A94C1B | #EF9A66 | accent as text, icon or focus ring: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
 
 The accent is the brand orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees) in light mode, lightened to
 #E98A52 in dark mode. Since V8.4a it is one orange on every filled button, app-wide (Hmz's choice). White fails
-on it (2.66:1), so labels on it are ink in both themes (7.11:1). As text or as a focus ring #F97B2F fails too
+on it (2.66:1), so labels on it are the brand brown (#3D2110, 5.55:1; #2A160A on the dark accent, 6.75). Near-black
+passed too (7.11) but read harsh against the saturated orange, so the brown won (Hmz, V8.4a, from four options
+rendered in context: terracotta + cream, orange + brown, tonal peach, slate). As text or as a focus ring #F97B2F fails too
 (2.66 on white, 2.59 against the page, under the 3:1 a focus indicator needs), so orange text and focus rings
 use `accent-text`. Before V8.4a the light accent was #B4531F with white labels (4.88), and the classroom still
 showed #F97B2F beside it. There is no gradient text and no coloured glow on a control.
@@ -305,9 +307,9 @@ orange-deep on wash (4.14) and the licence credit in the controls bar (4.1, now 
 nodes, minimum 4.71 light and 5.24 dark (`.claude/eval/2026-09-29-v8-4a/`).
 
 Also in V8.4a, with the one-orange change: every remaining white-on-#F97B2F fill in the classroom carries ink
-instead (Take Quiz, the demo teacher pills, the quiz's buttons and chosen options, the answer and input send and
-mic buttons, review, the course map, loading retry, the reviews chip, the avatar initial: 7.11, 5.63 on the
-#E06A20 hover), and the demo banner's Create an account link is `accent-text` (5.1).
+instead of white (Take Quiz, the demo teacher pills, the quiz's buttons and chosen options, the answer and input send and
+mic buttons, review, the course map, loading retry, the reviews chip, the avatar initial: brand brown, 5.55,
+hovering to `accent-hover` 6.26), and the demo banner's Create an account link is `accent-text` (5.1).
 
 Still open:
 
