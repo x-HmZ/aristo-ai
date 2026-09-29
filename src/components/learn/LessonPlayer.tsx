@@ -258,7 +258,7 @@ export function LessonPlayer({ demoMode = false }: { demoMode?: boolean } = {}) 
     !!captionSeg && !playback.isComplete && !playback.isLoading && !activeQuiz;
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full bg-bg/95">
       {playback.isLoading && <PreparingVisualsOverlay />}
 
       {showCaption && (
