@@ -22,7 +22,14 @@ import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
-import { AristoMark } from "@/components/brand/AristoMark";
+import { LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import {
+  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
+} from "@/components/learn/ClassroomChrome";
+import { SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
 
 function flattenCourseConceptIds(structure: CourseStructure): string[] {
   return structure.modules.flatMap((m) =>
@@ -298,6 +305,10 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const lessonLoaded   = mode === "course" && activeLesson !== null;
   const lessonComplete = lessonLoaded;
 
+  // The quiz is on the desk (the same condition as the strip below): the panel
+  // collapses to that strip so the paper is not under it. CSS only.
+  const quizOnDesk = mode === "course" && !!activeQuiz;
+
   const isLastTopic =
     course.topics.length > 0 &&
     course.currentTopicIndex === course.topics.length - 1;
@@ -356,71 +367,83 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
       {/* Top nav. Above the mode picker's blur (z-30) so the wordmark stays sharp
           on the first screen; dialogs (map z-40, dashboard, review, onboarding and
-          the lightbox at z-50) still cover it. */}
-      <div className="absolute top-0 left-0 right-0 z-[35] flex items-center justify-between px-6 py-4">
-        <AristoMark
-          decorative={false}
-          className="h-[17px] text-aristo-brown-main"
-          litClassName="text-aristo-orange-main"
-        />
+          the lightbox at z-50) still cover it. Ink glass on the room
+          (ClassroomChrome). Below md the actions are icons with their names kept
+          for screen readers. */}
+      <div className={cn(TOP_BAR, "z-[35]")}>
+        <ClassroomWordmark />
 
-        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-full px-4 py-1.5 shadow-sm">
+        <GlassPill>
           {/* Reviews-due chip — Phase 6 */}
           {localOnboarded && overdueCount > 0 && (
-            <button
+            <Button
               onClick={() => setShowReview(true)}
-              className="flex items-center gap-1 text-xs font-semibold text-accent-ink bg-aristo-orange-main hover:bg-accent-hover rounded-full px-2.5 py-0.5 transition-all shadow-sm"
+              className="rounded-full px-3"
               title="Start your daily review"
             >
-              ↻ {overdueCount} due
-            </button>
+              <RotateCcw aria-hidden />
+              <span>{overdueCount}<span className="max-md:sr-only"> due</span></span>
+            </Button>
           )}
           {/* Progress dashboard button */}
           {localOnboarded && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowDashboard(true)}
-              className="text-xs text-aristo-brown-muted hover:text-aristo-orange-main transition-colors font-medium"
+              className="rounded-full px-3 text-body hover:text-ink max-md:w-11 max-md:px-0"
               title="View your progress"
             >
-              ⊞ Progress
-            </button>
+              <LayoutDashboard aria-hidden />
+              <span className="max-md:sr-only">Progress</span>
+            </Button>
           )}
           {/* Map button — visible while in a course that has structure */}
           {mode === "course" && course.structure && (
-            <button
+            <Button
+              variant="ghost"
               onClick={handleViewMap}
-              className="text-xs text-aristo-brown-muted hover:text-aristo-orange-main transition-colors font-medium"
+              className="rounded-full px-3 text-body hover:text-ink max-md:w-11 max-md:px-0"
               title="View course map"
             >
-              🗺 Map
-            </button>
+              <MapIcon aria-hidden />
+              <span className="max-md:sr-only">Map</span>
+            </Button>
           )}
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-aristo-orange-main to-aristo-peach flex items-center justify-center text-accent-ink text-xs font-bold">
-            {userName[0]?.toUpperCase()}
-          </div>
-          <span className="text-sm font-medium text-aristo-brown-main">{userName}</span>
-          <span className="w-px h-3 bg-aristo-sand" />
-          <button
+          <PillDivider />
+          <span className="hidden min-w-0 items-center gap-2 px-2 md:flex">
+            <span aria-hidden className="flex size-7 shrink-0 items-center justify-center rounded-full border border-tint-line bg-tint text-xs font-bold text-accent-text">
+              {userName[0]?.toUpperCase()}
+            </span>
+            <span className="max-w-[10rem] truncate text-sm font-medium text-ink">{userName}</span>
+          </span>
+          <ThemeToggle className="rounded-full border-transparent text-body hover:border-transparent hover:bg-sunk hover:text-ink" />
+          <Button
+            variant="ghost"
             onClick={handleSignOut}
-            className="text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors font-medium"
+            className="rounded-full px-3 text-body hover:text-ink max-md:w-11 max-md:px-0"
           >
-            Sign out
-          </button>
-        </div>
+            <LogOut aria-hidden />
+            <span className="max-md:sr-only">Sign out</span>
+          </Button>
+        </GlassPill>
       </div>
 
       {/* Right panel */}
-      <div className="absolute right-5 top-[68px] bottom-5 z-10 w-[400px] flex flex-col rounded-2xl overflow-hidden shadow-[0_8px_40px_hsl(var(--aristo-orange-main)/0.18)] border border-white/40">
-        <TeacherControls onClear={handleClear} />
-        <div className="flex-1 overflow-hidden bg-white/25 backdrop-blur-xl">
+      <div className={panelColumn(quizOnDesk)}>
+        <div className={quizOnDesk ? "hidden" : "contents"}>
+          <TeacherControls onClear={handleClear} />
+        </div>
+        <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>
           <MessagePanel />
         </div>
         {renderBottom()}
       </div>
 
-      {/* Onboarding overlay */}
+      {/* Onboarding overlay. Onboarding, the course map and the dashboard are
+          not on the design system yet (V8.6): `.theme-paper` keeps them light
+          in both themes, as the lock did. */}
       {!localOnboarded && (
-        <div className="absolute inset-0 z-50">
+        <div className="theme-paper absolute inset-0 z-50 text-ink">
           <OnboardingView userName={userName} onComplete={handleOnboardingComplete} />
         </div>
       )}
@@ -432,6 +455,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
       {/* Course map overlay */}
       {showCourseMap && pendingCourse && (
+        <div className="theme-paper contents text-ink">
         <CourseMapView
           courseId={pendingCourse.id}
           currentTopicIndex={
@@ -440,11 +464,14 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           onSelectConcept={handleSelectConcept}
           onClose={handleCloseMap}
         />
+        </div>
       )}
 
       {/* Student dashboard overlay — Phase 9 */}
       {showDashboard && (
-        <DashboardView onClose={() => setShowDashboard(false)} />
+        <div className="theme-paper contents text-ink">
+          <DashboardView onClose={() => setShowDashboard(false)} />
+        </div>
       )}
 
       {/* Daily review overlay — Phase 6 */}
@@ -465,8 +492,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       {/* Image zoom lightbox */}
       {previewZoomUrl && (
         <div
-          className="absolute inset-0 z-50 flex items-center justify-center"
-          style={{ background: "rgba(30,14,6,0.82)", backdropFilter: "blur(6px)" }}
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
           onClick={() => setPreviewZoomUrl(null)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -474,29 +500,19 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
             src={previewZoomUrl}
             alt="Teaching diagram"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: "min(90vw, 700px)",
-              maxHeight: "80vh",
-              borderRadius: "16px",
-              boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
-              border: "2px solid hsl(var(--aristo-orange-main) / 0.4)",
-              objectFit: "contain",
-            }}
+            className={cn(SHAPE.surface, "max-h-[80vh] max-w-[min(90vw,700px)] object-contain shadow-e2")}
           />
-          <button
-            onClick={() => setPreviewZoomUrl(null)}
-            style={{
-              position: "absolute", top: "20px", right: "24px",
-              background: "hsl(var(--aristo-backdrop) / 0.15)", border: "1px solid rgba(255,255,255,0.2)",
-              borderRadius: "50%", width: "36px", height: "36px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", fontSize: "18px", cursor: "pointer",
-              backdropFilter: "blur(4px)",
-            }}
-            title="Close"
-          >
-            ×
-          </button>
+          <div className="theme-ink absolute right-5 top-5">
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => setPreviewZoomUrl(null)}
+              aria-label="Close image"
+              className="rounded-full"
+            >
+              <X aria-hidden />
+            </Button>
+          </div>
         </div>
       )}
     </div>
