@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { BookOpen, ChevronRight, CircleAlert, Compass, LoaderCircle, Route } from "lucide-react";
 import { useAristoStore, type CourseStructure } from "@/store/useAristoStore";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -17,6 +20,24 @@ export interface PublishedCourse {
 interface ModePickerProps {
   onExplore:     () => void;
   onStartCourse: (course: PublishedCourse) => void;
+}
+
+// A choice in the picker: a surface card with a line border, a sunk hover and
+// the system focus ring. The picker is a dialog over the room, on the tokens
+// (V8.4c): it follows the theme.
+const OPTION = cn(
+  SHAPE.surface,
+  FOCUS,
+  PRESS,
+  "group w-full border border-line bg-surface p-4 text-left duration-fast hover:border-muted/50 hover:bg-sunk disabled:pointer-events-none disabled:opacity-60",
+);
+
+function OptionIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-tint-line bg-tint text-accent-text [&_svg]:size-5">
+      {children}
+    </span>
+  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -50,7 +71,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
       const { course: generated } = await res.json();
       onStartCourse(generated);
     } catch {
-      setGenError("Course generation failed. Please try again.");
+      setGenError("The course could not be built. Try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -65,121 +86,115 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
   }
 
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
-      <div className="bg-white/80 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-aristo-lg w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden">
+    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+      <section
+        aria-labelledby="mode-picker-title"
+        className={cn(SHAPE.surface, "flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden border border-line bg-surface shadow-e2")}
+      >
 
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-white/60">
-          <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-lg font-bold text-aristo-brown-main">
-              What would you like to do?
-            </h2>
-          </div>
-          <p className="text-xs text-aristo-brown-muted">
-            Start a course or explore any topic freely.
+        <div className="border-b border-line px-6 pb-4 pt-6">
+          <h2 id="mode-picker-title" className="type-h3 font-bold text-ink">
+            What Would You Like to Do?
+          </h2>
+          <p className="mt-1 text-sm text-body">
+            Follow a course, or ask about any topic.
           </p>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+        <div className="aristo-scroll flex-1 space-y-3 overflow-y-auto px-5 py-4">
 
           {/* Free explore */}
-          <button
-            onClick={onExplore}
-            className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-aristo-wash to-aristo-peach-pale border border-aristo-orange-main/20 hover:border-aristo-orange-main/50 hover:shadow-aristo-sm transition-all duration-200 group"
-          >
+          <button onClick={onExplore} className={OPTION}>
             <div className="flex items-start gap-3">
-              <span className="text-2xl mt-0.5">🌐</span>
+              <OptionIcon><Compass aria-hidden /></OptionIcon>
               <div>
-                <div className="font-bold text-aristo-brown-main text-sm group-hover:text-aristo-orange-main transition-colors">
-                  Explore Freely
-                </div>
-                <div className="text-xs text-aristo-brown-muted mt-0.5 leading-relaxed">
-                  Ask Aristo about any topic — no set path.
+                <div className="text-sm font-bold text-ink">Explore freely</div>
+                <div className="mt-0.5 text-sm leading-relaxed text-body">
+                  Ask about any topic, in any order.
                 </div>
               </div>
             </div>
           </button>
 
           {/* Generate a course */}
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-[#EFF6FF] to-[#DBEAFE] border border-aristo-blue/20 hover:border-aristo-blue/50 hover:shadow-aristo-sm transition-all duration-200 group disabled:opacity-60"
-          >
+          <button onClick={handleGenerate} disabled={isGenerating} className={OPTION}>
             <div className="flex items-start gap-3">
-              <span className="text-2xl mt-0.5">{isGenerating ? "⏳" : "✨"}</span>
+              <OptionIcon>
+                {isGenerating
+                  ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
+                  : <Route aria-hidden />}
+              </OptionIcon>
               <div>
-                <div className="font-bold text-[#1E3A5F] text-sm group-hover:text-aristo-blue transition-colors">
-                  {isGenerating ? "Generating your course…" : "Generate My Course"}
+                <div className="text-sm font-bold text-ink">
+                  {isGenerating ? "Building your course…" : "Build my course"}
                 </div>
-                <div className="text-xs text-[#4B6280] mt-0.5 leading-relaxed">
-                  AI builds a personalised learning path from the knowledge graph.
+                <div className="mt-0.5 text-sm leading-relaxed text-body">
+                  Aristo picks the concepts for your subject and puts them in order.
                 </div>
               </div>
             </div>
           </button>
 
           {genError && (
-            <p className="text-xs text-red-500 px-1">{genError}</p>
+            <p role="alert" className={cn(SHAPE.control, "flex items-start gap-2 border border-danger/25 bg-danger/10 px-3 py-2 text-sm text-danger")}>
+              <CircleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
+              {genError}
+            </p>
           )}
 
           {/* Published courses */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-brown-muted mb-2 px-1">
+            <p className="mb-2 px-1 text-xs font-semibold text-muted">
               Courses
             </p>
 
             {courses === null ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="flex gap-1">
+              <div role="status" className="flex items-center justify-center py-8">
+                <span className="sr-only">Loading courses</span>
+                <div className="flex gap-1" aria-hidden>
                   {[0, 1, 2].map((i) => (
                     <span
                       key={i}
-                      className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-bounce"
+                      className="size-1.5 rounded-full bg-accent motion-safe:animate-bounce"
                       style={{ animationDelay: `${i * 0.15}s` }}
                     />
                   ))}
                 </div>
               </div>
             ) : courses.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📚</div>
-                <p className="text-xs text-aristo-brown-muted">
-                  No published courses yet. Generate one above!
+              <div className="flex flex-col items-center gap-2 py-6 text-center">
+                <OptionIcon><BookOpen aria-hidden /></OptionIcon>
+                <p className="text-sm text-body">
+                  No courses yet. Build one above.
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
                 {courses.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => onStartCourse(c)}
-                    className="w-full text-left p-4 rounded-2xl bg-white/70 border border-white/60 hover:border-aristo-orange-main/40 hover:bg-aristo-wash-faint hover:shadow-aristo-sm transition-all duration-200 group"
-                  >
+                  <button key={c.id} onClick={() => onStartCourse(c)} className={OPTION}>
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-aristo-brown-main text-sm group-hover:text-aristo-orange-main transition-colors truncate">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-ink">
                           {c.title}
                         </div>
                         {c.description && (
-                          <div className="text-xs text-aristo-brown-muted mt-0.5 leading-relaxed line-clamp-2">
+                          <div className="mt-0.5 line-clamp-2 text-sm leading-relaxed text-body">
                             {c.description}
                           </div>
                         )}
-                        <div className="text-[10px] text-aristo-brown-faint mt-1.5 flex items-center gap-2">
-                          <span>{conceptCount(c)} concepts</span>
+                        <div className="mt-1.5 flex items-center gap-2 text-xs text-muted">
+                          <span>{conceptCount(c)} {conceptCount(c) === 1 ? "concept" : "concepts"}</span>
                           {c.estimated_hours && (
                             <>
-                              <span>·</span>
-                              <span>~{c.estimated_hours}h</span>
+                              <span aria-hidden>·</span>
+                              <span>about {c.estimated_hours} h</span>
                             </>
                           )}
                         </div>
                       </div>
-                      <span className="text-aristo-orange-main text-lg mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                        →
-                      </span>
+                      <ChevronRight aria-hidden className="mt-0.5 size-5 shrink-0 text-muted transition-colors duration-fast group-hover:text-ink" />
                     </div>
                   </button>
                 ))}
@@ -187,7 +202,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
             )}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
