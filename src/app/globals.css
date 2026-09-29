@@ -323,13 +323,6 @@
     line-height: var(--leading-mono);
   }
 
-  /* Glass morphism — warm tinted. Classroom only (loading screen). */
-  .glass {
-    background: hsl(var(--aristo-cream) / 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--aristo-orange-pale) / 0.5);
-  }
-
   /* Gradient text. Classroom only (the onboarding title); the system has no
      gradient text, see brand-system.md. */
   .text-gradient {

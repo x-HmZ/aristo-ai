@@ -15,17 +15,25 @@
 //
 // This component owns no timers besides the microcopy rotation — all
 // visibility/fade/stall *decisions* live in SceneLoadingOverlay.
+//
+// It is a page shown before the room exists, so it follows the theme (V8.4c):
+// the page ground, a surface card, the accent progress fill on a sunk track.
+// The pre-paint script in pages/_document.tsx applies a stored choice before
+// this first paint.
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { AristoMark } from "@/components/brand/AristoMark";
+import { Button } from "@/components/ui/button";
+import { SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
 
 const MICROCOPY = [
-  "Setting up your classroom...",
-  "Your teacher is on the way...",
-  "Arranging the desks...",
-  "Warming up the whiteboard...",
-  "Getting your notes ready...",
+  "Setting up your classroom…",
+  "Your teacher is on the way…",
+  "Arranging the desks…",
+  "Switching on the board…",
+  "Getting your notes ready…",
 ];
 
 const MICROCOPY_INTERVAL_MS = 2400;
@@ -57,66 +65,61 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
   };
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-aristo-gradient">
-      {/* Atmosphere — soft blurred fields, calm not busy */}
-      <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 rounded-full bg-aristo-orange-light/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-16 w-[28rem] h-[28rem] rounded-full bg-aristo-orange-pale/40 blur-3xl" />
+    // reducedMotion="user": the caption's slide is dropped under
+    // prefers-reduced-motion; the cross-fade stays.
+    <MotionConfig reducedMotion="user">
+      <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-bg">
+        <div className={cn(SHAPE.surface, "flex w-[min(90vw,360px)] flex-col items-center gap-6 border border-line bg-surface px-8 py-10 shadow-e1")}>
+          <AristoMark decorative={false} className="h-[22px] text-ink" litClassName="text-accent" />
 
-      <div className="relative flex flex-col items-center gap-6 px-8 py-10 rounded-3xl glass shadow-aristo-lg w-[min(90vw,360px)]">
-        {/* Wordmark */}
-        <AristoMark
-          decorative={false}
-          className="h-[22px] text-aristo-brown-main"
-          litClassName="text-aristo-orange-main"
-        />
-
-        {/* Progress bar — slim, single element, no spinner stacked on top */}
-        <div className="w-full flex flex-col gap-2">
-          <div className="w-full h-1.5 rounded-full bg-aristo-beige-dark/60 overflow-hidden">
+          {/* Progress bar — slim, single element, no spinner stacked on top */}
+          <div className="flex w-full flex-col gap-2">
             <div
-              className="h-full rounded-full bg-aristo-orange-main transition-[width] duration-300 ease-out"
-              style={{ width: `${pct}%` }}
-            />
+              role="progressbar"
+              aria-label="Loading the classroom"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pct}
+              className="h-1.5 w-full overflow-hidden rounded-full bg-sunk"
+            >
+              <div
+                className="h-full rounded-full bg-accent transition-[width] duration-slow ease-out-soft"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+
+            {/* Microcopy / stall hint */}
+            <div className="flex min-h-4 items-center justify-center" aria-live="polite">
+              <AnimatePresence mode="wait">
+                {stalled ? (
+                  <motion.span
+                    key="stalled"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-center text-xs text-muted"
+                  >
+                    This is taking longer than usual. Check your connection.
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key={lineIndex}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-center text-xs text-muted"
+                  >
+                    {MICROCOPY[lineIndex]}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
-          {/* Microcopy / stall hint */}
-          <div className="h-4 flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              {stalled ? (
-                <motion.span
-                  key="stalled"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs text-aristo-brown-muted text-center"
-                >
-                  Taking longer than usual — check your connection.
-                </motion.span>
-              ) : (
-                <motion.span
-                  key={lineIndex}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-xs text-aristo-brown-muted text-center"
-                >
-                  {MICROCOPY[lineIndex]}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </div>
+          {stalled && <Button onClick={handleReload}>Reload</Button>}
         </div>
-
-        {stalled && (
-          <button
-            onClick={handleReload}
-            className="text-xs font-semibold text-accent-ink bg-aristo-orange-main hover:bg-accent-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
-          >
-            Reload
-          </button>
-        )}
       </div>
-    </div>
+    </MotionConfig>
   );
 }
