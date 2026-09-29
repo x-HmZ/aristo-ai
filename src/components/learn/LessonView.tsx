@@ -638,7 +638,7 @@ export function LessonView({
     if (!active || !scroller) return;
     const a = active.getBoundingClientRect();
     const s = scroller.getBoundingClientRect();
-    const covered  = 96; // the playback row floats over the bottom of the scroll
+    const covered  = 8; // a small margin; the scroll now ends above the playback row
     const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
     if (a.top < s.top) scroller.scrollBy({ top: a.top - s.top - 8, behavior });
     else if (a.bottom > s.bottom - covered) scroller.scrollBy({ top: a.bottom - (s.bottom - covered) + 8, behavior });
@@ -808,8 +808,11 @@ export function LessonView({
           every text pair below has a known background (brand-system.md). */}
       <div
         className={cn(
-          "aristo-scroll flex h-full flex-col gap-3 overflow-y-auto bg-bg/95 px-4 pt-4",
-          playbackMode ? "pb-24" : "pb-4",
+          "aristo-scroll flex flex-col gap-3 overflow-y-auto bg-bg/95 px-4 pt-4",
+          // In playback the scroll ends above the floating playback row (44px
+          // buttons, 6px padding, 12px from the bottom, plus a 6px gap), so the
+          // Back / Next row can never sit under it.
+          playbackMode ? "h-[calc(100%-4.75rem)]" : "h-full",
         )}
       >
 
@@ -910,8 +913,9 @@ export function LessonView({
           </section>
         )}
 
-        {/* Navigation */}
-        <div className="mt-1 flex shrink-0 items-center justify-between">
+        {/* Navigation. Sticky to the bottom of the scroll so Back / Next stay in
+            reach however long the phase card is; content scrolls behind it. */}
+        <div className="sticky bottom-0 z-[1] -mx-4 mt-auto flex shrink-0 items-center justify-between border-t border-line bg-bg px-4 py-2">
           <Button variant="ghost" onClick={goPrev} disabled={isFirst} className="-ml-3 text-body">
             <ArrowLeft aria-hidden />
             Back
