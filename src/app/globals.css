@@ -394,13 +394,12 @@
     );
   }
 
-  /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
-     Default WebKit scrollbars are invisible on the glass surfaces; this
-     gives the student a clear scroll affordance without breaking the
-     pastel aesthetic. */
+  /* Aristo scroll — slim scrollbar for the lesson and free panels, the
+     pickers and the desk card, in the theme's muted ink (V8.4c; it was the
+     classroom orange). Scoped themes (.theme-paper) resolve their own. */
   .aristo-scroll {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--aristo-orange-main) / 0.45) transparent;
+    scrollbar-color: rgb(var(--muted) / 0.45) transparent;
   }
   .aristo-scroll::-webkit-scrollbar {
     width: 6px;
@@ -409,10 +408,10 @@
     background: transparent;
   }
   .aristo-scroll::-webkit-scrollbar-thumb {
-    background: hsl(var(--aristo-orange-main) / 0.35);
+    background: rgb(var(--muted) / 0.45);
     border-radius: 6px;
   }
   .aristo-scroll::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--aristo-orange-main) / 0.6);
+    background: rgb(var(--muted));
   }
 }

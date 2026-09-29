@@ -6,44 +6,40 @@
  * The /api/teach route returns a structured response
  * (definition / explanation / example / fun_fact), but the legacy free-mode
  * UI flattened it into a single chat bubble.  This component renders the
- * same content as a stack of pastel-orange phase cards so the visual
- * language matches the course-mode lesson player.
+ * same content as a stack of cards so the visual language matches the
+ * course-mode lesson player.
  *
- * Each section uses the same colour accents as the corresponding lesson
- * phase so a student moving between free explore and course mode never
- * loses their place visually:
- *   • Definition  → orange (matches Explain)
- *   • Explanation → white (neutral body card)
- *   • Example     → green (matches Demonstrate)
- *   • Fun fact    → amber (matches the Explain key-insight callout)
+ * On the design system (V8.4c), like LessonView's cards: sections are told
+ * apart by an icon and a label, not a colour.
+ *   • Definition, Explanation → neutral surface cards
+ *   • Example     → ink on the warm tint (LessonView's hint and analogy)
+ *   • Fun fact    → warning on its tint with a Lightbulb (the key insight)
  */
 
 import type { ChatMessage } from "@/store/useAristoStore";
 import { useEffect, useMemo, useRef } from "react";
+import { AudioLines, BookOpen, Lightbulb, MessageSquareText, Shapes } from "lucide-react";
 import { useTTS } from "@/hooks/useTTS";
 import { useAristoStore } from "@/store/useAristoStore";
-import { BRAND_HEX } from "@/lib/brandColors";
+import { SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
 
-// ─── Card shell (mirrors LessonView's PhaseCard) ─────────────────────────────
+// ─── Card shell (mirrors LessonView's cards) ─────────────────────────────────
 
 function FreeCard({
   label,
-  accent,
+  icon: Icon,
   children,
 }: {
   label:    string;
-  accent:   string;
+  icon:     typeof BookOpen;
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm overflow-hidden animate-[fade-in_0.4s_ease-out]">
-      <div
-        className="px-4 py-2 flex items-center gap-2"
-        style={{ backgroundColor: `${accent}18`, borderBottom: `1px solid ${accent}30` }}
-      >
-        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: accent }}>
-          {label}
-        </span>
+    <div className={cn(SHAPE.surface, "overflow-hidden border border-line bg-surface motion-safe:animate-[fade-in_0.4s_ease-out]")}>
+      <div className="flex items-center gap-2 border-b border-line px-4 py-2">
+        <Icon aria-hidden className="size-4 text-accent-text" />
+        <span className="text-xs font-semibold text-muted">{label}</span>
       </div>
       <div className="px-4 py-3">{children}</div>
     </div>
@@ -141,8 +137,8 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
   // information is never lost.
   if (parsed.fallback) {
     return (
-      <FreeCard label="Aristo says" accent={BRAND_HEX.orangeMain}>
-        <p className="text-sm text-aristo-brown-main leading-relaxed whitespace-pre-wrap">
+      <FreeCard label="Aristo says" icon={MessageSquareText}>
+        <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink">
           {parsed.fallback}
         </p>
       </FreeCard>
@@ -150,34 +146,32 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
   }
 
   return (
-    <div className="flex flex-col gap-3 animate-[fade-in_0.3s_ease-out]">
+    <div className="flex flex-col gap-3 motion-safe:animate-[fade-in_0.3s_ease-out]">
       {parsed.definition && (
-        <FreeCard label="Definition" accent={BRAND_HEX.orangeMain}>
-          <p className="text-sm text-aristo-brown-main leading-relaxed">{parsed.definition}</p>
+        <FreeCard label="Definition" icon={BookOpen}>
+          <p className="text-sm leading-relaxed text-ink">{parsed.definition}</p>
         </FreeCard>
       )}
 
       {parsed.explanation && (
-        <FreeCard label="Explanation" accent={BRAND_HEX.orangeMain}>
-          {/* Soft accent border that "lights up" while the avatar narrates
-              this section — matches SegmentScript's active-segment style. */}
-          <p className="text-sm text-aristo-brown-main leading-relaxed">{parsed.explanation}</p>
+        <FreeCard label="Explanation" icon={AudioLines}>
+          <p className="text-sm leading-relaxed text-ink">{parsed.explanation}</p>
         </FreeCard>
       )}
 
       {parsed.example && (
-        <FreeCard label="Example" accent={BRAND_HEX.teal}>
-          <div className="px-3 py-2.5 rounded-xl bg-[#F0FDF4] border border-[#86EFAC]/35">
-            <p className="text-sm text-[#15803D] leading-relaxed">{parsed.example}</p>
+        <FreeCard label="Example" icon={Shapes}>
+          <div className={cn(SHAPE.control, "border border-tint-line bg-tint px-3 py-2.5")}>
+            <p className="text-sm leading-relaxed text-ink">{parsed.example}</p>
           </div>
         </FreeCard>
       )}
 
       {parsed.fun_fact && (
-        <FreeCard label="Fun fact" accent={BRAND_HEX.amber}>
-          <div className="flex gap-2 px-3 py-2 rounded-xl bg-[#FFFBEB] border border-[#FCD34D]/40">
-            <span className="text-base shrink-0">💡</span>
-            <p className="text-sm text-[#92400E] leading-relaxed">{parsed.fun_fact}</p>
+        <FreeCard label="Fun fact" icon={Lightbulb}>
+          <div className={cn(SHAPE.control, "flex gap-2 border border-warning/25 bg-warning/10 px-3 py-2")}>
+            <Lightbulb aria-hidden className="mt-0.5 size-4 shrink-0 text-warning" />
+            <p className="text-sm leading-relaxed text-warning">{parsed.fun_fact}</p>
           </div>
         </FreeCard>
       )}
@@ -187,10 +181,12 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
 
 // ─── User bubble — kept on the right side for chat continuity ────────────────
 
+// The warm tint, not the accent: the accent fill is kept for the one primary
+// action in view (the send button below).
 export function FreeUserBubble({ message }: { message: ChatMessage }) {
   return (
-    <div className="flex justify-end animate-[fade-in_0.3s_ease-out]">
-      <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-tr-sm bg-aristo-orange-main text-accent-ink text-sm font-medium shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.3)]">
+    <div className="flex justify-end motion-safe:animate-[fade-in_0.3s_ease-out]">
+      <div className="max-w-[85%] rounded-2xl rounded-tr-sm border border-tint-line bg-tint px-4 py-2.5 text-sm font-medium text-ink">
         {message.content}
       </div>
     </div>

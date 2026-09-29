@@ -2,6 +2,7 @@
 
 import type { TeacherAvatar } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
+import { FOCUS } from "@/lib/design/shape";
 
 /**
  * Attribution line for a third-party teacher model, shown wherever that
@@ -18,9 +19,11 @@ export function AvatarCredit({ avatar, className = "" }: { avatar: TeacherAvatar
   const credit = AVATAR_ASSETS[avatar]?.credit;
   if (!credit) return null;
 
-  const link = "underline decoration-dotted underline-offset-2 hover:text-aristo-brown-main";
+  // Inline links in a sentence: exempt from the 44px target size (WCAG 2.5.8),
+  // but they get the system focus ring.
+  const link = `underline decoration-dotted underline-offset-2 hover:text-ink rounded-sm ${FOCUS}`;
   return (
-    <p className={`text-[10px] leading-snug text-aristo-brown-muted ${className}`}>
+    <p className={`text-[10px] leading-snug text-muted ${className}`}>
       Teacher model:{" "}
       <a href={credit.sourceUrl} target="_blank" rel="noopener noreferrer" className={link}>
         &ldquo;{credit.title}&rdquo;
