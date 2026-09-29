@@ -7,12 +7,23 @@
  * Manages its own state; calls onComplete(score, total) when done.
  * Calls /api/quiz/submit per question (for mastery update + LLM feedback on subjective types).
  * Calls /api/quiz/complete at the end.
+ *
+ * On the design system since V8.4b: semantic tokens only, so it follows whatever
+ * theme its host resolves. The desk card wraps it in `.theme-paper` (always light);
+ * the daily review hosts it in the panel. Right and wrong are never colour alone:
+ * each carries an icon and words. Bloom levels have no colours (one neutral chip).
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { ArrowRight, BookOpen, Check, ChevronDown, ChevronUp, Hammer, Lightbulb, Scale, ScanSearch, Wrench, X } from "lucide-react";
+import type { LucideIcon }                              from "lucide-react";
 import type { QuizQuestion }                         from "@/lib/agents/assessment";
 import { evaluateObjective }                         from "@/lib/quiz/localEval";
 import { useAristoStore }                            from "@/store/useAristoStore";
+import { Button }                                    from "@/components/ui/button";
+import { Input }                                     from "@/components/ui/input";
+import { FOCUS }                                     from "@/lib/design/shape";
+import { cn }                                        from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -43,23 +54,21 @@ interface QuizViewProps {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+const BLOOM_ICON: Record<string, LucideIcon> = {
+  remember:   BookOpen,
+  understand: Lightbulb,
+  apply:      Wrench,
+  analyze:    ScanSearch,
+  evaluate:   Scale,
+  create:     Hammer,
+};
+
+// Levels have no colours (V8.2): one neutral chip, told apart by icon and label.
 function bloomBadge(level: string) {
-  const colors: Record<string, string> = {
-    remember:  "#64748B",
-    understand:"#7C3AED",
-    apply:     "#2563EB",
-    analyze:   "#0891B2",
-    evaluate:  "#059669",
-    create:    "#D97706",
-  };
+  const Icon = BLOOM_ICON[level] ?? BookOpen;
   return (
-    <span
-      className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md"
-      style={{
-        backgroundColor: (colors[level] ?? "#64748B") + "22",
-        color:           colors[level] ?? "#64748B",
-      }}
-    >
+    <span className="inline-flex items-center gap-1 rounded-full bg-sunk px-2 py-0.5 text-[11px] font-semibold capitalize text-body">
+      <Icon aria-hidden className="size-3" />
       {level}
     </span>
   );
@@ -67,16 +76,47 @@ function bloomBadge(level: string) {
 
 function typeLabel(t: string) {
   const labels: Record<string, string> = {
-    multiple_choice:  "Multiple Choice",
-    true_false:       "True / False",
-    fill_blank:       "Fill in the Blank",
-    short_answer:     "Short Answer",
-    code_completion:  "Code Completion",
-    code_debugging:   "Debug the Code",
-    ordering:         "Put in Order",
+    multiple_choice:  "Multiple choice",
+    true_false:       "True or false",
+    fill_blank:       "Fill in the blank",
+    short_answer:     "Short answer",
+    code_completion:  "Code completion",
+    code_debugging:   "Debug the code",
+    ordering:         "Put in order",
     matching:         "Matching",
   };
   return labels[t] ?? t;
+}
+
+/** Look of a choice, a row or a select after an answer: right, wrong, or neither. */
+const STATE_RIGHT = "border-success/40 bg-success/15 text-success";
+const STATE_WRONG = "border-danger/40 bg-danger/15 text-danger";
+const STATE_REST  = "border-line bg-sunk text-muted";
+
+/** The system's field (Input) for the multi-line and native controls that cannot use it. */
+const FIELD =
+  "w-full rounded-[10px] border border-line bg-surface px-3.5 text-base text-ink transition-colors duration-fast hover:border-muted/50 placeholder:text-muted md:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-default";
+
+/** A choice button: idle, picked and waiting for the mark, right, wrong, or the rest after an answer. */
+function choiceClass(opts: { result: AnswerResult | null; picked: boolean; right: boolean }) {
+  const { result, picked, right } = opts;
+  const state = !result
+    ? picked
+      ? "border-accent bg-accent text-accent-ink"
+      : "border-line bg-surface text-ink hover:border-muted/50 hover:bg-sunk"
+    : right
+    ? STATE_RIGHT
+    : picked
+    ? STATE_WRONG
+    : STATE_REST;
+  return cn("flex w-full items-center justify-between gap-2 rounded-[10px] border px-4 text-left font-medium transition-colors duration-fast disabled:cursor-default", FOCUS, state);
+}
+
+/** The mark that goes with a right or wrong state, so it never rests on colour alone. */
+function Mark({ right, wrong, what }: { right: boolean; wrong: boolean; what: string }) {
+  if (right) return <><Check aria-hidden className="size-4 shrink-0" /><span className="sr-only">{what} is correct</span></>;
+  if (wrong) return <><X aria-hidden className="size-4 shrink-0" /><span className="sr-only">{what} is incorrect</span></>;
+  return null;
 }
 
 // ─── MCQ Renderer ─────────────────────────────────────────────────────────────
@@ -101,22 +141,17 @@ function MCQRenderer({
   return (
     <div className="space-y-2">
       {(question.options ?? []).map((opt) => {
-        let cls =
-          "w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium border transition-all duration-200 ";
-        if (!result) {
-          cls += selected === opt
-            ? "bg-aristo-orange-main text-accent-ink border-aristo-orange-main"
-            : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40 hover:bg-aristo-wash-faint";
-        } else if (opt === question.correct_answer) {
-          cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
-        } else if (opt === selected) {
-          cls += "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]";
-        } else {
-          cls += "bg-white/30 border-white/30 text-aristo-brown-faint";
-        }
+        const right = !!result && opt === question.correct_answer;
+        const wrong = !!result && !right && opt === selected;
         return (
-          <button key={opt} onClick={() => handleClick(opt)} disabled={!!result} className={cls}>
-            {opt}
+          <button
+            key={opt}
+            onClick={() => handleClick(opt)}
+            disabled={!!result}
+            className={cn(choiceClass({ result, picked: selected === opt, right }), "min-h-11 py-2.5 text-[13px]")}
+          >
+            <span>{opt}</span>
+            <Mark right={right} wrong={wrong} what={opt} />
           </button>
         );
       })}
@@ -146,22 +181,17 @@ function TrueFalseRenderer({
   return (
     <div className="flex gap-3">
       {["True", "False"].map((val) => {
-        let cls =
-          "flex-1 py-3 rounded-xl text-sm font-bold border transition-all duration-200 ";
-        if (!result) {
-          cls += selected === val
-            ? "bg-aristo-orange-main text-accent-ink border-aristo-orange-main"
-            : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40";
-        } else if (val === question.correct_answer) {
-          cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
-        } else if (val === selected) {
-          cls += "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]";
-        } else {
-          cls += "bg-white/30 border-white/30 text-aristo-brown-faint";
-        }
+        const right = !!result && val === question.correct_answer;
+        const wrong = !!result && !right && val === selected;
         return (
-          <button key={val} onClick={() => handleClick(val)} disabled={!!result} className={cls}>
-            {val}
+          <button
+            key={val}
+            onClick={() => handleClick(val)}
+            disabled={!!result}
+            className={cn(choiceClass({ result, picked: selected === val, right }), "min-h-12 flex-1 justify-center py-3 text-sm font-semibold")}
+          >
+            <span>{val}</span>
+            <Mark right={right} wrong={wrong} what={val} />
           </button>
         );
       })}
@@ -192,10 +222,10 @@ function FillBlankRenderer({
 
   return (
     <div className="space-y-3">
-      <div className="text-sm text-aristo-brown-main leading-relaxed">
+      <div className="text-[13px] leading-relaxed text-ink">
         {parts[0]}
         <span
-          className="inline-block border-b-2 border-aristo-orange-main px-2 mx-1 min-w-[80px] text-center text-aristo-orange-main font-semibold"
+          className="mx-1 inline-block min-w-[80px] border-b-2 border-accent px-2 text-center font-semibold text-accent-text"
         >
           {result ? question.correct_answer : (value || "___")}
         </span>
@@ -203,21 +233,17 @@ function FillBlankRenderer({
       </div>
       {!result && (
         <div className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="Type your answer…"
-            className="flex-1 px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-aristo-brown-main placeholder-aristo-brown-faint focus:outline-none focus:border-aristo-orange-main"
+            className="flex-1"
           />
-          <button
-            onClick={handleSubmit}
-            disabled={!value.trim()}
-            className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
-          >
+          <Button onClick={handleSubmit} disabled={!value.trim()}>
             Submit
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -250,7 +276,7 @@ function ShortAnswerRenderer({
   return (
     <div className="space-y-3">
       {isCode && (
-        <pre className="bg-[#1E1E1E] text-[#D4D4D4] text-[11px] rounded-xl p-3 overflow-x-auto font-mono leading-relaxed">
+        <pre className="overflow-x-auto rounded-[10px] bg-sunk p-3 font-mono text-xs leading-relaxed text-ink">
           {question.question.includes("```")
             ? question.question.replace(/```\w*\n?/g, "").trim()
             : question.question}
@@ -264,32 +290,29 @@ function ShortAnswerRenderer({
             onChange={(e) => setValue(e.target.value)}
             rows={isCode ? 4 : 3}
             placeholder={isCode ? "Write the corrected code here…" : "Type your answer here…"}
-            className={`w-full px-3 py-2 rounded-xl text-xs bg-white/70 border border-white/60 text-aristo-brown-main placeholder-aristo-brown-faint focus:outline-none focus:border-aristo-orange-main resize-none ${isCode ? "font-mono" : ""}`}
+            className={cn(FIELD, "resize-none py-2", isCode && "font-mono")}
           />
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleSubmit}
-              disabled={!value.trim() || isEvaluating}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
-            >
-              {isEvaluating ? "Evaluating…" : "Submit"}
-            </button>
+            <Button onClick={handleSubmit} disabled={!value.trim() || isEvaluating}>
+              {isEvaluating ? "Marking…" : "Submit"}
+            </Button>
             {!revealed && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => { setRevealed(true); onAnswer("__skipped__"); }}
-                className="px-3 py-2 rounded-xl text-xs text-aristo-brown-muted hover:text-aristo-brown-main transition-colors"
+                className="text-body"
               >
-                I don&apos;t know →
-              </button>
+                I don&apos;t know
+              </Button>
             )}
           </div>
         </div>
       )}
 
       {result && (
-        <div className="bg-white/50 rounded-xl p-3 space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-aristo-brown-muted">Model Answer</p>
-          <pre className={`text-xs text-aristo-brown-main leading-relaxed whitespace-pre-wrap ${isCode ? "font-mono" : ""}`}>
+        <div className="space-y-1 rounded-[10px] bg-sunk p-3">
+          <p className="text-[11px] font-semibold text-muted">Model answer</p>
+          <pre className={cn("whitespace-pre-wrap text-[13px] leading-relaxed text-ink", isCode && "font-mono")}>
             {question.correct_answer}
           </pre>
         </div>
@@ -341,43 +364,56 @@ function OrderingRenderer({
   return (
     <div className="space-y-2">
       {ordered.map((item, idx) => {
-        const isCorrectPos = result && correctOrder[idx] === item;
-        const isWrongPos   = result && correctOrder[idx] !== item;
+        const isCorrectPos = !!result && correctOrder[idx] === item;
+        const isWrongPos   = !!result && correctOrder[idx] !== item;
         return (
           <div
             key={item}
-            className={`flex items-center gap-2 p-2 rounded-xl border transition-all ${
+            className={cn(
+              "flex min-h-11 items-center gap-2 rounded-[10px] border py-1 pl-3 pr-1 transition-colors duration-fast",
               result
                 ? isCorrectPos
-                  ? "bg-[#DCFCE7] border-[#86EFAC]"
-                  : isWrongPos
-                  ? "bg-[#FEE2E2] border-[#FCA5A5]"
-                  : "bg-white/40 border-white/40"
-                : "bg-white/70 border-white/60"
-            }`}
+                  ? STATE_RIGHT
+                  : STATE_WRONG
+                : "border-line bg-surface",
+            )}
           >
-            <span className="text-[10px] font-bold text-aristo-brown-faint w-4 tabular-nums">{idx + 1}.</span>
-            <span className="text-xs text-aristo-brown-main flex-1">{item}</span>
+            <span className={cn("w-4 text-[11px] font-semibold tabular-nums", result ? "text-current" : "text-muted")}>{idx + 1}.</span>
+            <span className={cn("flex-1 text-[13px]", result ? "text-current" : "text-ink")}>{item}</span>
+            <Mark right={isCorrectPos} wrong={isWrongPos} what={item} />
             {!result && (
-              <div className="flex flex-col gap-0.5">
-                <button onClick={() => moveUp(idx)} className="text-aristo-brown-faint hover:text-aristo-orange-main text-xs leading-none">▲</button>
-                <button onClick={() => moveDown(idx)} className="text-aristo-brown-faint hover:text-aristo-orange-main text-xs leading-none">▼</button>
+              <div className="flex">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => moveUp(idx)}
+                  disabled={idx === 0 || submitted}
+                  aria-label={`Move ${item} up`}
+                >
+                  <ChevronUp aria-hidden />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => moveDown(idx)}
+                  disabled={idx === ordered.length - 1 || submitted}
+                  aria-label={`Move ${item} down`}
+                >
+                  <ChevronDown aria-hidden />
+                </Button>
               </div>
             )}
           </div>
         );
       })}
       {!result && !submitted && (
-        <button
-          onClick={handleSubmit}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover transition-all mt-1"
-        >
-          Submit Order
-        </button>
+        <Button onClick={handleSubmit} className="mt-1 w-full">
+          Submit order
+        </Button>
       )}
       {result && (
-        <div className="text-[10px] text-aristo-brown-muted pt-1">
-          Correct order: {correctOrder.join(" → ")}
+        <div className="pt-1 text-xs text-body">
+          Correct order: {correctOrder.join(", ")}
         </div>
       )}
     </div>
@@ -425,26 +461,25 @@ function MatchingRenderer({
       <div className="space-y-2">
         {terms.map((term) => {
           const chosen    = pairs[term];
-          const isCorrect = result && correctMap[term] === chosen;
-          const isWrong   = result && correctMap[term] !== chosen;
+          const isCorrect = !!result && correctMap[term] === chosen;
+          const isWrong   = !!result && correctMap[term] !== chosen;
           return (
             <div key={term} className="space-y-1">
-              <span className="text-[10px] font-bold text-aristo-brown-main">{term}</span>
+              <span className="flex items-center gap-1 text-xs font-semibold text-ink">
+                {term}
+                <Mark right={isCorrect} wrong={isWrong} what={term} />
+              </span>
               <select
                 value={chosen ?? ""}
                 onChange={(e) => handleSelect(term, e.target.value)}
                 disabled={submitted || !!result}
-                className={`w-full px-2 py-1.5 rounded-lg text-xs border focus:outline-none transition-all ${
-                  result
-                    ? isCorrect
-                      ? "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]"
-                      : isWrong
-                      ? "bg-[#FEE2E2] border-[#FCA5A5] text-[#DC2626]"
-                      : "bg-white/40 border-white/40"
-                    : "bg-white/70 border-white/60 text-aristo-brown-main focus:border-aristo-orange-main"
-                }`}
+                className={cn(
+                  FIELD,
+                  "h-11 py-2",
+                  result && (isCorrect ? STATE_RIGHT : STATE_WRONG),
+                )}
               >
-                <option value="">— select —</option>
+                <option value="">Choose one</option>
                 {defs.map((d) => (
                   <option key={d} value={d}>{d}</option>
                 ))}
@@ -454,18 +489,14 @@ function MatchingRenderer({
         })}
       </div>
       {!result && !submitted && (
-        <button
-          onClick={handleSubmit}
-          disabled={!allMatched}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
-        >
-          Submit Matches
-        </button>
+        <Button onClick={handleSubmit} disabled={!allMatched} className="w-full">
+          Submit matches
+        </Button>
       )}
       {result && (
-        <div className="text-[10px] text-aristo-brown-muted space-y-0.5">
+        <div className="space-y-0.5 text-xs text-body">
           {correctPairs.map(([t, d]) => (
-            <div key={t}><span className="font-semibold">{t}</span> → {d}</div>
+            <div key={t}><span className="font-semibold text-ink">{t}</span>: {d}</div>
           ))}
         </div>
       )}
@@ -476,16 +507,21 @@ function MatchingRenderer({
 // ─── Feedback Banner ──────────────────────────────────────────────────────────
 
 function FeedbackBanner({ result }: { result: AnswerResult }) {
+  const ok = result.is_correct;
   return (
     <div
-      className={`rounded-xl p-3 text-xs leading-relaxed ${
-        result.is_correct
-          ? "bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D]"
-          : "bg-[#FEF3C7] border border-[#FCD34D] text-[#92400E]"
-      }`}
+      className={cn(
+        "flex gap-2 rounded-[10px] border p-3 type-caption text-ink",
+        ok ? "border-success/40 bg-success/10" : "border-danger/40 bg-danger/10",
+      )}
     >
-      <span className="font-bold mr-1">{result.is_correct ? "✓ Correct!" : "Not quite."}</span>
-      {result.feedback}
+      {ok
+        ? <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
+        : <X aria-hidden className="mt-0.5 size-4 shrink-0 text-danger" />}
+      <p>
+        <span className={cn("mr-1 font-semibold", ok ? "text-success" : "text-danger")}>{ok ? "Correct." : "Not quite."}</span>
+        {result.feedback}
+      </p>
     </div>
   );
 }
@@ -625,27 +661,27 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
   const progressPct = ((answered) / totalQs) * 100;
 
   return (
-    <div className="bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl overflow-hidden">
-      {/* Progress bar */}
-      <div className="h-1 bg-white/30">
+    <div className="overflow-hidden rounded-2xl bg-surface">
+      {/* Progress bar: the number is also in the header, so the fill is not the only cue */}
+      <div className="h-1 bg-sunk">
         <div
-          className="h-full bg-aristo-orange-main transition-all duration-500"
+          className="h-full bg-accent transition-all duration-slow"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="px-4 py-3 space-y-3">
+      <div className="space-y-3 px-4 py-3">
 
         {/* Header */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-main">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-accent-text">
               Question {currentIdx + 1} of {totalQs}
             </span>
             {bloomBadge(currentQ.bloom_level)}
-            <span className="text-[9px] text-aristo-brown-faint">{typeLabel(currentQ.question_type)}</span>
+            <span className="text-xs text-muted">{typeLabel(currentQ.question_type)}</span>
           </div>
-          <span className="text-[10px] text-aristo-brown-faint tabular-nums">
+          <span className="text-xs tabular-nums text-muted">
             {results.filter((r) => r?.is_correct).length} correct
           </span>
         </div>
@@ -653,13 +689,13 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
         {/* Question text — shown separately for code types */}
         {currentQ.question_type !== "code_debugging" &&
           currentQ.question_type !== "code_completion" && (
-          <p className="text-sm font-medium text-aristo-brown-main leading-snug">
+          <p className="text-[15px] font-medium leading-snug text-ink">
             {currentQ.question}
           </p>
         )}
         {(currentQ.question_type === "code_debugging" ||
           currentQ.question_type === "code_completion") && (
-          <p className="text-sm font-medium text-aristo-brown-main leading-snug">
+          <p className="text-[15px] font-medium leading-snug text-ink">
             {currentQ.question_type === "code_debugging"
               ? "Find and fix the bug in this code:"
               : "Complete the code:"}
@@ -693,23 +729,24 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           <MatchingRenderer question={currentQ} result={currentR} onAnswer={handleAnswer} />
         )}
 
-        {/* Feedback + Next */}
+        {/* Feedback + Next. The live region is always mounted, so a screen reader
+            announces the banner when it appears. */}
+        <div role="status" className="empty:!mt-0">
+          {currentR && <FeedbackBanner result={currentR} />}
+        </div>
         {currentR && (
           <div className="space-y-2">
-            <FeedbackBanner result={currentR} />
             {isEvaluating && (
-              <div className="flex items-center gap-1.5 text-[11px] text-aristo-brown-muted">
-                <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-bounce" />
-                Evaluating…
+              <div className="flex items-center gap-1.5 text-xs text-muted">
+                <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce" />
+                Marking…
               </div>
             )}
             <div className="flex justify-end">
-              <button
-                onClick={handleNext}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-sm transition-all"
-              >
-                {currentIdx < totalQs - 1 ? "Next →" : "See Results"}
-              </button>
+              <Button onClick={handleNext}>
+                {currentIdx < totalQs - 1 ? "Next question" : "See results"}
+                <ArrowRight aria-hidden />
+              </Button>
             </div>
           </div>
         )}

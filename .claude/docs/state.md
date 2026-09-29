@@ -2,6 +2,42 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-29 - V8.4b done: quiz, desk card, answer panel, input box, quiz bars (Sonnet, plan approved by Hmz)
+
+Branch `dev/v8-4b-quiz` off `origin/deploy-prep` (which had #11 and #12 but not #13, still open when this was done); PR into
+`deploy-prep`. Decisions are the seven V8.4b rows in decisions.md; the system parts are in brand-system.md ("Classroom
+(V8.4b): the quiz", Theme, register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-29-v8-4b/`.
+
+- **Shipped:**
+  - Desk card is paper in the room: `.theme-paper` keeps it light in both themes. Box, anchor and camera untouched.
+  - QuizView on the tokens and host-agnostic (the daily review hosts it too).
+  - Right and wrong are `success` / `danger` on tints, each with an icon, words and screen-reader text.
+  - Bloom level is one neutral chip with an icon and a label (no hues).
+  - "Question 1 of 2" is `accent-text`.
+  - Ordering rows have 44px icon buttons with labels.
+  - AnswerInputPanel, InputBox and the CourseFlow bars (with their loading bar) are on the system Button / Input, 44px,
+    following the theme like the V8.4a panel.
+  - Mic and listening keep their behaviour: the accent fill, a stop icon, a ring and "Listening…". Pulse, spinner and
+    bounce are `motion-safe:`.
+  - Scope additions (approved): the "Quiz on your desk" strips in LearnClient and DemoClient, and DemoResultBar.
+  - V8.1 step 5 microcopy for these files: no em-dash, no `!`, no emoji, no text arrows.
+  - `src/lib`, `src/app/api`, `src/hooks`, `src/store` and `pages/` untouched; no prop, handler or effect changed.
+- **Measured** (`.claude/eval/2026-09-29-v8-4b/README.md`):
+  - AA: 3,292 text nodes (every question type, the answer panel, the input box, the bars, the desk card on /demo and
+    /dev/desk-quiz; 360 / 768 / 1280; light and the dark preview), 0 failures, minimum 5.26.
+  - The desk card never overflows its 620px box, and nothing animates under reduced motion.
+  - Every target is at least 44px (the desk card's options measure 39-43px only because the card is tilted in 3D; the CSS
+    height is 44px).
+  - `/demo` JS 454.2 -> 455.2 kB, CSS 14.4 -> 14.3 kB, scene ready median 2245 -> 1969 ms (noise, not slower).
+  - `/learn` in the pane: JS 457.8 -> 458.5 kB, the same three GET calls, no paid endpoint, and the free-mode input is 44px.
+  - First loads: `/` 122 kB static, `/demo` 135 kB, `/learn` 134 kB.
+- **Gates:** type-check clean; lint 0 errors / 10 warnings (unchanged); tests 404; build green.
+- **Not done, left for V8.4c:** `ReviewView` (hosts QuizView; white header, emoji, dashes), the LearnClient / DemoClient shells
+  (panel column, top bars, banner; the card is partly under the 400px panel at narrow widths), FreeTopicCard, ModePicker,
+  loading, the orange `.aristo-scroll` scrollbar on the card, then deleting the lock in `pages/_app.tsx`.
+- **Next:** V8.4c; then V8.3 landing v3 and V8.7 re-capture. If #13 merged in the meantime, this branch's `state.md` will
+  need a trivial merge (each side adds a different block).
+
 ## 2026-09-29 - V8.5b: day room walls the teachers read against
 
 Branch `dev/v8-5b-day-walls` off `origin/deploy-prep`; PR into `deploy-prep`. It is independent of V8.4a (#11).

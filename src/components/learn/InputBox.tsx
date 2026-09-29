@@ -2,6 +2,10 @@
 
 import { useAristoStore, type ChatMessage } from "@/store/useAristoStore";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowRight, LoaderCircle, Mic, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import type { SpeechRecognitionInstance } from "@/lib/speech";
 import "@/lib/speech";
 
@@ -123,7 +127,7 @@ export function InputBox() {
                 id:        `msg_${Date.now()}_viz_err`,
                 type:      "chat",
                 role:      "assistant",
-                content:   "_(I couldn't create the visual for this topic right now — the lesson above still stands!)_",
+                content:   "_(I couldn't create the visual for this topic right now. The lesson above still stands.)_",
                 timestamp: Date.now(),
               });
             })
@@ -193,52 +197,30 @@ export function InputBox() {
 
   const placeholder = isBusy
     ? isGeneratingModel
-      ? "Generating 3D model…"
+      ? "Building your 3D model…"
       : "Thinking…"
     : "Ask about any topic…";
 
   return (
-    <div className="px-4 py-3 bg-white/40 backdrop-blur-xl border-t border-white/40 rounded-b-2xl">
+    <div className="rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        {/* Mic button */}
-        <button
+        {/* Mic button. Listening is the accent fill and the stop icon; the pulse is
+            motion-safe, so a reduced-motion reader still sees the ring. */}
+        <Button
+          variant={isListening ? "default" : "secondary"}
+          size="icon"
           onClick={toggleListening}
           disabled={isBusy}
           title={isListening ? "Stop listening" : "Speak"}
-          className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 border ${
-            isListening
-              ? "bg-aristo-orange-main border-aristo-orange-main text-accent-ink shadow-[0_0_16px_hsl(var(--aristo-orange-main)/0.5)] animate-pulse"
-              : "bg-white/70 border-white/60 text-aristo-brown-muted hover:border-aristo-orange-main/40 hover:text-aristo-orange-main hover:bg-aristo-wash-light"
-          } disabled:opacity-40 disabled:cursor-not-allowed`}
+          aria-label="Speak"
+          aria-pressed={isListening}
+          className={cn("shrink-0", isListening && "ring-2 ring-accent-text ring-offset-2 ring-offset-surface motion-safe:animate-pulse")}
         >
-          {isListening ? (
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <rect x="6" y="6" width="12" height="12" rx="1" />
-            </svg>
-          ) : (
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"
-              />
-            </svg>
-          )}
-        </button>
+          {isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
+        </Button>
 
         {/* Text input */}
-        <input
+        <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -249,33 +231,24 @@ export function InputBox() {
           }}
           placeholder={placeholder}
           disabled={isBusy}
-          className="flex-1 h-9 px-4 rounded-full bg-white/80 border border-white/60 text-sm text-aristo-brown-main placeholder:text-aristo-tan focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/30 focus:border-aristo-orange-main/50 disabled:opacity-50 transition-all"
+          className="flex-1"
         />
 
         {/* Send button */}
-        <button
+        <Button
+          size="icon"
           onClick={() => handleSubmit(input)}
           disabled={isBusy || !input.trim()}
           title="Send"
-          className="shrink-0 w-9 h-9 rounded-full bg-aristo-orange-main flex items-center justify-center text-accent-ink shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.35)] hover:bg-accent-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          aria-label={isBusy ? "Working" : "Send"}
+          className="shrink-0"
         >
           {isBusy ? (
-            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
+            <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
           ) : (
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <ArrowRight aria-hidden />
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

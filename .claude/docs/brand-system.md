@@ -225,6 +225,33 @@ in place.
 - **Status in lesson cards:** key insight `warning` on `warning/10` with a Lightbulb icon; output and "in the room"
   chips `success` on `success/10`; code `ink` on `sunk`; hint and analogy on `tint`.
 
+### Classroom (V8.4b): the quiz
+
+- **Desk card** (`DeskQuiz`): a sheet of paper in the lit room, so `.theme-paper` keeps it light in both themes:
+  `bg-surface`, `border-line`, `text-ink`, 16px radius, Geist. Its 520 x 620px box is untouched (with
+  `distanceFactor` it sets the world size). The entry animation is off under reduced motion.
+- **QuizView** is host-agnostic (tokens only). The desk gives it the paper; the daily review (`ReviewView`) gives it the
+  theme.
+- **Choices** (multiple choice, true or false): 44px (48 for true or false), control radius. Idle `surface` with a
+  `line` border and a `sunk` hover; picked and waiting for the mark, `accent` with `accent-ink`; right,
+  `success/15` with `success` text, a border at `success/40` and a Check icon; wrong, the same in `danger` with an
+  X icon; the rest after an answer, `sunk` with `muted`. Each mark also has screen-reader text ("Mantle is correct").
+- **Feedback banner** (`role="status"`): an icon, "Correct." or "Not quite." in `success` or `danger`, then the
+  explanation in `ink` on the `/10` tint. Wrong is `danger`, not `warning`.
+- **Bloom level:** one neutral chip (`bg-sunk text-body`) with an icon and the label: remember `BookOpen`, understand
+  `Lightbulb`, apply `Wrench`, analyze `ScanSearch`, evaluate `Scale`, create `Hammer`. Levels have no colours.
+- **Other types:** fill in the blank uses the system `Input` and Button; short answer, code and matching use the same
+  field style (`surface`, `line`, 44px); ordering rows have 44px ghost icon buttons (Chevron up and down) with labels;
+  code and the model answer are `ink` on `sunk`.
+- **Progress:** an `accent` fill on a `sunk` track, on the `duration-slow` token (0 under reduced motion). "Question n of m"
+  carries the number in `accent-text`.
+- **Bars** (`CourseFlow`, `InputBox`, `AnswerInputPanel`, the desk status strip, `DemoResultBar`):
+  `bg-surface/95 border-t border-line backdrop-blur-md`, following the theme like the lesson panel. Buttons are the
+  system's; the result score is `success`, `warning` or `danger` with an icon and words.
+- **Mic and listening:** the mic is a secondary icon Button; listening is the `accent` fill, a stop icon, a solid
+  `accent-text` ring and the status text "Listening…". The pulse, the spinner and the bounce are `motion-safe:`, so a
+  reduced-motion reader still gets the ring and the words.
+
 ### shadcn mapping (for `npx shadcn add`)
 
 shadcn's colour vocabulary was removed in V8.2: its `accent` means a hover tint, which contradicts the
@@ -272,8 +299,11 @@ system's `accent`. After adding a component, translate:
   It shares the explicit dark rule through a forgiving `:is()` list, so the values exist once per route in and it
   survives browsers without `:has()`. Use it for anything placed on the lit room: the caption band, the callouts,
   the image and model toolbars. The classroom panel itself follows the theme.
-- The Pages Router lock stays until V8.4b and V8.4c are on the tokens; V8.4c deletes it from `pages/_app.tsx`.
-  The V8.4a surfaces need no edit then (dark checked by removing the meta in the browser).
+- The Pages Router lock stays until V8.4c is on the tokens; V8.4c deletes it from `pages/_app.tsx`. The V8.4a and
+  V8.4b surfaces need no edit then (dark checked by removing the meta in the browser).
+- **`.theme-paper`** (V8.4b) is the light twin of `.theme-ink`: it sits in the `:root` rule of `globals.css`, so it
+  pins the light values on a subtree whatever the page theme (and the lock). Use it for anything that lies in the lit
+  room as an object. The desk quiz card is the one user.
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
 ## Responsive behaviour
@@ -291,7 +321,8 @@ with an owner:
 
 | Where | What | Why kept | Owner |
 |---|---|---|---|
-| `QuizView`, `DashboardView`, `CreateTeacherClient`, `FreeTopicCard`, `CourseMapView`, `ModePicker` | quiz right/wrong greens and reds, key-insight ambers, code-block themes, Bloom-level colours | moving them would change /learn and /demo, which V8.2 must not do. `LessonView`'s went in V8.4a (none left in the five V8.4a files or the Experience toolbars) | V8.4b / V8.4c |
+| `DashboardView`, `CreateTeacherClient`, `FreeTopicCard`, `CourseMapView`, `ModePicker`, `ReviewView` | status greens and reds, key-insight ambers, code-block themes, Bloom-level colours, emoji | moving them would change /learn and /demo, which V8.2 must not do. `LessonView`'s went in V8.4a and the quiz files' in V8.4b (none left in `QuizView`, `AnswerInputPanel`, `InputBox`, `CourseFlow` or the desk card, apart from the row below) | V8.4c |
+| `DeskQuiz` | the paper's grounding shadow, `rgba(30,14,6,0.65)` | a scene constant: it is a shadow cast on the desk in the lit room, tuned by eye in 3D, and `--shadow` is far too faint for it. Commented at the definition | stays |
 | `src/app/admin/*` (cost, overview, courses, quiz-analytics, misconceptions, knowledge graph) | data-viz and provider colours, status literals | internal; categorical data-viz is not a semantic colour | V8.6 (admin token pass) |
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
 | `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
@@ -311,10 +342,20 @@ instead of white (Take Quiz, the demo teacher pills, the quiz's buttons and chos
 mic buttons, review, the course map, loading retry, the reviews chip, the avatar initial: brand brown, 5.55,
 hovering to `accent-hover` 6.26), and the demo banner's Create an account link is `accent-text` (5.1).
 
+Fixed in V8.4b (the quiz, desk card, answer panel, input box and quiz bars): #F97B2F as text ("Question 1 of 2", the
+fill-in-the-blank), the quiz's green and red on tints (`success` / `danger` on `/15` tints, 5.53 / 4.89 light), the
+amber "not quite" banner, the Bloom hues, the grey `aristo-brown-faint` labels and the leftover white-on-orange. Measured over
+the desk card, every question type, the answer panel, the input box and the bars: 3,292 text nodes, 0 failures, minimum
+5.26 (`.claude/eval/2026-09-29-v8-4b/`). Two non-text gaps are left on purpose:
+
+- The progress fill, `accent` on `sunk` (2.25:1 light), is under the 3:1 a graphic needs. "Question n of m" carries the
+  number, and the rest of the system uses `accent` for progress.
+- Choice and field outlines are `line` on `surface` (1.30:1), the system-wide field border. The text names each control,
+  and right or wrong is never colour alone (icon, words, border).
+
 Still open:
 
-- Orange as text: the quiz labels ("Question 1 of 2", V8.4b), the /learn top nav hovers and `FreeTopicCard`
-  (V8.4c).
+- Orange as text: the /learn top nav hovers and `FreeTopicCard` (V8.4c). The quiz labels went in V8.4b.
 - The loading screen's grey caption (V8.4c).
 - `AvatarCredit` on its own (the /demo teacher row) keeps brown-muted #8B6E5A (4.69 on white, lower over glass).
 

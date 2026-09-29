@@ -311,9 +311,9 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     // here; QuizView owns its own controls.
     if (activeQuiz) {
       return (
-        <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl flex items-center justify-center gap-2 text-xs text-aristo-brown-muted">
-          <span className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main animate-pulse" />
-          <span>Quiz on your desk — look down</span>
+        <div className="flex items-center justify-center gap-2 rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
+          <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-pulse" />
+          <span>Your quiz is on the desk. Look down.</span>
         </div>
       );
     }

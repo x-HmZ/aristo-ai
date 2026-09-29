@@ -76,7 +76,12 @@
  * below is the viewport scrollbar (the root itself); the second is nested
  * scroll containers. */
 @layer base {
-  :root {
+  /* `.theme-paper` pins the light values on a subtree whatever the page theme:
+   * the desk quiz is a sheet of paper lying in the lit room, which never
+   * follows the theme (the light twin of `.theme-ink` below). One rule, so the
+   * values exist once. */
+  :root,
+  .theme-paper {
     --bg: 243 244 246; /* #F3F4F6  page */
     --surface: 252 252 253; /* #FCFCFD  cards, panels, popovers */
     --sunk: 234 236 240; /* #EAECF0  footer, wells, secondary fills */
@@ -193,7 +198,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root {
+    :root,
+    .theme-paper {
       --dur-fast: 0ms;
       --dur-base: 0ms;
       --dur-slow: 0ms;

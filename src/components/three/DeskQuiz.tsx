@@ -75,21 +75,19 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
       // toolbar) so they can't peek through during the tilt.
       zIndexRange={[200, 0]}
     >
+      {/* A sheet of paper in the lit room: `.theme-paper` keeps it light in both
+          themes (the room never follows the theme); it is otherwise on the tokens. */}
       <div
-        className="aristo-scroll"
+        className="theme-paper aristo-scroll aristo-paper rounded-2xl border border-line bg-surface px-5 py-[18px] text-ink"
         style={{
+          // 520 px wide is what sets the world size with PAPER_DISTANCE_FACTOR.
           width:         "520px",
           maxHeight:     "620px",
           overflowY:     "auto",
-          background:    "#fffef8",
-          borderRadius:  "16px",
-          padding:       "18px 20px",
-          boxShadow:     "0 32px 90px rgba(30,14,6,0.65), 0 0 0 1px hsl(var(--aristo-orange-main) / 0.12)",
-          color:         "#1a1a2e",
-          fontFamily:    "system-ui, sans-serif",
-          // Subtle paper-on-desk drop tone — soft warm shadow under the
-          // sheet so it feels grounded against the wood backdrop.
-          backgroundImage: "linear-gradient(180deg, #fffef8 0%, #fdf6e8 100%)",
+          // Soft warm shadow under the sheet so it feels grounded against the
+          // wood backdrop. A scene constant, not a UI colour (three.js-side
+          // lighting is literal too), so it stays a literal.
+          boxShadow:     "0 32px 90px rgba(30,14,6,0.65)",
           animation:     "aristoPaperIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both",
         }}
       >
@@ -97,6 +95,9 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
           @keyframes aristoPaperIn {
             from { opacity: 0; transform: translateY(14px) scale(0.97); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .aristo-paper { animation: none !important; }
           }
         `}</style>
         <QuizView

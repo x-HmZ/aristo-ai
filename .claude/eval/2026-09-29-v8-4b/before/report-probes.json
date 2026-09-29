@@ -1,0 +1,13 @@
+{
+ "label": "before",
+ "mode": "probes",
+ "shots": [
+  "probe-desk-q1-360-light.jpg",
+  "probe-desk-q1-768-light.jpg",
+  "probe-desk-q1-1280-light.jpg",
+  "probe-desk-q1-360-dark.jpg",
+  "probe-desk-q1-768-dark.jpg",
+  "probe-desk-q1-1280-dark.jpg"
+ ],
+ "paid": []
+}

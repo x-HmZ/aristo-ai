@@ -20,6 +20,9 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LoaderCircle, Mic, Square } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { NarrationSegment } from "@/lib/agents/teaching";
 import type { SpeechRecognitionInstance } from "@/lib/speech";
 import "@/lib/speech";
@@ -154,13 +157,13 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
   const handleSubmit = () => { doSubmit(answer); };
 
   return (
-    <div className="px-4 py-3 bg-white/55 backdrop-blur-xl border-t border-aristo-orange-main/30 rounded-b-2xl shadow-[inset_0_1px_0_hsl(var(--aristo-orange-main)/0.18)]">
+    <div className="rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 backdrop-blur-md">
       {/* Avatar prompt strip */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-orange-ink">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-xs font-semibold text-accent-text">
           Your turn
         </span>
-        <span className="text-[10px] text-aristo-brown-muted">
+        <span className="text-xs text-muted" aria-live="polite">
           {isListening
             ? "Listening… pause when you're done"
             : micError === "mic-unsupported"
@@ -168,39 +171,32 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
             : "Speak or type your answer"}
         </span>
         {onSkip && (
-          <button
+          <Button
+            variant="ghost"
             onClick={onSkip}
-            className="ml-auto text-[10px] text-aristo-brown-muted hover:text-aristo-brown-main underline underline-offset-2"
+            className="ml-auto px-3 text-body"
             title="Skip this question"
           >
             Skip
-          </button>
+          </Button>
         )}
       </div>
 
       <div className="flex items-end gap-2">
-        {/* Mic toggle */}
-        <button
+        {/* Mic toggle. Listening is the accent fill, the stop icon and the status text; the
+            pulse is motion-safe so a reduced-motion reader still sees a ring. */}
+        <Button
+          variant={isListening ? "default" : "secondary"}
+          size="icon"
           onClick={toggleListening}
           disabled={submitting || micError === "mic-unsupported"}
           title={isListening ? "Stop listening" : "Speak"}
-          className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 border ${
-            isListening
-              ? "bg-aristo-orange-main border-aristo-orange-main text-accent-ink shadow-[0_0_18px_hsl(var(--aristo-orange-main)/0.55)] animate-pulse"
-              : "bg-white/70 border-white/60 text-aristo-brown-muted hover:border-aristo-orange-main/40 hover:text-aristo-orange-main hover:bg-aristo-wash-light"
-          } disabled:opacity-40 disabled:cursor-not-allowed`}
+          aria-label="Speak"
+          aria-pressed={isListening}
+          className={cn("shrink-0", isListening && "ring-2 ring-accent-text ring-offset-2 ring-offset-surface motion-safe:animate-pulse")}
         >
-          {isListening ? (
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <rect x="6" y="6" width="12" height="12" rx="1" />
-            </svg>
-          ) : (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
-            </svg>
-          )}
-        </button>
+          {isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
+        </Button>
 
         {/* Text input (textarea so multi-line answers don't get cut off) */}
         <textarea
@@ -224,25 +220,25 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           placeholder={isListening ? "Listening…" : "Type your answer…"}
           rows={2}
           disabled={submitting}
-          className="aristo-scroll flex-1 px-3 py-2 rounded-2xl bg-white/85 border border-white/60 text-sm text-aristo-brown-main placeholder:text-aristo-tan focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/35 focus:border-aristo-orange-main/50 disabled:opacity-50 transition-all resize-none"
+          className="aristo-scroll min-h-11 flex-1 resize-none rounded-[10px] border border-line bg-surface px-3.5 py-2 text-base text-ink transition-colors duration-fast placeholder:text-muted hover:border-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 md:text-sm"
         />
 
         {/* Send button */}
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={submitting || !answer.trim()}
           title="Submit answer"
-          className="shrink-0 h-9 px-3 rounded-full bg-aristo-orange-main flex items-center justify-center text-accent-ink text-xs font-semibold shadow-[0_2px_12px_hsl(var(--aristo-orange-main)/0.35)] hover:bg-accent-hover transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          className="shrink-0"
         >
           {submitting ? (
-            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
+            <>
+              <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
+              Sending…
+            </>
           ) : (
             "Submit"
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );
