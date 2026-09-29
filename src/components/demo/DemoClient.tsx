@@ -18,7 +18,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CircleCheck, TrendingUp } from "lucide-react";
+import { ArrowRight, BookOpen, CircleCheck, HeartPulse, Mountain, TrendingUp } from "lucide-react";
 import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
@@ -28,8 +28,13 @@ import { Button } from "@/components/ui/button";
 import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
-import { AristoMark } from "@/components/brand/AristoMark";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import {
+  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
+} from "@/components/learn/ClassroomChrome";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
 
 /**
  * The avatar the demo opens on. It must lipsync (the page exists to show a
@@ -44,35 +49,65 @@ import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
  */
 const DEMO_TEACHER = "jake" as const;
 
+/** An icon per demo topic (the data's emoji is not rendered: no emoji in the UI). */
+const TOPIC_ICON: Record<string, typeof BookOpen> = {
+  "volcano-eruption": Mountain,
+  heart: HeartPulse,
+};
+const topicIcon = (slug: string) => TOPIC_ICON[slug] ?? BookOpen;
+
+/** The segmented control's item (TeacherControls' pattern). */
+function segmentClass(selected: boolean) {
+  return cn(
+    FOCUS,
+    "flex h-11 shrink-0 items-center rounded-[6px] px-3 text-sm font-semibold transition-colors duration-fast ease-out-soft",
+    selected ? "bg-surface text-ink shadow-e1" : "text-body hover:text-ink",
+  );
+}
+
 // ─── Topic picker overlay ─────────────────────────────────────────────────────
 
+// The system scrim over the room and a surface card that follows the theme.
 function TopicPicker({ onPick }: { onPick: (topic: DemoTopic) => void }) {
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-[#1E0E06]/55 backdrop-blur-sm px-4">
-      <div className="w-full max-w-2xl rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_24px_80px_rgba(30,14,6,0.35)] p-8">
-        <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-aristo-wash-light border border-aristo-orange-main/25 text-[10px] font-bold uppercase tracking-widest text-aristo-orange-ink mb-3">
-            Live demo — no account needed
+    <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/50 px-4 py-20 backdrop-blur-sm">
+      <section
+        aria-labelledby="demo-picker-title"
+        className={cn(SHAPE.surface, "w-full max-w-2xl border border-line bg-surface p-6 shadow-e2 sm:p-8")}
+      >
+        <div className="mb-6 text-center">
+          <span className="mb-3 inline-flex items-center rounded-full border border-tint-line bg-tint px-3 py-1 text-xs font-medium text-ink">
+            No account needed
           </span>
-          <h1 className="text-2xl font-bold text-aristo-brown-main">Pick a lesson to watch</h1>
-          <p className="text-sm text-aristo-brown-muted mt-1">
-            Your 3D teacher will explain it, show visuals, and quiz you at the end.
+          <h1 id="demo-picker-title" className="type-h2 font-bold text-ink">Pick a Lesson to Watch</h1>
+          <p className="mt-2 text-sm text-body">
+            Your teacher explains it out loud, shows it on the board, then puts a quiz on your desk.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {DEMO_TOPICS.map((topic) => (
-            <button
-              key={topic.slug}
-              onClick={() => onPick(topic)}
-              className="text-left rounded-2xl bg-[#FFF8F2] border border-aristo-orange-main/20 p-5 hover:border-aristo-orange-main/50 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_hsl(var(--aristo-orange-main)/0.2)] transition-all"
-            >
-              <div className="text-3xl mb-2">{topic.emoji}</div>
-              <div className="font-bold text-aristo-brown-main mb-1">{topic.title}</div>
-              <div className="text-xs text-aristo-brown-muted leading-relaxed">{topic.blurb}</div>
-            </button>
-          ))}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {DEMO_TOPICS.map((topic) => {
+            const Icon = topicIcon(topic.slug);
+            return (
+              <button
+                key={topic.slug}
+                onClick={() => onPick(topic)}
+                className={cn(
+                  SHAPE.surface,
+                  FOCUS,
+                  PRESS,
+                  "border border-line bg-surface p-5 text-left duration-fast hover:border-muted/50 hover:bg-sunk",
+                )}
+              >
+                <span className="mb-3 flex size-10 items-center justify-center rounded-full border border-tint-line bg-tint text-accent-text">
+                  <Icon aria-hidden className="size-5" />
+                </span>
+                <span className="mb-1 block font-bold text-ink">{topic.title}</span>
+                <span className="block text-sm leading-relaxed text-body">{topic.blurb}</span>
+              </button>
+            );
+          })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -134,6 +169,9 @@ export function DemoClient() {
   const quizResult  = useAristoStore((s) => s.quizResult);
 
   const [topic, setTopic] = useState<DemoTopic | null>(null);
+  // The quiz is on the desk: the panel collapses to its strip (CSS only).
+  const quizOnDesk = !!activeQuiz;
+  const TopicIcon = topicIcon(topic?.slug ?? "");
 
   // Boot: mark demo mode + a stable non-null userId (DeskQuiz's guard checks
   // truthiness only — no learner row is ever read/written for it). Reset
@@ -222,47 +260,41 @@ export function DemoClient() {
       <SceneLoadingOverlay />
 
       {/* Top nav. Above the topic picker's blur (z-40) so the wordmark stays sharp
-          on the first screen. */}
-      <div className="absolute top-0 left-0 right-0 z-[45] flex items-center justify-between px-6 py-4">
-        <AristoMark
-          decorative={false}
-          className="h-[17px] text-aristo-brown-main"
-          litClassName="text-aristo-orange-main"
-        />
+          on the first screen. Ink glass on the room (ClassroomChrome). */}
+      <div className={cn(TOP_BAR, "z-[45]")}>
+        <ClassroomWordmark />
 
         {/* Persistent, unobtrusive demo banner + soft CTA */}
-        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-full px-4 py-1.5 shadow-sm">
-          <span className="text-xs text-aristo-brown-muted">
+        <GlassPill>
+          <span className="hidden px-3 text-sm text-body sm:inline">
             You&apos;re in the demo
           </span>
-          <span className="w-px h-3 bg-aristo-sand" />
-          <Link
-            href="/sign-up"
-            className="text-xs font-semibold text-accent-text underline-offset-2 transition-colors hover:underline"
-          >
-            Create an account →
-          </Link>
-        </div>
+          <PillDivider />
+          <Button asChild variant="ghost" className="rounded-full px-3 text-accent-text hover:text-accent-text">
+            <Link href="/sign-up">
+              Create an account
+              <ArrowRight aria-hidden />
+            </Link>
+          </Button>
+          <ThemeToggle className="rounded-full border-transparent text-body hover:border-transparent hover:bg-sunk hover:text-ink" />
+        </GlassPill>
       </div>
 
       {/* Right panel */}
       {topic && (
-        <div className="absolute right-5 top-[68px] bottom-5 z-10 w-[400px] flex flex-col rounded-2xl overflow-hidden shadow-[0_8px_40px_hsl(var(--aristo-orange-main)/0.18)] border border-white/40">
-          <div className="px-4 py-2.5 bg-white/55 backdrop-blur-xl border-b border-white/40 flex items-center gap-2">
-            <span className="text-sm">{topic.emoji}</span>
-            <span className="text-sm font-bold text-aristo-brown-main truncate flex-1">{topic.title}</span>
-            <button
-              onClick={handleTryAnother}
-              className="text-[11px] text-aristo-brown-muted hover:text-aristo-brown-main font-medium transition-colors shrink-0"
-            >
-              Change topic
-            </button>
-          </div>
-          {/* Teacher switcher, with the licence credit for the one on screen. */}
-          <div className="px-4 py-2 bg-white/55 backdrop-blur-xl border-b border-white/40 flex flex-col gap-1">
+        <div className={panelColumn(quizOnDesk)}>
+          <div className={cn("flex flex-col gap-2 rounded-t-2xl border-b border-line bg-surface/95 px-4 py-3 backdrop-blur-xl", quizOnDesk && "hidden")}>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-aristo-tan shrink-0">Teacher</span>
-              <div className="flex items-center gap-1 bg-white/60 rounded-full p-0.5 border border-white/60">
+              <TopicIcon aria-hidden className="size-4 shrink-0 text-accent-text" />
+              <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">{topic.title}</span>
+              <Button variant="ghost" onClick={handleTryAnother} className="shrink-0 px-3 text-body">
+                Change topic
+              </Button>
+            </div>
+            {/* Teacher switcher, with the licence credit for the one on screen. */}
+            <div className="flex items-center gap-3">
+              <span id="demo-teacher-label" className="shrink-0 text-xs font-semibold text-muted">Teacher</span>
+              <div role="group" aria-labelledby="demo-teacher-label" className={cn(SHAPE.control, "flex items-center gap-1 bg-sunk p-1")}>
                 {ACTIVE_TEACHERS.map((t) => (
                   <button
                     key={t}
@@ -271,20 +303,17 @@ export function DemoClient() {
                       useGLTF.preload(`/models/${AVATAR_ASSETS[t].sceneFile}`);
                       useGLTF.preload(`/models/${AVATAR_ASSETS[t].animFile}`);
                     }}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
-                      teacher === t
-                        ? "bg-aristo-orange-main text-accent-ink shadow-sm"
-                        : "text-aristo-brown-muted hover:text-aristo-brown-main"
-                    }`}
+                    aria-pressed={teacher === t}
+                    className={segmentClass(teacher === t)}
                   >
                     {AVATAR_ASSETS[t].label}
                   </button>
                 ))}
               </div>
             </div>
-            <AvatarCredit avatar={teacher} />
+            <AvatarCredit avatar={teacher} className="px-1" />
           </div>
-          <div className="flex-1 overflow-hidden bg-white/25 backdrop-blur-xl">
+          <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>
             <LessonPlayer demoMode />
           </div>
           {renderBottom()}
