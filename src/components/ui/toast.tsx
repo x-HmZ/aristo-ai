@@ -31,7 +31,7 @@ const toastVariants = cva(
       variant: {
         default: "border bg-surface text-ink",
         destructive:
-          "destructive group border-danger bg-danger text-accent-ink",
+          "destructive group border-danger bg-danger text-status-ink",
       },
     },
     defaultVariants: {
@@ -62,7 +62,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-[10px] border bg-transparent px-3 text-sm font-medium ring-offset-bg transition-colors hover:bg-sunk focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-accent-ink/40 group-[.destructive]:hover:bg-accent-ink/10 group-[.destructive]:focus:ring-accent-ink",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-[10px] border bg-transparent px-3 text-sm font-medium ring-offset-bg transition-colors hover:bg-sunk focus:outline-none focus:ring-2 focus:ring-accent-text focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-status-ink/40 group-[.destructive]:hover:bg-status-ink/10 group-[.destructive]:focus:ring-status-ink",
       className
     )}
     {...props}
@@ -77,7 +77,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-[6px] p-1 text-ink/50 opacity-0 transition-opacity hover:text-ink focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent group-hover:opacity-100 group-[.destructive]:text-accent-ink/70 group-[.destructive]:hover:text-accent-ink group-[.destructive]:focus:ring-accent-ink",
+      "absolute right-2 top-2 rounded-[6px] p-1 text-ink/50 opacity-0 transition-opacity hover:text-ink focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-accent-text group-hover:opacity-100 group-[.destructive]:text-status-ink/70 group-[.destructive]:hover:text-status-ink group-[.destructive]:focus:ring-status-ink",
       className
     )}
     toast-close=""

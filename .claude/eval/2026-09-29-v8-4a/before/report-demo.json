@@ -1,0 +1,252 @@
+{
+ "label": "before",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-360-light.jpg",
+  "demo-1-activate-narrating-360-light.jpg",
+  "demo-2-explain-360-light.jpg",
+  "demo-2-image-pointing-360-light.jpg",
+  "demo-2-model-360-light.jpg",
+  "demo-3-demonstrate-360-light.jpg",
+  "demo-4-challenge-360-light.jpg",
+  "demo-5-connect-360-light.jpg",
+  "demo-quiz-desk-360-light.jpg",
+  "demo-picker-768-light.jpg",
+  "demo-1-activate-narrating-768-light.jpg",
+  "demo-2-explain-768-light.jpg",
+  "demo-2-image-pointing-768-light.jpg",
+  "demo-2-model-768-light.jpg",
+  "demo-3-demonstrate-768-light.jpg",
+  "demo-4-challenge-768-light.jpg",
+  "demo-5-connect-768-light.jpg",
+  "demo-quiz-desk-768-light.jpg",
+  "demo-picker-1280-light.jpg",
+  "demo-1-activate-narrating-1280-light.jpg",
+  "demo-2-explain-1280-light.jpg",
+  "demo-2-image-pointing-1280-light.jpg",
+  "demo-2-model-1280-light.jpg",
+  "demo-3-demonstrate-1280-light.jpg",
+  "demo-4-challenge-1280-light.jpg",
+  "demo-5-connect-1280-light.jpg",
+  "demo-quiz-desk-1280-light.jpg"
+ ],
+ "paid": [],
+ "rects": {
+  "demo-picker-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-1-activate-narrating-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-explain-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "demo-2-image-pointing-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "View in 3D": [
+    160,
+    563,
+    240,
+    588
+   ]
+  },
+  "demo-2-model-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    238,
+    565,
+    325,
+    590
+   ]
+  },
+  "demo-3-demonstrate-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    165,
+    567,
+    235,
+    592
+   ]
+  },
+  "demo-4-challenge-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    166,
+    565,
+    236,
+    590
+   ]
+  },
+  "demo-5-connect-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    165,
+    562,
+    235,
+    587
+   ]
+  },
+  "demo-quiz-desk-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show 3D": [
+    238,
+    -715,
+    308,
+    -690
+   ]
+  },
+  "demo-picker-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-1-activate-narrating-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-2-explain-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "demo-2-image-pointing-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "View in 3D": [
+    389,
+    739,
+    468,
+    764
+   ]
+  },
+  "demo-2-model-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    474,
+    745,
+    561,
+    770
+   ]
+  },
+  "demo-3-demonstrate-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    399,
+    739,
+    469,
+    764
+   ]
+  },
+  "demo-4-challenge-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    395,
+    738,
+    465,
+    763
+   ]
+  },
+  "demo-5-connect-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    393,
+    739,
+    463,
+    764
+   ]
+  },
+  "demo-quiz-desk-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show 3D": [
+    488,
+    -923,
+    558,
+    -898
+   ]
+  },
+  "demo-picker-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-1-activate-narrating-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-2-explain-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "demo-2-image-pointing-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "View in 3D": [
+    607,
+    515,
+    686,
+    540
+   ]
+  },
+  "demo-2-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    690,
+    520,
+    778,
+    545
+   ]
+  },
+  "demo-3-demonstrate-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    617,
+    522,
+    687,
+    547
+   ]
+  },
+  "demo-4-challenge-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    617,
+    520,
+    687,
+    545
+   ]
+  },
+  "demo-5-connect-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    616,
+    518,
+    686,
+    543
+   ]
+  },
+  "demo-quiz-desk-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show 3D": [
+    684,
+    -661,
+    754,
+    -636
+   ]
+  }
+ }
+}

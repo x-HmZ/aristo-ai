@@ -52,7 +52,7 @@ export const DEFAULTS = {
 };
 
 export const INK = { dark: "#ECEDEF", light: "#0E1117" };
-export const ACCENT = { dark: "#E98A52", light: "#B4521F" };
+export const ACCENT = { dark: "#E98A52", light: "#F97B2F" };
 
 // ---------------------------------------------------------------- geometry
 

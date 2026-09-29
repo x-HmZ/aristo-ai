@@ -84,10 +84,11 @@
     --body: 62 68 82; /* #3E4452  paragraphs; 8.9:1 on bg */
     --muted: 90 97 112; /* #5A6170  labels, captions; 5.7:1 on bg */
     --line: 220 223 229; /* #DCDFE5  hairlines and borders */
-    --accent: 180 83 31; /* #B4531F  solid fills: primary actions; 4.9:1 under accent-ink */
-    --accent-hover: 154 74 30; /* #9A4A1E  hover on accent fills; 6.1:1 under accent-ink */
-    --accent-ink: 252 252 253; /* #FCFCFD  text on any solid fill (accent or status) */
-    --accent-text: 169 76 27; /* #A94C1B  accent as text or icon; 5.1:1 on bg */
+    --accent: 249 123 47; /* #F97B2F  the brand orange: solid fills, primary actions; 5.6:1 under accent-ink */
+    --accent-hover: 250 140 71; /* #FA8C47  hover on accent fills (lighter, as in dark); 6.3:1 under accent-ink */
+    --accent-ink: 61 33 16; /* #3D2110  the brand brown: text on accent fills; 5.6:1 */
+    --status-ink: 252 252 253; /* #FCFCFD  text on status fills (danger ...); 6.3:1 on danger */
+    --accent-text: 169 76 27; /* #A94C1B  accent as text, icon or focus ring; 5.1:1 on bg */
     --tint: 244 234 227; /* #F4EAE3  warm wash, one surface per section */
     --tint-line: 230 211 198; /* #E6D3C6 */
     --success: 22 101 52; /* #166534  6.5 on bg, 7.0 on surface, 6.0 on sunk and tint */
@@ -139,9 +140,10 @@
       --body: 183 189 199; /* #B7BDC7  10:1 on bg */
       --muted: 143 151 164; /* #8F97A4  6.4:1 on bg */
       --line: 37 43 54; /* #252B36 */
-      --accent: 233 138 82; /* #E98A52  7.4:1 under accent-ink */
-      --accent-hover: 240 160 112; /* #F0A070  9.0:1 under accent-ink */
-      --accent-ink: 14 17 23;
+      --accent: 233 138 82; /* #E98A52  6.8:1 under accent-ink */
+      --accent-hover: 240 160 112; /* #F0A070  8.2:1 under accent-ink */
+      --accent-ink: 42 22 10; /* #2A160A  deep brown on the dark accent; 6.8:1 */
+      --status-ink: 14 17 23;
       --accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
       --tint: 33 26 23; /* #211A17 */
       --tint-line: 58 44 36; /* #3A2C24 */
@@ -158,7 +160,12 @@
     }
   }
 
-  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])) {
+  /* `.theme-ink` resolves the dark values on a subtree whatever the page theme
+   * (and through the lock): the classroom's caption band and in-scene chips sit
+   * on the lit 3D room, which never follows the theme. The list sits in :is()
+   * because :is() is forgiving: a browser without :has() drops only the first
+   * branch and keeps .theme-ink (a plain selector list would drop both). */
+  :is(:root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])), .theme-ink) {
     --bg: 14 17 23;
     --surface: 21 25 34;
     --sunk: 11 13 18;
@@ -168,7 +175,8 @@
     --line: 37 43 54;
     --accent: 233 138 82;
     --accent-hover: 240 160 112;
-    --accent-ink: 14 17 23;
+    --accent-ink: 42 22 10;
+    --status-ink: 14 17 23;
     --accent-text: 239 154 102;
     --tint: 33 26 23;
     --tint-line: 58 44 36;

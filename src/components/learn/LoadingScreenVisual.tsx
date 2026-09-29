@@ -111,7 +111,7 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
         {stalled && (
           <button
             onClick={handleReload}
-            className="text-xs font-semibold text-white bg-aristo-orange-main hover:bg-aristo-orange-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
+            className="text-xs font-semibold text-accent-ink bg-aristo-orange-main hover:bg-accent-hover rounded-full px-4 py-1.5 transition-colors shadow-aristo-sm"
           >
             Reload
           </button>

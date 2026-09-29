@@ -8,8 +8,9 @@
  * atrium", "Mitral valve", "Left ventricle" while the narration is about
  * the mitral valve).
  *
- * Pure presentational — accepts the chip strings and renders them in a
- * frosted, pastel-orange row.  Intended to be mounted via drei <Html />
+ * Pure presentational — accepts the chip strings and renders them as ink
+ * glass chips (`.theme-ink`, like the caption band: things placed on the lit
+ * room stay ink in both themes).  Intended to be mounted via drei <Html />
  * inside Experience.tsx's TeachingImageInner so the strip is anchored to
  * the panel's screen-space position without leaving R3F coordinate space.
  */
@@ -26,30 +27,13 @@ function CalloutsImpl({ callouts }: CalloutsProps) {
 
   return (
     <div
-      style={{
-        display:        "flex",
-        flexWrap:       "wrap",
-        justifyContent: "center",
-        gap:            "5px",
-        pointerEvents:  "none",
-        maxWidth:       "260px",
-      }}
+      data-callouts
+      className="theme-ink pointer-events-none flex max-w-[260px] flex-wrap justify-center gap-1.5"
     >
       {callouts.map((label, i) => (
         <span
           key={`${label}-${i}`}
-          style={{
-            background:    "hsl(var(--aristo-wash-light) / 0.94)",
-            border:        "1px solid hsl(var(--aristo-orange-main) / 0.4)",
-            color:         "hsl(var(--aristo-orange-deep))",
-            borderRadius:  "20px",
-            padding:       "3px 9px",
-            fontSize:      "10px",
-            fontWeight:    700,
-            letterSpacing: "0.02em",
-            whiteSpace:    "nowrap",
-            boxShadow:     "0 2px 8px hsl(var(--aristo-orange-main) / 0.18)",
-          }}
+          className="whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-2.5 py-1 text-xs font-semibold text-ink shadow-e1 backdrop-blur-md"
         >
           {label}
         </span>

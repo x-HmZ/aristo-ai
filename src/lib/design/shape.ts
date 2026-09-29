@@ -32,4 +32,4 @@ export const PRESS =
 
 /** Focus ring in the accent, offset against the page background. */
 export const FOCUS =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-bg";

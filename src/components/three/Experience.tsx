@@ -11,8 +11,17 @@ import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { Box, Image as ImageIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CameraController } from "./CameraController";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
+
+// In-scene controls (the image and model toolbars): the system's secondary
+// button and a status chip, inside `.theme-ink`. Classes only; the <Html>
+// positions and every scene constant are unchanged.
+const SCENE_BUTTON = "whitespace-nowrap border border-line shadow-e1";
+const SCENE_CHIP =
+  "pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
 
 // Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
 function RendererConfig() {
@@ -221,62 +230,30 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
           <meshBasicMaterial color={BRAND_HEX.orangeMain} transparent opacity={0.25} />
         </mesh>
 
-        {/* Bottom toolbar — state-aware */}
+        {/* Bottom toolbar — state-aware. Ink glass (`.theme-ink`) in both
+            themes, like everything placed on the lit room; "View in 3D" is
+            the system's secondary control (V8.4a). */}
         <Html position={[0, -(IMG_SIZE / 2 + 0.13), 0]} center>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div className="theme-ink flex items-center gap-1.5">
             {isGeneratingModel ? (
-              <div style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                background: "hsl(var(--aristo-backdrop) / 0.92)",
-                border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
-                borderRadius: "20px", padding: "3px 10px",
-                fontSize: "10px", fontWeight: 600, color: "hsl(var(--aristo-orange-deep))",
-                whiteSpace: "nowrap", pointerEvents: "none",
-              }}>
-                <span style={{
-                  width: "5px", height: "5px", borderRadius: "50%",
-                  background: "hsl(var(--aristo-orange-main))", display: "inline-block",
-                  animation: "aristoPulse 1.4s ease-in-out infinite",
-                }} />
+              <div role="status" className={SCENE_CHIP}>
+                <span aria-hidden className="size-1.5 rounded-full bg-accent motion-safe:animate-pulse" />
                 Building 3D model…
               </div>
             ) : (
               <>
                 {showViewIn3dButton && (
-                  <button
-                    onClick={handleViewIn3d}
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: "6px",
-                      background: "hsl(var(--aristo-orange-main))", color: "white",
-                      border: "1px solid hsl(var(--aristo-orange-deep) / 0.5)",
-                      borderRadius: "20px", padding: "4px 11px",
-                      fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em",
-                      whiteSpace: "nowrap", cursor: "pointer",
-                      boxShadow: "0 4px 14px hsl(var(--aristo-orange-main) / 0.35)",
-                    }}
-                  >
+                  <Button variant="secondary" onClick={handleViewIn3d} className={SCENE_BUTTON}>
+                    <Box aria-hidden />
                     {activeModelUrl ? "Show 3D" : "View in 3D"}
-                  </button>
+                  </Button>
                 )}
-                <div style={{
-                  display: "flex", alignItems: "center", gap: "6px",
-                  background: "hsl(var(--aristo-backdrop) / 0.92)",
-                  border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
-                  borderRadius: "20px", padding: "3px 10px",
-                  fontSize: "10px", fontWeight: 600, color: "hsl(var(--aristo-orange-deep))",
-                  whiteSpace: "nowrap", pointerEvents: "none",
-                }}>
+                <div className={SCENE_CHIP}>
                   scroll to resize · click to zoom
                 </div>
               </>
             )}
           </div>
-          <style>{`
-            @keyframes aristoPulse {
-              0%,100%{opacity:1;transform:scale(1)}
-              50%{opacity:0.35;transform:scale(0.65)}
-            }
-          `}</style>
         </Html>
       </group>
     </Float>
@@ -287,19 +264,12 @@ function ModelToolbar() {
   const setViewMode3d = useAristoStore((s) => s.setViewMode3d);
   return (
     <Html position={[MODEL_X, MODEL_Y - 0.86, MODEL_Z]} center>
-      <button
-        onClick={() => setViewMode3d(false)}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: "6px",
-          background: "hsl(var(--aristo-backdrop) / 0.92)", color: "hsl(var(--aristo-orange-deep))",
-          border: "1px solid hsl(var(--aristo-orange-main) / 0.4)",
-          borderRadius: "20px", padding: "4px 11px",
-          fontSize: "10px", fontWeight: 700, letterSpacing: "0.04em",
-          whiteSpace: "nowrap", cursor: "pointer",
-        }}
-      >
-        Show image
-      </button>
+      <div className="theme-ink">
+        <Button variant="secondary" onClick={() => setViewMode3d(false)} className={SCENE_BUTTON}>
+          <ImageIcon aria-hidden />
+          Show image
+        </Button>
+      </div>
     </Html>
   );
 }

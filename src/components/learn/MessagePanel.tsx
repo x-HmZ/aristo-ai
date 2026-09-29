@@ -5,23 +5,27 @@ import { LessonView }                       from "@/components/learn/LessonView"
 import { LessonPlayer, ADAPTIVE_VISUALS_ENABLED } from "@/components/learn/LessonPlayer";
 import { FreeTopicCard, FreeUserBubble }    from "@/components/learn/FreeTopicCard";
 import { useEffect, useRef }                from "react";
+import { BookOpen }                         from "lucide-react";
 import { AristoMark } from "@/components/brand/AristoMark";
 
 // ─── Thinking indicator ───────────────────────────────────────────────────────
 
 function ThinkingIndicator() {
   return (
-    <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/70 backdrop-blur-sm border border-white/50 shadow-sm w-fit animate-[fade-in_0.2s_ease-out]">
-      <div className="flex gap-1">
+    <div
+      role="status"
+      className="flex w-fit items-center gap-2 rounded-full border border-line bg-surface/95 px-4 py-2.5 shadow-e1 backdrop-blur-sm motion-safe:animate-[fade-in_0.2s_ease-out]"
+    >
+      <div className="flex gap-1" aria-hidden>
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-aristo-orange-main"
-            style={{ animation: `bounce 1.2s ease-in-out ${i * 0.2}s infinite` }}
+            className="aristo-thinking-dot size-1.5 rounded-full bg-accent"
+            style={{ animationDelay: `${i * 0.2}s` }}
           />
         ))}
       </div>
-      <span className="text-sm text-aristo-brown-muted">Aristo is thinking…</span>
+      <span className="text-sm text-muted">Aristo is thinking…</span>
     </div>
   );
 }
@@ -30,18 +34,18 @@ function ThinkingIndicator() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center shadow-sm">
+    <div className="flex h-full flex-col items-center justify-center gap-4 bg-bg/95 px-8 text-center">
+      <div className="flex size-14 items-center justify-center rounded-full border border-tint-line bg-tint">
         <AristoMark
           variant="column"
-          className="h-7 text-aristo-brown-main"
-          litClassName="text-aristo-orange-main"
+          className="h-7 text-ink"
+          litClassName="text-accent"
         />
       </div>
       <div>
-        <p className="text-aristo-brown-main font-bold text-base mb-1">Ask Aristo anything!</p>
-        <p className="text-aristo-brown-muted text-sm leading-relaxed">
-          Type a topic below or tap the mic — Aristo will explain it clearly, and may even show a 3D model.
+        <h2 className="mb-1 text-base font-bold text-ink">What Do You Want to Learn?</h2>
+        <p className="text-sm leading-relaxed text-body">
+          Type a topic below, or tap the mic and say it. Your teacher explains it out loud and shows it on the board.
         </p>
       </div>
     </div>
@@ -74,11 +78,11 @@ export function MessagePanel() {
   // Course mode, lesson still loading
   if (mode === "course" && isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-8">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aristo-peach-pale to-aristo-wash border border-aristo-orange-main/20 flex items-center justify-center text-2xl shadow-sm">
-          📖
+      <div role="status" className="flex h-full flex-col items-center justify-center gap-3 bg-bg/95 px-8 text-center">
+        <div className="flex size-14 items-center justify-center rounded-full border border-tint-line bg-tint">
+          <BookOpen aria-hidden className="size-6 text-accent-text" />
         </div>
-        <p className="text-aristo-brown-muted text-sm">Preparing your lesson…</p>
+        <p className="text-sm text-muted">Preparing your lesson…</p>
       </div>
     );
   }
@@ -106,6 +110,10 @@ export function MessagePanel() {
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+        .aristo-thinking-dot { animation: bounce 1.2s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .aristo-thinking-dot { animation: none; }
         }
       `}</style>
 

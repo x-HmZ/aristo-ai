@@ -1,0 +1,521 @@
+{
+ "label": "after",
+ "mode": "probes",
+ "shots": [
+  "probe-free-empty-360-light.jpg",
+  "probe-free-image-360-light.jpg",
+  "probe-free-model-360-light.jpg",
+  "probe-free-empty-alt-360-light.jpg",
+  "probe-free-image-alt-360-light.jpg",
+  "probe-free-model-alt-360-light.jpg",
+  "probe-desk-360-light.jpg",
+  "probe-desk-toggled-360-light.jpg",
+  "probe-free-empty-768-light.jpg",
+  "probe-free-image-768-light.jpg",
+  "probe-free-model-768-light.jpg",
+  "probe-free-empty-alt-768-light.jpg",
+  "probe-free-image-alt-768-light.jpg",
+  "probe-free-model-alt-768-light.jpg",
+  "probe-desk-768-light.jpg",
+  "probe-desk-toggled-768-light.jpg",
+  "probe-free-empty-1280-light.jpg",
+  "probe-free-image-1280-light.jpg",
+  "probe-free-model-1280-light.jpg",
+  "probe-free-empty-alt-1280-light.jpg",
+  "probe-free-image-alt-1280-light.jpg",
+  "probe-free-model-alt-1280-light.jpg",
+  "probe-desk-1280-light.jpg",
+  "probe-desk-toggled-1280-light.jpg",
+  "probe-free-empty-1280x600-light.jpg",
+  "probe-free-image-1280x600-light.jpg",
+  "probe-free-model-1280x600-light.jpg",
+  "probe-free-empty-alt-1280x600-light.jpg",
+  "probe-free-image-alt-1280x600-light.jpg",
+  "probe-free-model-alt-1280x600-light.jpg",
+  "probe-desk-1280x600-light.jpg",
+  "probe-desk-toggled-1280x600-light.jpg",
+  "probe-free-empty-360-dark.jpg",
+  "probe-free-image-360-dark.jpg",
+  "probe-free-model-360-dark.jpg",
+  "probe-free-empty-alt-360-dark.jpg",
+  "probe-free-image-alt-360-dark.jpg",
+  "probe-free-model-alt-360-dark.jpg",
+  "probe-desk-360-dark.jpg",
+  "probe-desk-toggled-360-dark.jpg",
+  "probe-free-empty-768-dark.jpg",
+  "probe-free-image-768-dark.jpg",
+  "probe-free-model-768-dark.jpg",
+  "probe-free-empty-alt-768-dark.jpg",
+  "probe-free-image-alt-768-dark.jpg",
+  "probe-free-model-alt-768-dark.jpg",
+  "probe-desk-768-dark.jpg",
+  "probe-desk-toggled-768-dark.jpg",
+  "probe-free-empty-1280-dark.jpg",
+  "probe-free-image-1280-dark.jpg",
+  "probe-free-model-1280-dark.jpg",
+  "probe-free-empty-alt-1280-dark.jpg",
+  "probe-free-image-alt-1280-dark.jpg",
+  "probe-free-model-alt-1280-dark.jpg",
+  "probe-desk-1280-dark.jpg",
+  "probe-desk-toggled-1280-dark.jpg",
+  "probe-free-empty-1280x600-dark.jpg",
+  "probe-free-image-1280x600-dark.jpg",
+  "probe-free-model-1280x600-dark.jpg",
+  "probe-free-empty-alt-1280x600-dark.jpg",
+  "probe-free-image-alt-1280x600-dark.jpg",
+  "probe-free-model-alt-1280x600-dark.jpg",
+  "probe-desk-1280x600-dark.jpg",
+  "probe-desk-toggled-1280x600-dark.jpg"
+ ],
+ "paid": [],
+ "rects": {
+  "probe-free-empty-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-image-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "View in 3D": [
+    112,
+    550,
+    248,
+    594
+   ]
+  },
+  "probe-free-model-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "probe-free-empty-alt-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-image-alt-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "View in 3D": [
+    112,
+    550,
+    248,
+    594
+   ]
+  },
+  "probe-free-model-alt-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "probe-desk-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-desk-toggled-360-light": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-empty-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-image-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "View in 3D": [
+    355,
+    734,
+    491,
+    778
+   ]
+  },
+  "probe-free-model-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ]
+  },
+  "probe-free-empty-alt-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-image-alt-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "View in 3D": [
+    347,
+    728,
+    484,
+    772
+   ]
+  },
+  "probe-free-model-alt-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ]
+  },
+  "probe-desk-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-desk-toggled-768-light": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-empty-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-image-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "View in 3D": [
+    570,
+    513,
+    707,
+    557
+   ]
+  },
+  "probe-free-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ]
+  },
+  "probe-free-empty-alt-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-image-alt-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "View in 3D": [
+    563,
+    507,
+    700,
+    551
+   ]
+  },
+  "probe-free-model-alt-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ]
+  },
+  "probe-desk-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-desk-toggled-1280-light": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-empty-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-free-image-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "View in 3D": [
+    553,
+    424,
+    690,
+    468
+   ]
+  },
+  "probe-free-model-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ]
+  },
+  "probe-free-empty-alt-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-free-image-alt-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "View in 3D": [
+    551,
+    424,
+    688,
+    468
+   ]
+  },
+  "probe-free-model-alt-1280x600-light": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ]
+  },
+  "probe-desk-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-desk-toggled-1280x600-light": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-free-empty-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-image-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "View in 3D": [
+    112,
+    556,
+    248,
+    600
+   ]
+  },
+  "probe-free-model-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "probe-free-empty-alt-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-image-alt-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "View in 3D": [
+    115,
+    550,
+    252,
+    594
+   ]
+  },
+  "probe-free-model-alt-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "Show image": [
+    208,
+    555,
+    356,
+    599
+   ]
+  },
+  "probe-desk-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-desk-toggled-360-dark": {
+   "vw": 360,
+   "vh": 780
+  },
+  "probe-free-empty-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-image-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "View in 3D": [
+    350,
+    729,
+    487,
+    773
+   ]
+  },
+  "probe-free-model-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ]
+  },
+  "probe-free-empty-alt-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-image-alt-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "View in 3D": [
+    350,
+    729,
+    487,
+    773
+   ]
+  },
+  "probe-free-model-alt-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "Show image": [
+    444,
+    735,
+    591,
+    779
+   ]
+  },
+  "probe-desk-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-desk-toggled-768-dark": {
+   "vw": 768,
+   "vh": 1024
+  },
+  "probe-free-empty-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-image-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "View in 3D": [
+    570,
+    513,
+    707,
+    557
+   ]
+  },
+  "probe-free-model-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ]
+  },
+  "probe-free-empty-alt-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-image-alt-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "View in 3D": [
+    570,
+    513,
+    707,
+    557
+   ]
+  },
+  "probe-free-model-alt-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "Show image": [
+    660,
+    510,
+    808,
+    554
+   ]
+  },
+  "probe-desk-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-desk-toggled-1280-dark": {
+   "vw": 1280,
+   "vh": 720
+  },
+  "probe-free-empty-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-free-image-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "View in 3D": [
+    551,
+    418,
+    687,
+    462
+   ]
+  },
+  "probe-free-model-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ]
+  },
+  "probe-free-empty-alt-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-free-image-alt-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "View in 3D": [
+    551,
+    424,
+    687,
+    468
+   ]
+  },
+  "probe-free-model-alt-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600,
+   "Show image": [
+    644,
+    422,
+    792,
+    466
+   ]
+  },
+  "probe-desk-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  },
+  "probe-desk-toggled-1280x600-dark": {
+   "vw": 1280,
+   "vh": 600
+  }
+ }
+}
