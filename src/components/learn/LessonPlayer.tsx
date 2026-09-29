@@ -20,15 +20,77 @@
  */
 
 import { useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useLessonPlayback } from "@/hooks/useLessonPlayback";
-import { LessonView } from "./LessonView";
+import { Button } from "@/components/ui/button";
+import { SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
+import { LessonView, PHASE_META } from "./LessonView";
 import { AnswerInputPanel } from "./AnswerInputPanel";
 
 // ─── Adaptive feature flag — single source of truth ──────────────────────────
 
 export const ADAPTIVE_VISUALS_ENABLED =
   process.env.NEXT_PUBLIC_ADAPTIVE_VISUALS === "true";
+
+// Debug labels (the "seg N / M" counter) show on `yarn dev` only.
+const SHOW_DEBUG = process.env.NODE_ENV === "development";
+
+// ─── Caption band ─────────────────────────────────────────────────────────────
+//
+// V8.0 direction A: the sentence being spoken, large, in ink glass over the
+// lower edge of the scene; the next one dimmed beneath it. Portalled to <body>
+// because the panel's backdrop-blur would otherwise contain a fixed child.
+//
+// Geometry (checked against the /dev probes, V8.4a): it keeps to the left of
+// the 400px panel (right-5 + 20px gap) and its top edge stays at or below 78%
+// of the viewport height, under the image and model toolbars, whose lowest
+// edge is 75.8% at any size (the projection scales with height). md and up
+// only: below md the panel covers the screen and LessonView shows the caption.
+// `.theme-ink` keeps it ink in both themes; the room never follows the theme.
+
+function CaptionBand({
+  phase,
+  current,
+  next,
+}: {
+  phase:   keyof LessonPayload["phases"];
+  current: string;
+  next:    string | null;
+}) {
+  const { n, name, icon: Icon } = PHASE_META[phase];
+  return createPortal(
+    <div
+      data-caption-band
+      className={cn(
+        SHAPE.surface,
+        "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 hidden max-h-[calc(22vh-16px)] items-start gap-4 overflow-hidden",
+        "border border-line bg-bg/[0.86] px-5 py-3 shadow-e2 backdrop-blur-md md:flex",
+      )}
+    >
+      <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5 text-accent-text">
+        <Icon aria-hidden className="size-5" />
+        <span className="text-xs font-semibold tabular-nums">
+          <span className="sr-only">{name}, step </span>
+          {n}
+          <span aria-hidden>/5</span>
+          <span className="sr-only"> of 5</span>
+        </span>
+      </div>
+      <div className="min-w-0">
+        <p key={current} className="line-clamp-3 text-lg font-medium leading-snug text-ink motion-safe:animate-[fade-in_0.3s_ease-out]">
+          {current}
+        </p>
+        {next && (
+          <p className="mt-1 line-clamp-1 text-sm text-body">{next}</p>
+        )}
+      </div>
+    </div>,
+    document.body,
+  );
+}
 
 // ─── Playback controls row ────────────────────────────────────────────────────
 
@@ -44,40 +106,44 @@ function PlaybackControls({
   segmentCount: number;
 }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm">
-      <button
+    <div className={cn(SHAPE.surface, "flex items-center gap-1 border border-line bg-surface/95 p-1.5 shadow-e1 backdrop-blur-md")}>
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onPrev}
         disabled={segmentIdx <= 0}
-        className="text-xs px-2 py-1 rounded-lg text-aristo-brown-muted hover:text-aristo-brown-main hover:bg-aristo-wash-light disabled:opacity-30 font-medium transition-all"
-        aria-label="Previous segment"
+        className="text-body"
+        aria-label="Previous sentence"
+        title="Previous sentence"
       >
-        ⏮ Prev
-      </button>
+        <SkipBack aria-hidden />
+      </Button>
       {isPaused ? (
-        <button
-          onClick={onResume}
-          className="text-xs px-3 py-1 rounded-lg bg-aristo-orange-main text-white font-semibold hover:bg-aristo-orange-hover transition-all"
-        >
-          ▶ Resume
-        </button>
+        <Button onClick={onResume} className="px-4">
+          <Play aria-hidden />
+          Resume
+        </Button>
       ) : (
-        <button
-          onClick={onPause}
-          className="text-xs px-3 py-1 rounded-lg bg-aristo-wash-light text-aristo-orange-ink border border-aristo-orange-main/30 font-semibold hover:bg-[#FDE3CE] transition-all"
-        >
-          ⏸ Pause
-        </button>
+        <Button variant="secondary" onClick={onPause} className="px-4">
+          <Pause aria-hidden />
+          Pause
+        </Button>
       )}
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         onClick={onSkip}
-        className="text-xs px-2 py-1 rounded-lg text-aristo-brown-muted hover:text-aristo-brown-main hover:bg-aristo-wash-light font-medium transition-all"
-        aria-label="Skip segment"
+        className="text-body"
+        aria-label="Next sentence"
+        title="Next sentence"
       >
-        Next ⏭
-      </button>
-      <span className="ml-auto text-[10px] tabular-nums text-aristo-brown-muted">
-        seg {Math.min(segmentIdx + 1, segmentCount)} / {segmentCount}
-      </span>
+        <SkipForward aria-hidden />
+      </Button>
+      {SHOW_DEBUG && (
+        <span className="ml-auto pr-2 font-mono text-[10px] tabular-nums text-muted">
+          seg {Math.min(segmentIdx + 1, segmentCount)} / {segmentCount}
+        </span>
+      )}
     </div>
   );
 }
@@ -86,14 +152,14 @@ function PlaybackControls({
 
 function PreparingVisualsOverlay() {
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-aristo-backdrop/85 backdrop-blur-sm animate-[fade-in_0.3s_ease-out]">
-      <div className="relative w-12 h-12">
-        <div className="absolute inset-0 rounded-full border-2 border-aristo-orange-main/25" />
-        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-aristo-orange-main animate-spin" />
+    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-bg/95 backdrop-blur-sm motion-safe:animate-[fade-in_0.3s_ease-out]">
+      <div className="relative size-12">
+        <div className="absolute inset-0 rounded-full border-2 border-accent/25" />
+        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent motion-safe:animate-spin" />
       </div>
-      <div className="text-center">
-        <p className="text-sm font-semibold text-aristo-orange-ink">Preparing your visuals…</p>
-        <p className="text-xs text-aristo-brown-muted mt-0.5">Aristo is sketching the diagrams for this lesson.</p>
+      <div className="px-6 text-center" role="status">
+        <p className="text-sm font-semibold text-ink">Preparing the diagrams…</p>
+        <p className="mt-0.5 text-xs text-muted">Your teacher is drawing the diagrams for this lesson.</p>
       </div>
     </div>
   );
@@ -104,6 +170,8 @@ function PreparingVisualsOverlay() {
 export function LessonPlayer({ demoMode = false }: { demoMode?: boolean } = {}) {
   const activeLesson = useAristoStore((s) => s.activeLesson);
   const currentSegmentId = useAristoStore((s) => s.currentSegmentId);
+  // Read only, to hide the caption band while the quiz is on the desk.
+  const activeQuiz = useAristoStore((s) => s.activeQuiz);
 
   const playback = useLessonPlayback(activeLesson, { demoMode });
 
@@ -124,9 +192,23 @@ export function LessonPlayer({ demoMode = false }: { demoMode?: boolean } = {}) 
     return seg?.phase;
   }, [playback.segmentIdx, playback.segments]);
 
+  // The sentence being spoken and the next one, for the caption band.
+  const captionSeg = playback.segments[playback.segmentIdx];
+  const captionNext = playback.segments[playback.segmentIdx + 1];
+  const showCaption =
+    !!captionSeg && !playback.isComplete && !playback.isLoading && !activeQuiz;
+
   return (
     <div className="relative h-full">
       {playback.isLoading && <PreparingVisualsOverlay />}
+
+      {showCaption && (
+        <CaptionBand
+          phase={captionSeg.phase}
+          current={captionSeg.text}
+          next={captionNext?.text ?? null}
+        />
+      )}
 
       <LessonView
         playbackMode
