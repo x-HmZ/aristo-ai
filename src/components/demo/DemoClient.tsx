@@ -99,7 +99,7 @@ function DemoResultBar({
       <div className="flex items-center gap-2">
         <Link
           href="/sign-up"
-          className="flex-1 text-center px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover shadow-aristo-sm transition-all"
+          className="flex-1 text-center px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-aristo-sm transition-all"
         >
           Create your free account →
         </Link>
@@ -272,7 +272,7 @@ export function DemoClient() {
                     }}
                     className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
                       teacher === t
-                        ? "bg-aristo-orange-main text-ink shadow-sm"
+                        ? "bg-aristo-orange-main text-accent-ink shadow-sm"
                         : "text-aristo-brown-muted hover:text-aristo-brown-main"
                     }`}
                   >

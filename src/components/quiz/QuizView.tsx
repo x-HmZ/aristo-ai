@@ -105,7 +105,7 @@ function MCQRenderer({
           "w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium border transition-all duration-200 ";
         if (!result) {
           cls += selected === opt
-            ? "bg-aristo-orange-main text-ink border-aristo-orange-main"
+            ? "bg-aristo-orange-main text-accent-ink border-aristo-orange-main"
             : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40 hover:bg-aristo-wash-faint";
         } else if (opt === question.correct_answer) {
           cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
@@ -150,7 +150,7 @@ function TrueFalseRenderer({
           "flex-1 py-3 rounded-xl text-sm font-bold border transition-all duration-200 ";
         if (!result) {
           cls += selected === val
-            ? "bg-aristo-orange-main text-ink border-aristo-orange-main"
+            ? "bg-aristo-orange-main text-accent-ink border-aristo-orange-main"
             : "bg-white/70 border-white/60 text-aristo-brown-main hover:border-aristo-orange-main/40";
         } else if (val === question.correct_answer) {
           cls += "bg-[#DCFCE7] border-[#86EFAC] text-[#16A34A]";
@@ -214,7 +214,7 @@ function FillBlankRenderer({
           <button
             onClick={handleSubmit}
             disabled={!value.trim()}
-            className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
+            className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
           >
             Submit
           </button>
@@ -270,7 +270,7 @@ function ShortAnswerRenderer({
             <button
               onClick={handleSubmit}
               disabled={!value.trim() || isEvaluating}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
             >
               {isEvaluating ? "Evaluating…" : "Submit"}
             </button>
@@ -370,7 +370,7 @@ function OrderingRenderer({
       {!result && !submitted && (
         <button
           onClick={handleSubmit}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover transition-all mt-1"
+          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover transition-all mt-1"
         >
           Submit Order
         </button>
@@ -457,7 +457,7 @@ function MatchingRenderer({
         <button
           onClick={handleSubmit}
           disabled={!allMatched}
-          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover disabled:opacity-50 transition-all"
+          className="w-full py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover disabled:opacity-50 transition-all"
         >
           Submit Matches
         </button>
@@ -706,7 +706,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
             <div className="flex justify-end">
               <button
                 onClick={handleNext}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-ink hover:bg-aristo-orange-hover shadow-sm transition-all"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-aristo-orange-main text-accent-ink hover:bg-accent-hover shadow-sm transition-all"
               >
                 {currentIdx < totalQs - 1 ? "Next →" : "See Results"}
               </button>
