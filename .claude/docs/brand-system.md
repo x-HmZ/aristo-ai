@@ -55,15 +55,18 @@ Keep the two copies identical.
 
 | Token | Light | Dark | Use and ratio |
 |---|---|---|---|
-| `accent` | #B4531F | #E98A52 | solid fills: primary buttons, the lit flute, focus rings, progress |
-| `accent-hover` | #9A4A1E | #F0A070 | hover on accent fills (darker in light, lighter in dark): 6.07 / 8.97 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface drops the label to 4.1:1) |
-| `accent-ink` | #FCFCFD | #0E1117 | text on **any** solid fill: accent 4.88 / 7.40; status fills below |
-| `accent-text` | #A94C1B | #EF9A66 | accent as text or icon: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
+| `accent` | #F97B2F | #E98A52 | solid fills: primary buttons, the lit flute, progress, the current phase |
+| `accent-hover` | #E8702A | #F0A070 | hover on accent fills: 6.10 / 8.97 under accent-ink. Never hover with an alpha (`bg-accent/90` over surface washes the fill out) |
+| `accent-ink` | #0E1117 | #0E1117 | text on accent fills: 7.11 / 7.40 |
+| `status-ink` | #FCFCFD | #0E1117 | text on status fills (danger button, badge, toast): danger 6.31 / 6.83 |
+| `accent-text` | #A94C1B | #EF9A66 | accent as text, icon or focus ring: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
 
-The accent is the classroom orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees), darkened in light mode
-and lightened in dark mode until it clears AA. #F97B2F itself fails as text and as a UI colour (2.66:1 on
-white, 2.53 on cream), so it never carries text in the system. Saturation stays under 80%. There is no
-gradient text and no coloured glow on a control.
+The accent is the brand orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees) in light mode, lightened to
+#E98A52 in dark mode. Since V8.4a it is one orange on every filled button, app-wide (Hmz's choice). White fails
+on it (2.66:1), so labels on it are ink in both themes (7.11:1). As text or as a focus ring #F97B2F fails too
+(2.66 on white, 2.59 against the page, under the 3:1 a focus indicator needs), so orange text and focus rings
+use `accent-text`. Before V8.4a the light accent was #B4531F with white labels (4.88), and the classroom still
+showed #F97B2F beside it. There is no gradient text and no coloured glow on a control.
 
 ### Semantic (status)
 
@@ -71,7 +74,7 @@ Text-safe colours on every ground (`bg`, `surface`, `sunk`, `tint`). Tints use o
 `border-danger/25`). The light success and warning were darkened after review: the first cut (#15803D, #B45309)
 was 4.2:1 on `sunk` and `tint`.
 
-| Token | Light | on bg / surface / sunk | under accent-ink | Dark | on bg / surface | under accent-ink |
+| Token | Light | on bg / surface / sunk | under status-ink | Dark | on bg / surface | under status-ink |
 |---|---|---|---|---|---|---|
 | `success` | #166534 | 6.48 / 6.95 / 6.03 | 6.95 | #4ADE80 | 10.85 / 10.09 | 10.85 |
 | `warning` | #92400E | 6.44 / 6.92 / 5.99 | 6.92 | #FBBF24 | 11.32 / 10.54 | 11.32 |
@@ -177,7 +180,7 @@ in place.
   - `outline`: surface with a line border.
   - `secondary`: sunk.
   - `ghost`, and `link` (accent-text).
-  - `destructive`: danger fill with accent-ink.
+  - `destructive`: danger fill with status-ink.
 - **Input / Select trigger:** 44px, control radius, surface fill, line border that darkens to `muted/50` on
   hover, accent focus ring offset against the page.
 - **Card:** surface, line border, 16px radius, no shadow. Titles use `type-h3`.
@@ -188,7 +191,7 @@ in place.
 - **Toast:** surface (or a danger fill), 16px, `shadow-e2`.
 - **Message boxes** (auth): errors are `bg-danger/10 border-danger/25 text-danger`; notices are
   `bg-tint border-tint-line text-ink`. Both use the 10px radius.
-- **Focus:** `FOCUS` from `shape.ts`, a 2px accent ring offset 2px against `bg`. Every interactive element
+- **Focus:** `FOCUS` from `shape.ts`, a 2px `accent-text` ring offset 2px against `bg` (5.11 light, 8.53 dark). Every interactive element
   gets it.
 - **Mark:** `AristoMark`: ink letters, accent flute. A standalone mark passes `decorative={false}` so it is
   named "Aristo".
@@ -235,9 +238,9 @@ system's `accent`. After adding a component, translate:
 | `bg-secondary`, `bg-muted` | `bg-sunk` |
 | `text-muted-foreground` | `text-muted` |
 | `bg-accent` / `hover:bg-accent` (hover tint), `text-accent-foreground` | `bg-sunk`, `text-ink` |
-| `bg-destructive`, `text-destructive-foreground`, `text-destructive` | `bg-danger`, `text-accent-ink`, `text-danger` |
+| `bg-destructive`, `text-destructive-foreground`, `text-destructive` | `bg-danger`, `text-status-ink`, `text-danger` |
 | `border`, `border-input`, `bg-border` | `border-line`, `bg-line` |
-| `ring-ring`, `ring-offset-background` | `ring-accent`, `ring-offset-bg` |
+| `ring-ring`, `ring-offset-background` | `ring-accent-text`, `ring-offset-bg` |
 | `rounded-md` / `rounded-sm` / `rounded-lg` | a `SHAPE` role (control, surface), 6px for nested items |
 | `shadow-md` / `shadow-lg` | `shadow-e1` / `shadow-e2` |
 
@@ -295,17 +298,21 @@ with an owner:
 ## Known AA gaps (inside locked surfaces)
 
 Fixed in V8.4a inside the lesson panel, TeacherControls, the message panel, the callouts and the in-scene toolbars:
-white on #F97B2F (Next, Submit, Resume, the teacher pill, View in 3D; now `accent` / `accent-ink` 4.88 or the
+white on #F97B2F (Next, Submit, Resume, the teacher pill, View in 3D; now `accent` with ink, 7.11, or the
 secondary button), `aristo-orange-ink` on cream (the analogy label, Pause, the course title, the diagrams overlay),
 #F97B2F as text (Explain more, 2.66), amber feedback text (2.15), the tan Scene label (2.76), the callouts'
-orange-deep on wash (4.14) and the licence credit in the controls bar (4.1, now `muted` 5.3). Measured: 1312 text
+orange-deep on wash (4.14) and the licence credit in the controls bar (4.1, now `muted` 5.3). Measured: 1812 text
 nodes, minimum 4.71 light and 5.24 dark (`.claude/eval/2026-09-29-v8-4a/`).
 
-Still open, outside V8.4a's files:
+Also in V8.4a, with the one-orange change: every remaining white-on-#F97B2F fill in the classroom carries ink
+instead (Take Quiz, the demo teacher pills, the quiz's buttons and chosen options, the answer and input send and
+mic buttons, review, the course map, loading retry, the reviews chip, the avatar initial: 7.11, 5.63 on the
+#E06A20 hover), and the demo banner's Create an account link is `accent-text` (5.1).
 
-- White on #F97B2F: the "Take Quiz" bar (`CourseFlow`), the quiz (V8.4b), the demo teacher row and the reviews chip
-  in the /learn top nav (V8.4c).
-- `aristo-orange-ink` / orange text on cream in the demo banner, the top nav and `FreeTopicCard` (V8.4c).
+Still open:
+
+- Orange as text: the quiz labels ("Question 1 of 2", V8.4b), the /learn top nav hovers and `FreeTopicCard`
+  (V8.4c).
 - The loading screen's grey caption (V8.4c).
 - `AvatarCredit` on its own (the /demo teacher row) keeps brown-muted #8B6E5A (4.69 on white, lower over glass).
 
