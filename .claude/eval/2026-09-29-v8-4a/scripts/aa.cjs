@@ -7,7 +7,7 @@ const path = require("path");
 const { execSync } = require("child_process");
 const { chromium } = require(path.join(execSync("npm root -g").toString().trim(), "playwright"));
 const [, , base = "http://localhost:3000"] = process.argv;
-const SIZES = [[360, 780], [768, 1024], [1280, 720]];
+const SIZES = [[360, 780], [768, 1024], [1024, 768], [1280, 720]];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const CHECK = () => {
