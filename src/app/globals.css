@@ -84,10 +84,11 @@
     --body: 62 68 82; /* #3E4452  paragraphs; 8.9:1 on bg */
     --muted: 90 97 112; /* #5A6170  labels, captions; 5.7:1 on bg */
     --line: 220 223 229; /* #DCDFE5  hairlines and borders */
-    --accent: 180 83 31; /* #B4531F  solid fills: primary actions; 4.9:1 under accent-ink */
-    --accent-hover: 154 74 30; /* #9A4A1E  hover on accent fills; 6.1:1 under accent-ink */
-    --accent-ink: 252 252 253; /* #FCFCFD  text on any solid fill (accent or status) */
-    --accent-text: 169 76 27; /* #A94C1B  accent as text or icon; 5.1:1 on bg */
+    --accent: 249 123 47; /* #F97B2F  the brand orange: solid fills, primary actions; 7.1:1 under accent-ink */
+    --accent-hover: 232 112 42; /* #E8702A  hover on accent fills; 6.1:1 under accent-ink */
+    --accent-ink: 14 17 23; /* #0E1117  text on accent fills (ink, as in dark) */
+    --status-ink: 252 252 253; /* #FCFCFD  text on status fills (danger ...); 6.3:1 on danger */
+    --accent-text: 169 76 27; /* #A94C1B  accent as text, icon or focus ring; 5.1:1 on bg */
     --tint: 244 234 227; /* #F4EAE3  warm wash, one surface per section */
     --tint-line: 230 211 198; /* #E6D3C6 */
     --success: 22 101 52; /* #166534  6.5 on bg, 7.0 on surface, 6.0 on sunk and tint */
@@ -142,6 +143,7 @@
       --accent: 233 138 82; /* #E98A52  7.4:1 under accent-ink */
       --accent-hover: 240 160 112; /* #F0A070  9.0:1 under accent-ink */
       --accent-ink: 14 17 23;
+      --status-ink: 14 17 23;
       --accent-text: 239 154 102; /* #EF9A66  8.5:1 on bg */
       --tint: 33 26 23; /* #211A17 */
       --tint-line: 58 44 36; /* #3A2C24 */
@@ -174,6 +176,7 @@
     --accent: 233 138 82;
     --accent-hover: 240 160 112;
     --accent-ink: 14 17 23;
+    --status-ink: 14 17 23;
     --accent-text: 239 154 102;
     --tint: 33 26 23;
     --tint-line: 58 44 36;

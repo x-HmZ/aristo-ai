@@ -510,7 +510,7 @@ function ChallengeCard({
             className={cn(
               SHAPE.control,
               "mb-2 w-full resize-none border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted hover:border-muted/50",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
             )}
           />
           <div className="flex flex-wrap items-center gap-1">

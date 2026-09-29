@@ -30,6 +30,7 @@ module.exports = {
         accent: "rgb(var(--accent) / <alpha-value>)",
         "accent-hover": "rgb(var(--accent-hover) / <alpha-value>)",
         "accent-ink": "rgb(var(--accent-ink) / <alpha-value>)",
+        "status-ink": "rgb(var(--status-ink) / <alpha-value>)",
         "accent-text": "rgb(var(--accent-text) / <alpha-value>)",
         tint: "rgb(var(--tint) / <alpha-value>)",
         "tint-line": "rgb(var(--tint-line) / <alpha-value>)",
