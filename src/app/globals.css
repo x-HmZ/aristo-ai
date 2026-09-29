@@ -160,9 +160,10 @@
 
   /* `.theme-ink` resolves the dark values on a subtree whatever the page theme
    * (and through the lock): the classroom's caption band and in-scene chips sit
-   * on the lit 3D room, which never follows the theme. */
-  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])),
-  .theme-ink {
+   * on the lit 3D room, which never follows the theme. The list sits in :is()
+   * because :is() is forgiving: a browser without :has() drops only the first
+   * branch and keeps .theme-ink (a plain selector list would drop both). */
+  :is(:root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])), .theme-ink) {
     --bg: 14 17 23;
     --surface: 21 25 34;
     --sunk: 11 13 18;
