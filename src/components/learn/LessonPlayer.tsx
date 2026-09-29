@@ -19,7 +19,7 @@
  * the parent component (MessagePanel).
  */
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
@@ -49,12 +49,19 @@ const SHOW_DEBUG = process.env.NODE_ENV === "development";
 // of the viewport height, under the image and model toolbars: their centre
 // sits near 74% of the height at every size (the projection scales with
 // height) and the 44px buttons reach 78.0% at 1280x600, 77.4% at 1280x720 and
-// 76.1% at 768x1024. Short viewports clamp the sentence to two lines so it
-// fits. md and up only: below md the panel covers the screen and LessonView
-// shows the caption.
+// 76.1% at 768x1024. lg and up only: below lg the scene beside the 400px panel
+// is too narrow for a caption (308px at 768), so LessonView shows it at the top
+// of the panel instead.
+//
+// Segments run to about 360 characters (1 to 3 sentences), so the band fits its
+// text rather than cutting it: the sentence steps down from 18 to 16 to 14px,
+// then the dimmed next line goes, and only then does it clamp to whole lines.
+// It re-fits per sentence (key) and on resize.
 // `.theme-ink` keeps it ink in both themes; the room never follows the theme.
 
-function CaptionBand({
+const CAPTION_SIZES = ["text-lg", "text-base", "text-sm"] as const;
+
+function CaptionFit({
   phase,
   current,
   next,
@@ -64,13 +71,37 @@ function CaptionBand({
   next:    string | null;
 }) {
   const { n, name, icon: Icon } = PHASE_META[phase];
-  return createPortal(
+  const bandRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const [step, setStep]         = useState(0);
+  const [withNext, setWithNext] = useState(true);
+  const [clamp, setClamp]       = useState<number | null>(null);
+
+  // Presentation only: step the type down until the band's content fits.
+  useLayoutEffect(() => {
+    const band = bandRef.current;
+    const text = textRef.current;
+    if (!band || !text || clamp !== null) return;
+    if (band.scrollHeight <= band.clientHeight + 1) return;
+    if (step < CAPTION_SIZES.length - 1) setStep(step + 1);
+    else if (withNext && next) setWithNext(false);
+    else {
+      const room = band.clientHeight - (band.scrollHeight - text.offsetHeight);
+      const line = parseFloat(getComputedStyle(text).lineHeight) || 20;
+      setClamp(Math.max(1, Math.floor(room / line)));
+    }
+  }, [step, withNext, clamp, next]);
+
+  return (
     <div
+      ref={bandRef}
       data-caption-band
+      role="region"
+      aria-label="Caption"
       className={cn(
         SHAPE.surface,
         "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 hidden max-h-[calc(20vh-16px)] items-start gap-4 overflow-hidden",
-        "border border-line bg-bg/[0.86] px-5 py-3 shadow-e2 backdrop-blur-md md:flex",
+        "border border-line bg-bg/[0.86] px-5 py-2.5 shadow-e2 backdrop-blur-md lg:flex",
       )}
     >
       <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5 text-accent-text">
@@ -83,14 +114,39 @@ function CaptionBand({
         </span>
       </div>
       <div className="min-w-0">
-        <p key={current} className="line-clamp-3 text-lg font-medium leading-snug text-ink motion-safe:animate-[fade-in_0.3s_ease-out] [@media(max-height:680px)]:line-clamp-2">
+        <p
+          ref={textRef}
+          className={cn(
+            CAPTION_SIZES[step],
+            "font-medium leading-snug text-ink motion-safe:animate-[fade-in_0.3s_ease-out]",
+            clamp !== null && "overflow-hidden",
+          )}
+          style={clamp !== null ? { display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: clamp } : undefined}
+        >
           {current}
         </p>
-        {next && (
+        {next && withNext && (
           <p className="mt-1 line-clamp-1 text-sm text-body">{next}</p>
         )}
       </div>
-    </div>,
+    </div>
+  );
+}
+
+function CaptionBand(props: {
+  phase:   keyof LessonPayload["phases"];
+  current: string;
+  next:    string | null;
+}) {
+  // Re-fit from the largest size when the window changes size.
+  const [resizes, setResizes] = useState(0);
+  useEffect(() => {
+    const onResize = () => setResizes((r) => r + 1);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return createPortal(
+    <CaptionFit key={`${resizes}:${props.current}`} {...props} />,
     document.body,
   );
 }
