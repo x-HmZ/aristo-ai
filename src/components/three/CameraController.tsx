@@ -86,6 +86,9 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  // True while this controller has been moving the camera (from the first driven frame until it lands on the lesson).
+  const driving = useRef(false);
+
   // Live camera position and look-at point — mutated each frame.
   const livePos    = useRef(new Vector3().copy(LESSON_POS));
   const liveTarget = useRef(new Vector3().copy(LESSON_TARGET));
@@ -132,7 +135,15 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
       !activeQuiz &&
       livePos.current.distanceToSquared(LESSON_POS) < SNAP_EPSILON &&
       liveTarget.current.distanceToSquared(LESSON_TARGET) < SNAP_EPSILON;
-    if (isAtLesson) return;
+    // Hand back to OrbitControls once landed. The frame that lands is still applied: with the exponential glide
+    // it is within SNAP_EPSILON of the lesson pose anyway, but a reduced-motion cut lands exactly on it in one
+    // frame, and without this the camera would stay where the desk framing left it.
+    if (isAtLesson) {
+      if (!driving.current) return;
+      driving.current = false;
+    } else {
+      driving.current = true;
+    }
 
     camera.position.copy(livePos.current);
     camera.lookAt(liveTarget.current);
