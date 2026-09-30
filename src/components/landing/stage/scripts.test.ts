@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MODEL_T, WAVE_AFTER_S, signalsFor } from "./scripts";
+import { HEART, MODEL_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, signalsFor } from "./scripts";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
 
@@ -24,5 +24,32 @@ describe("signalsFor", () => {
 
   it("passes speaking through", () => {
     expect(signalsFor("hero", { ...ctx, speaking: true }).isSpeaking).toBe(true);
+  });
+});
+
+describe("the heart's placement from the hand", () => {
+  it("puts its near edge just past the fingertip at the peak, not behind or through it", () => {
+    const edge = HEART.position[0] - HEART.half;
+    expect(edge - PRESENT_PEAK.index[0]).toBeGreaterThan(0);
+    expect(edge - PRESENT_PEAK.index[0]).toBeLessThan(0.05);
+  });
+  it("has the open hand level with its lower third", () => {
+    const bottom = HEART.position[1] - HEART.height / 2;
+    const k = (PRESENT_PEAK.index[1] - bottom) / HEART.height;
+    expect(k).toBeGreaterThan(0.25);
+    expect(k).toBeLessThan(0.45);
+  });
+  it("keeps it inside the model spot's box, turning included", () => {
+    const b = heartBox();
+    expect(b.left).toBeGreaterThan(0);
+    expect(b.top).toBeGreaterThan(0);
+    expect(b.left + b.width).toBeLessThan(100);
+    expect(b.top + b.height).toBeLessThan(100);
+  });
+  it("builds from the picture to the model over the section's clock", () => {
+    expect(heartBuildAt(0)).toEqual({ build: 0, show: 0 });
+    expect(heartBuildAt(MODEL_T.lift).build).toBe(0);
+    expect(heartBuildAt(MODEL_T.built).build).toBe(1);
+    expect(heartBuildAt(MODEL_T.present).show).toBe(1);
   });
 });

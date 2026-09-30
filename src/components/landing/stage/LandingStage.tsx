@@ -11,7 +11,7 @@
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Component, Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Group, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { RendererConfig, SceneLights } from "@/components/three/Experience";
@@ -19,8 +19,9 @@ import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/
 import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
+import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { HEART, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
@@ -83,6 +84,31 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
   return <group ref={group} visible={warm}>{children}</group>;
 }
 
+/** Where the head turns when a model is shown (the director's look target); the camera otherwise. */
+const LOOK: Partial<Record<SpotId, LookTargets>> = { model: { model: HEART.position } };
+
+/** Mounts its children in the first idle moment. */
+function Idle({ children }: { children: ReactNode }) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const go = () => setOn(true);
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(go, { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(go, 1200);
+    return () => clearTimeout(t);
+  }, []);
+  return on ? <>{children}</> : null;
+}
+
+/** An optional part (the heart) that fails to load drops out on its own; the stage carries on. */
+class PartBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 /** When each spot last waved (performance.now seconds), for the cool-down. Survives remounts. */
 const lastWave: Partial<Record<SpotId, number>> = {};
 
@@ -103,6 +129,9 @@ function SpotTeacher({ spot, warm, lookTargets }: { spot: SpotId; warm: boolean;
       const now = performance.now() / 1000;
       const liveFor = liveAt.current === null ? 0 : now - liveAt.current;
       const s = signalsFor(spot, { liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking });
+      // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
+      // half a second after he is live instead.
+      if (hold && spot === "model") s.modelShown = liveFor > 0.5;
       if (s.sceneReady && mayWave) lastWave[spot] = now;
       return s;
     },
@@ -161,9 +190,16 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onWarm={onWarm}>
-          <SpotTeacher key={active} spot={active} warm={warm} />
+          <SpotTeacher key={active} spot={active} warm={warm} lookTargets={LOOK[active]} />
         </Warmed>
       </Suspense>
+      {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is
+          ready before the reader reaches its section. A heart that fails to load drops out; Jake carries on. */}
+      {warm && (
+        <Idle>
+          <PartBoundary><Suspense fallback={null}><HeartBuild /></Suspense></PartBoundary>
+        </Idle>
+      )}
       {probe && <Probe spot={active} />}
     </Canvas>
   );

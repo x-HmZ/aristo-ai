@@ -6,7 +6,7 @@
  * gestures (the greeting, PresentModel) fire on their own edges.
  */
 import type { DirectorSignals } from "@/lib/avatar/director";
-import type { SpotId } from "./spots";
+import { SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
 
 export const IDLE: DirectorSignals = {
   gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
@@ -29,6 +29,58 @@ export const MODEL_T = {
   built: 4.6,
   length: 5.2,
 } as const;
+
+/**
+ * Jake's left hand at PresentModel's peak, in world space: a palm-up offer at shoulder height, held from about 0.8s to
+ * 2.1s after the cue. Read from his bones in the running stage (`?probe`; the V8.3b eval's
+ * `build/probe/model-light-1280/peaks.json`, frames 14 to 23), not by eye.
+ */
+export const PRESENT_PEAK = { hand: [-0.2, 0.21, -2.86] as V3, index: [0.01, 0.34, -2.8] as V3 };
+
+/**
+ * The heart, placed from that hand (Hmz's second hard requirement): at the product's own spawn scale (Experience
+ * FloatingModel, 0.825: 0.49 m wide, 0.83 m tall, 0.53 m deep), so it is in the lesson's proportion to him. At the
+ * peak it faces the reader (it turns only once built, after his hand is down), so its near edge is its front
+ * half-width from its centre: that edge sits 2 cm past his fingertip, and his open hand is at its lower-left, level
+ * with its lower third. He offers it; he never reaches through it or past it.
+ */
+export const HEART = (() => {
+  const scale = 0.825;
+  /** Half the model's width seen from the front (its bounds are +-0.298 local). */
+  const half = 0.298 * scale;
+  const height = 1.0 * scale;
+  const gap = 0.02;
+  const [ix, iy, iz] = PRESENT_PEAK.index;
+  return {
+    scale,
+    half,
+    height,
+    gap,
+    /** The model's centre (its bounding box is centred on its origin). */
+    position: [ix + gap + half, iy - 0.3 + height / 2, iz - 0.05] as V3,
+  };
+})();
+
+/** The model spot's box aspect (width / height): fixed, so its composition, and its still, are the same at every width. */
+export const MODEL_ASPECT = 1.1;
+
+/**
+ * The heart's area in the model spot, as percentages of the box (for the drag surface over it): its bounds seen
+ * from the classroom eye through the spot's frustum, with a margin, and wide enough to cover it while it turns.
+ */
+export function heartBox(): { left: number; top: number; width: number; height: number } {
+  const f = frustumFor(SPOTS.model, MODEL_ASPECT);
+  const [x, y, z] = HEART.position;
+  const rx = HEART.half + 0.1, ry = HEART.height / 2 + 0.04;
+  const a = project(f, [x - rx, y + ry, z]), b = project(f, [x + rx, y - ry, z]);
+  return { left: a.u * 100, top: a.v * 100, width: (b.u - a.u) * 100, height: (b.v - a.v) * 100 };
+}
+
+/** The build at section time `t`: 0 the picture, 1 the finished model; `show` fades the picture in first. */
+export function heartBuildAt(t: number): { build: number; show: number } {
+  const build = Math.min(1, Math.max(0, (t - MODEL_T.lift) / (MODEL_T.built - MODEL_T.lift)));
+  return { build, show: Math.min(1, Math.max(0, t / 0.4)) };
+}
 
 export interface SpotContext {
   /** Seconds since the teacher appeared at this spot (the first frame drawn there). */

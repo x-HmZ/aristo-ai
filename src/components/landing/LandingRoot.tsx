@@ -8,6 +8,7 @@ import { SiteFooter } from "./SiteFooter";
 import { ForParents } from "./ForParents";
 import { Hero } from "./sections/Hero";
 import { Close } from "./sections/Close";
+import { ModelBuild } from "./sections/ModelBuild";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
 import { host, resetHost, spotBox, subscribe } from "./stage/host";
 import { shared } from "./stage/shared";
@@ -140,6 +141,7 @@ export function LandingRoot() {
 
       <main>
         <Hero mode={mode} />
+        <ModelBuild mode={mode} />
         <ForParents />
         <Close />
       </main>

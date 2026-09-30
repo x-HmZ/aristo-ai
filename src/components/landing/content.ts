@@ -113,6 +113,14 @@ export const HOW = {
   ],
 } as const;
 
+/** It Builds a Model You Can Turn (mockup E). */
+export const MODEL_COPY = {
+  title: "It Builds a Model You Can Turn",
+  line: "When a topic has a shape, the lesson's picture becomes a 3D model in the room.",
+  turn: "Drag it to turn it.",
+  real: "The picture and the model are real output from the heart demo lesson. The build between them is an illustration.",
+} as const;
+
 export const MOVES_COPY = { title: "One Lesson, Five Moves" } as const;
 
 export const MAP_COPY = {

@@ -1,6 +1,6 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
-import { Vector3, type Object3D } from "three";
+import { Box3, Vector3, type Object3D } from "three";
 import { SPOTS, frustumFor, type SpotId } from "./spots";
 
 /** Jake's bones the verification reads: the hands and the index fingertips' last joints, both sides. */
@@ -15,6 +15,8 @@ declare global {
       /** A world point on the page, in CSS px (through this frame's camera and the canvas's box). */
       toPage: (p: [number, number, number]) => { x: number; y: number };
       frustum: () => ReturnType<typeof frustumFor>;
+      /** An object's world bounds by name (the heart's model is "landing-heart-solid", visible or not), or null. */
+      bounds: (name: string) => { min: [number, number, number]; max: [number, number, number] } | null;
       /** Frames rendered so far. */
       frame: number;
     };
@@ -44,6 +46,12 @@ export function Probe({ spot }: { spot: SpotId }) {
         return { x: r.left + window.scrollX + ((v.x + 1) / 2) * r.width, y: r.top + window.scrollY + ((1 - v.y) / 2) * r.height };
       },
       frustum: () => frustumFor(SPOTS[spot], size.width / Math.max(1, size.height)),
+      bounds: (name) => {
+        const o = find(name);
+        if (!o) return null;
+        const b = new Box3().setFromObject(o, true);
+        return b.isEmpty() ? null : { min: b.min.toArray() as [number, number, number], max: b.max.toArray() as [number, number, number] };
+      },
     };
     return () => { delete window.__landing; };
   }, [scene, camera, gl, size, spot, v]);

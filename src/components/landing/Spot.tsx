@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { registerSpot } from "./stage/host";
 import { SPOTS, type SpotId } from "./stage/spots";
@@ -15,13 +15,14 @@ import { SPOTS, type SpotId } from "./stage/spots";
 const HIGH = { fetchpriority: "high" } as Record<string, string>;
 
 export function Spot({
-  id, still, alt, className, pool, priority, children,
+  id, still, alt, className, style, pool, priority, children,
 }: {
   id: SpotId;
   /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`). */
   still?: string;
   alt: string;
   className?: string;
+  style?: CSSProperties;
   /** Above the fold: fetched at high priority (it can measure as the LCP). */
   priority?: boolean;
   /** The warm pool of light under him, positioned by the caller. */
@@ -31,7 +32,7 @@ export function Spot({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => (ref.current ? registerSpot(id, ref.current) : undefined), [id]);
   return (
-    <div ref={ref} data-spot={id} className={cn("landing-spot relative", className)}>
+    <div ref={ref} data-spot={id} className={cn("landing-spot relative", className)} style={style}>
       {pool && <div aria-hidden className={cn("glow-pool pointer-events-none absolute", pool)} />}
       {still ? (
         // eslint-disable-next-line @next/next/no-img-element -- a fixed-size box; next/image adds nothing here

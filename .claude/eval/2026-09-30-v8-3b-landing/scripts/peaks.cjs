@@ -24,7 +24,7 @@ const READ = () => {
     spot: L.spot, frame: L.frame, bones, page,
     box: { x: box.left + scrollX, y: box.top + scrollY, w: box.width, h: box.height },
     target: tr ? { x: tr.left + scrollX, y: tr.top + scrollY, w: tr.width, h: tr.height } : null,
-    clock: window.__landingClock ? window.__landingClock() : null,
+    heart: L.bounds('landing-heart-solid'),
   };
 };
 
@@ -56,18 +56,27 @@ const READ = () => {
     i++;
   }
   // The peak: the wave raises a hand highest; the present reaches furthest towards the target's centre.
+  // The wave: the raised hand at its highest. The present: the offering fingertip at its furthest reach.
   const m = (f) => {
     const L = f.page.CC_Base_L_Hand, R = f.page.CC_Base_R_Hand;
-    if (!f.target) return -Math.min(L.y, R.y);
-    const cx = f.target.x + f.target.w / 2, cy = f.target.y + f.target.h / 2;
-    return -Math.min(Math.hypot(L.x - cx, L.y - cy), Math.hypot(R.x - cx, R.y - cy));
+    if (spot === "model") return f.bones.CC_Base_L_Index3[0];
+    return -Math.min(L.y, R.y);
   };
   const peak = report.frames.reduce((a, f) => (m(f) > m(a) ? f : a), report.frames[0]);
   report.peak = peak.i;
   // The peak frame, with the hands (orange) and the fingertips (white) marked, and the target's box.
   const dot = (pt, c, rr = 7) => `<circle cx="${pt.x - peak.clip.x}" cy="${pt.y - peak.clip.y}" r="${rr}" fill="none" stroke="${c}" stroke-width="3"/>`;
+  // The heart's real bounds (world), projected: its near edge against the fingertip.
+  let hb = "";
+  if (peak.heart) {
+    const [a, b2] = [peak.heart.min, peak.heart.max];
+    const corners = await p.evaluate(([a, b]) => [[a[0], a[1], b[2]], [b[0], b[1], b[2]], [a[0], b[1], b[2]], [b[0], a[1], b[2]]].map((c) => window.__landing.toPage(c)), [a, b2]);
+    const xs = corners.map((c) => c.x - peak.clip.x), ys = corners.map((c) => c.y - peak.clip.y);
+    hb = `<rect x="${Math.min(...xs)}" y="${Math.min(...ys)}" width="${Math.max(...xs) - Math.min(...xs)}" height="${Math.max(...ys) - Math.min(...ys)}" fill="none" stroke="#1fa36a" stroke-width="2"/>`;
+    report.gap = { worldM: +(a[0] - peak.bones.CC_Base_L_Index3[0]).toFixed(3), handLowerThird: +((peak.bones.CC_Base_L_Index3[1] - a[1]) / (b2[1] - a[1])).toFixed(2) };
+  }
   const tb = peak.target ? `<rect x="${peak.target.x - peak.clip.x}" y="${peak.target.y - peak.clip.y}" width="${peak.target.w}" height="${peak.target.h}" fill="none" stroke="#2f7cf9" stroke-width="2" stroke-dasharray="6 4"/>` : "";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${peak.clip.width}" height="${peak.clip.height}">${tb}${dot(peak.page.CC_Base_L_Hand, "#f97b2f")}${dot(peak.page.CC_Base_R_Hand, "#f97b2f")}${dot(peak.page.CC_Base_L_Index3, "#fff", 4)}${dot(peak.page.CC_Base_R_Index3, "#fff", 4)}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${peak.clip.width}" height="${peak.clip.height}">${tb}${hb}${dot(peak.page.CC_Base_L_Hand, "#f97b2f")}${dot(peak.page.CC_Base_R_Hand, "#f97b2f")}${dot(peak.page.CC_Base_L_Index3, "#fff", 4)}${dot(peak.page.CC_Base_R_Index3, "#fff", 4)}</svg>`;
   await sharp(path.join(OUT, peak.file)).composite([{ input: Buffer.from(svg) }]).png().toFile(path.join(OUT, "peak-marked.png"));
   fs.copyFileSync(path.join(OUT, peak.file), path.join(OUT, "peak.png"));
   const pick = report.frames.filter((f) => f.i % 3 === 0).slice(0, 12);
@@ -77,7 +86,7 @@ const READ = () => {
   await sharp({ create: { width: tw * Math.min(6, tiles.length), height: th * Math.ceil(tiles.length / 6), channels: 3, background: "#222" } })
     .composite(tiles.map((t, k) => ({ input: t, left: (k % 6) * tw, top: Math.floor(k / 6) * th }))).png().toFile(path.join(OUT, "strip.png"));
   fs.writeFileSync(path.join(OUT, "peaks.json"), JSON.stringify(report, null, 1));
-  console.log(JSON.stringify({ frames: report.frames.length, peak: peak.i, ms: peak.ms, hands: { L: peak.bones.CC_Base_L_Hand, R: peak.bones.CC_Base_R_Hand, Li: peak.bones.CC_Base_L_Index3, Ri: peak.bones.CC_Base_R_Index3 }, target: peak.target, clock: peak.clock }));
+  console.log(JSON.stringify({ frames: report.frames.length, peak: peak.i, ms: peak.ms, hands: { L: peak.bones.CC_Base_L_Hand, R: peak.bones.CC_Base_R_Hand, Li: peak.bones.CC_Base_L_Index3, Ri: peak.bones.CC_Base_R_Index3 }, target: peak.target, heart: peak.heart, gap: report.gap }));
   console.log(JSON.stringify({ api: report.api.length, paid: report.paid.length }));
   await b.close();
 })();

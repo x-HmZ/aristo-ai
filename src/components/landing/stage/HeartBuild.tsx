@@ -6,9 +6,11 @@ import {
   MeshStandardMaterial, Points, SRGBColorSpace, ShaderMaterial, Vector2, Vector3, type Object3D,
 } from "three";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
-import { getFrame } from "./scroll";
+import { clockOf } from "../play";
+import { HEART, MODEL_T, heartBuildAt } from "./scripts";
+import { shared } from "./shared";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
-import { damp, roomAt, seg, smooth } from "./timeline";
+import { damp, seg, smooth } from "./timeline";
 import { warmUp } from "./warm";
 
 /**
@@ -20,9 +22,6 @@ import { warmUp } from "./warm";
 export const MODEL_URL = "/landing/heart.glb";
 export const SOURCE_URL = "/demo/heart/source.jpg";
 
-// The product's model anchor and spawn scale (Experience.tsx MODEL_* and FloatingModel).
-const ANCHOR: [number, number, number] = [0.37, 0.18, -3];
-const SCALE = 0.825;
 /** The photo card floats this far in front of the model's centre, in model units. */
 const CARD_Z = 0.45;
 const POINTS = 26000;
@@ -133,6 +132,7 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
   wire.setAttribute("position", new BufferAttribute(lines, 3));
 
   const solid = scene.clone(true);
+  solid.name = "landing-heart-solid";
   const solidMaterials: Material[] = [];
   solid.traverse((o) => {
     const mm = o as Mesh;
@@ -150,9 +150,12 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
 }
 
 /**
- * Image to 3D (plan 5A): the real FLUX photo (`source.jpg`) floats in front of the board; its pixels lift off as
+ * Image to 3D: the real FLUX photo (`source.jpg`) floats in front of the heart's place; its pixels lift off as
  * points, fly onto the real Tripo mesh (`model.glb`), a wireframe of the mesh shows through, then the solid model
- * fades in and the points fall away. It then turns slowly at the product's model anchor.
+ * fades in and the points fall away (V8.3; V8.3b runs it on the model section's clock, beside Jake's open hand).
+ *
+ * Once built it turns slowly and can be turned: `shared.heart.turn` is the reader's own turn (a drag, or Turn it),
+ * eased towards; the slow turn stops once the reader has turned it. Replaying the build unwinds it to face them.
  */
 export function HeartBuild() {
   const { scene } = useGLTF(MODEL_URL);
@@ -161,6 +164,9 @@ export function HeartBuild() {
   const built = useMemo(() => build(scene, photo.image as HTMLImageElement), [scene, photo]);
   const group = useRef<Group>(null);
   const spin = useRef(0);
+  const turned = useRef(0);
+  // `?still`: the still is captured facing the reader (the V8.3b eval, scripts/stills.cjs).
+  const still = useMemo(() => new URLSearchParams(window.location.search).has("still"), []);
 
   const pointsMat = useMemo(() => new ShaderMaterial({
     uniforms: { t: { value: 0 }, size: { value: 9 }, pixelRatio: { value: 1 }, opacity: { value: 0 } },
@@ -187,8 +193,6 @@ export function HeartBuild() {
   useFrame((state, dt) => {
     const g = group.current;
     if (!g) return;
-    const S = getFrame().S;
-    const r = roomAt(S);
     if (warm.current > 0) {
       warm.current = 0;
       g.visible = pointsObj.visible = wireObj.visible = built.solid.visible = true;
@@ -196,10 +200,11 @@ export function HeartBuild() {
       for (const m of built.solidMaterials) { m.opacity = 0; m.transparent = true; }
       return;
     }
-    g.visible = r.model > 0.001;
+    if (warm.current < 0) return;
+    const { build: b, show } = heartBuildAt(clockOf("model").t);
+    g.visible = show > 0.001;
     if (!g.visible) return;
-    const b = r.build;
-    const vis = r.model * smooth(seg(S, 2.66, 2.69));
+    const vis = smooth(show);
     pointsMat.uniforms.t.value = 0.95 * seg(b, 0.08, 0.8);
     pointsMat.uniforms.pixelRatio.value = state.gl.getPixelRatio();
     pointsMat.uniforms.opacity.value = vis * seg(b, 0.06, 0.12) * (1 - seg(b, 0.86, 0.97));
@@ -210,14 +215,19 @@ export function HeartBuild() {
     const solid = vis * smooth(seg(b, 0.72, 0.92));
     for (const m of built.solidMaterials) { m.opacity = solid; m.transparent = solid < 0.999; m.depthWrite = solid > 0.5; }
     built.solid.visible = solid > 0.002;
-    // Turns slowly once built; unwinds to face the reader if the build is scrolled back.
-    spin.current = b >= 1 ? spin.current + dt * 0.35 : damp(spin.current, 0, 4, dt);
-    g.rotation.y = spin.current;
-    g.position.y = ANCHOR[1] + Math.sin(state.clock.elapsedTime * 1.1) * 0.02 * (b >= 1 ? 1 : 0);
+    // Turns slowly once built, until the reader turns it; unwinds to face them when the build replays.
+    const h = shared.heart;
+    if (b < 1) { spin.current = damp(spin.current, 0, 4, dt); h.turn = 0; h.user = false; turned.current = 0; }
+    else {
+      if (!h.user && !still) spin.current += dt * 0.35;
+      turned.current = damp(turned.current, h.turn, 6, dt);
+    }
+    g.rotation.y = spin.current + turned.current;
+    g.position.y = HEART.position[1] + Math.sin(state.clock.elapsedTime * 1.1) * 0.02 * smooth(seg(clockOf("model").t, MODEL_T.built, MODEL_T.length));
   });
 
   return (
-    <group ref={group} position={ANCHOR} scale={SCALE} visible={false}>
+    <group ref={group} name="landing-heart" position={HEART.position as [number, number, number]} scale={HEART.scale} visible={false}>
       <mesh position={[built.card.x, built.card.y, CARD_Z - 0.002]} material={cardMat}>
         <planeGeometry args={[built.card.w, built.card.w]} />
       </mesh>

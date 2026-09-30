@@ -1,4 +1,7 @@
 import { useEffect, useState, type RefObject } from "react";
+import type { LandingMode } from "./stage/gate";
+import { host, subscribe as subscribeHost } from "./stage/host";
+import type { SpotId } from "./stage/spots";
 
 /**
  * Section clocks (V8.3b). Each section's motion graphic, and what Jake does beside it, runs on its own clock in
@@ -80,25 +83,42 @@ export const reducedMotion = (): boolean =>
 
 /**
  * Plays section `id` while `ref` is in view: from 40% visible, paused once it is fully out. `length` in seconds.
+ * With `spot`, the section is Jake's own graphic (the model build): see below.
  * Under reduced motion the clock is set to its end and never runs.
  */
-export function useSectionPlay(id: string, ref: RefObject<HTMLElement | null>, length: number): void {
+export function useSectionPlay(
+  id: string,
+  ref: RefObject<HTMLElement | null>,
+  length: number,
+  opts: { mode?: LandingMode | null; spot?: SpotId } = {},
+): void {
+  const { mode, spot } = opts;
   useEffect(() => {
     const c = clockOf(id);
     c.length = length;
-    if (reducedMotion()) { c.t = length; emit(id); return; }
+    // A graphic that is Jake's own spot waits for the gate: on the full path it plays once he is live there; on the
+    // lite path the spot is a still of its end, so the section shows its end too.
+    if (spot && !mode) return;
+    // `?still`: the stills are captured at each section's end (the V8.3b eval, scripts/stills.cjs).
+    const still = new URLSearchParams(window.location.search).has("still");
+    if (reducedMotion() || mode === "stack" || (spot && mode === "lite") || still) { c.t = length; emit(id); return; }
     const el = ref.current;
     if (!el) return;
+    let inView = false;
+    const ready = () => !spot || host.live === spot;
+    const apply = () => setPlaying(id, inView && ready());
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.intersectionRatio >= 0.4) setPlaying(id, true);
-        else if (!e.isIntersecting) setPlaying(id, false);
+        if (e.intersectionRatio >= 0.4) inView = true;
+        else if (!e.isIntersecting) inView = false;
+        apply();
       },
       { threshold: [0, 0.4] },
     );
     io.observe(el);
-    return () => { io.disconnect(); setPlaying(id, false); };
-  }, [id, ref, length]);
+    const off = spot ? subscribeHost(apply) : undefined;
+    return () => { io.disconnect(); off?.(); setPlaying(id, false); };
+  }, [id, ref, length, mode, spot]);
 }
 
 /** Index of the last cue the clock has passed (-1 before the first), re-rendering only when it changes. */

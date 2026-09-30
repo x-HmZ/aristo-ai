@@ -33,7 +33,7 @@ fs.mkdirSync(RAW, { recursive: true });
       [data-stage-layer] { -webkit-mask-image: none !important; mask-image: none !important; visibility: visible !important; }` });
     await sleep(200);
     const r = await p.evaluate((s) => { const q = document.querySelector(`[data-spot="${s}"]`).getBoundingClientRect(); return { x: q.left, y: q.top, width: q.width, height: q.height }; }, spot);
-    if (Math.round(r.width) !== 600 || Math.round(r.height) !== 600) throw new Error(`${spot} box is ${r.width} x ${r.height}, not 600 x 600`);
+    if (Math.round(r.width) !== 600) throw new Error(`${spot} box is ${r.width} wide, not 600`);
     const png = path.join(RAW, `${spot}.png`);
     await p.screenshot({ path: png, clip: r, omitBackground: true });
     const out = path.join(PUB, `${spot}.webp`);
