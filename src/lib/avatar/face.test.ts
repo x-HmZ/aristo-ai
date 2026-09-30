@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { FaceHint } from "./animationManifest";
 import {
-  BLINK_CLOSE_S, BLINK_DOUBLE_CHANCE, BLINK_GAP_S, BLINK_OPEN_S, SMILE_REST, SMILE_SPEAKING,
-  blinkShape, createBlinkState, smileTarget, stepBlink, stepSmile,
+  BLINK_CLOSE_S, BLINK_DOUBLE_CHANCE, BLINK_GAP_S, BLINK_OPEN_S, LID_REST, SMILE_REST, SMILE_REST_PLAIN, SMILE_SPEAKING,
+  blinkShape, createBlinkState, lidClosure, smileTarget, stepBlink, stepSmile,
 } from "./face";
 import {
   DRIFT, GAZE_LIMITS, SACCADE_AMPLITUDE, SACCADE_GAP_S, THINK_AVERT,
@@ -26,19 +26,28 @@ describe("smile", () => {
     expect(SMILE_SPEAKING[h]).toBeLessThanOrEqual(0.4); // a wide smile fights the visemes
   });
 
+  it("rests friendly on a tuned rig, and only partly on an untuned one", () => {
+    expect(smileTarget("neutral", false)).toBe(SMILE_REST.neutral);
+    expect(SMILE_REST.neutral).toBeGreaterThan(SMILE_REST_PLAIN);
+    const untuned = smileTarget("neutral", false, 0.4);
+    expect(untuned).toBeGreaterThan(SMILE_REST_PLAIN);
+    expect(untuned).toBeLessThan(SMILE_REST.neutral);
+  });
+
   it("targets the speaking or the resting level", () => {
     expect(smileTarget("smile", false)).toBe(SMILE_REST.smile);
     expect(smileTarget("smile", true)).toBe(SMILE_SPEAKING.smile);
   });
 
-  it("scales the lift above neutral by the rig's gain, never the plain level", () => {
+  it("scales every lift above the plain level by the rig's gain", () => {
     for (const speaking of [false, true]) {
-      const plain = smileTarget("neutral", speaking);
-      expect(smileTarget("neutral", speaking, 0.4)).toBe(plain);
-      expect(smileTarget("smile", speaking, 0)).toBe(plain);
-      expect(smileTarget("smile", speaking, 1)).toBe(smileTarget("smile", speaking));
-      const half = smileTarget("smile", speaking, 0.5);
-      expect(half).toBeCloseTo(plain + (smileTarget("smile", speaking) - plain) / 2, 9);
+      const plain = speaking ? SMILE_SPEAKING.neutral : SMILE_REST_PLAIN;
+      for (const h of HINTS) {
+        expect(smileTarget(h, speaking, 0)).toBe(plain);
+        expect(smileTarget(h, speaking, 1)).toBe(smileTarget(h, speaking));
+        const half = smileTarget(h, speaking, 0.5);
+        expect(half).toBeCloseTo(plain + (smileTarget(h, speaking) - plain) / 2, 9);
+      }
     }
     // A hint below neutral (thinking) lifts less, not more, with a small gain.
     expect(smileTarget("thinking", false, 0.4)).toBeGreaterThan(smileTarget("thinking", false));
@@ -73,6 +82,20 @@ describe("smile", () => {
 
   it("ignores a negative dt", () => {
     expect(stepSmile(0.3, "smile", false, -1)).toBe(0.3);
+  });
+});
+
+describe("lids", () => {
+  it("rest a little lowered on a tuned rig and close fully on a blink", () => {
+    expect(lidClosure(0)).toBe(LID_REST);
+    expect(lidClosure(1)).toBe(1);
+    expect(lidClosure(0.5)).toBeCloseTo(LID_REST + (1 - LID_REST) / 2, 9);
+  });
+
+  it("scale the resting lid by the rig's gain", () => {
+    expect(lidClosure(0, 0)).toBe(0);
+    expect(lidClosure(0, 0.4)).toBeCloseTo(LID_REST * 0.4, 9);
+    expect(lidClosure(1, 0.4)).toBe(1);
   });
 });
 

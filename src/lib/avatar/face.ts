@@ -20,11 +20,24 @@ import type { FaceHint } from "./animationManifest";
  * like this one; checked at 1.8 on Jake with no mesh artifacts.
  */
 export const SMILE_REST: Record<FaceHint, number> = {
-  neutral:  0.15, // the existing resting smile: the face must not read as dead
+  neutral:  0.8,  // a soft closed smile at rest (V8.3b, Hmz): friendly, short of the greeting
   smile:    1.6,  // greeting, correct, quiz good
-  warm:     0.8,  // wrong, quiz supportive: kind, not celebrating
+  warm:     1.1,  // wrong, quiz supportive: kind, not celebrating; still a lift above rest
   thinking: 0.03, // a flat, attentive mouth
 };
+
+/**
+ * The plain resting smile, before any tuned lift: what every rig shows with a gain of 0. It was the whole resting
+ * smile until V8.3b (0.15: the face must not read as dead); the friendlier rest above is a lift on top of it, so an
+ * untuned rig gets only part of it, as it does the other hints.
+ */
+export const SMILE_REST_PLAIN = 0.15;
+
+/**
+ * The lids' resting closure on a tuned rig (V8.3b, Hmz): lowered a little, which reads as smiling eyes with the
+ * soft resting smile. Blinks close from here.
+ */
+export const LID_REST = 0.12;
 
 /**
  * While speaking, the smile stays small: the visemes own the mouth, and a wide
@@ -46,13 +59,20 @@ export const SMILE_GAIN_UNTUNED = 0.4;
 
 /**
  * The smile for a hint. `gain` scales how far the hint lifts above the plain
- * (neutral) level, for rigs whose `mouthSmile` is stronger than the Canino
- * pair's the tables above were tuned on: 1 is as tuned, 0 shows no hint.
+ * level (`SMILE_REST_PLAIN` at rest, `SMILE_SPEAKING.neutral` while speaking),
+ * for rigs whose `mouthSmile` is stronger than the Canino pair's the tables
+ * above were tuned on: 1 is as tuned, 0 shows the plain level whatever the hint.
  */
 export function smileTarget(face: FaceHint, speaking: boolean, gain = 1): number {
   const table = speaking ? SMILE_SPEAKING : SMILE_REST;
-  const floor = table.neutral;
-  return floor + (table[face] - floor) * gain;
+  const plain = speaking ? SMILE_SPEAKING.neutral : SMILE_REST_PLAIN;
+  return plain + (table[face] - plain) * gain;
+}
+
+/** The lid closure to write: the resting lid (scaled by the rig's gain, like the smile), with the blink closing from it. */
+export function lidClosure(blink: number, gain = 1): number {
+  const rest = LID_REST * gain;
+  return rest + (1 - rest) * blink;
 }
 
 /** One smile step: frame-rate independent, fast down and slow up. */

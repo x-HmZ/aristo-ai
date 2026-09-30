@@ -19,7 +19,7 @@ import {
   createDirectorState, overlayBlend, overlayWeight, phaseOf, roleOf, stepDirector,
   type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
 } from "@/lib/avatar/director";
-import { SMILE_GAIN_UNTUNED, createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
+import { SMILE_GAIN_UNTUNED, createBlinkState, lidClosure, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
 import {
   EYE_RATE, EYE_WEIGHT, createGazeState, eyeAim, gazeTarget, stepSaccade, type GazeState,
 } from "@/lib/avatar/gaze";
@@ -872,7 +872,8 @@ export function Teacher({
       const blink = stepBlink(face.blink, clockRef.current, Math.random);
       face.blink = blink.state;
       const lids = typeof cfg.morphs.eyeClose === "string" ? [cfg.morphs.eyeClose] : cfg.morphs.eyeClose;
-      for (const lid of lids) lerpMorphTarget(lid, blink.closure, 1);
+      const closure = lidClosure(blink.closure, cfg.morphs.smileGain ?? SMILE_GAIN_UNTUNED);
+      for (const lid of lids) lerpMorphTarget(lid, closure, 1);
     }
   });
 
