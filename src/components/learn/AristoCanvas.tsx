@@ -4,6 +4,7 @@ import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useRef, type ReactNode } from "react";
 import { Experience } from "@/components/three/Experience";
+import { MIN_POLAR_ANGLE } from "@/components/three/deskFraming";
 import { useAristoStore } from "@/store/useAristoStore";
 
 interface DevOverrides {
@@ -69,7 +70,8 @@ export function AristoCanvas({
         // feel like the student turning their head from their seat.
         // minPolar π/6 lets them look ~60° down — enough to see their own
         // desk (and the quiz placeholder paper) without leaving the chair.
-        minPolarAngle={Math.PI / 6}
+        // Also the clamp on the desk camera (deskFraming.ts works from the clamped pose), hence the shared constant.
+        minPolarAngle={MIN_POLAR_ANGLE}
         maxPolarAngle={Math.PI / 1.8}
         minAzimuthAngle={-Math.PI / 4}
         maxAzimuthAngle={Math.PI / 4}

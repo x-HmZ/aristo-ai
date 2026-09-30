@@ -20,9 +20,10 @@
  */
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef } from "react";
-import { Vector3 } from "three";
+import { useEffect, useMemo, useRef } from "react";
+import { Vector3, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
+import { deskFraming } from "./deskFraming";
 
 // ─── Named framings ──────────────────────────────────────────────────────────
 
@@ -44,8 +45,8 @@ const LESSON_TARGET = new Vector3(0,    0,    0.4);
 // near y=-1.05.  Pointing the camera at that surface keeps the chair
 // across the table softly visible in the background for context rather
 // than blocking the view.
-const DESK_POS    = new Vector3(0,    0.2,  -0.05);
-const DESK_TARGET = new Vector3(0,   -1.05, -0.6);
+// DESK_POS and DESK_TARGET live in deskFraming.ts with the per-aspect framing: on a landscape canvas they are
+// used as they are; on a portrait one the camera slides back along the same ray so the paper fits the width.
 
 // Damping strength.  Higher = snappier.  λ=3.2 → ~95 % of distance covered
 // in ~0.9 s while never popping at the start/end — feels like a smooth
@@ -68,8 +69,22 @@ interface CameraControllerProps {
 }
 
 export function CameraController({ deskPos, deskTarget, lambda }: CameraControllerProps = {}) {
-  const { camera, controls } = useThree();
+  const { camera, controls, size } = useThree();
   const activeQuiz = useAristoStore((s) => s.activeQuiz);
+
+  // The desk framing follows the canvas aspect ratio (the paper is 520 CSS px wide, so a phone would crop it).
+  const fov = (camera as PerspectiveCamera).fov;
+  const framing = useMemo(() => deskFraming(size.width, size.height, fov), [size.width, size.height, fov]);
+
+  // prefers-reduced-motion: cut to the goal instead of gliding, both into and out of the desk.
+  const reduceMotion = useRef(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reduceMotion.current = mq.matches;
+    const onChange = (e: MediaQueryListEvent) => { reduceMotion.current = e.matches; };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // Live camera position and look-at point — mutated each frame.
   const livePos    = useRef(new Vector3().copy(LESSON_POS));
@@ -89,13 +104,13 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
         goalPosOverride.current.set(deskPos[0], deskPos[1], deskPos[2]);
         goalPos = goalPosOverride.current;
       } else {
-        goalPos = DESK_POS;
+        goalPos = framing.pos;
       }
       if (deskTarget) {
         goalTargetOverride.current.set(deskTarget[0], deskTarget[1], deskTarget[2]);
         goalTarget = goalTargetOverride.current;
       } else {
-        goalTarget = DESK_TARGET;
+        goalTarget = framing.target;
       }
     } else {
       goalPos    = LESSON_POS;
@@ -106,7 +121,7 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
     // Critically-damped exponential ease.  `1 - exp(-λ·dt)` is the
     // frame-rate-independent equivalent of "lerp by ~λ percent per second"
     // — looks identical at 30 fps and 144 fps.
-    const t = 1 - Math.exp(-L * Math.min(delta, 0.1));
+    const t = reduceMotion.current ? 1 : 1 - Math.exp(-L * Math.min(delta, 0.1));
     livePos.current   .lerp(goalPos,    t);
     liveTarget.current.lerp(goalTarget, t);
 
