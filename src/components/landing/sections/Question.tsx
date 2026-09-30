@@ -4,7 +4,7 @@ import { SHAPE } from "@/lib/design/shape";
 import { HOW, IDEA_LINKS, IDEAS, MOVES, TOPIC } from "../content";
 import { Pinned, show, useStageWriter } from "../Pinned";
 import { easeOut, seg, window01 } from "../stage/timeline";
-import { CaptionBand, StepRail } from "./parts";
+import { CaptionBand, StepRail, Still } from "./parts";
 
 /** Where each of the six steps starts, as the section's progress. The diagram and the model are in the 3D stage. */
 export const HOW_STEPS = [0, 0.12, 0.3, 0.48, 0.66, 0.88, 1] as const;
@@ -37,7 +37,6 @@ export function Question() {
     const p = f.progress[2];
     const on = window01(p, 0.005, 0.995, 0.005);
     show(head.current, on);
-    show(label.current, on);
     const k = stepAt(p);
     if (k !== lastStep.current && rail.current) {
       lastStep.current = k;
@@ -78,10 +77,7 @@ export function Question() {
   return (
     <Pinned id="how" labelledBy="how-title">
       {HOW.steps.map((step, i) => (
-        <div key={step.name} ref={(el) => { stills.current[i] = el; }} className="landing-still landing-beat absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/images/landing/v3/how-${i + 1}.webp`} alt="" loading="lazy" className="h-full w-full object-cover" />
-        </div>
+        <Still key={step.name} ref={(el) => { stills.current[i] = el; }} name={`how-${i + 1}`} />
       ))}
 
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[92px] sm:px-8">
@@ -90,6 +86,9 @@ export function Question() {
             {HOW.title}
           </h2>
           <StepRail ref={rail} steps={HOW.steps.map((s) => s.name)} />
+          <p ref={label} className="max-w-[520px]">
+            <span className={cn(SHAPE.control, GLASS, "inline-block px-3 py-1.5 text-xs text-body shadow-none")}>{HOW.realLabel}</span>
+          </p>
         </div>
 
         {/* 1. The question. */}
@@ -160,7 +159,7 @@ export function Question() {
         </ol>
 
         {/* Step captions, bottom left. */}
-        <div className="landing-overlap absolute bottom-[12svh] left-5 z-10 max-w-[520px] sm:left-8">
+        <div className="landing-overlap absolute bottom-[10svh] left-5 z-10 max-w-[520px] sm:left-8">
           {/* Step 6 has no caption of its own: the caption band below carries it. */}
           {HOW.steps.slice(0, 5).map((step, i) => (
             <p key={step.name} ref={(el) => { captions.current[i] = el; }} className="landing-beat">
@@ -172,9 +171,6 @@ export function Question() {
         {/* 6. The teacher begins. */}
         <CaptionBand ref={band} line={MOVES[0].line} segment={MOVES[0].segment} label={HOW.steps[5].caption} />
 
-        <p ref={label} className="landing-beat absolute bottom-4 left-5 z-10 max-w-[560px] sm:left-8">
-          <span className={cn(SHAPE.control, GLASS, "inline-block px-3 py-1.5 text-xs text-body shadow-none")}>{HOW.realLabel}</span>
-        </p>
       </div>
     </Pinned>
   );

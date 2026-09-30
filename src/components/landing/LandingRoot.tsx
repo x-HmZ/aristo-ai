@@ -144,14 +144,14 @@ export function LandingRoot() {
     >
       {/* Without JS nothing pins and every beat shows in flow (the same rules as reduced motion, globals.css). */}
       <noscript>
-        <style>{`.landing-pin{height:auto}.landing-pin-frame{position:relative;height:auto;overflow:visible}.landing-beat{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;visibility:visible!important}.landing-motion-only{display:none!important}.landing-overlap>*{grid-area:auto}.landing-reveal{opacity:1;transform:none}`}</style>
+        <style>{`.landing-pin{height:auto}.landing-pin-frame{position:relative;height:auto;overflow:visible}.landing-beat{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;visibility:visible!important}.landing-motion-only{display:none!important}.landing-overlap>*{grid-area:auto}.landing-still{max-width:960px;margin:24px auto 0;padding:0 20px}.landing-still img{height:auto;border-radius:16px}.landing-reveal{opacity:1;transform:none}`}</style>
       </noscript>
 
       <header>
         <LandingNav />
       </header>
 
-      <div ref={layer} aria-hidden className="pointer-events-none fixed inset-0 z-0" style={{ opacity: 0 }}>
+      <div ref={layer} data-stage-layer aria-hidden className="pointer-events-none fixed inset-0 z-0" style={{ opacity: 0 }}>
         {Stage && <Stage active={active} onLive={onLive} onSlow={onSlow} />}
       </div>
 

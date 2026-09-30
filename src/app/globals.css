@@ -433,6 +433,15 @@
     .landing-overlap > * {
       grid-area: auto;
     }
+    .landing-still {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 20px;
+    }
+    .landing-still img {
+      height: auto;
+      border-radius: 16px;
+    }
   }
   .landing-stack .landing-pin {
     height: auto;
@@ -454,6 +463,15 @@
   }
   .landing-stack .landing-overlap > * {
     grid-area: auto;
+  }
+  .landing-stack .landing-still {
+    max-width: 960px;
+    margin: 24px auto 0;
+    padding: 0 20px;
+  }
+  .landing-stack .landing-still img {
+    height: auto;
+    border-radius: 16px;
   }
 
   /* Wide display type: Archivo at its widest, set in capitals. The hero line

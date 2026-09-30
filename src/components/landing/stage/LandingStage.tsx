@@ -114,14 +114,17 @@ function StageTeacher({ onLive }: { onLive: () => void }) {
   const [act, setAct] = useState(() => actAt(getFrame().S));
   const [packs, setPacks] = useState(false);
   const clock = useRef(0);
+  // `?pose=board` holds the opening pose (turned to the board, no greeting): how the poster is captured, so the
+  // live stage starts exactly where the poster left off (.claude/eval/2026-09-30-v8-3-landing/scripts/stills.cjs).
+  const hold = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("pose") === "board", []);
   const driver = useMemo<TeacherDriver>(() => ({
     signals: () => teacherSignals(getFrame().S, {
-      greeted: readyAt.current !== null && clock.current - readyAt.current > 1.4,
+      greeted: !hold && readyAt.current !== null && clock.current - readyAt.current > 1.4,
       speaking: shared.speaking,
     }),
     viseme: visemeNow,
     clipPacks: packs,
-  }), [packs]);
+  }), [packs, hold]);
 
   useFrame((_, dt) => {
     clock.current += dt;
@@ -130,7 +133,7 @@ function StageTeacher({ onLive }: { onLive: () => void }) {
     if (a !== act) { setAct(a); readyAt.current = null; }
     if (readyAt.current === null && shared.live) readyAt.current = clock.current;
     // The opening turn from the board to the student, on the page act only (the close starts facing you).
-    const since = readyAt.current === null ? 0 : clock.current - readyAt.current;
+    const since = readyAt.current === null || hold ? 0 : clock.current - readyAt.current;
     if (turn.current) turn.current.rotation.y = act === "page" && S < 1 ? teacherYaw(since) : 0;
   });
 

@@ -4,7 +4,7 @@ import { SHAPE } from "@/lib/design/shape";
 import { CHALLENGE_QUESTION, MOVES, MOVES_COPY } from "../content";
 import { Pinned, show, useStageWriter } from "../Pinned";
 import { easeOut, moveAt, seg, window01 } from "../stage/timeline";
-import { CaptionBand, StepRail } from "./parts";
+import { CaptionBand, StepRail, Still } from "./parts";
 
 const GLASS = "theme-ink border border-line bg-bg/[0.86] text-ink backdrop-blur-md";
 
@@ -48,10 +48,7 @@ export function Moves() {
   return (
     <Pinned id="moves" labelledBy="moves-title">
       {MOVES.map((m, i) => (
-        <div key={m.phase} ref={(el) => { stills.current[i] = el; }} className="landing-still landing-beat absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/images/landing/v3/move-${i + 1}.webp`} alt="" loading="lazy" className="h-full w-full object-cover" />
-        </div>
+        <Still key={m.phase} ref={(el) => { stills.current[i] = el; }} name={`move-${i + 1}`} x={i === 3 ? "50%" : undefined} />
       ))}
 
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[92px] sm:px-8">
@@ -65,7 +62,7 @@ export function Moves() {
               const Icon = m.icon;
               return (
                 <p key={m.phase} ref={(el) => { does.current[i] = el; }} className="landing-beat">
-                  <span className={cn(SHAPE.control, GLASS, "inline-flex items-center gap-2 px-3 py-2 text-base font-semibold")}>
+                  <span className={cn(SHAPE.control, GLASS, "inline-flex flex-wrap items-center gap-x-2 gap-y-0.5 px-3 py-2 text-[15px] font-semibold sm:text-base")}>
                     <Icon className="size-4 text-accent-text" aria-hidden />
                     <span className="text-accent-text">{i + 1}. {m.name}</span>
                     <span className="text-ink">{m.does}</span>
@@ -90,7 +87,7 @@ export function Moves() {
 
         <div ref={desk} className="landing-still landing-beat absolute inset-x-5 bottom-[16svh] z-10 mx-auto max-w-[520px] sm:inset-x-8">
           <div className={cn(SHAPE.surface, "theme-paper border border-line bg-surface px-5 py-5 text-ink shadow-e2")}>
-            <p className="text-xs font-semibold text-accent-text">Challenge, on your desk</p>
+            <p className="text-xs font-semibold text-accent-text">Challenge, step 4 of 5</p>
             <p className="mt-2 text-lg font-semibold leading-snug">{CHALLENGE_QUESTION}</p>
             <p className="mt-3 text-sm text-body">Answer out loud, or type it.</p>
           </div>

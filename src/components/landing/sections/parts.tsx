@@ -90,3 +90,26 @@ export const CaptionBand = forwardRef<HTMLDivElement, { line: string; segment: s
     );
   }
 );
+
+/**
+ * A still of the room for one beat, for the lite path and the stack (captured from the live stage; hidden while the
+ * stage runs, so it never loads there). `x` is the object position across: the room stills keep Jake, who stands at
+ * about a third of the frame, in view on a portrait phone.
+ */
+export const Still = forwardRef<HTMLDivElement, { name: string; x?: string; className?: string }>(function Still({ name, x = "32%", className }, ref) {
+  return (
+    <div ref={ref} className={cn("landing-still landing-beat absolute inset-0", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/images/landing/v3/${name}.webp`}
+        srcSet={`/images/landing/v3/${name}-640.webp 640w, /images/landing/v3/${name}.webp 1280w`}
+        sizes="100vw"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="h-full w-full object-cover"
+        style={{ objectPosition: `${x} 50%` }}
+      />
+    </div>
+  );
+});

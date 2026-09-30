@@ -6,6 +6,7 @@ import { IDEA } from "../content";
 import { Pinned, show, useStageWriter } from "../Pinned";
 import { easeOut, seg, window01 } from "../stage/timeline";
 import { shared } from "../stage/shared";
+import { Still } from "./parts";
 
 /**
  * The Idea: the Column draws itself, its middle flute lights, and the story appears on the classroom display in
@@ -48,10 +49,7 @@ export function Idea() {
 
   return (
     <Pinned id="idea" labelledBy="idea-title">
-      <div ref={still} className="landing-still landing-beat absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/landing/v3/idea.webp" alt="" loading="lazy" className="h-full w-full object-cover" />
-      </div>
+      <Still ref={still} name="idea" />
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[96px] sm:px-8">
         <div ref={head} className="landing-beat relative z-10 flex items-center gap-4">
           <svg viewBox={COLUMN.viewBox} aria-hidden className="h-14 w-auto shrink-0 sm:h-16">
