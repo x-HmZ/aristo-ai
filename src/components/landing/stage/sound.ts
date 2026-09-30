@@ -80,16 +80,28 @@ function start(segment: string) {
 /** The "Hear it" toggle. Turning it on plays the line on screen now. */
 export function setEnabled(on: boolean, segment: string | null): void {
   enabled = on;
+  if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; pending = null; }
   if (!on) stopAudio();
   else if (segment) start(segment);
   notify();
 }
 
+/** A line starts only once its beat has held this long, so scrolling past a move neither plays nor fetches it. */
+const SETTLE_MS = 350;
+let pending: string | null = null;
+let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+
 /** Called by the beats each frame: the line that belongs on screen (null when none does). */
 export function want(segment: string | null): void {
-  if (!enabled || segment === current) return;
-  if (segment) start(segment);
-  else { stopAudio(); notify(); }
+  if (!enabled) return;
+  if (segment === current) { if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; pending = null; } return; }
+  if (!segment) { if (pendingTimer) clearTimeout(pendingTimer); pendingTimer = null; pending = null; stopAudio(); notify(); return; }
+  if (segment === pending) return;
+  // A new line: stop the old one now, start this one if the reader stays on it.
+  if (current) { stopAudio(); notify(); }
+  if (pendingTimer) clearTimeout(pendingTimer);
+  pending = segment;
+  pendingTimer = setTimeout(() => { pendingTimer = null; const s = pending; pending = null; if (enabled && s) start(s); }, SETTLE_MS);
 }
 
 /** How many words of the current line have been spoken (for the caption highlight). */
