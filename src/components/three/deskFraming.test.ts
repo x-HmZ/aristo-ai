@@ -33,6 +33,26 @@ describe("the model against the browser", () => {
     expect(Math.abs(p.bottom - bottom)).toBeLessThan(1.5);
   });
 
+  // The same, for the framings this module chooses: card rects measured in the browser (the probe page, the stub
+  // quiz) with the card at the CSS width and height the DOM reported. W, H, card CSS height, left, right, top, bottom.
+  // (Landscape sizes return DESK_POS itself, which OrbitControls clamps, so they are pinned by the block above.)
+  const solved: [number, number, number, number, number, number, number][] = [
+    [360, 640, 407, 19, 341, 148, 544],
+    [360, 780, 407, 18, 342, 218, 602],
+    [390, 844, 407, 18, 372, 250, 631],
+    [430, 932, 407, 18, 412, 294, 670],
+    [768, 1024, 331, 27, 741, 343, 710],
+  ];
+  it.each(solved)("the chosen framing at %ix%i matches the browser", (W, H, cardH, left, right, top, bottom) => {
+    const fr = deskFraming(W, H);
+    const p = projectDeskCard(W, H, poseOf(fr), fr.cardWidth, cardH);
+    // Where the DOM box is the projected box, to within a pixel or two (rounding, the 1px border).
+    expect(Math.abs(p.left - left)).toBeLessThan(2.5);
+    expect(Math.abs(p.right - right)).toBeLessThan(2.5);
+    expect(Math.abs(p.top - top)).toBeLessThan(2.5);
+    expect(Math.abs(p.bottom - bottom)).toBeLessThan(2.5);
+  });
+
   it("AristoCanvas passes the shared polar limit to OrbitControls", () => {
     const src = readFileSync("src/components/learn/AristoCanvas.tsx", "utf8");
     expect(src).toContain("minPolarAngle={MIN_POLAR_ANGLE}");
