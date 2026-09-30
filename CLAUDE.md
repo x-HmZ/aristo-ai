@@ -39,7 +39,7 @@ Next.js 15 App Router's `(app-pages-browser)` webpack layer aliases `react` to `
 - Do **not** move `/learn` into `src/app/learn/` — breaks R3F
 - Do **not** add a webpack alias redirecting `react` to real `node_modules/react` — breaks `React.use` in App Router pages
 
-Everything else lives in App Router.
+The same applies to `/` (`pages/index.tsx`, static; its 3D stage loads after first paint, V8.3), `/demo` and `/dev/*`. Everything else lives in App Router.
 
 ## Teacher avatars (V9)
 

@@ -2,6 +2,49 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - V8.3 landing v3 done: a scroll-driven story with the live classroom (Opus plan approved by Hmz)
+
+Branch `dev/v8-3-landing` off `origin/deploy-prep` (83c6f37, #15 and #17 in it; no upstream set); PR into
+`deploy-prep`. Plan and storyboard: `.claude/plans/V8.3-landing-plan.md` (Hmz: the recommendations plus 6B desk
+challenge, 7C editorial map, 8B goodbye wave). Decisions: the eight V8.3 rows in decisions.md. System: brand-system.md
+"Landing (V8.3)" and Motion. Copy: messaging.md "Landing copy, V8.3". Evidence: `.claude/eval/2026-09-30-v8-3-landing/`.
+
+- **Shipped:**
+  - `/` moved to the Pages Router (`pages/index.tsx`, static). `src/components/landing/`: `LandingRoot`, pinned
+    sections, `content.ts`, `mapStory.ts` and `stage/` (timeline, scroll driver, gate, the R3F stage, diagram and heart
+    shaders, warm-up, opt-in sound).
+  - The story, section by section:
+    - the opening window opens to full bleed as the camera enters the room;
+    - the idea: the Column draws itself, and the story shows on the display;
+    - from a question to a lesson: the topic types itself, the ideas link up, five cards with the real first lines,
+      the real `teaching.jpg` resolves from noise through sketch to colour, and `source.jpg` lifts into points onto
+      the real model;
+    - one lesson, five moves, with the challenge on the desk;
+    - the map beside one concept's memory curve (a real course, an example learner);
+    - the parents;
+    - the close, where Jake waves goodbye.
+  - `Teacher` gained an optional `driver` prop. The landing drives the director from scroll with the product's own
+    signals.
+  - `Experience.tsx` exports its lights and renderer config. Nothing in `src/lib`, `src/store`, `src/hooks` or
+    `src/app/api` changed.
+  - Modes: full, lite (phones, weak GPUs; 12 stills captured from the stage), and the stack (reduced motion, no JS).
+    The stage hands over to lite if it is slow, throws, or its chunk fails.
+  - `scripts/snapshot-kg.ts`, local only (anon key; published courses only). `public/landing/heart.glb`: the real
+    model resized, 624 kB. Footer links are 44px and carry Jake's CC BY credit.
+- **Measured** (headless on the GPU, production build):
+  - `/` is 127 kB first load (was 122; budget 135). `/demo` and `/learn` are unchanged.
+  - The LCP is the poster everywhere (188 to 504 ms). CLS 0.
+  - Scroll p95 16.8 ms at 360 to 1440 in both themes, with 0.4 to 3.6% of frames dropped. Lite under a 4x CPU
+    throttle drops 8.4 to 8.6%.
+  - AA: 5,412 nodes, 0 failures, minimum 5.11 light and 5.48 dark (the stack 4.74). No target under 44px, no overflow.
+  - 0 API and 0 paid calls in every run.
+- **Deviation:** GlanceBoard has no director signal (only the 25 s long wait), so the idea and diagram beats use
+  Pointing and PresentModel instead. A scripted cue would need `src/lib/avatar/director.ts`: ask Hmz.
+- **Gates:** type-check clean; lint 0 errors and 10 warnings; tests 482 (441 + 41); build green. The `code-reviewer`
+  found 2 high, 7 medium and 4 low; all fixed (eval README, "Review").
+- **Next:** V8.6 (admin, then onboarding, course map, dashboard and create-teacher onto the tokens); V8.7 (re-capture,
+  cleanup: the three `public/images/landing/classroom-*.webp` are now unused).
+
 ## 2026-09-30 - Desk quiz at portrait sizes done: the whole card on every phone, 44px targets (Opus plan approved by Hmz, Sonnet execution)
 
 Branch `dev/desk-quiz-portrait` off `origin/deploy-prep` (b3cc79b, #15 and #16 in it; no upstream set); PR into

@@ -174,6 +174,12 @@ strength a theme token) is atmosphere behind hero media and inside a closing ban
 Under `prefers-reduced-motion` every duration token is 0ms, `PRESS` drops its transform, and reveals render
 in place.
 
+**Scroll-driven motion (the landing, V8.3).** Scroll drives scene time, damped (λ 8, frame-rate independent), so
+motion arrives soft rather than stepped; nothing hijacks the scroll. Beats move by opacity and transform only (their
+own layers), fade over about 3% of a section, and hold still in between. The hero lines rise in with CSS at first
+paint (80ms apart). The camera eases (smoothstep) between held poses. Under reduced motion none of it runs: the page
+is a stack.
+
 ## Components
 
 - **Button** (`ui/button`): control radius, `PRESS`, `FOCUS`. Heights are 44 (default), 36 (sm) and 48 (lg),
@@ -283,6 +289,44 @@ in place.
   an icon in a tint circle; the result is one line with an icon and words in `success`, `warning` or `danger`; the
   quiz header is a `surface/95` bar with a ghost Skip; QuizView sits in the panel's column.
 - **Lightbox:** `bg-black/80` scrim, the image at 16px radius with `shadow-e2`, a 44px ink-glass close button.
+
+### Landing (V8.3): the scroll story
+
+- **Structure:** seven sections, five of them pinned (`.landing-pin`, a sticky 100svh frame; heights in
+  `landing/stage/timeline.ts SECTIONS`): the opening (a lit window beside the H1), the idea, from a question to a
+  lesson (six steps), one lesson in five moves, the map beside one concept's memory curve, the parents (not pinned,
+  no 3D), the close (the window again). Copy in `landing/content.ts`; the storyboard in
+  `.claude/plans/V8.3-landing-plan.md`.
+- **The room is the window.** The live stage is one fixed canvas under every frame, clipped to the opening's window
+  and opened to full bleed by the scroll (a lens shift keeps the room composed inside the window), faded out for the
+  map and the parents, closed into the close's window. The poster (`public/images/landing/v3/poster.webp`, the LCP)
+  fades out when the stage is live. The room and Jake are the product's: same lights, backdrop and model.
+- **Text over the room is ink glass**, the caption band recipe: `.theme-ink`, `bg-bg/[0.86]`, blur, `border-line`.
+  That covers the section titles, the step rails, the typed question, the idea chips, the move cards, the captions,
+  the caption band and the real-output label. The nav is a fixed glass bar in the page theme (`bg-bg/[0.9]`), with
+  `body` links (muted fails over a bright room pixel). The lite path drops the blur (the 86% ground carries the
+  contrast; AA is measured without the blur).
+- **Step rail:** numbered pills; done `accent-text`, current an accent pill with `accent-ink`, next `body`. The move
+  rail uses the phase rail's icons (History, AudioLines, Presentation, Target, Waypoints).
+- **Caption band** (`sections/parts.tsx`): the line, its label in `accent-text`, and "Hear it" (a 44px toggle,
+  `aria-pressed`; on, the accent fill). While a line plays its spoken words turn `accent-text`.
+- **The map** (`sections/MapStory.tsx`, dataviz rules): one series, one hue. Nodes are `surface` circles with a
+  `line` ring; mastery is an `accent-text` arc (the fill orange is 2.6:1 on the light page, under the 3:1 a graphic
+  needs); a mastered node's core is `accent-text`, a ready one is outlined; links are `line`, lit links
+  `accent-text/60`; review pulses are `accent-text` dots with a soft ring (no filter). Names show on hover and focus
+  (each node is focusable); the concept being learned is named. The curve is a 2.5px `accent-text` line on
+  `line` gridlines with `muted` axis labels, a hover crosshair and a screen-reader table. Both are labelled as an
+  example learner.
+- **Real output** is labelled where it shows: the centrepiece carries "Real output from the heart demo lesson. The
+  transitions between the steps are an illustration." No speed or time claim beyond the demo's measured "about five
+  minutes".
+- **Screen readers and keyboards:** beats that take turns (the Idea, the question, the moves) are hidden from the
+  accessibility tree while faded, so each of those sections carries a visually hidden transcript in reading order with
+  the real headings (H2, and H3 per step or move); their animated copy is `aria-hidden`. The hero, the map and the close
+  only fade, never hide, and any beat that takes keyboard focus shows itself (`:focus-within`). The map is one list of
+  concepts for screen readers; hover names a node for a mouse.
+- **Modes:** full (live stage), lite (stills from the stage that cross-fade, same DOM), stack (reduced motion, no JS:
+  no pinning, stills at most 960px, every beat in flow). See decisions.md, "Landing modes".
 
 ### shadcn mapping (for `npx shadcn add`)
 

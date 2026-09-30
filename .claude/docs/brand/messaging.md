@@ -241,3 +241,27 @@ Try a lesson, Sign in, Create an account · Get in touch
 
 **OG image** (1200 x 630, dark): the wordmark top left, the positioning line in Archivo wide
 caps, "Your own AI teacher, grades 6 to 8" beneath it, the full column large on the right.
+
+## Landing copy, V8.3 (the scroll story)
+
+Replaces the deck's "How it works", "What it does" and capability strip; the hero, the parents and the closing band
+keep the deck's words. The source is `src/components/landing/content.ts`; the heart lesson's lines there are the
+generated lesson verbatim (em-dashes included, labelled real output) and a test pins them to it.
+
+- **Nav:** How it works · The map · For parents · Sign in · **Try a lesson**
+- **The idea** (the story's one long-form telling), H2 **A Teacher of Your Own**, in three beats:
+  Aristotle was the personal tutor of Alexander the Great. For most of history, a teacher of your own was for royal
+  families. / In 1984 the researcher Benjamin Bloom described why it matters: students taught one to one learn more.
+  There have never been enough tutors. / Aristo is an attempt at that tutor for every student.
+- **From a Question to a Lesson:** You Ask. It Starts Thinking. · It Finds the Ideas Inside. · It Writes a Lesson in
+  Five Moves. · It Draws a Diagram for the Lesson. · It Builds a Model You Can Turn. · Your Teacher Begins.
+  Label: Real output from the heart demo lesson. The transitions between the steps are an illustration.
+- **One Lesson, Five Moves:** Activate, it starts from something you already know. Explain, it explains the idea,
+  then gives you a way to picture it. Demonstrate, it works through an example on the board, step by step.
+  Challenge, it puts a question on your desk and waits for your answer. Connect, it ties the idea to what you know
+  and what comes next.
+- **It Remembers What You Know:** Every concept comes back just before you would forget it, and the next lesson
+  starts from what you have mastered. Label: Example learner. The map is a real course's concepts; the progress is
+  illustrative. Curve: One Concept, Three Weeks. Each review lifts it back up, and it fades more slowly after each one.
+- **Sound:** Hear it (off by default; plays only the pre-rendered demo narration).
+- **Footer:** adds Jake's CC BY 4.0 credit (the landing shows him).
