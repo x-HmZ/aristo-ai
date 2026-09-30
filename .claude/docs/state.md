@@ -33,8 +33,8 @@ register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-2
     2343 -> 1639 ms (noise). 0 paid requests anywhere.
 - **Gap left:** the desk quiz at 360 portrait is cropped by the camera (needs a framing per aspect ratio; a camera
   constant). Owner: a desk-framing task.
-- **Not done:** `/learn` bytes signed in, in the pane: the pane session had expired (redirect to /sign-in), so only the
-  before number exists (458.9 / 14.3 kB). The harness covers the same shell headless.
+  - `/learn` in the pane (production build, signed in by Hmz, view-only): JS 458.9 -> 460.6 kB, CSS 14.3 -> 13.9, only
+    the three GET calls, no lock, dark under OS dark, the toggle 44px, no target under 44px.
 - **Next:** V8.3 landing v3; V8.6 (admin token pass, then onboarding, course map, dashboard and create-teacher onto the
   tokens, dropping the `.theme-paper` pins); V8.7 re-capture of the now-themed classroom.
 

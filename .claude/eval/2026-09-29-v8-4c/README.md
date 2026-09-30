@@ -76,7 +76,7 @@ numbers as `after-run.log`).
 | Shared CSS | 14.6 kB | 14.1 kB |
 | `/demo` cold, 7 fresh contexts, median scene ready / FCP | 2343 / 424 ms | 1639 / 288 ms (noise, not slower) |
 | `/demo` JS / CSS transferred (compressed) | 455.7 / 14.3 kB | 456.9 / 13.9 kB |
-| `/learn` JS / CSS transferred (compressed, pane, signed in) | 458.9 / 14.3 kB | see state.md (needs Hmz's sign-in) |
+| `/learn` JS / CSS transferred (compressed, pane, signed in) | 458.9 / 14.3 kB | 460.6 / 13.9 kB (the same three GETs; dark under OS dark; toggle 44px) |
 
 The extra ~1 kB on /demo is the lucide icons and the shared chrome in the lazy classroom chunk. The first build put
 `/learn` and `/demo` at 136 kB: the loading screen (in the first load) had taken the system Button (cva, Slot) and
