@@ -24,7 +24,7 @@ const SCENE_CHIP =
   "pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
 
 // Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
-function RendererConfig() {
+export function RendererConfig() {
   const { gl } = useThree();
   useEffect(() => { gl.toneMappingExposure = 0.83; }, [gl]);
   return null;
@@ -78,7 +78,7 @@ function Floor() {
   );
 }
 
-function SceneLights() {
+export function SceneLights() {
   return (
     <>
       <ambientLight intensity={0.38} color="#ffffff" />
