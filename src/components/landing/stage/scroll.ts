@@ -74,8 +74,12 @@ function read(): number {
   return sceneTime(raw);
 }
 
-/** One frame: read, damp, write. Returns true while S is still moving. */
-export function tick(dt: number): boolean {
+/**
+ * Read the scroll position and damp scene time, without writing anything. The 3D stage calls this, places the
+ * camera, then calls `flush`, so DOM that follows the scene (the text on the display) reads this frame's camera.
+ * Returns true while S is still moving.
+ */
+export function advance(dt: number): boolean {
   if (!measured) measure();
   const target = read();
   const jump = Math.abs(target - frame.S) > SNAP_S;
@@ -84,10 +88,23 @@ export function tick(dt: number): boolean {
   frame.S = Math.abs(S - target) < 1e-4 ? target : S;
   frame.target = target;
   frame.dt = dt;
-  // Per-section damped progress, recovered from S so the two never disagree.
-  for (let i = 0; i < n; i++) frame.progress[i] = frame.S <= i ? 0 : frame.S >= i + 1 ? 1 : frame.S - i;
-  writers.forEach((w) => w(frame));
+  // Under reduced motion the page is a plain stack: every section shows its end state, nothing moves with scroll.
+  if (reduced) { frame.S = frame.target = n; frame.progress.fill(1); }
+  // Otherwise, per-section damped progress, recovered from S so the two never disagree.
+  else for (let i = 0; i < n; i++) frame.progress[i] = frame.S <= i ? 0 : frame.S >= i + 1 ? 1 : frame.S - i;
   return frame.S !== target;
+}
+
+/** Run every writer with the current frame. */
+export function flush(): void {
+  writers.forEach((w) => w(frame));
+}
+
+/** One frame: read, damp, write. Returns true while S is still moving. */
+export function tick(dt: number): boolean {
+  const moving = advance(dt);
+  flush();
+  return moving;
 }
 
 export const getFrame = (): StageFrame => frame;

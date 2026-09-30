@@ -41,8 +41,8 @@ const ASSURANCES: Assurance[] = [
 export function ForParents() {
   return (
     <section
-      id="for-parents"
-      className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 pt-20 sm:px-8 lg:pt-28"
+      id="parents"
+      className="relative z-10 mx-auto w-full max-w-6xl scroll-mt-16 px-5 py-20 sm:px-8 lg:py-28"
     >
       <Reveal>
         <div

@@ -357,6 +357,105 @@
     }
   }
 
+  /* Landing v3 (V8.3): pinned sections. A section is `--pin-h` tall and its frame sticks to the viewport while the
+     reader scrolls through it; the scroll driver (landing/stage/scroll.ts) turns that travel into the section's
+     progress. Beats are absolutely placed inside the frame and faded by the driver.
+     Under reduced motion, and without JS (the page's noscript rule adds .landing-stack), nothing is pinned: the
+     page is a plain stack, every beat in flow at its end state, and the driver's inline styles are overridden. */
+  .landing-pin {
+    height: var(--pin-h);
+  }
+  .landing-pin-frame {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+  /* Beats that take turns in one place: stacked in a single grid cell (in flow again in the stack). */
+  .landing-overlap {
+    display: grid;
+  }
+  .landing-overlap > * {
+    grid-area: 1 / 1;
+  }
+  /* The hero lines rise in at first paint (CSS only, so the text paints with the poster). */
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-rise {
+      animation: landing-rise var(--dur-reveal) var(--ease-out) both;
+    }
+  }
+  @keyframes landing-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  /* The map's frontier: a soft halo breathing round the concepts that are ready to learn. */
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-ready-halo {
+      animation: landing-halo 2.4s var(--ease-in-out) infinite;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+  }
+  @keyframes landing-halo {
+    0%, 100% { transform: scale(0.92); }
+    50% { transform: scale(1.08); }
+  }
+  /* A still for the lite path and the stack; the live stage covers the room, so its stills never load. */
+  [data-stage="live"] .landing-still {
+    display: none;
+  }
+  /* The live stage sits under the pinned frames; the poster fades out to show it. */
+  .landing-poster {
+    transition: opacity 450ms var(--ease-out);
+  }
+  [data-stage="live"] .landing-poster {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-pin {
+      height: auto;
+    }
+    .landing-pin-frame {
+      position: relative;
+      height: auto;
+      overflow: visible;
+    }
+    .landing-beat {
+      position: relative !important;
+      inset: auto !important;
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+    }
+    .landing-motion-only {
+      display: none !important;
+    }
+    .landing-overlap > * {
+      grid-area: auto;
+    }
+  }
+  .landing-stack .landing-pin {
+    height: auto;
+  }
+  .landing-stack .landing-pin-frame {
+    position: relative;
+    height: auto;
+    overflow: visible;
+  }
+  .landing-stack .landing-beat {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+  .landing-stack .landing-motion-only {
+    display: none !important;
+  }
+  .landing-stack .landing-overlap > * {
+    grid-area: auto;
+  }
+
   /* Wide display type: Archivo at its widest, set in capitals. The hero line
      and the closing line only. `--font-display` is defined by the landing
      root only, so this class means nothing outside it. The source copy stays

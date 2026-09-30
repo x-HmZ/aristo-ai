@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { FOCUS } from "@/lib/design/shape";
 import { Wordmark } from "@/components/landing/Wordmark";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { JAKE_CREDIT } from "@/components/landing/credit";
 
 const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
@@ -33,10 +34,13 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
+// 44px tall rows: these are the footer's only targets (V8.3 found them at 20px).
 const linkClass = cn(
-  "rounded-sm text-sm text-body transition-colors hover:text-ink",
+  "inline-flex min-h-[44px] items-center rounded-sm text-sm text-body transition-colors hover:text-ink",
   FOCUS
 );
+// Inline links in the credit sentence: exempt from the target size (WCAG 2.5.8), with the focus ring.
+const creditLink = cn("underline decoration-dotted underline-offset-2 hover:text-ink rounded-sm", FOCUS);
 
 export function SiteFooter() {
   return (
@@ -46,7 +50,7 @@ export function SiteFooter() {
           <Link
             href="/"
             aria-label="Aristo home"
-            className={cn("rounded-sm", FOCUS)}
+            className={cn("inline-flex min-h-[44px] items-center rounded-sm", FOCUS)}
           >
             <Wordmark />
           </Link>
@@ -55,7 +59,7 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-0.5">
           <ColumnHeading>Product</ColumnHeading>
           {PRODUCT_LINKS.map((link) => (
             <Link key={link.href} href={link.href} className={linkClass}>
@@ -64,7 +68,7 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-0.5">
           <ColumnHeading>Get in touch</ColumnHeading>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
@@ -82,6 +86,15 @@ export function SiteFooter() {
           {/* The nav hides its toggle below sm; this is where it lives there. */}
           <ThemeToggle className="sm:hidden" />
         </div>
+        {/* The teacher on this page is a third-party model (CC BY 4.0): the credit sits where he is shown. */}
+        <p className="max-w-[640px] leading-snug">
+          Teacher model:{" "}
+          <a href={JAKE_CREDIT.sourceUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>&ldquo;{JAKE_CREDIT.title}&rdquo;</a>{" "}
+          by{" "}
+          <a href={JAKE_CREDIT.authorUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>{JAKE_CREDIT.author}</a>,{" "}
+          <a href={JAKE_CREDIT.licenseUrl} target="_blank" rel="license noopener noreferrer" className={creditLink}>{JAKE_CREDIT.license}</a>
+          {JAKE_CREDIT.modified ? ", modified" : ""}
+        </p>
         {LEGAL_LINKS.length > 0 && (
           <div className="flex items-center gap-4">
             {LEGAL_LINKS.map((link) => (

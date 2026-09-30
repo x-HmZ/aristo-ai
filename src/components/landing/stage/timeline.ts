@@ -64,9 +64,9 @@ const DISPLAY: Pose = { pos: [0.05, 0.12, 0.5], target: [0.5, 0.36, -6] };
 /** A step back, so the question's ideas have room around the teacher. */
 const PULLBACK: Pose = { pos: [0.05, 0.05, 1.45], target: [0, -0.02, -3] };
 /** On the board anchor, where the diagram resolves and the model is built. */
-const BOARD: Pose = { pos: [0.22, 0.08, 0.3], target: [0.3, 0.12, -3] };
+const BOARD: Pose = { pos: [0.18, 0.08, 0.62], target: [0.26, 0.12, -3] };
 const MODEL: Pose = { pos: [0.05, 0.06, 0.62], target: [0.1, 0.08, -3] };
-const CLOSE: Pose = { pos: [0, 0.02, 0.75], target: [-0.1, 0, -3] };
+const CLOSE: Pose = { pos: [-0.2, 0.02, 0.8], target: [-0.35, 0, -3] };
 
 /** Where the camera is at each key; it holds on a key and eases (smoothstep) between neighbours. */
 const KEYS: readonly Key[] = [

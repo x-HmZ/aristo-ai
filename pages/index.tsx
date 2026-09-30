@@ -1,14 +1,5 @@
 import Head from "next/head";
-import { CapabilityStrip } from "@/components/landing/CapabilityStrip";
-import { FeatureGrid } from "@/components/landing/FeatureGrid";
-import { FinalCta } from "@/components/landing/FinalCta";
-import { ForParents } from "@/components/landing/ForParents";
-import { Hero } from "@/components/landing/Hero";
-import { HowItWorks } from "@/components/landing/HowItWorks";
-import { LandingNav } from "@/components/landing/LandingNav";
-import { SiteFooter } from "@/components/landing/SiteFooter";
-import { displayFont } from "@/components/landing/fonts";
-import { cn } from "@/lib/utils";
+import { LandingRoot } from "@/components/landing/LandingRoot";
 
 // `/` is a Pages Router page since V8.3, for the same reason as /learn and /demo: its 3D stage needs R3F,
 // which cannot run under the App Router's React 19 alias (CLAUDE.md). It has no getServerSideProps, so it is
@@ -41,33 +32,7 @@ export default function HomePage() {
         <meta name="twitter:title" content={TITLE} />
         <meta name="twitter:image" content={`${SITE_URL}/opengraph-image`} />
       </Head>
-      <div
-        className={cn(
-          displayFont.variable,
-          "landing relative min-h-screen overflow-x-hidden bg-bg text-ink"
-        )}
-      >
-        {/* Without JS the IntersectionObserver in Reveal never fires, so the
-            scroll-reveal start state would leave the page blank. */}
-        <noscript>
-          <style>{".landing-reveal{opacity:1;transform:none}"}</style>
-        </noscript>
-
-        <header>
-          <LandingNav />
-        </header>
-
-        <main>
-          <Hero />
-          <CapabilityStrip />
-          <HowItWorks />
-          <FeatureGrid />
-          <ForParents />
-          <FinalCta />
-        </main>
-
-        <SiteFooter />
-      </div>
+      <LandingRoot />
     </>
   );
 }
