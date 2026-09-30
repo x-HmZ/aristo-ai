@@ -15,7 +15,8 @@
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Html } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useAristoStore } from "@/store/useAristoStore";
 import { Group, Vector3, type PerspectiveCamera } from "three";
 import { Classroom } from "@/components/three/Classroom";
 import { RendererConfig, SceneLights } from "@/components/three/Experience";
@@ -109,7 +110,9 @@ function Warmed({ onLive, children }: { onLive: () => void; children: React.Reac
   const reported = useRef(false);
   useEffect(() => {
     let alive = true;
-    if (group.current) void warmUp(gl, scene, camera, group.current).then(() => { if (alive) setWarm(true); });
+    // A failed warm-up (a driver without parallel compile, a texture that will not upload) only costs the first
+    // frame what it cost before: show the room anyway.
+    if (group.current) void warmUp(gl, scene, camera, group.current).catch(() => {}).then(() => { if (alive) setWarm(true); });
     return () => { alive = false; };
   }, [gl, scene, camera]);
   useFrame(() => {
@@ -220,8 +223,23 @@ function After({ from, idle, children }: { from: number; idle?: number; children
   return on ? <>{children}</> : null;
 }
 
+/** An optional part (the diagram, the heart) that fails to load drops out on its own; the stage carries on. */
+class PartBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 export default function LandingStage({ active, onLive, onSlow }: StageProps) {
   const [ready, setReady] = useState(false);
+  // The room and the teacher read a few transient lesson fields from the store (the board's lesson, the desk's
+  // quiz, the thinking badge). Coming back to / from /demo by a link keeps them in memory, so clear them for the
+  // stage. Persisted fields (teacher, course, progress) are untouched.
+  useEffect(() => {
+    useAristoStore.setState({ activeLesson: null, activeQuiz: null, isLoading: false, isSpeaking: false });
+  }, []);
+  // Stable elements, so a pause or a readiness change does not re-render (and re-clone) the room.
+  const room = useMemo(() => <Classroom variant="default" />, []);
   // The render loop ticks the scroll driver while it runs; paused (the map, the parents), the driver ticks itself,
   // which is also what notices the room coming back and resumes the stage.
   useEffect(() => { setExternal(active); return () => setExternal(false); }, [active]);
@@ -242,15 +260,15 @@ export default function LandingStage({ active, onLive, onSlow }: StageProps) {
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onLive={() => { setReady(true); onLive(); }}>
-          <Classroom variant="default" />
+          {room}
           <StageTeacher live={ready} />
         </Warmed>
       </Suspense>
       <After from={1.4} idle={0.3}>
-        <Suspense fallback={null}><Diagram /></Suspense>
+        <PartBoundary><Suspense fallback={null}><Diagram /></Suspense></PartBoundary>
       </After>
       <After from={1.9} idle={0.7}>
-        <Suspense fallback={null}><HeartBuild /></Suspense>
+        <PartBoundary><Suspense fallback={null}><HeartBuild /></Suspense></PartBoundary>
       </After>
       <After from={3.3}>
         <DeskCard />

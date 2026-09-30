@@ -39,6 +39,7 @@ export function Diagram() {
     [tex],
   );
   const frame = useMemo(() => new MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, toneMapped: false, side: DoubleSide }), []);
+  useEffect(() => () => { mat.dispose(); frame.dispose(); }, [mat, frame]);
 
   // Warmed before its beat (warm.ts), then one invisible draw.
   const { gl, scene: root, camera } = useThree();
@@ -47,7 +48,7 @@ export function Diagram() {
     let alive = true;
     const g = group.current;
     if (!g) return;
-    void warmUp(gl, root, camera, g).then(() => { if (alive) warm.current = 1; });
+    void warmUp(gl, root, camera, g).catch(() => {}).then(() => { if (alive) warm.current = 1; });
     return () => { alive = false; };
   }, [gl, root, camera, mat]);
   useFrame((state) => {

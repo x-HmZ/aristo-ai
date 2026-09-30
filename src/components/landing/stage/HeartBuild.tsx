@@ -171,6 +171,7 @@ export function HeartBuild() {
   const pointsObj = useMemo(() => new Points(built.points, pointsMat), [built, pointsMat]);
   const wireObj = useMemo(() => new LineSegments(built.wire, wireMat), [built, wireMat]);
   useEffect(() => () => { built.points.dispose(); built.wire.dispose(); built.solidMaterials.forEach((m) => m.dispose()); }, [built]);
+  useEffect(() => () => { pointsMat.dispose(); wireMat.dispose(); cardMat.dispose(); }, [pointsMat, wireMat, cardMat]);
 
   // Warmed before its beat (warm.ts): shaders compiled in parallel, textures uploaded in idle moments, then one
   // invisible draw for the geometry. Its first visible frame then costs what any other frame does.
@@ -180,7 +181,7 @@ export function HeartBuild() {
     let alive = true;
     const g = group.current;
     if (!g) return;
-    void warmUp(gl, root, camera, g).then(() => { if (alive) warm.current = 1; });
+    void warmUp(gl, root, camera, g).catch(() => {}).then(() => { if (alive) warm.current = 1; });
     return () => { alive = false; };
   }, [gl, root, camera, built]);
   useFrame((state, dt) => {
