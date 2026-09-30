@@ -41,8 +41,9 @@
 
     /* Lesson-phase and status hues from before the design system. Deprecated:
      * the system gives the five phases their identity through numbering, icon
-     * and position with one accent, and V8.4a moves the classroom off these.
-     * Kept only so /learn and /demo do not change before then. */
+     * and position with one accent; the classroom left them in V8.4a to V8.4c.
+     * Kept for the surfaces V8.6 still owns (admin, onboarding, the course
+     * map, the dashboard). */
     --aristo-purple: 258.31 89.53% 66.27%;     /* #8B5CF6  Activate phase, learner analytics */
     --aristo-purple-hover: 262.12 83.26% 57.84%; /* #7C3AED  hover on purple text */
     --aristo-teal: 160.12 84.08% 39.41%;       /* #10B981  Demonstrate phase, mastered */
@@ -246,11 +247,11 @@
     background: rgb(var(--muted));
   }
 
-  /* Surfaces not on the system yet (the classroom, admin, create-teacher)
-   * keep the page defaults they had before V8.2: cream page, warm near-black
-   * text, beige hairlines and an orange scrollbar. Zero specificity (:where)
-   * so any class on an element still wins, exactly as before. V8.4 and V8.6
-   * delete the lock surface by surface. */
+  /* Surfaces not on the system yet (admin and create-teacher; the classroom
+   * left the lock in V8.4c) keep the page defaults they had before V8.2:
+   * cream page, warm near-black text, beige hairlines and an orange
+   * scrollbar. Zero specificity (:where) so any class on an element still
+   * wins, exactly as before. V8.6 deletes the remaining locks. */
   :where(:root:has(meta[name="aristo-theme-lock"])) body {
     background-color: hsl(var(--aristo-cream));
     color: hsl(25 40% 12%); /* #2B1D12, the old shadcn foreground */
