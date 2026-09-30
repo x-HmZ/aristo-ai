@@ -1,0 +1,540 @@
+{
+ "label": "after",
+ "task": "shots",
+ "base": "http://localhost:49834",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": "off",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 468
+    },
+    {
+     "name": "top-end",
+     "y": 936
+    },
+    {
+     "name": "idea-start",
+     "y": 1716
+    },
+    {
+     "name": "idea-mid",
+     "y": 2184
+    },
+    {
+     "name": "idea-end",
+     "y": 2652
+    },
+    {
+     "name": "how-start",
+     "y": 3432
+    },
+    {
+     "name": "how-mid",
+     "y": 5070
+    },
+    {
+     "name": "how-end",
+     "y": 6708
+    },
+    {
+     "name": "moves-start",
+     "y": 7488
+    },
+    {
+     "name": "moves-mid",
+     "y": 8853
+    },
+    {
+     "name": "moves-end",
+     "y": 10218
+    },
+    {
+     "name": "map-start",
+     "y": 10998
+    },
+    {
+     "name": "map-mid",
+     "y": 11778
+    },
+    {
+     "name": "map-end",
+     "y": 12558
+    },
+    {
+     "name": "parents-start",
+     "y": 13338
+    },
+    {
+     "name": "start-start",
+     "y": 14505
+    },
+    {
+     "name": "start-mid",
+     "y": 14739
+    },
+    {
+     "name": "start-end",
+     "y": 14973
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "h": 1024,
+   "stage": "live",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 615
+    },
+    {
+     "name": "top-end",
+     "y": 1229
+    },
+    {
+     "name": "idea-start",
+     "y": 2253
+    },
+    {
+     "name": "idea-mid",
+     "y": 2867
+    },
+    {
+     "name": "idea-end",
+     "y": 3482
+    },
+    {
+     "name": "how-start",
+     "y": 4506
+    },
+    {
+     "name": "how-mid",
+     "y": 6656
+    },
+    {
+     "name": "how-end",
+     "y": 8807
+    },
+    {
+     "name": "moves-start",
+     "y": 9830
+    },
+    {
+     "name": "moves-mid",
+     "y": 11622
+    },
+    {
+     "name": "moves-end",
+     "y": 13414
+    },
+    {
+     "name": "map-start",
+     "y": 14438
+    },
+    {
+     "name": "map-mid",
+     "y": 15462
+    },
+    {
+     "name": "map-end",
+     "y": 16486
+    },
+    {
+     "name": "parents-start",
+     "y": 17510
+    },
+    {
+     "name": "start-start",
+     "y": 18321
+    },
+    {
+     "name": "start-mid",
+     "y": 18628
+    },
+    {
+     "name": "start-end",
+     "y": 18935
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "h": 800,
+   "stage": "live",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 480
+    },
+    {
+     "name": "top-end",
+     "y": 960
+    },
+    {
+     "name": "idea-start",
+     "y": 1760
+    },
+    {
+     "name": "idea-mid",
+     "y": 2240
+    },
+    {
+     "name": "idea-end",
+     "y": 2720
+    },
+    {
+     "name": "how-start",
+     "y": 3520
+    },
+    {
+     "name": "how-mid",
+     "y": 5200
+    },
+    {
+     "name": "how-end",
+     "y": 6880
+    },
+    {
+     "name": "moves-start",
+     "y": 7680
+    },
+    {
+     "name": "moves-mid",
+     "y": 9080
+    },
+    {
+     "name": "moves-end",
+     "y": 10480
+    },
+    {
+     "name": "map-start",
+     "y": 11280
+    },
+    {
+     "name": "map-mid",
+     "y": 12080
+    },
+    {
+     "name": "map-end",
+     "y": 12880
+    },
+    {
+     "name": "parents-start",
+     "y": 13680
+    },
+    {
+     "name": "start-start",
+     "y": 14449
+    },
+    {
+     "name": "start-mid",
+     "y": 14689
+    },
+    {
+     "name": "start-end",
+     "y": 14929
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "h": 780,
+   "stage": "off",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 468
+    },
+    {
+     "name": "top-end",
+     "y": 936
+    },
+    {
+     "name": "idea-start",
+     "y": 1716
+    },
+    {
+     "name": "idea-mid",
+     "y": 2184
+    },
+    {
+     "name": "idea-end",
+     "y": 2652
+    },
+    {
+     "name": "how-start",
+     "y": 3432
+    },
+    {
+     "name": "how-mid",
+     "y": 5070
+    },
+    {
+     "name": "how-end",
+     "y": 6708
+    },
+    {
+     "name": "moves-start",
+     "y": 7488
+    },
+    {
+     "name": "moves-mid",
+     "y": 8853
+    },
+    {
+     "name": "moves-end",
+     "y": 10218
+    },
+    {
+     "name": "map-start",
+     "y": 10998
+    },
+    {
+     "name": "map-mid",
+     "y": 11778
+    },
+    {
+     "name": "map-end",
+     "y": 12558
+    },
+    {
+     "name": "parents-start",
+     "y": 13338
+    },
+    {
+     "name": "start-start",
+     "y": 14505
+    },
+    {
+     "name": "start-mid",
+     "y": 14739
+    },
+    {
+     "name": "start-end",
+     "y": 14973
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "h": 1024,
+   "stage": "live",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 615
+    },
+    {
+     "name": "top-end",
+     "y": 1229
+    },
+    {
+     "name": "idea-start",
+     "y": 2253
+    },
+    {
+     "name": "idea-mid",
+     "y": 2867
+    },
+    {
+     "name": "idea-end",
+     "y": 3482
+    },
+    {
+     "name": "how-start",
+     "y": 4506
+    },
+    {
+     "name": "how-mid",
+     "y": 6656
+    },
+    {
+     "name": "how-end",
+     "y": 8807
+    },
+    {
+     "name": "moves-start",
+     "y": 9830
+    },
+    {
+     "name": "moves-mid",
+     "y": 11622
+    },
+    {
+     "name": "moves-end",
+     "y": 13414
+    },
+    {
+     "name": "map-start",
+     "y": 14438
+    },
+    {
+     "name": "map-mid",
+     "y": 15462
+    },
+    {
+     "name": "map-end",
+     "y": 16486
+    },
+    {
+     "name": "parents-start",
+     "y": 17510
+    },
+    {
+     "name": "start-start",
+     "y": 18321
+    },
+    {
+     "name": "start-mid",
+     "y": 18628
+    },
+    {
+     "name": "start-end",
+     "y": 18935
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "h": 800,
+   "stage": "live",
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "top-start",
+     "y": 0
+    },
+    {
+     "name": "top-mid",
+     "y": 480
+    },
+    {
+     "name": "top-end",
+     "y": 960
+    },
+    {
+     "name": "idea-start",
+     "y": 1760
+    },
+    {
+     "name": "idea-mid",
+     "y": 2240
+    },
+    {
+     "name": "idea-end",
+     "y": 2720
+    },
+    {
+     "name": "how-start",
+     "y": 3520
+    },
+    {
+     "name": "how-mid",
+     "y": 5200
+    },
+    {
+     "name": "how-end",
+     "y": 6880
+    },
+    {
+     "name": "moves-start",
+     "y": 7680
+    },
+    {
+     "name": "moves-mid",
+     "y": 9080
+    },
+    {
+     "name": "moves-end",
+     "y": 10480
+    },
+    {
+     "name": "map-start",
+     "y": 11280
+    },
+    {
+     "name": "map-mid",
+     "y": 12080
+    },
+    {
+     "name": "map-end",
+     "y": 12880
+    },
+    {
+     "name": "parents-start",
+     "y": 13680
+    },
+    {
+     "name": "start-start",
+     "y": 14449
+    },
+    {
+     "name": "start-mid",
+     "y": 14689
+    },
+    {
+     "name": "start-end",
+     "y": 14929
+    }
+   ]
+  }
+ ]
+}

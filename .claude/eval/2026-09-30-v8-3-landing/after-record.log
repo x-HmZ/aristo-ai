@@ -1,0 +1,7 @@
+{"theme":"light","w":360,"h":780,"stage":"off","frames":983,"seconds":16.6,"p50":16.7,"p95":16.7,"p99":33.3,"max":50,"dropped":1,"dropped2":0,"loaf":0,"loafMax":0}
+{"theme":"light","w":768,"h":1024,"stage":"live","frames":1352,"seconds":23.4,"p50":16.7,"p95":16.8,"p99":33.4,"max":100.1,"dropped":3,"dropped2":0.4,"loaf":3,"loafMax":97}
+{"theme":"light","w":1280,"h":800,"stage":"live","frames":1081,"seconds":19.3,"p50":16.7,"p95":33.3,"p99":33.4,"max":83.3,"dropped":5.8,"dropped2":0.3,"loaf":4,"loafMax":95}
+{"theme":"dark","w":360,"h":780,"stage":"off","frames":994,"seconds":16.6,"p50":16.7,"p95":16.8,"p99":16.8,"max":16.8,"dropped":0,"dropped2":0,"loaf":0,"loafMax":0}
+{"theme":"dark","w":768,"h":1024,"stage":"live","frames":1353,"seconds":23.3,"p50":16.7,"p95":16.8,"p99":33.4,"max":100,"dropped":2.6,"dropped2":0.3,"loaf":2,"loafMax":103}
+{"theme":"dark","w":1280,"h":800,"stage":"live","frames":1075,"seconds":19.4,"p50":16.7,"p95":33.3,"p99":33.4,"max":100,"dropped":6.5,"dropped2":0.5,"loaf":4,"loafMax":105}
+api 0 paid 0

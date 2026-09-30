@@ -1,0 +1,146 @@
+{
+ "label": "before",
+ "task": "perf",
+ "base": "http://localhost:3100",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": null,
+   "lcp": {
+    "t": 328,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fclassroom-lesson.webp&w=3840&q=75",
+    "size": 56922
+   },
+   "lcpAll": [
+    {
+     "t": 328,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fclassroom-lesson.webp&w=3840&q=75",
+     "size": 56922
+    }
+   ],
+   "cls": 0,
+   "load": 157,
+   "jsKB": 119.5,
+   "cssKB": 14.4,
+   "glbKB": 0,
+   "imgKB": 58.1,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-5e16d4e83bfd8df9.js",
+     "start": 17,
+     "kb": 2.7
+    },
+    {
+     "n": "4bd1b696-100b9d70ed4e49c1.js",
+     "start": 17,
+     "kb": 53.1
+    },
+    {
+     "n": "main-app-c7d4b84f112b2fd3.js",
+     "start": 18,
+     "kb": 0.6
+    },
+    {
+     "n": "1255-55f5611cfd370a3f.js",
+     "start": 18,
+     "kb": 44.7
+    },
+    {
+     "n": "4909-8f0f11a7623514d9.js",
+     "start": 18,
+     "kb": 6.6
+    },
+    {
+     "n": "2619-04bc32f026a0d946.js",
+     "start": 18,
+     "kb": 3.3
+    },
+    {
+     "n": "2231-d117f2370fdd9c90.js",
+     "start": 18,
+     "kb": 6.9
+    },
+    {
+     "n": "page-286d9f979789ddbd.js",
+     "start": 18,
+     "kb": 1.6
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "h": 800,
+   "stage": null,
+   "lcp": {
+    "t": 188,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fclassroom-lesson.webp&w=3840&q=75",
+    "size": 211094
+   },
+   "lcpAll": [
+    {
+     "t": 188,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fclassroom-lesson.webp&w=3840&q=75",
+     "size": 211094
+    }
+   ],
+   "cls": 0.0001,
+   "load": 214,
+   "jsKB": 119.5,
+   "cssKB": 14.4,
+   "glbKB": 0,
+   "imgKB": 108.8,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-5e16d4e83bfd8df9.js",
+     "start": 11,
+     "kb": 2.7
+    },
+    {
+     "n": "4bd1b696-100b9d70ed4e49c1.js",
+     "start": 11,
+     "kb": 53.1
+    },
+    {
+     "n": "1255-55f5611cfd370a3f.js",
+     "start": 11,
+     "kb": 44.7
+    },
+    {
+     "n": "main-app-c7d4b84f112b2fd3.js",
+     "start": 11,
+     "kb": 0.6
+    },
+    {
+     "n": "4909-8f0f11a7623514d9.js",
+     "start": 11,
+     "kb": 6.6
+    },
+    {
+     "n": "2619-04bc32f026a0d946.js",
+     "start": 12,
+     "kb": 3.3
+    },
+    {
+     "n": "2231-d117f2370fdd9c90.js",
+     "start": 12,
+     "kb": 6.9
+    },
+    {
+     "n": "page-286d9f979789ddbd.js",
+     "start": 12,
+     "kb": 1.6
+    }
+   ]
+  }
+ ]
+}
