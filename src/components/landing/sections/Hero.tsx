@@ -12,6 +12,8 @@ import { BTN_LG, BTN_OUTLINE, BTN_PRIMARY, LEDE, WRAP } from "../ui";
 
 /** A call to action earns one reaction at most this often. */
 const REACT_EVERY_MS = 3000;
+/** How long he looks at the button his hand goes to: PresentModel (2.63 s) and its fade. */
+const GESTURE_LOOK_MS = 3000;
 /** A tap on Jake waves again at most this often. */
 const TAP_EVERY_MS = 2500;
 /** Coming back to the page after this long away earns a welcome-back wave, at most once per WELCOME_EVERY_MS. */
@@ -24,7 +26,8 @@ const WELCOME_EVERY_MS = 8000;
  * On the live path he waves when he appears, then plays along with the reader, always with the product's own
  * gestures so each means what it means in a lesson:
  * - his head and eyes follow the mouse pointer (LandingStage `viewer`);
- * - pointing at, or focusing, Try a lesson: "your turn" (both palms offered forward);
+ * - pointing at, or focusing, Try a lesson: his left hand offered palm up towards it (the product's PresentModel),
+ *   his head and eyes on it;
  * - a tap on him: another wave; coming back to the page after a while: a welcome-back wave.
  * The text is not faded in by JS, so the H1 paints first. On the lite path he is a still and nothing reacts.
  */
@@ -60,16 +63,19 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
       document.documentElement.removeEventListener("mouseenter", enter);
       shared.pointer = null;
       shared.hero.hover = null;
+      shared.hero.look = null;
     };
   }, [live]);
 
-  const hover = (which: "try" | null) => () => {
+  const hover = (which: "try" | null) => (e: { currentTarget: HTMLElement }) => {
     if (!live) return;
     if (which) {
       const now = performance.now();
       if (now - lastReact.current < REACT_EVERY_MS) return;
       lastReact.current = now;
       shared.hero.seq += 1;
+      // His eyes go where his hand goes, for as long as the gesture plays.
+      shared.hero.look = { el: e.currentTarget, until: now + GESTURE_LOOK_MS };
     }
     shared.hero.hover = which;
   };
@@ -83,7 +89,9 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
   return (
     <section ref={section} id="top" aria-labelledby="hero-title" className="overflow-x-clip pb-[72px] pt-[108px] lg:pb-[88px] lg:pt-[112px]">
       <div className={cn(WRAP, "grid items-center gap-10 lg:grid-cols-2 lg:gap-14")}>
-        <div>
+        {/* Text first on a phone. On a wide screen Jake is on the left and the text sits level with his head, so the
+            buttons come to about the height of his offered hand (the offer and his gaze meet on Try a lesson). */}
+        <div className="lg:order-2 lg:self-start">
           <p className="mb-[18px] text-[13px] font-semibold uppercase tracking-[0.14em] text-muted">{HERO.eyebrow}</p>
           <h1
             id="hero-title"
@@ -117,7 +125,7 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
             </Link>
           </div>
         </div>
-        <div className="relative mx-auto w-full max-w-[600px] lg:max-w-none">
+        <div className="relative mx-auto w-full max-w-[600px] lg:order-1 lg:max-w-none">
           <Spot
             id="hero"
             still="/images/landing/v3b/hero.webp"
@@ -132,7 +140,7 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
                 type="button"
                 aria-label="Say hi to Jake"
                 onClick={tap}
-                className={cn(SHAPE.surface, FOCUS, "absolute left-[14%] top-[4%] z-20 h-[72%] w-[60%] cursor-pointer")}
+                className={cn(SHAPE.surface, FOCUS, "absolute left-[4%] top-[4%] z-20 h-[72%] w-[52%] cursor-pointer")}
               />
             )}
           </Spot>

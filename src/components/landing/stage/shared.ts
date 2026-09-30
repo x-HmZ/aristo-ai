@@ -17,10 +17,12 @@ export const shared: {
   /**
    * The hero's reactions (Hero.tsx writes them, the stage reads them):
    * - `hover`: the call to action under the pointer or focus, and `seq`, bumped once per reaction it earns;
-   * - `greet`: bumped for a fresh wave (a tap on Jake, the reader coming back to the page).
+   * - `greet`: bumped for a fresh wave (a tap on Jake, the reader coming back to the page);
+   * - `look`: while a gesture goes to an element, he looks at it (its centre) instead of the pointer, until `until`
+   *   (performance.now ms).
    */
-  hero: { hover: "try" | null; seq: number; greet: number };
+  hero: { hover: "try" | null; seq: number; greet: number; look: { el: HTMLElement; until: number } | null };
 } = {
   mode: "lite", live: false, speaking: false, heart: { turn: 0, user: false }, pointer: null,
-  hero: { hover: null, seq: 0, greet: 0 },
+  hero: { hover: null, seq: 0, greet: 0, look: null },
 };

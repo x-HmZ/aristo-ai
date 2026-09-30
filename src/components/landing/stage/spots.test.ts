@@ -28,11 +28,11 @@ describe("frustumFor", () => {
     expect(project(f, [-1, SPOTS.hero.bottom, TEACHER.position[2]]).v).toBeCloseTo(1);
   });
 
-  it("frames Jake whole from above his head down past mid-thigh at every spot", () => {
-    // Feet at -1.7, head top at about 0.87 (2.57 m); mid-thigh at about -0.75.
-    for (const s of Object.values(SPOTS)) {
+  it("frames Jake from above his head: to mid-thigh, or the upper thigh in the closer hero", () => {
+    // Feet at -1.7, head top at about 0.87 (2.57 m); the belt at about -0.2, mid-thigh at about -0.75.
+    for (const [id, s] of Object.entries(SPOTS)) {
       expect(s.top).toBeGreaterThan(0.9);
-      expect(s.bottom).toBeLessThan(-0.75);
+      expect(s.bottom).toBeLessThan(id === "hero" ? -0.6 : -0.75);
     }
   });
 });
@@ -51,5 +51,23 @@ describe("pickSpot", () => {
   it("returns null when nothing is in view", () => {
     expect(pickSpot<SpotId>({ hero: 0, model: 0 }, "hero")).toBeNull();
     expect(pickSpot({}, null)).toBeNull();
+  });
+});
+
+describe("frustumFor with a reach to keep in frame", () => {
+  const d = EYE[2] - TEACHER.position[2];
+  const x = (t: number) => t * d + EYE[0];
+  it("keeps the hero's whole reach in the box at every width it gets", () => {
+    for (const aspect of [0.7, 0.75, 0.88, 1, 1.2]) {
+      const f = frustumFor(SPOTS.hero, aspect);
+      expect(x(f.left)).toBeLessThanOrEqual(SPOTS.hero.need![0] + 1e-9);
+      expect(x(f.right)).toBeGreaterThanOrEqual(SPOTS.hero.need![1] - 1e-9);
+      expect((f.right - f.left) / (f.top - f.bottom)).toBeCloseTo(aspect);
+    }
+  });
+  it("keeps the top where the spot puts it when it has to grow", () => {
+    const f = frustumFor(SPOTS.hero, 0.6);
+    expect(f.top * d + EYE[1]).toBeCloseTo(SPOTS.hero.top);
+    expect(f.bottom * d + EYE[1]).toBeLessThan(SPOTS.hero.bottom);
   });
 });

@@ -3,8 +3,8 @@ import { useEffect, useMemo } from "react";
 import { Box3, Vector3, type Object3D } from "three";
 import { SPOTS, frustumFor, type SpotId } from "./spots";
 
-/** Jake's bones the verification reads: the hands and the index fingertips' last joints, both sides. */
-const BONES = ["CC_Base_L_Hand", "CC_Base_R_Hand", "CC_Base_L_Index3", "CC_Base_R_Index3", "CC_Base_Head"] as const;
+/** Jake's bones the verification reads: the hands, the index fingertips' last joints and the shoulders, both sides. */
+const BONES = ["CC_Base_L_Hand", "CC_Base_R_Hand", "CC_Base_L_Index3", "CC_Base_R_Index3", "CC_Base_Head", "CC_Base_L_Upperarm", "CC_Base_R_Upperarm"] as const;
 
 declare global {
   interface Window {

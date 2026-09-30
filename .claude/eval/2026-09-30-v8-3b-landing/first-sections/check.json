@@ -9,16 +9,16 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 26,
-     "min": 5.48,
+     "nodes": 3,
+     "min": 5.55,
      "fails": [],
      "small": [],
      "overflow": 0
     },
     {
      "name": "model",
-     "nodes": 20,
-     "min": 5.48,
+     "nodes": 6,
+     "min": 5.55,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -56,8 +56,8 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 26,
-     "min": 5.48,
+     "nodes": 4,
+     "min": 5.55,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -103,7 +103,7 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
+     "nodes": 14,
      "min": 5.11,
      "fails": [],
      "small": [],
@@ -150,7 +150,7 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
+     "nodes": 14,
      "min": 5.11,
      "fails": [],
      "small": [],
@@ -197,7 +197,7 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
+     "nodes": 14,
      "min": 5.11,
      "fails": [],
      "small": [],
@@ -244,16 +244,16 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 26,
-     "min": 5.97,
+     "nodes": 3,
+     "min": 6.75,
      "fails": [],
      "small": [],
      "overflow": 0
     },
     {
      "name": "model",
-     "nodes": 20,
-     "min": 5.97,
+     "nodes": 6,
+     "min": 6.75,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -291,8 +291,8 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 26,
-     "min": 5.97,
+     "nodes": 4,
+     "min": 6.75,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -338,8 +338,8 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
-     "min": 5.97,
+     "nodes": 14,
+     "min": 6.42,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -385,8 +385,8 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
-     "min": 5.97,
+     "nodes": 14,
+     "min": 6.42,
      "fails": [],
      "small": [],
      "overflow": 0
@@ -432,8 +432,8 @@
    "stops": [
     {
      "name": "top",
-     "nodes": 36,
-     "min": 5.97,
+     "nodes": 14,
+     "min": 6.42,
      "fails": [],
      "small": [],
      "overflow": 0

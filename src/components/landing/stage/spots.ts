@@ -29,6 +29,12 @@ export interface SpotFraming {
   /** A world x at the teacher's plane, and where across the box it sits (0 = left edge, 1 = right edge). */
   x: number;
   fx: number;
+  /**
+   * A world x range at the teacher's plane that must stay in the box (a gesture's full reach). When the box is too
+   * narrow for it at the spot's vertical range, the range grows downwards (the top stays, he gets smaller) until it
+   * fits; when it is wide enough, the view slides so the range is inside.
+   */
+  need?: readonly [number, number];
 }
 
 /**
@@ -36,7 +42,9 @@ export interface SpotFraming {
  * Each spot shows him from above the head to about the knee; the box's CSS mask fades him out below mid-thigh.
  */
 export const SPOTS: Record<SpotId, SpotFraming> = {
-  hero: { top: 1.02, bottom: -0.98, x: -1, fx: 0.44 },
+  // The hero has him on the left, a little closer, with his reach to his left (screen right, towards the buttons)
+  // kept in frame: his right arm at rest (-1.42, with a margin) to past his offering fingertip (PresentModel, 0.01).
+  hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.5, 0.1] },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
@@ -46,14 +54,25 @@ export interface Frustum { left: number; right: number; top: number; bottom: num
 
 /**
  * The off-axis frustum that shows a spot's rectangle in a box of the given aspect (width / height). The vertical
- * range is the spot's; the horizontal range follows from the aspect, placed so `x` sits at `fx` of the width.
+ * range is the spot's; the horizontal range follows from the aspect, placed so `x` sits at `fx` of the width, and
+ * then kept around `need` (see SpotFraming).
  */
 export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
   const d = EYE[2] - PLANE_Z;
   const top = (spot.top - EYE[1]) / d;
-  const bottom = (spot.bottom - EYE[1]) / d;
-  const width = (top - bottom) * aspect;
-  const left = (spot.x - EYE[0]) / d - spot.fx * width;
+  let bottom = (spot.bottom - EYE[1]) / d;
+  let width = (top - bottom) * aspect;
+  let left = (spot.x - EYE[0]) / d - spot.fx * width;
+  if (spot.need) {
+    const n0 = (spot.need[0] - EYE[0]) / d, n1 = (spot.need[1] - EYE[0]) / d;
+    if (width < n1 - n0) {
+      width = n1 - n0;
+      bottom = top - width / aspect;
+      left = n0;
+    } else {
+      left = Math.min(Math.max(left, n1 - width), n0);
+    }
+  }
   return { left, right: left + width, top, bottom };
 }
 

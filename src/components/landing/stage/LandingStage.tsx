@@ -21,7 +21,7 @@ import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { HEART, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
@@ -84,8 +84,12 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
   return <group ref={group} visible={warm}>{children}</group>;
 }
 
-/** Where the head turns when a model is shown (the director's look target); the camera otherwise. */
-const LOOK: Partial<Record<SpotId, LookTargets>> = { model: { model: HEART.position } };
+/**
+ * Where the head turns when a model is shown (the director's look target); the camera otherwise. At the hero the
+ * "model" is the button he offers his hand to: a point the viewer below keeps on it (Teacher reads it every frame).
+ */
+const HERO_LOOK: [number, number, number] = [0, 0, VIEWER_Z];
+const LOOK: Partial<Record<SpotId, LookTargets>> = { model: { model: HEART.position }, hero: { model: HERO_LOOK } };
 
 /** Mounts its children in the first idle moment. */
 function Idle({ children }: { children: ReactNode }) {
@@ -148,13 +152,25 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     // At the hero and the close he looks at the reader's pointer: the ray from the eye through it, where it crosses
     // a plane in front of him (VIEWER_Z). Elsewhere, and with no mouse, the camera, as in a lesson.
     viewer: () => {
-      const p = shared.pointer;
+      // During a gesture to an element (the hero's Try a lesson) he looks at that element; else at the pointer.
+      const look = shared.hero.look;
+      let p = shared.pointer;
+      if (look && performance.now() < look.until) {
+        const b = look.el.getBoundingClientRect();
+        p = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+      }
       if (!p || hold || (spot !== "hero" && spot !== "close")) return null;
       const r = gl.domElement.getBoundingClientRect();
       if (!r.width || !r.height) return null;
       ray.set(((p.x - r.left) / r.width) * 2 - 1, 1 - ((p.y - r.top) / r.height) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
       if (ray.z > -1e-3) return null;
-      return viewer.copy(camera.position).addScaledVector(ray, (VIEWER_Z - camera.position.z) / ray.z);
+      // A gesture's target is taken beside him, at his hand's depth, so his head turns to where his hand goes; the
+      // pointer is taken in front of him (VIEWER_Z), so he looks out at the reader.
+      const z = look && performance.now() < look.until ? GESTURE_Z : VIEWER_Z;
+      viewer.copy(camera.position).addScaledVector(ray, (z - camera.position.z) / ray.z);
+      // The head's "model" target is the same point while he offers his hand to the button (HERO_LOOK).
+      if (look && spot === "hero") viewer.toArray(HERO_LOOK);
+      return viewer;
     },
   }), [spot, warm, mayWave, hold, camera, gl, viewer, ray]);
 

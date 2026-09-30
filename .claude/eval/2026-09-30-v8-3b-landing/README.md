@@ -97,3 +97,19 @@ demo's); the lesson's picture is an infographic; spread the topics (volcano, hea
   is 2.2 cm from the heart's edge, and his hand is at 0.37 of its height, in both themes.
 - **Topics from here:** It Finds the Ideas and It Draws the Picture use the volcano, the model build the heart, and
   Immersive the volcano. Five Moves is described in plain words, with no lesson lines.
+
+### Round 3 (Hmz: one hand, and the gesture and the gaze must meet)
+
+- Tried and measured: MoveOn (the product's one-hand "now, next", right hand, the buttons' side). On this rig the hand
+  rolls up in front of the chest and opens low at his side: it moved 26 px towards the button and ended 49 degrees
+  off the line to it. Rejected.
+- **Chosen (Hmz): the hero is mirrored.** Jake is on the left, the text on the right, top-aligned with his head.
+  Hovering or focusing Try a lesson gets the one-hand palm-up offer (PresentModel, his left hand). While it plays,
+  his head and eyes go to the button: its look point is taken at his hand's depth (`GESTURE_Z`), not on the pointer
+  plane, so the head turns where the hand goes.
+- **Measured** (`hero-offer-peak.webp`, `peaks.json` heroPlay.offer): at the peak, shoulder to fingertip is 14 degrees
+  from shoulder to the button's centre (was 30 with the old layout).
+- **Framing:** the hero crop is a little closer (to the upper thigh), and it keeps his whole reach in the box at every
+  width (`need` in `spots.ts`, unit-tested). The hero still was recaptured to match.
+- **Checks** (`check.json`): 360 to 1440, both themes. 0 AA failures (minimum 4.74 light, 6.42 dark), 0 targets
+  under 44px, 0 overflow.

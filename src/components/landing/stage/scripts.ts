@@ -21,6 +21,8 @@ export const WAVE_AFTER_S = 0.6;
  * 0.9). Nearer him, the same pointer move turns his head further.
  */
 export const VIEWER_Z = -0.6;
+/** Where a thing his hand goes to is taken to be: at his offering hand's depth (PRESENT_PEAK), beside him. */
+export const GESTURE_Z = -2.8;
 
 /** He does not wave at the same spot twice within this (plan note 6: every entry, with a cool-down). */
 export const WAVE_COOLDOWN_S = 8;
@@ -107,10 +109,11 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
   switch (spot) {
     case "hero":
       s.sceneReady = ctx.mayWave && ctx.liveFor >= WAVE_AFTER_S;
-      // Try a lesson: the product's "your turn" (both palms offered forward), once per hover, as a new challenge
-      // segment. (Create an account earns nothing: the product's "that's right" pool can pick a one-hand offer to
-      // his left, away from the button.)
-      if (ctx.hover === "try") { s.role = "challenge_setup"; s.segmentId = `hero:try:${ctx.seq ?? 0}`; }
+      // Try a lesson: the product's palm-up offer (PresentModel, his left hand: the buttons are to his left in the
+      // hero), once per hover, on modelShown's rising edge. While it plays his head turns to the button and his eyes
+      // stay on it (LandingStage points the look at it), so the hand and the gaze go to the same place. (Create an
+      // account earns nothing: one offer per row of buttons reads better than two.)
+      s.modelShown = ctx.hover === "try";
       break;
     case "close":
       // The product's greeting: sceneReady's rising edge plays the wave, once per mount.
