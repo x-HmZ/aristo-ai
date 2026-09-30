@@ -2,10 +2,46 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - V8.4c done: classroom shells, pickers, loading, free mode, review; the lock is gone (Opus plan approved by Hmz)
+
+Branch `dev/v8-4c-shells` off `origin/deploy-prep` (36fefc8, #11 to #14 merged; no upstream set); PR into `deploy-prep`.
+Decisions are the nine V8.4c rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4c)", Theme,
+register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-29-v8-4c/`.
+
+- **Shipped:**
+  - /learn and /demo follow the theme (OS, a stored choice, or the new toggle in the top bar). The lock is deleted from
+    `pages/_app.tsx`; `pages/_document.tsx` applies a stored choice before the first paint. No V8.4a/b file changed.
+  - Top bars are ink-glass pills on the room (wordmark, account or demo banner, toggle); below md the /learn actions are
+    44px icons with screen-reader names. Shared pieces in `src/components/learn/ClassroomChrome.tsx`.
+  - The panel column follows the theme, is clamped to the viewport (fixes the overflow below 440px), and collapses to
+    its strip while the quiz is on the desk (Hmz: every width). The desk card is fully visible from 768 up.
+  - The topic picker and ModePicker (system scrim, surface cards, icons), the loading screen, free-mode cards, ReviewView
+    and the lightbox are on the tokens; AvatarCredit and `.aristo-scroll` are off the orange. The last V8.1 step 5 sweep.
+  - Onboarding, the course map and the dashboard (V8.6) are pinned light with `.theme-paper`.
+  - `src/lib`, `src/app/api`, `src/hooks`, `src/store`, `src/components/three`, `src/data` untouched; no prop, store read,
+    handler or effect changed.
+- **Measured** (real themes, headless on the GPU; the local `/dev/learn-shell` harness mounts LearnClient with every
+  /api call mocked in the page):
+  - AA: 8,076 text nodes, 0 failures, minimum 4.74 light / 5.24 dark (before: 6,031 nodes, 1,363 failures, min 1.22).
+  - Targets: all at least 44px except the tilted desk card's options (42px on screen, as in V8.4b). Nothing animates
+    under reduced motion; `--dur-*` are 0 on the root, `.theme-ink` and `.theme-paper`.
+  - No overflow at 360; the panel always inside the viewport; the desk card never under the panel or the strip at 768 /
+    1024 / 1280 / 1440. Anchor probes identical (the moving-mesh and screen-click ones vary by run, as before).
+  - Toggle on the production build: flips the theme, stores it, and the reloaded first paint is already right.
+  - First loads: `/` 122 kB static, `/demo` 135, `/learn` 134 (unchanged; the first build was 136 until the loading
+    screen dropped ui/button and MotionConfig). `/demo` JS 455.7 -> 456.9 kB, CSS 14.3 -> 13.9, scene ready median
+    2343 -> 1639 ms (noise). 0 paid requests anywhere.
+- **Gap left:** the desk quiz at 360 portrait is cropped by the camera (needs a framing per aspect ratio; a camera
+  constant). Owner: a desk-framing task.
+- **Not done:** `/learn` bytes signed in, in the pane: the pane session had expired (redirect to /sign-in), so only the
+  before number exists (458.9 / 14.3 kB). The harness covers the same shell headless.
+- **Next:** V8.3 landing v3; V8.6 (admin token pass, then onboarding, course map, dashboard and create-teacher onto the
+  tokens, dropping the `.theme-paper` pins); V8.7 re-capture of the now-themed classroom.
+
 ## 2026-09-29 - V8.4b done: quiz, desk card, answer panel, input box, quiz bars (Sonnet, plan approved by Hmz)
 
-Branch `dev/v8-4b-quiz` off `origin/deploy-prep` (which had #11 and #12 but not #13, still open when this was done); PR into
-`deploy-prep`. Decisions are the seven V8.4b rows in decisions.md; the system parts are in brand-system.md ("Classroom
+Branch `dev/v8-4b-quiz` off `origin/deploy-prep` (then at #11 and #12); PR into `deploy-prep`. #11 to #14 are all merged
+since. Decisions are the seven V8.4b rows in decisions.md; the system parts are in brand-system.md ("Classroom
 (V8.4b): the quiz", Theme, register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-29-v8-4b/`.
 
 - **Shipped:**
@@ -35,8 +71,7 @@ Branch `dev/v8-4b-quiz` off `origin/deploy-prep` (which had #11 and #12 but not 
 - **Not done, left for V8.4c:** `ReviewView` (hosts QuizView; white header, emoji, dashes), the LearnClient / DemoClient shells
   (panel column, top bars, banner; the card is partly under the 400px panel at narrow widths), FreeTopicCard, ModePicker,
   loading, the orange `.aristo-scroll` scrollbar on the card, then deleting the lock in `pages/_app.tsx`.
-- **Next:** V8.4c; then V8.3 landing v3 and V8.7 re-capture. If #13 merged in the meantime, this branch's `state.md` will
-  need a trivial merge (each side adds a different block).
+- **Next:** V8.4c (done, below); then V8.3 landing v3 and V8.7 re-capture.
 
 ## 2026-09-29 - V8.5b: day room walls the teachers read against
 

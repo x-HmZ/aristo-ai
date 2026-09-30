@@ -19,13 +19,13 @@ spark, never a fill: primary actions, one word of a headline, icons, step number
   status only.
 - **The five lesson phases have no colours.** Activate, Explain, Demonstrate, Challenge and Connect get their
   identity from their number (1 to 5), their icon and their position in the sequence, all in the one accent
-  (the phase rail and phase label, below). The lesson panel moved over in V8.4a; the quiz still uses the legacy
-  hues until V8.4b.
-- **Partly on the system:** /learn and /demo. The lesson panel, TeacherControls, the message panel's own states,
-  the caption band, the callouts and the in-scene toolbars are on the tokens (V8.4a). The quiz and inputs (V8.4b)
-  and free mode, pickers, loading and the page shells in `LearnClient` / `DemoClient` (V8.4c) are not.
-- **Not on the system yet:** /dev/* (V8.7), and /admin/* and /create-teacher (V8.6). They declare the theme lock
-  (see Theme) and keep the `aristo-*` palette.
+  (the phase rail and phase label, below). The classroom moved over in V8.4a to V8.4c; no phase or Bloom hue is left
+  in it.
+- **On the system:** /learn and /demo, since V8.4c: the lesson panel and band (V8.4a), the quiz and inputs (V8.4b),
+  and free mode, the pickers, the loading screen, the daily review and the page shells (V8.4c). They follow the theme.
+  Inside /learn, onboarding, the course map and the dashboard are V8.6's: pinned light with `.theme-paper`.
+- **Not on the system yet:** /admin/* and /create-teacher (V8.6). They declare the theme lock (see Theme) and keep
+  the `aristo-*` palette. /dev/* (V8.7) has no lock since V8.4c and follows the theme; its dev UI keeps literals.
 
 ## Colours
 
@@ -252,6 +252,33 @@ in place.
   `accent-text` ring and the status text "Listening…". The pulse, the spinner and the bounce are `motion-safe:`, so a
   reduced-motion reader still gets the ring and the words.
 
+### Classroom (V8.4c): the shells
+
+- **Top bar** (`ClassroomChrome.tsx`, shared by `LearnClient` and `DemoClient`): ink-glass pills on the room,
+  `.theme-ink`, `bg-bg/[0.86] backdrop-blur-md border-line shadow-e1`, 52px tall around 44px controls, `px-5 pt-3` so
+  they line up with the panel. Text on the glass is `ink`, `body` or `accent-text` only (muted is 4.34 over a white
+  room pixel). The wordmark has its own pill (the `column` variant below sm). /learn: the reviews chip is the accent
+  Button (RotateCcw and the count), then ghost Buttons for Progress, Map and Sign out, the initial and name (md and up),
+  and the theme toggle; below md the actions are 44px icons whose names stay for screen readers (`max-md:sr-only`).
+  /demo: "You're in the demo" (sm and up), "Create an account" as a ghost link in `accent-text`, the toggle.
+- **Panel column:** `w-[400px] max-w-[calc(100vw-2.5rem)]`, `right-5 top-[76px] bottom-5`, `border-line`,
+  `shadow-e2`, 16px radius; the message slot is `bg-bg/95 backdrop-blur-xl`; the demo's topic and teacher rows are
+  `bg-surface/95` like TeacherControls (the teacher pills are the segmented control). While the quiz is on the desk the
+  panel collapses to its strip (everything else `hidden`, not unmounted).
+- **Pickers** (the demo topic picker, ModePicker): the system scrim (`bg-black/50 backdrop-blur-sm`) and a surface
+  card with `shadow-e2`. Choices are surface cards with a `line` border and a `sunk` hover, an icon in a `tint`
+  circle (`accent-text`) instead of emoji; errors are the danger message box.
+- **Loading screen:** follows the theme: `bg-bg` page, a surface card, the `ink` wordmark with the `accent` flute,
+  an `accent` fill on a `sunk` track (`role="progressbar"`), a `muted` caption that cross-fades. Reload keeps the
+  system button look on a plain `<button>` so the first load stays flat.
+- **Free mode:** cards are `surface` with an icon (`accent-text`) and a `muted` label; the example is `ink` on `tint`;
+  the fun fact is `warning` on `warning/10` with a Lightbulb; the learner's own message is `ink` on `tint`, which
+  leaves the accent to the send button.
+- **Daily review** (`ReviewView`): follows the theme. The system scrim; loading, empty and done are surface cards with
+  an icon in a tint circle; the result is one line with an icon and words in `success`, `warning` or `danger`; the
+  quiz header is a `surface/95` bar with a ghost Skip; QuizView sits in the panel's column.
+- **Lightbox:** `bg-black/80` scrim, the image at 16px radius with `shadow-e2`, a 44px ink-glass close button.
+
 ### shadcn mapping (for `npx shadcn add`)
 
 shadcn's colour vocabulary was removed in V8.2: its `accent` means a hover tint, which contradicts the
@@ -277,33 +304,38 @@ system's `accent`. After adding a component, translate:
 
 - `src/components/theme/theme.ts` holds the key (`aristo-theme`), the attribute (`data-theme` on `<html>`),
   the lock meta name and the pre-paint script.
-- The script runs in the `<head>` of the root layout, so every App Router page paints in the stored theme. A
-  choice under the pre-V8.2 key `aristo-landing-theme` is copied to the new key once, then deleted.
+- The script runs in the `<head>` of the root layout, so every App Router page paints in the stored theme, and in
+  `pages/_document.tsx` (V8.4c) for the Pages Router (/learn, /demo, /dev/*), whose first paint is the loading screen.
+  A choice under the pre-V8.2 key `aristo-landing-theme` is copied to the new key once, then deleted.
+- The toggle is on the landing (nav at sm+, footer below sm) and in the classroom top bar (/learn and /demo, V8.4c).
+  Its icon vars (`--theme-icon-*`) follow the page theme only: they are not in the rules `.theme-paper` and
+  `.theme-ink` share, so the toggle on the ink pill still shows the page's icon.
 - Resolution, in order:
   1. A page carrying `<meta name="aristo-theme-lock" content="light">` stays light.
   2. `data-theme`.
   3. `prefers-color-scheme`.
 - The lock is read with `:has()`, so it covers Radix portals too. It also restores the pre-V8.2 page defaults
   on those pages: cream body, #2B1D12 text, #E8DDCF hairlines, the orange scrollbar. Lock sites:
-  - `pages/_app.tsx` (/learn, /demo, /dev/*)
   - `src/app/admin/layout.tsx`
   - `src/app/create-teacher/page.tsx`
 
-  Remove the meta when a surface moves onto the tokens.
+  Remove the meta when a surface moves onto the tokens. `pages/_app.tsx` (/learn, /demo, /dev/*) lost its lock in
+  V8.4c.
 - A browser without `:has()` (Chrome < 105, Safari < 15.4, Firefox < 121) gets light everywhere. Locked
   pages then show the system's light neutrals instead of cream, but stay readable.
 - Checked signed in (2026-09-29): /admin and /create-teacher get the lock meta in `<head>` with the first
-  response, so an OS-dark visitor sees no dark frame. Both render light under OS-dark, as does /learn.
+  response, so an OS-dark visitor sees no dark frame. Both render light under OS-dark (/learn did too until V8.4c).
 - The 3D scene's lighting and backdrop never follow the theme: the room is the lit window in both.
 - **`.theme-ink`** (V8.4a) resolves the dark tokens on a subtree, whatever the page theme and through the lock.
   It shares the explicit dark rule through a forgiving `:is()` list, so the values exist once per route in and it
   survives browsers without `:has()`. Use it for anything placed on the lit room: the caption band, the callouts,
-  the image and model toolbars. The classroom panel itself follows the theme.
-- The Pages Router lock stays until V8.4c is on the tokens; V8.4c deletes it from `pages/_app.tsx`. The V8.4a and
-  V8.4b surfaces need no edit then (dark checked by removing the meta in the browser).
+  the image and model toolbars, the classroom top bar's pills (V8.4c). The classroom panel itself follows the theme.
+- V8.4c deleted the Pages Router lock from `pages/_app.tsx`; the V8.4a and V8.4b surfaces needed no edit. Dark is
+  checked by the real theme (OS dark, a stored choice, the toggle), not by removing the meta.
 - **`.theme-paper`** (V8.4b) is the light twin of `.theme-ink`: it sits in the `:root` rule of `globals.css`, so it
   pins the light values on a subtree whatever the page theme (and the lock). Use it for anything that lies in the lit
-  room as an object. The desk quiz card is the one user.
+  room as an object. The desk quiz card is its designed user; since V8.4c it also pins the V8.6 surfaces inside /learn
+  (onboarding, course map, dashboard) light until they move onto the tokens.
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
 ## Responsive behaviour
@@ -321,7 +353,7 @@ with an owner:
 
 | Where | What | Why kept | Owner |
 |---|---|---|---|
-| `DashboardView`, `CreateTeacherClient`, `FreeTopicCard`, `CourseMapView`, `ModePicker`, `ReviewView` | status greens and reds, key-insight ambers, code-block themes, Bloom-level colours, emoji | moving them would change /learn and /demo, which V8.2 must not do. `LessonView`'s went in V8.4a and the quiz files' in V8.4b (none left in `QuizView`, `AnswerInputPanel`, `InputBox`, `CourseFlow` or the desk card, apart from the row below) | V8.4c |
+| `DashboardView`, `CourseMapView`, `OnboardingView`, `CreateTeacherClient` | status greens and reds, mastery colours, the aristo palette, emoji | not on the system yet; on /learn they are pinned light with `.theme-paper`. The classroom's own went in V8.4a (`LessonView`), V8.4b (the quiz files) and V8.4c (`FreeTopicCard`, `ModePicker`, `ReviewView`, `LoadingScreenVisual`, the `LearnClient` / `DemoClient` shells, `AvatarCredit`, `.aristo-scroll`): none left there | V8.6 |
 | `DeskQuiz` | the paper's grounding shadow, `rgba(30,14,6,0.65)` | a scene constant: it is a shadow cast on the desk in the lit room, tuned by eye in 3D, and `--shadow` is far too faint for it. Commented at the definition | stays |
 | `src/app/admin/*` (cost, overview, courses, quiz-analytics, misconceptions, knowledge graph) | data-viz and provider colours, status literals | internal; categorical data-viz is not a semantic colour | V8.6 (admin token pass) |
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
@@ -353,11 +385,18 @@ the desk card, every question type, the answer panel, the input box and the bars
 - Choice and field outlines are `line` on `surface` (1.30:1), the system-wide field border. The text names each control,
   and right or wrong is never colour alone (icon, words, border).
 
+Fixed in V8.4c (the shells, pickers, loading, free mode, review, then the lock deleted): the /learn top nav's orange
+hovers, `FreeTopicCard`'s orange, green and amber labels and text, the loading screen's grey caption, `AvatarCredit`'s
+brown-muted (now `muted`), the demo banner and teacher row over white glass (1.22 to 1.97 over a dark pixel), the red
+course error (2.34) and ReviewView's faint lines. Measured in real themes: 8,076 text nodes, 0 failures, minimum 4.74
+light and 5.24 dark (before: 6,031 nodes, 1,363 failures, minimum 1.22; `.claude/eval/2026-09-29-v8-4c/`).
+
 Still open:
 
-- Orange as text: the /learn top nav hovers and `FreeTopicCard` (V8.4c). The quiz labels went in V8.4b.
-- The loading screen's grey caption (V8.4c).
-- `AvatarCredit` on its own (the /demo teacher row) keeps brown-muted #8B6E5A (4.69 on white, lower over glass).
+- The desk quiz at 360x780 portrait: the camera crops the paper on both sides (a framing per aspect ratio is a camera
+  constant). Owner: a desk-framing task.
+- The V8.6 surfaces inside /learn (onboarding, course map, dashboard), pinned light: orange and brown-muted text as
+  low as 1.82 (the gradient "Aristo" title reads as transparent to the checker).
 
 Admin, also V8.6: the sidebar's section labels (orange on beige, about 2.35:1), the active nav item (white on
 #F97B2F, 2.66:1) and the "Aristo Admin" header (about 2.5:1). All were lower before V8.2 (#F59047).
