@@ -42,3 +42,39 @@ ships.
 | `webp.cjs` | PNG to WebP in place (the captures are stored as WebP; the capture scripts write PNG) |
 
 Every capture ran headless on the GPU with `/api` aborted: 0 API calls, 0 paid calls.
+
+## The build: first sections (nav, hero, the model build), for Hmz's review
+
+Steps 2 to 5 of plan section 8, plus the model section (round 3's "It Builds the Model"). Curated evidence in
+`first-sections/` (WebP and JSON); raw captures go to `build/` (ignored). All headless on the GPU, `/api` aborted:
+0 API calls and 0 paid calls in every run.
+
+- **How Jake is rendered:** the product's `Teacher`, live, on one transparent canvas that moves to whichever spot is
+  most in view. The camera is the classroom's own lesson camera and Jake stands where the classroom puts him; a spot
+  only picks the crop of that view that fills its box (an off-axis frustum, `stage/spots.ts`).
+- **Proportions** (`proportions.json`, `proportions.webp`): against `public/images/landing/v3/idea.webp` at the same
+  head-to-belt scale, chest width -1.5% and waist +1.8%, within measurement noise (idea.webp was shot from the
+  display pose, not the lesson pose).
+- **Peaks** (`peaks.json`, `*-peak-*.webp`, `*-strip-*.webp`): the frame is chosen from Jake's bones read in the same
+  frame (`?probe`), not by eye.
+  - Wave (hero): the raised hand's highest frame, about 1.3 s after he appears.
+  - PresentModel (model): his left fingertip at its furthest reach; the heart's real bounds are 1.8 cm past it, and
+    his open hand is at 0.36 of the heart's height. The heart is at the product's spawn scale (0.825).
+- **Checks** (`check.json`): 360 / 768 / 1024 / 1280 / 1440, light and dark, 5 stops each. 0 AA failures (minimum
+  4.74 light, For Parents' eyebrow on its tint, unchanged from V8.3; 5.97 dark), 0 targets under 44px, 0 overflow.
+- **Load and frames** (`perf.json`, production build): `/` 116 kB first load (budget 135; `/demo` 135 unchanged). LCP is
+  the hero still, 152 to 368 ms (lite at 360: 160 to 368). CLS 0. Jake live at 1.2 to 2.2 s. Frame p95 16.7 to 16.8 ms
+  in every phase; 0% dropped while the model builds and while scrolling. The hero phase has one 100 to 150 ms frame
+  (0.9 to 1.3%) as the stage finishes starting up (next: find it with long-frame attribution). Lite under a 4x CPU
+  throttle (`perf-throttle4.json`): 0% dropped, LCP 740 to 764 ms.
+
+| Script | What it does |
+|---|---|
+| `nav.cjs` | The nav at four widths, both themes: sheet, Escape, highlight, targets, overflow |
+| `stage.cjs` | The canvas moving hero, close, hero: the layer's box against the spot's |
+| `peaks.cjs` | Frames from the moment Jake is live at a spot, with bones, picking the gesture's peak |
+| `stills.cjs` | The spots' stills from the live stage (`?full=1&still=<spot>`), to `public/images/landing/v3b/` |
+| `proportions.cjs` | The side-by-side against the classroom render, measured |
+| `check.cjs` | AA, targets, overflow and a screenshot per stop |
+| `perf.cjs` | LCP, CLS, time to live, frame times (`THROTTLE=4` for the throttled lite run) |
+| `review.cjs` | The review sheet |

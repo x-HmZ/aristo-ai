@@ -1,0 +1,76 @@
+{
+ "api": [],
+ "paid": [],
+ "runs": [
+  {
+   "theme": "light",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 764,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 158,
+   "hero": {
+    "n": 241,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 47,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 740,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 158,
+   "hero": {
+    "n": 242,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 43,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   }
+  }
+ ]
+}

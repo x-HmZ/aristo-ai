@@ -60,7 +60,7 @@ export function ModelBuild({ mode }: { mode: LandingMode | null }) {
             alt="Jake presents the 3D heart built from the lesson's picture"
             className="w-full"
             style={{ aspectRatio: String(MODEL_ASPECT) }}
-            pool="left-[30%] -right-[4%] bottom-[2%] h-[70%]"
+            pool="left-[38%] -right-[2%] top-0 h-[72%]"
           >
             {live && (
               <>

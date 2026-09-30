@@ -2,6 +2,22 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - V8.3b build: nav, hero and the model build live; waiting for Hmz's review before the rest
+
+- Commits on `dev/v8-3b-landing` (no upstream): a5b0ad9 static page, 1526c27 nav, 3b8b324 stage on spots, 2e8b024
+  hero, 9b42095 model build. Evidence: `.claude/eval/2026-09-30-v8-3b-landing/first-sections/` and its README.
+- **Stage:** one transparent canvas placed over the most visible spot (`stage/host.ts`), the classroom's own camera
+  and Jake's classroom placement, each spot a crop of that view (`stage/spots.ts`). Jake remounts per spot visit;
+  spots show stills (`public/images/landing/v3b/`) until he is live, and on the lite path.
+- **Measured:** proportions within 2% of the classroom render; PresentModel fingertip 1.8 cm from the heart's edge;
+  0 AA fails, 0 small targets, 0 overflow at 5 widths x 2 themes; `/` 116 kB; LCP 152 to 368 ms; CLS 0; tests 511.
+- **Deviations from the plan:** HeartBuild and shaders.ts kept (round 3's model build is 3D); the nav has mockup E's
+  four links; the hero's round of lines enters at Explain.
+- **Open:** one 100 to 150 ms frame at stage start-up; the 3D picture card is a plain white square (source.jpg);
+  `scroll.ts`, `timeline.ts` and `Diagram.tsx` stay until the sections that reuse them.
+- **Next:** Hmz reviews the sheet; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
+  Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
+
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
 
 - **Direction E, "Jake Presents"** (`mockups/e.html`, `shots/sheet-e.webp`): A's page. Jake appears on his own in
