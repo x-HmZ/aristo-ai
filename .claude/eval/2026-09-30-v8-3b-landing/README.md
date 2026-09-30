@@ -78,3 +78,22 @@ Steps 2 to 5 of plan section 8, plus the model section (round 3's "It Builds the
 | `check.cjs` | AA, targets, overflow and a screenshot per stop |
 | `perf.cjs` | LCP, CLS, time to live, frame times (`THROTTLE=4` for the throttled lite run) |
 | `review.cjs` | The review sheet |
+
+### Round 2 (Hmz's review of the first sections)
+
+Hmz: the hero is a hello, not a lesson; the landing shows features, not one hardcoded lesson (the lesson is the
+demo's); the lesson's picture is an infographic; spread the topics (volcano, heart, volcano).
+
+- **Hero** (`review-round2.webp`, `hero-*.webp`, `scripts/hero-play.cjs`): the heart lesson's line card is gone.
+  Jake waves on arrival, then plays along with the product's own gestures:
+  - his head and eyes follow the mouse pointer (a new optional `viewer` on Teacher's driver; the classroom path
+    is unchanged);
+  - hovering or focusing Try a lesson gets "your turn" (both palms offered);
+  - a tap on him gets another wave, and coming back to the page after 3 s away gets a welcome-back wave.
+  - Tried and dropped: an approving nod on Create an account. The product's "that's right" pool also picks
+    "Exactly", a one-hand offer to his left, away from the button.
+- **The model build** (`model-strip-*.webp`, `present-peak-*.webp`): it starts from the heart lesson's infographic
+  (`teaching.jpg`, rounded card), whose drawn heart lifts into points onto the model. Re-verified peak: the fingertip
+  is 2.2 cm from the heart's edge, and his hand is at 0.37 of its height, in both themes.
+- **Topics from here:** It Finds the Ideas and It Draws the Picture use the volcano, the model build the heart, and
+  Immersive the volcano. Five Moves is described in plain words, with no lesson lines.

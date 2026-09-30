@@ -5,8 +5,18 @@ const path = require("path");
 const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules", "sharp"));
 const B = (f) => path.join(__dirname, "..", "build", f);
 const W = 1600, GAP = 16, LABEL = 28;
+const NAME = process.argv[2] === "round2" ? "review-round2" : "review-first-sections";
 
-const ROWS = [
+const ROUND2 = [
+  ["Hero: his head and eyes follow the pointer (the headline, the buttons, above him, below right)", ["hero-play/light/looks-faces.png"]],
+  ["Hover Try a lesson: the product's 'your turn', both palms offered", ["hero-play/light/yourturn-strip.png"]],
+  ["Tap on Jake: another wave", ["hero-play/light/tap-strip.png"]],
+  ["Leave the page and come back: a welcome-back wave", ["hero-play/light/welcome-strip.png"]],
+  ["The model build from the lesson's infographic, light and dark", ["peaks/model-light-1280/strip.png"]],
+  ["", ["peaks/model-dark-1280/strip.png"]],
+  ["PresentModel at its peak: fingertip 2.2 cm from the heart's real edge (green), hand at 0.37 of its height", ["peaks/model-light-1280/peak-marked.png", "peaks/model-dark-1280/peak.png"]],
+];
+const ROWS = process.argv[2] === "round2" ? ROUND2 : [
   ["Nav and hero, 1280, light and dark (Jake live, the line playing)", ["check/light-1280-top.png", "check/dark-1280-top.png"]],
   ["Phones (lite: stills), 360: hero, the model build, the nav's sheet", ["check/light-360-top.png", "check/dark-360-model.png", "nav/dark-360-sheet.png"]],
   ["The wave at its peak (hands and fingertips marked), light and dark", ["peaks/hero-light-1280/peak-marked.png", "peaks/hero-dark-1280/peak.png"]],
@@ -33,7 +43,7 @@ const ROWS = [
     imgs.forEach((im, k) => parts.push({ input: im.buf, left: GAP + k * (cellW + GAP), top: y }));
     y += rowH + GAP * 2;
   }
-  await sharp({ create: { width: W, height: y, channels: 3, background: "#e9ebef" } }).composite(parts).png().toFile(B("review-first-sections.png"));
-  await sharp(B("review-first-sections.png")).webp({ quality: 80 }).toFile(B("review-first-sections.webp"));
+  await sharp({ create: { width: W, height: y, channels: 3, background: "#e9ebef" } }).composite(parts).png().toFile(B(NAME + ".png"));
+  await sharp(B(NAME + ".png")).webp({ quality: 80 }).toFile(B(NAME + ".webp"));
   console.log("ok", W, y);
 })();

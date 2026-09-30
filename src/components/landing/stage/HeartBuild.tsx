@@ -2,7 +2,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import {
-  BufferAttribute, BufferGeometry, Color, Group, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial,
+  BufferAttribute, BufferGeometry, CanvasTexture, Color, Group, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial,
   MeshStandardMaterial, Points, SRGBColorSpace, ShaderMaterial, Vector2, Vector3, type Object3D,
 } from "three";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
@@ -20,9 +20,16 @@ import { warmUp } from "./warm";
  * the original cost a 200 to 400ms frame mid-scroll.
  */
 export const MODEL_URL = "/landing/heart.glb";
-export const SOURCE_URL = "/demo/heart/source.jpg";
-
-/** The photo card floats this far in front of the model's centre, in model units. */
+/** The lesson's own picture of the heart: its board infographic (Hmz, V8.3b: the picture is an infographic). */
+export const SOURCE_URL = "/demo/heart/teaching.jpg";
+/**
+ * Where the heart itself is in the infographic, in uv (the title and the labels are around it): the model's front
+ * view is mapped onto this box, so each point starts on the drawn heart, in its colour.
+ */
+const PICTURE_HEART = { u0: 0.24, u1: 0.75, v0: 0.24, v1: 0.9 } as const;
+/** The picture card's width in model units: smaller than the model, so it stays in frame and clear of his hand. */
+const CARD_W = 0.88;
+/** The picture card floats this far in front of the model's centre, in model units. */
 const CARD_Z = 0.45;
 const POINTS = 26000;
 const WIRE_TRIANGLES = 14000;
@@ -33,6 +40,20 @@ interface Built {
   solid: Object3D;
   solidMaterials: Material[];
   card: { w: number; x: number; y: number };
+}
+
+/** The picture card's rounded corners (the system's surface radius, 16 of about 300 px), as an alpha map. */
+function roundedMask(): CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = c.height = 256;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 256, 256, 14);
+  ctx.fill();
+  return new CanvasTexture(c);
 }
 
 /** Pixels of an image, drawn small, for colour lookups by uv. */
@@ -52,7 +73,7 @@ const at = (px: Uint8ClampedArray, size: number, u: number, v: number, out: Colo
 
 /**
  * Everything the build needs, computed once from the real assets: points sampled on the heart's surface (colour
- * from its texture) with starts on the flat photo (colour from the photo, at the pixel the front view maps to), a
+ * from its texture) with starts on the flat picture (colour from the picture, at the pixel the front view maps to), a
  * sparse wireframe of the real mesh (every Nth triangle), and the solid model with fadeable materials.
  */
 function build(scene: Object3D, photo: HTMLImageElement): Built {
@@ -62,16 +83,9 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
   if (!mesh) throw new Error("heart model has no mesh");
   const m = mesh as Mesh;
 
-  // The photo's heart: the bounding box of its non-white pixels, in uv.
-  const PS = 128;
+  const PS = 256;
   const photoPx = pixels(photo, PS);
-  let u0 = 1, u1 = 0, v0 = 1, v1 = 0;
-  for (let y = 0; y < PS; y++) for (let x = 0; x < PS; x++) {
-    const i = (y * PS + x) * 4;
-    if ((photoPx[i] + photoPx[i + 1] + photoPx[i + 2]) / 765 < 0.9) {
-      u0 = Math.min(u0, x / PS); u1 = Math.max(u1, x / PS); v0 = Math.min(v0, y / PS); v1 = Math.max(v1, y / PS);
-    }
-  }
+  const { u0, u1, v0, v1 } = PICTURE_HEART;
 
   const mat = (Array.isArray(m.material) ? m.material[0] : m.material) as MeshStandardMaterial;
   const TS = 256;
@@ -90,10 +104,11 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
     if (texPx) at(texPx, TS, uv.x, uv.y, col); else col.set("#b5433c");
     c1.set([col.r, col.g, col.b], i * 3);
   }
-  // The card: the photo, sized so its heart covers the model's front view.
-  const cardW = Math.max((xmax - xmin) / Math.max(0.05, u1 - u0), (ymax - ymin) / Math.max(0.05, v1 - v0));
-  const cardX = xmin - u0 * cardW;
-  const cardY = ymax + v0 * cardW;
+  // The card: the whole infographic, centred on the model's front view; the points start on its drawn heart and
+  // grow onto the model as they fly.
+  const cardW = CARD_W;
+  const cardX = (xmin + xmax) / 2 - cardW / 2;
+  const cardY = (ymin + ymax) / 2 + cardW / 2;
   for (let i = 0; i < POINTS; i++) {
     const x = pos[i * 3], y = pos[i * 3 + 1];
     const u = u0 + ((x - xmin) / (xmax - xmin)) * (u1 - u0);
@@ -150,9 +165,11 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
 }
 
 /**
- * Image to 3D: the real FLUX photo (`source.jpg`) floats in front of the heart's place; its pixels lift off as
- * points, fly onto the real Tripo mesh (`model.glb`), a wireframe of the mesh shows through, then the solid model
- * fades in and the points fall away (V8.3; V8.3b runs it on the model section's clock, beside Jake's open hand).
+ * Picture to 3D: the lesson's real infographic (`teaching.jpg`) floats where the heart will be; the pixels of its
+ * drawn heart lift off as points, fly onto the real Tripo mesh (`model.glb`), a wireframe of the mesh shows through,
+ * then the solid model fades in and the points fall away. An illustration of the step (the real model is made from
+ * a separate generated photo), labelled so on the page. V8.3; V8.3b runs it on the model section's clock, beside
+ * Jake's open hand.
  *
  * Once built it turns slowly and can be turned: `shared.heart.turn` is the reader's own turn (a drag, or Turn it),
  * eased towards; the slow turn stops once the reader has turned it. Replaying the build unwinds it to face them.
@@ -173,11 +190,11 @@ export function HeartBuild() {
     vertexShader: POINTS_VERT, fragmentShader: POINTS_FRAG, transparent: true, depthWrite: false,
   }), []);
   const wireMat = useMemo(() => new LineBasicMaterial({ color: "#f3c6a8", transparent: true, opacity: 0, depthWrite: false }), []);
-  const cardMat = useMemo(() => new MeshBasicMaterial({ map: photo, transparent: true, opacity: 0, toneMapped: false }), [photo]);
+  const cardMat = useMemo(() => new MeshBasicMaterial({ map: photo, alphaMap: roundedMask(), transparent: true, opacity: 0, toneMapped: false }), [photo]);
   const pointsObj = useMemo(() => new Points(built.points, pointsMat), [built, pointsMat]);
   const wireObj = useMemo(() => new LineSegments(built.wire, wireMat), [built, wireMat]);
   useEffect(() => () => { built.points.dispose(); built.wire.dispose(); built.solidMaterials.forEach((m) => m.dispose()); }, [built]);
-  useEffect(() => () => { pointsMat.dispose(); wireMat.dispose(); cardMat.dispose(); }, [pointsMat, wireMat, cardMat]);
+  useEffect(() => () => { pointsMat.dispose(); wireMat.dispose(); cardMat.alphaMap?.dispose(); cardMat.dispose(); }, [pointsMat, wireMat, cardMat]);
 
   // Warmed before its beat (warm.ts): shaders compiled in parallel, textures uploaded in idle moments, then one
   // invisible draw for the geometry. Its first visible frame then costs what any other frame does.

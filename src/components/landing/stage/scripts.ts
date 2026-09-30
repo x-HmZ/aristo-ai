@@ -30,10 +30,10 @@ export const WAVE_COOLDOWN_S = 8;
  * and settles on the model; he presents as the points lift, so his open hand is out beside the heart while it forms.
  */
 export const MODEL_T = {
-  lift: 0.9,
-  present: 1.1,
-  built: 4.6,
-  length: 5.2,
+  lift: 1.3,
+  present: 1.8,
+  built: 5.0,
+  length: 5.6,
 } as const;
 
 /**
