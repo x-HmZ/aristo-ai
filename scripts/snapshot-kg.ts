@@ -9,9 +9,10 @@
  *   npx tsx scripts/snapshot-kg.ts --list            courses with their concept counts
  *   npx tsx scripts/snapshot-kg.ts --course <id>     write the snapshot (at most MAX_NODES concepts)
  *
- * Keys: reads NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY from .env.local, and tries the anon key
- * first. Only if a table it needs reads back nothing under the anon key does it use SUPABASE_SERVICE_ROLE_KEY,
- * and it says so. A key is never printed, logged or written.
+ * Keys: reads NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY from .env.local and uses the anon key.
+ * Only if a read fails with an error under the anon key (not merely comes back empty) does it use
+ * SUPABASE_SERVICE_ROLE_KEY, and it says so. A key is never printed, logged or written. Only a published course is
+ * ever snapshotted: its concept names end up in a public file.
  */
 
 import dotenv from "dotenv";
@@ -78,15 +79,16 @@ function env(name: string): string {
   if (!v) throw new Error(`${name} is not set in .env.local`);
   return v;
 }
-const url = env("NEXT_PUBLIC_SUPABASE_URL");
-const anon = createClient(url, env("NEXT_PUBLIC_SUPABASE_ANON_KEY"), { auth: { persistSession: false } });
+let anon: SupabaseClient | null = null;
 let service: SupabaseClient | null = null;
 
-/** Run `query` with the anon client; if it errors or reads back no rows, once more with the service role. */
+/** Run `query` with the anon client; only if that errors, once more with the service role. */
 async function read(table: string, query: (c: SupabaseClient) => PromiseLike<{ data: unknown; error: unknown }>): Promise<unknown> {
+  const url = env("NEXT_PUBLIC_SUPABASE_URL");
+  anon ??= createClient(url, env("NEXT_PUBLIC_SUPABASE_ANON_KEY"), { auth: { persistSession: false } });
   const first = await query(anon);
-  if (!first.error && Array.isArray(first.data) && first.data.length > 0) return first.data;
-  console.log(`${table}: nothing readable with the anon key, using the service role (local only).`);
+  if (!first.error) return first.data;
+  console.log(`${table}: the anon read failed, using the service role (local only).`);
   service ??= createClient(url, env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
   const second = await query(service);
   if (second.error) throw new Error(`${table}: read failed`);
@@ -152,6 +154,7 @@ async function main() {
   const wanted = args[args.indexOf("--course") + 1];
   const course = courses.find((c) => c.id === wanted);
   if (!args.includes("--course") || !course) throw new Error("pass --course <id> (see --list)");
+  if (course.is_published !== true) throw new Error(`${course.id} is not published; only a published course goes on the landing`);
 
   const allIds = conceptIdsOf(course.structure);
   if (allIds.length < MIN_NODES) throw new Error(`${course.id} has ${allIds.length} concepts; the map wants ${MIN_NODES} or more`);
