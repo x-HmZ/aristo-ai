@@ -9,6 +9,8 @@
  *   • DESK_POS     — where the camera sits during the quiz framing
  *   • DESK_TARGET  — what point in world space the camera looks at
  *   • PAPER_ANCHOR — where the <Html> quiz paper anchors in world space
+ * (all three are in deskFraming.ts; a slider overrides the production value, and a knob left alone shows the
+ * production framing, which follows the canvas aspect ratio)
  *
  * The sliders write through props to AristoCanvas → Experience →
  * CameraController / DeskQuiz, so live values appear in the scene without
@@ -36,8 +38,8 @@ interface Tunables {
   lambda:      number;
 }
 
-// Mirror the production constants in CameraController.tsx / DeskQuiz.tsx so
-// the dev route's "Reset" button restores the values that ship to /learn.
+// Mirror the production constants in deskFraming.ts so the dev route's "Reset" button restores the values that
+// ship to /learn (a knob still at its default is not passed as an override).
 const DEFAULT_TUNABLES: Tunables = {
   deskPos:     [0,    0.2,  -0.05],
   deskTarget:  [0,   -1.05, -0.6],
@@ -117,7 +119,8 @@ const STUB_QUESTIONS: QuizQuestion[] = [
 // camera glided or cut to the desk framing.
 function CameraSpy() {
   useFrame(({ camera }) => {
-    (window as unknown as { __cam?: number[] }).__cam = camera.position.toArray();
+    const w = window as unknown as { __cam?: number[] };
+    w.__cam = camera.position.toArray(w.__cam);
   });
   return null;
 }
@@ -230,12 +233,12 @@ export default function DeskQuizPreview() {
     // Print copy-pasteable constants for rolling back into source.
     // eslint-disable-next-line no-console
     console.log(
-`// CameraController.tsx
+`// deskFraming.ts (a dev slider overrides the pose; the shipped pose is per aspect ratio, so only paste these
+// after retuning for a landscape canvas)
 const DESK_POS    = new Vector3(${tun.deskPos.join(", ")});
 const DESK_TARGET = new Vector3(${tun.deskTarget.join(", ")});
-const LAMBDA      = ${tun.lambda};
+const LAMBDA      = ${tun.lambda}; // CameraController.tsx
 
-// DeskQuiz.tsx
 const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
     );
   };

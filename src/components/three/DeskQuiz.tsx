@@ -29,13 +29,11 @@ import { useMemo } from "react";
 import type { PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { QuizView } from "@/components/quiz/QuizView";
-import { DESK_CONTROL_HEIGHT, PAPER_ANCHOR, PAPER_DISTANCE_FACTOR, deskFraming } from "./deskFraming";
+import { DESK_CONTROL_MIN, PAPER_ANCHOR, PAPER_DISTANCE_FACTOR, deskFraming } from "./deskFraming";
 
 export { PAPER_ANCHOR };
 
-// ─── Tunables ────────────────────────────────────────────────────────────────
-
-// The paper anchor, the CSS-px to world scale (PAPER_DISTANCE_FACTOR) and the per-aspect card width live in
+// The paper anchor, the CSS-px to world scale (PAPER_DISTANCE_FACTOR), the card width and the control height live in
 // deskFraming.ts, next to the camera framing they have to agree with.
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -47,9 +45,11 @@ interface DeskQuizProps {
 
 export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
   const activeQuiz    = useAristoStore((s) => s.activeQuiz);
-  const { size, camera } = useThree();
-  const fov = (camera as PerspectiveCamera).fov;
-  const { cardWidth, maxHeight } = useMemo(() => deskFraming(size.width, size.height, fov), [size.width, size.height, fov]);
+  const size = useThree((s) => s.size);
+  const fov = useThree((s) => (s.camera as PerspectiveCamera).fov);
+  const { cardWidth, maxHeight, controlHeight } = useMemo(
+    () => deskFraming(size.width, size.height, fov), [size.width, size.height, fov],
+  );
   const userId        = useAristoStore((s) => s.userId);
   const demoMode       = useAristoStore((s) => s.demoMode);
   const setActiveQuiz = useAristoStore((s) => s.setActiveQuiz);
@@ -99,9 +99,10 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
             from { opacity: 0; transform: translateY(14px) scale(0.97); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
           }
-          /* Every control on the paper is at least DESK_CONTROL_HEIGHT tall in CSS px, so that it still measures
-             44px on screen after the paper is tilted and foreshortened (deskFraming.ts sizes the framing for it). */
-          .aristo-paper :is(button, input, select, textarea) { min-height: ${DESK_CONTROL_HEIGHT}px; }
+          ${controlHeight > DESK_CONTROL_MIN
+            ? `/* The tilted paper is foreshortened: controls this tall in CSS px measure 44px on screen (deskFraming.ts). */
+          .aristo-paper :is(button, input, select, textarea) { min-height: ${controlHeight}px; }`
+            : ""}
           @media (prefers-reduced-motion: reduce) {
             .aristo-paper { animation: none !important; }
           }

@@ -33,20 +33,9 @@ const LESSON_POS    = new Vector3(0,    0,    0.9);
 // orbit around the teacher that swings the camera out of the classroom.
 const LESSON_TARGET = new Vector3(0,    0,    0.4);
 
-// Desk view — camera stays essentially at the student's POV and simply
-// tilts the gaze downward toward the desk surface in front of them.  This
-// "student looking down at their own paper" framing was tuned in the
-// /dev/desk-quiz harness (see HANDOFF_DESK_QUIZ.md).
-//
-// Why we don't aim at the PLACEMENT.default.desk anchor in Classroom.tsx
-// — that anchor is the *teacher's* desk further back in the room.  The
-// student sits in a chair near the lesson-camera origin; the desk in
-// front of them is at roughly z=-0.6 in world space, with its surface
-// near y=-1.05.  Pointing the camera at that surface keeps the chair
-// across the table softly visible in the background for context rather
-// than blocking the view.
-// DESK_POS and DESK_TARGET live in deskFraming.ts with the per-aspect framing: on a landscape canvas they are
-// used as they are; on a portrait one the camera slides back along the same ray so the paper fits the width.
+// Desk view — the student looking down at their own paper.  The pose (DESK_POS / DESK_TARGET, tuned in the
+// /dev/desk-quiz harness) lives in deskFraming.ts with the per-aspect framing: on a landscape canvas it is used as
+// it is; on a portrait one the camera slides back along the same view ray so the paper fits the width.
 
 // Damping strength.  Higher = snappier.  λ=3.2 → ~95 % of distance covered
 // in ~0.9 s while never popping at the start/end — feels like a smooth
