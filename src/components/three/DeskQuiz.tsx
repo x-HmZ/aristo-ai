@@ -24,20 +24,19 @@
  */
 
 import { Html } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { useMemo } from "react";
+import type { PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { QuizView } from "@/components/quiz/QuizView";
+import { DESK_CONTROL_HEIGHT, PAPER_ANCHOR, PAPER_DISTANCE_FACTOR, deskFraming } from "./deskFraming";
+
+export { PAPER_ANCHOR };
 
 // ─── Tunables ────────────────────────────────────────────────────────────────
 
-// Centre of the student-desk surface (probed: y=-0.888), nudged 1 cm up to
-// avoid z-fighting with the desktop mesh.
-export const PAPER_ANCHOR: [number, number, number] = [0, -0.878, -0.5];
-
-// CSS-pixel → world scale for the transformed DOM.  The paper wrapper is
-// 520 px wide; the desk is ~0.93 world units wide.  distanceFactor in drei's
-// transform mode applies scale = distanceFactor/400 per px, so 0.55 ≈
-// 0.72 world units of paper width — comfortable margins on the desk.
-const PAPER_DISTANCE_FACTOR = 0.55;
+// The paper anchor, the CSS-px to world scale (PAPER_DISTANCE_FACTOR) and the per-aspect card width live in
+// deskFraming.ts, next to the camera framing they have to agree with.
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -48,6 +47,9 @@ interface DeskQuizProps {
 
 export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
   const activeQuiz    = useAristoStore((s) => s.activeQuiz);
+  const { size, camera } = useThree();
+  const fov = (camera as PerspectiveCamera).fov;
+  const { cardWidth, maxHeight } = useMemo(() => deskFraming(size.width, size.height, fov), [size.width, size.height, fov]);
   const userId        = useAristoStore((s) => s.userId);
   const demoMode       = useAristoStore((s) => s.demoMode);
   const setActiveQuiz = useAristoStore((s) => s.setActiveQuiz);
@@ -80,9 +82,10 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
       <div
         className="theme-paper aristo-scroll aristo-paper rounded-2xl border border-line bg-surface px-5 py-[18px] text-ink"
         style={{
-          // 520 px wide is what sets the world size with PAPER_DISTANCE_FACTOR.
-          width:         "520px",
-          maxHeight:     "620px",
+          // The CSS width sets the world size with PAPER_DISTANCE_FACTOR: 520 px on a landscape canvas, narrower on
+          // a phone so the whole sheet fits (see deskFraming.ts).
+          width:         `${cardWidth}px`,
+          maxHeight:     `${maxHeight}px`,
           overflowY:     "auto",
           // Soft warm shadow under the sheet so it feels grounded against the
           // wood backdrop. A scene constant, not a UI colour (three.js-side
@@ -96,6 +99,9 @@ export function DeskQuiz({ paperAnchor }: DeskQuizProps = {}) {
             from { opacity: 0; transform: translateY(14px) scale(0.97); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
           }
+          /* Every control on the paper is at least DESK_CONTROL_HEIGHT tall in CSS px, so that it still measures
+             44px on screen after the paper is tilted and foreshortened (deskFraming.ts sizes the framing for it). */
+          .aristo-paper :is(button, input, select, textarea) { min-height: ${DESK_CONTROL_HEIGHT}px; }
           @media (prefers-reduced-motion: reduce) {
             .aristo-paper { animation: none !important; }
           }
