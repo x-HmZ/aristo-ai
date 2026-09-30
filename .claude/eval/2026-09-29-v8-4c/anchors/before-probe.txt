@@ -1,0 +1,12 @@
+[probe-down] {"x":0,"z":-0.5,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":-0.4,"z":-0.3,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":0.4,"z":-0.75,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":0.3,"z":-2.35,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":-1,"z":-3,"hits":[{"y":0.852,"mesh":"Mesh039_1"},{"y":0.849,"mesh":"Mesh039_1"},{"y":0.849,"mesh":"Mesh039_1"},{"y":0.846,"mesh":"Mesh039_1"},{"y":0.845,"mesh":"Mesh039_1"}]}
+[probe-down] {"x":0.37,"z":-3,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":0,"z":-1.5,"hits":[{"y":-1.195,"mesh":"Classroom"},{"y":-1.24,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":-3.2,"z":-5.2,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
+[probe-down] {"x":0.45,"z":-5.4,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
+[probe] {"point":[0.91,0.4,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
+[probe] {"point":[1.685,0.723,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
+[probe] {"point":[2.623,0.076,-5.617],"normal":[0,0,1],"mesh":"Classroom"}

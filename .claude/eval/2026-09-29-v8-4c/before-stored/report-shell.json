@@ -1,0 +1,508 @@
+{
+ "label": "before-stored",
+ "mode": "shell",
+ "shots": [
+  "shell-loading-1280-stored-dark.jpg",
+  "shell-loading-stalled-1280-stored-dark.jpg",
+  "shell-picker-empty-1280-stored-dark.jpg",
+  "shell-picker-generating-1280-stored-dark.jpg",
+  "shell-picker-error-1280-stored-dark.jpg",
+  "shell-picker-1280-stored-dark.jpg",
+  "shell-free-empty-1280-stored-dark.jpg",
+  "shell-free-cards-1280-stored-dark.jpg",
+  "shell-free-cards-end-1280-stored-dark.jpg",
+  "shell-lightbox-1280-stored-dark.jpg",
+  "shell-review-quiz-1280-stored-dark.jpg",
+  "shell-review-answered-1280-stored-dark.jpg",
+  "shell-review-done-1280-stored-dark.jpg",
+  "shell-course-lesson-1280-stored-dark.jpg",
+  "shell-course-desk-1280-stored-dark.jpg",
+  "shell-course-advance-1280-stored-dark.jpg",
+  "shell-review-empty-1280-stored-dark.jpg",
+  "shell-review-loading-1280-stored-dark.jpg"
+ ],
+ "layout": {
+  "shell-loading-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-loading-stalled-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-picker-empty-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-picker-generating-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-picker-error-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-picker-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-free-empty-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-free-cards-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-free-cards-end-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-lightbox-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-review-quiz-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-review-answered-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-review-done-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-course-lesson-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-course-desk-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": true,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-course-advance-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-review-empty-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "shell-review-loading-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     70
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {
+  "1280-stored-dark": [
+   "/api/courses",
+   "/api/profile",
+   "/api/learn/overdue-count",
+   "/api/courses",
+   "/api/profile",
+   "/api/learn/overdue-count",
+   "/api/quiz/review",
+   "/api/quiz/review"
+  ]
+ },
+ "notes": []
+}

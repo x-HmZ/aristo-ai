@@ -1,0 +1,108 @@
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 1254 fails 0 min light 4.74 min dark 5.24
+under-44 targets 1
+   demo-desk-q1: Lava 513x42
+running animations 6
+   SECTION.rounded-2xl shrink-0 overflow-hidden bor fade-in
+   P.text-lg font-medium leading-snug text-in fade-in
+   transition BUTTON
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   SPAN.size-1.5 rounded-full bg-accent-text mot pulse
+   P.text-base font-medium leading-snug text- fade-in
+shots 36 paid 0 api at network 0 notes 0
+done 1024x768-light
+done 1440x900-light
+done 1024x768-dark
+done 1440x900-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 892 fails 0 min light 4.74 min dark 5.24
+under-44 targets 0
+running animations 6
+   SECTION.rounded-2xl shrink-0 overflow-hidden bor fade-in
+   P.text-base font-medium leading-snug text- fade-in
+   P.text-sm font-medium leading-snug text-in fade-in
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   SPAN.size-1.5 rounded-full bg-accent-text mot pulse
+   P.text-lg font-medium leading-snug text-in fade-in
+shots 24 paid 0 api at network 0 notes 0
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 3740 fails 0 min light 4.75 min dark 5.24
+under-44 targets 1
+   shell-course-desk: Lava 513x42
+running animations 9
+   svg.lucide lucide-loader-circle motion-safe: spin
+   DIV.flex justify-end motion-safe:animate-[fa fade-in
+   DIV.flex flex-col gap-3 motion-safe:animate- fade-in
+   DIV.rounded-2xl overflow-hidden border borde fade-in
+   SECTION.rounded-2xl shrink-0 overflow-hidden bor fade-in
+   P.text-lg font-medium leading-snug text-in fade-in
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   SPAN.size-1.5 rounded-full bg-accent-text mot pulse
+   DIV.size-8 rounded-full border-2 border-acce spin
+shots 108 paid 0 api at network 0 notes 0
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 90 fails 0 min light 5.48 min dark 5.48
+under-44 targets 1
+   probe-desk: 3 513x42
+running animations 1
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+shots 42 paid 0 api at network 0 notes 0
+done 360-stored-dark
+done 1280-stored-dark
+done 360-stored-light
+done 1280-stored-light
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+shots 24 paid 0 api at network 0 notes 0
+done 360-stored-dark
+done 1280-stored-dark
+done 360-stored-light
+done 1280-stored-light
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+shots 72 paid 0 api at network 0 notes 0
+done 360-light
+done 1280-light
+done 360-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+shots 4 paid 0 api at network 0 notes 0
+done 360-light
+done 1280-light
+done 360-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 824 fails 0 min light 4.74 min dark 5.24
+under-44 targets 1
+   demo-desk-q1: Lava 513x42
+running animations 0
+shots 24 paid 0 api at network 0 notes 0
+done 1280-light
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+AA nodes 1276 fails 0 min light 4.75 min dark 5.24
+under-44 targets 1
+   shell-course-desk: Lava 513x42
+running animations 0
+shots 36 paid 0 api at network 0 notes 0
+reduce light {"root":"0ms 0ms 0ms 0ms","ink":"0ms 0ms 0ms 0ms","paper":"0ms 0ms 0ms 0ms","paperInInk":"0ms"}
+reduce dark {"root":"0ms 0ms 0ms 0ms","ink":"0ms 0ms 0ms 0ms","paper":"0ms 0ms 0ms 0ms","paperInInk":"0ms"}
+no-preference light {"root":"120ms 200ms 360ms 550ms","ink":"120ms 200ms 360ms 550ms","paper":"120ms 200ms 360ms 550ms","paperInInk":"200ms"}
+no-preference dark {"root":"120ms 200ms 360ms 550ms","ink":"120ms 200ms 360ms 550ms","paper":"120ms 200ms 360ms 550ms","paperInInk":"200ms"}
+finished

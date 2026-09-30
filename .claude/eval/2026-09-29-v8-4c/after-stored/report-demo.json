@@ -1,0 +1,684 @@
+{
+ "label": "after-stored",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-360-stored-dark.jpg",
+  "demo-lesson-360-stored-dark.jpg",
+  "demo-image-360-stored-dark.jpg",
+  "demo-model-360-stored-dark.jpg",
+  "demo-desk-q1-360-stored-dark.jpg",
+  "demo-results-360-stored-dark.jpg",
+  "demo-picker-1280-stored-dark.jpg",
+  "demo-lesson-1280-stored-dark.jpg",
+  "demo-image-1280-stored-dark.jpg",
+  "demo-model-1280-stored-dark.jpg",
+  "demo-desk-q1-1280-stored-dark.jpg",
+  "demo-results-1280-stored-dark.jpg",
+  "demo-picker-360-stored-light.jpg",
+  "demo-lesson-360-stored-light.jpg",
+  "demo-image-360-stored-light.jpg",
+  "demo-model-360-stored-light.jpg",
+  "demo-desk-q1-360-stored-light.jpg",
+  "demo-results-360-stored-light.jpg",
+  "demo-picker-1280-stored-light.jpg",
+  "demo-lesson-1280-stored-light.jpg",
+  "demo-image-1280-stored-light.jpg",
+  "demo-model-1280-stored-light.jpg",
+  "demo-desk-q1-1280-stored-light.jpg",
+  "demo-results-1280-stored-light.jpg"
+ ],
+ "layout": {
+  "demo-picker-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-lesson-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-image-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-model-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-desk-q1-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    713,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": [
+    -184,
+    226,
+    544,
+    591
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-results-360-stored-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-picker-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-lesson-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-image-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-model-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-desk-q1-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    653,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-results-1280-stored-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-picker-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-lesson-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-image-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-model-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-desk-q1-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    713,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": [
+    -184,
+    226,
+    544,
+    591
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-results-360-stored-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-picker-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-lesson-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-image-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-model-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-desk-q1-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    653,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-results-1280-stored-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": []
+}

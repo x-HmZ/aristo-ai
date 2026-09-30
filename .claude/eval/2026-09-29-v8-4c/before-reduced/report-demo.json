@@ -1,0 +1,180 @@
+{
+ "label": "before",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-1280-light.jpg",
+  "demo-lesson-1280-light.jpg",
+  "demo-image-1280-light.jpg",
+  "demo-model-1280-light.jpg",
+  "demo-desk-q1-1280-light.jpg",
+  "demo-results-1280-light.jpg"
+ ],
+ "layout": {
+  "demo-picker-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-lesson-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-image-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-desk-q1-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": true,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-results-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    68,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": []
+}

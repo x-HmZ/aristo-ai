@@ -1,0 +1,13 @@
+{
+ "label": "before",
+ "mode": "toggle",
+ "shots": [],
+ "layout": {},
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": [
+  "360-light: no toggle on /demo",
+  "1280-light: no toggle on /demo"
+ ]
+}

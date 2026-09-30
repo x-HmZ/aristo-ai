@@ -1,0 +1,1020 @@
+{
+ "label": "after",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-360-light.jpg",
+  "demo-lesson-360-light.jpg",
+  "demo-image-360-light.jpg",
+  "demo-model-360-light.jpg",
+  "demo-desk-q1-360-light.jpg",
+  "demo-results-360-light.jpg",
+  "demo-picker-768-light.jpg",
+  "demo-lesson-768-light.jpg",
+  "demo-image-768-light.jpg",
+  "demo-model-768-light.jpg",
+  "demo-desk-q1-768-light.jpg",
+  "demo-results-768-light.jpg",
+  "demo-picker-1280-light.jpg",
+  "demo-lesson-1280-light.jpg",
+  "demo-image-1280-light.jpg",
+  "demo-model-1280-light.jpg",
+  "demo-desk-q1-1280-light.jpg",
+  "demo-results-1280-light.jpg",
+  "demo-picker-360-dark.jpg",
+  "demo-lesson-360-dark.jpg",
+  "demo-image-360-dark.jpg",
+  "demo-model-360-dark.jpg",
+  "demo-desk-q1-360-dark.jpg",
+  "demo-results-360-dark.jpg",
+  "demo-picker-768-dark.jpg",
+  "demo-lesson-768-dark.jpg",
+  "demo-image-768-dark.jpg",
+  "demo-model-768-dark.jpg",
+  "demo-desk-q1-768-dark.jpg",
+  "demo-results-768-dark.jpg",
+  "demo-picker-1280-dark.jpg",
+  "demo-lesson-1280-dark.jpg",
+  "demo-image-1280-dark.jpg",
+  "demo-model-1280-dark.jpg",
+  "demo-desk-q1-1280-dark.jpg",
+  "demo-results-1280-dark.jpg"
+ ],
+ "layout": {
+  "demo-picker-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-lesson-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-image-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-model-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-desk-q1-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    713,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": [
+    -184,
+    226,
+    544,
+    591
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-results-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-picker-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-lesson-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-image-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-model-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-desk-q1-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    957,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": [
+    -94,
+    296,
+    862,
+    776
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-results-768-light": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-picker-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-lesson-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-image-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-model-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-desk-q1-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    653,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-results-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "demo-picker-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-lesson-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-image-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-model-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-desk-q1-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    713,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": [
+    -184,
+    226,
+    544,
+    591
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-results-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": [
+    20,
+    76,
+    340,
+    760
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-picker-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-lesson-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-image-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-model-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-desk-q1-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    957,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": [
+    -94,
+    296,
+    862,
+    776
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-results-768-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "scrollW": 768,
+   "panel": [
+    348,
+    76,
+    748,
+    1004
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     768,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-picker-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-lesson-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-image-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-model-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-desk-q1-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    653,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": [
+    304,
+    208,
+    976,
+    546
+   ],
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "demo-results-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": [
+    860,
+    76,
+    1260,
+    700
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": []
+}

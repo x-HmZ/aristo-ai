@@ -1,0 +1,166 @@
+yarn run v1.22.22
+$ next build
+   ▲ Next.js 15.5.15
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully in 14.9s
+   Skipping validation of types
+   Linting ...
+
+./src/app/create-teacher/CreateTeacherClient.tsx
+141:15  Warning: Do not use an `<a>` element to navigate to `/learn/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+142:31  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+142:42  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+176:7  Warning: Do not use an `<a>` element to navigate to `/learn/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+./src/components/learn/DashboardView.tsx
+110:67  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/quiz/QuizView.tsx
+627:6  Warning: React Hook useCallback has a missing dependency: 'context'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/three/Classroom.tsx
+106:6  Warning: React Hook useEffect has a missing dependency: 'lesson'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/useCourseAutoTeach.ts
+67:6  Warning: React Hook useEffect has a missing dependency: 'course'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/utils/modelLoader.js
+11:46  Warning: React Hook "useGLTF" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+13:5  Warning: React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+(node:28540) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:22492) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:30232) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:40168) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (0/61) ...
+(node:12096) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (15/61) 
+(node:40596) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (30/61) 
+   Generating static pages (45/61) 
+ ✓ Generating static pages (61/61)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                     Size  First Load JS
+┌ ○ /                                        8.69 kB         122 kB
+├ ○ /_not-found                                294 B         103 kB
+├ ƒ /admin                                     294 B         103 kB
+├ ƒ /admin/audit-log                         4.63 kB         142 kB
+├ ƒ /admin/cost                              12.8 kB         259 kB
+├ ƒ /admin/courses                           4.34 kB         117 kB
+├ ƒ /admin/courses/[courseId]                5.25 kB         228 kB
+├ ƒ /admin/courses/new                       9.56 kB         150 kB
+├ ƒ /admin/knowledge-graph                   10.3 kB         154 kB
+├ ƒ /admin/lesson-cache                      5.71 kB         143 kB
+├ ƒ /admin/misconceptions                    2.93 kB         143 kB
+├ ƒ /admin/moderation                        4.57 kB         114 kB
+├ ƒ /admin/overview                          5.91 kB         116 kB
+├ ƒ /admin/quiz-analytics                    13.7 kB         233 kB
+├ ƒ /admin/rag                               4.89 kB         149 kB
+├ ƒ /admin/system                            4.39 kB         114 kB
+├ ƒ /admin/users                             9.81 kB         154 kB
+├ ƒ /api/admin/analytics                       294 B         103 kB
+├ ƒ /api/admin/audit-log                       294 B         103 kB
+├ ƒ /api/admin/cost/events                     294 B         103 kB
+├ ƒ /api/admin/cost/summary                    294 B         103 kB
+├ ƒ /api/admin/courses                         294 B         103 kB
+├ ƒ /api/admin/courses/[id]/analytics          294 B         103 kB
+├ ƒ /api/admin/courses/from-kg                 294 B         103 kB
+├ ƒ /api/admin/kg/concept/[id]                 294 B         103 kB
+├ ƒ /api/admin/kg/coverage/[domain]            294 B         103 kB
+├ ƒ /api/admin/kg/prerequisites                294 B         103 kB
+├ ƒ /api/admin/lesson-cache                    294 B         103 kB
+├ ƒ /api/admin/lesson-cache/[id]               294 B         103 kB
+├ ƒ /api/admin/lesson-cache/[id]/regenerate    294 B         103 kB
+├ ƒ /api/admin/lesson-cache/bulk-invalidate    294 B         103 kB
+├ ƒ /api/admin/misconceptions                  294 B         103 kB
+├ ƒ /api/admin/misconceptions/[id]             294 B         103 kB
+├ ƒ /api/admin/moderation/[id]                 294 B         103 kB
+├ ƒ /api/admin/moderation/queue                294 B         103 kB
+├ ƒ /api/admin/quiz-analytics                  294 B         103 kB
+├ ƒ /api/admin/rag/chunks                      294 B         103 kB
+├ ƒ /api/admin/rag/chunks/[id]                 294 B         103 kB
+├ ƒ /api/admin/rag/test                        294 B         103 kB
+├ ƒ /api/admin/rag/upload                      294 B         103 kB
+├ ƒ /api/admin/system/health                   294 B         103 kB
+├ ƒ /api/admin/users                           294 B         103 kB
+├ ƒ /api/admin/users/[id]                      294 B         103 kB
+├ ƒ /api/auth/onboarding                       294 B         103 kB
+├ ƒ /api/courses                               294 B         103 kB
+├ ƒ /api/courses/[id]                          294 B         103 kB
+├ ƒ /api/courses/generate                      294 B         103 kB
+├ ƒ /api/generate-model                        294 B         103 kB
+├ ƒ /api/generate-model/3d                     294 B         103 kB
+├ ƒ /api/kg/[domain]                           294 B         103 kB
+├ ƒ /api/kg/concepts                           294 B         103 kB
+├ ƒ /api/kg/generate/[domain]                  294 B         103 kB
+├ ƒ /api/kg/ingest                             294 B         103 kB
+├ ƒ /api/kg/validate/[domain]                  294 B         103 kB
+├ ƒ /api/learn/challenge                       294 B         103 kB
+├ ƒ /api/learn/complete                        294 B         103 kB
+├ ƒ /api/learn/explain-more                    294 B         103 kB
+├ ƒ /api/learn/lesson/[conceptId]              294 B         103 kB
+├ ƒ /api/learn/next                            294 B         103 kB
+├ ƒ /api/learn/overdue-count                   294 B         103 kB
+├ ƒ /api/learn/segment-visuals                 294 B         103 kB
+├ ƒ /api/openai-tts                            294 B         103 kB
+├ ƒ /api/profile                               294 B         103 kB
+├ ƒ /api/profile/analytics                     294 B         103 kB
+├ ƒ /api/profile/custom-teacher                294 B         103 kB
+├ ƒ /api/profile/mastery                       294 B         103 kB
+├ ƒ /api/profile/session                       294 B         103 kB
+├ ƒ /api/quiz                                  294 B         103 kB
+├ ƒ /api/quiz/complete                         294 B         103 kB
+├ ƒ /api/quiz/lesson/[conceptId]               294 B         103 kB
+├ ƒ /api/quiz/review                           294 B         103 kB
+├ ƒ /api/quiz/submit                           294 B         103 kB
+├ ƒ /api/teach                                 294 B         103 kB
+├ ƒ /api/tts                                   294 B         103 kB
+├ ƒ /api/whisper                               294 B         103 kB
+├ ○ /apple-icon                                294 B         103 kB
+├ ○ /aristo                                    294 B         103 kB
+├ ƒ /auth/callback                             294 B         103 kB
+├ ƒ /create-teacher                          6.01 kB         116 kB
+├ ○ /icon.svg                                    0 B            0 B
+├ ○ /opengraph-image                           294 B         103 kB
+├ ƒ /pending                                   167 B         107 kB
+├ ƒ /sign-in                                  1.9 kB         115 kB
+└ ƒ /sign-up                                  1.9 kB         115 kB
++ First Load JS shared by all                 103 kB
+  ├ chunks/1255-55f5611cfd370a3f.js          45.7 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js      54.2 kB
+  └ other shared chunks (total)              3.01 kB
+
+Route (pages)                                   Size  First Load JS
+┌   /_app                                        0 B        87.5 kB
+├ ○ /demo (1005 ms)                          3.45 kB         135 kB
+├ ○ /dev/avatar-lab (450 ms)                 2.13 kB        89.6 kB
+├ ○ /dev/desk-quiz (448 ms)                  1.93 kB        89.4 kB
+├ ○ /dev/free-model (454 ms)                 1.93 kB        89.4 kB
+├ ○ /dev/learn-shell (1005 ms)               12.9 kB         146 kB
+├ ○ /dev/quiz-bars (779 ms)                  13.4 kB         110 kB
+└ ƒ /learn                                   3.18 kB         134 kB
++ First Load JS shared by all                 102 kB
+  ├ chunks/framework-2f3de63929c73f88.js     44.8 kB
+  ├ chunks/main-7dca61d467265710.js          34.7 kB
+  ├ css/fd5b1fb40cb71a0f.css                 14.6 kB
+  └ other shared chunks (total)              7.93 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+Done in 54.91s.

@@ -1,0 +1,178 @@
+{
+ "label": "after",
+ "mode": "toggle",
+ "shots": [
+  "toggle-after-click-360-light.jpg",
+  "toggle-after-click-1280-light.jpg",
+  "toggle-after-click-360-dark.jpg",
+  "toggle-after-click-1280-dark.jpg"
+ ],
+ "layout": {
+  "toggle-after-click-360-light": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "toggle-after-click-1280-light": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "dark",
+   "lock": false,
+   "bodyBg": "rgb(14, 17, 23)"
+  },
+  "toggle-after-click-360-dark": {
+   "vw": 360,
+   "vh": 780,
+   "scrollW": 360,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     360,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  },
+  "toggle-after-click-1280-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "scrollW": 1280,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1280,
+     64
+    ]
+   ],
+   "barsInside": true,
+   "theme": "light",
+   "lock": false,
+   "bodyBg": "rgb(243, 244, 246)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": [],
+ "toggle": {
+  "360-light": {
+   "labelBefore": "Switch to dark theme",
+   "before": {
+    "attr": null,
+    "stored": null,
+    "bg": "rgb(243, 244, 246)"
+   },
+   "after": {
+    "attr": "dark",
+    "stored": "dark",
+    "bg": "rgb(14, 17, 23)"
+   },
+   "firstPaint": {
+    "attr": "dark",
+    "bg": "rgba(0, 0, 0, 0)",
+    "loading": "rgba(0, 0, 0, 0)"
+   }
+  },
+  "1280-light": {
+   "labelBefore": "Switch to dark theme",
+   "before": {
+    "attr": null,
+    "stored": null,
+    "bg": "rgb(243, 244, 246)"
+   },
+   "after": {
+    "attr": "dark",
+    "stored": "dark",
+    "bg": "rgb(14, 17, 23)"
+   },
+   "firstPaint": {
+    "attr": "dark",
+    "bg": "rgba(0, 0, 0, 0)",
+    "loading": "rgba(0, 0, 0, 0)"
+   }
+  },
+  "360-dark": {
+   "labelBefore": "Switch to light theme",
+   "before": {
+    "attr": null,
+    "stored": null,
+    "bg": "rgb(14, 17, 23)"
+   },
+   "after": {
+    "attr": "light",
+    "stored": "light",
+    "bg": "rgb(243, 244, 246)"
+   },
+   "firstPaint": {
+    "attr": "light",
+    "bg": "rgba(0, 0, 0, 0)",
+    "loading": "rgba(0, 0, 0, 0)"
+   }
+  },
+  "1280-dark": {
+   "labelBefore": "Switch to light theme",
+   "before": {
+    "attr": null,
+    "stored": null,
+    "bg": "rgb(14, 17, 23)"
+   },
+   "after": {
+    "attr": "light",
+    "stored": "light",
+    "bg": "rgb(243, 244, 246)"
+   },
+   "firstPaint": {
+    "attr": "light",
+    "bg": "rgba(0, 0, 0, 0)",
+    "loading": "rgba(0, 0, 0, 0)"
+   }
+  }
+ }
+}
