@@ -12,7 +12,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { Component, Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { Group, type PerspectiveCamera } from "three";
+import { Group, Vector3, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { RendererConfig, SceneLights } from "@/components/three/Experience";
 import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/components/three/Teacher";
@@ -21,7 +21,7 @@ import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { HEART, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { HEART, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
@@ -32,7 +32,7 @@ const FAR = 60;
 /** The section clock each spot's script reads. */
 const SECTION_OF: Record<SpotId, string> = { hero: "hero", model: "model", close: "close" };
 
-const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}`, () => "null|false");
+const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}`, () => "null|false|0");
 
 /**
  * Runs first each frame: the camera stays at the classroom's eye, looking straight ahead, and the active spot's
@@ -116,19 +116,27 @@ const lastWave: Partial<Record<SpotId, number>> = {};
  * Jake at one spot: mounted fresh per visit (keyed by the spot), driven by the spot's script. Two frames after he
  * mounts he has drawn in his idle pose, and the spot goes live (its still hides and the canvas shows).
  */
-function SpotTeacher({ spot, warm, lookTargets }: { spot: SpotId; warm: boolean; lookTargets?: LookTargets }) {
+function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: boolean; greet: number; lookTargets?: LookTargets }) {
   const frames = useRef(0);
   const liveAt = useRef<number | null>(null);
+  // A fresh mount asked for by the reader (a tap on Jake, coming back to the page) always waves: those have their
+  // own cool-downs (Hero.tsx). Arriving at a spot waves unless it waved in the last WAVE_COOLDOWN_S.
   const mayWave = useMemo(() => {
     const now = performance.now() / 1000;
-    return lastWave[spot] === undefined || now - lastWave[spot]! > WAVE_COOLDOWN_S;
-  }, [spot]);
+    return greet > 0 || lastWave[spot] === undefined || now - lastWave[spot]! > WAVE_COOLDOWN_S;
+  }, [spot, greet]);
   const hold = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("still"), []);
+  const { camera, gl } = useThree();
+  const viewer = useMemo(() => new Vector3(), []);
+  const ray = useMemo(() => new Vector3(), []);
   const driver = useMemo<TeacherDriver>(() => ({
     signals: () => {
       const now = performance.now() / 1000;
       const liveFor = liveAt.current === null ? 0 : now - liveAt.current;
-      const s = signalsFor(spot, { liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking });
+      const h = shared.hero;
+      const s = signalsFor(spot, {
+        liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: h.hover, seq: h.seq,
+      });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
@@ -137,14 +145,25 @@ function SpotTeacher({ spot, warm, lookTargets }: { spot: SpotId; warm: boolean;
     },
     viseme: visemeNow,
     clipPacks: warm,
-  }), [spot, warm, mayWave, hold]);
+    // At the hero and the close he looks at the reader's pointer: the ray from the eye through it, where it crosses
+    // a plane in front of him (VIEWER_Z). Elsewhere, and with no mouse, the camera, as in a lesson.
+    viewer: () => {
+      const p = shared.pointer;
+      if (!p || hold || (spot !== "hero" && spot !== "close")) return null;
+      const r = gl.domElement.getBoundingClientRect();
+      if (!r.width || !r.height) return null;
+      ray.set(((p.x - r.left) / r.width) * 2 - 1, 1 - ((p.y - r.top) / r.height) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
+      if (ray.z > -1e-3) return null;
+      return viewer.copy(camera.position).addScaledVector(ray, (VIEWER_Z - camera.position.z) / ray.z);
+    },
+  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray]);
 
   useFrame(() => {
-    if (!warm || host.live === spot) return;
+    if (!warm || liveAt.current !== null) return;
     frames.current += 1;
     if (frames.current >= 2) {
       liveAt.current = performance.now() / 1000;
-      setLive(spot);
+      if (host.live !== spot) setLive(spot);
     }
   });
 
@@ -162,7 +181,8 @@ function SpotTeacher({ spot, warm, lookTargets }: { spot: SpotId; warm: boolean;
 
 export default function LandingStage({ onLive, onSlow }: { onLive: () => void; onSlow: () => void }) {
   const [warm, setWarm] = useState(false);
-  const [activeKey, onScreenKey] = useHost().split("|");
+  const [activeKey, onScreenKey, greetKey] = useHost().split("|");
+  const greet = Number(greetKey);
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
   const probe = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("probe"), []);
@@ -190,7 +210,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onWarm={onWarm}>
-          <SpotTeacher key={active} spot={active} warm={warm} lookTargets={LOOK[active]} />
+          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
         </Warmed>
       </Suspense>
       {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is

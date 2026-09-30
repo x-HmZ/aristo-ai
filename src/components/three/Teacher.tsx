@@ -374,6 +374,11 @@ export interface TeacherDriver {
   viseme?: () => { viseme: string; intensity: number } | null;
   /** Load the clip packs (the store path waits for `sceneReady`). */
   clipPacks: boolean;
+  /**
+   * Where the viewer is, in world space, when the director looks at the student (V8.3b: the landing's hero follows
+   * the reader's pointer). Unset or null: the camera, as in a lesson.
+   */
+  viewer?: () => Vector3 | null;
 }
 
 interface TeacherProps {
@@ -836,9 +841,11 @@ export function Teacher({
     applyOverlay(out.overlay, now);
     // The old auto-revert: hand a finished nod or shake back to the store. A driver owns its own signals.
     if (!drive && out.release && store.gesture === out.release) store.setGesture("idle");
-    applyLook(out.look, state.camera.position, delta);
+    // "Look at the student" means the camera, unless a driver says where the viewer is (the landing's pointer).
+    const viewer = drive?.viewer?.() ?? state.camera.position;
+    applyLook(out.look, viewer, delta);
     faceRef.current!.hint = out.face;
-    applyEyes(out.look, state.camera.position, now, delta);
+    applyEyes(out.look, viewer, now, delta);
   });
 
   // Morph targets per frame

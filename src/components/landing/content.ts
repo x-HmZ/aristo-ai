@@ -20,6 +20,8 @@ export const HERO = {
   eyebrow: "Grades 6 to 8",
   lines: ["One teacher.", "One student.", "Every kid."],
   sub: "Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.",
+  /** Under Jake on the live path: how to play with him. */
+  hint: "He follows your pointer. Tap him to say hi.",
 } as const;
 
 export const IDEA = {

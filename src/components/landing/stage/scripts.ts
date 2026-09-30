@@ -16,6 +16,12 @@ export const IDLE: DirectorSignals = {
 
 /** A wave waits this long after the teacher appears, so it is seen, not caught mid-fade. */
 export const WAVE_AFTER_S = 0.6;
+/**
+ * The plane the reader's pointer is taken to be on, for where Jake looks (world z; he stands at -3, the eye is at
+ * 0.9). Nearer him, the same pointer move turns his head further.
+ */
+export const VIEWER_Z = -0.6;
+
 /** He does not wave at the same spot twice within this (plan note 6: every entry, with a cool-down). */
 export const WAVE_COOLDOWN_S = 8;
 
@@ -89,14 +95,23 @@ export interface SpotContext {
   t: number;
   /** This visit may wave (the cool-down has passed). */
   mayWave: boolean;
-  /** A line is being spoken (the hero's caption, silent or with sound). */
+  /** A line is being spoken (silent or with sound). */
   speaking: boolean;
+  /** The hero's call to action under the reader's pointer or focus, and its reaction count (shared.hero). */
+  hover?: "try" | null;
+  seq?: number;
 }
 
 export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
   const s: DirectorSignals = { ...IDLE, isSpeaking: ctx.speaking };
   switch (spot) {
     case "hero":
+      s.sceneReady = ctx.mayWave && ctx.liveFor >= WAVE_AFTER_S;
+      // Try a lesson: the product's "your turn" (both palms offered forward), once per hover, as a new challenge
+      // segment. (Create an account earns nothing: the product's "that's right" pool can pick a one-hand offer to
+      // his left, away from the button.)
+      if (ctx.hover === "try") { s.role = "challenge_setup"; s.segmentId = `hero:try:${ctx.seq ?? 0}`; }
+      break;
     case "close":
       // The product's greeting: sceneReady's rising edge plays the wave, once per mount.
       s.sceneReady = ctx.mayWave && ctx.liveFor >= WAVE_AFTER_S;

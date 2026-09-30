@@ -53,3 +53,18 @@ describe("the heart's placement from the hand", () => {
     expect(heartBuildAt(MODEL_T.present).show).toBe(1);
   });
 });
+
+describe("the hero's reactions", () => {
+  it("offers 'your turn' once per hover of Try a lesson, as a new challenge segment", () => {
+    const a = signalsFor("hero", { ...ctx, hover: "try", seq: 3 });
+    expect(a.role).toBe("challenge_setup");
+    expect(a.segmentId).toBe("hero:try:3");
+    expect(signalsFor("hero", { ...ctx, hover: "try", seq: 4 }).segmentId).not.toBe(a.segmentId);
+  });
+  it("does nothing extra with no hover, and never outside the hero", () => {
+    const s = signalsFor("hero", { ...ctx, hover: null, seq: 5 });
+    expect(s.segmentId).toBeNull();
+    expect(s.reaction).toBeNull();
+    expect(signalsFor("close", { ...ctx, hover: "try", seq: 5 }).segmentId).toBeNull();
+  });
+});

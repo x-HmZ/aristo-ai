@@ -1,3 +1,4 @@
+import { shared } from "./shared";
 import { pickSpot, type SpotId } from "./spots";
 
 /**
@@ -74,6 +75,12 @@ export function setLive(id: SpotId | null): void {
   if (host.live) boxes.get(host.live)?.removeAttribute("data-live");
   host.live = id;
   if (id) boxes.get(id)?.setAttribute("data-live", "");
+  emit();
+}
+
+/** A fresh wave at the hero (a tap on Jake, the reader coming back): the stage remounts him there. */
+export function greetHero(): void {
+  shared.hero.greet += 1;
   emit();
 }
 
