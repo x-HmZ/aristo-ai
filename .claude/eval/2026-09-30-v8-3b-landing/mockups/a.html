@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V8.3b mockup A: Lesson Objects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mock.css">
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* Nav: a floating pill, detached from the edges, glass in the page theme. */
+  .nav-shell { position: fixed; inset: 12px 0 auto; z-index: 40; pointer-events: none; }
+  .nav {
+    pointer-events: auto; display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 8px 0 20px;
+    border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 12px 30px var(--shadow);
+  }
+  .nav .links { display: none; margin: 0 auto; gap: 4px; }
+  .nav .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--body); }
+  .nav .links a:hover { color: var(--ink); background: var(--sunk); }
+  .nav .end { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .nav .btn-primary { border-radius: 999px; }
+  @media (max-width: 639px) { .nav { padding-left: 16px; gap: 4px; } .nav .mark { height: 16px; } .nav .btn-primary { padding: 0 14px; } }
+  .only-lg { display: none; }
+  .only-sm { display: inline-grid; }
+  .sm-up { display: none !important; }
+  @media (min-width: 640px) { .sm-up { display: inline-grid !important; } }
+  @media (min-width: 1024px) { .nav .links { display: flex; } .nav .end { margin-left: 0; } .only-lg { display: inline-flex; } .only-sm { display: none; } }
+
+  /* Hero */
+  .hero { position: relative; padding: 116px 0 72px; overflow-x: clip; }
+  .hero-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 1024px) { .hero-grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 48px; } .hero { padding: 136px 0 96px; } }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  /* One sentence per line: a line is 9.6em wide at wdth 125 (8.6em at 112), measured. */
+  h1 { font-size: 36px; margin: 0; }
+  @media (min-width: 640px) { h1 { font-size: 56px; } }
+  @media (min-width: 1024px) { h1 { font-size: 48px; } }
+  @media (min-width: 1200px) { h1 { font-size: 56px; } }
+  h1 span { display: block; white-space: nowrap; }
+  .hero .lede { margin-top: 24px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  @media (max-width: 479px) { .ctas .btn { flex: 1 1 100%; } }
+
+  /* The lesson, in objects */
+  .stage { position: relative; height: 470px; }
+  @media (min-width: 640px) { .stage { height: 580px; } }
+  .stage .glow-pool { position: absolute; inset: -12% -10%; pointer-events: none; }
+  .obj { position: absolute; opacity: 0; transform: translateY(18px) rotate(var(--r, 0deg)); transition: opacity 550ms var(--ease-out), transform 550ms var(--ease-out); transition-delay: var(--d, 0ms); }
+  .ready .obj, .still .obj { opacity: 1; transform: translateY(0) rotate(var(--r, 0deg)); }
+  .obj-diagram { left: 0; top: 0; width: 70%; --r: -3deg; --d: 120ms; padding: 10px; }
+  .obj-diagram img { border-radius: 10px; aspect-ratio: 1; object-fit: cover; width: 100%; }
+  .obj-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); padding: 8px 4px 2px; }
+  .obj-label .icon { width: 15px; height: 15px; }
+  .obj-model { right: 0; top: 7%; width: 38%; --r: 3deg; --d: 300ms; padding: 10px; }
+  .display { border-radius: 10px; aspect-ratio: 4 / 5; background-color: #16181d;
+    background-image: url("../../../../public/images/landing/v3/move-1.webp"); background-size: 560% auto; background-position: 56.5% 30%; }
+  .obj-caption { left: 0; bottom: 4%; width: 100%; --d: 480ms; padding: 16px 18px 18px; }
+  @media (min-width: 640px) { .obj-diagram { width: 56%; } .obj-caption { width: 62%; bottom: 3%; } }
+  .who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .avatar { width: 32px; height: 32px; border-radius: 999px; background: var(--sunk); display: grid; place-items: center; }
+  .avatar svg { height: 18px; fill: var(--ink); }
+  .who .name { font-size: 14px; font-weight: 600; }
+  .who .wave { margin-left: auto; }
+  @media (max-width: 479px) { .who .wave { display: none; } .who .hear { margin-left: auto; } }
+  .hear { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; margin: -8px -8px -8px 4px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--body); }
+  .hear:hover { background: var(--sunk); color: var(--ink); }
+  .obj-caption .words { font-size: 17px; line-height: 1.5; font-weight: 500; margin: 0; }
+  .obj-desk { z-index: 2; right: 0; bottom: 0; width: 44%; --r: -2deg; --d: 660ms; padding: 16px 18px; display: none; background: var(--surface); }
+  @media (min-width: 640px) { .obj-desk { display: block; } }
+  .obj-desk p { margin: 6px 0 8px; font-size: 15px; line-height: 1.4; font-weight: 600; color: var(--ink); }
+  .real-under { margin-top: 14px; }
+
+  /* Mid: one lesson, five moves, as a player */
+  .moves { padding: 96px 0 112px; }
+  .moves header { max-width: 40rem; margin-bottom: 40px; }
+  .moves header .lede { margin-top: 16px; }
+  .player { display: grid; gap: 24px; }
+  @media (min-width: 1024px) { .player { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: start; } }
+  .rail { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  @media (min-width: 1024px) { .rail { flex-direction: column; margin: 0; padding: 0; overflow: visible; gap: 4px; } }
+  .move { scroll-snap-align: start; flex: none; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 12px; min-height: 48px; padding: 8px 16px 8px 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); text-align: left; }
+  @media (min-width: 1024px) { .move { border-radius: 16px; border-color: transparent; background: none; padding: 14px 16px; } .move:hover { background: var(--sunk); } }
+  .move .num { width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; font-size: 13px; font-weight: 700; background: var(--sunk); color: var(--body); }
+  .move .icon { color: var(--muted); }
+  .move .name { font-size: 16px; font-weight: 600; }
+  @media (min-width: 1024px) { .move .name { font-size: 18px; } }
+  .move .does { display: none; grid-column: 3; font-size: 15px; color: var(--body); line-height: 1.5; }
+  .move .bar { display: none; grid-column: 1 / -1; height: 2px; border-radius: 2px; background: var(--accent-text); transform-origin: left; transform: scaleX(0.62); margin-top: 6px; }
+  .move.cur .num { background: var(--accent); color: var(--accent-ink); }
+  .move.cur .icon { color: var(--accent-text); }
+  @media (min-width: 1024px) { .move.cur { background: var(--surface); border-color: var(--line); } .move.cur .does, .move.cur .bar { display: block; } }
+  .move-does-sm { font-size: 15px; color: var(--body); margin: 0; }
+  @media (min-width: 1024px) { .move-does-sm { display: none; } }
+  .screen { overflow: hidden; }
+  .screen .board { position: relative; background: linear-gradient(160deg, #2a2d33, #121418 70%); aspect-ratio: 16 / 10; }
+  .screen .board .pic { position: absolute; top: 6%; bottom: 6%; left: 50%; transform: translateX(-50%); aspect-ratio: 1; }
+  .screen .board img { width: 100%; height: 100%; border-radius: 6px; }
+  /* The lit route: the right atrium, as the line says. */
+  .screen .ring { position: absolute; width: 17%; aspect-ratio: 1; border: 3px solid #EF9A66; border-radius: 999px; left: 27.5%; top: 51%; }
+  .screen .foot { padding: 16px 20px 20px; border-top: 1px solid var(--line); }
+  .screen .foot p { margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: var(--ink); }
+</style>
+</head>
+<body>
+  <div class="nav-shell"><div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-label="Aristo home" style="display:inline-flex;min-height:44px;align-items:center"><svg class="mark" data-mark="wordmark" aria-hidden="true"></svg></a>
+      <div class="links"><a href="#lesson">How it works</a><a href="#teacher">Your teacher</a><a href="#map">The map</a><a href="#parents">For parents</a></div>
+      <div class="end">
+        <button class="icon-btn sm-up" onclick="toggleTheme()" aria-label="Switch theme"><i data-lucide="sun-moon"></i></button>
+        <a class="btn btn-ghost only-lg" href="#">Sign in</a>
+        <a class="btn btn-primary" href="#">Try a lesson</a>
+        <button class="icon-btn only-sm" aria-label="Menu"><i data-lucide="menu"></i></button>
+      </div>
+    </nav>
+  </div></div>
+
+  <main>
+    <section class="hero"><div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Grades 6 to 8</p>
+        <h1 class="display-wide"><span>One teacher.</span><span>One student.</span><span class="hl">Every kid.</span></h1>
+        <p class="lede">Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.</p>
+        <div class="ctas"><a class="btn btn-primary btn-lg" href="#"><i data-lucide="play"></i>Try a lesson</a><a class="btn btn-outline btn-lg" href="#">Create an account</a></div>
+      </div>
+      <div>
+        <div class="stage">
+          <div class="glow-pool" aria-hidden="true"></div>
+          <figure class="obj obj-diagram card e2" style="margin:0"><img src="../../../../public/demo/heart/teaching.jpg" alt="The diagram made for the heart lesson: a labelled cross-section of the heart"><figcaption class="obj-label"><i data-lucide="presentation"></i>On the board</figcaption></figure>
+          <figure class="obj obj-model card e2" style="margin:0"><div class="display" role="img" aria-label="The 3D heart model built for the lesson"></div><figcaption class="obj-label"><i data-lucide="box"></i>In the room, in 3D</figcaption></figure>
+          <div class="obj obj-desk card e2 paper"><span class="phase"><i data-lucide="target"></i>Challenge, step 4 of 5</span><p>If one of the heart's one-way valves gets damaged and doesn't close all the way, what happens to the heart's pumping efficiency, and why?</p><span class="cap">Answer out loud, or type it.</span></div>
+          <div class="obj obj-caption card e2">
+            <div class="who"><span class="avatar"><svg data-mark="column" aria-hidden="true"></svg></span><span style="display:grid;line-height:1.3"><span class="name">Jake</span><span class="phase" style="white-space:nowrap">Explain, step 2 of 5</span></span><span class="wave" id="wave"></span><button class="hear" aria-pressed="false"><i data-lucide="volume-2"></i>Hear it</button></div>
+            <p class="words" id="cap"></p>
+          </div>
+        </div>
+        <p class="real real-under">Real output from the heart demo lesson.</p>
+      </div>
+    </div></section>
+
+    <section class="moves" id="lesson"><div class="wrap">
+      <header><h2 class="h2">One Lesson, Five Moves</h2><p class="lede">Every lesson takes a topic through the same five steps. This is the heart lesson, move by move.</p></header>
+      <div class="player">
+        <div class="rail" role="tablist" aria-label="The five moves">
+          <button class="move" role="tab"><span class="num">1</span><i data-lucide="history"></i><span class="name">Activate</span><span class="does">It starts from something you already know.</span><span class="bar"></span></button>
+          <button class="move" role="tab"><span class="num">2</span><i data-lucide="audio-lines"></i><span class="name">Explain</span><span class="does">It explains the idea, then gives you a way to picture it.</span><span class="bar"></span></button>
+          <button class="move cur" role="tab" aria-selected="true"><span class="num">3</span><i data-lucide="presentation"></i><span class="name">Demonstrate</span><span class="does">It works through an example on the board, step by step.</span><span class="bar"></span></button>
+          <button class="move" role="tab"><span class="num">4</span><i data-lucide="target"></i><span class="name">Challenge</span><span class="does">It puts a question on your desk and waits for your answer.</span><span class="bar"></span></button>
+          <button class="move" role="tab"><span class="num">5</span><i data-lucide="waypoints"></i><span class="name">Connect</span><span class="does">It ties the idea to what you know and what comes next.</span><span class="bar"></span></button>
+        </div>
+        <div>
+          <p class="move-does-sm" style="margin-bottom:16px">It works through an example on the board, step by step.</p>
+          <div class="card screen e1" role="tabpanel">
+            <div class="board"><div class="pic"><img src="../../../../public/demo/heart/teaching.jpg" alt="The heart diagram, the right atrium ringed"><span class="ring" aria-hidden="true"></span></div></div>
+            <div class="foot"><span class="phase"><i data-lucide="presentation"></i>Demonstrate, step 3 of 5</span><p>Look at the diagram: blood low on oxygen flows into the right atrium first.</p></div>
+          </div>
+          <p class="real" style="margin-top:12px">Real output from the heart demo lesson. Plays on its own; pick a move to jump to it.</p>
+        </div>
+      </div>
+    </div></section>
+  </main>
+<script>
+  window.init = function () { caption(document.getElementById("cap"), 18, 11); wave(document.getElementById("wave"), 14); };
+</script>
+</body>
+</html>

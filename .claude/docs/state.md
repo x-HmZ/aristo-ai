@@ -2,6 +2,44 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
+
+- **Direction E, "Jake Presents"** (`mockups/e.html`, `shots/sheet-e.webp`): A's page. Jake appears on his own in
+  each section beside its short motion graphic, and does something with it. The room is one "Immersive" section with
+  a camera tour. Nothing is pinned or scrubbed.
+- **The plan:** `.claude/plans/V8.3b-landing-plan.md`. Round 3 at the top is the direction and the two hard
+  requirements; sections 5 to 8 give the perf plan, the notes, what is kept and deleted, and the build order.
+- **Hard requirements (Hmz):**
+  - nothing may look wrong (the mockup's slim hero Jake was the capture framing; the build renders the product's
+    `Teacher`, compared side by side with the classroom render);
+  - gestures land on real things at the right scale, placed from Jake's hand bone at the gesture's peak and verified
+    with peak frames.
+- **Already done:** note 7, the face (54f15a6); note 8, the paper (cc03e22).
+- **Next session:** start at plan section 8, step 2. Build a section at a time, and show Hmz the first live sections
+  (nav, hero, the model build) before the rest. Evidence goes in `.claude/eval/2026-09-30-v8-3b-landing/` (its
+  README lists the scripts).
+
+## 2026-09-30 - V8.3b: direction D (A's page + the V8.3 immersion) mocked; face and desk paper done
+
+- Round 2 (Hmz): A's style plus B's teacher as a main part of the look, with the V8.3 immersion but none of its UX.
+  D is mocked (`mockups/d.html`, `shots/sheet-d.png`). No tilted cards. The Idea keeps its own section.
+- Committed: 54f15a6 (resting face smile 0.8 and lids 0.12, app-wide, gain-scaled; Jake and MJ checked in
+  `face/pair-sheet.png`) and cc03e22 (the placeholder paper removed from the classroom). Tests 485, lint 0 errors
+  and 10 warnings.
+- **Next:** Hmz's go on D and the desk-card question (plan section 9), then the build order in plan section 8.
+
+## 2026-09-30 - V8.3b planned: waiting for Hmz to pick a direction (no product code yet)
+
+- Branch `dev/v8-3b-landing` from `origin/dev/v8-3-landing` (93e913a), upstream unset.
+- Plan: `.claude/plans/V8.3b-landing-plan.md`, covering the research with links, three directions (A Lesson Objects,
+  recommended; B The Lit Window; C Line and Light), the section list with motion, where Jake appears, the perf plan,
+  the 8 notes, and 4 questions.
+- Evidence in `.claude/eval/2026-09-30-v8-3b-landing/`: `mockups/` (real HTML on the tokens, and `shots/sheet-*.png`
+  at 1280 and 360, light and dark) and `face/sheet.png` (note 7, five idle faces).
+- `scripts/`: `mockups.cjs`, `sheets.cjs`, `face.cjs`, `measure.cjs`, `overflow.cjs`.
+- Dev harness only: `/dev/avatar-lab` reads `?who=&view=&clip=&smile=&lid=&blink=0`.
+- **Next:** Hmz answers the plan's section 10, then the build order in section 9.
+
 ## 2026-09-30 - V8.3 reviewed by Hmz: redo the landing as a website (next session; PR #18 not merged)
 
 Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new session, as V8.3b.

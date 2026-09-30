@@ -1,0 +1,94 @@
+/* V8.3b direction mockups: the app's tokens (globals.css) as hex, so the mockups read exactly as the build will.
+   Light is :root; dark is [data-theme="dark"]. Nothing here ships. */
+:root {
+  --bg: #F3F4F6; --surface: #FCFCFD; --sunk: #EAECF0; --line: #DCDFE5;
+  --ink: #0E1117; --body: #3E4452; --muted: #5A6170;
+  --accent: #F97B2F; --accent-hover: #FA8C47; --accent-ink: #3D2110; --accent-text: #A94C1B;
+  --tint: #F4EAE3; --tint-line: #E6D3C6;
+  --glow: 180 83 31; --glow-strength: 0.1; --shadow: rgb(14 17 23 / 0.14);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  --bg: #0E1117; --surface: #151922; --sunk: #0B0D12; --line: #252B36;
+  --ink: #ECEDEF; --body: #B7BDC7; --muted: #8F97A4;
+  --accent: #E98A52; --accent-hover: #F0A070; --accent-ink: #2A160A; --accent-text: #EF9A66;
+  --tint: #211A17; --tint-line: #3A2C24;
+  --glow: 233 138 82; --glow-strength: 0.22; --shadow: rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+/* The desk card is an object in the lit room: always the light values (.theme-paper). */
+.paper {
+  --surface: #FCFCFD; --ink: #0E1117; --body: #3E4452; --muted: #5A6170; --line: #DCDFE5; --accent-text: #A94C1B;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Geist", system-ui, sans-serif; font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 768px) { .wrap { padding: 0 32px; } }
+
+.display-wide {
+  font-family: "Archivo", "Geist", sans-serif; font-variation-settings: "wdth" 125; font-stretch: 125%;
+  text-transform: uppercase; font-weight: 800; letter-spacing: -0.02em; line-height: 0.98;
+}
+@media (max-width: 639px) { .display-wide { font-variation-settings: "wdth" 112; font-stretch: 112%; } }
+.hl { color: var(--accent-text); }
+.h2 { font-size: 30px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650; margin: 0; }
+@media (min-width: 768px) { .h2 { font-size: 44px; } }
+.lede { color: var(--body); font-size: 17px; line-height: 1.6; max-width: 34rem; margin: 0; }
+.muted { color: var(--muted); }
+.cap { font-size: 13px; line-height: 1.45; color: var(--muted); }
+
+/* Buttons: control radius 10, 44px minimum; primary is the accent fill with brown ink. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px;
+  border-radius: 10px; font-size: 15px; font-weight: 600; white-space: nowrap;
+  transition: background-color 120ms, transform 120ms;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { color: var(--body); }
+.btn-ghost:hover { color: var(--ink); }
+.btn-outline { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.btn-lg { min-height: 52px; padding: 0 24px; font-size: 16px; font-weight: 700; }
+.icon-btn {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: var(--body);
+}
+.icon-btn:hover { background: var(--sunk); color: var(--ink); }
+.icon { width: 18px; height: 18px; stroke-width: 2; }
+
+.mark { display: block; height: 20px; width: auto; fill: currentColor; }
+.mark .lit { fill: var(--accent); }
+
+/* Shared lesson artefacts. */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.e1 { box-shadow: 0 12px 30px var(--shadow); }
+.e2 { box-shadow: 0 30px 70px var(--shadow), 0 6px 18px var(--shadow); }
+.phase { font-size: 13px; font-weight: 600; color: var(--accent-text); display: inline-flex; gap: 6px; align-items: center; }
+.words .w { color: var(--muted); transition: color 160ms; }
+.words .w.on { color: var(--ink); }
+.words .w.now { color: var(--accent-text); }
+.wave { display: flex; align-items: center; gap: 3px; height: 20px; }
+.wave i { display: block; width: 3px; border-radius: 2px; background: var(--accent-text); opacity: 0.85; }
+.real { font-size: 13px; color: var(--muted); }
+
+.glow-pool {
+  background: radial-gradient(55% 60% at 55% 55%, rgb(var(--glow) / var(--glow-strength)) 0%,
+    rgb(var(--glow) / calc(var(--glow-strength) * 0.3)) 45%, transparent 72%);
+}
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

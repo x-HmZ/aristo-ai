@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V8.3b mockup E: Jake Presents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mock.css">
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* Nav: A's floating pill. */
+  .nav-shell { position: fixed; inset: 12px 0 auto; z-index: 40; pointer-events: none; }
+  .nav { pointer-events: auto; display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 8px 0 20px; border: 1px solid var(--line); border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 12px 30px var(--shadow); }
+  .nav .links { display: none; margin: 0 auto; gap: 4px; }
+  .nav .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--body); }
+  .nav .links a:hover, .nav .links a.on { color: var(--ink); background: var(--sunk); }
+  .nav .end { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .nav .btn-primary { border-radius: 999px; }
+  .only-lg { display: none; } .only-sm { display: inline-grid; }
+  .sm-up { display: none !important; }
+  @media (min-width: 640px) { .sm-up { display: inline-grid !important; } }
+  @media (min-width: 1024px) { .nav .links { display: flex; } .nav .end { margin-left: 0; } .only-lg { display: inline-flex; } .only-sm { display: none; } }
+  @media (max-width: 639px) { .nav { padding-left: 16px; gap: 4px; } .nav .mark { height: 16px; } .nav .btn-primary { padding: 0 14px; } }
+
+  /* Jake as the presenter: head to mid-thigh, fading into a warm pool of light on the page. No room. */
+  .presenter { position: absolute; bottom: 0; pointer-events: none; }
+  .presenter img { display: block; height: 100%; width: auto; }
+  .pool { position: absolute; pointer-events: none; border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(var(--glow) / calc(var(--glow-strength) * 1.6)), rgb(var(--glow) / calc(var(--glow-strength) * 0.4)) 55%, transparent); }
+  /* The frame that crops him also fades him out, so the cut is never a hard edge in either theme. */
+  .clip { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%); mask-image: linear-gradient(to bottom, #000 62%, transparent 96%); }
+
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  h1 { font-size: 36px; margin: 0; }
+  @media (min-width: 640px) { h1 { font-size: 56px; } }
+  @media (min-width: 1024px) { h1 { font-size: 48px; } }
+  @media (min-width: 1200px) { h1 { font-size: 56px; } }
+  h1 span { display: block; white-space: nowrap; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  @media (max-width: 479px) { .ctas .btn { flex: 1 1 100%; } }
+  .two { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 1024px) { .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; } }
+  section { position: relative; }
+
+  /* Hero */
+  .hero { padding: 108px 0 72px; overflow-x: clip; }
+  @media (min-width: 1024px) { .hero { padding: 112px 0 88px; } }
+  .hero .lede { margin-top: 24px; }
+  .hero-stage { position: relative; height: 470px; }
+  @media (min-width: 640px) { .hero-stage { height: 600px; } }
+  .hero-stage .pool { left: 8%; right: 8%; bottom: -6%; height: 60%; }
+  .hero-stage .presenter { left: 50%; transform: translateX(-58%); height: 128%; top: 0; bottom: auto; }
+  .hero-stage .clip { height: 100%; }
+  .say { position: absolute; right: 0; bottom: 6%; width: min(360px, 78%); padding: 14px 16px 16px; }
+  @media (max-width: 639px) { .say { position: relative; width: auto; margin: -64px 0 0; } }
+  .who { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .who .name { font-size: 14px; font-weight: 600; }
+  .hear { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; margin: -8px -8px -8px auto; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--body); }
+  .hear:hover { background: var(--sunk); color: var(--ink); }
+  .words { font-size: 16px; line-height: 1.5; font-weight: 500; margin: 0; }
+
+  /* It builds a model: Jake presents; the lesson's picture lifts into points and settles into the real model. */
+  .feature { padding: 96px 0; }
+  .feature .lede { margin-top: 16px; }
+  .model-stage { position: relative; height: 440px; }
+  @media (min-width: 640px) { .model-stage { height: 520px; } }
+  .model-stage .clip { position: absolute; inset: 0; }
+  .model-stage .pool { left: 34%; right: -4%; bottom: 2%; height: 70%; }
+  .model-stage .presenter { left: 0; height: 122%; top: 2%; bottom: auto; }
+  @media (max-width: 639px) { .model-stage .presenter { left: -8%; } }
+  .heart { position: absolute; right: 2%; top: 20%; width: 58%; aspect-ratio: 1; }
+  .heart img { width: 100%; height: 100%; }
+  /* The build, part way: points still settling onto the model's outline. */
+  .pts { position: absolute; inset: 0; background-image: radial-gradient(circle, rgb(239 154 102 / 0.95) 1.6px, transparent 2.2px); background-size: 14px 14px;
+    -webkit-mask-image: radial-gradient(48% 52% at 52% 56%, transparent 58%, #000 72%, transparent 100%); mask-image: radial-gradient(48% 52% at 52% 56%, transparent 58%, #000 72%, transparent 100%); }
+  .src { position: absolute; right: 0; top: 0; width: 132px; padding: 8px; }
+  .src img { border-radius: 8px; aspect-ratio: 1; object-fit: cover; }
+  .src .cap { display: block; padding: 6px 2px 0; font-size: 12px; }
+  .arc { position: absolute; right: 60px; top: 150px; width: 120px; height: 90px; overflow: visible; }
+  .turn { position: absolute; right: 12%; bottom: 4%; }
+  .rail3 { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 14px; font-weight: 600; color: var(--body); }
+  .pill .icon { width: 16px; height: 16px; }
+  .pill.done { color: var(--ink); } .pill.done .icon { color: var(--accent-text); }
+  .pill.now { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .under-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 24px; }
+
+  /* It remembers: the curve in plain words, Jake tapping the moments it comes back; the map below. */
+  .remember header { max-width: 40rem; margin-bottom: 32px; }
+  .remember header .lede { margin-top: 16px; }
+  .curve-wrap { position: relative; display: grid; gap: 16px; }
+  @media (min-width: 1024px) { .curve-wrap { grid-template-columns: 240px minmax(0, 1fr); gap: 0; align-items: end; } }
+  .jake-col { position: relative; height: 300px; }
+  @media (min-width: 1024px) { .jake-col { height: 460px; margin-right: -40px; z-index: 2; } }
+  @media (max-width: 1023px) { .jake-col { display: none; } }
+  .jake-col .pool { left: -10%; right: -20%; bottom: -8%; height: 55%; }
+  .jake-col .presenter { left: 0; height: 118%; top: 0; bottom: auto; }
+  .curve-card { padding: 24px 24px 20px; }
+  @media (min-width: 1024px) { .curve-card { padding: 28px 32px 24px 64px; } }
+  .curve-card h3, .map-card h3 { margin: 0; font-size: 18px; font-weight: 650; }
+  .plot { position: relative; margin-top: 20px; }
+  .plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .note { position: absolute; transform: translate(-50%, 0); font-size: 13px; font-weight: 600; color: var(--ink); background: var(--surface); padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+  .note.acc { color: var(--accent-text); }
+  @media (max-width: 639px) { .note.wide { display: none; } }
+  .yl { position: absolute; left: 0; font-size: 12px; color: var(--muted); transform: translateY(-50%); }
+  .axis { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 8px; padding-left: 0; }
+  .map-card { margin-top: 16px; padding: 20px 24px; display: grid; gap: 12px; }
+  @media (min-width: 1024px) { .map-card { margin-left: 240px; grid-template-columns: 220px minmax(0, 1fr); align-items: center; } }
+  .strip { position: relative; height: 130px; }
+  .strip svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+  /* Immersive: the room, edge to edge; the camera tours it. Solid cards in the page theme. */
+  .immersive { padding: 96px 0 0; }
+  .immersive header { max-width: 40rem; margin-bottom: 32px; }
+  .immersive header .lede { margin-top: 16px; }
+  .room { position: relative; overflow: hidden; background: #cfd6dd; aspect-ratio: 4 / 5; }
+  .room img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 50%; }
+  @media (min-width: 768px) { .room { aspect-ratio: auto; height: min(760px, 92svh); } .room img { object-position: 50% 45%; } }
+  .tour { position: relative; z-index: 2; margin: -44px 8px 0; padding: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+  @media (min-width: 768px) { .tour { position: absolute; left: 32px; bottom: 32px; margin: 0; flex-wrap: nowrap; } }
+  .shot { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--body); white-space: nowrap; }
+  .shot .icon { width: 16px; height: 16px; }
+  .shot.on { background: var(--sunk); color: var(--ink); } .shot.on .icon { color: var(--accent-text); }
+  .tour .sep { width: 1px; height: 24px; background: var(--line); margin: 0 4px; }
+  @media (max-width: 767px) { .tour { display: grid; grid-template-columns: 1fr 1fr; } .tour .sep, .tour .drag { display: none; } .tour .icon-btn { justify-self: start; } }
+  .imm-foot { padding: 16px 0 96px; }
+</style>
+</head>
+<body>
+  <div class="nav-shell"><div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-label="Aristo home" style="display:inline-flex;min-height:44px;align-items:center"><svg class="mark" data-mark="wordmark" aria-hidden="true"></svg></a>
+      <div class="links"><a href="#how">How it works</a><a href="#map">The map</a><a href="#immersive">Immersive</a><a href="#parents">For parents</a></div>
+      <div class="end">
+        <button class="icon-btn sm-up" onclick="toggleTheme()" aria-label="Switch theme"><i data-lucide="sun-moon"></i></button>
+        <a class="btn btn-ghost only-lg" href="#">Sign in</a>
+        <a class="btn btn-primary" href="#">Try a lesson</a>
+        <button class="icon-btn only-sm" aria-label="Menu"><i data-lucide="menu"></i></button>
+      </div>
+    </nav>
+  </div></div>
+
+  <main>
+    <section class="hero"><div class="wrap two">
+      <div>
+        <p class="eyebrow">Grades 6 to 8</p>
+        <h1 class="display-wide"><span>One teacher.</span><span>One student.</span><span class="hl">Every kid.</span></h1>
+        <p class="lede">Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.</p>
+        <div class="ctas"><a class="btn btn-primary btn-lg" href="#"><i data-lucide="play"></i>Try a lesson</a><a class="btn btn-outline btn-lg" href="#">Create an account</a></div>
+      </div>
+      <div>
+        <div class="hero-stage">
+          <div class="pool" aria-hidden="true"></div>
+          <div class="clip"><div class="presenter"><img src="jake/wave.webp" alt="Jake, your teacher, waves hello"></div></div>
+          <div class="say card e2">
+            <div class="who"><span class="name">Jake</span><span class="phase">Explain</span><button class="hear" aria-pressed="false"><i data-lucide="volume-2"></i>Hear it</button></div>
+            <p class="words" id="cap"></p>
+            <p class="real" style="margin:8px 0 0">Real output from the heart demo lesson.</p>
+          </div>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="feature" id="how"><div class="wrap two">
+      <div class="model-stage">
+        <div class="pool" aria-hidden="true"></div>
+        <div class="clip"><div class="presenter"><img src="jake/present.webp" alt="Jake presents the model"></div></div>
+        <div class="heart"><img src="jake/heart.webp" alt="The 3D heart model built for the lesson"><span class="pts" aria-hidden="true"></span></div>
+        <svg class="arc" viewBox="0 0 120 90" aria-hidden="true"><path d="M118 2 C 90 10, 60 40, 8 86" fill="none" stroke="var(--accent-text)" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/></svg>
+        <figure class="src card e1" style="margin:0"><img src="../../../../public/demo/heart/source.jpg" alt="The picture the model was made from"><figcaption class="cap">The picture first</figcaption></figure>
+        <button class="btn btn-outline turn e1"><i data-lucide="rotate-3d"></i>Turn it</button>
+      </div>
+      <div>
+        <h2 class="h2">It Builds a Model You Can Turn</h2>
+        <p class="lede">When a topic has a shape, the lesson's picture becomes a 3D model in the room. Drag it to turn it.</p>
+        <div class="rail3"><span class="pill done"><i data-lucide="image"></i>The picture</span><span class="pill now"><i data-lucide="scan"></i>The points</span><span class="pill"><i data-lucide="box"></i>The model</span></div>
+        <div class="under-row"><button class="btn btn-ghost"><i data-lucide="rotate-ccw"></i>Replay</button></div>
+        <p class="real" style="margin-top:8px">The picture and the model are real output from the heart demo lesson. The build between them is an illustration.</p>
+      </div>
+    </div></section>
+
+    <section class="feature remember" id="map"><div class="wrap">
+      <header><h2 class="h2">It Remembers What You Know</h2><p class="lede">Every concept comes back just before you would forget it, and the next lesson starts from what you have mastered.</p></header>
+      <div class="curve-wrap">
+        <div class="jake-col"><div class="pool" aria-hidden="true"></div><div class="clip" style="height:100%"><div class="presenter"><img src="jake/step.webp" alt=""></div></div></div>
+        <div class="card curve-card e1">
+          <h3>One Concept, Three Weeks</h3>
+          <div class="plot" id="plot"></div>
+          <div class="axis"><span>Today</span><span>1 week</span><span>2 weeks</span><span>3 weeks</span></div>
+        </div>
+      </div>
+      <div class="card map-card">
+        <div><h3>Your Map</h3><p class="cap" style="margin:4px 0 0">A real course, its first 20 concepts. Lit ones are mastered; the ringed one is next.</p></div>
+        <div class="strip" id="strip" aria-hidden="true"></div>
+      </div>
+      <p class="real" style="margin-top:12px">Example learner. The map is a real course's concepts; the progress is illustrative.</p>
+    </div></section>
+
+    <section class="immersive" id="immersive">
+      <div class="wrap"><header><h2 class="h2">Step Into the Classroom</h2><p class="lede">Everything above, together in one room. Look around while your teacher teaches the heart.</p></header></div>
+      <div class="room">
+        <img src="../../../../public/images/landing/v3/move-1.webp" alt="The 3D classroom: Jake, the heart model and the diagram">
+        <div class="tour card e2" role="tablist" aria-label="Where the camera looks">
+          <button class="shot on" role="tab" aria-selected="true"><i data-lucide="user-round"></i>Your teacher</button>
+          <button class="shot" role="tab"><i data-lucide="presentation"></i>The board</button>
+          <button class="shot" role="tab"><i data-lucide="box"></i>The model</button>
+          <button class="shot" role="tab"><i data-lucide="target"></i>Your desk</button>
+          <span class="sep" aria-hidden="true"></span>
+          <span class="shot drag" aria-hidden="true"><i data-lucide="move"></i>Drag to look around</span>
+          <button class="icon-btn" aria-label="Pause the tour"><i data-lucide="pause"></i></button>
+        </div>
+      </div>
+      <div class="wrap imm-foot"><p class="real" style="margin:0">Live 3D, the product's own classroom. The lesson in it is the real heart demo lesson.</p></div>
+    </section>
+  </main>
+<script>
+  window.init = function () {
+    caption(document.getElementById("cap"), 18, 11);
+
+    // The curve: one concept over 21 days, reviews on days 2, 6 and 13 (illustrative), with notes in plain words.
+    var W = 640, H = 260, top = 0.08, bot = 0.92, reviews = [2, 6, 13], S = [1.6, 4, 9, 20], d = "", t0 = 0, k = 0;
+    var X = function (day) { return day / 21 * W; }, Y = function (r) { return H * (top + (1 - r) * (bot - top)); };
+    for (var day = 0; day <= 21.001; day += 0.1) {
+      if (k < reviews.length && day >= reviews[k]) { t0 = reviews[k]; k++; d += " L" + X(day).toFixed(1) + " " + Y(1).toFixed(1); }
+      d += (d ? " L" : "M") + X(day).toFixed(1) + " " + Y(Math.exp(-(day - t0) / S[k])).toFixed(1);
+    }
+    var grid = [1, 0].map(function (r) { return '<line x1="0" x2="' + W + '" y1="' + Y(r) + '" y2="' + Y(r) + '" stroke="var(--line)"/>'; }).join("");
+    var dots = [0].concat(reviews).map(function (r, i) { return '<circle cx="' + X(r) + '" cy="' + Y(1) + '" r="' + (i ? 6 : 5) + '" fill="' + (i ? "var(--accent-text)" : "var(--surface)") + '" stroke="var(--accent-text)" stroke-width="2"/>'; }).join("");
+    var plot = document.getElementById("plot");
+    plot.innerHTML = '<svg viewBox="0 -10 ' + W + " " + (H + 10) + '" role="img" aria-label="Memory of one concept over three weeks: it fades, each review brings it back, and it fades more slowly each time">' + grid +
+      '<path d="' + d + '" fill="none" stroke="var(--accent-text)" stroke-width="3" stroke-linejoin="round"/>' + dots + "</svg>";
+    var pct = function (day, r) { return "left:" + (X(day) / W * 100) + "%;top:" + ((Y(r) + 10) / (H + 10) * 100) + "%"; };
+    plot.insertAdjacentHTML("beforeend",
+      '<span class="note wide" style="' + pct(0.9, 1) + ';transform:translate(-20%,-150%)">You learn it</span>' +
+      '<span class="note" style="' + pct(1.6, 0.36) + ';transform:translate(-30%,10px)">It starts to fade</span>' +
+      '<span class="note acc" style="' + pct(6, 1) + ';transform:translate(-50%,-150%)">It comes back</span>' +
+      '<span class="note" style="' + pct(16.5, 0.84) + ';transform:translate(-50%,16px)">Each time, it lasts longer</span>');
+
+    // The real course map as a strip.
+    var kg = DATA.kg, el = document.getElementById("strip"), pos = {};
+    kg.nodes.forEach(function (n, i) { pos[n.id] = { x: 2 + n.x * 96, y: 10 + n.y * 80, i: i }; });
+    el.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' + kg.edges.map(function (e) { var a = pos[e[0]], b = pos[e[1]], lit = a.i < 11 && b.i < 11;
+      return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="' + (lit ? "var(--accent-text)" : "var(--line)") + '" stroke-width="' + (lit ? 1.8 : 1.3) + '" vector-effect="non-scaling-stroke"/>'; }).join("") + "</svg>" +
+      kg.nodes.map(function (n, i) { var p = pos[n.id]; var st = i < 11 ? "background:var(--accent-text);border-color:var(--accent-text)" : i === 11 ? "background:var(--surface);border:2px solid var(--accent-text);box-shadow:0 0 0 5px rgb(var(--glow) / 0.25)" : "background:var(--surface)";
+        return '<span style="position:absolute;left:' + p.x + "%;top:" + p.y + '%;width:12px;height:12px;margin:-6px;border-radius:99px;border:1.5px solid var(--line);' + st + '"></span>'; }).join("");
+  };
+</script>
+</body>
+</html>
