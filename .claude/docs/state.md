@@ -15,7 +15,13 @@ _Update this at the end of every significant session: done / next / blockers, co
   four links; the hero's round of lines enters at Explain.
 - **Open:** one 100 to 150 ms frame at stage start-up; the 3D picture card is a plain white square (source.jpg);
   `scroll.ts`, `timeline.ts` and `Diagram.tsx` stay until the sections that reuse them.
-- **Next:** Hmz reviews the sheet; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
+- **Hmz's review (round 2), done in f84e1dd and 93fa477:**
+  - The hero is a hello: Jake follows the pointer, gives "your turn" on Try a lesson, and waves on a tap or when
+    the reader comes back. No lesson card.
+  - The model build starts from the infographic.
+  - Topics: volcano for the ideas and the picture, the heart for the model, the volcano for Immersive; Five Moves in
+    plain words. Memory: `landing_features_not_a_lesson.md`.
+- **Next:** Hmz's go on round 2; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
   Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
 
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
