@@ -59,11 +59,14 @@ const TOP_INSET   = 72;   // px under the top bar pills (52px pill at 12px)
 const BOTTOM_INSET = 80;  // px above the "quiz is on the desk" strip
 // The card height the fit is designed for. A real card is 330 to 450px; it scrolls inside beyond maxHeight.
 const DESIGN_HEIGHT = 450;
-// The card height the control size is judged at, and where the first control starts (measured down from the card's
-// top edge: padding, header, question). With 331 and 100 the model reproduces the measured heights of 44px controls
-// (45, 42, 63 and 53px at 1024x768, 1280x720, 1920x1080 and 1440x900) to within half a pixel.
-const CONTROL_REF_HEIGHT = 380;
+// Where the first control starts, measured down from the card's top edge (padding, header, question). With a 331px
+// card the model reproduces the measured heights of 44px controls (45, 42, 63 and 53px at 1024x768, 1280x720,
+// 1920x1080 and 1440x900) to within half a pixel.
 const FIRST_CONTROL_TOP = 100;
+// A taller card pushes its first control further from the camera, so it is judged at the tallest card in practice: an
+// answered question with its feedback banner (measured 500 to 516px at 520 wide) on the paper as it is today, and
+// DESIGN_HEIGHT (about the max-height of a narrowed card, which cannot grow past it) on a narrowed one.
+const TALLEST_CARD = 520;
 const MIN_CARD_WIDTH = 200;
 const MIN_MAX_HEIGHT = 260;
 // Below this a LANDSCAPE canvas has too little vertical room between the bars for a card worth reading (a landscape
@@ -188,11 +191,11 @@ function solve(W: number, H: number, fov: number): DeskFraming {
 
   // A control's size on screen is proportional to its CSS size, so from the first control at DESK_CONTROL_MAX the CSS
   // height that measures TARGET_PX follows. Above DESK_CONTROL_MAX the pose cannot reach 44px.
-  const need = (pose: Pose, cw: number) =>
-    Math.max(DESK_CONTROL_MIN, Math.ceil((TARGET_PX * DESK_CONTROL_MAX) / at(pose, cw, CONTROL_REF_HEIGHT).control));
+  const need = (pose: Pose, cw: number, ref: number) =>
+    Math.max(DESK_CONTROL_MIN, Math.ceil((TARGET_PX * DESK_CONTROL_MAX) / at(pose, cw, ref).control));
 
   // 1. Today's pose, if it shows the whole card.
-  const todayNeed = need(TODAY_POSE, PAPER_WIDTH);
+  const todayNeed = need(TODAY_POSE, PAPER_WIDTH, TALLEST_CARD);
   const todayFits = fits(at(TODAY_POSE, PAPER_WIDTH, DESIGN_HEIGHT));
   const today: DeskFraming = { ...TODAY, controlHeight: Math.min(todayNeed, DESK_CONTROL_MAX) };
   if (todayFits && todayNeed <= DESK_CONTROL_MAX) return today;
@@ -210,7 +213,7 @@ function solve(W: number, H: number, fov: number): DeskFraming {
     }
     return hi;
   };
-  const reaches = (cw: number) => need(slide(fitF(cw)), cw) <= DESK_CONTROL_MAX;
+  const reaches = (cw: number) => need(slide(fitF(cw)), cw, DESIGN_HEIGHT) <= DESK_CONTROL_MAX;
 
   // The widest card (up to today's) whose first control still reaches 44px with controls of DESK_CONTROL_MAX. The
   // control only shrinks as the card widens, because a wider card needs a further camera. Where even the narrowest
@@ -242,6 +245,6 @@ function solve(W: number, H: number, fov: number): DeskFraming {
 
   return {
     pos: new Vector3(...pose.pos), target: new Vector3(...pose.target), cardWidth, maxHeight,
-    controlHeight: Math.min(need(pose, cardWidth), DESK_CONTROL_MAX),
+    controlHeight: Math.min(need(pose, cardWidth, DESIGN_HEIGHT), DESK_CONTROL_MAX),
   };
 }

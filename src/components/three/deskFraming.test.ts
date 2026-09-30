@@ -61,8 +61,8 @@ describe("landscape and square canvases keep today's framing", () => {
     },
   );
 
-  it("keeps the 44px controls QuizView already has wherever they already measure 44px", () => {
-    for (const [W, H] of [[1024, 768], [1366, 768], [1440, 900], [1920, 1080], [2560, 1440]]) {
+  it("keeps the 44px controls QuizView already has where they measure 44px even on an answered card", () => {
+    for (const [W, H] of [[1440, 900], [1600, 900], [1920, 1080], [2560, 1440], [768, 1024], [820, 1180]]) {
       expect(deskFraming(W, H).controlHeight).toBe(DESK_CONTROL_MIN);
     }
   });
@@ -70,9 +70,9 @@ describe("landscape and square canvases keep today's framing", () => {
   it("makes the controls a little taller where the tilt shrinks 44px below 44px on screen", () => {
     const fr = deskFraming(1280, 720);
     expect(fr.controlHeight).toBeGreaterThan(DESK_CONTROL_MIN);
-    const p = projectDeskCard(1280, 720, TODAY_POSE, PAPER_WIDTH, 380, 40, fr.controlHeight);
+    const p = projectDeskCard(1280, 720, TODAY_POSE, PAPER_WIDTH, 520, 40, fr.controlHeight);
     expect(p.control).toBeGreaterThanOrEqual(TARGET_PX - 0.1);
-    const small = projectDeskCard(1280, 720, TODAY_POSE, PAPER_WIDTH, 380, 40, DESK_CONTROL_MIN);
+    const small = projectDeskCard(1280, 720, TODAY_POSE, PAPER_WIDTH, 520, 40, DESK_CONTROL_MIN);
     expect(small.control).toBeLessThan(TARGET_PX);
   });
 
@@ -100,7 +100,7 @@ describe("portrait canvases fit the card and reach 44px", () => {
     expect(p.left).toBeGreaterThanOrEqual(15.5);
     expect(p.right).toBeLessThanOrEqual(W - 15.5);
     // The first control, at the CSS height the framing asks for, projects to at least 44px.
-    const first = projectDeskCard(W, H, poseOf(fr), fr.cardWidth, 380, 40, fr.controlHeight);
+    const first = projectDeskCard(W, H, poseOf(fr), fr.cardWidth, 450, 40, fr.controlHeight);
     expect(first.control).toBeGreaterThanOrEqual(TARGET_PX - 0.1);
     expect(fr.controlHeight).toBeLessThanOrEqual(DESK_CONTROL_MAX);
     expect(p.control).toBeGreaterThan(0);
@@ -167,7 +167,7 @@ describe("portrait canvases fit the card and reach 44px", () => {
       expect(fr.controlHeight).toBe(DESK_CONTROL_MAX);
       expect(fr.cardWidth).toBeGreaterThanOrEqual(200);
     }
-    const first = projectDeskCard(320, 568, poseOf(deskFraming(320, 568)), deskFraming(320, 568).cardWidth, 380, 40, DESK_CONTROL_MAX);
+    const first = projectDeskCard(320, 568, poseOf(deskFraming(320, 568)), deskFraming(320, 568).cardWidth, 450, 40, DESK_CONTROL_MAX);
     expect(first.control).toBeGreaterThan(38);
   });
 
