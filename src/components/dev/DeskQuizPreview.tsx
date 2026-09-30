@@ -21,6 +21,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneProbe } from "@/components/dev/SceneProbe";
+import { useFrame } from "@react-three/fiber";
 import { useAristoStore } from "@/store/useAristoStore";
 import type { QuizQuestion } from "@/lib/agents/assessment";
 
@@ -112,6 +113,15 @@ const STUB_QUESTIONS: QuizQuestion[] = [
   },
 ];
 
+// Publishes the live camera position for the verification scripts (window.__cam), so a check can tell whether the
+// camera glided or cut to the desk framing.
+function CameraSpy() {
+  useFrame(({ camera }) => {
+    (window as unknown as { __cam?: number[] }).__cam = camera.position.toArray();
+  });
+  return null;
+}
+
 // ─── Knob — single slider row with current numeric value ─────────────────────
 
 function Knob({
@@ -196,12 +206,18 @@ export default function DeskQuizPreview() {
     );
   }, [quizActive]);
 
-  const devOverrides = useMemo(() => ({
-    deskPos:     tun.deskPos,
-    deskTarget:  tun.deskTarget,
-    paperAnchor: tun.paperAnchor,
-    lambda:      tun.lambda,
-  }), [tun]);
+  // Pass an override only for a knob that has moved, so the route shows the production framing (which follows the
+  // canvas aspect ratio) until you touch a slider.
+  const devOverrides = useMemo(() => {
+    const moved = (a: readonly number[], b: readonly number[]) => a.some((v, i) => v !== b[i]);
+    const d = DEFAULT_TUNABLES;
+    return {
+      deskPos:     moved(tun.deskPos, d.deskPos) ? tun.deskPos : undefined,
+      deskTarget:  moved(tun.deskTarget, d.deskTarget) ? tun.deskTarget : undefined,
+      paperAnchor: moved(tun.paperAnchor, d.paperAnchor) ? tun.paperAnchor : undefined,
+      lambda:      tun.lambda !== d.lambda ? tun.lambda : undefined,
+    };
+  }, [tun]);
 
   const save = () => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tun));
@@ -234,6 +250,7 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
       <div style={{ flex: 1, position: "relative" }}>
         <AristoCanvas devOverrides={devOverrides}>
           <SceneProbe />
+          <CameraSpy />
         </AristoCanvas>
         {/* Marker overlay — useful sanity reference */}
         <div style={{
