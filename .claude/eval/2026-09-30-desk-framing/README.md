@@ -37,54 +37,70 @@ Pulling back or scaling the paper multiplies the card by about 0.45 on a phone, 
 Narrowing the card alone works at 390 but not at 360x640 (39px). The flat sheet is exactly 44px but is the
 "popup over a desk" that DeskQuiz attempts 2 and 3 rejected. The shipped rule is 1 + 2b together (`ray-52-*`):
 slide the camera along today's view ray and narrow the card until the card fits the width and the first control is
-44px, with desk controls 52px tall in CSS.
+44px, with the controls made 44 to 52px tall in CSS as the tilt needs.
 
 Scripts: `options/probe-options.cjs` (the variants), `options/model-explore.cjs` and `model-solve.cjs` (the model
 before it became `deskFraming.ts`).
 
 ## Results (`before/`, `after/`)
 
-Probe stub card, light. After the change the CSS card is 363px tall in landscape (the 52px controls) against 331 before,
-which is why the landscape rects moved by 3 to 5px; the framing is the same object.
+Probe stub card, light. The CSS height is the card's content height (331px for the first question at 520 wide, 407 at
+270 wide because the text wraps). In landscape the framing is the same object as before; only the CSS height of the
+controls changed where the tilt needed it (see below).
 
-| Size | Before: card x range (visible) | Before: min control | After: card x range (visible) | After: card CSS width | After: min control |
+| Size | Before: card x range (visible) | Before: min control | After: card x range (visible) | After: card CSS box | After: min control |
 |---|---|---|---|---|---|
-| 360x640 | -119..479 (60%) | 38 | 19..341 (100%) | 255 | 48 |
-| 360x780 | -184..544 (49%) | 46 | 18..342 (100%) | 270 | 47 |
-| 390x844 | -199..589 (50%) | 50 | 18..372 (100%) | 300 | 47 |
-| 430x932 | -220..650 (50%) | 55 | 18..412 (100%) | 341 | 46 |
-| 768x1024 | -94..862 (80%) | 60 | 24..744 (100%) | 520 | 55 |
-| 1024x768 | 154..870 (100%) | 45 | 150..874 (100%) | 520 | 53 |
-| 1280x720 | 304..976 (100%) | 42 | 301..979 (100%) | 520 | 49 |
-| 1440x900 | 300..1140 (100%) | 53 | 296..1144 (100%) | 520 | 62 |
-| 1920x1080 | 456..1464 (100%) | 63 | 451..1469 (100%) | 520 | 74 |
+| 360x640 | -119..479 (60%) | 38 | 19..341 (100%) | 255 x 407 | 48 |
+| 360x780 | -184..544 (49%) | 46 | 18..342 (100%) | 270 x 407 | 47 |
+| 390x844 | -199..589 (50%) | 50 | 18..372 (100%) | 300 x 407 | 47 |
+| 430x932 | -220..650 (50%) | 55 | 18..412 (100%) | 341 x 407 | 46 |
+| 768x1024 | -94..862 (80%) | 60 | 27..741 (100%) | 520 x 331 | 47 |
+| 1024x768 | 154..870 (100%) | 45 | 152..872 (100%) | 520 x 347 | 49 |
+| 1280x720 | 304..976 (100%) | 42 | 301..979 (100%) | 520 x 359 | 48 |
+| 1440x900 | 300..1140 (100%) | 53 | 300..1140 (100%) | 520 x 331 | 53 |
+| 1920x1080 | 456..1464 (100%) | 63 | 456..1464 (100%) | 520 x 331 | 63 |
 
-- **Over every state** (9 sizes, light and dark: the probe in both rooms, /demo and the harness, first question, answered and
-  true or false; 36 probe states, 36 desk states and 72 answered states in the hosts): the card is fully inside the viewport in all of them (before: 60 host states
-  cropped), never under the top bar, the panel or the strip, the smallest desk control is 45px (before: 34), and there
-  is no horizontal overflow or panel outside the viewport (as before).
-- **Targets:** 0 controls under 44px on the desk card (before: 52 kinds, the tilted 38 to 43px ones). `check.cjs`
-  TARGETS scoped to `.aristo-paper`.
+- **Over every state** (9 sizes, light and dark: the probe in both rooms, /demo and the harness, first question,
+  answered and true or false; 36 probe states, 36 desk states and 72 answered states in the hosts): the card is fully
+  inside the viewport in all of them (before: 60 of the 108 host states cropped), never under the top bar, the panel or
+  the strip, there is no horizontal overflow, and no panel is outside the viewport (as before).
+- **Targets:** 0 controls under 44px on the desk card, in every state (before: 52 kinds, 34px at the worst). The smallest
+  is 44px (rounded to the pixel) on an answered card at 768x1024, 1024x768 and 1280x720. `check.cjs` TARGETS scoped to
+  `.aristo-paper`.
+- **Control height is an output of the fit:** `controlHeight` is 44 (what QuizView already has) at 768x1024, 1440x900 and
+  up, 48 at 1024x768, 51 at 1280x720 and 52 on phones. An answered question with its feedback banner is 500 to 536px
+  tall, which pushes its first control further from the camera, so the height is judged at that card (the first
+  version judged it at a 380px card and left 41 to 43px controls in the answered state at 1024x768 and 1280x720; the
+  first-cut fixed 52px made every landscape card 32px taller).
 - **AA:** 1,288 text nodes on the desk card in the hosts plus 468 in the probes, 0 failures, minimum 5.33 (the card's
   colours did not change since V8.4b, which measured 5.26).
 - **Landscape framing:** `deskFraming` returns the `DESK_POS` / `DESK_TARGET` objects themselves for 1024x768, 1280x720,
   1366x768, 1440x900, 1600x900, 1920x1080 and 2560x1440 (unit test, `toBe`). The browser camera reads
-  `(0, 0.133, 0.083)` at all of them, the same as the clamped constant.
+  `(0, 0.133, 0.083)` at all of them, the clamped constant. At 1440x900 and 1920x1080 the card is exactly the rect it
+  was before.
 - **Phones:** the camera slides along the same ray: 360x640 `(0, 0.07, 0.047)`, 360x780 `(0, 0.307, 0.183)`, 390x844
-  `(0, 0.413, 0.245)`, 430x932 `(0, 0.563, 0.331)`, 768x1024 `(0, 0.44, 0.26)`. The look direction is unchanged.
+  `(0, 0.413, 0.245)`, 430x932 `(0, 0.563, 0.331)`, 768x1024 `(0, 0.44, 0.26)`. The look direction is unchanged. Pixel
+  pins of these framings against the browser are in `deskFraming.test.ts`.
 - **Motion** (`after/report-probe*.json`, `motion-*`): toggling the quiz off and on samples the camera at 150ms and 3s.
-  Normal motion glides (360x780: y 0.20, z 0.43 at 150ms on the way out, settling at y 0.007, z 0.885, the lesson pose).
+  Normal motion glides (360x780: y 0.19, z 0.46 at 150ms on the way out, settling at y 0.007, z 0.885, the lesson pose).
   Under `prefers-reduced-motion` (`after-reduced/`) it cuts: `(0, 0, 0.9)` at 150ms out and the desk pose at 150ms in,
   and no animation runs in the card. The first version of the cut left the camera at the desk on the way out (the
-  hand-back check returned before applying the pose); the after numbers are with the fix.
-- **fps in the desk framing** (`/demo`, production build, uncapped, 3 x 8s medians; noise between runs is about 10%):
-  1280x720 126.8 before, 119.1 and 125.5 after; 390x844 246.2 before, 229.1 and 233.8 after; p95 frame time 5 to 6ms in
-  all.
+  hand-back check returned before applying the pose); the numbers here are with the fix.
+- **fps in the desk framing** (`/demo`, production build, uncapped, 3 x 8s medians; single runs range from 79 to 145
+  fps on this machine): 1280x720 126.8 before, 116.1 and 111.4 after; 390x844 246.2 before, 228.4 and 225.8 after; p95
+  frame time 5 to 6.6ms in every run. Nothing runs per frame that did not before: the framing is memoised per canvas
+  size (a solve is under a millisecond), and the camera writes are the same ones.
 - **Anchors** (`anchors/`, `scripts/room/verify-room.mjs probe`): the 9 probe-downs are identical except the moving mesh
   `Mesh039_1` (0.842 to 0.848), and the 3 display clicks vary with run, not with the change: the old code read 0.392 and
   0.403 on a warm server, the new 0.408 to 0.419. No `LESSON_*`, `SCENE_*`, `MODEL_*` or `PAPER_ANCHOR` value, no FOV,
   no `distanceFactor` changed.
 - **Builds:** `/` 122 kB static, `/demo` 135 kB, `/learn` 134 kB before and after (`before-build.log`, `after-build.log`).
+- **Code review** (the `code-reviewer` agent): no critical findings. Fixed: the fixed 52px controls changing every
+  landscape card (above), portrait canvases under about 550px tall falling back to the cropped framing, the 44px floor
+  on small phones (the card now goes down to 200px, best effort under about 330px wide), stale comments, `useThree`
+  selectors, a capped cache, and the missing tests (25 to 37 new). Left as they are: a resize mid-quiz glides the camera
+  for about a second while the card changes width at once, and `matchMedia().addEventListener` is not in Safari before
+  14.
 
 ## Known gap
 

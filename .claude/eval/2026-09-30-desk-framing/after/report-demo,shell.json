@@ -469,27 +469,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 24,
-    "y": 328,
-    "r": 744,
-    "b": 731,
-    "w": 720,
-    "h": 403
+    "x": 27,
+    "y": 343,
+    "r": 741,
+    "b": 710,
+    "w": 715,
+    "h": 367
    },
-   "visible": 1,
+   "visible": 0.999,
    "margins": {
-    "left": 24,
-    "right": 24,
-    "top": 328,
-    "bottom": 293
+    "left": 27,
+    "right": 27,
+    "top": 343,
+    "bottom": 314
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 55,
-   "minW": 560,
+   "minH": 47,
+   "minW": 562,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -504,10 +504,10 @@
     ],
     "panelInside": true,
     "card": [
-     24,
-     328,
-     744,
-     731
+     27,
+     343,
+     741,
+     710
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -547,9 +547,9 @@
    "cssMaxH": "452px",
    "cssH": 452,
    "scrolls": true,
-   "controls": 4,
-   "minH": 52,
-   "minW": 549,
+   "controls": 5,
+   "minH": 44,
+   "minW": 227,
    "underBar": false,
    "cam": null
   },
@@ -557,26 +557,26 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 37,
-    "y": 405,
-    "r": 731,
-    "b": 630,
-    "w": 693,
-    "h": 225
+    "x": 38,
+    "y": 407,
+    "r": 730,
+    "b": 628,
+    "w": 692,
+    "h": 220
    },
-   "visible": 1.001,
+   "visible": 1.005,
    "margins": {
-    "left": 37,
-    "right": 37,
-    "top": 405,
-    "bottom": 394
+    "left": 38,
+    "right": 38,
+    "top": 407,
+    "bottom": 396
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 60,
+   "minH": 55,
    "minW": 285,
    "underBar": false,
    "cam": null
@@ -585,27 +585,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 150,
-    "y": 208,
-    "r": 874,
-    "b": 604,
-    "w": 724,
-    "h": 396
+    "x": 152,
+    "y": 215,
+    "r": 872,
+    "b": 593,
+    "w": 720,
+    "h": 378
    },
    "visible": 1,
    "margins": {
-    "left": 150,
-    "right": 150,
-    "top": 208,
-    "bottom": 164
+    "left": 152,
+    "right": 152,
+    "top": 215,
+    "bottom": 175
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 347,
    "scrolls": false,
    "controls": 4,
-   "minH": 53,
-   "minW": 545,
+   "minH": 49,
+   "minW": 546,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -620,10 +620,10 @@
     ],
     "panelInside": true,
     "card": [
-     150,
-     208,
-     874,
-     604
+     152,
+     215,
+     872,
+     593
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -645,27 +645,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 127,
-    "y": 133,
-    "r": 897,
-    "b": 731,
-    "w": 769,
-    "h": 597
+    "x": 130,
+    "y": 141,
+    "r": 894,
+    "b": 716,
+    "w": 764,
+    "h": 574
    },
-   "visible": 1.003,
+   "visible": 1.002,
    "margins": {
-    "left": 127,
-    "right": 127,
-    "top": 133,
-    "bottom": 37
+    "left": 130,
+    "right": 130,
+    "top": 141,
+    "bottom": 52
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 521,
    "scrolls": false,
    "controls": 5,
-   "minH": 48,
-   "minW": 232,
+   "minH": 44,
+   "minW": 230,
    "underBar": false,
    "cam": null
   },
@@ -674,26 +674,26 @@
    "vh": 768,
    "card": {
     "x": 168,
-    "y": 281,
+    "y": 283,
     "r": 856,
-    "b": 501,
-    "w": 688,
-    "h": 220
+    "b": 499,
+    "w": 687,
+    "h": 216
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 168,
     "right": 168,
-    "top": 281,
-    "bottom": 267
+    "top": 283,
+    "bottom": 269
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 59,
-   "minW": 282,
+   "minH": 55,
+   "minW": 281,
    "underBar": false,
    "cam": null
   },
@@ -702,25 +702,25 @@
    "vh": 720,
    "card": {
     "x": 301,
-    "y": 195,
+    "y": 197,
     "r": 979,
-    "b": 566,
-    "w": 679,
-    "h": 371
+    "b": 563,
+    "w": 678,
+    "h": 367
    },
-   "visible": 0.999,
+   "visible": 0.997,
    "margins": {
     "left": 301,
     "right": 301,
-    "top": 195,
-    "bottom": 154
+    "top": 197,
+    "bottom": 157
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 359,
    "scrolls": false,
    "controls": 4,
-   "minH": 49,
+   "minH": 48,
    "minW": 511,
    "underBar": false,
    "cam": null,
@@ -737,9 +737,9 @@
     "panelInside": true,
     "card": [
      301,
-     195,
+     197,
      979,
-     566
+     563
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -762,25 +762,25 @@
    "vh": 720,
    "card": {
     "x": 280,
-    "y": 125,
+    "y": 127,
     "r": 1000,
-    "b": 685,
-    "w": 721,
-    "h": 560
+    "b": 682,
+    "w": 720,
+    "h": 555
    },
-   "visible": 0.999,
+   "visible": 1,
    "margins": {
     "left": 280,
     "right": 280,
-    "top": 125,
-    "bottom": 35
+    "top": 127,
+    "bottom": 38
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 536,
    "scrolls": false,
    "controls": 5,
-   "minH": 45,
+   "minH": 44,
    "minW": 217,
    "underBar": false,
    "cam": null
@@ -790,25 +790,25 @@
    "vh": 720,
    "card": {
     "x": 318,
-    "y": 263,
+    "y": 264,
     "r": 962,
-    "b": 470,
+    "b": 469,
     "w": 645,
-    "h": 206
+    "h": 205
    },
-   "visible": 1.003,
+   "visible": 0.998,
    "margins": {
     "left": 318,
     "right": 318,
-    "top": 263,
-    "bottom": 250
+    "top": 264,
+    "bottom": 251
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 203,
    "scrolls": false,
    "controls": 2,
-   "minH": 55,
+   "minH": 54,
    "minW": 264,
    "underBar": false,
    "cam": null
@@ -817,27 +817,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 296,
-    "y": 244,
-    "r": 1144,
-    "b": 707,
-    "w": 848,
-    "h": 464
+    "x": 300,
+    "y": 260,
+    "r": 1140,
+    "b": 682,
+    "w": 840,
+    "h": 422
    },
-   "visible": 0.998,
+   "visible": 1,
    "margins": {
-    "left": 296,
-    "right": 296,
-    "top": 244,
-    "bottom": 193
+    "left": 300,
+    "right": 300,
+    "top": 260,
+    "bottom": 218
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 62,
-   "minW": 639,
+   "minH": 53,
+   "minW": 642,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -852,10 +852,10 @@
     ],
     "panelInside": true,
     "card": [
-     296,
-     244,
-     1144,
-     707
+     300,
+     260,
+     1140,
+     682
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -877,27 +877,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 269,
-    "y": 156,
-    "r": 1171,
-    "b": 856,
-    "w": 901,
-    "h": 700
+    "x": 276,
+    "y": 175,
+    "r": 1164,
+    "b": 821,
+    "w": 889,
+    "h": 646
    },
-   "visible": 1.001,
+   "visible": 0.999,
    "margins": {
-    "left": 269,
-    "right": 269,
-    "top": 156,
-    "bottom": 44
+    "left": 276,
+    "right": 276,
+    "top": 175,
+    "bottom": 79
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 501,
    "scrolls": false,
    "controls": 5,
-   "minH": 56,
-   "minW": 271,
+   "minH": 48,
+   "minW": 267,
    "underBar": false,
    "cam": null
   },
@@ -906,25 +906,25 @@
    "vh": 900,
    "card": {
     "x": 317,
-    "y": 329,
+    "y": 332,
     "r": 1123,
-    "b": 587,
-    "w": 806,
-    "h": 258
+    "b": 585,
+    "w": 805,
+    "h": 253
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 317,
     "right": 317,
-    "top": 329,
-    "bottom": 313
+    "top": 332,
+    "bottom": 315
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 69,
+   "minH": 64,
    "minW": 330,
    "underBar": false,
    "cam": null
@@ -933,27 +933,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 451,
-    "y": 292,
-    "r": 1469,
-    "b": 849,
-    "w": 1018,
-    "h": 556
+    "x": 456,
+    "y": 312,
+    "r": 1464,
+    "b": 819,
+    "w": 1008,
+    "h": 506
    },
    "visible": 1.002,
    "margins": {
-    "left": 451,
-    "right": 451,
-    "top": 292,
-    "bottom": 231
+    "left": 456,
+    "right": 456,
+    "top": 312,
+    "bottom": 261
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 74,
-   "minW": 767,
+   "minH": 63,
+   "minW": 770,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -968,10 +968,10 @@
     ],
     "panelInside": true,
     "card": [
-     451,
-     292,
-     1469,
-     849
+     456,
+     312,
+     1464,
+     819
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -993,27 +993,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 419,
-    "y": 188,
-    "r": 1501,
-    "b": 1028,
-    "w": 1081,
-    "h": 840
+    "x": 427,
+    "y": 210,
+    "r": 1493,
+    "b": 985,
+    "w": 1067,
+    "h": 775
    },
-   "visible": 1.001,
+   "visible": 0.999,
    "margins": {
-    "left": 419,
-    "right": 419,
-    "top": 188,
-    "bottom": 52
+    "left": 427,
+    "right": 427,
+    "top": 210,
+    "bottom": 95
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 501,
    "scrolls": false,
    "controls": 5,
-   "minH": 67,
-   "minW": 326,
+   "minH": 58,
+   "minW": 320,
    "underBar": false,
    "cam": null
   },
@@ -1021,26 +1021,26 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 476,
-    "y": 395,
-    "r": 1444,
-    "b": 705,
-    "w": 967,
-    "h": 310
+    "x": 477,
+    "y": 398,
+    "r": 1443,
+    "b": 702,
+    "w": 966,
+    "h": 304
    },
-   "visible": 1.001,
+   "visible": 1,
    "margins": {
-    "left": 476,
-    "right": 476,
-    "top": 395,
-    "bottom": 375
+    "left": 477,
+    "right": 477,
+    "top": 398,
+    "bottom": 378
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 83,
+   "minH": 77,
    "minW": 396,
    "underBar": false,
    "cam": null
@@ -1513,27 +1513,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 24,
-    "y": 328,
-    "r": 744,
-    "b": 731,
-    "w": 720,
-    "h": 403
+    "x": 27,
+    "y": 343,
+    "r": 741,
+    "b": 710,
+    "w": 715,
+    "h": 367
    },
-   "visible": 1,
+   "visible": 0.999,
    "margins": {
-    "left": 24,
-    "right": 24,
-    "top": 328,
-    "bottom": 293
+    "left": 27,
+    "right": 27,
+    "top": 343,
+    "bottom": 314
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 55,
-   "minW": 560,
+   "minH": 47,
+   "minW": 562,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -1548,10 +1548,10 @@
     ],
     "panelInside": true,
     "card": [
-     24,
-     328,
-     744,
-     731
+     27,
+     343,
+     741,
+     710
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -1573,27 +1573,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 16,
-    "y": 287,
-    "r": 752,
-    "b": 790,
-    "w": 736,
-    "h": 503
+    "x": 17,
+    "y": 291,
+    "r": 751,
+    "b": 784,
+    "w": 735,
+    "h": 494
    },
-   "visible": 1,
+   "visible": 0.997,
    "margins": {
-    "left": 16,
-    "right": 16,
-    "top": 287,
-    "bottom": 234
+    "left": 17,
+    "right": 17,
+    "top": 291,
+    "bottom": 240
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 452,
-   "scrolls": true,
+   "cssH": 444,
+   "scrolls": false,
    "controls": 5,
-   "minH": 52,
-   "minW": 226,
+   "minH": 44,
+   "minW": 221,
    "underBar": false,
    "cam": null
   },
@@ -1601,26 +1601,26 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 37,
-    "y": 405,
-    "r": 731,
-    "b": 630,
-    "w": 693,
-    "h": 225
+    "x": 38,
+    "y": 407,
+    "r": 730,
+    "b": 628,
+    "w": 692,
+    "h": 220
    },
-   "visible": 1.001,
+   "visible": 1.005,
    "margins": {
-    "left": 37,
-    "right": 37,
-    "top": 405,
-    "bottom": 394
+    "left": 38,
+    "right": 38,
+    "top": 407,
+    "bottom": 396
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 60,
+   "minH": 55,
    "minW": 285,
    "underBar": false,
    "cam": null
@@ -1629,27 +1629,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 150,
-    "y": 208,
-    "r": 874,
-    "b": 604,
-    "w": 724,
-    "h": 396
+    "x": 152,
+    "y": 215,
+    "r": 872,
+    "b": 593,
+    "w": 720,
+    "h": 378
    },
    "visible": 1,
    "margins": {
-    "left": 150,
-    "right": 150,
-    "top": 208,
-    "bottom": 164
+    "left": 152,
+    "right": 152,
+    "top": 215,
+    "bottom": 175
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 347,
    "scrolls": false,
    "controls": 4,
-   "minH": 53,
-   "minW": 545,
+   "minH": 49,
+   "minW": 546,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -1664,10 +1664,10 @@
     ],
     "panelInside": true,
     "card": [
-     150,
-     208,
-     874,
-     604
+     152,
+     215,
+     872,
+     593
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -1689,27 +1689,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 135,
-    "y": 156,
-    "r": 889,
-    "b": 689,
-    "w": 754,
-    "h": 532
+    "x": 138,
+    "y": 165,
+    "r": 886,
+    "b": 674,
+    "w": 749,
+    "h": 509
    },
-   "visible": 1.002,
+   "visible": 0.999,
    "margins": {
-    "left": 135,
-    "right": 135,
-    "top": 156,
-    "bottom": 79
+    "left": 138,
+    "right": 138,
+    "top": 165,
+    "bottom": 94
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 464,
    "scrolls": false,
    "controls": 5,
-   "minH": 49,
-   "minW": 227,
+   "minH": 46,
+   "minW": 225,
    "underBar": false,
    "cam": null
   },
@@ -1718,26 +1718,26 @@
    "vh": 768,
    "card": {
     "x": 168,
-    "y": 281,
+    "y": 283,
     "r": 856,
-    "b": 501,
-    "w": 688,
-    "h": 220
+    "b": 499,
+    "w": 687,
+    "h": 216
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 168,
     "right": 168,
-    "top": 281,
-    "bottom": 267
+    "top": 283,
+    "bottom": 269
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 59,
-   "minW": 282,
+   "minH": 55,
+   "minW": 281,
    "underBar": false,
    "cam": null
   },
@@ -1746,25 +1746,25 @@
    "vh": 720,
    "card": {
     "x": 301,
-    "y": 195,
+    "y": 197,
     "r": 979,
-    "b": 566,
-    "w": 679,
-    "h": 371
+    "b": 563,
+    "w": 678,
+    "h": 367
    },
-   "visible": 0.999,
+   "visible": 0.997,
    "margins": {
     "left": 301,
     "right": 301,
-    "top": 195,
-    "bottom": 154
+    "top": 197,
+    "bottom": 157
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 359,
    "scrolls": false,
    "controls": 4,
-   "minH": 49,
+   "minH": 48,
    "minW": 511,
    "underBar": false,
    "cam": null,
@@ -1781,9 +1781,9 @@
     "panelInside": true,
     "card": [
      301,
-     195,
+     197,
      979,
-     566
+     563
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -1806,26 +1806,26 @@
    "vh": 720,
    "card": {
     "x": 287,
-    "y": 147,
+    "y": 149,
     "r": 993,
-    "b": 646,
-    "w": 707,
-    "h": 499
+    "b": 642,
+    "w": 706,
+    "h": 493
    },
-   "visible": 0.999,
+   "visible": 1,
    "margins": {
     "left": 287,
     "right": 287,
-    "top": 147,
-    "bottom": 74
+    "top": 149,
+    "bottom": 78
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 479,
    "scrolls": false,
    "controls": 5,
-   "minH": 46,
-   "minW": 213,
+   "minH": 45,
+   "minW": 212,
    "underBar": false,
    "cam": null
   },
@@ -1834,25 +1834,25 @@
    "vh": 720,
    "card": {
     "x": 318,
-    "y": 263,
+    "y": 264,
     "r": 962,
-    "b": 470,
+    "b": 469,
     "w": 645,
-    "h": 206
+    "h": 205
    },
-   "visible": 1.003,
+   "visible": 0.998,
    "margins": {
     "left": 318,
     "right": 318,
-    "top": 263,
-    "bottom": 250
+    "top": 264,
+    "bottom": 251
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 203,
    "scrolls": false,
    "controls": 2,
-   "minH": 55,
+   "minH": 54,
    "minW": 264,
    "underBar": false,
    "cam": null
@@ -1861,27 +1861,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 296,
-    "y": 244,
-    "r": 1144,
-    "b": 707,
-    "w": 848,
-    "h": 464
+    "x": 300,
+    "y": 260,
+    "r": 1140,
+    "b": 682,
+    "w": 840,
+    "h": 422
    },
-   "visible": 0.998,
+   "visible": 1,
    "margins": {
-    "left": 296,
-    "right": 296,
-    "top": 244,
-    "bottom": 193
+    "left": 300,
+    "right": 300,
+    "top": 260,
+    "bottom": 218
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 62,
-   "minW": 639,
+   "minH": 53,
+   "minW": 642,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -1896,10 +1896,10 @@
     ],
     "panelInside": true,
     "card": [
-     296,
-     244,
-     1144,
-     707
+     300,
+     260,
+     1140,
+     682
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -1921,27 +1921,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 278,
-    "y": 183,
-    "r": 1162,
-    "b": 807,
-    "w": 884,
-    "h": 624
+    "x": 284,
+    "y": 203,
+    "r": 1156,
+    "b": 773,
+    "w": 872,
+    "h": 570
    },
    "visible": 1,
    "margins": {
-    "left": 278,
-    "right": 278,
-    "top": 183,
-    "bottom": 93
+    "left": 284,
+    "right": 284,
+    "top": 203,
+    "bottom": 127
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 444,
    "scrolls": false,
    "controls": 5,
-   "minH": 58,
-   "minW": 266,
+   "minH": 50,
+   "minW": 262,
    "underBar": false,
    "cam": null
   },
@@ -1950,25 +1950,25 @@
    "vh": 900,
    "card": {
     "x": 317,
-    "y": 329,
+    "y": 332,
     "r": 1123,
-    "b": 587,
-    "w": 806,
-    "h": 258
+    "b": 585,
+    "w": 805,
+    "h": 253
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 317,
     "right": 317,
-    "top": 329,
-    "bottom": 313
+    "top": 332,
+    "bottom": 315
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 69,
+   "minH": 64,
    "minW": 330,
    "underBar": false,
    "cam": null
@@ -1977,27 +1977,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 451,
-    "y": 292,
-    "r": 1469,
-    "b": 849,
-    "w": 1018,
-    "h": 556
+    "x": 456,
+    "y": 312,
+    "r": 1464,
+    "b": 819,
+    "w": 1008,
+    "h": 506
    },
    "visible": 1.002,
    "margins": {
-    "left": 451,
-    "right": 451,
-    "top": 292,
-    "bottom": 231
+    "left": 456,
+    "right": 456,
+    "top": 312,
+    "bottom": 261
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 74,
-   "minW": 767,
+   "minH": 63,
+   "minW": 770,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -2012,10 +2012,10 @@
     ],
     "panelInside": true,
     "card": [
-     451,
-     292,
-     1469,
-     849
+     456,
+     312,
+     1464,
+     819
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -2037,27 +2037,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 430,
-    "y": 220,
-    "r": 1490,
-    "b": 968,
-    "w": 1060,
-    "h": 748
+    "x": 437,
+    "y": 243,
+    "r": 1483,
+    "b": 928,
+    "w": 1046,
+    "h": 684
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
-    "left": 430,
-    "right": 430,
-    "top": 220,
-    "bottom": 112
+    "left": 437,
+    "right": 437,
+    "top": 243,
+    "bottom": 152
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 444,
    "scrolls": false,
    "controls": 5,
-   "minH": 69,
-   "minW": 319,
+   "minH": 59,
+   "minW": 314,
    "underBar": false,
    "cam": null
   },
@@ -2065,26 +2065,26 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 476,
-    "y": 395,
-    "r": 1444,
-    "b": 705,
-    "w": 967,
-    "h": 310
+    "x": 477,
+    "y": 398,
+    "r": 1443,
+    "b": 702,
+    "w": 966,
+    "h": 304
    },
-   "visible": 1.001,
+   "visible": 1,
    "margins": {
-    "left": 476,
-    "right": 476,
-    "top": 395,
-    "bottom": 375
+    "left": 477,
+    "right": 477,
+    "top": 398,
+    "bottom": 378
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 83,
+   "minH": 77,
    "minW": 396,
    "underBar": false,
    "cam": null
@@ -2557,27 +2557,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 24,
-    "y": 328,
-    "r": 744,
-    "b": 731,
-    "w": 720,
-    "h": 403
+    "x": 27,
+    "y": 343,
+    "r": 741,
+    "b": 710,
+    "w": 715,
+    "h": 367
    },
-   "visible": 1,
+   "visible": 0.999,
    "margins": {
-    "left": 24,
-    "right": 24,
-    "top": 328,
-    "bottom": 293
+    "left": 27,
+    "right": 27,
+    "top": 343,
+    "bottom": 314
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 55,
-   "minW": 560,
+   "minH": 47,
+   "minW": 562,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -2592,10 +2592,10 @@
     ],
     "panelInside": true,
     "card": [
-     24,
-     328,
-     744,
-     731
+     27,
+     343,
+     741,
+     710
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -2635,9 +2635,9 @@
    "cssMaxH": "452px",
    "cssH": 452,
    "scrolls": true,
-   "controls": 4,
-   "minH": 52,
-   "minW": 549,
+   "controls": 5,
+   "minH": 44,
+   "minW": 227,
    "underBar": false,
    "cam": null
   },
@@ -2645,26 +2645,26 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 37,
-    "y": 405,
-    "r": 731,
-    "b": 630,
-    "w": 693,
-    "h": 225
+    "x": 38,
+    "y": 407,
+    "r": 730,
+    "b": 628,
+    "w": 692,
+    "h": 220
    },
-   "visible": 1.001,
+   "visible": 1.005,
    "margins": {
-    "left": 37,
-    "right": 37,
-    "top": 405,
-    "bottom": 394
+    "left": 38,
+    "right": 38,
+    "top": 407,
+    "bottom": 396
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 60,
+   "minH": 55,
    "minW": 285,
    "underBar": false,
    "cam": null
@@ -2673,27 +2673,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 150,
-    "y": 208,
-    "r": 874,
-    "b": 604,
-    "w": 724,
-    "h": 396
+    "x": 152,
+    "y": 215,
+    "r": 872,
+    "b": 593,
+    "w": 720,
+    "h": 378
    },
    "visible": 1,
    "margins": {
-    "left": 150,
-    "right": 150,
-    "top": 208,
-    "bottom": 164
+    "left": 152,
+    "right": 152,
+    "top": 215,
+    "bottom": 175
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 347,
    "scrolls": false,
    "controls": 4,
-   "minH": 53,
-   "minW": 545,
+   "minH": 49,
+   "minW": 546,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -2708,10 +2708,10 @@
     ],
     "panelInside": true,
     "card": [
-     150,
-     208,
-     874,
-     604
+     152,
+     215,
+     872,
+     593
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -2733,27 +2733,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 127,
-    "y": 133,
-    "r": 897,
-    "b": 731,
-    "w": 769,
-    "h": 597
+    "x": 130,
+    "y": 141,
+    "r": 894,
+    "b": 716,
+    "w": 764,
+    "h": 574
    },
-   "visible": 1.003,
+   "visible": 1.002,
    "margins": {
-    "left": 127,
-    "right": 127,
-    "top": 133,
-    "bottom": 37
+    "left": 130,
+    "right": 130,
+    "top": 141,
+    "bottom": 52
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 521,
    "scrolls": false,
    "controls": 5,
-   "minH": 48,
-   "minW": 232,
+   "minH": 44,
+   "minW": 230,
    "underBar": false,
    "cam": null
   },
@@ -2762,26 +2762,26 @@
    "vh": 768,
    "card": {
     "x": 168,
-    "y": 281,
+    "y": 283,
     "r": 856,
-    "b": 501,
-    "w": 688,
-    "h": 220
+    "b": 499,
+    "w": 687,
+    "h": 216
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 168,
     "right": 168,
-    "top": 281,
-    "bottom": 267
+    "top": 283,
+    "bottom": 269
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 59,
-   "minW": 282,
+   "minH": 55,
+   "minW": 281,
    "underBar": false,
    "cam": null
   },
@@ -2790,25 +2790,25 @@
    "vh": 720,
    "card": {
     "x": 301,
-    "y": 195,
+    "y": 197,
     "r": 979,
-    "b": 566,
-    "w": 679,
-    "h": 371
+    "b": 563,
+    "w": 678,
+    "h": 367
    },
-   "visible": 0.999,
+   "visible": 0.997,
    "margins": {
     "left": 301,
     "right": 301,
-    "top": 195,
-    "bottom": 154
+    "top": 197,
+    "bottom": 157
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 359,
    "scrolls": false,
    "controls": 4,
-   "minH": 49,
+   "minH": 48,
    "minW": 511,
    "underBar": false,
    "cam": null,
@@ -2825,9 +2825,9 @@
     "panelInside": true,
     "card": [
      301,
-     195,
+     197,
      979,
-     566
+     563
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -2850,25 +2850,25 @@
    "vh": 720,
    "card": {
     "x": 280,
-    "y": 125,
+    "y": 127,
     "r": 1000,
-    "b": 685,
-    "w": 721,
-    "h": 560
+    "b": 682,
+    "w": 720,
+    "h": 555
    },
-   "visible": 0.999,
+   "visible": 1,
    "margins": {
     "left": 280,
     "right": 280,
-    "top": 125,
-    "bottom": 35
+    "top": 127,
+    "bottom": 38
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 536,
    "scrolls": false,
    "controls": 5,
-   "minH": 45,
+   "minH": 44,
    "minW": 217,
    "underBar": false,
    "cam": null
@@ -2878,25 +2878,25 @@
    "vh": 720,
    "card": {
     "x": 318,
-    "y": 263,
+    "y": 264,
     "r": 962,
-    "b": 470,
+    "b": 469,
     "w": 645,
-    "h": 206
+    "h": 205
    },
-   "visible": 1.003,
+   "visible": 0.998,
    "margins": {
     "left": 318,
     "right": 318,
-    "top": 263,
-    "bottom": 250
+    "top": 264,
+    "bottom": 251
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 203,
    "scrolls": false,
    "controls": 2,
-   "minH": 55,
+   "minH": 54,
    "minW": 264,
    "underBar": false,
    "cam": null
@@ -2905,27 +2905,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 296,
-    "y": 244,
-    "r": 1144,
-    "b": 707,
-    "w": 848,
-    "h": 464
+    "x": 300,
+    "y": 260,
+    "r": 1140,
+    "b": 682,
+    "w": 840,
+    "h": 422
    },
-   "visible": 0.998,
+   "visible": 1,
    "margins": {
-    "left": 296,
-    "right": 296,
-    "top": 244,
-    "bottom": 193
+    "left": 300,
+    "right": 300,
+    "top": 260,
+    "bottom": 218
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 62,
-   "minW": 639,
+   "minH": 53,
+   "minW": 642,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -2940,10 +2940,10 @@
     ],
     "panelInside": true,
     "card": [
-     296,
-     244,
-     1144,
-     707
+     300,
+     260,
+     1140,
+     682
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -2965,27 +2965,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 269,
-    "y": 156,
-    "r": 1171,
-    "b": 856,
-    "w": 901,
-    "h": 700
+    "x": 276,
+    "y": 175,
+    "r": 1164,
+    "b": 821,
+    "w": 889,
+    "h": 646
    },
-   "visible": 1.001,
+   "visible": 0.999,
    "margins": {
-    "left": 269,
-    "right": 269,
-    "top": 156,
-    "bottom": 44
+    "left": 276,
+    "right": 276,
+    "top": 175,
+    "bottom": 79
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 501,
    "scrolls": false,
    "controls": 5,
-   "minH": 56,
-   "minW": 271,
+   "minH": 48,
+   "minW": 267,
    "underBar": false,
    "cam": null
   },
@@ -2994,25 +2994,25 @@
    "vh": 900,
    "card": {
     "x": 317,
-    "y": 329,
+    "y": 332,
     "r": 1123,
-    "b": 587,
-    "w": 806,
-    "h": 258
+    "b": 585,
+    "w": 805,
+    "h": 253
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 317,
     "right": 317,
-    "top": 329,
-    "bottom": 313
+    "top": 332,
+    "bottom": 315
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 69,
+   "minH": 64,
    "minW": 330,
    "underBar": false,
    "cam": null
@@ -3021,27 +3021,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 451,
-    "y": 292,
-    "r": 1469,
-    "b": 849,
-    "w": 1018,
-    "h": 556
+    "x": 456,
+    "y": 312,
+    "r": 1464,
+    "b": 819,
+    "w": 1008,
+    "h": 506
    },
    "visible": 1.002,
    "margins": {
-    "left": 451,
-    "right": 451,
-    "top": 292,
-    "bottom": 231
+    "left": 456,
+    "right": 456,
+    "top": 312,
+    "bottom": 261
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 74,
-   "minW": 767,
+   "minH": 63,
+   "minW": 770,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -3056,10 +3056,10 @@
     ],
     "panelInside": true,
     "card": [
-     451,
-     292,
-     1469,
-     849
+     456,
+     312,
+     1464,
+     819
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -3081,27 +3081,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 419,
-    "y": 188,
-    "r": 1501,
-    "b": 1028,
-    "w": 1081,
-    "h": 840
+    "x": 427,
+    "y": 210,
+    "r": 1493,
+    "b": 985,
+    "w": 1067,
+    "h": 775
    },
-   "visible": 1.001,
+   "visible": 0.999,
    "margins": {
-    "left": 419,
-    "right": 419,
-    "top": 188,
-    "bottom": 52
+    "left": 427,
+    "right": 427,
+    "top": 210,
+    "bottom": 95
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 541,
+   "cssH": 501,
    "scrolls": false,
    "controls": 5,
-   "minH": 67,
-   "minW": 326,
+   "minH": 58,
+   "minW": 320,
    "underBar": false,
    "cam": null
   },
@@ -3109,26 +3109,26 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 476,
-    "y": 395,
-    "r": 1444,
-    "b": 705,
-    "w": 967,
-    "h": 310
+    "x": 477,
+    "y": 398,
+    "r": 1443,
+    "b": 702,
+    "w": 966,
+    "h": 304
    },
-   "visible": 1.001,
+   "visible": 1,
    "margins": {
-    "left": 476,
-    "right": 476,
-    "top": 395,
-    "bottom": 375
+    "left": 477,
+    "right": 477,
+    "top": 398,
+    "bottom": 378
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 83,
+   "minH": 77,
    "minW": 396,
    "underBar": false,
    "cam": null
@@ -3601,27 +3601,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 24,
-    "y": 328,
-    "r": 744,
-    "b": 731,
-    "w": 720,
-    "h": 403
+    "x": 27,
+    "y": 343,
+    "r": 741,
+    "b": 710,
+    "w": 715,
+    "h": 367
    },
-   "visible": 1,
+   "visible": 0.999,
    "margins": {
-    "left": 24,
-    "right": 24,
-    "top": 328,
-    "bottom": 293
+    "left": 27,
+    "right": 27,
+    "top": 343,
+    "bottom": 314
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 55,
-   "minW": 560,
+   "minH": 47,
+   "minW": 562,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -3636,10 +3636,10 @@
     ],
     "panelInside": true,
     "card": [
-     24,
-     328,
-     744,
-     731
+     27,
+     343,
+     741,
+     710
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -3661,27 +3661,27 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 16,
-    "y": 287,
-    "r": 752,
-    "b": 790,
-    "w": 736,
-    "h": 503
+    "x": 17,
+    "y": 291,
+    "r": 751,
+    "b": 784,
+    "w": 735,
+    "h": 494
    },
-   "visible": 1,
+   "visible": 0.997,
    "margins": {
-    "left": 16,
-    "right": 16,
-    "top": 287,
-    "bottom": 234
+    "left": 17,
+    "right": 17,
+    "top": 291,
+    "bottom": 240
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 452,
-   "scrolls": true,
+   "cssH": 444,
+   "scrolls": false,
    "controls": 5,
-   "minH": 52,
-   "minW": 226,
+   "minH": 44,
+   "minW": 221,
    "underBar": false,
    "cam": null
   },
@@ -3689,26 +3689,26 @@
    "vw": 768,
    "vh": 1024,
    "card": {
-    "x": 37,
-    "y": 405,
-    "r": 731,
-    "b": 630,
-    "w": 693,
-    "h": 225
+    "x": 38,
+    "y": 407,
+    "r": 730,
+    "b": 628,
+    "w": 692,
+    "h": 220
    },
-   "visible": 1.001,
+   "visible": 1.005,
    "margins": {
-    "left": 37,
-    "right": 37,
-    "top": 405,
-    "bottom": 394
+    "left": 38,
+    "right": 38,
+    "top": 407,
+    "bottom": 396
    },
    "cssWidth": 520,
    "cssMaxH": "452px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 60,
+   "minH": 55,
    "minW": 285,
    "underBar": false,
    "cam": null
@@ -3717,27 +3717,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 150,
-    "y": 208,
-    "r": 874,
-    "b": 604,
-    "w": 724,
-    "h": 396
+    "x": 152,
+    "y": 215,
+    "r": 872,
+    "b": 593,
+    "w": 720,
+    "h": 378
    },
    "visible": 1,
    "margins": {
-    "left": 150,
-    "right": 150,
-    "top": 208,
-    "bottom": 164
+    "left": 152,
+    "right": 152,
+    "top": 215,
+    "bottom": 175
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 347,
    "scrolls": false,
    "controls": 4,
-   "minH": 53,
-   "minW": 545,
+   "minH": 49,
+   "minW": 546,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -3752,10 +3752,10 @@
     ],
     "panelInside": true,
     "card": [
-     150,
-     208,
-     874,
-     604
+     152,
+     215,
+     872,
+     593
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -3777,27 +3777,27 @@
    "vw": 1024,
    "vh": 768,
    "card": {
-    "x": 135,
-    "y": 156,
-    "r": 889,
-    "b": 689,
-    "w": 754,
-    "h": 532
+    "x": 138,
+    "y": 165,
+    "r": 886,
+    "b": 674,
+    "w": 749,
+    "h": 509
    },
-   "visible": 1.002,
+   "visible": 0.999,
    "margins": {
-    "left": 135,
-    "right": 135,
-    "top": 156,
-    "bottom": 79
+    "left": 138,
+    "right": 138,
+    "top": 165,
+    "bottom": 94
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 464,
    "scrolls": false,
    "controls": 5,
-   "minH": 49,
-   "minW": 227,
+   "minH": 46,
+   "minW": 225,
    "underBar": false,
    "cam": null
   },
@@ -3806,26 +3806,26 @@
    "vh": 768,
    "card": {
     "x": 168,
-    "y": 281,
+    "y": 283,
     "r": 856,
-    "b": 501,
-    "w": 688,
-    "h": 220
+    "b": 499,
+    "w": 687,
+    "h": 216
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 168,
     "right": 168,
-    "top": 281,
-    "bottom": 267
+    "top": 283,
+    "bottom": 269
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 59,
-   "minW": 282,
+   "minH": 55,
+   "minW": 281,
    "underBar": false,
    "cam": null
   },
@@ -3834,25 +3834,25 @@
    "vh": 720,
    "card": {
     "x": 301,
-    "y": 195,
+    "y": 197,
     "r": 979,
-    "b": 566,
-    "w": 679,
-    "h": 371
+    "b": 563,
+    "w": 678,
+    "h": 367
    },
-   "visible": 0.999,
+   "visible": 0.997,
    "margins": {
     "left": 301,
     "right": 301,
-    "top": 195,
-    "bottom": 154
+    "top": 197,
+    "bottom": 157
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 359,
    "scrolls": false,
    "controls": 4,
-   "minH": 49,
+   "minH": 48,
    "minW": 511,
    "underBar": false,
    "cam": null,
@@ -3869,9 +3869,9 @@
     "panelInside": true,
     "card": [
      301,
-     195,
+     197,
      979,
-     566
+     563
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -3894,26 +3894,26 @@
    "vh": 720,
    "card": {
     "x": 287,
-    "y": 147,
+    "y": 149,
     "r": 993,
-    "b": 646,
-    "w": 707,
-    "h": 499
+    "b": 642,
+    "w": 706,
+    "h": 493
    },
-   "visible": 0.999,
+   "visible": 1,
    "margins": {
     "left": 287,
     "right": 287,
-    "top": 147,
-    "bottom": 74
+    "top": 149,
+    "bottom": 78
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 479,
    "scrolls": false,
    "controls": 5,
-   "minH": 46,
-   "minW": 213,
+   "minH": 45,
+   "minW": 212,
    "underBar": false,
    "cam": null
   },
@@ -3922,25 +3922,25 @@
    "vh": 720,
    "card": {
     "x": 318,
-    "y": 263,
+    "y": 264,
     "r": 962,
-    "b": 470,
+    "b": 469,
     "w": 645,
-    "h": 206
+    "h": 205
    },
-   "visible": 1.003,
+   "visible": 0.998,
    "margins": {
     "left": 318,
     "right": 318,
-    "top": 263,
-    "bottom": 250
+    "top": 264,
+    "bottom": 251
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 203,
    "scrolls": false,
    "controls": 2,
-   "minH": 55,
+   "minH": 54,
    "minW": 264,
    "underBar": false,
    "cam": null
@@ -3949,27 +3949,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 296,
-    "y": 244,
-    "r": 1144,
-    "b": 707,
-    "w": 848,
-    "h": 464
+    "x": 300,
+    "y": 260,
+    "r": 1140,
+    "b": 682,
+    "w": 840,
+    "h": 422
    },
-   "visible": 0.998,
+   "visible": 1,
    "margins": {
-    "left": 296,
-    "right": 296,
-    "top": 244,
-    "bottom": 193
+    "left": 300,
+    "right": 300,
+    "top": 260,
+    "bottom": 218
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 62,
-   "minW": 639,
+   "minH": 53,
+   "minW": 642,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -3984,10 +3984,10 @@
     ],
     "panelInside": true,
     "card": [
-     296,
-     244,
-     1144,
-     707
+     300,
+     260,
+     1140,
+     682
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -4009,27 +4009,27 @@
    "vw": 1440,
    "vh": 900,
    "card": {
-    "x": 278,
-    "y": 183,
-    "r": 1162,
-    "b": 807,
-    "w": 884,
-    "h": 624
+    "x": 284,
+    "y": 203,
+    "r": 1156,
+    "b": 773,
+    "w": 872,
+    "h": 570
    },
    "visible": 1,
    "margins": {
-    "left": 278,
-    "right": 278,
-    "top": 183,
-    "bottom": 93
+    "left": 284,
+    "right": 284,
+    "top": 203,
+    "bottom": 127
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 444,
    "scrolls": false,
    "controls": 5,
-   "minH": 58,
-   "minW": 266,
+   "minH": 50,
+   "minW": 262,
    "underBar": false,
    "cam": null
   },
@@ -4038,25 +4038,25 @@
    "vh": 900,
    "card": {
     "x": 317,
-    "y": 329,
+    "y": 332,
     "r": 1123,
-    "b": 587,
-    "w": 806,
-    "h": 258
+    "b": 585,
+    "w": 805,
+    "h": 253
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
     "left": 317,
     "right": 317,
-    "top": 329,
-    "bottom": 313
+    "top": 332,
+    "bottom": 315
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 69,
+   "minH": 64,
    "minW": 330,
    "underBar": false,
    "cam": null
@@ -4065,27 +4065,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 451,
-    "y": 292,
-    "r": 1469,
-    "b": 849,
-    "w": 1018,
-    "h": 556
+    "x": 456,
+    "y": 312,
+    "r": 1464,
+    "b": 819,
+    "w": 1008,
+    "h": 506
    },
    "visible": 1.002,
    "margins": {
-    "left": 451,
-    "right": 451,
-    "top": 292,
-    "bottom": 231
+    "left": 456,
+    "right": 456,
+    "top": 312,
+    "bottom": 261
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 331,
    "scrolls": false,
    "controls": 4,
-   "minH": 74,
-   "minW": 767,
+   "minH": 63,
+   "minW": 770,
    "underBar": false,
    "cam": null,
    "layout": {
@@ -4100,10 +4100,10 @@
     ],
     "panelInside": true,
     "card": [
-     451,
-     292,
-     1469,
-     849
+     456,
+     312,
+     1464,
+     819
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -4125,27 +4125,27 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 430,
-    "y": 220,
-    "r": 1490,
-    "b": 968,
-    "w": 1060,
-    "h": 748
+    "x": 437,
+    "y": 243,
+    "r": 1483,
+    "b": 928,
+    "w": 1046,
+    "h": 684
    },
-   "visible": 1,
+   "visible": 1.001,
    "margins": {
-    "left": 430,
-    "right": 430,
-    "top": 220,
-    "bottom": 112
+    "left": 437,
+    "right": 437,
+    "top": 243,
+    "bottom": 152
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 484,
+   "cssH": 444,
    "scrolls": false,
    "controls": 5,
-   "minH": 69,
-   "minW": 319,
+   "minH": 59,
+   "minW": 314,
    "underBar": false,
    "cam": null
   },
@@ -4153,26 +4153,26 @@
    "vw": 1920,
    "vh": 1080,
    "card": {
-    "x": 476,
-    "y": 395,
-    "r": 1444,
-    "b": 705,
-    "w": 967,
-    "h": 310
+    "x": 477,
+    "y": 398,
+    "r": 1443,
+    "b": 702,
+    "w": 966,
+    "h": 304
    },
-   "visible": 1.001,
+   "visible": 1,
    "margins": {
-    "left": 476,
-    "right": 476,
-    "top": 395,
-    "bottom": 375
+    "left": 477,
+    "right": 477,
+    "top": 398,
+    "bottom": 378
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 204,
+   "cssH": 200,
    "scrolls": false,
    "controls": 2,
-   "minH": 83,
+   "minH": 77,
    "minW": 396,
    "underBar": false,
    "cam": null

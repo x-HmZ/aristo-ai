@@ -231,8 +231,9 @@ in place.
   `bg-surface`, `border-line`, `text-ink`, 16px radius, Geist. The box is 520 x 620px on a landscape canvas and
   narrower on a phone (255px at 360x640, 270 at 360x780, 300 at 390x844, 341 at 430x932; with `distanceFactor` the width
   sets the world size), chosen with the camera by `deskFraming` so the whole sheet fits with a 16px margin. Every button
-  and field on it is at least 52px tall in CSS (`DESK_CONTROL_HEIGHT`), so that it still measures 44px or more on
-  screen once the paper is tilted (45 to 74px measured, 9 sizes, both themes). The entry animation and the camera glide
+  and field on it is 44 to 52px tall in CSS (`controlHeight` from `deskFraming`: 44 where the tilt leaves 44px on screen,
+  up to 52 where it does not), so that it measures 44px or more on screen once the paper is tilted, on an answered
+  card too (44 to 77px measured, 9 sizes, both themes). The entry animation and the camera glide
   are off under reduced motion.
 - **QuizView** is host-agnostic (tokens only). The desk gives it the paper; the daily review (`ReviewView`) gives it the
   theme.
@@ -397,7 +398,7 @@ light and 5.24 dark (before: 6,031 nodes, 1,363 failures, minimum 1.22; `.claude
 
 Fixed in the desk-framing task (2026-09-30): the desk card cropped by the camera on portrait sizes (49% visible at 360x780,
 80% at 768x1024) and its tilted controls measuring 34 to 43px. Measured: the card is fully visible and every control is
-at least 45px in 144 states, and the AA figures are unchanged (`.claude/eval/2026-09-30-desk-framing/`).
+at least 44px in 144 states, and the AA figures are unchanged (`.claude/eval/2026-09-30-desk-framing/`).
 
 Still open:
 

@@ -1,0 +1,7 @@
+probe-360x780-light          card 18..342 vis 1 css 270x407 minH 47 minW 210 underBar false
+probe-768x1024-light         card 27..741 vis 0.999 css 520x331 minH 47 minW 562 underBar false
+probe-1280x720-light         card 301..979 vis 0.997 css 520x359 minH 48 minW 511 underBar false
+AA nodes 39 fails 0 min 5.48
+under-44 controls 0
+running animations 0
+paid 0 api at network 0 notes 0

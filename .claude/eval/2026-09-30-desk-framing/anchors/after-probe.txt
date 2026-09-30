@@ -1,14 +1,14 @@
-(node:15660) [UNDICI-WS] Warning: WebSockets are experimental, expect them to change at any time.
+(node:34840) [UNDICI-WS] Warning: WebSockets are experimental, expect them to change at any time.
 (Use `node --trace-warnings ...` to show where the warning was created)
 [probe-down] {"x":0,"z":-0.5,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":-0.4,"z":-0.3,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":0.4,"z":-0.75,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":0.3,"z":-2.35,"hits":[{"y":-0.888,"mesh":"Classroom"},{"y":-0.935,"mesh":"Classroom"},{"y":-1.001,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
-[probe-down] {"x":-1,"z":-3,"hits":[{"y":0.848,"mesh":"Mesh039_1"},{"y":0.848,"mesh":"Mesh039_1"},{"y":0.845,"mesh":"Mesh039_1"},{"y":0.843,"mesh":"Mesh039_1"},{"y":0.842,"mesh":"Mesh039_1"}]}
+[probe-down] {"x":-1,"z":-3,"hits":[{"y":0.848,"mesh":"Mesh039_1"},{"y":0.847,"mesh":"Mesh039_1"},{"y":0.845,"mesh":"Mesh039_1"},{"y":0.843,"mesh":"Mesh039_1"},{"y":0.842,"mesh":"Mesh039_1"}]}
 [probe-down] {"x":0.37,"z":-3,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":0,"z":-1.5,"hits":[{"y":-1.195,"mesh":"Classroom"},{"y":-1.24,"mesh":"Classroom"},{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":-3.2,"z":-5.2,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
 [probe-down] {"x":0.45,"z":-5.4,"hits":[{"y":-1.694,"mesh":"Classroom"}]}
-[probe] {"point":[0.91,0.408,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
-[probe] {"point":[1.686,0.731,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
-[probe] {"point":[2.623,0.084,-5.617],"normal":[0,0,1],"mesh":"Classroom"}
+[probe] {"point":[0.91,0.415,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
+[probe] {"point":[1.686,0.738,-5.574],"normal":[0,0,1],"mesh":"Classroom"}
+[probe] {"point":[2.624,0.092,-5.617],"normal":[0,0,1],"mesh":"Classroom"}

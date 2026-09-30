@@ -5,7 +5,7 @@
 Browserslist: caniuse-lite is outdated. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
- ✓ Compiled successfully in 13.1s
+ ✓ Compiled successfully in 12.8s
    Skipping validation of types
    Linting ...
 
@@ -33,23 +33,21 @@ Browserslist: caniuse-lite is outdated. Please run:
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
    Collecting page data ...
-(node:22536) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:9220) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:22148) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:8280) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:37840) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:18224) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:22548) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-(node:34756) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:34448) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (0/61) ...
+(node:7304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (15/61) 
-(node:34400) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-(node:9528) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (30/61) 
+(node:24496) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (45/61) 
  ✓ Generating static pages (61/61)
    Finalizing page optimization ...
@@ -72,7 +70,7 @@ Route (app)                                     Size  First Load JS
 ├ ƒ /admin/quiz-analytics                    13.7 kB         233 kB
 ├ ƒ /admin/rag                               4.89 kB         149 kB
 ├ ƒ /admin/system                            4.39 kB         114 kB
-├ ƒ /admin/users                             9.81 kB         153 kB
+├ ƒ /admin/users                             9.81 kB         154 kB
 ├ ƒ /api/admin/analytics                       294 B         103 kB
 ├ ƒ /api/admin/audit-log                       294 B         103 kB
 ├ ƒ /api/admin/cost/events                     294 B         103 kB
@@ -147,12 +145,12 @@ Route (app)                                     Size  First Load JS
 
 Route (pages)                                   Size  First Load JS
 ┌   /_app                                        0 B        87.3 kB
-├ ○ /demo (1043 ms)                          3.62 kB         135 kB
-├ ○ /dev/avatar-lab (431 ms)                 2.13 kB        89.5 kB
-├ ○ /dev/desk-quiz (430 ms)                  1.93 kB        89.2 kB
-├ ○ /dev/free-model (428 ms)                 1.93 kB        89.2 kB
-├ ○ /dev/learn-shell (1043 ms)               13.2 kB         147 kB
-├ ○ /dev/quiz-bars (794 ms)                  13.4 kB         110 kB
+├ ○ /demo (884 ms)                           3.62 kB         135 kB
+├ ○ /dev/avatar-lab (406 ms)                 2.13 kB        89.5 kB
+├ ○ /dev/desk-quiz (416 ms)                  1.93 kB        89.3 kB
+├ ○ /dev/free-model (417 ms)                 1.93 kB        89.3 kB
+├ ○ /dev/learn-shell (885 ms)                13.2 kB         147 kB
+├ ○ /dev/quiz-bars (694 ms)                  13.4 kB         110 kB
 └ ƒ /learn                                   3.36 kB         134 kB
 + First Load JS shared by all                 101 kB
   ├ chunks/framework-2f3de63929c73f88.js     44.8 kB

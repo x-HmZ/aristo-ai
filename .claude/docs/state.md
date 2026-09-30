@@ -9,12 +9,13 @@ Branch `dev/desk-quiz-portrait` off `origin/deploy-prep` (b3cc79b, #15 and #16 i
 the desk card part of brand-system.md is updated. Evidence, scripts and numbers: `.claude/eval/2026-09-30-desk-framing/`.
 
 - **Shipped:**
-  - `src/components/three/deskFraming.ts` (pure, 25 unit tests): the camera pose and the card box for a canvas size.
+  - `src/components/three/deskFraming.ts` (pure, 37 unit tests, pinned against browser measurements): the camera pose and the card box for a canvas size.
     Landscape sizes get `DESK_POS` / `DESK_TARGET` and 520 x 620 back as the same objects; otherwise the camera slides
     along today's view ray and the card narrows until it fits the width and the first control is 44px on screen.
     `CameraController` and `DeskQuiz` read it. Lesson framing, `SCENE_*` / `MODEL_*`, `PAPER_ANCHOR`, the FOV and
     `distanceFactor` are unchanged.
-  - Desk controls are 52px tall in CSS (`DeskQuiz` only; `QuizView` unchanged, so the daily review is as it was).
+  - Desk controls are 44 to 52px tall in CSS as the tilt needs (`controlHeight` from `deskFraming`; `DeskQuiz` only,
+    `QuizView` unchanged, so the daily review is as it was).
   - The camera cuts to the desk and back under `prefers-reduced-motion` (with a landing-frame fix found in
     verification).
   - `AristoCanvas` shares `MIN_POLAR_ANGLE` (same value) with `deskFraming`, because OrbitControls clamps the desk pose
@@ -24,12 +25,13 @@ the desk card part of brand-system.md is updated. Evidence, scripts and numbers:
 - **Measured** (the probe, /demo and the harness; 9 sizes from 360x640 to 1920x1080, light and dark):
   - The card is fully visible in all 144 states (before: 60 of the 108 host states cropped; 49% visible at 360x780,
     80% at 768x1024) and never under the top bar, the panel or the strip.
-  - Smallest desk control 45px (before 34); 0 under 44 (before 52 kinds). AA: 0 failures, minimum 5.33.
-  - fps in the desk framing (production build): 1280x720 127 before, 119 and 126 after; 390x844 246 before, 229 and
-    234 after (noise about 10%). First loads: `/` 122 kB static, `/demo` 135, `/learn` 134, all unchanged.
+  - Smallest desk control 44px on screen in every state, answered cards included (before 34); 0 under 44 (before 52
+    kinds). AA: 0 failures, minimum 5.33.
+  - fps in the desk framing (production build): 1280x720 127 before, 116 and 111 after; 390x844 246 before, 228 and
+    226 after (single runs range from 79 to 145; p95 frame time unchanged at 5 to 6.6 ms). First loads: `/` 122 kB static, `/demo` 135, `/learn` 134, all unchanged.
   - Anchors: the nine probe-downs identical (moving mesh aside); the display clicks vary run to run by more than the
     change (old code 0.392 to 0.403, new 0.408 to 0.419).
-- **Gates:** type-check clean; lint 0 errors / 10 warnings; tests 429 (404 + 25); build green.
+- **Gates:** type-check clean; lint 0 errors / 10 warnings; tests 441 (404 + 37); build green.
 - **Gap left:** a landscape phone (844x390, 667x375) has no room for a usable card between the bars, so it keeps
   today's framing and is cropped (controls about 28px). Owner: a panel and strip layout task, not the camera.
 - **Next:** V8.3 landing v3 (session order below); V8.6; V8.7.

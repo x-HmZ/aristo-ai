@@ -121,30 +121,150 @@
     }
    }
   },
+  "probe-768x1024-light": {
+   "vw": 768,
+   "vh": 1024,
+   "card": {
+    "x": 27,
+    "y": 343,
+    "r": 741,
+    "b": 710,
+    "w": 715,
+    "h": 367
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 27,
+    "right": 27,
+    "top": 343,
+    "bottom": 314
+   },
+   "cssWidth": 520,
+   "cssMaxH": "452px",
+   "cssH": 331,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 562,
+   "underBar": false,
+   "cam": [
+    0,
+    0.43984166151555637,
+    0.2599490405930356
+   ],
+   "layout": {
+    "vw": 768,
+    "vh": 1024,
+    "scrollW": 768,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     27,
+     343,
+     741,
+     710
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-768x1024": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.43984166151555637,
+     0.2599490405930356
+    ],
+    "card": {
+     "x": 27,
+     "y": 343,
+     "r": 741,
+     "b": 710,
+     "w": 715,
+     "h": 367
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.43984166151555637,
+     0.2599490405930356
+    ],
+    "card": {
+     "x": 27,
+     "y": 343,
+     "r": 741,
+     "b": 710,
+     "w": 715,
+     "h": 367
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.43984166151555637,
+     0.2599490405930356
+    ],
+    "card": {
+     "x": 27,
+     "y": 343,
+     "r": 741,
+     "b": 710,
+     "w": 715,
+     "h": 367
+    }
+   }
+  },
   "probe-1280x720-light": {
    "vw": 1280,
    "vh": 720,
    "card": {
     "x": 301,
-    "y": 195,
+    "y": 197,
     "r": 979,
-    "b": 566,
-    "w": 679,
-    "h": 371
+    "b": 563,
+    "w": 678,
+    "h": 367
    },
-   "visible": 0.999,
+   "visible": 0.997,
    "margins": {
     "left": 301,
     "right": 301,
-    "top": 195,
-    "bottom": 154
+    "top": 197,
+    "bottom": 157
    },
    "cssWidth": 520,
    "cssMaxH": "620px",
-   "cssH": 363,
+   "cssH": 359,
    "scrolls": false,
    "controls": 4,
-   "minH": 49,
+   "minH": 48,
    "minW": 511,
    "underBar": false,
    "cam": [
@@ -160,9 +280,9 @@
     "panelInside": null,
     "card": [
      301,
-     195,
+     197,
      979,
-     566
+     563
     ],
     "cardUnderPanel": false,
     "cardUnderStrip": false,
@@ -183,11 +303,11 @@
     ],
     "card": {
      "x": 301,
-     "y": 195,
+     "y": 197,
      "r": 979,
-     "b": 566,
-     "w": 679,
-     "h": 371
+     "b": 563,
+     "w": 678,
+     "h": 367
     }
    },
    "offAt150": {
@@ -217,11 +337,11 @@
     ],
     "card": {
      "x": 301,
-     "y": 195,
+     "y": 197,
      "r": 979,
-     "b": 566,
-     "w": 679,
-     "h": 371
+     "b": 563,
+     "w": 678,
+     "h": 367
     }
    },
    "onSettled": {
@@ -233,11 +353,11 @@
     ],
     "card": {
      "x": 301,
-     "y": 195,
+     "y": 197,
      "r": 979,
-     "b": 566,
-     "w": 679,
-     "h": 371
+     "b": 563,
+     "w": 678,
+     "h": 367
     }
    }
   }
