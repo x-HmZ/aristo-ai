@@ -2,6 +2,37 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - V8.3 reviewed by Hmz: redo the landing as a website (next session; PR #18 not merged)
+
+Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new session, as V8.3b.
+
+- **The direction:**
+  - The page must look like a landing page: a modern, creative, real website, with a much better navbar and proper
+    sections and components.
+  - The whole page being the classroom is fine only if immersion is a deliberate, emphasised part of the story.
+  - Motion graphics need not come from Jake or the room: design them freely to the Night Class vibe.
+  - Reference the lesson rather than replaying it. Anything that plays runs like a short demo at a readable pace, not
+    scroll-scrubbed; the pinned scroll-through felt unintuitive.
+- **His notes on this build:**
+  1. Start with Jake idle, not facing the board.
+  2. The dark ink-glass title chips ("A Teacher of Your Own") do not carry the app's vibe.
+  3. The Column mark drawn in ink blends into the room in dark mode.
+  4. The scroll-through is not intuitive.
+  5. "It Remembers What You Know" and "For Parents" feel out of place with the rest of the page.
+  6. The goodbye wave plays only once.
+  7. Jake's idle face is too blank: friendlier, not a full smile.
+  8. The classroom's old placeholder paper (Classroom.tsx StudentDeskPaper) shows under the desk card.
+- **Reusable from dev/v8-3-landing:**
+  - `/` in the Pages Router, and the gate (full / lite / stack);
+  - the poster-as-LCP approach;
+  - the opt-in sound (`stage/sound.ts`);
+  - the KG snapshot, Jake's credit and the 44px footer;
+  - the `Teacher` `driver` prop and the warm-up (`stage/warm.ts`);
+  - the resized `public/landing/heart.glb`;
+  - the eval scripts and the perf lessons in the eval README (lazy parts warmed before use, no per-frame SVG filters,
+    host-level pause state, idle writers skipped).
+- **Next:** V8.3b in a new session (prompt given to Hmz); V8.6; V8.7.
+
 ## 2026-09-30 - V8.3 landing v3 done: a scroll-driven story with the live classroom (Opus plan approved by Hmz)
 
 Branch `dev/v8-3-landing` off `origin/deploy-prep` (83c6f37, #15 and #17 in it; no upstream set); PR into
