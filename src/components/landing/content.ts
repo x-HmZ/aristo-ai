@@ -8,6 +8,14 @@
  */
 import { AudioLines, History, Presentation, Target, Waypoints, type LucideIcon } from "lucide-react";
 
+/** The nav's section links, in page order (mockup E). */
+export const NAV_LINKS = [
+  { id: "how", label: "How it works" },
+  { id: "map", label: "The map" },
+  { id: "immersive", label: "Immersive" },
+  { id: "parents", label: "For parents" },
+] as const;
+
 export const HERO = {
   eyebrow: "Grades 6 to 8",
   lines: ["One teacher.", "One student.", "Every kid."],
