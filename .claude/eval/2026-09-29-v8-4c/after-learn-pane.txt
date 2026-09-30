@@ -1,0 +1,1 @@
+/learn pane (prod, signed in, sessionStorage cleared, OS dark, nothing clicked): js 460.6 kB, css 13.9 kB, api: /api/courses /api/profile /api/learn/overdue-count; no lock; toggle 44x44; no target under 44

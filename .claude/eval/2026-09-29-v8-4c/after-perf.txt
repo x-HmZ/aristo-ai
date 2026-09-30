@@ -1,0 +1,2 @@
+[{"sceneReady":4415,"fcp":456,"dcl":72,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1789,"fcp":152,"dcl":87,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1577,"fcp":248,"dcl":157,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1639,"fcp":252,"dcl":150,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1632,"fcp":288,"dcl":195,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1803,"fcp":308,"dcl":320,"jsKB":456.9,"cssKB":13.9},{"sceneReady":1626,"fcp":300,"dcl":168,"jsKB":456.9,"cssKB":13.9}]
+median {"sceneReady":1639,"fcp":288,"dcl":157,"jsKB":456.9,"cssKB":13.9}

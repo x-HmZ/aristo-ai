@@ -41,8 +41,9 @@
 
     /* Lesson-phase and status hues from before the design system. Deprecated:
      * the system gives the five phases their identity through numbering, icon
-     * and position with one accent, and V8.4a moves the classroom off these.
-     * Kept only so /learn and /demo do not change before then. */
+     * and position with one accent; the classroom left them in V8.4a to V8.4c.
+     * Kept for the surfaces V8.6 still owns (admin, onboarding, the course
+     * map, the dashboard). */
     --aristo-purple: 258.31 89.53% 66.27%;     /* #8B5CF6  Activate phase, learner analytics */
     --aristo-purple-hover: 262.12 83.26% 57.84%; /* #7C3AED  hover on purple text */
     --aristo-teal: 160.12 84.08% 39.41%;       /* #10B981  Demonstrate phase, mastered */
@@ -103,8 +104,6 @@
     --glow: 180 83 31; /* the classroom's light spill, see .glow-* */
     --glow-strength: 0.1;
     --shadow: 14 17 23 / 0.14; /* full colour incl. alpha, see shadow-e1/e2 */
-    --theme-icon-sun: none; /* ThemeToggle shows the icon for the other mode */
-    --theme-icon-moon: block;
 
     /* Motion. Durations collapse to zero under prefers-reduced-motion. */
     --dur-fast: 120ms; /* press, hover, focus */
@@ -134,6 +133,15 @@
     --leading-mono: 1.55;
 
     color-scheme: light;
+  }
+
+  /* ThemeToggle shows the icon for the other mode. These two follow the page
+   * theme only: they are not in the rules .theme-paper and .theme-ink share,
+   * so a toggle placed on ink glass (the classroom top bar) still shows the
+   * page's icon. */
+  :root {
+    --theme-icon-sun: none;
+    --theme-icon-moon: block;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -192,9 +200,12 @@
     --glow: 233 138 82;
     --glow-strength: 0.22;
     --shadow: 0 0 0 / 0.5;
+    color-scheme: dark;
+  }
+
+  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])) {
     --theme-icon-sun: block;
     --theme-icon-moon: none;
-    color-scheme: dark;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -236,11 +247,11 @@
     background: rgb(var(--muted));
   }
 
-  /* Surfaces not on the system yet (the classroom, admin, create-teacher)
-   * keep the page defaults they had before V8.2: cream page, warm near-black
-   * text, beige hairlines and an orange scrollbar. Zero specificity (:where)
-   * so any class on an element still wins, exactly as before. V8.4 and V8.6
-   * delete the lock surface by surface. */
+  /* Surfaces not on the system yet (admin and create-teacher; the classroom
+   * left the lock in V8.4c) keep the page defaults they had before V8.2:
+   * cream page, warm near-black text, beige hairlines and an orange
+   * scrollbar. Zero specificity (:where) so any class on an element still
+   * wins, exactly as before. V8.6 deletes the remaining locks. */
   :where(:root:has(meta[name="aristo-theme-lock"])) body {
     background-color: hsl(var(--aristo-cream));
     color: hsl(25 40% 12%); /* #2B1D12, the old shadcn foreground */
@@ -311,13 +322,6 @@
     font-family: var(--font-geist-mono), ui-monospace, monospace;
     font-size: var(--text-mono);
     line-height: var(--leading-mono);
-  }
-
-  /* Glass morphism — warm tinted. Classroom only (loading screen). */
-  .glass {
-    background: hsl(var(--aristo-cream) / 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--aristo-orange-pale) / 0.5);
   }
 
   /* Gradient text. Classroom only (the onboarding title); the system has no
@@ -391,13 +395,12 @@
     );
   }
 
-  /* Aristo scroll — slim orange scrollbar for the lesson + free panels.
-     Default WebKit scrollbars are invisible on the glass surfaces; this
-     gives the student a clear scroll affordance without breaking the
-     pastel aesthetic. */
+  /* Aristo scroll — slim scrollbar for the lesson and free panels, the
+     pickers and the desk card, in the theme's muted ink (V8.4c; it was the
+     classroom orange). Scoped themes (.theme-paper) resolve their own. */
   .aristo-scroll {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--aristo-orange-main) / 0.45) transparent;
+    scrollbar-color: rgb(var(--muted) / 0.45) transparent;
   }
   .aristo-scroll::-webkit-scrollbar {
     width: 6px;
@@ -406,10 +409,10 @@
     background: transparent;
   }
   .aristo-scroll::-webkit-scrollbar-thumb {
-    background: hsl(var(--aristo-orange-main) / 0.35);
+    background: rgb(var(--muted) / 0.45);
     border-radius: 6px;
   }
   .aristo-scroll::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--aristo-orange-main) / 0.6);
+    background: rgb(var(--muted));
   }
 }

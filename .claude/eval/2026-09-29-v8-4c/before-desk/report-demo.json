@@ -1,0 +1,348 @@
+{
+ "label": "before-desk",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-1024x768-light.jpg",
+  "demo-lesson-1024x768-light.jpg",
+  "demo-image-1024x768-light.jpg",
+  "demo-model-1024x768-light.jpg",
+  "demo-desk-q1-1024x768-light.jpg",
+  "demo-results-1024x768-light.jpg",
+  "demo-picker-1440x900-light.jpg",
+  "demo-lesson-1440x900-light.jpg",
+  "demo-image-1440x900-light.jpg",
+  "demo-model-1440x900-light.jpg",
+  "demo-desk-q1-1440x900-light.jpg",
+  "demo-results-1440x900-light.jpg"
+ ],
+ "layout": {
+  "demo-picker-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-lesson-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": [
+    604,
+    68,
+    1004,
+    748
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-image-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": [
+    604,
+    68,
+    1004,
+    748
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-model-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": [
+    604,
+    68,
+    1004,
+    748
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-desk-q1-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": [
+    604,
+    68,
+    1004,
+    748
+   ],
+   "panelInside": true,
+   "card": [
+    154,
+    222,
+    870,
+    582
+   ],
+   "cardUnderPanel": true,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-results-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "scrollW": 1024,
+   "panel": [
+    604,
+    68,
+    1004,
+    748
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1024,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-picker-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": null,
+   "panelInside": null,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-lesson-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": [
+    1020,
+    68,
+    1420,
+    880
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-image-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": [
+    1020,
+    68,
+    1420,
+    880
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-model-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": [
+    1020,
+    68,
+    1420,
+    880
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-desk-q1-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": [
+    1020,
+    68,
+    1420,
+    880
+   ],
+   "panelInside": true,
+   "card": [
+    300,
+    260,
+    1140,
+    682
+   ],
+   "cardUnderPanel": true,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  },
+  "demo-results-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "scrollW": 1440,
+   "panel": [
+    1020,
+    68,
+    1420,
+    880
+   ],
+   "panelInside": true,
+   "card": null,
+   "cardUnderPanel": false,
+   "cardUnderStrip": false,
+   "bars": [
+    [
+     0,
+     0,
+     1440,
+     62
+    ]
+   ],
+   "barsInside": true,
+   "theme": null,
+   "lock": true,
+   "bodyBg": "rgb(253, 249, 242)"
+  }
+ },
+ "paid": [],
+ "api": [],
+ "calls": {},
+ "notes": []
+}

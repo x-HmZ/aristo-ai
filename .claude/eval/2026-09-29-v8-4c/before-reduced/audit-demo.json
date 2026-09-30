@@ -1,0 +1,2493 @@
+[
+ {
+  "name": "demo-picker-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Live demo — no account needed",
+    "ratio": 4.05,
+    "need": 4.5,
+    "fg": "rgb(196, 90, 16)",
+    "bg": "255,245,236",
+    "scene": false,
+    "size": 10
+   },
+   {
+    "t": "Pick a lesson to watch",
+    "ratio": 11.87,
+    "need": 3,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "231,230,230",
+    "scene": true,
+    "size": 24
+   },
+   {
+    "t": "Your 3D teacher will explain it, show vi",
+    "ratio": 3.77,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "231,230,230",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "🌋",
+    "ratio": 15.51,
+    "need": 3,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 30
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 14.02,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 16
+   },
+   {
+    "t": "Magma, gas pressure, and the moment a mo",
+    "ratio": 4.46,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "🫀",
+    "ratio": 15.51,
+    "need": 3,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 30
+   },
+   {
+    "t": "How the Heart Pumps Blood",
+    "ratio": 14.02,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 16
+   },
+   {
+    "t": "Four chambers, two pumps, and why blood ",
+    "ratio": 4.46,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "255,248,242",
+    "scene": false,
+    "size": 12
+   }
+  ],
+  "tg": {
+   "s": [
+    "Create an account → 120x16"
+   ],
+   "a": []
+  }
+ },
+ {
+  "name": "demo-lesson-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "🌋",
+    "ratio": 4.87,
+    "need": 4.5,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 4.4,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Change topic",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 11
+   },
+   {
+    "t": "Teacher",
+    "ratio": 1.22,
+    "need": 4.5,
+    "fg": "rgb(184, 149, 122)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Jake",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "MJ",
+    "ratio": 3.08,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "209,209,209",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Teacher model:",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "“",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Free Cartoon Game Man Character (Rigged)",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "”",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "by",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Canino3d",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ",",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "CC BY 4.0",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ", modified",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 17.1,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Activate",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "3",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "4",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "5",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Activate",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": ", step",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "1",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of 5",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "gas pressure and expansion",
+    "ratio": 8.24,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "heat causing materials to rise",
+    "ratio": 8.24,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Explain more",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Transcript",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Next",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Pause",
+    "ratio": 15.98,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "seg",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "1",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "/",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "15",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Ready for the quiz?",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Take the quiz",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "/5",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "You've probably shaken a soda bottle and",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 18
+   },
+   {
+    "t": "You already know that gases expand and p",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 14
+   }
+  ],
+  "tg": {
+   "s": [
+    "Create an account → 120x16",
+    "Change topic 69x17",
+    "Jake 52x24",
+    "MJ 42x24"
+   ],
+   "a": []
+  }
+ },
+ {
+  "name": "demo-image-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "Solid rock",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Melting zone",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Rising magma",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Magma chamber",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "View in 3D",
+    "ratio": 16.59,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "11,13,18",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "scroll to resize · click to zoom",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "🌋",
+    "ratio": 4.87,
+    "need": 4.5,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 4.4,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Change topic",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 11
+   },
+   {
+    "t": "Teacher",
+    "ratio": 1.22,
+    "need": 4.5,
+    "fg": "rgb(184, 149, 122)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Jake",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "MJ",
+    "ratio": 3.08,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "209,209,209",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Teacher model:",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "“",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Free Cartoon Game Man Character (Rigged)",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "”",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "by",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Canino3d",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ",",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "CC BY 4.0",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ", modified",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 17.1,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.09,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "3",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "4",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "5",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": ", step",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of 5",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Analogy",
+    "ratio": 4.74,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Magma rising and building gas pressure i",
+    "ratio": 8.23,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "An eruption is not random — it's the phy",
+    "ratio": 5.93,
+    "need": 4.5,
+    "fg": "rgb(146, 64, 14)",
+    "bg": "241,233,229",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Explain more",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Transcript",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Back",
+    "ratio": 8.86,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "243,244,246",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Next",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Pause",
+    "ratio": 15.98,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "seg",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "4",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "/",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "15",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Ready for the quiz?",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Take the quiz",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "2",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "/5",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Formally: magma is molten rock beneath E",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 16
+   },
+   {
+    "t": "As magma sits in that chamber, dissolved",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 14
+   }
+  ],
+  "tg": {
+   "s": [
+    "Create an account → 120x16",
+    "Change topic 69x17",
+    "Jake 52x24",
+    "MJ 42x24"
+   ],
+   "a": []
+  }
+ },
+ {
+  "name": "demo-model-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "Crater/Vent opening",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Central vent",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Magma chamber",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Surrounding crust",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Erupting lava",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Side vent",
+    "ratio": 11.77,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "230,230,230",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Show image",
+    "ratio": 16.59,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "11,13,18",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "🌋",
+    "ratio": 4.87,
+    "need": 4.5,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 4.4,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Change topic",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 11
+   },
+   {
+    "t": "Teacher",
+    "ratio": 1.22,
+    "need": 4.5,
+    "fg": "rgb(184, 149, 122)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Jake",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "MJ",
+    "ratio": 3.08,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "209,209,209",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Teacher model:",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "“",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Free Cartoon Game Man Character (Rigged)",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "”",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "by",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Canino3d",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ",",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "CC BY 4.0",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ", modified",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 17.1,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.09,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "3",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "4",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "5",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": ", step",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of 5",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Analogy",
+    "ratio": 4.74,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Magma rising and building gas pressure i",
+    "ratio": 8.23,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "An eruption is not random — it's the phy",
+    "ratio": 5.93,
+    "need": 4.5,
+    "fg": "rgb(146, 64, 14)",
+    "bg": "241,233,229",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Explain more",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Transcript",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Back",
+    "ratio": 8.86,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "243,244,246",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Next",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Pause",
+    "ratio": 15.98,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "seg",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "4",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "/",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "15",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Ready for the quiz?",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Take the quiz",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "2",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "/5",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Formally: magma is molten rock beneath E",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 16
+   },
+   {
+    "t": "As magma sits in that chamber, dissolved",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 14
+   }
+  ],
+  "tg": {
+   "s": [
+    "Create an account → 120x16",
+    "Change topic 69x17",
+    "Jake 52x24",
+    "MJ 42x24"
+   ],
+   "a": []
+  }
+ },
+ {
+  "name": "demo-desk-q1-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "Question",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "1",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "remember",
+    "ratio": 8.24,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 11
+   },
+   {
+    "t": "Multiple choice",
+    "ratio": 6.06,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "0",
+    "ratio": 6.06,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "correct",
+    "ratio": 6.06,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "What is molten rock called before it rea",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 15
+   },
+   {
+    "t": "Lava",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 13
+   },
+   {
+    "t": "Magma",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 13
+   },
+   {
+    "t": "Ash",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 13
+   },
+   {
+    "t": "Pumice",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 13
+   },
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "🌋",
+    "ratio": 4.87,
+    "need": 4.5,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 4.4,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Change topic",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 11
+   },
+   {
+    "t": "Teacher",
+    "ratio": 1.22,
+    "need": 4.5,
+    "fg": "rgb(184, 149, 122)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Jake",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "MJ",
+    "ratio": 3.08,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "209,209,209",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Teacher model:",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "“",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Free Cartoon Game Man Character (Rigged)",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "”",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "by",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Canino3d",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ",",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "CC BY 4.0",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ", modified",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 17.1,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.09,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "3",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "4",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "5",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": ", step",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of 5",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Analogy",
+    "ratio": 4.74,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Magma rising and building gas pressure i",
+    "ratio": 8.23,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "An eruption is not random — it's the phy",
+    "ratio": 5.93,
+    "need": 4.5,
+    "fg": "rgb(146, 64, 14)",
+    "bg": "241,233,229",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Explain more",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Transcript",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Back",
+    "ratio": 8.86,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "243,244,246",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Next",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Pause",
+    "ratio": 15.98,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "seg",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "4",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "/",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "15",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Your quiz is on the desk. Look down.",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   }
+  ],
+  "tg": {
+   "s": [
+    "Lava 513x42",
+    "Create an account → 120x16",
+    "Change topic 69x17",
+    "Jake 52x24",
+    "MJ 42x24"
+   ],
+   "a": []
+  }
+ },
+ {
+  "name": "demo-results-1280-light",
+  "w": 1280,
+  "aa": [
+   {
+    "t": "Show 3D",
+    "ratio": 16.59,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "11,13,18",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "scroll to resize · click to zoom",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "You're in the demo",
+    "ratio": 1.65,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Create an account →",
+    "ratio": 1.97,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "153,153,153",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "🌋",
+    "ratio": 4.87,
+    "need": 4.5,
+    "fg": "rgb(43, 29, 18)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 4.4,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Change topic",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 11
+   },
+   {
+    "t": "Teacher",
+    "ratio": 1.22,
+    "need": 4.5,
+    "fg": "rgb(184, 149, 122)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Jake",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "MJ",
+    "ratio": 3.08,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "209,209,209",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Teacher model:",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "“",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Free Cartoon Game Man Character (Rigged)",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "”",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "by",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "Canino3d",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ",",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "CC BY 4.0",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": ", modified",
+    "ratio": 1.4,
+    "need": 4.5,
+    "fg": "rgb(139, 110, 90)",
+    "bg": "140,140,140",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "How Volcanoes Erupt",
+    "ratio": 17.1,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "1",
+    "ratio": 5.09,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "3",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "4",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "5",
+    "ratio": 5.63,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "243,244,246",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "Explain",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": ", step",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "2",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "of 5",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Analogy",
+    "ratio": 4.74,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 12
+   },
+   {
+    "t": "Magma rising and building gas pressure i",
+    "ratio": 8.23,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "244,234,227",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "An eruption is not random — it's the phy",
+    "ratio": 5.93,
+    "need": 4.5,
+    "fg": "rgb(146, 64, 14)",
+    "bg": "241,233,229",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Explain more",
+    "ratio": 5.48,
+    "need": 4.5,
+    "fg": "rgb(169, 76, 27)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Transcript",
+    "ratio": 18.43,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "252,252,253",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Back",
+    "ratio": 8.86,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "243,244,246",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Next",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Pause",
+    "ratio": 15.98,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "234,236,240",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "seg",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "5",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "/",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "15",
+    "ratio": 6.02,
+    "need": 4.5,
+    "fg": "rgb(90, 97, 112)",
+    "bg": "251,251,252",
+    "scene": true,
+    "size": 10
+   },
+   {
+    "t": "1",
+    "ratio": 16.5,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "/",
+    "ratio": 16.5,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "2",
+    "ratio": 16.5,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "correct",
+    "ratio": 16.5,
+    "need": 4.5,
+    "fg": "rgb(14, 17, 23)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "Aristo remembers what you know and paces",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 13
+   },
+   {
+    "t": "Create an account",
+    "ratio": 5.55,
+    "need": 4.5,
+    "fg": "rgb(61, 33, 16)",
+    "bg": "249,123,47",
+    "scene": false,
+    "size": 14
+   },
+   {
+    "t": "Try another topic",
+    "ratio": 8.52,
+    "need": 4.5,
+    "fg": "rgb(62, 68, 82)",
+    "bg": "239,239,240",
+    "scene": true,
+    "size": 14
+   },
+   {
+    "t": "2",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "/5",
+    "ratio": 5.78,
+    "need": 4.5,
+    "fg": "rgb(239, 154, 102)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 12
+   },
+   {
+    "t": "As magma sits in that chamber, dissolved",
+    "ratio": 10.92,
+    "need": 4.5,
+    "fg": "rgb(236, 237, 239)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 18
+   },
+   {
+    "t": "Here's the key insight: an eruption isn'",
+    "ratio": 6.77,
+    "need": 4.5,
+    "fg": "rgb(183, 189, 199)",
+    "bg": "48,50,55",
+    "scene": true,
+    "size": 14
+   }
+  ],
+  "tg": {
+   "s": [
+    "Create an account → 120x16",
+    "Change topic 69x17",
+    "Jake 52x24",
+    "MJ 42x24"
+   ],
+   "a": []
+  }
+ }
+]

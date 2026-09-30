@@ -1,0 +1,250 @@
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 10 card under panel demo-desk-q1-360-light demo-desk-q1-768-light demo-desk-q1-1280-light demo-desk-q1-360-dark demo-desk-q1-768-dark demo-desk-q1-1280-dark card under strip 0 bars outside 0
+AA nodes 1526 fails 486 min light 1.22 min dark 1.22
+FAIL demo-picker-360-light "You're in the demo" 1.65 < 4.5 rgb(139, 110, 90) on 153,153,153
+FAIL demo-picker-360-light "Create an account →" 1.97 < 4.5 rgb(169, 76, 27) on 153,153,153
+FAIL demo-picker-360-light "Live demo — no account needed" 4.05 < 4.5 rgb(196, 90, 16) on 255,245,236
+FAIL demo-picker-360-light "Your 3D teacher will explain it, show vi" 3.77 < 4.5 rgb(139, 110, 90) on 231,230,230
+FAIL demo-picker-360-light "Magma, gas pressure, and the moment a mo" 4.46 < 4.5 rgb(139, 110, 90) on 255,248,242
+FAIL demo-picker-360-light "Four chambers, two pumps, and why blood " 4.46 < 4.5 rgb(139, 110, 90) on 255,248,242
+FAIL demo-lesson-360-light "How Volcanoes Erupt" 4.4 < 4.5 rgb(61, 33, 16) on 140,140,140
+FAIL demo-lesson-360-light "Change topic" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "Teacher" 1.22 < 4.5 rgb(184, 149, 122) on 140,140,140
+FAIL demo-lesson-360-light "MJ" 3.08 < 4.5 rgb(139, 110, 90) on 209,209,209
+FAIL demo-lesson-360-light "Teacher model:" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "“" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "Free Cartoon Game Man Character (Rigged)" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "”" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "by" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "Canino3d" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "," 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light "CC BY 4.0" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-360-light ", modified" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+under-44 targets 43
+   demo-picker: Create an account → 66x32
+   demo-lesson: Create an account → 66x32
+   demo-lesson: Change topic 69x17
+   demo-lesson: Jake 52x24
+   demo-lesson: MJ 42x24
+   demo-lesson: “Free Cartoon Game Man Charact 206x13
+   demo-lesson: Canino3d 44x13
+   demo-lesson: CC BY 4.0 358x27
+   demo-image: Create an account → 66x32
+   demo-image: Change topic 69x17
+   demo-image: Jake 52x24
+   demo-image: MJ 42x24
+   demo-image: “Free Cartoon Game Man Charact 206x13
+   demo-image: Canino3d 44x13
+   demo-image: CC BY 4.0 358x27
+   demo-model: Create an account → 66x32
+   demo-model: Change topic 69x17
+   demo-model: Jake 52x24
+   demo-model: MJ 42x24
+   demo-model: “Free Cartoon Game Man Charact 206x13
+   demo-model: Canino3d 44x13
+   demo-model: CC BY 4.0 358x27
+   demo-desk-q1: Create an account → 66x32
+   demo-desk-q1: Change topic 69x17
+   demo-desk-q1: Jake 52x24
+   demo-desk-q1: MJ 42x24
+   demo-desk-q1: “Free Cartoon Game Man Charact 206x13
+   demo-desk-q1: Canino3d 44x13
+   demo-desk-q1: CC BY 4.0 358x27
+   demo-results: Create an account → 66x32
+   demo-results: Change topic 69x17
+   demo-results: Jake 52x24
+   demo-results: MJ 42x24
+   demo-results: “Free Cartoon Game Man Charact 206x13
+   demo-results: Canino3d 44x13
+   demo-results: CC BY 4.0 358x27
+   demo-picker: Create an account → 120x16
+   demo-lesson: Create an account → 120x16
+   demo-image: Create an account → 120x16
+   demo-model: Create an account → 120x16
+running animations 5
+   SECTION.rounded-2xl shrink-0 overflow-hidden bor fade-in
+   P.text-lg font-medium leading-snug text-in fade-in
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   SPAN.size-1.5 rounded-full bg-accent-text mot pulse
+   P.text-base font-medium leading-snug text- fade-in
+shots 36 paid 0 api at network 0 notes 0
+done 1024x768-light
+done 1440x900-light
+layout: overflow 0 panel outside 0 card under panel demo-desk-q1-1024x768-light demo-desk-q1-1440x900-light card under strip 0 bars outside 0
+shots 12 paid 0 api at network 0 notes 0
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 32 card under panel shell-course-desk-360-light shell-course-desk-768-light shell-course-desk-1280-light shell-course-desk-360-dark shell-course-desk-768-dark shell-course-desk-1280-dark card under strip 0 bars outside 0
+AA nodes 4238 fails 796 min light 1.45 min dark 1.45
+FAIL shell-loading-360-light "Setting up your classroom..." 2.13 < 4.5 rgb(139, 110, 90) on 177,174,169
+FAIL shell-loading-stalled-360-light "Taking longer than usual — check your co" 2.13 < 4.5 rgb(139, 110, 90) on 177,174,169
+FAIL shell-picker-empty-360-light "⊞ Progress" 1.65 < 4.5 rgb(139, 110, 90) on 153,153,153
+FAIL shell-picker-empty-360-light "Start a course or explore any topic free" 2.92 < 4.5 rgb(139, 110, 90) on 204,204,204
+FAIL shell-picker-empty-360-light "Ask Aristo about any topic — no set path" 2.92 < 4.5 rgb(139, 110, 90) on 204,204,204
+FAIL shell-picker-empty-360-light "AI builds a personalised learning path f" 3.89 < 4.5 rgb(75, 98, 128) on 204,204,204
+FAIL shell-picker-empty-360-light "Courses" 2.92 < 4.5 rgb(139, 110, 90) on 204,204,204
+FAIL shell-picker-empty-360-light "No published courses yet. Generate one a" 2.92 < 4.5 rgb(139, 110, 90) on 204,204,204
+FAIL shell-picker-generating-360-light "Layers of the Earth, plates, volcanoes a" 4.11 < 4.5 rgb(139, 110, 90) on 240,240,240
+FAIL shell-picker-generating-360-light "2" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "concepts" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "·" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "~" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "3" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "h" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-generating-360-light "1" 2 < 4.5 rgb(184, 169, 154) on 240,240,240
+FAIL shell-picker-error-360-light "Course generation failed. Please try aga" 2.34 < 4.5 rgb(239, 68, 68) on 204,204,204
+FAIL shell-free-cards-360-light "Definition" 1.76 < 4.5 rgb(249, 123, 47) on 220,208,201
+FAIL shell-free-cards-360-light "Explanation" 1.76 < 4.5 rgb(249, 123, 47) on 220,208,201
+FAIL shell-free-cards-360-light "Example" 1.68 < 4.5 rgb(16, 185, 129) on 198,214,209
+FAIL shell-free-cards-360-light "Fun fact" 1.45 < 4.5 rgb(245, 158, 11) on 219,211,197
+FAIL shell-free-cards-end-360-light "Aristo says" 1.76 < 4.5 rgb(249, 123, 47) on 220,208,201
+FAIL shell-review-quiz-360-light "↻" 2.12 < 4.5 rgb(249, 123, 47) on 230,230,230
+FAIL shell-review-quiz-360-light "2" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-quiz-360-light "concept" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-quiz-360-light "s" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-quiz-360-light "due ·" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-quiz-360-light "question" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-quiz-360-light "Skip for now" 3.74 < 4.5 rgb(139, 110, 90) on 230,230,230
+FAIL shell-review-done-360-light "You reviewed" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "concept" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "s" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "—" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "of" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "correct (" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "50" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "%)" 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-review-done-360-light "Keep reviewing — repetition is how memor" 2.05 < 4.5 rgb(184, 169, 154) on 242,242,242
+FAIL shell-course-lesson-360-light "🗺 Map" 1.65 < 4.5 rgb(139, 110, 90) on 153,153,153
+FAIL shell-review-empty-360-light "No reviews are due right now. Come back " 4.2 < 4.5 rgb(139, 110, 90) on 242,242,242
+FAIL shell-picker-empty-768-light "Sign out" 1.65 < 4.5 rgb(139, 110, 90) on 153,153,153
+under-44 targets 157
+   shell-loading-stalled: Reload 72x28
+   shell-picker-empty: ↻ 3 due 48x36
+   shell-picker-empty: ⊞ Progress 50x32
+   shell-picker-empty: Sign out 29x32
+   shell-picker-empty: “Free Cartoon Game Man Charact 206x13
+   shell-picker-empty: Canino3d 44x13
+   shell-picker-empty: CC BY 4.0 358x27
+   shell-picker-generating: ↻ 3 due 48x36
+   shell-picker-generating: ⊞ Progress 50x32
+   shell-picker-generating: Sign out 29x32
+   shell-picker-generating: “Free Cartoon Game Man Charact 206x13
+   shell-picker-generating: Canino3d 44x13
+   shell-picker-generating: CC BY 4.0 358x27
+   shell-picker-error: ↻ 3 due 48x36
+   shell-picker-error: ⊞ Progress 50x32
+   shell-picker-error: Sign out 29x32
+   shell-picker-error: “Free Cartoon Game Man Charact 206x13
+   shell-picker-error: Canino3d 44x13
+   shell-picker-error: CC BY 4.0 358x27
+   shell-picker: ↻ 3 due 48x36
+   shell-picker: ⊞ Progress 50x32
+   shell-picker: Sign out 29x32
+   shell-picker: “Free Cartoon Game Man Charact 206x13
+   shell-picker: Canino3d 44x13
+   shell-picker: CC BY 4.0 358x27
+   shell-free-empty: ↻ 3 due 48x36
+   shell-free-empty: ⊞ Progress 50x32
+   shell-free-empty: Sign out 29x32
+   shell-free-empty: “Free Cartoon Game Man Charact 206x13
+   shell-free-empty: Canino3d 44x13
+   shell-free-empty: CC BY 4.0 358x27
+   shell-free-cards: ↻ 3 due 48x36
+   shell-free-cards: ⊞ Progress 50x32
+   shell-free-cards: Sign out 29x32
+   shell-free-cards: “Free Cartoon Game Man Charact 206x13
+   shell-free-cards: Canino3d 44x13
+   shell-free-cards: CC BY 4.0 358x27
+   shell-free-cards-end: ↻ 3 due 48x36
+   shell-free-cards-end: ⊞ Progress 50x32
+   shell-free-cards-end: Sign out 29x32
+running animations 8
+   DIV.flex justify-end animate-[fade-in_0.3s_e fade-in
+   DIV.flex flex-col gap-3 animate-[fade-in_0.3 fade-in
+   DIV.rounded-2xl bg-white/80 backdrop-blur-sm fade-in
+   SECTION.rounded-2xl shrink-0 overflow-hidden bor fade-in
+   P.text-lg font-medium leading-snug text-in fade-in
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   SPAN.size-1.5 rounded-full bg-accent-text mot pulse
+   DIV.w-8 h-8 rounded-full border-2 border-ari spin
+shots 108 paid 0 api at network 0 notes 0
+done 360-light
+done 768-light
+done 1280-light
+done 360-dark
+done 768-dark
+done 1280-dark
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+shots 42 paid 0 api at network 0 notes 0
+done 1280-stored-dark
+layout: overflow 0 panel outside 0 card under panel demo-desk-q1-1280-stored-dark card under strip 0 bars outside 0
+shots 6 paid 0 api at network 0 notes 0
+done 1280-stored-dark
+layout: overflow 0 panel outside 0 card under panel shell-course-desk-1280-stored-dark card under strip 0 bars outside 0
+shots 18 paid 0 api at network 0 notes 0
+done 360-light
+done 1280-light
+layout: overflow 0 panel outside 0 card under panel 0 card under strip 0 bars outside 0
+shots 0 paid 0 api at network 0 notes 2
+  note 360-light: no toggle on /demo
+  note 1280-light: no toggle on /demo
+done 1280-light
+layout: overflow 0 panel outside 0 card under panel demo-desk-q1-1280-light card under strip 0 bars outside 0
+AA nodes 267 fails 81 min light 1.22 min dark -
+FAIL demo-picker-1280-light "You're in the demo" 1.65 < 4.5 rgb(139, 110, 90) on 153,153,153
+FAIL demo-picker-1280-light "Create an account →" 1.97 < 4.5 rgb(169, 76, 27) on 153,153,153
+FAIL demo-picker-1280-light "Live demo — no account needed" 4.05 < 4.5 rgb(196, 90, 16) on 255,245,236
+FAIL demo-picker-1280-light "Your 3D teacher will explain it, show vi" 3.77 < 4.5 rgb(139, 110, 90) on 231,230,230
+FAIL demo-picker-1280-light "Magma, gas pressure, and the moment a mo" 4.46 < 4.5 rgb(139, 110, 90) on 255,248,242
+FAIL demo-picker-1280-light "Four chambers, two pumps, and why blood " 4.46 < 4.5 rgb(139, 110, 90) on 255,248,242
+FAIL demo-lesson-1280-light "How Volcanoes Erupt" 4.4 < 4.5 rgb(61, 33, 16) on 140,140,140
+FAIL demo-lesson-1280-light "Change topic" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "Teacher" 1.22 < 4.5 rgb(184, 149, 122) on 140,140,140
+FAIL demo-lesson-1280-light "MJ" 3.08 < 4.5 rgb(139, 110, 90) on 209,209,209
+FAIL demo-lesson-1280-light "Teacher model:" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "“" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "Free Cartoon Game Man Character (Rigged)" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "”" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "by" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "Canino3d" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "," 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light "CC BY 4.0" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+FAIL demo-lesson-1280-light ", modified" 1.4 < 4.5 rgb(139, 110, 90) on 140,140,140
+under-44 targets 22
+   demo-picker: Create an account → 120x16
+   demo-lesson: Create an account → 120x16
+   demo-lesson: Change topic 69x17
+   demo-lesson: Jake 52x24
+   demo-lesson: MJ 42x24
+   demo-image: Create an account → 120x16
+   demo-image: Change topic 69x17
+   demo-image: Jake 52x24
+   demo-image: MJ 42x24
+   demo-model: Create an account → 120x16
+   demo-model: Change topic 69x17
+   demo-model: Jake 52x24
+   demo-model: MJ 42x24
+   demo-desk-q1: Lava 513x42
+   demo-desk-q1: Create an account → 120x16
+   demo-desk-q1: Change topic 69x17
+   demo-desk-q1: Jake 52x24
+   demo-desk-q1: MJ 42x24
+   demo-results: Create an account → 120x16
+   demo-results: Change topic 69x17
+   demo-results: Jake 52x24
+   demo-results: MJ 42x24
+running animations 0
+shots 6 paid 0 api at network 0 notes 0
+reduce light {"root":"0ms 0ms 0ms 0ms","ink":"0ms 0ms 0ms 0ms","paper":"0ms 0ms 0ms 0ms","paperInInk":"0ms"}
+reduce dark {"root":"0ms 0ms 0ms 0ms","ink":"0ms 0ms 0ms 0ms","paper":"0ms 0ms 0ms 0ms","paperInInk":"0ms"}
+no-preference light {"root":"120ms 200ms 360ms 550ms","ink":"120ms 200ms 360ms 550ms","paper":"120ms 200ms 360ms 550ms","paperInInk":"200ms"}
+no-preference dark {"root":"120ms 200ms 360ms 550ms","ink":"120ms 200ms 360ms 550ms","paper":"120ms 200ms 360ms 550ms","paperInInk":"200ms"}
