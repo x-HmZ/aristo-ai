@@ -2,13 +2,45 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-30 - Next: desk-quiz framing, then V8.3 landing (direction agreed with Hmz, no code yet)
+## 2026-09-30 - Desk quiz at portrait sizes done: the whole card on every phone, 44px targets (Opus plan approved by Hmz, Sonnet execution)
+
+Branch `dev/desk-quiz-portrait` off `origin/deploy-prep` (b3cc79b, #15 and #16 in it; no upstream set); PR into
+`deploy-prep`. Decisions are the five rows starting "Desk quiz framing follows the canvas aspect ratio" in decisions.md;
+the desk card part of brand-system.md is updated. Evidence, scripts and numbers: `.claude/eval/2026-09-30-desk-framing/`.
+
+- **Shipped:**
+  - `src/components/three/deskFraming.ts` (pure, 37 unit tests, pinned against browser measurements): the camera pose and the card box for a canvas size.
+    Landscape sizes get `DESK_POS` / `DESK_TARGET` and 520 x 620 back as the same objects; otherwise the camera slides
+    along today's view ray and the card narrows until it fits the width and the first control is 44px on screen.
+    `CameraController` and `DeskQuiz` read it. Lesson framing, `SCENE_*` / `MODEL_*`, `PAPER_ANCHOR`, the FOV and
+    `distanceFactor` are unchanged.
+  - Desk controls are 44 to 52px tall in CSS as the tilt needs (`controlHeight` from `deskFraming`; `DeskQuiz` only,
+    `QuizView` unchanged, so the daily review is as it was).
+  - The camera cuts to the desk and back under `prefers-reduced-motion` (with a landing-frame fix found in
+    verification).
+  - `AristoCanvas` shares `MIN_POLAR_ANGLE` (same value) with `deskFraming`, because OrbitControls clamps the desk pose
+    to it: the camera that renders is `(0, 0.133, 0.083)`, not `DESK_POS`. This is why "a steeper camera" is not on
+    offer without touching the lesson orbit.
+  - `/dev/desk-quiz` now shows the production framing until a slider moves, and publishes `window.__cam`.
+- **Measured** (the probe, /demo and the harness; 9 sizes from 360x640 to 1920x1080, light and dark):
+  - The card is fully visible in all 144 states (before: 60 of the 108 host states cropped; 49% visible at 360x780,
+    80% at 768x1024) and never under the top bar, the panel or the strip.
+  - Smallest desk control 44px on screen in every state, answered cards included (before 34); 0 under 44 (before 52
+    kinds). AA: 0 failures, minimum 5.33.
+  - fps in the desk framing (production build): 1280x720 127 before, 116 and 111 after; 390x844 246 before, 228 and
+    226 after (single runs range from 79 to 145; p95 frame time unchanged at 5 to 6.6 ms). First loads: `/` 122 kB static, `/demo` 135, `/learn` 134, all unchanged.
+  - Anchors: the nine probe-downs identical (moving mesh aside); the display clicks vary run to run by more than the
+    change (old code 0.392 to 0.403, new 0.408 to 0.419).
+- **Gates:** type-check clean; lint 0 errors / 10 warnings; tests 441 (404 + 37); build green.
+- **Gap left:** a landscape phone (844x390, 667x375) has no room for a usable card between the bars, so it keeps
+  today's framing and is cropped (controls about 28px). Owner: a panel and strip layout task, not the camera.
+- **Next:** V8.3 landing v3 (session order below); V8.6; V8.7.
+
+## 2026-09-30 - Next: V8.3 landing (the desk-quiz framing is done, above) (direction agreed with Hmz, no code yet)
 
 V8.4c merged (#15, 215db0d). Session order Hmz chose:
 
-1. **Desk-quiz framing at portrait sizes** (`/model opusplan`; one scoped Fable 5.1 session only if the camera and
-   anchors cannot be made to agree). At 360x780 the desk camera crops the 520px paper on both sides (FOV 40, the paper
-   about 700px on screen); at 768x1024 the left edge is cut. Fix it before V8.3.
+1. ~~Desk-quiz framing at portrait sizes~~ Done, see the entry above.
 2. **V8.3 landing v3** (`/model opusplan`; Fable 5.1 only if the scroll-and-3D choreography stalls). The direction
    Hmz agreed, which replaces the brief's looping hero video and example-image carousel:
    - **A motion-led, scroll-driven page**, premium, advanced yet friendly and creative: Night Class ink, the lit
@@ -64,8 +96,7 @@ register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-2
   - First loads: `/` 122 kB static, `/demo` 135, `/learn` 134 (unchanged; the first build was 136 until the loading
     screen dropped ui/button and MotionConfig). `/demo` JS 455.7 -> 456.9 kB, CSS 14.3 -> 13.9, scene ready median
     2343 -> 1639 ms (noise). 0 paid requests anywhere.
-- **Gap left:** the desk quiz at 360 portrait is cropped by the camera (needs a framing per aspect ratio; a camera
-  constant). Owner: a desk-framing task.
+- **Gap left:** the desk quiz at 360 portrait is cropped by the camera. Closed by the desk-framing task (entry above).
   - `/learn` in the pane (production build, signed in by Hmz, view-only): JS 458.9 -> 460.6 kB, CSS 14.3 -> 13.9, only
     the three GET calls, no lock, dark under OS dark, the toggle 44px, no target under 44px.
 - **Next:** V8.3 landing v3; V8.6 (admin token pass, then onboarding, course map, dashboard and create-teacher onto the

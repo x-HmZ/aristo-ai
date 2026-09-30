@@ -1,0 +1,43 @@
+demo-360x640-light           card 17..343 vis 1.002 css 255x432 minH 49 minW 203 underBar false
+demo-360x780-light           card 16..344 vis 0.998 css 270x448 minH 48 minW 213 underBar false
+demo-390x844-light           card 16..374 vis 1 css 300x448 minH 48 minW 243 underBar false
+demo-430x932-light           card 17..413 vis 1.003 css 341x428 minH 47 minW 283 underBar false
+demo-768x1024-light          card 27..741 vis 0.999 css 520x331 minH 47 minW 562 underBar false
+demo-1024x768-light          card 152..872 vis 1 css 520x347 minH 49 minW 546 underBar false
+demo-1280x720-light          card 301..979 vis 0.997 css 520x359 minH 48 minW 511 underBar false
+demo-1440x900-light          card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+demo-1920x1080-light         card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+shell-360x640-light          card 17..343 vis 1.002 css 255x432 minH 49 minW 203 underBar false
+shell-360x780-light          card 16..344 vis 0.998 css 270x448 minH 48 minW 213 underBar false
+shell-390x844-light          card 16..374 vis 1 css 300x448 minH 48 minW 243 underBar false
+shell-430x932-light          card 17..413 vis 1.003 css 341x428 minH 47 minW 283 underBar false
+shell-768x1024-light         card 27..741 vis 0.999 css 520x331 minH 47 minW 562 underBar false
+shell-1024x768-light         card 152..872 vis 1 css 520x347 minH 49 minW 546 underBar false
+shell-1280x720-light         card 301..979 vis 0.997 css 520x359 minH 48 minW 511 underBar false
+shell-1440x900-light         card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+shell-1920x1080-light        card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+demo-360x640-dark            card 17..343 vis 1.002 css 255x432 minH 49 minW 203 underBar false
+demo-360x780-dark            card 16..344 vis 0.998 css 270x448 minH 48 minW 213 underBar false
+demo-390x844-dark            card 16..374 vis 1 css 300x448 minH 48 minW 243 underBar false
+demo-430x932-dark            card 17..413 vis 1.003 css 341x428 minH 47 minW 283 underBar false
+demo-768x1024-dark           card 27..741 vis 0.999 css 520x331 minH 47 minW 562 underBar false
+demo-1024x768-dark           card 152..872 vis 1 css 520x347 minH 49 minW 546 underBar false
+demo-1280x720-dark           card 301..979 vis 0.997 css 520x359 minH 48 minW 511 underBar false
+demo-1440x900-dark           card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+demo-1920x1080-dark          card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+shell-360x640-dark           card 17..343 vis 1.002 css 255x432 minH 49 minW 203 underBar false
+shell-360x780-dark           card 16..344 vis 0.998 css 270x448 minH 48 minW 213 underBar false
+shell-390x844-dark           card 16..374 vis 1 css 300x448 minH 48 minW 243 underBar false
+shell-430x932-dark           card 17..413 vis 1.003 css 341x428 minH 47 minW 283 underBar false
+shell-768x1024-dark          card 27..741 vis 0.999 css 520x331 minH 47 minW 562 underBar false
+shell-1024x768-dark          card 152..872 vis 1 css 520x347 minH 49 minW 546 underBar false
+shell-1280x720-dark          card 301..979 vis 0.997 css 520x359 minH 48 minW 511 underBar false
+shell-1440x900-dark          card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+shell-1920x1080-dark         card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+AA nodes 1288 fails 0 min 5.33
+under-44 controls 0
+running animations 2
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   transition BUTTON
+paid 0 api at network 0 notes 0
+finished

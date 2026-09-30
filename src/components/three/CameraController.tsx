@@ -20,9 +20,10 @@
  */
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef } from "react";
-import { Vector3 } from "three";
+import { useEffect, useMemo, useRef } from "react";
+import { Vector3, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
+import { deskFraming } from "./deskFraming";
 
 // ─── Named framings ──────────────────────────────────────────────────────────
 
@@ -32,20 +33,9 @@ const LESSON_POS    = new Vector3(0,    0,    0.9);
 // orbit around the teacher that swings the camera out of the classroom.
 const LESSON_TARGET = new Vector3(0,    0,    0.4);
 
-// Desk view — camera stays essentially at the student's POV and simply
-// tilts the gaze downward toward the desk surface in front of them.  This
-// "student looking down at their own paper" framing was tuned in the
-// /dev/desk-quiz harness (see HANDOFF_DESK_QUIZ.md).
-//
-// Why we don't aim at the PLACEMENT.default.desk anchor in Classroom.tsx
-// — that anchor is the *teacher's* desk further back in the room.  The
-// student sits in a chair near the lesson-camera origin; the desk in
-// front of them is at roughly z=-0.6 in world space, with its surface
-// near y=-1.05.  Pointing the camera at that surface keeps the chair
-// across the table softly visible in the background for context rather
-// than blocking the view.
-const DESK_POS    = new Vector3(0,    0.2,  -0.05);
-const DESK_TARGET = new Vector3(0,   -1.05, -0.6);
+// Desk view — the student looking down at their own paper.  The pose (DESK_POS / DESK_TARGET, tuned in the
+// /dev/desk-quiz harness) lives in deskFraming.ts with the per-aspect framing: on a landscape canvas it is used as
+// it is; on a portrait one the camera slides back along the same view ray so the paper fits the width.
 
 // Damping strength.  Higher = snappier.  λ=3.2 → ~95 % of distance covered
 // in ~0.9 s while never popping at the start/end — feels like a smooth
@@ -68,8 +58,25 @@ interface CameraControllerProps {
 }
 
 export function CameraController({ deskPos, deskTarget, lambda }: CameraControllerProps = {}) {
-  const { camera, controls } = useThree();
+  const { camera, controls, size } = useThree();
   const activeQuiz = useAristoStore((s) => s.activeQuiz);
+
+  // The desk framing follows the canvas aspect ratio (the paper is 520 CSS px wide, so a phone would crop it).
+  const fov = (camera as PerspectiveCamera).fov;
+  const framing = useMemo(() => deskFraming(size.width, size.height, fov), [size.width, size.height, fov]);
+
+  // prefers-reduced-motion: cut to the goal instead of gliding, both into and out of the desk.
+  const reduceMotion = useRef(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reduceMotion.current = mq.matches;
+    const onChange = (e: MediaQueryListEvent) => { reduceMotion.current = e.matches; };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // True while this controller has been moving the camera (from the first driven frame until it lands on the lesson).
+  const driving = useRef(false);
 
   // Live camera position and look-at point — mutated each frame.
   const livePos    = useRef(new Vector3().copy(LESSON_POS));
@@ -89,13 +96,13 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
         goalPosOverride.current.set(deskPos[0], deskPos[1], deskPos[2]);
         goalPos = goalPosOverride.current;
       } else {
-        goalPos = DESK_POS;
+        goalPos = framing.pos;
       }
       if (deskTarget) {
         goalTargetOverride.current.set(deskTarget[0], deskTarget[1], deskTarget[2]);
         goalTarget = goalTargetOverride.current;
       } else {
-        goalTarget = DESK_TARGET;
+        goalTarget = framing.target;
       }
     } else {
       goalPos    = LESSON_POS;
@@ -106,7 +113,7 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
     // Critically-damped exponential ease.  `1 - exp(-λ·dt)` is the
     // frame-rate-independent equivalent of "lerp by ~λ percent per second"
     // — looks identical at 30 fps and 144 fps.
-    const t = 1 - Math.exp(-L * Math.min(delta, 0.1));
+    const t = reduceMotion.current ? 1 : 1 - Math.exp(-L * Math.min(delta, 0.1));
     livePos.current   .lerp(goalPos,    t);
     liveTarget.current.lerp(goalTarget, t);
 
@@ -117,7 +124,15 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
       !activeQuiz &&
       livePos.current.distanceToSquared(LESSON_POS) < SNAP_EPSILON &&
       liveTarget.current.distanceToSquared(LESSON_TARGET) < SNAP_EPSILON;
-    if (isAtLesson) return;
+    // Hand back to OrbitControls once landed. The frame that lands is still applied: with the exponential glide
+    // it is within SNAP_EPSILON of the lesson pose anyway, but a reduced-motion cut lands exactly on it in one
+    // frame, and without this the camera would stay where the desk framing left it.
+    if (isAtLesson) {
+      if (!driving.current) return;
+      driving.current = false;
+    } else {
+      driving.current = true;
+    }
 
     camera.position.copy(livePos.current);
     camera.lookAt(liveTarget.current);
