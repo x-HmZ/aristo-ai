@@ -7,7 +7,7 @@ $ next build
 Browserslist: caniuse-lite is outdated. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
- ✓ Compiled successfully in 10.6s
+ ✓ Compiled successfully in 11.3s
    Skipping validation of types
    Linting ...
 
@@ -35,21 +35,19 @@ Browserslist: caniuse-lite is outdated. Please run:
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
    Collecting page data ...
-(node:27680) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:40880) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:33316) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:28560) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:24556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:24760) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:29216) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-(node:42100) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:25304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (0/61) ...
-   Generating static pages (15/61) 
-(node:37304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(node:27620) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:42076) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+   Generating static pages (15/61) 
+(node:24992) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
    Generating static pages (30/61) 
    Generating static pages (45/61) 
@@ -149,12 +147,12 @@ Route (app)                                     Size  First Load JS
 
 Route (pages)                                   Size  First Load JS
 ┌   /_app                                        0 B        87.3 kB
-├ ○ /demo (794 ms)                           3.62 kB         135 kB
-├ ○ /dev/avatar-lab (312 ms)                 2.13 kB        89.5 kB
-├ ○ /dev/desk-quiz (376 ms)                  1.93 kB        89.2 kB
-├ ○ /dev/free-model (375 ms)                 1.93 kB        89.2 kB
-├ ○ /dev/learn-shell (794 ms)                13.2 kB         147 kB
-├ ○ /dev/quiz-bars (609 ms)                  13.4 kB         110 kB
+├ ○ /demo (1208 ms)                          3.62 kB         135 kB
+├ ○ /dev/avatar-lab (421 ms)                 2.13 kB        89.5 kB
+├ ○ /dev/desk-quiz (422 ms)                  1.93 kB        89.2 kB
+├ ○ /dev/free-model (424 ms)                 1.93 kB        89.2 kB
+├ ○ /dev/learn-shell (1207 ms)               13.2 kB         147 kB
+├ ○ /dev/quiz-bars (975 ms)                  13.4 kB         110 kB
 └ ƒ /learn                                   3.36 kB         134 kB
 + First Load JS shared by all                 101 kB
   ├ chunks/framework-2f3de63929c73f88.js     44.8 kB
@@ -165,4 +163,4 @@ Route (pages)                                   Size  First Load JS
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
 
-Done in 46.41s.
+Done in 47.14s.

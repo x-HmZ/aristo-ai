@@ -37,6 +37,9 @@ requests and 0 API requests at the network**. The harness is excluded from git; 
 
 ## Results
 
+`after/` and `after-desk/` demo and shell were re-captured after the code-review fixes (`after-run-2.log`, the same
+numbers as `after-run.log`).
+
 | | Before | After |
 |---|---|---|
 | AA text nodes checked (whole page on /demo and the harness; the product parts of the probes) | 6,031 | 8,076 |
