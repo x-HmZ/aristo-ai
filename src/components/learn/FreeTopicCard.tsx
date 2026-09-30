@@ -169,8 +169,7 @@ export function FreeTopicCard({ message, isLatest = false }: FreeTopicCardProps)
 
       {parsed.fun_fact && (
         <FreeCard label="Fun fact" icon={Lightbulb}>
-          <div className={cn(SHAPE.control, "flex gap-2 border border-warning/25 bg-warning/10 px-3 py-2")}>
-            <Lightbulb aria-hidden className="mt-0.5 size-4 shrink-0 text-warning" />
+          <div className={cn(SHAPE.control, "border border-warning/25 bg-warning/10 px-3 py-2")}>
             <p className="text-sm leading-relaxed text-warning">{parsed.fun_fact}</p>
           </div>
         </FreeCard>

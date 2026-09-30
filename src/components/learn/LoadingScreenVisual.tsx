@@ -87,11 +87,12 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
           </div>
 
           {/* Microcopy / stall hint */}
-          <div className="flex min-h-4 items-center justify-center" aria-live="polite">
+          <div className="flex min-h-4 items-center justify-center">
             <AnimatePresence mode="wait">
               {stalled ? (
                 <motion.span
                   key="stalled"
+                  role="status"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

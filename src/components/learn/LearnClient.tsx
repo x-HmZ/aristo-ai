@@ -322,7 +322,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     // here; QuizView owns its own controls.
     if (activeQuiz) {
       return (
-        <div className="flex items-center justify-center gap-2 rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
+        <div className="flex items-center justify-center gap-2 bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
           <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-pulse" />
           <span>Your quiz is on the desk. Look down.</span>
         </div>
@@ -382,7 +382,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
               title="Start your daily review"
             >
               <RotateCcw aria-hidden />
-              <span>{overdueCount}<span className="max-md:sr-only"> due</span></span>
+              <span>{overdueCount > 99 ? "99+" : overdueCount}<span className="max-md:sr-only"> due</span></span>
             </Button>
           )}
           {/* Progress dashboard button */}

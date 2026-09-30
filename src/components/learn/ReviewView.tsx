@@ -165,7 +165,7 @@ export function ReviewView({ userId, onClose }: ReviewViewProps) {
 
       {/* Quiz panel: in the lesson panel's column (right-5, 400px) */}
       <div className="aristo-scroll flex flex-1 items-start justify-end overflow-y-auto pb-5 pr-5 pt-4">
-        <div className="w-[400px] max-w-[calc(100vw-2.5rem)]">
+        <div className={cn(SHAPE.surface, "w-[400px] max-w-[calc(100vw-2.5rem)] overflow-hidden border border-line shadow-e2")}>
           <QuizView
             conceptId={questions[0]?.concept_id ?? ""}
             questions={questions}

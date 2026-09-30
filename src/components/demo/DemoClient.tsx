@@ -236,7 +236,7 @@ export function DemoClient() {
     if (!topic) return null;
     if (activeQuiz) {
       return (
-        <div className="flex items-center justify-center gap-2 rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
+        <div className="flex items-center justify-center gap-2 bg-surface/95 px-4 py-3 text-sm text-body backdrop-blur-md">
           <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-pulse" />
           <span>Your quiz is on the desk. Look down.</span>
         </div>
