@@ -1,0 +1,248 @@
+{
+ "label": "after",
+ "rows": {
+  "probe-360x780-light": {
+   "vw": 360,
+   "vh": 780,
+   "card": {
+    "x": 18,
+    "y": 218,
+    "r": 342,
+    "b": 602,
+    "w": 324,
+    "h": 384
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 218,
+    "bottom": 178
+   },
+   "cssWidth": 270,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 210,
+   "underBar": false,
+   "cam": [
+    0,
+    0.3066372821988582,
+    0.18313515375013534
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 780,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     218,
+     342,
+     602
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-360x780": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.3066372821988582,
+     0.18313515375013534
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.3066372821988582,
+     0.18313515375013534
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.3066372821988582,
+     0.18313515375013534
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   }
+  },
+  "probe-1280x720-light": {
+   "vw": 1280,
+   "vh": 720,
+   "card": {
+    "x": 301,
+    "y": 195,
+    "r": 979,
+    "b": 566,
+    "w": 679,
+    "h": 371
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 301,
+    "right": 301,
+    "top": 195,
+    "bottom": 154
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 49,
+   "minW": 511,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761725148726,
+    0.08282501418738308
+   ],
+   "layout": {
+    "vw": 1280,
+    "vh": 720,
+    "scrollW": 1280,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     301,
+     195,
+     979,
+     566
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-1280x720": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.13268761725148726,
+     0.08282501418738308
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     3.061616997868383e-17,
+     0.9
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.13268761725148726,
+     0.08282501418738308
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268761725148726,
+     0.08282501418738308
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   }
+  }
+ },
+ "paid": [],
+ "api": [],
+ "notes": []
+}

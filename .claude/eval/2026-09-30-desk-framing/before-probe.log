@@ -1,0 +1,57 @@
+probe-360x640-light          card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+probe-360x780-light          card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+probe-390x844-light          card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+probe-430x932-light          card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+probe-768x1024-light         card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+probe-1024x768-light         card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+probe-1280x720-light         card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+probe-1440x900-light         card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+probe-1920x1080-light        card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+probe-alt-360x640-light      card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+probe-alt-360x780-light      card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+probe-alt-390x844-light      card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+probe-alt-430x932-light      card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+probe-alt-768x1024-light     card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+probe-alt-1024x768-light     card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+probe-alt-1280x720-light     card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+probe-alt-1440x900-light     card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+probe-alt-1920x1080-light    card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+probe-360x640-dark           card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+probe-360x780-dark           card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+probe-390x844-dark           card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+probe-430x932-dark           card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+probe-768x1024-dark          card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+probe-1024x768-dark          card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+probe-1280x720-dark          card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+probe-1440x900-dark          card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+probe-1920x1080-dark         card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+probe-alt-360x640-dark       card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+probe-alt-360x780-dark       card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+probe-alt-390x844-dark       card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+probe-alt-430x932-dark       card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+probe-alt-768x1024-dark      card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+probe-alt-1024x768-dark      card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+probe-alt-1280x720-dark      card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+probe-alt-1440x900-dark      card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+probe-alt-1920x1080-dark     card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+AA nodes 380 fails 0 min 5.48
+under-44 controls 16
+   probe-360x640-light: 3 456x38
+   probe-360x640-light: 4 471x40
+   probe-360x640-light: 5 486x42
+   probe-1280x720-light: 3 513x42
+   probe-alt-360x640-light: 3 456x38
+   probe-alt-360x640-light: 4 471x40
+   probe-alt-360x640-light: 5 486x42
+   probe-alt-1280x720-light: 3 513x42
+   probe-360x640-dark: 3 456x38
+   probe-360x640-dark: 4 471x40
+   probe-360x640-dark: 5 486x42
+   probe-1280x720-dark: 3 513x42
+   probe-alt-360x640-dark: 3 456x38
+   probe-alt-360x640-dark: 4 471x40
+   probe-alt-360x640-dark: 5 486x42
+   probe-alt-1280x720-dark: 3 513x42
+running animations 1
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+paid 0 api at network 0 notes 0

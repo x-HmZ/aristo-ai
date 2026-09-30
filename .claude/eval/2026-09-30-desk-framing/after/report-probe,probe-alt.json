@@ -1,0 +1,3104 @@
+{
+ "label": "after",
+ "rows": {
+  "probe-360x640-light": {
+   "vw": 360,
+   "vh": 640,
+   "card": {
+    "x": 19,
+    "y": 148,
+    "r": 341,
+    "b": 544,
+    "w": 323,
+    "h": 396
+   },
+   "visible": 0.997,
+   "margins": {
+    "left": 19,
+    "right": 19,
+    "top": 148,
+    "bottom": 96
+   },
+   "cssWidth": 255,
+   "cssMaxH": "432px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 48,
+   "minW": 199,
+   "underBar": false,
+   "cam": [
+    0,
+    0.07016979032727755,
+    0.04677340396852192
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 640,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     19,
+     148,
+     341,
+     544
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-360x640": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.07016979047203753,
+     0.04677340220831905
+    ],
+    "card": {
+     "x": 19,
+     "y": 148,
+     "r": 341,
+     "b": 544,
+     "w": 323,
+     "h": 396
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.043308888437354254,
+     0.3733874037963866
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.0013544532834641743,
+     0.8835305826176225
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.026723729126589213,
+     0.5750539465830039
+    ],
+    "card": {
+     "x": 49,
+     "y": 229,
+     "r": 311,
+     "b": 467,
+     "w": 262,
+     "h": 238
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.0701670064790132,
+     0.046807254053686465
+    ],
+    "card": {
+     "x": 19,
+     "y": 148,
+     "r": 341,
+     "b": 544,
+     "w": 323,
+     "h": 396
+    }
+   }
+  },
+  "probe-360x780-light": {
+   "vw": 360,
+   "vh": 780,
+   "card": {
+    "x": 18,
+    "y": 218,
+    "r": 342,
+    "b": 602,
+    "w": 324,
+    "h": 384
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 218,
+    "bottom": 178
+   },
+   "cssWidth": 270,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 210,
+   "underBar": false,
+   "cam": [
+    0,
+    0.30663727613670844,
+    0.1831351876453423
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 780,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     218,
+     342,
+     602
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-360x780": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.3066372764540042,
+     0.18313518587125033
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.19964594943141123,
+     0.4332623669465919
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.006945858237990311,
+     0.8837617870898107
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.11659853800250936,
+     0.6274128168022476
+    ],
+    "card": {
+     "x": 25,
+     "y": 310,
+     "r": 335,
+     "b": 586,
+     "w": 310,
+     "h": 276
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.3066250691708877,
+     0.183163705693837
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   }
+  },
+  "probe-390x844-light": {
+   "vw": 390,
+   "vh": 844,
+   "card": {
+    "x": 18,
+    "y": 250,
+    "r": 372,
+    "b": 631,
+    "w": 354,
+    "h": 381
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 250,
+    "bottom": 213
+   },
+   "cssWidth": 300,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 241,
+   "underBar": false,
+   "cam": [
+    0,
+    0.41330766911737526,
+    0.24464793262775286
+   ],
+   "layout": {
+    "vw": 390,
+    "vh": 844,
+    "scrollW": 390,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     250,
+     372,
+     631
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-390x844": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.4133076697238006,
+     0.24464793128097495
+    ],
+    "card": {
+     "x": 18,
+     "y": 250,
+     "r": 372,
+     "b": 631,
+     "w": 354,
+     "h": 381
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.25591165221968204,
+     0.49421940826791266
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.010441542076891252,
+     0.8834436021736156
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.14370358511837228,
+     0.6721396196214875
+    ],
+    "card": {
+     "x": 15,
+     "y": 349,
+     "r": 375,
+     "b": 641,
+     "w": 359,
+     "h": 292
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.41329123539832335,
+     0.24467398271612262
+    ],
+    "card": {
+     "x": 18,
+     "y": 250,
+     "r": 372,
+     "b": 631,
+     "w": 354,
+     "h": 381
+    }
+   }
+  },
+  "probe-430x932-light": {
+   "vw": 430,
+   "vh": 932,
+   "card": {
+    "x": 18,
+    "y": 294,
+    "r": 412,
+    "b": 670,
+    "w": 394,
+    "h": 376
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 294,
+    "bottom": 262
+   },
+   "cssWidth": 341,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 46,
+   "minW": 282,
+   "underBar": false,
+   "cam": [
+    0,
+    0.56263784478552,
+    0.33076095639130665
+   ],
+   "layout": {
+    "vw": 430,
+    "vh": 932,
+    "scrollW": 430,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     294,
+     412,
+     670
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-430x932": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.5626378459595134,
+     0.3307609552035399
+    ],
+    "card": {
+     "x": 18,
+     "y": 294,
+     "r": 412,
+     "b": 670,
+     "w": 394,
+     "h": 376
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.3471497235596435,
+     0.5487773112677055
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.016632459321132786,
+     0.8831723988626621
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.19527184545684736,
+     0.7024371101557635
+    ],
+    "card": {
+     "x": 0,
+     "y": 433,
+     "r": 430,
+     "b": 742,
+     "w": 431,
+     "h": 309
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.562614244944568,
+     0.3307848331195029
+    ],
+    "card": {
+     "x": 18,
+     "y": 294,
+     "r": 412,
+     "b": 670,
+     "w": 394,
+     "h": 376
+    }
+   }
+  },
+  "probe-768x1024-light": {
+   "vw": 768,
+   "vh": 1024,
+   "card": {
+    "x": 24,
+    "y": 328,
+    "r": 744,
+    "b": 731,
+    "w": 720,
+    "h": 403
+   },
+   "visible": 1,
+   "margins": {
+    "left": 24,
+    "right": 24,
+    "top": 328,
+    "bottom": 293
+   },
+   "cssWidth": 520,
+   "cssMaxH": "452px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 55,
+   "minW": 560,
+   "underBar": false,
+   "cam": [
+    0,
+    0.43984166372897704,
+    0.25994908545431933
+   ],
+   "layout": {
+    "vw": 768,
+    "vh": 1024,
+    "scrollW": 768,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     24,
+     328,
+     744,
+     731
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-768x1024": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.4398416636191752,
+     0.25994908322887283
+    ],
+    "card": {
+     "x": 24,
+     "y": 328,
+     "r": 744,
+     "b": 731,
+     "w": 720,
+     "h": 403
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.27199258643000973,
+     0.5042005127253704
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.01169562460516162,
+     0.882980704427138
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.1671621406295204,
+     0.656748171336612
+    ],
+    "card": {
+     "x": 16,
+     "y": 443,
+     "r": 752,
+     "b": 757,
+     "w": 736,
+     "h": 313
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.43982419348351975,
+     0.2599744598100905
+    ],
+    "card": {
+     "x": 24,
+     "y": 328,
+     "r": 744,
+     "b": 731,
+     "w": 720,
+     "h": 403
+    }
+   }
+  },
+  "probe-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "card": {
+    "x": 150,
+    "y": 208,
+    "r": 874,
+    "b": 604,
+    "w": 724,
+    "h": 396
+   },
+   "visible": 1,
+   "margins": {
+    "left": 150,
+    "right": 150,
+    "top": 208,
+    "bottom": 164
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 53,
+   "minW": 545,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762011452528,
+    0.08282503027039279
+   ],
+   "layout": {
+    "vw": 1024,
+    "vh": 768,
+    "scrollW": 1024,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     150,
+     208,
+     874,
+     604
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-1024x768": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876198234861,
+     0.08282502863549024
+    ],
+    "card": {
+     "x": 150,
+     "y": 208,
+     "r": 874,
+     "b": 604,
+     "w": 724,
+     "h": 396
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.1239945151825671,
+     0.3110260535464846
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.004089396220837465,
+     0.8805753679729103
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.076089489077666,
+     0.5385749268811114
+    ],
+    "card": {
+     "x": 203,
+     "y": 250,
+     "r": 821,
+     "b": 515,
+     "w": 618,
+     "h": 265
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268927729135305,
+     0.08284164649039549
+    ],
+    "card": {
+     "x": 150,
+     "y": 208,
+     "r": 874,
+     "b": 604,
+     "w": 724,
+     "h": 396
+    }
+   }
+  },
+  "probe-1280x720-light": {
+   "vw": 1280,
+   "vh": 720,
+   "card": {
+    "x": 301,
+    "y": 195,
+    "r": 979,
+    "b": 566,
+    "w": 679,
+    "h": 371
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 301,
+    "right": 301,
+    "top": 195,
+    "bottom": 154
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 49,
+   "minW": 511,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761818039243,
+    0.08282502349484233
+   ],
+   "layout": {
+    "vw": 1280,
+    "vh": 720,
+    "scrollW": 1280,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     301,
+     195,
+     979,
+     566
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-1280x720": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.13268761813205465,
+     0.08282502301050831
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.13042486911504791,
+     0.280481871703523
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.004094634058319616,
+     0.880550488222982
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.06903636504290289,
+     0.5720772660462111
+    ],
+    "card": {
+     "x": 350,
+     "y": 234,
+     "r": 930,
+     "b": 483,
+     "w": 580,
+     "h": 248
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268936954447907,
+     0.08284257073639145
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   }
+  },
+  "probe-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "card": {
+    "x": 296,
+    "y": 244,
+    "r": 1144,
+    "b": 707,
+    "w": 848,
+    "h": 464
+   },
+   "visible": 0.998,
+   "margins": {
+    "left": 296,
+    "right": 296,
+    "top": 244,
+    "bottom": 193
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 62,
+   "minW": 639,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761983619215,
+    0.08282504008565239
+   ],
+   "layout": {
+    "vw": 1440,
+    "vh": 900,
+    "scrollW": 1440,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     296,
+     244,
+     1144,
+     707
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-1440x900": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876197087581,
+     0.08282503880878711
+    ],
+    "card": {
+     "x": 296,
+     "y": 244,
+     "r": 1144,
+     "b": 707,
+     "w": 848,
+     "h": 464
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12547133323987358,
+     0.30401116711060067
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.003931563994292016,
+     0.8813250710271124
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.07553291466721584,
+     0.5412186553307249
+    ],
+    "card": {
+     "x": 358,
+     "y": 294,
+     "r": 1082,
+     "b": 604,
+     "w": 724,
+     "h": 310
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268928688420045,
+     0.08284174259745736
+    ],
+    "card": {
+     "x": 296,
+     "y": 244,
+     "r": 1144,
+     "b": 707,
+     "w": 848,
+     "h": 464
+    }
+   }
+  },
+  "probe-1920x1080-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "card": {
+    "x": 451,
+    "y": 292,
+    "r": 1469,
+    "b": 849,
+    "w": 1018,
+    "h": 556
+   },
+   "visible": 1.002,
+   "margins": {
+    "left": 451,
+    "right": 451,
+    "top": 292,
+    "bottom": 231
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 74,
+   "minW": 767,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762967029057,
+    0.08282513862147245
+   ],
+   "layout": {
+    "vw": 1920,
+    "vh": 1080,
+    "scrollW": 1920,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     451,
+     292,
+     1469,
+     849
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-1920x1080": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876290693444,
+     0.08282513260010582
+    ],
+    "card": {
+     "x": 451,
+     "y": 292,
+     "r": 1469,
+     "b": 849,
+     "w": 1018,
+     "h": 556
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12328233134831479,
+     0.3144089260955048
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.004078939790562477,
+     0.8806250359948284
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.07601013080661095,
+     0.5389518786685977
+    ],
+    "card": {
+     "x": 525,
+     "y": 354,
+     "r": 1395,
+     "b": 725,
+     "w": 869,
+     "h": 372
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268928314576556,
+     0.08284170514351807
+    ],
+    "card": {
+     "x": 451,
+     "y": 292,
+     "r": 1469,
+     "b": 849,
+     "w": 1018,
+     "h": 556
+    }
+   }
+  },
+  "probe-alt-360x640-light": {
+   "vw": 360,
+   "vh": 640,
+   "card": {
+    "x": 19,
+    "y": 148,
+    "r": 341,
+    "b": 544,
+    "w": 323,
+    "h": 396
+   },
+   "visible": 0.997,
+   "margins": {
+    "left": 19,
+    "right": 19,
+    "top": 148,
+    "bottom": 96
+   },
+   "cssWidth": 255,
+   "cssMaxH": "432px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 48,
+   "minW": 199,
+   "underBar": false,
+   "cam": [
+    0,
+    0.07016979705630533,
+    0.04677339343310383
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 640,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     19,
+     148,
+     341,
+     544
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-360x640": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.07016979686171987,
+     0.04677339217619181
+    ],
+    "card": {
+     "x": 19,
+     "y": 148,
+     "r": 341,
+     "b": 544,
+     "w": 323,
+     "h": 396
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.04330889209255506,
+     0.3733873989142996
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.0013548868856049362,
+     0.8835253114884467
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.024514471153498085,
+     0.6019173254167522
+    ],
+    "card": {
+     "x": 49,
+     "y": 228,
+     "r": 311,
+     "b": 467,
+     "w": 262,
+     "h": 238
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.0701668487969831,
+     0.04680917138165863
+    ],
+    "card": {
+     "x": 19,
+     "y": 148,
+     "r": 341,
+     "b": 544,
+     "w": 323,
+     "h": 396
+    }
+   }
+  },
+  "probe-alt-360x780-light": {
+   "vw": 360,
+   "vh": 780,
+   "card": {
+    "x": 18,
+    "y": 218,
+    "r": 342,
+    "b": 602,
+    "w": 324,
+    "h": 384
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 218,
+    "bottom": 178
+   },
+   "cssWidth": 270,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 210,
+   "underBar": false,
+   "cam": [
+    0,
+    0.3066372703678846,
+    0.18313519774870668
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 780,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     218,
+     342,
+     602
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-360x780": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.3066372703678846,
+     0.18313519774870668
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.19335841295062572,
+     0.44796153559021523
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.007100928338467923,
+     0.8833992599906961
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.10712672444585614,
+     0.6495562760720767
+    ],
+    "card": {
+     "x": 25,
+     "y": 309,
+     "r": 335,
+     "b": 585,
+     "w": 310,
+     "h": 276
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.30662443581408294,
+     0.1831651863723292
+    ],
+    "card": {
+     "x": 18,
+     "y": 218,
+     "r": 342,
+     "b": 602,
+     "w": 324,
+     "h": 384
+    }
+   }
+  },
+  "probe-alt-390x844-light": {
+   "vw": 390,
+   "vh": 844,
+   "card": {
+    "x": 18,
+    "y": 250,
+    "r": 372,
+    "b": 631,
+    "w": 354,
+    "h": 381
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 250,
+    "bottom": 213
+   },
+   "cssWidth": 300,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 241,
+   "underBar": false,
+   "cam": [
+    0,
+    0.4133076749810033,
+    0.2446479319595516
+   ],
+   "layout": {
+    "vw": 390,
+    "vh": 844,
+    "scrollW": 390,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     250,
+     372,
+     631
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-390x844": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.4133076749810033,
+     0.2446479319595516
+    ],
+    "card": {
+     "x": 18,
+     "y": 250,
+     "r": 372,
+     "b": 631,
+     "w": 354,
+     "h": 381
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.2692693807708174,
+     0.4730390296231958
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.010434861799117453,
+     0.883454194803935
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.15838642949415177,
+     0.6488580953524474
+    ],
+    "card": {
+     "x": 15,
+     "y": 348,
+     "r": 375,
+     "b": 640,
+     "w": 359,
+     "h": 293
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.413290365903314,
+     0.24467536141146595
+    ],
+    "card": {
+     "x": 18,
+     "y": 250,
+     "r": 372,
+     "b": 631,
+     "w": 354,
+     "h": 381
+    }
+   }
+  },
+  "probe-alt-430x932-light": {
+   "vw": 430,
+   "vh": 932,
+   "card": {
+    "x": 18,
+    "y": 294,
+    "r": 412,
+    "b": 670,
+    "w": 394,
+    "h": 376
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 294,
+    "bottom": 262
+   },
+   "cssWidth": 341,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 46,
+   "minW": 282,
+   "underBar": false,
+   "cam": [
+    0,
+    0.5626378289793527,
+    0.3307609723829211
+   ],
+   "layout": {
+    "vw": 430,
+    "vh": 932,
+    "scrollW": 430,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     294,
+     412,
+     670
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-430x932": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.5626378310845338,
+     0.33076097025304096
+    ],
+    "card": {
+     "x": 18,
+     "y": 294,
+     "r": 412,
+     "b": 670,
+     "w": 394,
+     "h": 376
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.36714473206049525,
+     0.5285477095417297
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.016648433688899605,
+     0.883156237074196
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.1955076880709824,
+     0.70219850049707
+    ],
+    "card": {
+     "x": 0,
+     "y": 406,
+     "r": 430,
+     "b": 719,
+     "w": 429,
+     "h": 313
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.5626142903112037,
+     0.33078478722059923
+    ],
+    "card": {
+     "x": 18,
+     "y": 294,
+     "r": 412,
+     "b": 670,
+     "w": 394,
+     "h": 376
+    }
+   }
+  },
+  "probe-alt-768x1024-light": {
+   "vw": 768,
+   "vh": 1024,
+   "card": {
+    "x": 24,
+    "y": 328,
+    "r": 744,
+    "b": 731,
+    "w": 720,
+    "h": 403
+   },
+   "visible": 1,
+   "margins": {
+    "left": 24,
+    "right": 24,
+    "top": 328,
+    "bottom": 293
+   },
+   "cssWidth": 520,
+   "cssMaxH": "452px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 55,
+   "minW": 560,
+   "underBar": false,
+   "cam": [
+    0,
+    0.43984165403270925,
+    0.2599490733235966
+   ],
+   "layout": {
+    "vw": 768,
+    "vh": 1024,
+    "scrollW": 768,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     24,
+     328,
+     744,
+     731
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-768x1024": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.4398416544061884,
+     0.2599490716899697
+    ],
+    "card": {
+     "x": 24,
+     "y": 328,
+     "r": 744,
+     "b": 731,
+     "w": 720,
+     "h": 403
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.27391416386695167,
+     0.5014042475490209
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.011793337908053151,
+     0.8828385128720391
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.1675976335123348,
+     0.6561144486538787
+    ],
+    "card": {
+     "x": 16,
+     "y": 442,
+     "r": 752,
+     "b": 756,
+     "w": 736,
+     "h": 313
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.4398232050617613,
+     0.2599758981465423
+    ],
+    "card": {
+     "x": 24,
+     "y": 328,
+     "r": 744,
+     "b": 731,
+     "w": 720,
+     "h": 403
+    }
+   }
+  },
+  "probe-alt-1024x768-light": {
+   "vw": 1024,
+   "vh": 768,
+   "card": {
+    "x": 150,
+    "y": 208,
+    "r": 874,
+    "b": 604,
+    "w": 724,
+    "h": 396
+   },
+   "visible": 1,
+   "margins": {
+    "left": 150,
+    "right": 150,
+    "top": 208,
+    "bottom": 164
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 53,
+   "minW": 545,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762100663745,
+    0.08282503542993291
+   ],
+   "layout": {
+    "vw": 1024,
+    "vh": 768,
+    "scrollW": 1024,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     150,
+     208,
+     874,
+     604
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-1024x768": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876208078145,
+     0.08282503430520816
+    ],
+    "card": {
+     "x": 150,
+     "y": 208,
+     "r": 874,
+     "b": 604,
+     "w": 724,
+     "h": 396
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12375667223075026,
+     0.3121558078136787
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.004088087736243272,
+     0.8805815832829023
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.0767617405870274,
+     0.5353817322116541
+    ],
+    "card": {
+     "x": 202,
+     "y": 246,
+     "r": 822,
+     "b": 512,
+     "w": 619,
+     "h": 266
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268927357667648,
+     0.08284160927445394
+    ],
+    "card": {
+     "x": 150,
+     "y": 208,
+     "r": 874,
+     "b": 604,
+     "w": 724,
+     "h": 396
+    }
+   }
+  },
+  "probe-alt-1280x720-light": {
+   "vw": 1280,
+   "vh": 720,
+   "card": {
+    "x": 301,
+    "y": 195,
+    "r": 979,
+    "b": 566,
+    "w": 679,
+    "h": 371
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 301,
+    "right": 301,
+    "top": 195,
+    "bottom": 154
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 49,
+   "minW": 511,
+   "underBar": false,
+   "cam": [
+    0,
+    0.1326876210051473,
+    0.08282505179836774
+   ],
+   "layout": {
+    "vw": 1280,
+    "vh": 720,
+    "scrollW": 1280,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     301,
+     195,
+     979,
+     566
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-1280x720": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876208075407,
+     0.08282504981838668
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12435212887986657,
+     0.3093273878206342
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.004107757642387352,
+     0.8804881511986598
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.07616877496271501,
+     0.538198318927104
+    ],
+    "card": {
+     "x": 350,
+     "y": 233,
+     "r": 930,
+     "b": 482,
+     "w": 579,
+     "h": 249
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268927676007936,
+     0.0828416411677656
+    ],
+    "card": {
+     "x": 301,
+     "y": 195,
+     "r": 979,
+     "b": 566,
+     "w": 679,
+     "h": 371
+    }
+   }
+  },
+  "probe-alt-1440x900-light": {
+   "vw": 1440,
+   "vh": 900,
+   "card": {
+    "x": 296,
+    "y": 244,
+    "r": 1144,
+    "b": 707,
+    "w": 848,
+    "h": 464
+   },
+   "visible": 0.998,
+   "margins": {
+    "left": 296,
+    "right": 296,
+    "top": 244,
+    "bottom": 193
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 62,
+   "minW": 639,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761808250096,
+    0.08282502251399082
+   ],
+   "layout": {
+    "vw": 1440,
+    "vh": 900,
+    "scrollW": 1440,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     296,
+     244,
+     1144,
+     707
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-1440x900": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.13268761804001428,
+     0.08282502208827891
+    ],
+    "card": {
+     "x": 296,
+     "y": 244,
+     "r": 1144,
+     "b": 707,
+     "w": 848,
+     "h": 464
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12523066366584945,
+     0.3051543475872152
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.003905232614141385,
+     0.8814501450828283
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.07656444883626329,
+     0.5363188680277494
+    ],
+    "card": {
+     "x": 358,
+     "y": 292,
+     "r": 1082,
+     "b": 603,
+     "w": 725,
+     "h": 310
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.1326892751669837,
+     0.08284162520714156
+    ],
+    "card": {
+     "x": 296,
+     "y": 244,
+     "r": 1144,
+     "b": 707,
+     "w": 848,
+     "h": 464
+    }
+   }
+  },
+  "probe-alt-1920x1080-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "card": {
+    "x": 451,
+    "y": 292,
+    "r": 1469,
+    "b": 849,
+    "w": 1018,
+    "h": 556
+   },
+   "visible": 1.002,
+   "margins": {
+    "left": 451,
+    "right": 451,
+    "top": 292,
+    "bottom": 231
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 74,
+   "minW": 767,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762004967338,
+    0.082825042224694
+   ],
+   "layout": {
+    "vw": 1920,
+    "vh": 1080,
+    "scrollW": 1920,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     451,
+     292,
+     1469,
+     849
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(243, 244, 246)"
+   }
+  },
+  "motion-probe-alt-1920x1080": {
+   "start": {
+    "n": "desk settled",
+    "cam": [
+     0,
+     0.1326876199176794,
+     0.08282504090214116
+    ],
+    "card": {
+     "x": 451,
+     "y": 292,
+     "r": 1469,
+     "b": 849,
+     "w": 1018,
+     "h": 556
+    }
+   },
+   "offAt150": {
+    "n": "lesson +150ms",
+    "cam": [
+     0,
+     0.12627692477169883,
+     0.30018460733443064
+    ],
+    "card": null
+   },
+   "offSettled": {
+    "n": "lesson +3s",
+    "cam": [
+     0,
+     0.003947953376706767,
+     0.8812472214606429
+    ],
+    "card": null
+   },
+   "onAt150": {
+    "n": "desk +150ms",
+    "cam": [
+     0,
+     0.07640639510412012,
+     0.5370696232554292
+    ],
+    "card": {
+     "x": 525,
+     "y": 349,
+     "r": 1395,
+     "b": 722,
+     "w": 870,
+     "h": 373
+    }
+   },
+   "onSettled": {
+    "n": "desk +3s",
+    "cam": [
+     0,
+     0.13268927516637263,
+     0.08284162520102112
+    ],
+    "card": {
+     "x": 451,
+     "y": 292,
+     "r": 1469,
+     "b": 849,
+     "w": 1018,
+     "h": 556
+    }
+   }
+  },
+  "probe-360x640-dark": {
+   "vw": 360,
+   "vh": 640,
+   "card": {
+    "x": 19,
+    "y": 148,
+    "r": 341,
+    "b": 544,
+    "w": 323,
+    "h": 396
+   },
+   "visible": 0.997,
+   "margins": {
+    "left": 19,
+    "right": 19,
+    "top": 148,
+    "bottom": 96
+   },
+   "cssWidth": 255,
+   "cssMaxH": "432px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 48,
+   "minW": 199,
+   "underBar": false,
+   "cam": [
+    0,
+    0.07016979742939666,
+    0.04677339474817588
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 640,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     19,
+     148,
+     341,
+     544
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-360x780-dark": {
+   "vw": 360,
+   "vh": 780,
+   "card": {
+    "x": 18,
+    "y": 218,
+    "r": 342,
+    "b": 602,
+    "w": 324,
+    "h": 384
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 218,
+    "bottom": 178
+   },
+   "cssWidth": 270,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 210,
+   "underBar": false,
+   "cam": [
+    0,
+    0.3066372683763803,
+    0.18313518606469437
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 780,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     218,
+     342,
+     602
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-390x844-dark": {
+   "vw": 390,
+   "vh": 844,
+   "card": {
+    "x": 18,
+    "y": 250,
+    "r": 372,
+    "b": 631,
+    "w": 354,
+    "h": 381
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 250,
+    "bottom": 213
+   },
+   "cssWidth": 300,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 241,
+   "underBar": false,
+   "cam": [
+    0,
+    0.4133076700639128,
+    0.24464793498253157
+   ],
+   "layout": {
+    "vw": 390,
+    "vh": 844,
+    "scrollW": 390,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     250,
+     372,
+     631
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-430x932-dark": {
+   "vw": 430,
+   "vh": 932,
+   "card": {
+    "x": 18,
+    "y": 294,
+    "r": 412,
+    "b": 670,
+    "w": 394,
+    "h": 376
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 294,
+    "bottom": 262
+   },
+   "cssWidth": 341,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 46,
+   "minW": 282,
+   "underBar": false,
+   "cam": [
+    0,
+    0.5626378461424993,
+    0.3307609597236753
+   ],
+   "layout": {
+    "vw": 430,
+    "vh": 932,
+    "scrollW": 430,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     294,
+     412,
+     670
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-768x1024-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "card": {
+    "x": 24,
+    "y": 328,
+    "r": 744,
+    "b": 731,
+    "w": 720,
+    "h": 403
+   },
+   "visible": 1,
+   "margins": {
+    "left": 24,
+    "right": 24,
+    "top": 328,
+    "bottom": 293
+   },
+   "cssWidth": 520,
+   "cssMaxH": "452px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 55,
+   "minW": 560,
+   "underBar": false,
+   "cam": [
+    0,
+    0.43984167305288635,
+    0.25994906154003994
+   ],
+   "layout": {
+    "vw": 768,
+    "vh": 1024,
+    "scrollW": 768,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     24,
+     328,
+     744,
+     731
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "card": {
+    "x": 150,
+    "y": 208,
+    "r": 874,
+    "b": 604,
+    "w": 724,
+    "h": 396
+   },
+   "visible": 1,
+   "margins": {
+    "left": 150,
+    "right": 150,
+    "top": 208,
+    "bottom": 164
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 53,
+   "minW": 545,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762053834382,
+    0.08282502722292584
+   ],
+   "layout": {
+    "vw": 1024,
+    "vh": 768,
+    "scrollW": 1024,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     150,
+     208,
+     874,
+     604
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-1280x720-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "card": {
+    "x": 301,
+    "y": 195,
+    "r": 979,
+    "b": 566,
+    "w": 679,
+    "h": 371
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 301,
+    "right": 301,
+    "top": 195,
+    "bottom": 154
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 49,
+   "minW": 511,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761833080722,
+    0.0828250250019732
+   ],
+   "layout": {
+    "vw": 1280,
+    "vh": 720,
+    "scrollW": 1280,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     301,
+     195,
+     979,
+     566
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-1440x900-dark": {
+   "vw": 1440,
+   "vh": 900,
+   "card": {
+    "x": 296,
+    "y": 244,
+    "r": 1144,
+    "b": 707,
+    "w": 848,
+    "h": 464
+   },
+   "visible": 0.998,
+   "margins": {
+    "left": 296,
+    "right": 296,
+    "top": 244,
+    "bottom": 193
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 62,
+   "minW": 639,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761913558902,
+    0.08282503306574074
+   ],
+   "layout": {
+    "vw": 1440,
+    "vh": 900,
+    "scrollW": 1440,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     296,
+     244,
+     1144,
+     707
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-1920x1080-dark": {
+   "vw": 1920,
+   "vh": 1080,
+   "card": {
+    "x": 451,
+    "y": 292,
+    "r": 1469,
+    "b": 849,
+    "w": 1018,
+    "h": 556
+   },
+   "visible": 1.002,
+   "margins": {
+    "left": 451,
+    "right": 451,
+    "top": 292,
+    "bottom": 231
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 74,
+   "minW": 767,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761777232907,
+    0.08282501940612386
+   ],
+   "layout": {
+    "vw": 1920,
+    "vh": 1080,
+    "scrollW": 1920,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     451,
+     292,
+     1469,
+     849
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-360x640-dark": {
+   "vw": 360,
+   "vh": 640,
+   "card": {
+    "x": 19,
+    "y": 148,
+    "r": 341,
+    "b": 544,
+    "w": 323,
+    "h": 396
+   },
+   "visible": 0.997,
+   "margins": {
+    "left": 19,
+    "right": 19,
+    "top": 148,
+    "bottom": 96
+   },
+   "cssWidth": 255,
+   "cssMaxH": "432px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 48,
+   "minW": 199,
+   "underBar": false,
+   "cam": [
+    0,
+    0.07016978680369923,
+    0.04677344681332263
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 640,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     19,
+     148,
+     341,
+     544
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-360x780-dark": {
+   "vw": 360,
+   "vh": 780,
+   "card": {
+    "x": 18,
+    "y": 218,
+    "r": 342,
+    "b": 602,
+    "w": 324,
+    "h": 384
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 218,
+    "bottom": 178
+   },
+   "cssWidth": 270,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 210,
+   "underBar": false,
+   "cam": [
+    0,
+    0.3066372693077716,
+    0.18313518388726263
+   ],
+   "layout": {
+    "vw": 360,
+    "vh": 780,
+    "scrollW": 360,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     218,
+     342,
+     602
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-390x844-dark": {
+   "vw": 390,
+   "vh": 844,
+   "card": {
+    "x": 18,
+    "y": 250,
+    "r": 372,
+    "b": 631,
+    "w": 354,
+    "h": 381
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 250,
+    "bottom": 213
+   },
+   "cssWidth": 300,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 47,
+   "minW": 241,
+   "underBar": false,
+   "cam": [
+    0,
+    0.4133076627113983,
+    0.2446479351140206
+   ],
+   "layout": {
+    "vw": 390,
+    "vh": 844,
+    "scrollW": 390,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     250,
+     372,
+     631
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-430x932-dark": {
+   "vw": 430,
+   "vh": 932,
+   "card": {
+    "x": 18,
+    "y": 294,
+    "r": 412,
+    "b": 670,
+    "w": 394,
+    "h": 376
+   },
+   "visible": 1,
+   "margins": {
+    "left": 18,
+    "right": 18,
+    "top": 294,
+    "bottom": 262
+   },
+   "cssWidth": 341,
+   "cssMaxH": "455px",
+   "cssH": 407,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 46,
+   "minW": 282,
+   "underBar": false,
+   "cam": [
+    0,
+    0.562637862497457,
+    0.33076094320553334
+   ],
+   "layout": {
+    "vw": 430,
+    "vh": 932,
+    "scrollW": 430,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     18,
+     294,
+     412,
+     670
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-768x1024-dark": {
+   "vw": 768,
+   "vh": 1024,
+   "card": {
+    "x": 24,
+    "y": 328,
+    "r": 744,
+    "b": 731,
+    "w": 720,
+    "h": 403
+   },
+   "visible": 1,
+   "margins": {
+    "left": 24,
+    "right": 24,
+    "top": 328,
+    "bottom": 293
+   },
+   "cssWidth": 520,
+   "cssMaxH": "452px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 55,
+   "minW": 560,
+   "underBar": false,
+   "cam": [
+    0,
+    0.4398416684017358,
+    0.2599490618447365
+   ],
+   "layout": {
+    "vw": 768,
+    "vh": 1024,
+    "scrollW": 768,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     24,
+     328,
+     744,
+     731
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-1024x768-dark": {
+   "vw": 1024,
+   "vh": 768,
+   "card": {
+    "x": 150,
+    "y": 208,
+    "r": 874,
+    "b": 604,
+    "w": 724,
+    "h": 396
+   },
+   "visible": 1,
+   "margins": {
+    "left": 150,
+    "right": 150,
+    "top": 208,
+    "bottom": 164
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 53,
+   "minW": 545,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762154995928,
+    0.08282503107026629
+   ],
+   "layout": {
+    "vw": 1024,
+    "vh": 768,
+    "scrollW": 1024,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     150,
+     208,
+     874,
+     604
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-1280x720-dark": {
+   "vw": 1280,
+   "vh": 720,
+   "card": {
+    "x": 301,
+    "y": 195,
+    "r": 979,
+    "b": 566,
+    "w": 679,
+    "h": 371
+   },
+   "visible": 0.999,
+   "margins": {
+    "left": 301,
+    "right": 301,
+    "top": 195,
+    "bottom": 154
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 49,
+   "minW": 511,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268761868460355,
+    0.08282502854694618
+   ],
+   "layout": {
+    "vw": 1280,
+    "vh": 720,
+    "scrollW": 1280,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     301,
+     195,
+     979,
+     566
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-1440x900-dark": {
+   "vw": 1440,
+   "vh": 900,
+   "card": {
+    "x": 296,
+    "y": 244,
+    "r": 1144,
+    "b": 707,
+    "w": 848,
+    "h": 464
+   },
+   "visible": 0.998,
+   "margins": {
+    "left": 296,
+    "right": 296,
+    "top": 244,
+    "bottom": 193
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 62,
+   "minW": 639,
+   "underBar": false,
+   "cam": [
+    0,
+    0.1326876187613386,
+    0.08282502931581914
+   ],
+   "layout": {
+    "vw": 1440,
+    "vh": 900,
+    "scrollW": 1440,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     296,
+     244,
+     1144,
+     707
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  },
+  "probe-alt-1920x1080-dark": {
+   "vw": 1920,
+   "vh": 1080,
+   "card": {
+    "x": 451,
+    "y": 292,
+    "r": 1469,
+    "b": 849,
+    "w": 1018,
+    "h": 556
+   },
+   "visible": 1.002,
+   "margins": {
+    "left": 451,
+    "right": 451,
+    "top": 292,
+    "bottom": 231
+   },
+   "cssWidth": 520,
+   "cssMaxH": "620px",
+   "cssH": 363,
+   "scrolls": false,
+   "controls": 4,
+   "minH": 74,
+   "minW": 767,
+   "underBar": false,
+   "cam": [
+    0,
+    0.13268762006043877,
+    0.08282504233256438
+   ],
+   "layout": {
+    "vw": 1920,
+    "vh": 1080,
+    "scrollW": 1920,
+    "panel": null,
+    "panelInside": null,
+    "card": [
+     451,
+     292,
+     1469,
+     849
+    ],
+    "cardUnderPanel": false,
+    "cardUnderStrip": false,
+    "bars": [],
+    "barsInside": true,
+    "theme": null,
+    "lock": false,
+    "bodyBg": "rgb(14, 17, 23)"
+   }
+  }
+ },
+ "paid": [],
+ "api": [],
+ "notes": []
+}

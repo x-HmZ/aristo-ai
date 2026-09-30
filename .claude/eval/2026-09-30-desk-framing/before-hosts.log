@@ -1,0 +1,121 @@
+demo-360x640-light           card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+demo-360x780-light           card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+demo-390x844-light           card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+demo-430x932-light           card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+demo-768x1024-light          card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+demo-1024x768-light          card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+demo-1280x720-light          card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+demo-1440x900-light          card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+demo-1920x1080-light         card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+shell-360x640-light          card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+shell-360x780-light          card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+shell-390x844-light          card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+shell-430x932-light          card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+shell-768x1024-light         card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+shell-1024x768-light         card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+shell-1280x720-light         card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+shell-1440x900-light         card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+shell-1920x1080-light        card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+demo-360x640-dark            card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+demo-360x780-dark            card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+demo-390x844-dark            card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+demo-430x932-dark            card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+demo-768x1024-dark           card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+demo-1024x768-dark           card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+demo-1280x720-dark           card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+demo-1440x900-dark           card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+demo-1920x1080-dark          card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+shell-360x640-dark           card -119..479 vis 0.603 css 520x331 minH 38 minW 456 underBar false
+shell-360x780-dark           card -184..544 vis 0.493 css 520x331 minH 46 minW 556 underBar false
+shell-390x844-dark           card -199..589 vis 0.496 css 520x331 minH 50 minW 602 underBar false
+shell-430x932-dark           card -220..650 vis 0.495 css 520x331 minH 55 minW 665 underBar false
+shell-768x1024-dark          card -94..862 vis 0.804 css 520x331 minH 60 minW 730 underBar false
+shell-1024x768-dark          card 154..870 vis 1 css 520x331 minH 45 minW 548 underBar false
+shell-1280x720-dark          card 304..976 vis 1 css 520x331 minH 42 minW 513 underBar false
+shell-1440x900-dark          card 300..1140 vis 1 css 520x331 minH 53 minW 642 underBar false
+shell-1920x1080-dark         card 456..1464 vis 1.002 css 520x331 minH 63 minW 770 underBar false
+AA nodes 1172 fails 0 min 5.33
+under-44 controls 52
+   demo-360x640-light: Lava 456x38
+   demo-360x640-light: Magma 471x40
+   demo-360x640-light: Ash 486x42
+   demo-answered-360x640-light: Lava
+Lava is incorrect 435x34
+   demo-answered-360x640-light: Magma
+Magma is correct 448x36
+   demo-answered-360x640-light: Ash 462x38
+   demo-answered-360x640-light: Pumice 476x41
+   demo-answered-360x780-light: Lava
+Lava is incorrect 530x42
+   demo-answered-1024x768-light: Lava
+Lava is incorrect 522x41
+   demo-answered-1024x768-light: Magma
+Magma is correct 537x43
+   demo-1280x720-light: Lava 513x42
+   demo-answered-1280x720-light: Lava
+Lava is incorrect 489x38
+   demo-answered-1280x720-light: Magma
+Magma is correct 504x41
+   demo-answered-1280x720-light: Ash 519x43
+   shell-360x640-light: Lava 456x38
+   shell-360x640-light: Magma 471x40
+   shell-360x640-light: Ash 486x42
+   shell-answered-360x640-light: Lava
+Lava is incorrect 442x35
+   shell-answered-360x640-light: Magma
+Magma is correct 455x37
+   shell-answered-360x640-light: Ash 469x40
+   shell-answered-360x640-light: Pumice 484x42
+   shell-answered-360x780-light: Lava
+Lava is incorrect 539x43
+   shell-answered-1024x768-light: Lava
+Lava is incorrect 530x42
+   shell-1280x720-light: Lava 513x42
+   shell-answered-1280x720-light: Lava
+Lava is incorrect 497x40
+   shell-answered-1280x720-light: Magma
+Magma is correct 512x42
+   demo-360x640-dark: Lava 456x38
+   demo-360x640-dark: Magma 471x40
+   demo-360x640-dark: Ash 486x42
+   demo-answered-360x640-dark: Lava
+Lava is incorrect 435x34
+   demo-answered-360x640-dark: Magma
+Magma is correct 448x36
+   demo-answered-360x640-dark: Ash 462x38
+   demo-answered-360x640-dark: Pumice 476x41
+   demo-answered-360x780-dark: Lava
+Lava is incorrect 530x42
+   demo-answered-1024x768-dark: Lava
+Lava is incorrect 522x41
+   demo-answered-1024x768-dark: Magma
+Magma is correct 537x43
+   demo-1280x720-dark: Lava 513x42
+   demo-answered-1280x720-dark: Lava
+Lava is incorrect 489x38
+   demo-answered-1280x720-dark: Magma
+Magma is correct 504x41
+   demo-answered-1280x720-dark: Ash 519x43
+   shell-360x640-dark: Lava 456x38
+   shell-360x640-dark: Magma 471x40
+   shell-360x640-dark: Ash 486x42
+   shell-answered-360x640-dark: Lava
+Lava is incorrect 442x35
+   shell-answered-360x640-dark: Magma
+Magma is correct 455x37
+   shell-answered-360x640-dark: Ash 469x40
+   shell-answered-360x640-dark: Pumice 484x42
+   shell-answered-360x780-dark: Lava
+Lava is incorrect 539x43
+   shell-answered-1024x768-dark: Lava
+Lava is incorrect 530x42
+   shell-1280x720-dark: Lava 513x42
+   shell-answered-1280x720-dark: Lava
+Lava is incorrect 497x40
+   shell-answered-1280x720-dark: Magma
+Magma is correct 512x42
+running animations 2
+   DIV.theme-paper aristo-scroll aristo-paper r aristoPaperIn
+   transition BUTTON
+paid 0 api at network 0 notes 0
+finished
