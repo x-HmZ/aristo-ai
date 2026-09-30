@@ -228,8 +228,12 @@ in place.
 ### Classroom (V8.4b): the quiz
 
 - **Desk card** (`DeskQuiz`): a sheet of paper in the lit room, so `.theme-paper` keeps it light in both themes:
-  `bg-surface`, `border-line`, `text-ink`, 16px radius, Geist. Its 520 x 620px box is untouched (with
-  `distanceFactor` it sets the world size). The entry animation is off under reduced motion.
+  `bg-surface`, `border-line`, `text-ink`, 16px radius, Geist. The box is 520 x 620px on a landscape canvas and
+  narrower on a phone (255px at 360x640, 270 at 360x780, 300 at 390x844, 341 at 430x932; with `distanceFactor` the width
+  sets the world size), chosen with the camera by `deskFraming` so the whole sheet fits with a 16px margin. Every button
+  and field on it is at least 52px tall in CSS (`DESK_CONTROL_HEIGHT`), so that it still measures 44px or more on
+  screen once the paper is tilted (45 to 74px measured, 9 sizes, both themes). The entry animation and the camera glide
+  are off under reduced motion.
 - **QuizView** is host-agnostic (tokens only). The desk gives it the paper; the daily review (`ReviewView`) gives it the
   theme.
 - **Choices** (multiple choice, true or false): 44px (48 for true or false), control radius. Idle `surface` with a
@@ -391,10 +395,15 @@ brown-muted (now `muted`), the demo banner and teacher row over white glass (1.2
 course error (2.34) and ReviewView's faint lines. Measured in real themes: 8,076 text nodes, 0 failures, minimum 4.74
 light and 5.24 dark (before: 6,031 nodes, 1,363 failures, minimum 1.22; `.claude/eval/2026-09-29-v8-4c/`).
 
+Fixed in the desk-framing task (2026-09-30): the desk card cropped by the camera on portrait sizes (49% visible at 360x780,
+80% at 768x1024) and its tilted controls measuring 34 to 43px. Measured: the card is fully visible and every control is
+at least 45px in 144 states, and the AA figures are unchanged (`.claude/eval/2026-09-30-desk-framing/`).
+
 Still open:
 
-- The desk quiz at 360x780 portrait: the camera crops the paper on both sides (a framing per aspect ratio is a camera
-  constant). Owner: a desk-framing task.
+- The desk quiz on a landscape phone (844x390, 667x375): 238px of height is left between the top bar and the strip, so
+  `deskFraming` keeps today's framing there and the card is cropped, with controls at about 28px on screen. Owner: a
+  task on the panel and strip layout, not the camera.
 - The V8.6 surfaces inside /learn (onboarding, course map, dashboard), pinned light: orange and brown-muted text as
   low as 1.82 (the gradient "Aristo" title reads as transparent to the checker).
 
