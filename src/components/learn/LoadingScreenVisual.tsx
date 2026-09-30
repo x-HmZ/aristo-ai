@@ -22,10 +22,9 @@
 // this first paint.
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { AristoMark } from "@/components/brand/AristoMark";
-import { Button } from "@/components/ui/button";
-import { SHAPE } from "@/lib/design/shape";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 
 const MICROCOPY = [
@@ -65,61 +64,70 @@ export function LoadingScreenVisual({ progress, stalled = false, onReload }: Loa
   };
 
   return (
-    // reducedMotion="user": the caption's slide is dropped under
-    // prefers-reduced-motion; the cross-fade stays.
-    <MotionConfig reducedMotion="user">
-      <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-bg">
-        <div className={cn(SHAPE.surface, "flex w-[min(90vw,360px)] flex-col items-center gap-6 border border-line bg-surface px-8 py-10 shadow-e1")}>
-          <AristoMark decorative={false} className="h-[22px] text-ink" litClassName="text-accent" />
+    // The caption cross-fades (opacity only, no slide), so there is no
+    // motion to drop under prefers-reduced-motion.
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-bg">
+      <div className={cn(SHAPE.surface, "flex w-[min(90vw,360px)] flex-col items-center gap-6 border border-line bg-surface px-8 py-10 shadow-e1")}>
+        <AristoMark decorative={false} className="h-[22px] text-ink" litClassName="text-accent" />
 
-          {/* Progress bar — slim, single element, no spinner stacked on top */}
-          <div className="flex w-full flex-col gap-2">
+        {/* Progress bar — slim, single element, no spinner stacked on top */}
+        <div className="flex w-full flex-col gap-2">
+          <div
+            role="progressbar"
+            aria-label="Loading the classroom"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+            className="h-1.5 w-full overflow-hidden rounded-full bg-sunk"
+          >
             <div
-              role="progressbar"
-              aria-label="Loading the classroom"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={pct}
-              className="h-1.5 w-full overflow-hidden rounded-full bg-sunk"
-            >
-              <div
-                className="h-full rounded-full bg-accent transition-[width] duration-slow ease-out-soft"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-
-            {/* Microcopy / stall hint */}
-            <div className="flex min-h-4 items-center justify-center" aria-live="polite">
-              <AnimatePresence mode="wait">
-                {stalled ? (
-                  <motion.span
-                    key="stalled"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-center text-xs text-muted"
-                  >
-                    This is taking longer than usual. Check your connection.
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key={lineIndex}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-center text-xs text-muted"
-                  >
-                    {MICROCOPY[lineIndex]}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </div>
+              className="h-full rounded-full bg-accent transition-[width] duration-slow ease-out-soft"
+              style={{ width: `${pct}%` }}
+            />
           </div>
 
-          {stalled && <Button onClick={handleReload}>Reload</Button>}
+          {/* Microcopy / stall hint */}
+          <div className="flex min-h-4 items-center justify-center" aria-live="polite">
+            <AnimatePresence mode="wait">
+              {stalled ? (
+                <motion.span
+                  key="stalled"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center text-xs text-muted"
+                >
+                  This is taking longer than usual. Check your connection.
+                </motion.span>
+              ) : (
+                <motion.span
+                  key={lineIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center text-xs text-muted"
+                >
+                  {MICROCOPY[lineIndex]}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
+
+        {/* The system Button's default look, as a plain button: this file is
+            in /learn and /demo's first load, and ui/button would add
+            cva and Slot to it for one rarely shown control. */}
+        {stalled && (
+          <button
+            type="button"
+            onClick={handleReload}
+            className={cn(SHAPE.control, PRESS, FOCUS, "inline-flex h-11 items-center justify-center bg-accent px-5 text-sm font-semibold text-accent-ink duration-fast ease-out-soft hover:bg-accent-hover")}
+          >
+            Reload
+          </button>
+        )}
       </div>
-    </MotionConfig>
+    </div>
   );
 }
