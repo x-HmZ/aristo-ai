@@ -1,7 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { SECTIONS, type SectionId } from "./stage/timeline";
-import { addWriter, type Writer } from "./stage/scroll";
+import { addWriter, getEpoch, type Writer } from "./stage/scroll";
 
 /**
  * A pinned landing section: `vh` viewport heights tall (timeline.ts SECTIONS), its frame stuck to the viewport while
@@ -30,24 +30,31 @@ export function Pinned({
  * moves, reads the frame and writes to refs; it must never set React state. The latest closure is always used.
  *
  * With `section` (its index in SECTIONS), the writer is skipped while that section is at rest off screen: its
- * progress unchanged at 0 or 1. On a slow phone, seven writers running every frame for sections nobody sees cost
+ * progress unchanged at 0 or 1 and nothing else changed (`getEpoch`: the stage going live, a re-measure). On a slow phone, seven writers running every frame for sections nobody sees cost
  * a fifth of the frames.
  */
 export function useStageWriter(writer: Writer, section?: number): void {
   const ref = useRef(writer);
   ref.current = writer;
   const last = useRef(-1);
+  const seen = useRef(-1);
   useEffect(() => addWriter((f) => {
     if (section !== undefined) {
       const p = f.progress[section];
-      if (p === last.current && (p === 0 || p === 1)) return;
+      const e = getEpoch();
+      if (p === last.current && e === seen.current && (p === 0 || p === 1)) return;
       last.current = p;
+      seen.current = e;
     }
     ref.current(f);
   }), [section]);
 }
 
-/** Opacity and a vertical offset in one write; skips the style write when nothing changed. */
+/**
+ * Opacity and a vertical offset in one write; skips the style write when nothing changed. At 0 the beat is also
+ * hidden (out of the accessibility tree and the tab order): the sections that use it for beats that take turns
+ * carry a screen-reader transcript of the whole section instead (Idea, Question, Moves).
+ */
 export function show(el: HTMLElement | SVGElement | null, opacity: number, y = 0, scale = 1): void {
   if (!el) return;
   const o = opacity < 0.001 ? 0 : opacity > 0.999 ? 1 : +opacity.toFixed(3);
@@ -58,4 +65,17 @@ export function show(el: HTMLElement | SVGElement | null, opacity: number, y = 0
   // Hidden at 0, otherwise inherited: an explicit "visible" would show a child inside a hidden parent.
   const vis = o === 0 ? "hidden" : "";
   if (s.visibility !== vis) s.visibility = vis;
+}
+
+/**
+ * Like `show`, but never hides: for text that must stay in the accessibility tree and the tab order while faded
+ * (the hero, the map, the close). A faded beat that takes focus shows itself (globals.css, :focus-within).
+ */
+export function fade(el: HTMLElement | SVGElement | null, opacity: number, y = 0): void {
+  if (!el) return;
+  const o = opacity < 0.001 ? 0 : opacity > 0.999 ? 1 : +opacity.toFixed(3);
+  const t = y === 0 ? "none" : `translate3d(0, ${y.toFixed(1)}px, 0)`;
+  const st = (el as HTMLElement).style;
+  if (st.opacity !== String(o)) st.opacity = String(o);
+  if (st.transform !== t) st.transform = t;
 }

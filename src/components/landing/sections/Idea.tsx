@@ -32,6 +32,7 @@ export function Idea() {
     if (lit.current) lit.current.style.opacity = String(seg(p, 0.16, 0.22));
     // The card over the display, and the three beats inside it.
     const d = shared.display;
+    if (card.current && !shared.live && card.current.style.left) card.current.removeAttribute("style");
     if (card.current && d && shared.live) {
       const s = card.current.style;
       s.left = `${Math.round(d.x + d.w * 0.08)}px`;
@@ -49,6 +50,11 @@ export function Idea() {
 
   return (
     <Pinned id="idea" labelledBy="idea-title">
+      {/* The section for screen readers, whole and in order: the beats below take turns on screen. */}
+      <div className="sr-only">
+        <h2 id="idea-title">{IDEA.title}</h2>
+        {IDEA.beats.map((b) => <p key={b}>{b}</p>)}
+      </div>
       <Still ref={still} name="idea" />
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[96px] sm:px-8">
         <div ref={head} className="landing-beat relative z-10 flex items-center gap-4">
@@ -59,9 +65,9 @@ export function Idea() {
             </g>
             <path ref={lit} d={COLUMN.lit} className="fill-accent" style={{ opacity: 0, filter: "drop-shadow(0 0 18px rgb(var(--glow) / 0.8))" }} />
           </svg>
-          <h2 id="idea-title" className="text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-4xl">
+          <p aria-hidden className="text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-4xl">
             <span className={cn(SHAPE.control, "theme-ink inline-block bg-bg/[0.86] px-3 py-1.5 text-ink backdrop-blur-md")}>{IDEA.title}</span>
-          </h2>
+          </p>
         </div>
 
         {/* Default place (lite, before the stage publishes the display): centred low in the frame. */}
@@ -72,7 +78,7 @@ export function Idea() {
             "theme-ink landing-beat absolute bottom-[14svh] left-5 right-5 z-10 border border-line bg-bg/[0.86] px-6 py-5 shadow-e2 backdrop-blur-md sm:left-8 sm:right-auto sm:max-w-[560px] sm:px-8 sm:py-7"
           )}
         >
-          <div className="landing-overlap">
+          <div className="landing-overlap" aria-hidden>
             {IDEA.beats.map((beat, i) => (
               <p
                 key={beat}

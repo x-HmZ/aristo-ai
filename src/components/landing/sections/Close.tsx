@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { CLOSE } from "../content";
-import { Pinned, show, useStageWriter } from "../Pinned";
+import { Pinned, fade, show, useStageWriter } from "../Pinned";
 import { easeOut, seg } from "../stage/timeline";
 
 /**
@@ -17,7 +17,7 @@ export function Close() {
   useStageWriter((f) => {
     const p = f.progress[6];
     const t = easeOut(seg(p, 0.45, 0.7));
-    show(text.current, t, 24 * (1 - t));
+    fade(text.current, t, 24 * (1 - t));
     show(still.current, seg(p, 0.0, 0.1));
   }, 6);
   return (

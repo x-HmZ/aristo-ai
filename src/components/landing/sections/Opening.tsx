@@ -5,7 +5,7 @@ import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { HERO } from "../content";
-import { Pinned, show, useStageWriter } from "../Pinned";
+import { Pinned, fade, show, useStageWriter } from "../Pinned";
 import { easeOut, seg } from "../stage/timeline";
 import { Still } from "./parts";
 import { shared } from "../stage/shared";
@@ -18,7 +18,7 @@ export const POSTER = "/images/landing/v3/poster.webp";
  * first shows (LandingRoot clips the fixed canvas to `[data-window="top"]`); scrolling opens it to full bleed and
  * the camera moves through it to the desk. The hero text is not faded in by JS, so it paints with the poster.
  */
-export function Opening() {
+export function Opening({ lite }: { lite: boolean }) {
   const text = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLDivElement>(null);
   const room = useRef<HTMLDivElement>(null);
@@ -27,7 +27,7 @@ export function Opening() {
   useStageWriter((f) => {
     const p = f.progress[0];
     const o = easeOut(seg(p, 0, 0.3));
-    show(text.current, 1 - o, -56 * o);
+    fade(text.current, 1 - o, -56 * o);
     // The frame's own border and glow go as the window opens; the canvas takes its place.
     show(frame.current, 1 - seg(p, 0.02, 0.2));
     // Lite: no canvas opens the window, so the room still cross-fades in full bleed instead.
@@ -43,7 +43,9 @@ export function Opening() {
 
   return (
     <Pinned id="top" labelledBy="hero-title">
-      <Still ref={room} name="how-1" className="landing-motion-only" />
+      {/* Lite only, and only once the gate has said so: in the viewport, a lazy image would still load and compete
+          with the poster for the first paint. */}
+      {lite && <Still ref={room} name="how-1" className="landing-motion-only" />}
       <div className="mx-auto grid h-full w-full max-w-6xl grid-rows-[auto_minmax(0,1fr)] gap-6 px-5 pb-6 pt-[92px] sm:px-8 lg:grid-cols-[minmax(0,470px)_minmax(0,1fr)] lg:grid-rows-1 lg:items-center lg:gap-14 lg:pb-10 lg:pt-[96px]">
         <div ref={text} className="landing-beat relative z-10 flex flex-col gap-5 lg:gap-7">
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">{HERO.eyebrow}</span>

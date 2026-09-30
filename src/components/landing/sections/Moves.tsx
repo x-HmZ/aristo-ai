@@ -47,17 +47,29 @@ export function Moves() {
 
   return (
     <Pinned id="moves" labelledBy="moves-title">
+      {/* The section for screen readers, whole and in order: the moves below take turns on screen. */}
+      <div className="sr-only">
+        <h2 id="moves-title">{MOVES_COPY.title}</h2>
+        {MOVES.map((m, i) => (
+          <div key={m.phase}>
+            <h3>{i + 1}. {m.name}</h3>
+            <p>{m.does}</p>
+            <p>{m.line}</p>
+            {m.phase === "challenge" && <p>On your desk: {CHALLENGE_QUESTION}</p>}
+          </div>
+        ))}
+      </div>
       {MOVES.map((m, i) => (
         <Still key={m.phase} ref={(el) => { stills.current[i] = el; }} name={`move-${i + 1}`} x={i === 3 ? "50%" : undefined} />
       ))}
 
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[92px] sm:px-8">
         <div ref={head} className="landing-beat relative z-10 flex flex-col items-start gap-3">
-          <h2 id="moves-title" className={cn(SHAPE.control, GLASS, "px-3 py-1.5 text-[24px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[30px]")}>
+          <p aria-hidden className={cn(SHAPE.control, GLASS, "px-3 py-1.5 text-[24px] font-extrabold leading-tight tracking-[-0.02em] sm:text-[30px]")}>
             {MOVES_COPY.title}
-          </h2>
+          </p>
           <StepRail ref={rail} steps={MOVES.map((m) => m.name)} />
-          <div className="landing-overlap">
+          <div className="landing-overlap" aria-hidden>
             {MOVES.map((m, i) => {
               const Icon = m.icon;
               return (
@@ -85,7 +97,7 @@ export function Moves() {
           ))}
         </div>
 
-        <div ref={desk} className="landing-still landing-beat absolute inset-x-5 bottom-[16svh] z-10 mx-auto max-w-[520px] sm:inset-x-8">
+        <div ref={desk} aria-hidden className="landing-still landing-beat absolute inset-x-5 bottom-[16svh] z-10 mx-auto max-w-[520px] sm:inset-x-8">
           <div className={cn(SHAPE.surface, "theme-paper border border-line bg-surface px-5 py-5 text-ink shadow-e2")}>
             <p className="text-xs font-semibold text-accent-text">Challenge, step 4 of 5</p>
             <p className="mt-2 text-lg font-semibold leading-snug">{CHALLENGE_QUESTION}</p>

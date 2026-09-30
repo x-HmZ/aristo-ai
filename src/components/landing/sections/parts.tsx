@@ -30,15 +30,22 @@ export const StepRail = forwardRef<HTMLOListElement, { steps: readonly string[];
 );
 
 /** "Hear it": the opt-in sound for the whole page. Plays `segment` when turned on. */
-export function HearIt({ segment }: { segment: string }) {
-  const [on, setOn] = useState(false);
-  const [live, setLive] = useState<string | null>(null);
-  useEffect(() => subscribe(() => { setOn(isEnabled()); setLive(playing()); }), []);
+export function HearIt({ segment, label }: { segment: string; label: string }) {
+  const [on, setOn] = useState(isEnabled);
+  const [live, setLive] = useState<string | null>(playing);
+  useEffect(() => {
+    const sync = () => { setOn(isEnabled()); setLive(playing()); };
+    sync();
+    return subscribe(sync);
+  }, []);
   return (
     <button
       type="button"
       aria-pressed={on}
-      onClick={() => setEnabled(!on, segment)}
+      // On, and playing another line (the stack shows every band at once): play this one rather than turn off.
+      onClick={() => setEnabled(on && live !== null && live !== segment ? true : !on, segment)}
+      // The visible words lead the name (WCAG 2.5.3), then which line it is.
+      aria-label={`${on ? (live ? "Playing" : "Sound on") : "Hear it"}: ${label}`}
       className={cn(
         SHAPE.control, PRESS, FOCUS,
         "inline-flex min-h-[44px] shrink-0 items-center gap-2 border border-line px-3.5 text-sm font-semibold",
@@ -75,16 +82,17 @@ export const CaptionBand = forwardRef<HTMLDivElement, { line: string; segment: s
           className
         )}
       >
-        <p className="mb-2 text-xs font-semibold text-accent-text">{label}</p>
+        {/* The words are in the section's screen-reader transcript; the band keeps only its control. */}
+        <p aria-hidden className="mb-2 text-xs font-semibold text-accent-text">{label}</p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-5">
-          <p className="text-base font-medium leading-snug text-ink sm:text-lg">
+          <p aria-hidden className="text-base font-medium leading-snug text-ink sm:text-lg">
             {words.map((w, i) => (
               <span key={i} ref={(el) => { wordEls.current[i] = el; }} className="transition-colors duration-fast data-[spoken=0]:text-ink data-[spoken=1]:text-accent-text">
                 {w}{i < words.length - 1 ? " " : ""}
               </span>
             ))}
           </p>
-          <HearIt segment={segment} />
+          <HearIt segment={segment} label={label} />
         </div>
       </div>
     );

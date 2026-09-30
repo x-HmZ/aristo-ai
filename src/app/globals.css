@@ -360,8 +360,9 @@
   /* Landing v3 (V8.3): pinned sections. A section is `--pin-h` tall and its frame sticks to the viewport while the
      reader scrolls through it; the scroll driver (landing/stage/scroll.ts) turns that travel into the section's
      progress. Beats are absolutely placed inside the frame and faded by the driver.
-     Under reduced motion, and without JS (the page's noscript rule adds .landing-stack), nothing is pinned: the
-     page is a plain stack, every beat in flow at its end state, and the driver's inline styles are overridden. */
+     Under reduced motion, and without JS, nothing is pinned: the
+     page is a plain stack, every beat in flow at its end state, and the driver's inline styles are overridden.
+     Without JS the page's noscript style applies the same rules. */
   .landing-pin {
     height: var(--pin-h);
   }
@@ -379,6 +380,8 @@
     }
     .landing-pin .landing-still {
       will-change: opacity;
+      /* Hidden until its writer fades it in (a still showing before hydration would sit behind the hero). */
+      opacity: 0;
     }
   }
   /* The lite path (phones, weak GPUs) drops the glass blur: re-blurring every glass layer each frame as the stills
@@ -387,6 +390,11 @@
   [data-mode="lite"] .landing-pin :is(.backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-xl) {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+  /* A faded beat that takes keyboard focus shows itself, so a focus ring is never drawn on something invisible. */
+  .landing-pin .landing-beat:focus-within {
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   /* Beats that take turns in one place: stacked in a single grid cell (in flow again in the stack). */
   .landing-overlap {
@@ -447,36 +455,6 @@
       height: auto;
       border-radius: 16px;
     }
-  }
-  .landing-stack .landing-pin {
-    height: auto;
-  }
-  .landing-stack .landing-pin-frame {
-    position: relative;
-    height: auto;
-    overflow: visible;
-  }
-  .landing-stack .landing-beat {
-    position: relative !important;
-    inset: auto !important;
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-  }
-  .landing-stack .landing-motion-only {
-    display: none !important;
-  }
-  .landing-stack .landing-overlap > * {
-    grid-area: auto;
-  }
-  .landing-stack .landing-still {
-    max-width: 960px;
-    margin: 24px auto 0;
-    padding: 0 20px;
-  }
-  .landing-stack .landing-still img {
-    height: auto;
-    border-radius: 16px;
   }
 
   /* Wide display type: Archivo at its widest, set in capitals. The hero line

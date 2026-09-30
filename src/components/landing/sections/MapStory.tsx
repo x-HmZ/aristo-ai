@@ -3,9 +3,9 @@ import { cn } from "@/lib/utils";
 import { SHAPE } from "@/lib/design/shape";
 import { MAP_COPY } from "../content";
 import {
-  COURSE, CURVE_DAYS, CURVE_REVIEWS, EDGES, NEWEST, NODES, REVIEWS, dayAt, masteryAt, pulseAt, recallOn, routeTo, stateAt,
+  COURSE, CURVE_DAYS, CURVE_REVIEWS, EDGES, NEWEST, NODES, ORDER, REVIEWS, dayAt, masteryAt, pulseAt, recallOn, routeTo, stateAt,
 } from "../mapStory";
-import { Pinned, show, useStageWriter } from "../Pinned";
+import { Pinned, fade, useStageWriter } from "../Pinned";
 import { seg, window01 } from "../stage/timeline";
 
 // The map's drawing box. Nodes sit on the snapshot's precomputed layout.
@@ -54,8 +54,8 @@ export function MapStory() {
 
   useStageWriter((f) => {
     const p = f.progress[4];
-    show(head.current, window01(p, 0.0, 1, 0.04), 14 * (1 - seg(p, 0, 0.06)));
-    show(figs.current, window01(p, 0.03, 1, 0.05));
+    fade(head.current, window01(p, 0.0, 1, 0.04), 14 * (1 - seg(p, 0, 0.06)));
+    fade(figs.current, window01(p, 0.03, 1, 0.05));
     const lst = last.current;
     let learning: (typeof NODES)[number] | null = null;
     NODES.forEach((n, i) => {
@@ -130,7 +130,10 @@ export function MapStory() {
             <figcaption className="text-sm font-semibold text-ink">
               The map: {COURSE} <span className="font-normal text-muted">(first {NODES.length} concepts)</span>
             </figcaption>
-            <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 min-h-0 w-full flex-1" role="group" aria-label={`Concept map of ${COURSE}`}>
+            <ol className="sr-only" aria-label={`The first ${NODES.length} concepts of ${COURSE}, in the order they are learned`}>
+              {ORDER.map((id) => <li key={id}>{NODES.find((n) => n.id === id)!.name}</li>)}
+            </ol>
+            <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 min-h-0 w-full flex-1" aria-hidden>
               <g>
                 {EDGES.map(([a, b], i) => {
                   const [x1, y1] = pos.get(a)!, [x2, y2] = pos.get(b)!;
@@ -147,14 +150,9 @@ export function MapStory() {
                     key={n.id}
                     ref={(el) => { nodes.current[i] = el; }}
                     data-state="later"
-                    tabIndex={0}
-                    role="img"
-                    aria-label={n.name}
-                    className="group cursor-default outline-none"
+                    className="group cursor-default"
                     onPointerEnter={() => setFocus(n.id)}
                     onPointerLeave={() => setFocus(null)}
-                    onFocus={() => setFocus(n.id)}
-                    onBlur={() => setFocus(null)}
                   >
                     <circle cx={x} cy={y} r={24} className="fill-transparent" />
                     <circle cx={x} cy={y} r={R} className="fill-surface stroke-line" strokeWidth={2} />
@@ -169,7 +167,6 @@ export function MapStory() {
                       className="fill-line transition-[fill] duration-slow group-data-[state=done]:fill-accent-text group-data-[state=ready]:fill-surface group-data-[state=ready]:stroke-accent-text"
                       strokeWidth={2} />
                     <circle cx={x} cy={y} r={R + 6} className="fill-none stroke-accent-text opacity-0 group-data-[state=ready]:opacity-60" strokeWidth={1.5} />
-                    <circle cx={x} cy={y} r={R + 5} className="fill-none stroke-ink opacity-0 group-focus-visible:opacity-100" strokeWidth={2} />
                   </g>
                 );
               })}
@@ -200,7 +197,7 @@ export function MapStory() {
             </figcaption>
             <svg
               viewBox={`0 0 ${CW} ${CH}`}
-              className="mt-3 min-h-0 w-full flex-1 touch-none"
+              className="mt-3 min-h-0 w-full flex-1 touch-pan-y"
               aria-hidden
               onPointerMove={onCurve}
               onPointerLeave={() => setHover(null)}

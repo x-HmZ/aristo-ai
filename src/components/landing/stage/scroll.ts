@@ -39,6 +39,14 @@ const raw = new Float64Array(n);
 const frame: StageFrame = { S: 0, target: 0, progress: new Float64Array(n), dt: 0, vw: 0, vh: 0 };
 const writers = new Set<Writer>();
 
+/**
+ * Bumped whenever something a writer reads besides the scroll changes (the stage going live or handing over, a
+ * re-measure). Writers gated on their section at rest (Pinned.tsx useStageWriter) run again when it moves.
+ */
+let epoch = 0;
+export const getEpoch = (): number => epoch;
+export function bumpEpoch(): void { epoch++; wake(); }
+
 let started = false;
 let measured = false;
 let reduced = false;
@@ -60,9 +68,13 @@ export function measure(): void {
     // Pinned sections progress while their sticky frame is held; the others across their own height.
     // Under reduced motion nothing is pinned (the page is a plain stack, globals.css).
     const pinned = "vh" in s && !reduced;
-    travels[i] = Math.max(1, pinned ? r.height - frame.vh : r.height);
+    // The frame's own height (100svh), not innerHeight: with a phone's toolbar hidden, innerHeight is taller than
+    // svh and progress would reach 1 early.
+    const fh = (el.querySelector(".landing-pin-frame") as HTMLElement | null)?.offsetHeight ?? frame.vh;
+    travels[i] = Math.max(1, pinned ? r.height - fh : r.height);
   });
   measured = true;
+  epoch++;
 }
 
 function read(): number {
@@ -163,5 +175,9 @@ export function start(): () => void {
     ro.disconnect();
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
+    // A later mount (client-side navigation back to /) starts from a fresh frame.
+    measured = false;
+    first = true;
+    last = 0;
   };
 }

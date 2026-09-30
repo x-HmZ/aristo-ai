@@ -30,6 +30,7 @@ export default function HomePage() {
         <meta property="og:image:alt" content="Aristo. One teacher. One student. Every kid." />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={TITLE} />
+        <meta name="twitter:description" content={DESCRIPTION} />
         <meta name="twitter:image" content={`${SITE_URL}/opengraph-image`} />
       </Head>
       <LandingRoot />

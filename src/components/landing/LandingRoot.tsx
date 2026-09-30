@@ -15,9 +15,9 @@ import { Moves } from "./sections/Moves";
 import { MapStory } from "./sections/MapStory";
 import { Close } from "./sections/Close";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
-import { measure as measureScroll, start } from "./stage/scroll";
+import { bumpEpoch, measure as measureScroll, start } from "./stage/scroll";
 import { shared } from "./stage/shared";
-import { want } from "./stage/sound";
+import { setEnabled, want } from "./stage/sound";
 import { SECTIONS, mix, moveAt, roomAt } from "./stage/timeline";
 
 interface StageProps { active: boolean; onLive: () => void; onSlow: () => void }
@@ -53,7 +53,7 @@ function measureWindow(name: "top" | "start"): WindowBox | null {
   const frame = el?.closest<HTMLElement>(".landing-pin-frame");
   if (!el || !section || !frame) return null;
   const r = el.getBoundingClientRect(), fr = frame.getBoundingClientRect(), sr = section.getBoundingClientRect();
-  return { dx: r.left - fr.left, dy: r.top - fr.top, w: r.width, h: r.height, top: sr.top + window.scrollY, travel: sr.height - window.innerHeight };
+  return { dx: r.left - fr.left, dy: r.top - fr.top, w: r.width, h: r.height, top: sr.top + window.scrollY, travel: sr.height - frame.offsetHeight };
 }
 
 /** Where a pinned frame's top is on screen for a scroll position: below, stuck at 0, or scrolling away. */
@@ -70,13 +70,25 @@ const frameTop = (b: WindowBox, y: number) => (y < b.top ? b.top - y : y <= b.to
  * stage stops rendering), and handed over to the lite path if the stage turns out slow.
  */
 export function LandingRoot() {
-  const [mode, setMode] = useState<LandingMode>("lite");
+  // null until the gate has run (the server render and the first paint): the lite layout, minus lite-only extras.
+  const [mode, setMode] = useState<LandingMode | null>(null);
   const [Stage, setStage] = useState<ComponentType<StageProps> | null>(null);
   const layer = useRef<HTMLDivElement>(null);
   const boxes = useRef<{ top: WindowBox | null; start: WindowBox | null }>({ top: null, start: null });
   const liveAt = useRef<number | null>(null);
 
-  useEffect(() => start(), []);
+  useEffect(() => {
+    const stop = start();
+    // Leaving / by a client-side link: nothing of the landing plays or lingers on the next page.
+    return () => {
+      stop();
+      setEnabled(false, null);
+      shared.live = false;
+      shared.speaking = false;
+      shared.display = null;
+      delete document.documentElement.dataset.stage;
+    };
+  }, []);
 
   useEffect(() => {
     const m = decideMode(readEnv());
@@ -147,6 +159,7 @@ export function LandingRoot() {
     liveAt.current = performance.now();
     document.documentElement.dataset.stage = "live";
     measureScroll();
+    bumpEpoch();
   };
   const onSlow = () => {
     shared.live = false;
@@ -155,16 +168,17 @@ export function LandingRoot() {
     document.documentElement.dataset.stage = "off";
     setStage(null);
     setMode("lite");
+    bumpEpoch();
   };
 
   return (
     <div
-      data-mode={mode}
-      className={cn(displayFont.variable, "landing relative min-h-screen overflow-x-clip bg-bg text-ink")}
+      data-mode={mode ?? undefined}
+      className={cn(displayFont.variable, "landing relative min-h-screen overflow-x-clip bg-bg font-sans text-ink antialiased")}
     >
       {/* Without JS nothing pins and every beat shows in flow (the same rules as reduced motion, globals.css). */}
       <noscript>
-        <style>{`.landing-pin{height:auto}.landing-pin-frame{position:relative;height:auto;overflow:visible}.landing-beat{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;visibility:visible!important}.landing-motion-only{display:none!important}.landing-overlap>*{grid-area:auto}.landing-still{max-width:960px;margin:24px auto 0;padding:0 20px}.landing-still img{height:auto;border-radius:16px}.landing-reveal{opacity:1;transform:none}`}</style>
+        <style>{`.landing-pin{height:auto}.landing-pin-frame{position:relative;height:auto;overflow:visible}.landing-beat{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;visibility:visible!important}.landing-motion-only{display:none!important}.landing-overlap>*{grid-area:auto}.landing-still{opacity:1!important}.landing-still{max-width:960px;margin:24px auto 0;padding:0 20px}.landing-still img{height:auto;border-radius:16px}.landing-reveal{opacity:1;transform:none}`}</style>
       </noscript>
 
       <header>
@@ -180,7 +194,7 @@ export function LandingRoot() {
       </div>
 
       <main>
-        <Opening />
+        <Opening lite={mode === "lite"} />
         <Idea />
         <Question />
         <Moves />

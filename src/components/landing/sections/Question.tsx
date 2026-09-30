@@ -76,36 +76,52 @@ export function Question() {
 
   return (
     <Pinned id="how" labelledBy="how-title">
+      {/* The section for screen readers, whole and in order: the beats below take turns on screen. */}
+      <div className="sr-only">
+        <h2 id="how-title">{HOW.title}</h2>
+        <p>{HOW.realLabel}</p>
+        <h3>{HOW.steps[0].caption}</h3>
+        <p>Topic: {TOPIC}</p>
+        <h3>{HOW.steps[1].caption}</h3>
+        <ul>{IDEAS.map((idea) => <li key={idea.id}>{idea.label}</li>)}</ul>
+        <h3>{HOW.steps[2].caption}</h3>
+        <ol>{MOVES.map((m) => <li key={m.phase}>{m.name}: {m.first}</li>)}</ol>
+        <h3>{HOW.steps[3].caption}</h3>
+        <p>{"The lesson's own diagram, a labelled cross-section of the heart, resolves on the board."}</p>
+        <h3>{HOW.steps[4].caption}</h3>
+        <p>{"The image the model was made from lifts off in points and becomes the lesson's 3D heart, turning in the room."}</p>
+        <h3>{HOW.steps[5].caption}</h3>
+        <p>{MOVES[0].line}</p>
+      </div>
       {HOW.steps.map((step, i) => (
         <Still key={step.name} ref={(el) => { stills.current[i] = el; }} name={`how-${i + 1}`} />
       ))}
 
       <div className="relative mx-auto h-full w-full max-w-6xl px-5 pt-[92px] sm:px-8">
         <div ref={head} className="landing-beat relative z-10 flex flex-col items-start gap-3">
-          <h2 id="how-title" className={cn(SHAPE.control, GLASS, "px-3 py-1.5 text-[24px] font-extrabold leading-tight tracking-[-0.02em] shadow-none sm:text-[30px]")}>
+          <p aria-hidden className={cn(SHAPE.control, GLASS, "px-3 py-1.5 text-[24px] font-extrabold leading-tight tracking-[-0.02em] shadow-none sm:text-[30px]")}>
             {HOW.title}
-          </h2>
+          </p>
           <StepRail ref={rail} steps={HOW.steps.map((s) => s.name)} />
-          <p ref={label} className="max-w-[520px]">
+          <p ref={label} aria-hidden className="max-w-[520px]">
             <span className={cn(SHAPE.control, GLASS, "inline-block px-3 py-1.5 text-xs text-body shadow-none")}>{HOW.realLabel}</span>
           </p>
         </div>
 
         {/* 1. The question. */}
-        <div ref={ask} className="landing-beat absolute inset-x-5 top-[46%] z-10 mx-auto max-w-[560px] sm:inset-x-8">
+        <div ref={ask} aria-hidden className="landing-beat absolute inset-x-5 top-[46%] z-10 mx-auto max-w-[560px] sm:inset-x-8">
           <div className={cn(SHAPE.control, GLASS, "flex min-h-[56px] items-center gap-3 px-5 text-lg font-medium")}>
             <span className="text-body" aria-hidden>Topic</span>
             <span className="h-5 w-px bg-line" aria-hidden />
             <span className="relative">
-              <span ref={typed} aria-hidden />
+              <span ref={typed}>{TOPIC}</span>
               <span className="landing-motion-only ml-0.5 inline-block h-5 w-[2px] translate-y-[3px] animate-pulse bg-accent" aria-hidden />
-              <span className="sr-only">{TOPIC}</span>
             </span>
           </div>
         </div>
 
         {/* 2. The ideas, linked in teaching order. */}
-        <div ref={ideas} className="landing-beat absolute inset-x-5 bottom-[22%] top-[30%] z-10 sm:left-[36%] sm:right-8">
+        <div ref={ideas} aria-hidden className="landing-beat absolute inset-x-5 bottom-[22%] top-[30%] z-10 sm:left-[36%] sm:right-8">
           <svg aria-hidden className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
             {IDEA_LINKS.map(([a, b], i) => {
               const A = IDEAS.find((x) => x.id === a)!, B = IDEAS.find((x) => x.id === b)!;
@@ -123,7 +139,7 @@ export function Question() {
               );
             })}
           </svg>
-          <ul aria-label="The ideas the lesson is built from">
+          <ul>
             {IDEAS.map((idea, i) => (
               <li
                 key={idea.id}
@@ -140,7 +156,7 @@ export function Question() {
         </div>
 
         {/* 3. The five moves. */}
-        <ol ref={cards} aria-label="The lesson's five moves" className="landing-beat absolute right-5 top-[24%] z-10 flex w-[min(420px,calc(100%-40px))] flex-col gap-2.5 sm:right-8">
+        <ol ref={cards} aria-hidden className="landing-beat absolute right-5 top-[24%] z-10 flex w-[min(420px,calc(100%-40px))] flex-col gap-2.5 sm:right-8">
           {MOVES.map((m, i) => {
             const Icon = m.icon;
             return (
@@ -159,7 +175,7 @@ export function Question() {
         </ol>
 
         {/* Step captions, bottom left. */}
-        <div className="landing-overlap absolute bottom-[10svh] left-5 z-10 max-w-[520px] sm:left-8">
+        <div aria-hidden className="landing-overlap absolute bottom-[10svh] left-5 z-10 max-w-[520px] sm:left-8">
           {/* Step 6 has no caption of its own: the caption band below carries it. */}
           {HOW.steps.slice(0, 5).map((step, i) => (
             <p key={step.name} ref={(el) => { captions.current[i] = el; }} className="landing-beat">
