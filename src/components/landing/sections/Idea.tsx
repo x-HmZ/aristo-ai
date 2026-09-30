@@ -45,7 +45,7 @@ export function Idea() {
     const windows: [number, number][] = [[0.22, 0.42], [0.46, 0.64], [0.68, 0.84]];
     windows.forEach(([a, b], i) => show(beats.current[i], window01(p, a, b, 0.04), 10 * (1 - seg(p, a - 0.04, a))));
     show(still.current, window01(p, 0.05, 0.9, 0.08));
-  });
+  }, 1);
 
   return (
     <Pinned id="idea" labelledBy="idea-title">

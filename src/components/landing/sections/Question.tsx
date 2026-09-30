@@ -72,7 +72,7 @@ export function Question() {
     });
     // 6. The teacher begins: the caption band with the hook.
     show(band.current, window01(p, 0.9, 0.995, 0.02), 16 * (1 - easeOut(seg(p, 0.88, 0.92))));
-  });
+  }, 2);
 
   return (
     <Pinned id="how" labelledBy="how-title">
@@ -94,7 +94,7 @@ export function Question() {
         {/* 1. The question. */}
         <div ref={ask} className="landing-beat absolute inset-x-5 top-[46%] z-10 mx-auto max-w-[560px] sm:inset-x-8">
           <div className={cn(SHAPE.control, GLASS, "flex min-h-[56px] items-center gap-3 px-5 text-lg font-medium")}>
-            <span className="text-muted" aria-hidden>Topic</span>
+            <span className="text-body" aria-hidden>Topic</span>
             <span className="h-5 w-px bg-line" aria-hidden />
             <span className="relative">
               <span ref={typed} aria-hidden />

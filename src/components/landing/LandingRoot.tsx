@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType } from "react";
+import { Component, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { displayFont } from "./fonts";
 import { MOVES } from "./content";
@@ -21,6 +21,28 @@ import { want } from "./stage/sound";
 import { SECTIONS, mix, moveAt, roomAt } from "./stage/timeline";
 
 interface StageProps { active: boolean; onLive: () => void; onSlow: () => void }
+
+/** Anything the stage throws (a model that will not load, a lost context) hands the page to the lite path. */
+class StageBoundary extends Component<{ onError: () => void; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch() { this.props.onError(); }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
+/**
+ * Holds whether the stage renders, so pausing it (the map, the parents) re-renders only this, not the page.
+ */
+function StageHost({ Stage, onLive, onSlow }: { Stage: ComponentType<StageProps>; onLive: () => void; onSlow: () => void }) {
+  const [active, setActive] = useState(true);
+  const activeRef = useRef(true);
+  useStageWriter((f) => {
+    const S = f.S;
+    const on = roomAt(S).canvas > 0 || (S > 3.9 && S < 4.2) || S > 5.75;
+    if (on !== activeRef.current) { activeRef.current = on; setActive(on); }
+  });
+  return <Stage active={active} onLive={onLive} onSlow={onSlow} />;
+}
 
 /** A window's box inside its pinned frame, and the section's scroll span, measured on resize. */
 interface WindowBox { dx: number; dy: number; w: number; h: number; top: number; travel: number }
@@ -50,11 +72,9 @@ const frameTop = (b: WindowBox, y: number) => (y < b.top ? b.top - y : y <= b.to
 export function LandingRoot() {
   const [mode, setMode] = useState<LandingMode>("lite");
   const [Stage, setStage] = useState<ComponentType<StageProps> | null>(null);
-  const [active, setActive] = useState(true);
   const layer = useRef<HTMLDivElement>(null);
   const boxes = useRef<{ top: WindowBox | null; start: WindowBox | null }>({ top: null, start: null });
   const liveAt = useRef<number | null>(null);
-  const activeRef = useRef(true);
 
   useEffect(() => start(), []);
 
@@ -68,7 +88,10 @@ export function LandingRoot() {
     let cancelled = false;
     const go = () => {
       if (cancelled) return;
-      void import("./stage/LandingStage").then((mod) => { if (!cancelled) setStage(() => mod.default); });
+      import("./stage/LandingStage")
+        .then((mod) => { if (!cancelled) setStage(() => mod.default); })
+        // The chunk did not load (offline, a failed deploy): stay on the lite path.
+        .catch(() => { if (cancelled) return; root.dataset.stage = "off"; shared.mode = "lite"; setMode("lite"); });
     };
     const idle = () => {
       if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(go, { timeout: 1500 });
@@ -98,9 +121,6 @@ export function LandingRoot() {
     }
     const el = layer.current;
     if (!el) return;
-    // Pause the stage while the room is faded out.
-    const on = r.canvas > 0 || (S > 3.9 && S < 4.2) || S > 5.75;
-    if (on !== activeRef.current) { activeRef.current = on; setActive(on); }
     // Shown once live (the poster above it fades out, globals.css); then the room's own fade.
     const o = liveAt.current === null ? 0 : r.canvas;
     const os = o < 0.001 ? "0" : o.toFixed(3);
@@ -152,7 +172,11 @@ export function LandingRoot() {
       </header>
 
       <div ref={layer} data-stage-layer aria-hidden className="pointer-events-none fixed inset-0 z-0" style={{ opacity: 0 }}>
-        {Stage && <Stage active={active} onLive={onLive} onSlow={onSlow} />}
+        {Stage && (
+          <StageBoundary onError={onSlow}>
+            <StageHost Stage={Stage} onLive={onLive} onSlow={onSlow} />
+          </StageBoundary>
+        )}
       </div>
 
       <main>

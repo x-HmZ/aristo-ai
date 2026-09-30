@@ -39,7 +39,7 @@ export function Opening() {
       const v = shared.live || shared.mode === "stack" ? "" : String(1 - seg(p, 0.3, 0.5));
       if (ps.opacity !== v) ps.opacity = v;
     }
-  });
+  }, 0);
 
   return (
     <Pinned id="top" labelledBy="hero-title">

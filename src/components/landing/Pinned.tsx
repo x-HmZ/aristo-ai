@@ -28,11 +28,23 @@ export function Pinned({
 /**
  * Register a writer with the scroll driver for the component's lifetime. The writer runs once per frame the page
  * moves, reads the frame and writes to refs; it must never set React state. The latest closure is always used.
+ *
+ * With `section` (its index in SECTIONS), the writer is skipped while that section is at rest off screen: its
+ * progress unchanged at 0 or 1. On a slow phone, seven writers running every frame for sections nobody sees cost
+ * a fifth of the frames.
  */
-export function useStageWriter(writer: Writer): void {
+export function useStageWriter(writer: Writer, section?: number): void {
   const ref = useRef(writer);
   ref.current = writer;
-  useEffect(() => addWriter((f) => ref.current(f)), []);
+  const last = useRef(-1);
+  useEffect(() => addWriter((f) => {
+    if (section !== undefined) {
+      const p = f.progress[section];
+      if (p === last.current && (p === 0 || p === 1)) return;
+      last.current = p;
+    }
+    ref.current(f);
+  }), [section]);
 }
 
 /** Opacity and a vertical offset in one write; skips the style write when nothing changed. */
@@ -43,6 +55,7 @@ export function show(el: HTMLElement | SVGElement | null, opacity: number, y = 0
   const s = (el as HTMLElement).style;
   if (s.opacity !== String(o)) s.opacity = String(o);
   if (s.transform !== t) s.transform = t;
-  const vis = o === 0 ? "hidden" : "visible";
+  // Hidden at 0, otherwise inherited: an explicit "visible" would show a child inside a hidden parent.
+  const vis = o === 0 ? "hidden" : "";
   if (s.visibility !== vis) s.visibility = vis;
 }

@@ -43,7 +43,7 @@ export function Moves() {
     });
     // Lite path: the desk card in the DOM (the live stage draws its own in the room).
     show(desk.current, window01(p, 0.7, 0.77, 0.02));
-  });
+  }, 3);
 
   return (
     <Pinned id="moves" labelledBy="moves-title">

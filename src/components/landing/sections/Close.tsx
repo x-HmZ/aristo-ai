@@ -19,7 +19,7 @@ export function Close() {
     const t = easeOut(seg(p, 0.45, 0.7));
     show(text.current, t, 24 * (1 - t));
     show(still.current, seg(p, 0.0, 0.1));
-  });
+  }, 6);
   return (
     <Pinned id="start" labelledBy="close-title">
       <div className="mx-auto grid h-full w-full max-w-6xl grid-rows-[auto_minmax(0,1fr)] gap-6 px-5 pb-8 pt-[92px] sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:grid-rows-1 lg:items-center lg:gap-14">

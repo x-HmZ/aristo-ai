@@ -59,7 +59,7 @@ export function MapStory() {
     const lst = last.current;
     let learning: (typeof NODES)[number] | null = null;
     NODES.forEach((n, i) => {
-      const m = Math.round(masteryAt(n.id, p) * 200) / 200;
+      const m = Math.round(masteryAt(n.id, p) * 60) / 60;
       if (lst.arcs[i] !== m) { lst.arcs[i] = m; const a = arcs.current[i]; if (a) a.style.strokeDashoffset = String(1 - m); }
       const s = stateAt(n.id, p);
       if (lst.states[i] !== s) { lst.states[i] = s; const g = nodes.current[i]; if (g) g.dataset.state = s; }
@@ -97,9 +97,10 @@ export function MapStory() {
     if (d !== lst.day && day.current) { lst.day = d; day.current.textContent = String(d); }
     // The curve draws with the days.
     const reveal = seg(p, 0.1, 0.95);
-    if (curve.current) curve.current.style.strokeDashoffset = String(1 - reveal);
+    const off = (1 - Math.round(reveal * 100) / 100).toFixed(2);
+    if (curve.current && curve.current.style.strokeDashoffset !== off) curve.current.style.strokeDashoffset = off;
     CURVE_REVIEWS.forEach((r, i) => { const m = marks.current[i]; if (m) m.style.opacity = reveal * CURVE_DAYS >= r ? "1" : "0"; });
-  });
+  }, 4);
 
   const onCurve = (e: PointerEvent<SVGSVGElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
@@ -167,13 +168,14 @@ export function MapStory() {
                     <circle cx={x} cy={y} r={5}
                       className="fill-line transition-[fill] duration-slow group-data-[state=done]:fill-accent-text group-data-[state=ready]:fill-surface group-data-[state=ready]:stroke-accent-text"
                       strokeWidth={2} />
-                    <circle cx={x} cy={y} r={R + 6} className="landing-ready-halo fill-none stroke-accent-text opacity-0 group-data-[state=ready]:opacity-60" strokeWidth={1.5} />
+                    <circle cx={x} cy={y} r={R + 6} className="fill-none stroke-accent-text opacity-0 group-data-[state=ready]:opacity-60" strokeWidth={1.5} />
                     <circle cx={x} cy={y} r={R + 5} className="fill-none stroke-ink opacity-0 group-focus-visible:opacity-100" strokeWidth={2} />
                   </g>
                 );
               })}
               {REVIEWS.map((r, i) => (
-                <circle key={r.id} ref={(el) => { pulses.current[i] = el; }} r={6} className="fill-accent-text" style={{ opacity: 0, filter: "drop-shadow(0 0 6px rgb(var(--glow) / 0.9))" }} />
+                // A halo ring instead of a drop-shadow filter: a filter repaints the whole map every frame.
+                <circle key={r.id} ref={(el) => { pulses.current[i] = el; }} r={6} className="fill-accent-text stroke-accent-text/30" strokeWidth={8} style={{ opacity: 0 }} />
               ))}
               <text ref={now} className="fill-ink text-[22px] font-semibold" style={{ opacity: 0 }} aria-hidden />
               {focus && (() => {

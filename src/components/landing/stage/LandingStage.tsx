@@ -31,6 +31,7 @@ import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { advance, flush, getFrame, setExternal } from "./scroll";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
+import { warmUp } from "./warm";
 import { actAt, cameraAt, roomAt, teacherSignals, teacherYaw, type Pose } from "./timeline";
 
 const SCENE: [number, number, number] = [0.37, 0.18, -3];
@@ -96,23 +97,34 @@ function Director({ onSlow, ready }: { onSlow: () => void; ready: boolean }) {
   return null;
 }
 
-/** Mounts after the teacher's Suspense resolves: reports the first painted frame. */
-function LiveMarker({ onLive }: { onLive: () => void }) {
-  const done = useRef(false);
+/**
+ * The room and the teacher, hidden until warm (warm.ts: shaders compiled in parallel, textures uploaded in idle
+ * moments). Drawing them cold took one 2.1s frame, with the poster still up but the page unable to take input.
+ * Reports the first frame they are drawn in.
+ */
+function Warmed({ onLive, children }: { onLive: () => void; children: React.ReactNode }) {
+  const group = useRef<Group>(null);
+  const { gl, scene, camera } = useThree();
+  const [warm, setWarm] = useState(false);
+  const reported = useRef(false);
+  useEffect(() => {
+    let alive = true;
+    if (group.current) void warmUp(gl, scene, camera, group.current).then(() => { if (alive) setWarm(true); });
+    return () => { alive = false; };
+  }, [gl, scene, camera]);
   useFrame(() => {
-    if (done.current) return;
-    done.current = true;
+    if (!warm || reported.current) return;
+    reported.current = true;
     onLive();
   });
-  return null;
+  return <group ref={group} visible={warm}>{children}</group>;
 }
 
 /** Jake, driven by the scroll timeline. Two acts: the page, and the close (a fresh mount, so he waves goodbye). */
-function StageTeacher({ onLive }: { onLive: () => void }) {
+function StageTeacher({ live }: { live: boolean }) {
   const turn = useRef<Group>(null);
   const readyAt = useRef<number | null>(null);
   const [act, setAct] = useState(() => actAt(getFrame().S));
-  const [packs, setPacks] = useState(false);
   const clock = useRef(0);
   // `?pose=board` holds the opening pose (turned to the board, no greeting): how the poster is captured, so the
   // live stage starts exactly where the poster left off (.claude/eval/2026-09-30-v8-3-landing/scripts/stills.cjs).
@@ -123,8 +135,8 @@ function StageTeacher({ onLive }: { onLive: () => void }) {
       speaking: shared.speaking,
     }),
     viseme: visemeNow,
-    clipPacks: packs,
-  }), [packs, hold]);
+    clipPacks: live,
+  }), [live, hold]);
 
   useFrame((_, dt) => {
     clock.current += dt;
@@ -139,18 +151,15 @@ function StageTeacher({ onLive }: { onLive: () => void }) {
 
   return (
     <group ref={turn} position={TEACHER_POS}>
-      <Suspense fallback={null}>
-        <Teacher
-          key={act}
-          teacher="jake"
-          position={[0, 0, 0]}
-          scale={AVATAR_ASSETS.jake.standScale}
-          rotationY={0.3}
-          lookTargets={LOOK_LOCAL}
-          driver={driver}
-        />
-        <LiveMarker onLive={() => { onLive(); setPacks(true); }} />
-      </Suspense>
+      <Teacher
+        key={act}
+        teacher="jake"
+        position={[0, 0, 0]}
+        scale={AVATAR_ASSETS.jake.standScale}
+        rotationY={0.3}
+        lookTargets={LOOK_LOCAL}
+        driver={driver}
+      />
     </group>
   );
 }
@@ -184,10 +193,30 @@ function DeskCard() {
   );
 }
 
-/** Mounts its children once scene time passes `from` (the lazy assets: the diagram, then the heart). */
-function After({ from, children }: { from: number; children: React.ReactNode }) {
+/**
+ * Mounts its children once scene time passes `from`, or earlier: in the first idle moment after the reader has
+ * scrolled past `idle`, so a part's one-off costs (building the heart's points, uploading its textures, compiling
+ * its shaders) land while they read the opening or the idea, not mid-beat. Nobody who stays on the first screen
+ * downloads them.
+ */
+function After({ from, idle, children }: { from: number; idle?: number; children: React.ReactNode }) {
   const [on, setOn] = useState(() => getFrame().S >= from);
-  useFrame(() => { if (!on && getFrame().S >= from) setOn(true); });
+  const [early, setEarly] = useState(false);
+  useFrame(() => {
+    const S = getFrame().S;
+    if (!on && S >= from) setOn(true);
+    if (!early && idle !== undefined && S >= idle) setEarly(true);
+  });
+  useEffect(() => {
+    if (on || !early) return;
+    const go = () => setOn(true);
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(go, { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const t = setTimeout(go, 1200);
+    return () => clearTimeout(t);
+  }, [on, early]);
   return on ? <>{children}</> : null;
 }
 
@@ -209,17 +238,18 @@ export default function LandingStage({ active, onLive, onSlow }: StageProps) {
       <RendererConfig />
       <color attach="background" args={[BRAND_HEX.backdrop]} />
       <SceneLights />
+      {/* One boundary: the environment, the room and Jake arrive together, then warm up before they are shown. */}
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
+        <Warmed onLive={() => { setReady(true); onLive(); }}>
+          <Classroom variant="default" />
+          <StageTeacher live={ready} />
+        </Warmed>
       </Suspense>
-      <Suspense fallback={null}>
-        <Classroom variant="default" />
-        <StageTeacher onLive={() => { setReady(true); onLive(); }} />
-      </Suspense>
-      <After from={1.4}>
+      <After from={1.4} idle={0.3}>
         <Suspense fallback={null}><Diagram /></Suspense>
       </After>
-      <After from={1.9}>
+      <After from={1.9} idle={0.7}>
         <Suspense fallback={null}><HeartBuild /></Suspense>
       </After>
       <After from={3.3}>

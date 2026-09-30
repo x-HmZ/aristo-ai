@@ -1,4 +1,4 @@
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import {
@@ -9,8 +9,15 @@ import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.j
 import { getFrame } from "./scroll";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
 import { damp, roomAt, seg, smooth } from "./timeline";
+import { warmUp } from "./warm";
 
-export const MODEL_URL = "/demo/heart/model.glb";
+/**
+ * The demo's real Tripo model (public/demo/heart/model.glb, 1.88 MB, 501k triangles, three 2048px textures), resized
+ * for the landing, where it is a few hundred pixels tall: 1024px textures, simplified to 100k triangles, Draco,
+ * 624 kB (gltf-transform resize, simplify --ratio 0.2 --error 0.0005, draco; see the V8.3 eval README). Uploading
+ * the original cost a 200 to 400ms frame mid-scroll.
+ */
+export const MODEL_URL = "/landing/heart.glb";
 export const SOURCE_URL = "/demo/heart/source.jpg";
 
 // The product's model anchor and spawn scale (Experience.tsx MODEL_* and FloatingModel).
@@ -47,7 +54,7 @@ const at = (px: Uint8ClampedArray, size: number, u: number, v: number, out: Colo
 /**
  * Everything the build needs, computed once from the real assets: points sampled on the heart's surface (colour
  * from its texture) with starts on the flat photo (colour from the photo, at the pixel the front view maps to), a
- * sparse wireframe of the real mesh (every Nth triangle of 501k), and the solid model with fadeable materials.
+ * sparse wireframe of the real mesh (every Nth triangle), and the solid model with fadeable materials.
  */
 function build(scene: Object3D, photo: HTMLImageElement): Built {
   scene.updateMatrixWorld(true);
@@ -165,11 +172,29 @@ export function HeartBuild() {
   const wireObj = useMemo(() => new LineSegments(built.wire, wireMat), [built, wireMat]);
   useEffect(() => () => { built.points.dispose(); built.wire.dispose(); built.solidMaterials.forEach((m) => m.dispose()); }, [built]);
 
+  // Warmed before its beat (warm.ts): shaders compiled in parallel, textures uploaded in idle moments, then one
+  // invisible draw for the geometry. Its first visible frame then costs what any other frame does.
+  const { gl, scene: root, camera } = useThree();
+  const warm = useRef(-1);
+  useEffect(() => {
+    let alive = true;
+    const g = group.current;
+    if (!g) return;
+    void warmUp(gl, root, camera, g).then(() => { if (alive) warm.current = 1; });
+    return () => { alive = false; };
+  }, [gl, root, camera, built]);
   useFrame((state, dt) => {
     const g = group.current;
     if (!g) return;
     const S = getFrame().S;
     const r = roomAt(S);
+    if (warm.current > 0) {
+      warm.current = 0;
+      g.visible = pointsObj.visible = wireObj.visible = built.solid.visible = true;
+      pointsMat.uniforms.opacity.value = 0; wireMat.opacity = 0; cardMat.opacity = 0;
+      for (const m of built.solidMaterials) { m.opacity = 0; m.transparent = true; }
+      return;
+    }
     g.visible = r.model > 0.001;
     if (!g.visible) return;
     const b = r.build;

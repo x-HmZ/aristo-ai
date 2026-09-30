@@ -1,10 +1,11 @@
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { DoubleSide, Group, MeshBasicMaterial, SRGBColorSpace, ShaderMaterial, Vector2, Vector3 } from "three";
 import { getFrame } from "./scroll";
 import { DIAGRAM_FRAG, DIAGRAM_VERT } from "./shaders";
 import { mix, roomAt, seg, smooth } from "./timeline";
+import { warmUp } from "./warm";
 
 export const DIAGRAM_URL = "/demo/heart/teaching.jpg";
 
@@ -39,10 +40,21 @@ export function Diagram() {
   );
   const frame = useMemo(() => new MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, toneMapped: false, side: DoubleSide }), []);
 
+  // Warmed before its beat (warm.ts), then one invisible draw.
+  const { gl, scene: root, camera } = useThree();
+  const warm = useRef(-1);
+  useEffect(() => {
+    let alive = true;
+    const g = group.current;
+    if (!g) return;
+    void warmUp(gl, root, camera, g).then(() => { if (alive) warm.current = 1; });
+    return () => { alive = false; };
+  }, [gl, root, camera, mat]);
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
     const r = roomAt(getFrame().S);
+    if (warm.current > 0) { warm.current = 0; g.visible = true; mat.uniforms.opacity.value = 0; frame.opacity = 0; return; }
     g.visible = r.diagram > 0;
     if (!g.visible) return;
     mat.uniforms.p.value = r.diagram;
