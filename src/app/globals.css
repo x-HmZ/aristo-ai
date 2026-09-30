@@ -357,53 +357,7 @@
     }
   }
 
-  /* Landing v3 (V8.3): pinned sections. A section is `--pin-h` tall and its frame sticks to the viewport while the
-     reader scrolls through it; the scroll driver (landing/stage/scroll.ts) turns that travel into the section's
-     progress. Beats are absolutely placed inside the frame and faded by the driver.
-     Under reduced motion, and without JS, nothing is pinned: the
-     page is a plain stack, every beat in flow at its end state, and the driver's inline styles are overridden.
-     Without JS the page's noscript style applies the same rules. */
-  .landing-pin {
-    height: var(--pin-h);
-  }
-  .landing-pin-frame {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: hidden;
-  }
-  /* The scroll driver moves beats every frame with opacity and transform only; their own layers keep that to
-     compositing (no repaint of the frame). Stills only cross-fade, so they get an opacity layer. */
-  @media (prefers-reduced-motion: no-preference) {
-    .landing-pin .landing-beat:not(.landing-still) {
-      will-change: opacity, transform;
-    }
-    .landing-pin .landing-still {
-      will-change: opacity;
-      /* Hidden until its writer fades it in (a still showing before hydration would sit behind the hero). */
-      opacity: 0;
-    }
-  }
-  /* The lite path (phones, weak GPUs) drops the glass blur: re-blurring every glass layer each frame as the stills
-     cross-fade under it was most of a slow phone's frame. The glass keeps its 86% ground, and AA is measured on
-     that ground without the blur, so nothing gets harder to read. */
-  [data-mode="lite"] .landing-pin :is(.backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-xl) {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-  /* A faded beat that takes keyboard focus shows itself, so a focus ring is never drawn on something invisible. */
-  .landing-pin .landing-beat:focus-within {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  /* Beats that take turns in one place: stacked in a single grid cell (in flow again in the stack). */
-  .landing-overlap {
-    display: grid;
-  }
-  .landing-overlap > * {
-    grid-area: 1 / 1;
-  }
-  /* The hero lines rise in at first paint (CSS only, so the text paints with the poster). */
+  /* The hero lines rise in at first paint (CSS only, so the H1 paints at once and stays the LCP). */
   @media (prefers-reduced-motion: no-preference) {
     .landing-rise {
       animation: landing-rise var(--dur-reveal) var(--ease-out) both;
@@ -412,49 +366,6 @@
   @keyframes landing-rise {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
-  }
-  /* A still for the lite path and the stack; the live stage covers the room, so its stills never load. */
-  [data-stage="live"] .landing-still {
-    display: none;
-  }
-  /* The live stage sits under the pinned frames; the poster fades out to show it. */
-  .landing-poster {
-    transition: opacity 450ms var(--ease-out);
-  }
-  [data-stage="live"] .landing-poster {
-    opacity: 0;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .landing-pin {
-      height: auto;
-    }
-    .landing-pin-frame {
-      position: relative;
-      height: auto;
-      overflow: visible;
-    }
-    .landing-beat {
-      position: relative !important;
-      inset: auto !important;
-      opacity: 1 !important;
-      transform: none !important;
-      visibility: visible !important;
-    }
-    .landing-motion-only {
-      display: none !important;
-    }
-    .landing-overlap > * {
-      grid-area: auto;
-    }
-    .landing-still {
-      max-width: 960px;
-      margin: 24px auto 0;
-      padding: 0 20px;
-    }
-    .landing-still img {
-      height: auto;
-      border-radius: 16px;
-    }
   }
 
   /* Wide display type: Archivo at its widest, set in capitals. The hero line
