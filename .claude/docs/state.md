@@ -21,7 +21,10 @@ _Update this at the end of every significant session: done / next / blockers, co
   - The model build starts from the infographic.
   - Topics: volcano for the ideas and the picture, the heart for the model, the volcano for Immersive; Five Moves in
     plain words. Memory: `landing_features_not_a_lesson.md`.
-- **Next:** Hmz's go on round 2; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
+- **Round 3 (4a6ae40, 1317bf0):** the hero is mirrored (Jake left, text right, top-aligned). Try a lesson gets the
+  one-hand palm-up offer, with his head and eyes on the button: 14 degrees from the line to it. MoveOn was tried and
+  rejected (49 degrees off). Tests 510.
+- **Next:** Hmz's go on round 3; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
   Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
 
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
