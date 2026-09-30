@@ -2,14 +2,16 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HERO } from "../content";
+import { HeroLine } from "../HeroLine";
 import { Spot } from "../Spot";
+import type { LandingMode } from "../stage/gate";
 import { BTN_LG, BTN_OUTLINE, BTN_PRIMARY, LEDE, WRAP } from "../ui";
 
 /**
  * The hero (V8.3b): the positioning line on the left, Jake on the right, who waves hello once he is live. The text
  * is not faded in by JS, so the H1 paints first and is the LCP.
  */
-export function Hero() {
+export function Hero({ mode }: { mode: LandingMode | null }) {
   return (
     <section id="top" aria-labelledby="hero-title" className="overflow-x-clip pb-[72px] pt-[108px] lg:pb-[88px] lg:pt-[112px]">
       <div className={cn(WRAP, "grid items-center gap-10 lg:grid-cols-2 lg:gap-14")}>
@@ -40,7 +42,11 @@ export function Hero() {
             </Link>
           </div>
         </div>
-        <Spot id="hero" alt="Jake, your teacher, waves hello" className="h-[470px] sm:h-[600px]" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
+        <div className="relative mx-auto w-full max-w-[600px] lg:max-w-none">
+          <Spot id="hero" still="/images/landing/v3b/hero.webp" priority alt="Jake, your teacher, waves hello" className="h-[470px] sm:h-[600px]" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
+          {/* His line card: over the spot's bottom right from sm, overlapping its bottom edge under him on a phone. */}
+          <HeroLine mode={mode} className="relative -mt-16 sm:absolute sm:bottom-[6%] sm:right-0 sm:mt-0 sm:w-[min(360px,78%)]" />
+        </div>
       </div>
     </section>
   );

@@ -376,6 +376,18 @@
     opacity: 0;
   }
 
+  /* A spoken line's words (HeroLine): not yet said, said, and the one being said. */
+  .landing-word {
+    color: rgb(var(--muted));
+    transition: color 160ms var(--ease-out);
+  }
+  .landing-word[data-s="on"] {
+    color: rgb(var(--ink));
+  }
+  .landing-word[data-s="now"] {
+    color: rgb(var(--accent-text));
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {

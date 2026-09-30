@@ -10,7 +10,7 @@ export function Close() {
   return (
     <section id="start" aria-labelledby="close-title" className="overflow-x-clip py-24">
       <div className={cn(WRAP, "grid items-center gap-10 lg:grid-cols-2 lg:gap-14")}>
-        <Spot id="close" alt="Jake waves goodbye" className="order-2 h-[420px] sm:h-[520px] lg:order-1" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
+        <Spot id="close" still="/images/landing/v3b/close.webp" alt="Jake waves goodbye" className="order-2 mx-auto h-[470px] w-full max-w-[600px] sm:h-[600px] lg:order-1 lg:max-w-none" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
         <div className="order-1 flex flex-col items-start gap-5 lg:order-2">
           <h2 id="close-title" className="display-wide text-[30px] font-extrabold leading-none tracking-[-0.02em] sm:text-[40px] lg:text-[48px]">
             {CLOSE.title}

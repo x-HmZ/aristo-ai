@@ -11,7 +11,7 @@ import { Close } from "./sections/Close";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
 import { host, resetHost, spotBox, subscribe } from "./stage/host";
 import { shared } from "./stage/shared";
-import { setEnabled } from "./stage/sound";
+import { stopAll } from "./stage/sound";
 
 interface StageProps { onLive: () => void; onSlow: () => void }
 
@@ -42,7 +42,7 @@ export function LandingRoot() {
 
   // Leaving / by a client-side link: nothing of the landing plays or lingers on the next page.
   useEffect(() => () => {
-    setEnabled(false, null);
+    stopAll();
     shared.live = false;
     shared.speaking = false;
     resetHost();
@@ -139,7 +139,7 @@ export function LandingRoot() {
       </div>
 
       <main>
-        <Hero />
+        <Hero mode={mode} />
         <ForParents />
         <Close />
       </main>

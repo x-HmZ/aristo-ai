@@ -11,14 +11,19 @@ import { SPOTS, type SpotId } from "./stage/spots";
  * what the live canvas would. Overlays (a line card, a control) go in
  * `children` and sit above the canvas (z-20).
  */
+// React 18 passes the attribute through only in lowercase (fetchPriority is a React 19 prop).
+const HIGH = { fetchpriority: "high" } as Record<string, string>;
+
 export function Spot({
-  id, still, alt, className, pool, children,
+  id, still, alt, className, pool, priority, children,
 }: {
   id: SpotId;
   /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`). */
   still?: string;
   alt: string;
   className?: string;
+  /** Above the fold: fetched at high priority (it can measure as the LCP). */
+  priority?: boolean;
   /** The warm pool of light under him, positioned by the caller. */
   pool?: string;
   children?: ReactNode;
@@ -30,7 +35,7 @@ export function Spot({
       {pool && <div aria-hidden className={cn("glow-pool pointer-events-none absolute", pool)} />}
       {still ? (
         // eslint-disable-next-line @next/next/no-img-element -- a fixed-size box; next/image adds nothing here
-        <img src={still} alt={alt} className="landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" />
+        <img src={still} alt={alt} className="landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />
       ) : (
         <span role="img" aria-label={alt} className="absolute inset-0" />
       )}
