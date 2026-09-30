@@ -2,6 +2,39 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-09-30 - Next: desk-quiz framing, then V8.3 landing (direction agreed with Hmz, no code yet)
+
+V8.4c merged (#15, 215db0d). Session order Hmz chose:
+
+1. **Desk-quiz framing at portrait sizes** (`/model opusplan`; one scoped Fable 5.1 session only if the camera and
+   anchors cannot be made to agree). At 360x780 the desk camera crops the 520px paper on both sides (FOV 40, the paper
+   about 700px on screen); at 768x1024 the left edge is cut. Fix it before V8.3.
+2. **V8.3 landing v3** (`/model opusplan`; Fable 5.1 only if the scroll-and-3D choreography stalls). The direction
+   Hmz agreed, which replaces the brief's looping hero video and example-image carousel:
+   - **A motion-led, scroll-driven page**, premium, advanced yet friendly and creative: Night Class ink, the lit
+     classroom as the warm window, the one orange as light. Soft, springy motion, depth and parallax. Not a static
+     page with screenshots, not a carousel.
+   - **Opening:** the teacher turns, smiles and greets; "One teacher. One student. Every kid." builds in; scrolling
+     pushes the camera through the "window" into the room.
+   - **The idea:** the column mark draws itself, the flute lights, the one-to-one tutoring story appears on the display.
+   - **From a question to a lesson** (pinned, the centrepiece): a topic types itself; it breaks into concepts that float
+     out and link up (Aristo grasping the idea, the knowledge graph); the five moves stack in with real demo lines
+     (lesson generation); the diagram resolves out of noise and sketch lines onto the board (image generation); it
+     lifts off, becomes a point cloud, a wireframe, then the solid model turning in the room (3D generation, from
+     `public/demo/heart/source.jpg`, `teaching.jpg` and `model.glb`, the pipeline's real before and after); the
+     camera pulls back and the teacher starts teaching.
+   - **One lesson, five moves** (pinned): the teacher delivers it; scroll drives Activate to Connect.
+   - **The student grasping it**, storyboarded and cinematic too (Hmz): the map's concepts light up, mastery rings
+     fill, and review pulses travel back along the links, labelled as an example learner.
+   - **For parents:** calm. **Close:** the teacher sends you off, one CTA.
+   - **Guards:** the first paint stays a poster with / at or under 135 kB; 3D, models and animation code load after
+     it; phones, low-end GPUs, no WebGL and reduced motion get a lighter version telling the same story; only existing
+     assets; no paid generation; finished pieces are labelled as real outputs, no speed claim unless measured.
+   - **The plan starts with a storyboard** (start, middle and end of each section's scroll range, teacher gestures
+     that make sense in context, two or three options where there is a real choice) for Hmz to pick from before
+     anything is built.
+3. Then V8.6 (admin, then onboarding, course map, dashboard, create-teacher onto the tokens) and V8.7 (re-capture).
+
 ## 2026-09-30 - V8.4c done: classroom shells, pickers, loading, free mode, review; the lock is gone (Opus plan approved by Hmz)
 
 Branch `dev/v8-4c-shells` off `origin/deploy-prep` (36fefc8, #11 to #14 merged; no upstream set); PR into `deploy-prep`.
