@@ -2,11 +2,12 @@ import Link from "next/link";
 import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HERO } from "../content";
+import { Spot } from "../Spot";
 import { BTN_LG, BTN_OUTLINE, BTN_PRIMARY, LEDE, WRAP } from "../ui";
 
 /**
- * The hero (V8.3b): the positioning line on the left, Jake on the right. The text is not faded in by JS, so the H1
- * paints first and is the LCP.
+ * The hero (V8.3b): the positioning line on the left, Jake on the right, who waves hello once he is live. The text
+ * is not faded in by JS, so the H1 paints first and is the LCP.
  */
 export function Hero() {
   return (
@@ -39,9 +40,7 @@ export function Hero() {
             </Link>
           </div>
         </div>
-        <div className="relative h-[470px] sm:h-[600px]">
-          <div aria-hidden className="glow-pool pointer-events-none absolute inset-x-[8%] -bottom-[6%] h-3/5" />
-        </div>
+        <Spot id="hero" alt="Jake, your teacher, waves hello" className="h-[470px] sm:h-[600px]" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
       </div>
     </section>
   );

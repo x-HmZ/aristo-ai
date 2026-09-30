@@ -363,6 +363,19 @@
       animation: landing-rise var(--dur-reveal) var(--ease-out) both;
     }
   }
+  /* A spot (V8.3b): Jake fades out below mid-thigh, live or still, so the crop is never a hard edge in either
+     theme. The still gives way to the live canvas once it has drawn there (host.ts sets data-live). */
+  .landing-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+  }
+  .landing-spot-still {
+    transition: opacity 200ms var(--ease-out);
+  }
+  .landing-spot[data-live] .landing-spot-still {
+    opacity: 0;
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {
