@@ -20,7 +20,7 @@ export const TEACHER: { position: [number, number, number]; rotationY: number } 
 /** The depth of the plane a spot's rectangle is measured on: the teacher's. */
 export const PLANE_Z = TEACHER.position[2];
 
-export type SpotId = "hero" | "idea" | "picture" | "model" | "moves" | "close";
+export type SpotId = "hero" | "idea" | "picture" | "model" | "moves" | "remember" | "close";
 
 export interface SpotFraming {
   /** World y at the teacher's plane shown at the box's top and bottom edges. */
@@ -59,6 +59,9 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   // fingertips reach -1.88; eval bounds.cjs) with the board's right edge (1.1): the view grows, he and the board are
   // drawn a little smaller, and nothing of him is cut off.
   moves: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.98, 1.16] },
+  // It Remembers What You Know: as the picture spot, him on the left and, at the board's place, the paper card whose
+  // review points he taps (PointNear, aimed).
+  remember: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
 
@@ -96,7 +99,7 @@ export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
 
 /** The box aspect each spot's stills are captured at (eval scripts/stills.cjs): the fixed-aspect spots at theirs. */
 export const CAPTURE_ASPECT: Record<SpotId, number> = {
-  hero: 1, idea: 1, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, close: 1,
+  hero: 1, idea: 1, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, remember: BOARD_ASPECT, close: 1,
 };
 
 const n = (v: number) => +v.toFixed(4);

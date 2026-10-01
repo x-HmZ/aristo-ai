@@ -88,7 +88,7 @@ export function heartBox(): { left: number; top: number; width: number; height: 
  * The classroom board's square in a volcano spot's box, as percentages (BOARD through the spot's frustum at
  * BOARD_ASPECT): where the ideas panel sits, under the canvas, so his pointing hand is drawn in front of it.
  */
-export function boardBox(spot: "picture" | "moves"): { left: number; top: number; width: number; height: number } {
+export function boardBox(spot: "picture" | "moves" | "remember"): { left: number; top: number; width: number; height: number } {
   const f = frustumFor(SPOTS[spot], BOARD_ASPECT);
   const [x, y, z] = BOARD.center, h = BOARD.size / 2;
   const a = project(f, [x - h, y + h, z]), b = project(f, [x + h, y - h, z]);
@@ -142,6 +142,11 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
     case "model":
       // The product's "a model appears": modelShown's rising edge plays PresentModel and turns the head to it.
       s.modelShown = ctx.t >= MODEL_T.present;
+      break;
+    case "remember":
+      // The product's pointing clip while the curve is drawn: his finger goes to each review point before the line
+      // reaches it, and on to the next once it has (LandingStage aims it, aim.ts).
+      if (ctx.t >= REMEMBER_T.point[0] && ctx.t < REMEMBER_T.point[1]) s.gesture = "pointing";
       break;
     case "moves": {
       // Each move as the lesson's own segment: its phase and role, under a new segment id, so the director plays the
@@ -231,3 +236,23 @@ export const PICTURE_AIM: V3 = [
   PICTURE_PLACE.position[1] + (0.5 - 0.34) * PICTURE_PLACE.size,
   PICTURE_PLACE.position[2],
 ];
+
+/**
+ * It Remembers What You Know, in seconds of its clock: one concept's memory over three weeks is drawn from day 0 to
+ * day 21 (`draw`); he points from `point[0]` to `point[1]`, his finger on each review point (days 2, 6 and 13,
+ * mapStory CURVE_REVIEWS) as the line reaches it, then `hold` on to the next. The product's PointNear raises his hand
+ * in about 0.8 s and holds it about 3.7 s before its own way down (eval rtrack1), so all three reviews are reached
+ * inside that hold, and the gesture ends before the clip lowers. The line ends after his hand is down: the section
+ * ends at rest.
+ */
+export const REMEMBER_T = { draw: [1.26, 6.96], point: [0.8, 5.2], hold: 0.3, length: 7.6 } as const;
+
+/** The curve's day at section time `t` (0 to CURVE_DAYS). */
+export function curveDayAt(t: number, days: number): number {
+  return days * Math.min(1, Math.max(0, (t - REMEMBER_T.draw[0]) / (REMEMBER_T.draw[1] - REMEMBER_T.draw[0])));
+}
+
+/** When the line reaches `day`, in section time. */
+export function curveTimeOf(day: number, days: number): number {
+  return REMEMBER_T.draw[0] + (day / days) * (REMEMBER_T.draw[1] - REMEMBER_T.draw[0]);
+}

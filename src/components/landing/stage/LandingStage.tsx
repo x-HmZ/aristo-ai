@@ -20,10 +20,11 @@ import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
 import { createAim } from "./aim";
+import { damp } from "./timeline";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
@@ -32,7 +33,7 @@ import { warmUp } from "./warm";
 const NEAR = 0.05;
 const FAR = 60;
 /** The section clock each spot's script reads. */
-const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", close: "close" };
+const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", remember: "remember", close: "close" };
 
 const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}`, () => "null|false|0|0");
 
@@ -100,7 +101,7 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
  * the eyes and the aimed hand (aim.ts) all go to the same place. The heart's place is fixed.
  */
 const TARGET: Record<SpotId, [number, number, number]> = {
-  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], close: [0, 0, GESTURE_Z],
+  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], remember: [0, 0, PLANE_Z], close: [0, 0, GESTURE_Z],
 };
 const LOOK = Object.fromEntries(
   Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
@@ -119,7 +120,7 @@ const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
  */
 const HERO_WITHHELD: ReadonlySet<string> = new Set(["Pointing", "Talking6"]);
 /** The spots where a gesture's hand is aimed at its target. */
-const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture"]);
+const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture", "remember"]);
 
 /**
  * The gesture target at a spot now, or null when no gesture is aimed: an element on the page (the hero's button, the
@@ -131,6 +132,11 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
+  // The review point his finger is on (Remember.tsx marks the next one the line will reach).
+  if (spot === "remember" && t >= REMEMBER_T.point[0] && t < REMEMBER_T.point[1]) {
+    const el = document.querySelector("[data-spot=remember] [data-aim=remember]");
+    return el ? { el, z: PLANE_Z } : null;
+  }
   return null;
 }
 
@@ -190,6 +196,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
   const aim = useRef<ReturnType<typeof createAim> | null>(null);
   const aimAt = useMemo(() => new Vector3(), []);
   const aimed = useRef(false);
+  const wasAimed = useRef(false);
   // His wrists and knuckles on the page (viewport px), for what he holds at the idea and moves spots (Idea.tsx,
   // Moves.tsx).
   const hands = useRef<Object3D[] | null>(null);
@@ -227,8 +234,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
-      // Five Moves ends at rest too, so its one still is this.
-      if (start || (hold && spot === "moves")) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
+      // Five Moves and It Remembers end at rest too, so their one still is this.
+      if (start || (hold && (spot === "moves" || spot === "remember"))) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
       // The other stills: at rest beside the lit column; pointing at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
@@ -241,8 +248,15 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     // (aim.ts), the same point the head and eyes go to. At the idea spot, his palms are reported for the flute he holds.
     afterPose: (root, delta) => {
       if (AIMED.has(spot)) {
-        aim.current ??= createAim(root);
-        aim.current(aimAt.fromArray(TARGET[spot]), aimed.current, delta);
+        // The pointing spots aim the finger too; the hero's open palm only the arm and the wrist.
+        aim.current ??= createAim(root, "L", { finger: spot !== "hero" });
+        // The aimed point glides to a new target (It Remembers moves the finger from one review point to the next)
+        // and is taken at once when a gesture starts.
+        const [tx, ty, tz] = TARGET[spot];
+        if (aimed.current && !wasAimed.current) aimAt.set(tx, ty, tz);
+        else aimAt.set(damp(aimAt.x, tx, 7, delta), damp(aimAt.y, ty, 7, delta), damp(aimAt.z, tz, 7, delta));
+        wasAimed.current = aimed.current;
+        aim.current(aimAt, aimed.current, delta);
       }
       if (spot === "idea" || spot === "moves") reportPalms(root);
     },

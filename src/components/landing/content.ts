@@ -161,12 +161,25 @@ export const MOVES_COPY = {
   },
 } as const;
 
+/**
+ * It Remembers What You Know (V8.3b): one concept's memory over three weeks on a paper card, its review points tapped
+ * by Jake, then the real course map on the classroom's display. The curve's labels are plain words (mockup E); the
+ * concept is one of the map's, and the learner is an example (the label says so).
+ */
 export const MAP_COPY = {
   title: "It Remembers What You Know",
   line: "Every concept comes back just before you would forget it, and the next lesson starts from what you have mastered.",
   label: "Example learner. The map is a real course's concepts; the progress is illustrative.",
   curveTitle: "One Concept, Three Weeks",
   curveLine: "Each review lifts it back up, and it fades more slowly after each one.",
+  /** The curve's concept: one of the map's (kg-snapshot.json), so the two tell one story. */
+  concept: "Variables and Assignment",
+  marks: { learn: "You learn it", fade: "It starts to fade", back: "It comes back" },
+  axis: ["Today", "1 week", "2 weeks", "3 weeks"],
+  mapTitle: "Your Map",
+  mapLine: "A real course, its first 20 concepts. Lit ones are mastered; the ringed one is next.",
+  conceptMark: "The concept above",
+  nextMark: "Next lesson starts here",
 } as const;
 
 export const CLOSE = {

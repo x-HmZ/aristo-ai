@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
-import { HEART, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
+import { CURVE_DAYS, CURVE_REVIEWS } from "../mapStory";
+import { HEART, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, REMEMBER_T, WAVE_AFTER_S, curveDayAt, curveTimeOf, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
 import { BOARD, EYE } from "./spots";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
@@ -141,5 +142,29 @@ describe("One Lesson, Five Moves", () => {
     const s = signalsFor("moves", { ...ctx, liveFor: 5, t: 10 });
     expect(s.sceneReady).toBe(false);
     expect(s.modelShown).toBe(false);
+  });
+});
+
+describe("It Remembers What You Know", () => {
+  it("points only inside the product's pointing hold, and reaches every review point inside it", () => {
+    expect(signalsFor("remember", { ...ctx, t: REMEMBER_T.point[0] - 0.01 }).gesture).toBe("idle");
+    expect(signalsFor("remember", { ...ctx, t: REMEMBER_T.point[0] }).gesture).toBe("pointing");
+    expect(signalsFor("remember", { ...ctx, t: REMEMBER_T.point[1] }).gesture).toBe("idle");
+    // PointNear has his hand up from about 0.8 s after the cue and starts down about 4.5 s after it (eval rtrack1).
+    const up = REMEMBER_T.point[0] + 0.8, down = REMEMBER_T.point[0] + 4.5;
+    for (const day of CURVE_REVIEWS.slice(1)) {
+      const at = curveTimeOf(day, CURVE_DAYS);
+      expect(at).toBeGreaterThan(up);
+      expect(at + REMEMBER_T.hold).toBeLessThan(down);
+    }
+    expect(REMEMBER_T.point[1]).toBeLessThanOrEqual(down);
+  });
+
+  it("draws the whole curve, and ends after his hand is down", () => {
+    expect(curveDayAt(REMEMBER_T.draw[0], CURVE_DAYS)).toBe(0);
+    expect(curveDayAt(REMEMBER_T.draw[1], CURVE_DAYS)).toBe(CURVE_DAYS);
+    expect(curveDayAt(curveTimeOf(6, CURVE_DAYS), CURVE_DAYS)).toBeCloseTo(6, 6);
+    expect(REMEMBER_T.length).toBeGreaterThan(REMEMBER_T.draw[1]);
+    expect(REMEMBER_T.draw[1]).toBeGreaterThan(REMEMBER_T.point[1]);
   });
 });

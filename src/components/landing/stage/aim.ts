@@ -18,9 +18,10 @@ export function raisedWeight(sinElevation: number): number {
   return t * t * (3 - 2 * t);
 }
 
-/** The most the shoulder and the wrist may turn, in radians. */
+/** The most the shoulder, the wrist and (when pointing) the index finger's base may turn, in radians. */
 export const MAX_SHOULDER = (25 * Math.PI) / 180;
 export const MAX_WRIST = (30 * Math.PI) / 180;
+export const MAX_FINGER = (15 * Math.PI) / 180;
 
 interface Held { clip: Quaternion; written: Quaternion; wrote: boolean }
 const held = (): Held => ({ clip: new Quaternion(), written: new Quaternion(), wrote: false });
@@ -45,11 +46,17 @@ function turn(bone: Object3D, end: Object3D, target: Vector3, w: number, max: nu
   bone.updateMatrixWorld(true);
 }
 
-export function createAim(root: Object3D, side: "L" | "R" = "L") {
+/**
+ * `finger`: for a pointing hand, the index finger's base turns last, so the finger itself (knuckle to tip) points at
+ * the target and not only the line from the wrist: at a distance the finger's own bend otherwise misses it (It
+ * Remembers' last review point, V8.3b eval). Off for an open palm (the hero's offer).
+ */
+export function createAim(root: Object3D, side: "L" | "R" = "L", opts: { finger?: boolean } = {}) {
   const shoulder = root.getObjectByName(`CC_Base_${side}_Upperarm`);
   const hand = root.getObjectByName(`CC_Base_${side}_Hand`);
   const tip = root.getObjectByName(`CC_Base_${side}_Index3`);
-  const hs = held(), hh = held();
+  const knuckle = opts.finger ? root.getObjectByName(`CC_Base_${side}_Index1`) : undefined;
+  const hs = held(), hh = held(), hk = held();
   let weight = 0;
 
   const restore = (bone: Object3D, h: Held) => {
@@ -64,6 +71,7 @@ export function createAim(root: Object3D, side: "L" | "R" = "L") {
     if (!shoulder || !hand || !tip || !shoulder.parent || !hand.parent) return;
     restore(shoulder, hs);
     restore(hand, hh);
+    if (knuckle) restore(knuckle, hk);
     if (!active && weight < 1e-3) return;
     // The mixer and the look moved the skeleton this frame; its world matrices are refreshed at render, so now.
     root.updateMatrixWorld(true);
@@ -74,7 +82,9 @@ export function createAim(root: Object3D, side: "L" | "R" = "L") {
     if (weight < 1e-3 || !target) return;
     turn(shoulder, tip, target, weight, MAX_SHOULDER);
     turn(hand, tip, target, weight, MAX_WRIST);
+    if (knuckle?.parent) turn(knuckle, tip, target, weight, MAX_FINGER);
     keep(shoulder, hs);
     keep(hand, hh);
+    if (knuckle) keep(knuckle, hk);
   };
 }

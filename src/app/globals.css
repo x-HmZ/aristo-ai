@@ -606,6 +606,90 @@
     }
   }
 
+  /* It Remembers What You Know (Remember.tsx). The memory card is paper (.theme-paper): the line in ink's accent, the
+     review points orbs of the idea's light that wait ringed until the line reaches them, then light with one pulse
+     (his tap). The map is the classroom's display: mastered concepts lit, the next one ringed and pulsing, the rest
+     waiting in the display's line colour. Without data-armed (lite, reduced motion) everything is in place. */
+  .landing-memory-grid {
+    stroke: rgb(var(--line));
+    stroke-width: 1px;
+    stroke-dasharray: 4 4;
+  }
+  .landing-memory-line {
+    fill: none;
+    stroke: rgb(var(--accent-text));
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .landing-memory-tap {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55);
+  }
+  .landing-memory[data-armed] .landing-memory-tap:not([data-on]) {
+    background: rgb(var(--surface));
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: none;
+  }
+  .landing-memory[data-armed] .landing-memory-tap[data-on] {
+    animation: landing-tap 500ms var(--ease-out) both;
+  }
+  @keyframes landing-tap {
+    0% { scale: 1.6; box-shadow: 0 0 0 10px rgb(var(--glow) / 0.35); }
+    100% { scale: 1; box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55); }
+  }
+  .landing-memory-head {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--accent-text));
+    box-shadow: 0 0 10px 3px rgb(var(--glow) / 0.5);
+  }
+  .landing-memory-mark {
+    transition: opacity 400ms var(--ease-out);
+  }
+  .landing-memory[data-armed] .landing-memory-mark:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-map-edge {
+    stroke: rgb(var(--line));
+    stroke-width: 1.5px;
+    transition: stroke 300ms var(--ease-out);
+  }
+  .landing-map-edge-lit {
+    stroke: rgb(var(--accent-text));
+  }
+  .landing-map-later {
+    border: 1.5px solid rgb(var(--muted) / 0.6);
+    background: rgb(var(--sunk));
+  }
+  .landing-map-next {
+    animation: landing-next 1.1s var(--ease-in-out) 2 both;
+  }
+  @keyframes landing-next {
+    50% { box-shadow: 0 0 0 9px rgb(var(--glow) / 0.3), 0 0 12px 2px rgb(var(--glow) / 0.45); }
+  }
+  .landing-map-mark {
+    transition: opacity 400ms var(--ease-out);
+  }
+  .landing-map-mark:not([data-on]) {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-memory[data-armed] .landing-memory-tap[data-on],
+    .landing-map-next {
+      animation: none;
+    }
+    .landing-memory-mark,
+    .landing-map-edge,
+    .landing-map-mark {
+      transition: none;
+    }
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {
