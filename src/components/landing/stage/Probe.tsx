@@ -21,6 +21,8 @@ declare global {
       bounds: (name: string) => { min: [number, number, number]; max: [number, number, number] } | null;
       /** The nearest vertex of an object's meshes to a world point, and its distance (m), or null. */
       nearest: (name: string, p: [number, number, number]) => { point: [number, number, number]; distance: number } | null;
+      /** The renderer's counts: shader programs, geometries and textures on the GPU (for long-frame attribution). */
+      gl: () => { programs: number; geometries: number; textures: number };
       /** Frames rendered so far. */
       frame: number;
       /** The spot's section clock (play.ts), in seconds. */
@@ -59,6 +61,7 @@ export function Probe({ spot }: { spot: SpotId }) {
         const b = new Box3().setFromObject(o, true);
         return b.isEmpty() ? null : { min: b.min.toArray() as [number, number, number], max: b.max.toArray() as [number, number, number] };
       },
+      gl: () => ({ programs: gl.info.programs?.length ?? -1, geometries: gl.info.memory.geometries, textures: gl.info.memory.textures }),
       nearest: (name, p) => {
         const o = find(name);
         if (!o) return null;

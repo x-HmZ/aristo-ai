@@ -25,12 +25,13 @@ import { damp } from "./timeline";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, VOLCANO, lookAround, roomAimAt, roomCameraAt, roomFov, roomSignals, shotAt } from "./room";
+import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, VOLCANO, roomAimAt, roomFov, roomSignals, shotAt } from "./room";
+import { lookAround, roomCameraAt } from "./roomCamera";
 import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type FramedSpotId, type SpotId } from "./spots";
-import { warmUp } from "./warm";
+import { drawEach, warmUp } from "./warm";
 
 const NEAR = 0.05;
 const FAR = 60;
@@ -129,8 +130,9 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
 }
 
 /**
- * Jake, hidden until warm the first time (warm.ts: shaders compiled in parallel, textures uploaded in idle moments;
- * drawing him cold cost one long frame). Reports when he is ready to show.
+ * Jake, hidden until warm the first time (warm.ts: shaders compiled in parallel, textures uploaded in idle moments,
+ * then each mesh's first draw in an idle moment of its own; drawing him cold cost one long frame). Reports when he is
+ * ready to show.
  */
 function Warmed({ onWarm, children }: { onWarm: () => void; children: React.ReactNode }) {
   const group = useRef<Group>(null);
@@ -139,7 +141,13 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
   useEffect(() => {
     let alive = true;
     // A failed warm-up only costs the first frame what it cost before: show him anyway.
-    if (group.current) void warmUp(gl, scene, camera, group.current).catch(() => {}).then(() => { if (alive) setWarm(true); });
+    const g = group.current;
+    if (g) {
+      void warmUp(gl, scene, camera, g)
+        .then(() => drawEach(gl, scene, camera, g, () => alive))
+        .catch(() => {})
+        .then(() => { if (alive) setWarm(true); });
+    }
     return () => { alive = false; };
   }, [gl, scene, camera]);
   useEffect(() => { if (warm) onWarm(); }, [warm, onWarm]);

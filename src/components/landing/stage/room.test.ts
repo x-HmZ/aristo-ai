@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
 import {
-  AIM_PICTURE, LESSON, OUTSIDE, ROOM_ASPECT, ROOM_FOV, ROOM_PICTURE, ROOM_PRESENT_TIP, ROOM_T, VOLCANO, lineAt, lookAround,
-  roomAimAt, roomCameraAt, roomFov, roomSignals, roomStateAt, shotAt,
+  AIM_PICTURE, ROOM_ASPECT, ROOM_FOV, ROOM_PICTURE, ROOM_PRESENT_TIP, ROOM_T, VOLCANO, lineAt, roomAimAt, roomFov,
+  roomSignals, roomStateAt, shotAt,
 } from "./room";
+import { LESSON, OUTSIDE, lookAround, roomCameraAt } from "./roomCamera";
 
 const near = (a: readonly number[], b: readonly number[]) => a.forEach((v, i) => expect(v).toBeCloseTo(b[i], 9));
 const pitchOf = (p: { pos: readonly number[]; target: readonly number[] }) => {

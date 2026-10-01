@@ -4,13 +4,13 @@
  * Step Into the Classroom's room (V8.3b): the product's own classroom, with the volcano lesson's picture, the model it
  * becomes and the quiz on your desk, each shown on the tour's clock (room.ts). Its own chunk, imported only once the
  * reader is near the section (LandingStage): Classroom preloads the room's GLB when its module loads, so nothing of
- * the room is fetched before then. It warms up hidden (shaders compiled, textures and geometry uploaded off screen),
- * and is drawn only while the canvas serves the room.
+ * the room is fetched before then. It warms up hidden (shaders compiled, textures uploaded, each mesh drawn once in
+ * an idle moment), and is drawn only while the canvas serves the room.
  */
 import { Html, useGLTF, useTexture } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { Color, Group, MeshBasicMaterial, PerspectiveCamera, SRGBColorSpace, WebGLRenderTarget, type Object3D, type Scene } from "three";
+import { Color, Group, MeshBasicMaterial, SRGBColorSpace } from "three";
 import { Classroom } from "@/components/three/Classroom";
 import { PAPER_ANCHOR, PAPER_DISTANCE_FACTOR, deskFraming } from "@/components/three/deskFraming";
 import { QuizView } from "@/components/quiz/QuizView";
@@ -19,9 +19,9 @@ import { BRAND_HEX } from "@/lib/brandColors";
 import { clockOf } from "../play";
 import { host, roomReady as emit } from "./host";
 import { shared } from "./shared";
-import { OUTSIDE, ROOM_PICTURE, ROOM_T, VOLCANO, roomStateAt } from "./room";
+import { ROOM_PICTURE, ROOM_T, VOLCANO, roomStateAt } from "./room";
 import { PICTURE_URL } from "./scripts";
-import { warmUp } from "./warm";
+import { drawEach, warmUp } from "./warm";
 
 const SIZE = ROOM_PICTURE.size;
 /** The product's white frame around a lesson picture (Experience FRAME_SIZE 1.525 for IMG_SIZE 1.455), at its scale. */
@@ -134,27 +134,6 @@ function RoomQuiz() {
   );
 }
 
-/**
- * Draws the scene with `object` shown once into a 1x1 target, from outside the room looking in with a wide lens, so
- * the room's geometry is on the GPU before the reader arrives: the first frame at the room is then an ordinary one.
- * The whole scene, so its lights are the ones its shaders were compiled for (warmUp) and nothing compiles here.
- */
-function upload(gl: Parameters<typeof warmUp>[0], scene: Scene, object: Object3D) {
-  const target = new WebGLRenderTarget(1, 1);
-  const cam = new PerspectiveCamera(120, 1, 0.01, 60);
-  cam.position.set(...OUTSIDE.pos);
-  cam.lookAt(0, -0.5, -3);
-  cam.updateMatrixWorld();
-  const was = object.visible;
-  object.visible = true;
-  const prev = gl.getRenderTarget();
-  gl.setRenderTarget(target);
-  gl.render(scene, cam);
-  gl.setRenderTarget(prev);
-  object.visible = was;
-  target.dispose();
-}
-
 export default function RoomScene() {
   const group = useRef<Group>(null);
   const { gl, scene, camera } = useThree();
@@ -164,11 +143,13 @@ export default function RoomScene() {
     let alive = true;
     const g = group.current;
     if (!g) return;
+    // Compiled, uploaded, then each mesh drawn once in an idle moment of its own (warm.ts), while the reader is still
+    // above the section: its first frame is then an ordinary one.
     void warmUp(gl, scene, camera, g)
+      .then(() => drawEach(gl, scene, camera, g, () => alive))
       .catch(() => {})
       .then(() => {
         if (!alive) return;
-        try { upload(gl, scene, g); } catch { /* the first frame at the room uploads it instead */ }
         ready.current = true;
         shared.room.ready = true;
         emit();
