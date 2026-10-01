@@ -11,7 +11,10 @@ const [, , out = "build/check", base = "http://localhost:3000", widths = "360,76
 const OUT = path.join(__dirname, "..", out);
 fs.mkdirSync(OUT, { recursive: true });
 // Each stop: the section, what to centre, how long its graphic takes to settle once centred.
-const STOPS = [["top", "[data-spot=hero]", 1500], ["idea", "#idea", 8000], ["picture", "[data-spot=picture]", 7000], ["model", "[data-spot=model]", 7500], ["moves", "#how", 14500], ["remember", "[data-spot=remember]", 8000], ["map", ".landing-map", 3000], ["parents", "#parents", 900], ["start", "[data-spot=close]", 2500], ["footer", "footer", 300]];
+const STOPS = [["top", "[data-spot=hero]", 1500], ["idea", "#idea", 8000], ["picture", "[data-spot=picture]", 7000], ["model", "[data-spot=model]", 7500], ["moves", "#how", 14500], ["remember", "[data-spot=remember]", 8000], ["map", ".landing-map", 3000], ["immersive", "[data-spot=room]", 6000], ["parents", "#parents", 900], ["start", "[data-spot=close]", 2500], ["footer", "footer", 300]];
+
+// `ONLY=immersive,parents`: those stops alone (a section's own run).
+if (process.env.ONLY) { const only = process.env.ONLY.split(","); for (let i = STOPS.length - 1; i >= 0; i--) if (!only.includes(STOPS[i][0])) STOPS.splice(i, 1); }
 
 (async () => {
   const b = await chromium.launch(LAUNCH);

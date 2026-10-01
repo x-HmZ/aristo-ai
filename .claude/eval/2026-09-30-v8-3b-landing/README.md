@@ -199,3 +199,45 @@ Evidence in `session2/`. New scripts:
 - **It Finds the Ideas Inside** removed (Hmz).
 - **It Remembers** (`session2/remember/`): taps within 4 px, map and curve in both themes; checks.txt has the full
   AA/targets/overflow run.
+
+## Session 3 (2026-10-01): Step Into the Classroom, then the rest
+
+Evidence in `session3/`. New scripts:
+
+| Script | What it does |
+|---|---|
+| `room-peaks.cjs` | The room tour's two gestures at their peaks: the pointing finger against its target (angle, line miss), the presenting fingertip against the model's real surface (nearest vertex, via the probe's `nearest`) |
+| `room-stills.cjs` | The room's posters from the live stage at 16:9 (1600 x 900): `room-start.webp` (the tour's first frame) and `room.webp` (its end, lite and stack); refuses a blank box |
+| `room-play.cjs` | The room's controls: a tab, a drag, Pause, Hear it (which mp3 is fetched) |
+| `room-frame.cjs` | Jake in frame through the tour: head and hands against the box edges (from a `track.cjs` run) |
+| `shift.cjs` | A poster against its live frame at every offset within +-R px: aligned (least at 0,0) or shifted |
+| `check.cjs` | gained the `immersive` stop and `ONLY=` to run some stops alone |
+
+### Step Into the Classroom (`session3/immersive/`)
+
+- **The story** (`tour.webp`): the product's room, edge to edge. The camera comes in from the back of the room to
+  the seat; Jake explains (the soda bottle, HoldIdea); the board: the cross-section lands and he points at it ("Take a
+  look at this cross-section"), the camera leans in while he names the chamber; the picture becomes the volcano's
+  model and he presents it; the camera glances down at the quiz on your desk (the product's QuizView on its paper,
+  inert) and back up. His lines are the volcano lesson's own (seg_003, seg_008, seg_009, to sentence ends), silent
+  with the words lighting, or heard (Hear it).
+- **Peaks** (`peaks.webp`, `peaks.json`; light 1280 top, dark 1440 bottom):
+  - pointing: the finger 0.4 degrees from the line to the picture's middle (the vent), its line 0.6 to 0.7 px from it
+    on the page;
+  - PresentModel: his fingertip 1.9 to 4 cm from the model's real surface, level with its base, outside it. The model
+    is placed from his fingertip measured in the room (his head turns to the model, which moves his arm a little, so
+    it was iterated to a fixed point).
+  - Tried and dropped: a second pointing at the magma chamber. It is below what aim.ts may turn his arm to; the finger
+    ended at the empty rock beside the vent. Also tried: a camera push to the chamber, which cut his head off.
+- **Frame** (`room-frame.cjs`): head and hands inside the box through the tour (the desk glance aside) at 1024 and
+  1440; the closest is a fingertip 22 px from the edge (before the board lean was nudged left).
+- **Poster** (`handover-1440.webp`): the first frame held 0.6 s before the camera moves; poster against live: mean
+  difference 1.8, best offset (0, 0) in every corner at 1024 (16:9) and 1440 (wider: the camera keeps the 16:9 width,
+  as the poster's cover does).
+- **Controls** (`controls.webp`, `play.json`): a tab lands on its shot (17.22 for The model) and plays on; a drag turns
+  the view and the next shot eases it back; Pause holds the clock; Hear it fetches `/demo/volcano-eruption/seg_008.mp3`
+  only. 0 API calls, 0 paid.
+- **Checks** (`check.json`): 360 to 1440, both themes: 0 AA failures (min 5.48 light, 5.97 dark), 0 targets under
+  44 px, 0 overflow. Lite at 360 shows the end still at 4:3.
+- **Loading:** the room (1.05 MB), the model (0.66 MB) and the quiz are their own chunk, imported once the reader is
+  within two screens of the section, then warmed and uploaded off screen before the spot goes live.
