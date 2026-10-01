@@ -99,6 +99,12 @@ const LOOK = Object.fromEntries(
 ) as unknown as Record<SpotId, LookTargets>;
 /** For the stills (`?still`): the section time whose gesture target a still is captured with. */
 const HOLD_AT: Partial<Record<SpotId, number>> = { ideas: IDEAS_T.point[0] + 1, picture: PICTURE_T.point[0] + 1 };
+/**
+ * Clips the landing never asks for: Pointing, the pointing pool's Mixamo half, raises his right hand across his body,
+ * away from the board on his left, past where aim.ts can bring a hand to a target. PointNear (his left index into
+ * the near part of the board) lands (V8.3b eval, round 5).
+ */
+const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
 /** The spots where a gesture's hand is aimed at its target. */
 const AIMED: ReadonlySet<SpotId> = new Set(["hero", "ideas", "picture"]);
 
@@ -112,7 +118,7 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
   }
   if (spot === "ideas" && t >= IDEAS_T.point[0] && t < IDEAS_T.point[1]) {
-    const el = document.querySelector("[data-aim=ideas]");
+    const el = document.querySelector("[data-spot=ideas] [data-aim=ideas]");
     return el ? { el, z: PLANE_Z } : null;
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
@@ -214,6 +220,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       if (spot === "idea") reportPalms(root);
     },
     clipPacks: warm,
+    withhold: WITHHELD,
     // Where he looks when the director says "the student": the gesture's target while one is aimed; at the hero and
     // the close, the reader's pointer (the ray from the eye through it, where it crosses VIEWER_Z in front of him);
     // otherwise, and with no mouse, the camera, as in a lesson.

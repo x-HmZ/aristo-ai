@@ -15,7 +15,7 @@ import { SPOTS, type SpotId } from "./stage/spots";
 const HIGH = { fetchpriority: "high" } as Record<string, string>;
 
 export function Spot({
-  id, still, alt, className, style, pool, priority, children,
+  id, still, alt, className, style, pool, priority, under, children,
 }: {
   id: SpotId;
   /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`). */
@@ -25,6 +25,8 @@ export function Spot({
   style?: CSSProperties;
   /** Above the fold: fetched at high priority (it can measure as the LCP). */
   priority?: boolean;
+  /** A thing he presents or points at that must be drawn behind him (under the still and the canvas). */
+  under?: ReactNode;
   /** The warm pool of light under him, positioned by the caller. */
   pool?: string;
   children?: ReactNode;
@@ -34,6 +36,7 @@ export function Spot({
   return (
     <div ref={ref} data-spot={id} className={cn("landing-spot relative", className)} style={style}>
       {pool && <div aria-hidden className={cn("glow-pool pointer-events-none absolute", pool)} />}
+      {under}
       {still ? (
         // eslint-disable-next-line @next/next/no-img-element -- a fixed-size box; next/image adds nothing here
         <img src={still} alt={alt} className="landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />

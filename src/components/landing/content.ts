@@ -119,6 +119,32 @@ export const HOW = {
   ],
 } as const;
 
+/**
+ * It Finds the Ideas Inside (V8.3b): the volcano demo lesson's topic and the ideas it was built from, its own words.
+ * `first`: what it builds on (the lesson's prerequisites, and its analogy). x and y place each in the board panel (%).
+ */
+export const IDEAS_COPY = {
+  title: "It Finds the Ideas Inside",
+  line: "Pick any topic. Your teacher works out the ideas it is made of, and what you need to know first.",
+  topic: "How Volcanoes Erupt",
+  thinking: "Finding the ideas",
+  legend: "Ringed: what it builds on.",
+  real: "Real output from the volcano demo lesson: its topic, and the ideas it found.",
+  ideas: [
+    { id: "heat", label: "Heat causing materials to rise", x: 34, y: 28, first: true },
+    { id: "soda", label: "A shaken soda bottle", x: 70, y: 40, first: true },
+    { id: "magma", label: "Magma", x: 22, y: 41, first: false },
+    { id: "gas", label: "Gas pressure and expansion", x: 66, y: 53, first: true },
+    { id: "chamber", label: "Magma chamber", x: 45, y: 69, first: false },
+    { id: "vent", label: "Central vent", x: 20, y: 85, first: false },
+    { id: "lava", label: "Erupting lava", x: 50, y: 85, first: false },
+    { id: "viscosity", label: "Viscosity", x: 81, y: 85, first: false },
+  ],
+  links: [["heat", "magma"], ["soda", "gas"], ["magma", "chamber"], ["gas", "chamber"], ["chamber", "vent"], ["vent", "lava"], ["viscosity", "lava"]],
+  /** The idea his pointing lands on. */
+  aim: "chamber",
+} as const;
+
 /** It Builds a Model You Can Turn (mockup E). */
 export const MODEL_COPY = {
   title: "It Builds a Model You Can Turn",

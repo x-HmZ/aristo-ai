@@ -435,6 +435,42 @@
     }
   }
 
+  /* It Finds the Ideas Inside (Ideas.tsx): ideas appear in turn and their links draw once both ends are there. */
+  .landing-idea-node {
+    transition: opacity 400ms var(--ease-out), scale 400ms var(--ease-out);
+  }
+  .landing-ideas[data-armed] .landing-idea-node:not([data-on]) {
+    opacity: 0;
+    scale: 0.85;
+  }
+  .landing-link {
+    stroke: rgb(var(--accent-text));
+    stroke-width: 1.6;
+    transition: opacity 500ms var(--ease-out);
+  }
+  .landing-ideas[data-armed] .landing-link:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 1em;
+    background: rgb(var(--ink));
+    animation: landing-caret 1s steps(1) infinite;
+  }
+  @keyframes landing-caret {
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-idea-node,
+    .landing-link {
+      transition: none;
+    }
+    .landing-caret {
+      animation: none;
+    }
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {

@@ -6,7 +6,7 @@
  * gestures (the greeting, PresentModel) fire on their own edges.
  */
 import type { DirectorSignals } from "@/lib/avatar/director";
-import { BOARD, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
+import { BOARD, BOARD_ASPECT, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
 
 export const IDLE: DirectorSignals = {
   gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
@@ -81,6 +81,17 @@ export function heartBox(): { left: number; top: number; width: number; height: 
   const [x, y, z] = HEART.position;
   const rx = HEART.half + 0.1, ry = HEART.height / 2 + 0.04;
   const a = project(f, [x - rx, y + ry, z]), b = project(f, [x + rx, y - ry, z]);
+  return { left: a.u * 100, top: a.v * 100, width: (b.u - a.u) * 100, height: (b.v - a.v) * 100 };
+}
+
+/**
+ * The classroom board's square in a volcano spot's box, as percentages (BOARD through the spot's frustum at
+ * BOARD_ASPECT): where the ideas panel sits, under the canvas, so his pointing hand is drawn in front of it.
+ */
+export function boardBox(spot: "ideas" | "picture"): { left: number; top: number; width: number; height: number } {
+  const f = frustumFor(SPOTS[spot], BOARD_ASPECT);
+  const [x, y, z] = BOARD.center, h = BOARD.size / 2;
+  const a = project(f, [x - h, y + h, z]), b = project(f, [x + h, y - h, z]);
   return { left: a.u * 100, top: a.v * 100, width: (b.u - a.u) * 100, height: (b.v - a.v) * 100 };
 }
 

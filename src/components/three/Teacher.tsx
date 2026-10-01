@@ -384,6 +384,11 @@ export interface TeacherDriver {
    * before the render (V8.3b: the landing aims an offered hand at a button). Unset: nothing.
    */
   afterPose?: (root: Object3D, delta: number) => void;
+  /**
+   * Clips the director may not pick for this teacher (V8.3b: the landing keeps pointing to the one clip whose aim it
+   * corrects). Unset: every clip in the avatar's set, as in a lesson.
+   */
+  withhold?: ReadonlySet<string>;
 }
 
 interface TeacherProps {
@@ -488,6 +493,18 @@ export function Teacher({
   useLayoutEffect(() => {
     for (const clip of animations) if (allowed.has(clip.name)) availableRef.current.set(clip.name, clip.duration);
   }, [animations, allowed]);
+  // What the director may pick for a driver that withholds clips (rebuilt only when a pack adds clips).
+  const heldBack = useRef<{ size: number; map: Map<string, number> } | null>(null);
+  const availableFor = (drive: TeacherDriver | undefined): ReadonlyMap<string, number> => {
+    const available = availableRef.current;
+    if (!drive?.withhold?.size) return available;
+    if (heldBack.current?.size !== available.size) {
+      const map = new Map(available);
+      for (const name of drive.withhold) map.delete(name);
+      heldBack.current = { size: available.size, map };
+    }
+    return heldBack.current.map;
+  };
   const onPackLoad  = useCallback((clips: AnimationClip[]) => {
     const root = group.current;
     if (!root) return;
@@ -835,7 +852,7 @@ export function Teacher({
     const step = stepDirector(directorRef.current!, {
       now,
       signals,
-      available: availableRef.current,
+      available: availableFor(drive),
       masks:     rig.maskSet,
       rng:       Math.random,
     });
