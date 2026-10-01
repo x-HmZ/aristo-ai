@@ -23,7 +23,8 @@ if (process.env.ONLY) { const only = process.env.ONLY.split(","); for (let i = S
     const ctx = await themedContext(b, theme, { width: w, height: 800 });
     const p = await ctx.newPage();
     await guardApi(p, report);
-    await p.goto(base + "/", { waitUntil: "load" });
+    // `QUERY=?lite=1`: the lite path at any width.
+    await p.goto(base + "/" + (process.env.QUERY || ""), { waitUntil: "load" });
     const mode = await p.evaluate(() => new Promise((r) => setTimeout(() => r(document.querySelector(".landing").dataset.mode), 300)));
     if (mode === "full") await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 90000 });
     const row = { theme, w, mode, stops: [] };
