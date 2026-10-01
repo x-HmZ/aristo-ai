@@ -2,6 +2,28 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-01 - V8.3b build, session 3 done: Immersive, For Parents, the close, review, verification; PR open
+
+Branch `dev/v8-3b-landing`, pushed, PR into `deploy-prep` (supersedes #18). Evidence:
+`.claude/eval/2026-09-30-v8-3b-landing/session3/` (immersive/, parents/, close/, verify/, perf/; README "Session 3").
+
+- **Built:** Step Into the Classroom (the product's room, a camera tour on the section's clock: in to the seat, he
+  explains; the board, he points at the volcano cross-section; the model it becomes, presented from his fingertip;
+  a glance at the quiz on your desk. Tabs, drag to look around, Pause, Hear it; loads only near the section). For
+  Parents on the system (promises on the product's paper). The close waves each time it comes into view.
+- **Shown to Hmz, no reply yet:** Immersive (tour, peaks, controls), For Parents, the close's wave peaks. It
+  Remembers still has no comment from him; ask before changing it.
+- **Perf:** the hero start-up frame (500 to 850 ms of shader first-draws) is fixed by `warm.ts drawEach`; the room
+  never warms into a render target. Left: frames up to about 180 ms at the hero after he is live and during a very
+  fast scroll near the room (its one-off load). p95 16.7 to 16.8 ms everywhere; `/` 129 kB.
+- **Reviews:** security nothing above low; code review fixes in 8d6da5a (room preload, reset on leaving, failed room,
+  focus). Not done from it: per-frame `getBoundingClientRect` and small allocations in the driver (measured frames
+  are fine), the module-level TARGET arrays.
+- **Measured:** 0 AA failures (min 5.11 light, 5.48 dark), 0 targets under 44 px, 0 overflow at 360 to 1440, bounds
+  0 px out, tests 86, lint 0 errors and 10 warnings, 0 API and 0 paid calls.
+- **Next:** Hmz's review of the PR and of Immersive / For Parents / the close; then merge into `deploy-prep`; close
+  #18 (not done: ask). Optional: a resized copy of the room's 4096 px texture for the landing (decide with Hmz).
+
 ## 2026-10-01 - V8.3b build, session 2 done: Five Moves and It Remembers built and reviewed; Ideas removed
 
 Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last code commit 613917b, evidence 4c7cce0. Evidence:

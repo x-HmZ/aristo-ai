@@ -241,3 +241,40 @@ Evidence in `session3/`. New scripts:
   44 px, 0 overflow. Lite at 360 shows the end still at 4:3.
 - **Loading:** the room (1.05 MB), the model (0.66 MB) and the quiz are their own chunk, imported once the reader is
   within two screens of the section, then warmed and uploaded off screen before the spot goes live.
+
+### The long frames (`session3/perf/`, production build; scripts `longframes.cjs`, `glframes.cjs`, `profile.cjs`, `remount.cjs`)
+
+- **Hero start-up (was one 500 to 850 ms frame):** Jake's ten material programs finishing at his first draw
+  (`getProgramInfoLog` in three's `onFirstUse`), after compileAsync had reported them ready: ANGLE over Direct3D 11
+  does that work at first use. Fixed by `warm.ts drawEach` (each mesh drawn once, alone, in its own idle moment
+  before he shows). Now: idle tasks of 59 to 165 ms before he is live, and after it frames of at most 146 ms (binding
+  his gesture-clip pack, about 75 ms of React work, and unattributed GPU-side frames).
+- **Near the room (a 2.5 s frame, introduced this session):** the room's first warm-up drew into a render target,
+  which compiles another set of shader variants (no tone mapping, linear output) that the screen never uses. Removed;
+  the room uses `drawEach` too.
+- **The steady scroll (the 133 ms frame of session 1):** in a 6000 px/s scroll the frames over 100 ms are now the
+  room's one-off load two screens before it: React committing the room (up to 179 ms) and the 4096 px baked
+  texture's upload or a mesh's first draw in idle moments (up to 171 ms). Not chased further: at reading speed they land
+  while the reader is still above the section. A resized copy of the room's texture (as the heart was resized) would
+  shrink the upload, at a visible cost on a 1440 px room.
+- **Frames (`report.json`):** p95 16.7 to 16.8 ms in every section, the room's tour included (0% dropped), at 360 to
+  1440, both themes. LCP 160 to 252 ms full, 200 to 632 lite; lite under a 4x CPU throttle 496 to 1112 ms
+  (`report-throttle4.json`). CLS 0 before any scroll, at most 0.0021 after. `/` 129 kB first load (budget 135);
+  `/demo` 135 and `/learn` 134, unchanged.
+
+### For Parents, the close, the stills, the review, the verification
+
+- **For Parents** (`session3/parents/`): restyled on the system; AA minimum 5.55 light (was 4.74).
+- **The close** (`session3/close/`, `close-wave.cjs`): waves each time it comes into view, 8 s cool-down; both
+  waves peak inside his box (0 px out, at least 20 px clear).
+- **Stills:** `picture.webp` recaptured (the finger aim). Lite and stack checked at 768 and 1280 (lite) and 360 and
+  1280 (stack): 0 AA failures, 0 small targets, 0 overflow.
+- **Reviews:** security, nothing above low; code review, eleven findings, the ones that mattered fixed (the room's GLB
+  was preloaded with the stage; the clocks and shared state survived client-side navigation; a failed room left live
+  controls; focus was lost at the tour's end). `review-fixes.cjs`: no room request at the hero, one near the section;
+  Back from /demo starts the page fresh.
+- **Verification** (`session3/verify/`): full check 360 to 1440 both themes (0 AA failures, minimum 5.11 light and
+  5.48 dark; 0 targets under 44 px; 0 overflow), bounds 0 px out for every spot at 768, 1024 and 1440, posters against
+  first frames (Jake's region within 2 of 255 and 0 to 1 px everywhere; the picture and the model start fading their
+  graphic in at once), every gesture's peaks re-measured, `/demo` smoke (no console errors), 0 API and 0 paid calls in
+  every run.
