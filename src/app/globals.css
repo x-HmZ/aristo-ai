@@ -333,29 +333,6 @@
     color: transparent;
   }
 
-  /* Scroll reveal. The class is toggled by src/components/landing/Reveal.tsx;
-     the motion itself lives here so that prefers-reduced-motion is honoured
-     without any JS involvement. */
-  .landing-reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition:
-      opacity var(--dur-reveal) var(--ease-out),
-      transform var(--dur-reveal) var(--ease-out);
-  }
-
-  .landing-reveal.is-visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .landing-reveal {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-  }
 
   /* The hero lines rise in at first paint (CSS only, so the H1 paints at once and stays the LCP). */
   @media (prefers-reduced-motion: no-preference) {

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { displayFont } from "./fonts";
 import { LandingNav } from "./LandingNav";
 import { SiteFooter } from "./SiteFooter";
-import { ForParents } from "./ForParents";
+import { ForParents } from "./sections/ForParents";
 import { Hero } from "./sections/Hero";
 import { Idea } from "./sections/Idea";
 import { Picture } from "./sections/Picture";
