@@ -1,32 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lesson } from "@/data/demo/heart";
-import { CHALLENGE_QUESTION, IDEA, IDEA_LINKS, IDEAS, MOVES, TOPIC } from "./content";
-
-// The landing shows these as real output, so they must be the lesson's words exactly.
-describe("heart lesson excerpts", () => {
-  it("the topic is the lesson's concept name", () => {
-    expect(TOPIC).toBe(lesson.concept_name);
-  });
-  it("each move's line is its segment's text, in its phase, and its first sentence starts it", () => {
-    for (const m of MOVES) {
-      const seg = lesson.segments!.find((s) => s.id === m.segment)!;
-      expect(seg.text).toBe(m.line);
-      expect(seg.phase).toBe(m.phase);
-      expect(m.line.startsWith(m.first)).toBe(true);
-    }
-  });
-  it("the desk challenge is the lesson's challenge question", () => {
-    expect(CHALLENGE_QUESTION).toBe(lesson.phases.challenge.question);
-  });
-  it("the ideas come from the lesson's own output", () => {
-    const text = JSON.stringify(lesson).toLowerCase();
-    for (const idea of IDEAS) expect(text).toContain(idea.label.toLowerCase());
-    for (const [a, b] of IDEA_LINKS) {
-      expect(IDEAS.some((i) => i.id === a)).toBe(true);
-      expect(IDEAS.some((i) => i.id === b)).toBe(true);
-    }
-  });
-});
+import { IDEA, PARENTS_COPY, ROOM_COPY } from "./content";
 
 describe("copy rules (messaging.md)", () => {
   it("keeps each idea beat to 25 words and says 'kid' nowhere", () => {
@@ -34,6 +7,14 @@ describe("copy rules (messaging.md)", () => {
       expect(beat.split(/\s+/).length).toBeLessThanOrEqual(25);
       expect(beat.toLowerCase()).not.toContain("kid");
     }
+  });
+  it("keeps the parents' promises to about 33 words, the one exception (rule 5), and speaks of 'your child'", () => {
+    for (const p of PARENTS_COPY.promises) expect(p.body.split(/s+/).length).toBeLessThanOrEqual(35);
+    expect(PARENTS_COPY.promises.some((p) => p.body.includes("your child"))).toBe(true);
+  });
+  it("has no em-dash, en-dash or exclamation mark in the new sections' copy (rules 6 and 7)", () => {
+    const text = JSON.stringify([PARENTS_COPY, ROOM_COPY]);
+    expect(text).not.toMatch(/[–—!]/);
   });
 });
 

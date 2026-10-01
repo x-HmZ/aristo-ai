@@ -11,7 +11,7 @@ import { HEART, MODEL_T, heartBuildAt } from "./scripts";
 import { host } from "./host";
 import { shared } from "./shared";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
-import { damp, seg, smooth } from "./timeline";
+import { damp, seg, smooth } from "./ease";
 import { warmUp } from "./warm";
 
 /**

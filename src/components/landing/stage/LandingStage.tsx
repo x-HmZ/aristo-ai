@@ -21,7 +21,7 @@ import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
 import { createAim } from "./aim";
-import { damp } from "./timeline";
+import { damp } from "./ease";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";

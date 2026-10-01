@@ -1,5 +1,5 @@
 /**
- * The landing's two shaders (V8.3). Both are driven by one uniform from the scroll timeline; neither needs a
+ * The landing's two shaders (V8.3). Both are driven by one uniform from their section's clock; neither needs a
  * texture beyond the real pipeline outputs (teaching.jpg, source.jpg, model.glb).
  */
 

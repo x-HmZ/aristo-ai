@@ -6,6 +6,7 @@
  * Pure: no DOM; three only through deskFraming's constants. Unit-tested.
  */
 import { DESK_POSE, DESK_TARGET } from "@/components/three/deskFraming";
+import { clamp01, mix, smooth } from "./ease";
 import { EYE, type V3 } from "./spots";
 
 export interface Pose { pos: V3; target: V3 }
@@ -48,9 +49,6 @@ const KEYS: readonly (Pose & { t: number })[] = [
   { t: 31.4, ...LESSON },
 ];
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
-const smooth = (t: number) => t * t * (3 - 2 * t);
-const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 const mix3 = (a: V3, b: V3, t: number): V3 => [mix(a[0], b[0], t), mix(a[1], b[1], t), mix(a[2], b[2], t)];
 
 /** A pose's view as a heading (yaw, from -z towards +x), an elevation (pitch) and a distance to its target. */

@@ -4,7 +4,7 @@
  * says so. Unit-tested.
  */
 import snapshot from "@/data/landing/kg-snapshot.json";
-import { seg, smooth } from "./stage/timeline";
+import { seg, smooth } from "./stage/ease";
 
 export interface MapNode { id: string; name: string; layer: number; x: number; y: number }
 export const NODES: readonly MapNode[] = snapshot.nodes;

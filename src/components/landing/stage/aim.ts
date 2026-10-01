@@ -1,5 +1,5 @@
 import { Quaternion, Vector3, type Object3D } from "three";
-import { damp } from "./timeline";
+import { damp } from "./ease";
 
 /**
  * Aims an offered hand at a point (V8.3b, the hero: Hmz wanted the open palm to point at Try a lesson). The clip

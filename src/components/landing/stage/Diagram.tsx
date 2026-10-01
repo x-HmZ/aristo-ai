@@ -7,7 +7,7 @@ import { PICTURE_PLACE, PICTURE_T, PICTURE_URL } from "./scripts";
 import { DIAGRAM_FRAG, DIAGRAM_VERT } from "./shaders";
 import { host } from "./host";
 
-import { seg, smooth } from "./timeline";
+import { seg, smooth } from "./ease";
 import { warmUp } from "./warm";
 
 /** Set back from the board and enlarged to look the same, so his pointing hand passes in front (scripts.ts). */
