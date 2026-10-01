@@ -105,6 +105,11 @@ const HOLD_AT: Partial<Record<SpotId, number>> = { ideas: IDEAS_T.point[0] + 1, 
  * the near part of the board) lands (V8.3b eval, round 5).
  */
 const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
+/**
+ * The hero also never waves with his right hand (Talking6; Talking6M is the left): there he stands at the page's left
+ * edge, and that hand would leave the box. His left waves towards the text, inside it (V8.3b eval, round 6).
+ */
+const HERO_WITHHELD: ReadonlySet<string> = new Set(["Pointing", "Talking6"]);
 /** The spots where a gesture's hand is aimed at its target. */
 const AIMED: ReadonlySet<SpotId> = new Set(["hero", "ideas", "picture"]);
 
@@ -169,6 +174,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     return greet > 0 || lastWave[spot] === undefined || now - lastWave[spot]! > WAVE_COOLDOWN_S;
   }, [spot, greet]);
   const hold = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("still"), []);
+  // `?still&start`: a section's first frame (him at rest, nothing built yet), the poster the live path shows first.
+  const start = useMemo(() => hold && new URLSearchParams(window.location.search).has("start"), [hold]);
   const { camera, gl } = useThree();
   const viewer = useMemo(() => new Vector3(), []);
   const ray = useMemo(() => new Vector3(), []);
@@ -202,6 +209,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
+      if (start) return { ...s, modelShown: false, gesture: "idle", phase: null, segmentId: null, isLoading: false };
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
       // The other stills: at rest beside the lit column; pointing at the ideas and at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
@@ -220,12 +228,12 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       if (spot === "idea") reportPalms(root);
     },
     clipPacks: warm,
-    withhold: WITHHELD,
+    withhold: spot === "hero" ? HERO_WITHHELD : WITHHELD,
     // Where he looks when the director says "the student": the gesture's target while one is aimed; at the hero and
     // the close, the reader's pointer (the ray from the eye through it, where it crosses VIEWER_Z in front of him);
     // otherwise, and with no mouse, the camera, as in a lesson.
     viewer: () => {
-      const g = gestureAt(spot, hold ? HOLD_AT[spot] ?? -1 : clockOf(SECTION_OF[spot]).t);
+      const g = gestureAt(spot, start ? -1 : hold ? HOLD_AT[spot] ?? -1 : clockOf(SECTION_OF[spot]).t);
       aimed.current = !!g;
       if (g && "world" in g) { viewer.fromArray(g.world); viewer.toArray(TARGET[spot]); return viewer; }
       let p = shared.pointer, z = VIEWER_Z;
@@ -240,7 +248,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       if (g) viewer.toArray(TARGET[spot]);
       return viewer;
     },
-  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray, aimAt, reportPalms]);
+  }), [spot, warm, mayWave, hold, start, camera, gl, viewer, ray, aimAt, reportPalms]);
 
   useFrame(() => {
     if (!warm || liveAt.current !== null) return;
