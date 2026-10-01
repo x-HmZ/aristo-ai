@@ -10,11 +10,11 @@ const fs = require("fs");
 const path = require("path");
 const { chromium, sleep, LAUNCH, themedContext, guardApi } = require("../../2026-09-30-desk-framing/scripts/common.cjs");
 const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules", "sharp"));
-const [, , out = "build/bounds", base = "http://localhost:3000", width = "1280", spots = "hero,idea,picture,model,moves,close"] = process.argv;
+const [, , out = "build/bounds", base = "http://localhost:3000", width = "1280", spots = "hero,idea,picture,model,moves,remember,close"] = process.argv;
 const OUT = path.join(__dirname, "..", out, width);
 fs.mkdirSync(OUT, { recursive: true });
 const M = 0.25;
-const SECS = { hero: 10, idea: 8.5, picture: 7, model: 6, moves: 24.5, close: 5 };
+const SECS = { hero: 10, idea: 8.5, picture: 7, model: 6, moves: 24.5, remember: 8, close: 5 };
 
 async function opaqueBox(file) {
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });

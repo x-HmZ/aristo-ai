@@ -1,0 +1,32 @@
+[
+ {
+  "tap": 1,
+  "day": 2,
+  "t": 1.7,
+  "arrivesAt": 1.8,
+  "deg": 0.6,
+  "tipToPointPx": 4.6,
+  "missPx": 0.3,
+  "handUp": true
+ },
+ {
+  "tap": 2,
+  "day": 6,
+  "t": 2.9,
+  "arrivesAt": 2.9,
+  "deg": 0.3,
+  "tipToPointPx": 42.1,
+  "missPx": 0.4,
+  "handUp": true
+ },
+ {
+  "tap": 3,
+  "day": 13,
+  "t": 4.7,
+  "arrivesAt": 4.8,
+  "deg": 0.5,
+  "tipToPointPx": 107.6,
+  "missPx": 1.2,
+  "handUp": true
+ }
+]
