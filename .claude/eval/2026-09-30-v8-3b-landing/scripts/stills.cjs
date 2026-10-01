@@ -7,7 +7,9 @@ const fs = require("fs");
 const path = require("path");
 const { chromium, sleep, LAUNCH, guardApi } = require("../../2026-09-30-desk-framing/scripts/common.cjs");
 const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules", "sharp"));
-const [, , spots = "hero", base = "http://localhost:3000", waitMs = "2500"] = process.argv;
+const [, , spots = "hero", base = "http://localhost:3000", waitMs = "2500", which = "end"] = process.argv;
+// 'start': the section's first frame (him at rest, nothing built), the live path's poster, to <spot>-start.webp.
+const START = which === "start";
 const ROOT = path.join(__dirname, "..", "..", "..", "..");
 const PUB = path.join(ROOT, "public", "images", "landing", "v3b");
 const RAW = path.join(__dirname, "..", "build", "stills");
@@ -25,7 +27,7 @@ fs.mkdirSync(RAW, { recursive: true });
     // still covers every box the spot gets.
     const aspect = { model: 1.1, ideas: 1.3, picture: 1.3 }[spot] ?? 1;
     await ctx.addInitScript(([s, h]) => { const st = document.createElement("style"); st.textContent = `[data-spot="${s}"] { width: 600px !important; height: ${h}px !important; max-width: none !important; aspect-ratio: auto !important; }`; document.addEventListener("DOMContentLoaded", () => document.head.appendChild(st)); }, [spot, Math.round(600 / aspect)]);
-    await p.goto(base + `/?probe&full=1&still=${spot}`, { waitUntil: "load" });
+    await p.goto(base + `/?probe&full=1&still=${spot}${START ? "&start" : ""}`, { waitUntil: "load" });
     await p.waitForFunction(() => document.querySelector("[data-spot][data-live]"), null, { timeout: 90000 });
     const y = await p.evaluate((s) => { const r = document.querySelector(`[data-spot="${s}"]`).getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); }, spot);
     for (let v = 0; v <= y; v += 200) { await p.evaluate((q) => scrollTo(0, q), Math.min(v, y)); await sleep(30); }
@@ -39,11 +41,12 @@ fs.mkdirSync(RAW, { recursive: true });
     const r = await p.evaluate((s) => { const q = document.querySelector(`[data-spot="${s}"]`).getBoundingClientRect(); return { x: q.left, y: q.top, width: q.width, height: q.height }; }, spot);
     if (Math.round(r.width) !== 600) throw new Error(`${spot} box is ${r.width} wide, not 600`);
     if (Math.abs(r.width / r.height - aspect) > 0.01) throw new Error(`${spot} box is ${r.width} x ${r.height}, not at aspect ${aspect}`);
-    const png = path.join(RAW, `${spot}.png`);
+    const name = START ? `${spot}-start` : spot;
+    const png = path.join(RAW, `${name}.png`);
     await p.screenshot({ path: png, clip: r, omitBackground: true });
-    const out = path.join(PUB, `${spot}.webp`);
+    const out = path.join(PUB, `${name}.webp`);
     await sharp(png).webp({ quality: 82, alphaQuality: 90, effort: 6 }).toFile(out);
-    console.log(spot, `${Math.round(fs.statSync(out).size / 1024)} kB`);
+    console.log(name, `${Math.round(fs.statSync(out).size / 1024)} kB`);
     await ctx.close();
   }
   console.log(JSON.stringify({ api: report.api.length, paid: report.paid.length }));

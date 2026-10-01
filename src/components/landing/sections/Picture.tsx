@@ -69,6 +69,7 @@ export function Picture({ mode }: { mode: LandingMode | null }) {
           <Spot
             id="picture"
             still="/images/landing/v3b/picture.webp"
+            start="/images/landing/v3b/picture-start.webp"
             alt="Jake points at the volcano lesson's cross-section, drawn on the board"
             className="w-full"
             style={{ aspectRatio: String(BOARD_ASPECT) }}

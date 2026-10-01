@@ -375,6 +375,16 @@
   .landing-spot[data-live] .landing-spot-still {
     opacity: 0;
   }
+  /* On the live path a spot's poster is its first frame; elsewhere (lite, the stack, no JS) its end. */
+  .landing-still-start {
+    display: none;
+  }
+  [data-mode="full"] .landing-still-start {
+    display: block;
+  }
+  [data-mode="full"] .landing-still-end {
+    display: none;
+  }
 
   /* A spoken line's words (HeroLine): not yet said, said, and the one being said. */
   .landing-word {
@@ -435,21 +445,73 @@
     }
   }
 
-  /* It Finds the Ideas Inside (Ideas.tsx): ideas appear in turn and their links draw once both ends are there. */
+  /* It Finds the Ideas Inside (Ideas.tsx): the classroom's display (.theme-ink), where the ideas come out of a
+     thinking glow as orbs of light (the idea's own light, .landing-orb) and link up like a constellation. */
+  .landing-display {
+    container-type: size;
+  }
+  .landing-display-glow {
+    background: radial-gradient(60% 50% at 50% 48%, rgb(var(--glow) / 0.16), transparent 72%);
+  }
+  .landing-thinking {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%, rgb(255 236 214) 0%, rgb(var(--accent)) 55%, rgb(var(--accent) / 0.8) 75%);
+    box-shadow: 0 0 26px 8px rgb(var(--glow) / 0.5);
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out);
+  }
+  .landing-thinking[data-on] {
+    opacity: 1;
+    animation: landing-think 1.2s var(--ease-in-out) infinite alternate;
+  }
+  @keyframes landing-think {
+    from { scale: 0.8; }
+    to { scale: 1.15; }
+  }
+  .landing-idea-orb {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+  }
+  .landing-idea-big {
+    width: 20px;
+    height: 20px;
+  }
+  .landing-idea-lit {
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55);
+  }
+  .landing-idea-ring {
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 12px 2px rgb(var(--glow) / 0.45), inset 0 0 6px rgb(var(--glow) / 0.35);
+  }
   .landing-idea-node {
-    transition: opacity 400ms var(--ease-out), scale 400ms var(--ease-out);
+    transition: transform 650ms var(--ease-out), opacity 300ms var(--ease-out);
+  }
+  .landing-idea-label {
+    transition: opacity 400ms var(--ease-out) 250ms;
   }
   .landing-ideas[data-armed] .landing-idea-node:not([data-on]) {
     opacity: 0;
-    scale: 0.85;
+    transform: translate(calc(var(--dx) * 1cqw), calc(var(--dy) * 1cqh)) scale(0.3);
+  }
+  .landing-ideas[data-armed] .landing-idea-node:not([data-on]) .landing-idea-label {
+    opacity: 0;
   }
   .landing-link {
     stroke: rgb(var(--accent-text));
-    stroke-width: 1.6;
-    transition: opacity 500ms var(--ease-out);
+    stroke-width: 0.45;
+    stroke-linecap: round;
+    opacity: 0.85;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 600ms var(--ease-in-out) 200ms;
   }
   .landing-ideas[data-armed] .landing-link:not([data-on]) {
-    opacity: 0;
+    stroke-dashoffset: 1;
   }
   .landing-caret {
     display: inline-block;
@@ -463,8 +525,12 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .landing-idea-node,
+    .landing-idea-label,
     .landing-link {
       transition: none;
+    }
+    .landing-thinking[data-on] {
+      animation: none;
     }
     .landing-caret {
       animation: none;

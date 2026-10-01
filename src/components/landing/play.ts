@@ -100,8 +100,10 @@ export function useSectionPlay(
     // lite path the spot is a still of its end, so the section shows its end too.
     if (spot && !mode) return;
     // `?still`: the stills are captured at each section's end (the V8.3b eval, scripts/stills.cjs).
-    const still = new URLSearchParams(window.location.search).has("still");
-    if (reducedMotion() || mode === "stack" || (spot && mode === "lite") || still) { c.t = length; emit(id); return; }
+    const params = new URLSearchParams(window.location.search);
+    // `?still&start`: the first frame instead, held.
+    if (params.has("still") && params.has("start")) { c.t = 0; emit(id); return; }
+    if (reducedMotion() || mode === "stack" || (spot && mode === "lite") || params.has("still")) { c.t = length; emit(id); return; }
     const el = ref.current;
     if (!el) return;
     let inView = false;

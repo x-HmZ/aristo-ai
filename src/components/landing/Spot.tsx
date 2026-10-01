@@ -15,11 +15,16 @@ import { SPOTS, type SpotId } from "./stage/spots";
 const HIGH = { fetchpriority: "high" } as Record<string, string>;
 
 export function Spot({
-  id, still, alt, className, style, pool, priority, under, children,
+  id, still, start, alt, className, style, pool, priority, under, children,
 }: {
   id: SpotId;
-  /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`). */
+  /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`): the section's end. */
   still?: string;
+  /**
+   * The section's first frame (`<id>-start.webp`: him at rest, nothing built yet), shown instead on the live path,
+   * so the poster before he is live is exactly what the canvas then starts from. Unset: `still` on every path.
+   */
+  start?: string;
   alt: string;
   className?: string;
   style?: CSSProperties;
@@ -39,9 +44,14 @@ export function Spot({
       {under}
       {still ? (
         // eslint-disable-next-line @next/next/no-img-element -- a fixed-size box; next/image adds nothing here
-        <img src={still} alt={alt} className="landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />
+        <img src={still} alt={alt} className={cn("landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover", start && "landing-still-end")} style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />
       ) : (
         <span role="img" aria-label={alt} className="absolute inset-0" />
+      )}
+      {start && (
+        // The live path's poster (globals.css swaps the two by data-mode; a lazy image that is not displayed never loads).
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={start} alt="" aria-hidden className="landing-spot-still landing-still-start landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading="lazy" />
       )}
       {children}
     </div>
