@@ -296,7 +296,7 @@ is a stack.
   Step Into the Classroom, For Parents, the close, the footer. Copy in `landing/content.ts` (messaging.md for the
   deck); the plan is `.claude/plans/V8.3b-landing-plan.md`.
 - **Columns:** `WRAP` (1180px, 16px gutter, 32px from md); a heading column (`H2`: Title Case Geist 650, 30/44px;
-  `LEDE`: 17px `body`) beside the section's graphic. Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
+x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
   `BTN_GHOST`, all 44px; `BTN_LG` 52px for the hero and the close). The hero eyebrow and the parents' eyebrow are
   13px uppercase `muted` text, no pill.
 - **One visual language, nothing generic:**
@@ -304,7 +304,10 @@ is a stack.
   - the classroom's **dark display** (`.theme-ink`, `bg-sunk`, `.landing-display-glow`): Five Moves' board, the
     map;
   - **chalk on dark, ink on paper:** a drawing's line phase follows the page (chalk on a dark page); a sheet is the
-    product's paper (`.theme-paper`, light in both themes): the memory card, the parents' promises, the desk quiz.
+    product's paper (`.theme-paper`, light in both themes): the memory card, the desk quiz.
+  - **For Parents** is the page's one tint band (`bg-tint`, `border-tint-line`, edge to edge): the one place the
+    page turns to the adult. Its eyebrow is `accent-text` (4.74 on the light tint), its promises sit under hairlines.
+  - On a display a hollow ring is filled with the display's ground, so a line meets its edge.
 - **Jake** is the product's `Teacher`, live on one canvas that moves to the section's spot (a crop of the
   classroom's lesson view, `stage/spots.ts`), fading out below mid-thigh (`.landing-fade`) onto a warm pool. He
   always has room in his box (`need`, checked by `eval/.../bounds.cjs`). Every gesture lands on a real thing,
