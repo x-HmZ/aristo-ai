@@ -44,11 +44,17 @@ const stats = (d) => {
     const hero = stats(await p.evaluate(RECORD, 4000));
     // LCP and CLS before any scroll: a reader's scroll ends LCP, the harness's scrollTo does not.
     const vitals = await p.evaluate(() => ({ lcp: window.__perf.lcp, cls: +window.__perf.cls.toFixed(4) }));
-    // The model section, centred, while its build plays.
-    const y = await p.evaluate(() => { const r = document.querySelector("[data-spot=model]").getBoundingClientRect(); return r.top + scrollY - (innerHeight - r.height) / 2; });
-    for (let v = 0; v <= y; v += 160) { await p.evaluate((q) => scrollTo(0, q), Math.min(v, y)); await sleep(20); }
-    if (mode === "full") await p.waitForFunction(() => document.querySelector("[data-spot=model][data-live]"), null, { timeout: 30000 }).catch(() => {});
-    const model = stats(await p.evaluate(RECORD, 7000));
+    // Each section with a graphic, centred, while it plays (the idea, the ideas, the picture, the model build).
+    const sections = {};
+    for (const spot of ["idea", "ideas", "picture", "model"]) {
+      const y = await p.evaluate((s) => { const el = document.querySelector("[data-spot=" + s + "]"); const r = (el.offsetParent ? el : el.parentElement).getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); }, spot);
+      const from = await p.evaluate(() => scrollY);
+      for (let v = from; v <= y; v += 160) { await p.evaluate((q) => scrollTo(0, q), Math.min(v, y)); await sleep(20); }
+      await p.evaluate((q) => scrollTo(0, q), y);
+      if (mode === "full") await p.waitForFunction((s) => document.querySelector("[data-spot=" + s + "][data-live]"), spot, { timeout: 30000 }).catch(() => {});
+      sections[spot] = stats(await p.evaluate(RECORD, 7000));
+    }
+    const model = sections.model;
     // A steady scroll from the top to the bottom.
     await p.evaluate(() => scrollTo(0, 0)); await sleep(1500);
     const scroll = stats(await p.evaluate(() => new Promise((resolve) => {
@@ -59,7 +65,7 @@ const stats = (d) => {
     })));
     const clsAfter = await p.evaluate(() => +window.__perf.cls.toFixed(4));
     const js = await p.evaluate(() => Math.round(performance.getEntriesByType("resource").filter((r) => r.initiatorType === "script").reduce((a, r) => a + r.transferSize, 0) / 1024));
-    const row = { theme, w, mode, liveMs, ...vitals, clsAfterScroll: clsAfter, jsKB: js, hero, model, scroll };
+    const row = { theme, w, mode, liveMs, ...vitals, clsAfterScroll: clsAfter, jsKB: js, hero, sections, model, scroll };
     report.runs.push(row);
     console.log(JSON.stringify(row));
     await ctx.close();

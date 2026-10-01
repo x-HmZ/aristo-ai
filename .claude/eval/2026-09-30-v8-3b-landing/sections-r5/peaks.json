@@ -1,0 +1,38 @@
+{
+ "ideaHold": {
+  "peakFrame": 43,
+  "ms": 4874,
+  "hold": {
+   "palmGapPx": 164.9,
+   "orbW": 102.265625,
+   "orbH": 102.265625,
+   "centreOffsetPx": 0,
+   "clearEachSidePx": 31.2
+  },
+  "pointing": null
+ },
+ "ideasPointing3Runs": [
+  {
+   "deg": 3.6,
+   "tipToTargetPx": 60
+  },
+  {
+   "deg": 4.3,
+   "tipToTargetPx": 61
+  },
+  {
+   "deg": 3.6,
+   "tipToTargetPx": 60
+  }
+ ],
+ "picturePointing": {
+  "light": {
+   "deg": 6.2,
+   "tipToTargetPx": 56
+  },
+  "dark": {
+   "deg": 6.2,
+   "tipToTargetPx": 57
+  }
+ }
+}

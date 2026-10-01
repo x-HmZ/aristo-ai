@@ -23,7 +23,16 @@ const ROUND3 = [
   ["He follows the pointer: the headline, the buttons, above him, below left", ["hero-play/light/looks.png"]],
   ["Tap on him: a wave; leave and come back: a welcome-back wave", ["hero-play/light/tap-strip.png", "hero-play/light/welcome-strip.png"]],
 ];
-const ROWS = process.argv[2] === "round3" ? ROUND3 : process.argv[2] === "round2" ? ROUND2 : [
+const ROUND5 = [
+  ["A Teacher of Your Own: the beats rise, the colonnade draws, he holds the idea, it flies into the column and lights it", ["section/idea-light-1280/sheet.png"]],
+  ["The hold: the idea centred between his palms (blue), 31 px clear each side; dark", ["peaks/idea-light-1280/peak-marked.png", "section/idea-dark-1280/sheet.png"]],
+  ["It Finds the Ideas Inside (volcano): the topic types, he thinks, the ideas link, he points (PointNear, aimed)", ["peaks-r3/ideas-light-1280/strip.png"]],
+  ["Pointing: the magma chamber (3.6 to 4.3 degrees over three runs) and the crater (6.2 degrees)", ["peaks-r3/ideas-light-1280/peak-marked.png", "peaks/picture-light-1280/peak-marked.png"]],
+  ["It Draws a Diagram (volcano): noise, lines, colour, then he points at the crater; light and dark", ["peaks/picture-light-1280/strip.png"]],
+  ["", ["peaks/picture-dark-1280/strip.png"]],
+  ["Phones and tablet: the idea, the ideas panel alone below 640px, the picture (dark), the ideas at 768, the idea (dark)", ["phones-r5.png"]],
+];
+const ROWS = process.argv[2] === "round5" ? ROUND5 : process.argv[2] === "round3" ? ROUND3 : process.argv[2] === "round2" ? ROUND2 : [
   ["Nav and hero, 1280, light and dark (Jake live, the line playing)", ["check/light-1280-top.png", "check/dark-1280-top.png"]],
   ["Phones (lite: stills), 360: hero, the model build, the nav's sheet", ["check/light-360-top.png", "check/dark-360-model.png", "nav/dark-360-sheet.png"]],
   ["The wave at its peak (hands and fingertips marked), light and dark", ["peaks/hero-light-1280/peak-marked.png", "peaks/hero-dark-1280/peak.png"]],

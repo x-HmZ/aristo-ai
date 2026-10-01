@@ -26,7 +26,12 @@ _Update this at the end of every significant session: done / next / blockers, co
   rejected (49 degrees off). Tests 510.
 - **Round 4 (6ecee7a):** the offered palm is aimed at Try a lesson after the pose (`stage/aim.ts`, via Teacher's
   new optional `afterPose`). Measured: reach 5.4 to 5.9 degrees and hand 0.7 to 3.6 degrees from the button. Tests 514.
-- **Next:** Hmz's go on round 4; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
+- **Next sections built (72ab2bc, 0ab9cd5, 747b148):** A Teacher of Your Own (he holds the idea, an orb that lights the
+  mark's flute), It Finds the Ideas Inside and It Draws a Diagram (volcano; PointNear aimed at a node and at the crater,
+  3.6 to 6.2 degrees). Teacher's driver gained `withhold`. `/` 118 kB; 0 AA fails; sections play at 0% dropped.
+  Tests 519.
+- **Next:** Hmz's review of these three; then Five Moves (plain words), It Remembers, Immersive (volcano), For Parents,
+  the close; then steps 10 to 12 (A Teacher of Your Own, the ideas, the picture,
   Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
 
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)

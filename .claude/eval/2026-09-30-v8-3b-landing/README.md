@@ -125,3 +125,39 @@ demo's); the lesson's picture is an infographic; spread the topics (volcano, hea
 - **Measured** (`peaks.json` heroOffer, `hero-offer-peak*.webp`): at the peak, shoulder to fingertip is 5.4 to 5.9
   degrees from the line to the button's centre, and wrist to fingertip 0.7 to 3.6. That holds at 1024, 1280 and 1440
   in light, and at 1280 in dark (was 14 and not measured).
+
+## The next sections: A Teacher of Your Own, It Finds the Ideas Inside, It Draws a Diagram
+
+Commits 72ab2bc, 0ab9cd5, 747b148. Evidence: `sections-r5/` (`review-round5.webp`, `peaks.json`, `check.json`,
+`perf.json`). New scripts: `section.cjs` (a section over time); `peaks.cjs` gained the hold and pointing measures;
+`stills.cjs` now forces each spot to its capture size.
+
+- **A Teacher of Your Own:**
+  - The story's three beats (messaging.md) rise beside the mark, and the colonnade draws itself with its middle
+    flute's place empty.
+  - Jake holds the idea (the product's HoldIdea). While his palms are up, an orb of light shows between them, sized
+    to 0.62 of the gap and following them as the stage reports them.
+  - When his hands start down, it flies into the empty place and lights it.
+  - **Measured:** palm gap 165 px, orb 102 px, 0 px off centre, 31 px clear each side.
+  - **Tried and changed:** a flute-shaped bar between the palms floated in a gap five times its width.
+- **It Finds the Ideas Inside (the volcano lesson):**
+  - The panel sits at the classroom board's place and size, under the canvas, so his hand is drawn in front of it.
+  - The topic types itself while he thinks (OneMoment, Thinking).
+  - The lesson's own ideas appear and link; ringed ideas are what it builds on.
+  - He points with PointNear, aimed at the magma chamber.
+  - **Measured over three runs:** the finger is 3.6 to 4.3 degrees from the node, with the fingertip at its edge.
+  - **Teacher change:** the driver gained `withhold`, so the landing never draws the Mixamo Pointing clip, which
+    raises his right hand across his body.
+  - Below 640 px the panel stands alone and he is not shown.
+- **It Draws a Diagram for the Lesson (the volcano lesson's cross-section):**
+  - It resolves noise, then lines, then colour at the board's place.
+  - It is set 0.3 m back and enlarged to look identical, because PointNear brings his hand to the board's own plane
+    and the hand vanished behind it.
+  - He points at the crater: 6.2 degrees, in both themes.
+  - The lines phase is ink on paper on a light page and chalk on a dark one.
+- **Checks:** at 360 to 1440, both themes: 0 AA failures (minimum 4.74 light, 6.42 dark), 0 targets under 44 px,
+  0 overflow.
+- **Load:** `/` is 118 kB first load (budget 135). LCP 152 to 428 ms. CLS 0.
+- **Frames:** every section plays at p95 16.7 to 16.8 ms with 0% dropped.
+- **Open:** the hero's one 83 to 150 ms start-up frame, and one 133 ms frame in the steady scroll at 1440 light
+  (probably Jake remounting at a spot change). Both are for the verification step.
