@@ -53,8 +53,9 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
-  // One Lesson, Five Moves: him alone, centred, with the widest of the five gestures kept in the box.
-  moves: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.75, -0.25] },
+  // One Lesson, Five Moves: as the volcano spots, him on the left and the classroom's display at the board's place,
+  // where what each move's gesture makes in his hands is set down.
+  moves: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
 
@@ -92,7 +93,7 @@ export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
 
 /** The box aspect each spot's stills are captured at (eval scripts/stills.cjs): the fixed-aspect spots at theirs. */
 export const CAPTURE_ASPECT: Record<SpotId, number> = {
-  hero: 1, idea: 1, ideas: BOARD_ASPECT, picture: BOARD_ASPECT, model: 1.1, moves: 1, close: 1,
+  hero: 1, idea: 1, ideas: BOARD_ASPECT, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, close: 1,
 };
 
 const n = (v: number) => +v.toFixed(4);

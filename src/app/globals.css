@@ -587,6 +587,60 @@
     box-shadow: 0 18px 40px rgb(var(--shadow));
     will-change: transform, opacity;
   }
+  /* Five Moves' board (MovesBoard.tsx): the classroom's display, where each place lights as its piece lands
+     (data-on, MovesHands); the links draw once both ends are lit, as in It Finds the Ideas Inside. The question
+     is a ring with a question mark; its answer arrives under it, then its tick. Without data-armed it is whole. */
+  .landing-board-node {
+    transition: opacity 260ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-board .landing-link {
+    stroke-width: 0.4;
+  }
+  .landing-board[data-armed] .landing-link:not([data-on]) {
+    stroke-dashoffset: 1;
+  }
+  .landing-board-idea {
+    width: 22px;
+    height: 22px;
+  }
+  .landing-board-question {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 12px 2px rgb(var(--glow) / 0.45);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgb(var(--accent-text));
+  }
+  .landing-board-answer {
+    transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-answer]) .landing-board-answer {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  .landing-board-tick {
+    transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-tick]) .landing-board-tick {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-board-node,
+    .landing-board-answer,
+    .landing-board-tick {
+      transition: none;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .landing-move,
     .landing-move-icon {

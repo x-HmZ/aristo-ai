@@ -88,7 +88,7 @@ export function heartBox(): { left: number; top: number; width: number; height: 
  * The classroom board's square in a volcano spot's box, as percentages (BOARD through the spot's frustum at
  * BOARD_ASPECT): where the ideas panel sits, under the canvas, so his pointing hand is drawn in front of it.
  */
-export function boardBox(spot: "ideas" | "picture"): { left: number; top: number; width: number; height: number } {
+export function boardBox(spot: "ideas" | "picture" | "moves"): { left: number; top: number; width: number; height: number } {
   const f = frustumFor(SPOTS[spot], BOARD_ASPECT);
   const [x, y, z] = BOARD.center, h = BOARD.size / 2;
   const a = project(f, [x - h, y + h, z]), b = project(f, [x + h, y - h, z]);
@@ -160,6 +160,8 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
         s.role = m.role;
         s.segmentId = `moves:${beat.move}:${beat.step}`;
       }
+      // The answer on the board is right: the product's "that's right" (Nodding, or Exactly towards the board).
+      if (ctx.t >= MOVES_T.nod) s.reaction = { kind: "nodding", id: 1 };
       break;
     }
   }
@@ -185,10 +187,11 @@ const MOVE_SIGNALS: Record<MoveId, Pick<DirectorSignals, "phase" | "role">> = {
 
 /**
  * One Lesson, Five Moves, in seconds of its clock: when each move starts (`at`), and Demonstrate's three steps
- * (`steps`, each a StepBeat chop). Each move lasts until the next; its gesture plays in its first 2.5 s and its
- * graphic holds after. The clock stops at `length` and holds on Connect.
+ * (`steps`, each a StepBeat chop). Each move's gesture makes its piece in his hands, which is then set on the board
+ * (Moves.tsx). In Challenge an answer arrives on the board (`answer`) and he says "that's right" (`nod`), which ends
+ * before Connect starts. The clock stops at `length` with the whole lesson on the board.
  */
-export const MOVES_T = { at: [0.6, 4.2, 7.8, 13.0, 16.6], steps: [7.8, 9.5, 11.2], length: 20.4 } as const;
+export const MOVES_T = { at: [0.6, 4.2, 7.8, 13.2, 19.8], steps: [7.8, 9.5, 11.2], answer: 16.3, nod: 16.9, length: 24 } as const;
 
 /** The move playing at section time `t`, and its step (0 except within Demonstrate), or null before the first. */
 export function moveBeatAt(t: number): { move: MoveId; index: number; step: number } | null {

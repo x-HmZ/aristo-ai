@@ -160,11 +160,31 @@ export const MODEL_COPY = {
   real: "The picture and the model are real output from the heart demo lesson. The build between them is an illustration.",
 } as const;
 
-/** One Lesson, Five Moves (V8.3b): the moves in plain words (messaging.md), no lesson lines. */
+/**
+ * One Lesson, Five Moves (V8.3b): the moves in plain words (messaging.md), and the volcano demo lesson built up on the
+ * classroom's display, one move at a time. The board's words are our short summaries of what each move of that lesson
+ * holds (its prerequisites, key insight and analogy, steps, challenge and next concept), not its lines; the label
+ * says so. x and y place each on the board's spine (%); its words sit to its right.
+ */
 export const MOVES_COPY = {
   title: "One Lesson, Five Moves",
   line: "Every lesson is real teaching, and you can see it.",
-  label: "The gestures are the ones your teacher makes at each move in a lesson.",
+  label: "The volcano demo lesson's five moves, summarised. The gestures are the ones your teacher makes at each move.",
+  topic: "How Volcanoes Erupt",
+  board: {
+    known: [
+      { label: "Trapped gas pushes out", x: 14, y: 16 },
+      { label: "Hot things rise", x: 14, y: 26 },
+    ],
+    idea: { label: "Pressure builds underground", tag: "Like a shaken soda bottle", x: 14, y: 39 },
+    steps: [
+      { label: "Magma fills the chamber", x: 14, y: 52 },
+      { label: "Forced up the vent", x: 14, y: 61 },
+      { label: "Out as lava", x: 14, y: 70 },
+    ],
+    question: { label: "Why does one explode and one ooze?", answer: "Thick magma traps the gas", x: 14, y: 81 },
+    next: { label: "Next: types of volcanoes", x: 14, y: 93 },
+  },
 } as const;
 
 export const MAP_COPY = {

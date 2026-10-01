@@ -134,6 +134,15 @@ describe("One Lesson, Five Moves", () => {
     expect(MOVES_T.length - MOVES_T.at[4]).toBeGreaterThan(longest + 0.5);
   });
 
+  it("says that's right once, after the answer, and is done before Connect", () => {
+    expect(signalsFor("moves", { ...ctx, t: MOVES_T.nod - 0.01 }).reaction).toBeNull();
+    expect(signalsFor("moves", { ...ctx, t: MOVES_T.nod }).reaction).toEqual({ kind: "nodding", id: 1 });
+    expect(signalsFor("moves", { ...ctx, t: MOVES_T.length }).reaction).toEqual({ kind: "nodding", id: 1 });
+    expect(MOVES_T.nod).toBeGreaterThan(MOVES_T.answer);
+    const longest = Math.max(...["Nodding", "Exactly"].map((id) => CLIPS_BY_ID.get(id)!.duration));
+    expect(MOVES_T.at[4] - MOVES_T.nod).toBeGreaterThan(longest + 0.2);
+  });
+
   it("never waves or shows a model there", () => {
     const s = signalsFor("moves", { ...ctx, liveFor: 5, t: 10 });
     expect(s.sceneReady).toBe(false);
