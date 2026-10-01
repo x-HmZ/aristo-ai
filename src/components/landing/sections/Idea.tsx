@@ -24,7 +24,7 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
  * On the live path the beats rise one after another and the colonnade draws itself with its middle flute's place
  * empty. Jake holds the idea (the product's HoldIdea, palms facing with a gap): while his hands are up, the idea
  * shows between them as an orb of warm light, sized to the gap and following his palms as the stage reports them
- * (shared.idea). As his hands come down it flies into the empty place, stretching into the flute's shape, and
+ * (shared.hands). As his hands come down it flies into the empty place, stretching into the flute's shape, and
  * lights it: the mark's own story, the colonnade with its middle flute lit. On the lite path, and under reduced
  * motion, everything is in place.
  */
@@ -51,8 +51,8 @@ export function Idea({ mode }: { mode: LandingMode | null }) {
       const el = orb.current, box = wrap.current?.getBoundingClientRect(), s = slot.current?.getBoundingClientRect();
       if (!el || !box || !s) return;
       const t = clockOf("idea").t;
-      const palms = shared.idea.palms;
-      const up = shared.idea.raised && !!palms && t >= IDEA_T.hold;
+      const palms = shared.hands.spot === "idea" ? shared.hands.palms : null;
+      const up = shared.hands.raised && !!palms && t >= IDEA_T.hold;
       const mid = palms ? { x: (palms.l.x + palms.r.x) / 2, y: (palms.l.y + palms.r.y) / 2 } : from;
       if (phase === "wait" && up) { phase = "held"; heldAt = t; top = mid.y; from = mid; }
       if (phase === "wait" && t >= IDEA_T.giveUp) { phase = "done"; setLitNow(true); }

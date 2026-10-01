@@ -537,6 +537,63 @@
     }
   }
 
+  /* One Lesson, Five Moves (Moves.tsx): the move now playing is lit (the accent, as the classroom's phase rail);
+     the ones before it stay in ink, the ones to come wait in muted ink. Without data-armed everything is in place. */
+  .landing-move {
+    border-color: rgb(var(--line));
+    background: rgb(var(--surface));
+    transition: border-color 300ms var(--ease-out), background-color 300ms var(--ease-out), opacity 300ms var(--ease-out);
+  }
+  .landing-move-icon {
+    border-color: rgb(var(--line));
+    background: rgb(var(--bg));
+    color: rgb(var(--accent-text));
+    transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out), border-color 300ms var(--ease-out);
+  }
+  .landing-move[aria-current] {
+    border-color: rgb(var(--accent) / 0.55);
+    background: rgb(var(--tint));
+  }
+  .landing-move[aria-current] .landing-move-icon {
+    border-color: rgb(var(--accent));
+    background: rgb(var(--accent));
+    color: rgb(var(--accent-ink));
+  }
+  .landing-moves[data-armed] .landing-move:not([data-on]) :is(.text-ink, .text-body) {
+    color: rgb(var(--muted));
+  }
+  /* What he holds or sets down at each move (MovesHands.tsx): rings of what you know, lit steps and the idea, in the
+     idea's own light (.landing-orb, the Ideas section's rings); the question card is paper (.theme-paper). */
+  .landing-move-ring {
+    border-radius: 50%;
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.45), inset 0 0 8px rgb(var(--glow) / 0.35);
+    will-change: transform, opacity;
+  }
+  .landing-move-dot {
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 16px 4px rgb(var(--glow) / 0.55);
+    will-change: transform, opacity;
+  }
+  .landing-move-link {
+    height: 2px;
+    border-radius: 1px;
+    background: rgb(var(--accent-text));
+    box-shadow: 0 0 8px rgb(var(--glow) / 0.5);
+    will-change: transform, opacity;
+  }
+  .landing-move-card {
+    box-shadow: 0 18px 40px rgb(var(--shadow));
+    will-change: transform, opacity;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-move,
+    .landing-move-icon {
+      transition: none;
+    }
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {

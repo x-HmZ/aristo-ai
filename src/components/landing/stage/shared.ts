@@ -23,12 +23,29 @@ export const shared: {
    */
   hero: { hover: "try" | null; seq: number; greet: number; look: { el: HTMLElement; until: number } | null };
   /**
-   * A Teacher of Your Own: his palms' centres on the page (viewport px), and whether both hands are up in front of
-   * him (HoldIdea), written by the stage each frame there.
+   * His hands where something is held in them (A Teacher of Your Own, One Lesson, Five Moves), written by the stage
+   * each frame at those spots: his palms' centres on the page (viewport px), whether both hands are up in front of
+   * him, and which spot wrote them.
    */
-  idea: { palms: { l: { x: number; y: number }; r: { x: number; y: number } } | null; raised: boolean };
+  hands: {
+    spot: string | null;
+    palms: { l: { x: number; y: number }; r: { x: number; y: number } } | null;
+    raised: boolean;
+    /** Each wrist's height in world metres (at rest about -0.45; a gesture lifts it above -0.3). */
+    lift: { l: number; r: number };
+    /** Each hand's lowest point on the page (viewport px): of the wrist, the fingertips and the thumb tip. */
+    low: { l: { x: number; y: number }; r: { x: number; y: number } } | null;
+    /**
+     * Called by the stage right after it writes these, in the same frame it renders: what the page draws at his hands
+     * moves in step with them (a rAF of its own would run a frame behind, about 10 px while a hand moves).
+     */
+    onReport: (() => void) | null;
+  };
+  /** One Lesson, Five Moves: the section's run, bumped by Replay, so the teacher there starts again from rest. */
+  moves: { run: number };
 } = {
   mode: "lite", live: false, speaking: false, heart: { turn: 0, user: false }, pointer: null,
   hero: { hover: null, seq: 0, greet: 0, look: null },
-  idea: { palms: null, raised: false },
+  hands: { spot: null, palms: null, raised: false, lift: { l: -0.45, r: -0.45 }, low: null, onReport: null },
+  moves: { run: 0 },
 };

@@ -84,6 +84,15 @@ export function greetHero(): void {
   emit();
 }
 
+/**
+ * One Lesson, Five Moves starts again (Replay): the teacher there remounts from rest, so the first move's gesture is
+ * never blocked by the last one still playing.
+ */
+export function replayMoves(): void {
+  shared.moves.run += 1;
+  emit();
+}
+
 /** Leaving the page by a client-side link: nothing lingers. */
 export function resetHost(): void {
   setLive(null);

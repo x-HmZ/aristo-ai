@@ -20,7 +20,7 @@ export const TEACHER: { position: [number, number, number]; rotationY: number } 
 /** The depth of the plane a spot's rectangle is measured on: the teacher's. */
 export const PLANE_Z = TEACHER.position[2];
 
-export type SpotId = "hero" | "idea" | "ideas" | "picture" | "model" | "close";
+export type SpotId = "hero" | "idea" | "ideas" | "picture" | "model" | "moves" | "close";
 
 export interface SpotFraming {
   /** World y at the teacher's plane shown at the box's top and bottom edges. */
@@ -53,6 +53,8 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
+  // One Lesson, Five Moves: him alone, centred, with the widest of the five gestures kept in the box.
+  moves: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.75, -0.25] },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
 

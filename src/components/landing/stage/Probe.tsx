@@ -1,10 +1,11 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import { Box3, Vector3, type Object3D } from "three";
+import { clockOf } from "../play";
 import { SPOTS, frustumFor, type SpotId } from "./spots";
 
 /** Jake's bones the verification reads: the hands, the index fingertips' last joints and the shoulders, both sides. */
-const BONES = ["CC_Base_L_Hand", "CC_Base_R_Hand", "CC_Base_L_Index1", "CC_Base_R_Index1", "CC_Base_L_Index3", "CC_Base_R_Index3", "CC_Base_Head", "CC_Base_L_Upperarm", "CC_Base_R_Upperarm"] as const;
+const BONES = ["CC_Base_L_Hand", "CC_Base_R_Hand", "CC_Base_L_Index1", "CC_Base_R_Index1", "CC_Base_L_Index3", "CC_Base_R_Index3", "CC_Base_L_Mid1", "CC_Base_R_Mid1", "CC_Base_L_Mid3", "CC_Base_R_Mid3", "CC_Base_L_Thumb3", "CC_Base_R_Thumb3", "CC_Base_L_Pinky3", "CC_Base_R_Pinky3", "CC_Base_Head", "CC_Base_L_Upperarm", "CC_Base_R_Upperarm"] as const;
 
 declare global {
   interface Window {
@@ -19,6 +20,8 @@ declare global {
       bounds: (name: string) => { min: [number, number, number]; max: [number, number, number] } | null;
       /** Frames rendered so far. */
       frame: number;
+      /** The spot's section clock (play.ts), in seconds. */
+      clock: () => number;
     };
   }
 }
@@ -36,6 +39,7 @@ export function Probe({ spot }: { spot: SpotId }) {
     window.__landing = {
       spot,
       frame: 0,
+      clock: () => clockOf(spot).t,
       bones: () => Object.fromEntries(BONES.map((n) => {
         const o = find(n);
         return [n, o ? (o.getWorldPosition(v).toArray() as [number, number, number]) : [NaN, NaN, NaN]];

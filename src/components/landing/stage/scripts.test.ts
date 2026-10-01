@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { HEART, IDEAS_T, IDEA_T, MODEL_T, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, signalsFor } from "./scripts";
+import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
+import { HEART, IDEAS_T, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
 import { BOARD, EYE } from "./spots";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
@@ -97,5 +98,45 @@ describe("the idea, the ideas and the picture", () => {
     const seen = (x: number, z: number) => x / (EYE[2] - z);
     expect(seen(PICTURE_PLACE.position[0], PICTURE_PLACE.position[2])).toBeCloseTo(seen(BOARD.center[0], BOARD.center[2]));
     expect(seen(PICTURE_PLACE.size, PICTURE_PLACE.position[2])).toBeCloseTo(seen(BOARD.size, BOARD.center[2]));
+  });
+});
+
+describe("One Lesson, Five Moves", () => {
+  it("plays nothing before the first move, so a replay re-arms the sparse beats", () => {
+    expect(moveBeatAt(0)).toBeNull();
+    expect(signalsFor("moves", { ...ctx, t: MOVES_T.at[0] - 0.01 }).segmentId).toBeNull();
+  });
+
+  it("sends each move as the lesson's own segment: its phase, its role, a new id", () => {
+    const at = (t: number) => signalsFor("moves", { ...ctx, t });
+    expect(MOVE_IDS.map((_, i) => at(MOVES_T.at[i] + 0.1).phase)).toEqual(["activate", "explain", "demonstrate", "challenge", "connect"]);
+    expect(MOVE_IDS.map((_, i) => at(MOVES_T.at[i] + 0.1).role)).toEqual(["hook", null, "demo_step", "challenge_setup", null]);
+    const ids = new Set(MOVES_T.at.map((t) => at(t + 0.1).segmentId));
+    expect(ids.size).toBe(5);
+  });
+
+  it("gives each step of Demonstrate its own segment, so each one chops", () => {
+    const ids = MOVES_T.steps.map((t) => signalsFor("moves", { ...ctx, t: t + 0.1 }).segmentId);
+    expect(new Set(ids).size).toBe(3);
+    expect(MOVES_T.steps[0]).toBe(MOVES_T.at[2]);
+    expect(MOVES_T.steps[2]).toBeLessThan(MOVES_T.at[3]);
+  });
+
+  it("leaves each gesture time to finish before the next move starts", () => {
+    // The longest move gesture: YourTurn at its 0.85 rate; every other is shorter.
+    const longest = Math.max(...["Imagine", "HoldIdea", "YourTurn", "BringTogether"].map((id) => {
+      const c = CLIPS_BY_ID.get(id)!;
+      return c.duration / (c.timeWarp?.[0] ?? 1);
+    }));
+    for (let i = 1; i < MOVES_T.at.length; i++) expect(MOVES_T.at[i] - MOVES_T.at[i - 1]).toBeGreaterThan(longest + 0.5);
+    const step = CLIPS_BY_ID.get("StepBeat")!.duration;
+    for (let i = 1; i < MOVES_T.steps.length; i++) expect(MOVES_T.steps[i] - MOVES_T.steps[i - 1]).toBeGreaterThan(step);
+    expect(MOVES_T.length - MOVES_T.at[4]).toBeGreaterThan(longest + 0.5);
+  });
+
+  it("never waves or shows a model there", () => {
+    const s = signalsFor("moves", { ...ctx, liveFor: 5, t: 10 });
+    expect(s.sceneReady).toBe(false);
+    expect(s.modelShown).toBe(false);
   });
 });

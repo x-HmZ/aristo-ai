@@ -160,7 +160,12 @@ export const MODEL_COPY = {
   real: "The picture and the model are real output from the heart demo lesson. The build between them is an illustration.",
 } as const;
 
-export const MOVES_COPY = { title: "One Lesson, Five Moves" } as const;
+/** One Lesson, Five Moves (V8.3b): the moves in plain words (messaging.md), no lesson lines. */
+export const MOVES_COPY = {
+  title: "One Lesson, Five Moves",
+  line: "Every lesson is real teaching, and you can see it.",
+  label: "The gestures are the ones your teacher makes at each move in a lesson.",
+} as const;
 
 export const MAP_COPY = {
   title: "It Remembers What You Know",

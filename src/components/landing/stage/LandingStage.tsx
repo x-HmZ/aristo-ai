@@ -32,9 +32,9 @@ import { warmUp } from "./warm";
 const NEAR = 0.05;
 const FAR = 60;
 /** The section clock each spot's script reads. */
-const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", ideas: "ideas", picture: "picture", model: "model", close: "close" };
+const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", ideas: "ideas", picture: "picture", model: "model", moves: "moves", close: "close" };
 
-const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}`, () => "null|false|0");
+const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}`, () => "null|false|0|0");
 
 /**
  * Runs first each frame: the camera stays at the classroom's eye, looking straight ahead, and the active spot's
@@ -92,7 +92,7 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
  * the eyes and the aimed hand (aim.ts) all go to the same place. The heart's place is fixed.
  */
 const TARGET: Record<SpotId, [number, number, number]> = {
-  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], ideas: [0, 0, PLANE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], close: [0, 0, GESTURE_Z],
+  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], ideas: [0, 0, PLANE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], close: [0, 0, GESTURE_Z],
 };
 const LOOK = Object.fromEntries(
   Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
@@ -154,8 +154,12 @@ class PartBoundary extends Component<{ children: ReactNode }, { failed: boolean 
 
 /** A wrist above this (world y) is raised in front of him. */
 const RAISED_Y = -0.12;
-/** Each palm's wrist and index knuckle, left then right. */
-const PALM_BONES = ["CC_Base_L_Hand", "CC_Base_L_Index1", "CC_Base_R_Hand", "CC_Base_R_Index1"] as const;
+/** Each palm's wrist and index knuckle, left then right; then each hand's fingertips and thumb tip, left then right. */
+const PALM_BONES = [
+  "CC_Base_L_Hand", "CC_Base_L_Index1", "CC_Base_R_Hand", "CC_Base_R_Index1",
+  "CC_Base_L_Index3", "CC_Base_L_Mid3", "CC_Base_L_Pinky3", "CC_Base_L_Thumb3",
+  "CC_Base_R_Index3", "CC_Base_R_Mid3", "CC_Base_R_Pinky3", "CC_Base_R_Thumb3",
+] as const;
 
 /** When each spot last waved (performance.now seconds), for the cool-down. Survives remounts. */
 const lastWave: Partial<Record<SpotId, number>> = {};
@@ -182,7 +186,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
   const aim = useRef<ReturnType<typeof createAim> | null>(null);
   const aimAt = useMemo(() => new Vector3(), []);
   const aimed = useRef(false);
-  // His wrists and knuckles on the page (viewport px), for the flute he holds at the idea spot (Idea.tsx).
+  // His wrists and knuckles on the page (viewport px), for what he holds at the idea and moves spots (Idea.tsx,
+  // Moves.tsx).
   const hands = useRef<Object3D[] | null>(null);
   const pv = useMemo(() => new Vector3(), []);
   const reportPalms = useCallback((root: Object3D) => {
@@ -191,14 +196,23 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     root.updateMatrixWorld(true);
     const r = gl.domElement.getBoundingClientRect();
     // Up in front of him: both wrists above his belt (at rest they hang at about -0.45; HoldIdea brings them to 0.05).
-    shared.idea.raised = hands.current[0].getWorldPosition(pv).y > RAISED_Y && hands.current[2].getWorldPosition(pv).y > RAISED_Y;
-    const [lw, lk, rw, rk] = hands.current.map((o) => {
+    const ly = hands.current[0].getWorldPosition(pv).y, ry = hands.current[2].getWorldPosition(pv).y;
+    shared.hands.raised = ly > RAISED_Y && ry > RAISED_Y;
+    shared.hands.lift.l = ly;
+    shared.hands.lift.r = ry;
+    const page = hands.current.map((o) => {
       o.getWorldPosition(pv).project(camera);
       return { x: r.left + ((pv.x + 1) / 2) * r.width, y: r.top + ((1 - pv.y) / 2) * r.height };
     });
+    const [lw, lk, rw, rk] = page;
     // A palm's centre is about halfway from the wrist to the knuckles.
-    shared.idea.palms = { l: { x: (lw.x + lk.x) / 2, y: (lw.y + lk.y) / 2 }, r: { x: (rw.x + rk.x) / 2, y: (rw.y + rk.y) / 2 } };
-  }, [camera, gl, pv]);
+    shared.hands.palms = { l: { x: (lw.x + lk.x) / 2, y: (lw.y + lk.y) / 2 }, r: { x: (rw.x + rk.x) / 2, y: (rw.y + rk.y) / 2 } };
+    // The lowest point of each hand on the page (wrist, fingertips, thumb): what sits under a hand sits below it.
+    const lowest = (pts: { x: number; y: number }[]) => pts.reduce((a, b) => (b.y > a.y ? b : a));
+    shared.hands.low = { l: lowest([lw, ...page.slice(4, 8)]), r: lowest([rw, ...page.slice(8, 12)]) };
+    shared.hands.spot = spot;
+    shared.hands.onReport?.();
+  }, [camera, gl, pv, spot]);
   const driver = useMemo<TeacherDriver>(() => ({
     signals: () => {
       const now = performance.now() / 1000;
@@ -209,7 +223,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
-      if (start) return { ...s, modelShown: false, gesture: "idle", phase: null, segmentId: null, isLoading: false };
+      // Five Moves ends at rest too, so its one still is this.
+      if (start || (hold && spot === "moves")) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
       // The other stills: at rest beside the lit column; pointing at the ideas and at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
@@ -225,7 +240,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
         aim.current ??= createAim(root);
         aim.current(aimAt.fromArray(TARGET[spot]), aimed.current, delta);
       }
-      if (spot === "idea") reportPalms(root);
+      if (spot === "idea" || spot === "moves") reportPalms(root);
     },
     clipPacks: warm,
     withhold: spot === "hero" ? HERO_WITHHELD : WITHHELD,
@@ -273,7 +288,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
 
 export default function LandingStage({ onLive, onSlow }: { onLive: () => void; onSlow: () => void }) {
   const [warm, setWarm] = useState(false);
-  const [activeKey, onScreenKey, greetKey] = useHost().split("|");
+  const [activeKey, onScreenKey, greetKey, movesKey] = useHost().split("|");
   const greet = Number(greetKey);
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
@@ -302,7 +317,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onWarm={onWarm}>
-          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
+          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active}spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
         </Warmed>
       </Suspense>
       {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is

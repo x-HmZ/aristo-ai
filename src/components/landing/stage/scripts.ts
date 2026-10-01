@@ -149,8 +149,55 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
       // The product's "a model appears": modelShown's rising edge plays PresentModel and turns the head to it.
       s.modelShown = ctx.t >= MODEL_T.present;
       break;
+    case "moves": {
+      // Each move as the lesson's own segment: its phase and role, under a new segment id, so the director plays the
+      // move's own gesture once (Imagine, HoldIdea, StepBeat per step, YourTurn, BringTogether). Before the first
+      // move the id is null, which re-arms the sparse explain and connect beats for a replay.
+      const beat = moveBeatAt(ctx.t);
+      if (beat) {
+        const m = MOVE_SIGNALS[beat.move];
+        s.phase = m.phase;
+        s.role = m.role;
+        s.segmentId = `moves:${beat.move}:${beat.step}`;
+      }
+      break;
+    }
   }
   return s;
+}
+
+/** The five moves, in lesson order. */
+export const MOVE_IDS = ["activate", "explain", "demonstrate", "challenge", "connect"] as const;
+export type MoveId = (typeof MOVE_IDS)[number];
+
+/**
+ * The director signals that make each move's gesture, as a lesson sends them: Activate opens with a hook (Imagine),
+ * Explain is the phase's beat (HoldIdea), each step of Demonstrate is a demo step (StepBeat), Challenge sets up the
+ * question (YourTurn), and Connect is the phase's beat (BringTogether).
+ */
+const MOVE_SIGNALS: Record<MoveId, Pick<DirectorSignals, "phase" | "role">> = {
+  activate: { phase: "activate", role: "hook" },
+  explain: { phase: "explain", role: null },
+  demonstrate: { phase: "demonstrate", role: "demo_step" },
+  challenge: { phase: "challenge", role: "challenge_setup" },
+  connect: { phase: "connect", role: null },
+};
+
+/**
+ * One Lesson, Five Moves, in seconds of its clock: when each move starts (`at`), and Demonstrate's three steps
+ * (`steps`, each a StepBeat chop). Each move lasts until the next; its gesture plays in its first 2.5 s and its
+ * graphic holds after. The clock stops at `length` and holds on Connect.
+ */
+export const MOVES_T = { at: [0.6, 4.2, 7.8, 13.0, 16.6], steps: [7.8, 9.5, 11.2], length: 20.4 } as const;
+
+/** The move playing at section time `t`, and its step (0 except within Demonstrate), or null before the first. */
+export function moveBeatAt(t: number): { move: MoveId; index: number; step: number } | null {
+  let index = -1;
+  while (index + 1 < MOVES_T.at.length && t >= MOVES_T.at[index + 1]) index++;
+  if (index < 0) return null;
+  let step = 0;
+  if (MOVE_IDS[index] === "demonstrate") while (step + 1 < MOVES_T.steps.length && t >= MOVES_T.steps[step + 1]) step++;
+  return { move: MOVE_IDS[index], index, step };
 }
 
 /**

@@ -21,6 +21,10 @@ export interface Clock {
   length: number;
   /** Bumped on Replay, so anything that fired once can fire again. */
   run: number;
+  /** The section wants it running (in view, and its teacher live): set by useSectionPlay. */
+  want: boolean;
+  /** The reader paused it (a Pause control); it stays paused through scrolling until they play it again. */
+  paused: boolean;
 }
 
 /** The time a section shows under reduced motion, or with no JS: after every cue. */
@@ -33,7 +37,7 @@ let last = 0;
 
 export function clockOf(id: string): Clock {
   let c = clocks.get(id);
-  if (!c) { c = { t: 0, playing: false, length: FINAL, run: 0 }; clocks.set(id, c); }
+  if (!c) { c = { t: 0, playing: false, length: FINAL, run: 0, want: false, paused: false }; clocks.set(id, c); }
   return c;
 }
 
@@ -56,7 +60,8 @@ function tick(now: number) {
 
 export function setPlaying(id: string, on: boolean): void {
   const c = clockOf(id);
-  const next = on && c.t < c.length;
+  c.want = on;
+  const next = on && !c.paused && c.t < c.length;
   if (c.playing === next) return;
   c.playing = next;
   emit(id);
@@ -68,7 +73,16 @@ export function restart(id: string): void {
   c.t = 0;
   c.run += 1;
   c.playing = false;
+  c.paused = false;
   setPlaying(id, true);
+}
+
+/** The reader pauses or plays a section (WCAG 2.2.2). Playing again resumes only if the section still wants to run. */
+export function setPaused(id: string, paused: boolean): void {
+  const c = clockOf(id);
+  c.paused = paused;
+  emit(id);
+  setPlaying(id, c.want);
 }
 
 export function subscribeClock(id: string, l: () => void): () => void {
@@ -130,13 +144,13 @@ export function cueIndex(t: number, cues: readonly number[]): number {
   return i;
 }
 
-export function useCue(id: string, cues: readonly number[]): { cue: number; run: number; playing: boolean } {
-  const [state, setState] = useState(() => ({ cue: -1, run: 0, playing: false }));
+export function useCue(id: string, cues: readonly number[]): { cue: number; run: number; playing: boolean; paused: boolean } {
+  const [state, setState] = useState(() => ({ cue: -1, run: 0, playing: false, paused: false }));
   useEffect(() => {
     const on = () => setState((s) => {
       const c = clockOf(id);
-      const n = { cue: cueIndex(c.t, cues), run: c.run, playing: c.playing };
-      return n.cue === s.cue && n.run === s.run && n.playing === s.playing ? s : n;
+      const n = { cue: cueIndex(c.t, cues), run: c.run, playing: c.playing, paused: c.paused };
+      return n.cue === s.cue && n.run === s.run && n.playing === s.playing && n.paused === s.paused ? s : n;
     });
     on();
     return subscribeClock(id, on);

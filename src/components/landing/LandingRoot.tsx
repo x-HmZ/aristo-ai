@@ -12,6 +12,7 @@ import { Ideas } from "./sections/Ideas";
 import { Picture } from "./sections/Picture";
 import { Close } from "./sections/Close";
 import { ModelBuild } from "./sections/ModelBuild";
+import { Moves } from "./sections/Moves";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
 import { host, resetHost, spotBox, subscribe } from "./stage/host";
 import { shared } from "./stage/shared";
@@ -148,6 +149,7 @@ export function LandingRoot() {
         <Ideas mode={mode} />
         <Picture mode={mode} />
         <ModelBuild mode={mode} />
+        <Moves mode={mode} />
         <ForParents />
         <Close />
       </main>

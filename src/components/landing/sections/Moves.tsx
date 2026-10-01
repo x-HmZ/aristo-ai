@@ -1,0 +1,88 @@
+import { useRef } from "react";
+import { Pause, Play, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { SHAPE } from "@/lib/design/shape";
+import { MOVES, MOVES_COPY } from "../content";
+import { restart, setPaused, useCue, useSectionPlay } from "../play";
+import { Spot } from "../Spot";
+import type { LandingMode } from "../stage/gate";
+import { replayMoves } from "../stage/host";
+import { MOVES_T } from "../stage/scripts";
+import { BTN_GHOST, H2, LEDE, REAL, WRAP } from "../ui";
+import { MovesHands } from "./MovesHands";
+
+const CUES = MOVES_T.at;
+
+/**
+ * One Lesson, Five Moves (V8.3b): the five moves in plain words (messaging.md), and Jake making each move's own
+ * gesture as a lesson's director plays it (stage/scripts.ts). The moves light in turn on the section's clock, which
+ * holds on Connect; Pause stops it and Replay starts it again. On the lite path and under reduced motion every move
+ * is in place and he is a still.
+ */
+export function Moves({ mode }: { mode: LandingMode | null }) {
+  const stage = useRef<HTMLDivElement>(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  useSectionPlay("moves", stage, MOVES_T.length, { mode, spot: "moves" });
+  const { cue, playing, paused } = useCue("moves", CUES);
+  const armed = mode === "full";
+  const now = armed ? cue : -1;
+  const done = armed && cue === CUES.length - 1 && !playing && !paused;
+
+  return (
+    <section id="moves" aria-labelledby="moves-title" className="overflow-x-clip py-24">
+      <div ref={wrap} className={cn(WRAP, "landing-moves relative grid items-center gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,6fr)] lg:gap-14")} data-armed={armed || undefined}>
+        <div>
+          <h2 id="moves-title" className={H2}>{MOVES_COPY.title}</h2>
+          <p className={cn(LEDE, "mt-4")}>{MOVES_COPY.line}</p>
+          <ol className="mt-8 flex flex-col gap-2" aria-label="The five moves">
+            {MOVES.map((m, i) => {
+              const Icon = m.icon;
+              return (
+                <li
+                  key={m.phase}
+                  aria-current={i === now ? "step" : undefined}
+                  data-on={!armed || i <= now || undefined}
+                  className={cn(SHAPE.surface, "landing-move grid grid-cols-[40px_minmax(0,1fr)] items-start gap-3 border px-3.5 py-3")}
+                >
+                  <span className={cn(SHAPE.control, "landing-move-icon inline-flex size-10 items-center justify-center border")}>
+                    <Icon className="size-[18px]" aria-hidden />
+                  </span>
+                  <span className="flex flex-col gap-0.5 pt-0.5">
+                    <span className="text-[15px] font-semibold text-ink">{m.name}</span>
+                    <span className="text-[15px] leading-snug text-body">{m.does}</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+          {armed && (
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              {done ? (
+                <button type="button" onClick={() => { replayMoves(); restart("moves"); }} className={BTN_GHOST}>
+                  <RotateCcw className="size-4" aria-hidden />
+                  Replay
+                </button>
+              ) : (
+                <button type="button" onClick={() => setPaused("moves", !paused)} className={BTN_GHOST}>
+                  {paused ? <Play className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
+                  {paused ? "Play" : "Pause"}
+                </button>
+              )}
+            </div>
+          )}
+          <p className={cn(REAL, "mt-2")}>{MOVES_COPY.label}</p>
+        </div>
+        <div ref={stage} className="mx-auto w-full max-w-[600px] lg:max-w-none">
+          <Spot
+            id="moves"
+            still="/images/landing/v3b/moves.webp"
+            alt="Jake, ready to teach the five moves"
+            className="h-[470px] sm:h-[600px]"
+            pool="inset-x-[8%] -bottom-[6%] h-3/5"
+          />
+        </div>
+        {armed && <MovesHands wrap={wrap} />}
+      </div>
+    </section>
+  );
+}
