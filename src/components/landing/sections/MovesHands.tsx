@@ -113,10 +113,11 @@ export function MovesHands({ wrap, board }: { wrap: RefObject<HTMLDivElement | n
       if (st.lit.has(id)) return;
       st.lit.add(id);
       setOn(nodeEl(id), true);
+      board.current?.querySelectorAll<HTMLElement>("[data-group]").forEach((g) => { if (g.dataset.group!.split(" ").includes(id)) setOn(g, true); });
       for (const [a, b] of BOARD_LINKS) if (st.lit.has(a) && st.lit.has(b)) setOn(board.current?.querySelector(`[data-link="${a}-${b}"]`), true);
     };
     const clearBoard = () => {
-      board.current?.querySelectorAll("[data-node], [data-link]").forEach((el) => { setOn(el, false); setOn(el, false, "data-answer"); setOn(el, false, "data-tick"); });
+      board.current?.querySelectorAll("[data-node], [data-link], [data-group]").forEach((el) => { setOn(el, false); setOn(el, false, "data-answer"); setOn(el, false, "data-tick"); });
     };
     /** A board place's orb centre in the section's box. */
     const target = (id: BoardNode, box: DOMRect): P => {

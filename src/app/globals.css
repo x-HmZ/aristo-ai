@@ -436,8 +436,9 @@
 
   /* The classroom's display (.theme-ink) on the landing (Five Moves' board): orbs of the idea's own light
      (.landing-orb), rings for what a topic builds on, and links that draw once both their ends are lit. */
+  /* inline-size, not size: a display holds a list that sets its own height (Five Moves board). */
   .landing-display {
-    container-type: size;
+    container-type: inline-size;
   }
   .landing-display-glow {
     background: radial-gradient(60% 50% at 50% 48%, rgb(var(--glow) / 0.16), transparent 72%);
@@ -544,7 +545,19 @@
     opacity: 0;
   }
   .landing-board .landing-link {
-    stroke-width: 0.4;
+    stroke-width: 1.5px;
+  }
+  /* On the displays a hollow ring is filled with the display's ground, so a line meets its edge and never shows
+     through it (Five Moves' board, the map). */
+  :is(.landing-board, .landing-map) .landing-idea-ring,
+  .landing-board-question {
+    background: rgb(var(--sunk));
+  }
+  .landing-board-group {
+    transition: opacity 260ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-group:not([data-on]) {
+    opacity: 0;
   }
   .landing-board[data-armed] .landing-link:not([data-on]) {
     stroke-dashoffset: 1;
@@ -583,6 +596,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .landing-board-node,
+    .landing-board-group,
     .landing-board-answer,
     .landing-board-tick {
       transition: none;
@@ -650,6 +664,22 @@
   }
   .landing-map-edge-lit {
     stroke: rgb(var(--accent-text));
+  }
+  /* The link the next lesson starts from: once the next lesson's ring shows, lit and dashed, flowing towards it (from
+     what you have mastered into what comes next); still under reduced motion. */
+  .landing-map-edge-next.landing-map-edge-drawn {
+    stroke: rgb(var(--accent-text));
+    stroke-width: 2px;
+    stroke-dasharray: 5 4;
+    animation: landing-flow 900ms linear infinite;
+  }
+  @keyframes landing-flow {
+    to { stroke-dashoffset: -9; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-map-edge-next.landing-map-edge-drawn {
+      animation: none;
+    }
   }
   .landing-map-later {
     border: 1.5px solid rgb(var(--muted) / 0.6);

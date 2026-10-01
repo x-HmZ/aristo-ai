@@ -72,7 +72,7 @@ export const MODEL_COPY = {
  * One Lesson, Five Moves (V8.3b): the moves in plain words (messaging.md), and the volcano demo lesson built up on the
  * classroom's display, one move at a time. The board's words are our short summaries of what each move of that lesson
  * holds (its prerequisites, key insight and analogy, steps, challenge and next concept), not its lines; the label
- * says so. x and y place each on the board's spine (%); its words sit to its right.
+ * says so. Each group sits under the name of the move that set it there (MovesBoard BOARD_GROUPS).
  */
 export const MOVES_COPY = {
   title: "One Lesson, Five Moves",
@@ -80,18 +80,11 @@ export const MOVES_COPY = {
   label: "The volcano demo lesson's five moves, summarised. The gestures are the ones your teacher makes at each move.",
   topic: "How Volcanoes Erupt",
   board: {
-    known: [
-      { label: "Trapped gas pushes out", x: 14, y: 15 },
-      { label: "Hot things rise", x: 14, y: 22.5 },
-    ],
-    idea: { label: "Pressure builds underground", tag: "Like a shaken soda bottle", x: 14, y: 31.5 },
-    steps: [
-      { label: "Magma fills the chamber", x: 14, y: 43 },
-      { label: "Forced up the vent", x: 14, y: 50 },
-      { label: "Out as lava", x: 14, y: 57 },
-    ],
-    question: { label: "Why does one explode and one ooze?", answer: "Thick magma traps the gas", x: 14, y: 67 },
-    next: { label: "Next: types of volcanoes", x: 14, y: 88 },
+    known: [{ label: "Trapped gas pushes out" }, { label: "Hot things rise" }],
+    idea: { label: "Pressure builds underground", tag: "Like a shaken soda bottle" },
+    steps: [{ label: "Magma fills the chamber" }, { label: "Forced up the vent" }, { label: "Out as lava" }],
+    question: { label: "Why does one explode and one ooze?", answer: "Thick magma traps the gas" },
+    next: { label: "Types of volcanoes" },
   },
 } as const;
 
@@ -111,9 +104,10 @@ export const MAP_COPY = {
   marks: { learn: "You learn it", fade: "It starts to fade", back: "It comes back" },
   axis: ["Today", "1 week", "2 weeks", "3 weeks"],
   mapTitle: "Your Map",
-  mapLine: "A real course, its first 20 concepts. Lit ones are mastered; the ringed one is next.",
-  conceptMark: "The concept above",
-  nextMark: "Next lesson starts here",
+  /** Around the course's own title (kg-snapshot.json), its subtitle dropped. */
+  mapLine: ["The first 20 concepts of a real course,", "with an example learner's progress."],
+  conceptMark: "The concept on the card above",
+  legend: { done: "Mastered", next: "Next lesson:", later: "Not yet" },
 } as const;
 
 export const CLOSE = {

@@ -96,7 +96,7 @@ export function Moves({ mode }: { mode: LandingMode | null }) {
                 ref={board}
                 armed={armed}
                 className="absolute"
-                style={{ left: `${BOX.left}%`, top: `${BOX.top}%`, width: `${BOX.width}%`, height: `${BOX.height * BOARD_TALL}%` }}
+                style={{ left: `${BOX.left}%`, top: `${BOX.top}%`, width: `${BOX.width}%`, minHeight: `${BOX.height * BOARD_TALL}%` }}
               />
             }
           />

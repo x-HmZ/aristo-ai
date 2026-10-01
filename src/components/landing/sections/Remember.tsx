@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MAP_COPY } from "../content";
-import { CURVE_DAYS, CURVE_REVIEWS, EDGES, NODES, ORDER, recallOn } from "../mapStory";
+import { COURSE, CURVE_DAYS, CURVE_REVIEWS, EDGES, NODES, ORDER, recallOn } from "../mapStory";
 import { clockOf, restart, setPaused, subscribeClock, useCue, useSectionPlay } from "../play";
 import { Spot } from "../Spot";
 import type { LandingMode } from "../stage/gate";
@@ -167,6 +167,9 @@ function MemoryCard({ armed, aim, className, style }: { armed: boolean; aim: boo
 const MASTERED = 11;
 const DONE = new Set(ORDER.slice(0, MASTERED));
 const NEXT = ORDER.find((id) => !DONE.has(id) && EDGES.filter(([, to]) => to === id).every(([from]) => DONE.has(from)))!;
+const NEXT_NAME = NODES.find((n) => n.id === NEXT)!.name;
+/** The links the next lesson starts from: each from a mastered concept into it. */
+const INTO_NEXT = new Set(EDGES.filter(([, to]) => to === NEXT).map(([from, to]) => `${from}-${to}`));
 const CONCEPT_ID = NODES.find((n) => n.name === MAP_COPY.concept)!.id;
 const MAP_LENGTH = 2.6;
 /** Cues: each mastered concept lights in learning order, then the next one's ring, then the two labels. */
@@ -175,8 +178,10 @@ const NODE_AT = Object.fromEntries(NODES.map((n) => [n.id, { x: 4 + n.x * 92, y:
 
 /**
  * The real course map (kg-snapshot.json, its first 20 concepts) on the classroom's display: the example learner's
- * mastered concepts light in learning order, the curve's concept among them, and the ring of the next lesson pulses,
- * which starts from them. Plays once when it comes into view; on the lite path and under reduced motion it is whole.
+ * mastered concepts light in learning order, the curve's concept among them; then the next lesson's ring pulses and
+ * its link from what it builds on draws in, lit, because the next lesson starts from what you have mastered. The next
+ * concept sits in the densest column of the course, so it is named in the legend under the map, not over its
+ * neighbours. Plays once when it comes into view; on the lite path and under reduced motion it is whole.
  */
 function CourseMap({ mode }: { mode: LandingMode | null }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -186,22 +191,27 @@ function CourseMap({ mode }: { mode: LandingMode | null }) {
   const lit = (id: string) => DONE.has(id) && (!armed || cue >= ORDER.indexOf(id));
   const nextOn = !armed || cue >= MASTERED;
   const marksOn = !armed || cue >= MASTERED + 1;
-  const n = NODE_AT[NEXT], c = NODE_AT[CONCEPT_ID];
+  const c = NODE_AT[CONCEPT_ID];
   return (
     <div ref={ref} className="theme-ink landing-map relative mt-10 overflow-hidden rounded-[20px] border border-line bg-sunk px-5 pb-5 pt-5 text-ink shadow-e2 sm:px-7">
       <div aria-hidden className="landing-display-glow absolute inset-0" />
       <div className="relative">
         <h3 className="text-[17px] font-semibold text-ink">{MAP_COPY.mapTitle}</h3>
-        <p className="mt-1 text-[13px] text-body">{MAP_COPY.mapLine}</p>
+        <p className="mt-1 text-[13px] text-body">{MAP_COPY.mapLine[0]} {COURSE.split(":")[0]}, {MAP_COPY.mapLine[1]}</p>
       </div>
-      <div className="relative mt-4 h-[220px] sm:h-[240px]" role="img" aria-label={`${MAP_COPY.mapTitle}: ${MASTERED} of ${NODES.length} concepts mastered, ${MAP_COPY.concept} among them; next, ${NODES.find((x) => x.id === NEXT)!.name}.`}>
+      <div className="relative mt-4 h-[220px] sm:h-[240px]" role="img" aria-label={`${MAP_COPY.mapTitle}: ${MASTERED} of ${NODES.length} concepts mastered, ${MAP_COPY.concept} among them; next, ${NEXT_NAME}.`}>
         <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
           {EDGES.map(([a, b]) => (
             <line
               key={`${a}-${b}`}
               x1={NODE_AT[a].x} y1={NODE_AT[a].y} x2={NODE_AT[b].x} y2={NODE_AT[b].y}
               vectorEffect="non-scaling-stroke"
-              className={cn("landing-map-edge", lit(a) && lit(b) && "landing-map-edge-lit")}
+              className={cn(
+                "landing-map-edge",
+                lit(a) && lit(b) && "landing-map-edge-lit",
+                INTO_NEXT.has(`${a}-${b}`) && "landing-map-edge-next",
+                INTO_NEXT.has(`${a}-${b}`) && nextOn && "landing-map-edge-drawn",
+              )}
             />
           ))}
         </svg>
@@ -226,10 +236,16 @@ function CourseMap({ mode }: { mode: LandingMode | null }) {
           {MAP_COPY.concept}
           <span className="block text-[11px] font-normal text-body">{MAP_COPY.conceptMark}</span>
         </span>
-        <span aria-hidden data-on={marksOn || undefined} className="landing-map-mark absolute -translate-y-1/2 whitespace-nowrap rounded-md bg-sunk px-1.5 py-0.5 text-[12px] font-semibold text-accent-text" style={{ left: `calc(${n.x}% + 14px)`, top: `${n.y}%` }}>
-          {MAP_COPY.nextMark}
-        </span>
       </div>
+      {/* The legend, which also names the next lesson. */}
+      <ul aria-hidden className="relative mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] text-body sm:text-[13px]">
+        <li className="flex items-center gap-2"><span className="landing-idea-orb landing-idea-lit" />{MAP_COPY.legend.done}</li>
+        <li data-on={nextOn || undefined} className="landing-map-mark flex items-center gap-2">
+          <span className="landing-idea-orb landing-idea-ring" />
+          <span>{MAP_COPY.legend.next} <span className="font-semibold text-accent-text">{NEXT_NAME}</span></span>
+        </li>
+        <li className="flex items-center gap-2"><span className="landing-idea-orb landing-map-later" />{MAP_COPY.legend.later}</li>
+      </ul>
     </div>
   );
 }
