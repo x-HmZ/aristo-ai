@@ -6,7 +6,7 @@
 // - Demonstrate (StepBeat): each step's landing; the step's top against the chopping hand's lowest point.
 // - Challenge (YourTurn): the palms highest while the card shows; the card's bottom edge against the palms' centres,
 //   and where the palms are along it.
-// - Connect (BringTogether): the hands closest; each end of the link against its palm.
+// - Connect (BringTogether): the hands closest; the idea and what comes next, each against its palm.
 // Writes moves-peaks.json and a marked frame per move, and a sheet of them.
 // Usage: node moves-peaks.cjs <trackdir> <outdir>
 const fs = require("fs");
@@ -15,7 +15,7 @@ const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules
 const [, , dir, outDir] = process.argv;
 fs.mkdirSync(outDir, { recursive: true });
 const { samples } = require(path.resolve(dir, "track.json"));
-const T = { at: [0.6, 4.2, 7.8, 13.0, 16.6], steps: [7.8, 9.5, 11.2], length: 20.4 };
+const T = { at: [0.6, 4.2, 7.8, 13.2, 19.8], steps: [7.8, 9.5, 11.2], length: 24 };
 const within = (a, b) => samples.filter((s) => s.t >= a && s.t < b);
 const palm = (s, side) => { const w = s.page[`CC_Base_${side}_Hand`], k = s.page[`CC_Base_${side}_Index1`]; return { x: (w.x + k.x) / 2, y: (w.y + k.y) / 2 }; };
 const low = (s, side) => ["Hand", "Index3", "Mid3", "Pinky3", "Thumb3"].map((n) => s.page[`CC_Base_${side}_${n}`]).filter((p) => p && Number.isFinite(p.y)).reduce((a, b) => (b.y > a.y ? b : a));
@@ -62,11 +62,11 @@ for (let k = 0; k < 3; k++) {
 }
 // Connect: the hands closest while both ends show.
 {
-  const list = within(T.at[4], T.length + 1).filter((s) => s.marks.known && s.marks.idea && s.bones.CC_Base_L_Hand[1] > -0.1);
+  const list = within(T.at[4], T.length + 1).filter((s) => s.marks.idea && s.marks.next && s.bones.CC_Base_L_Hand[1] > -0.1);
   const s = best(list, (x) => -Math.hypot(palm(x, "L").x - palm(x, "R").x, palm(x, "L").y - palm(x, "R").y));
-  const l = palm(s, "L"), r = palm(s, "R"), a = centre(s.marks.known), b = centre(s.marks.idea);
-  peaks.push({ move: "connect", gesture: "BringTogether", t: r1(s.t), s, marks: ["known", "idea", "next"], measures: {
-    palmGapPx: r1(Math.hypot(l.x - r.x, l.y - r.y)), ringToRightPalmPx: r1(Math.hypot(a.x - r.x, a.y - r.y)), ideaToLeftPalmPx: r1(Math.hypot(b.x - l.x, b.y - l.y)), nextShown: !!s.marks.next,
+  const l = palm(s, "L"), r = palm(s, "R"), a = centre(s.marks.idea), b = centre(s.marks.next);
+  peaks.push({ move: "connect", gesture: "BringTogether", t: r1(s.t), s, marks: ["idea", "next"], measures: {
+    palmGapPx: r1(Math.hypot(l.x - r.x, l.y - r.y)), ideaToRightPalmPx: r1(Math.hypot(a.x - r.x, a.y - r.y)), nextToLeftPalmPx: r1(Math.hypot(b.x - l.x, b.y - l.y)),
   } });
 }
 

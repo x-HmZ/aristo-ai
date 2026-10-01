@@ -8,25 +8,25 @@
     "side": "R",
     "ringTopBelowHandPx": 4,
     "ringOffPalmXPx": 0,
-    "ringPx": 26
+    "ringPx": 22
    },
    {
     "side": "L",
     "ringTopBelowHandPx": 4,
     "ringOffPalmXPx": 0,
-    "ringPx": 26
+    "ringPx": 22
    }
   ]
  },
  {
   "move": "explain",
   "gesture": "HoldIdea",
-  "t": 5,
+  "t": 4.8,
   "measures": {
-   "palmGapPx": 159.8,
-   "orbPx": 99.1,
+   "palmGapPx": 142.1,
+   "orbPx": 88.1,
    "centreOffPx": 0,
-   "clearEachSidePx": 30.2
+   "clearEachSidePx": 26.9
   }
  },
  {
@@ -35,8 +35,8 @@
   "step": 0,
   "t": 8.6,
   "measures": {
-   "stepTopBelowHandPx": 1.4,
-   "stepOffHandXPx": 0.8,
+   "stepTopBelowHandPx": -4,
+   "stepOffHandXPx": 1.8,
    "handLift": 0
   }
  },
@@ -46,8 +46,8 @@
   "step": 1,
   "t": 10.3,
   "measures": {
-   "stepTopBelowHandPx": 2.8,
-   "stepOffHandXPx": 1,
+   "stepTopBelowHandPx": -3.2,
+   "stepOffHandXPx": 1.9,
    "handLift": 0
   }
  },
@@ -57,8 +57,8 @@
   "step": 2,
   "t": 12,
   "measures": {
-   "stepTopBelowHandPx": -0.1,
-   "stepOffHandXPx": 2,
+   "stepTopBelowHandPx": -2.5,
+   "stepOffHandXPx": 2.3,
    "handLift": 0
   }
  },
@@ -69,24 +69,23 @@
   "measures": {
    "cardBottomAbovePalmsPx": 2,
    "palmsAlongCard": [
-    0,
-    1
+    0.1,
+    0.9
    ],
    "cardPx": [
-    263.3,
-    126
+    228.1,
+    112
    ]
   }
  },
  {
   "move": "connect",
   "gesture": "BringTogether",
-  "t": 18.3,
+  "t": 21.2,
   "measures": {
-   "palmGapPx": 151.4,
-   "ringToRightPalmPx": 19,
-   "ideaToLeftPalmPx": 21,
-   "nextShown": true
+   "palmGapPx": 134.7,
+   "ideaToRightPalmPx": 18,
+   "nextToLeftPalmPx": 17
   }
  }
 ]
