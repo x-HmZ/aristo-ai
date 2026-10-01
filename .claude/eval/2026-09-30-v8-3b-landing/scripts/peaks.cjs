@@ -34,8 +34,8 @@ const READ = () => {
   const b = await chromium.launch(LAUNCH);
   const report = { api: [], paid: [], frames: [] };
   const ctx = await themedContext(b, theme, { width: W, height: 800 });
-  // The picture's aim is a world point (scripts.ts PICTURE_AIM: the crater, 34% down the board image).
-  if (spot === "picture") await ctx.addInitScript(() => { window.__aimWorld = [0.37, 0.18 + (0.5 - 0.34) * 1.455, -3]; });
+  // The picture's aim is a world point (scripts.ts PICTURE_AIM: the crater, 34% down the picture, set 0.3 m back).
+  if (spot === "picture") await ctx.addInitScript(() => { const k = 4.2 / 3.9; window.__aimWorld = [0.37 * k, (0.18 + (0.5 - 0.34) * 1.455) * k, -3.3]; });
   const p = await ctx.newPage();
   await guardApi(p, report);
   await p.goto(base + "/?probe", { waitUntil: "load" });

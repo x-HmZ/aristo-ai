@@ -29,6 +29,7 @@ export const DIAGRAM_FRAG = /* glsl */ `
   uniform float p;
   uniform float time;
   uniform float opacity;
+  uniform float paper;
   uniform vec2 texel;
   varying vec2 vUv;
   ${NOISE}
@@ -48,8 +49,10 @@ export const DIAGRAM_FRAG = /* glsl */ `
     float b = smoothstep(0.35, 0.75, p);
     float front = vnoise(vUv * 6.0) * 0.6 + vUv.y * 0.4;
     float drawn = smoothstep(front - 0.05, front + 0.05, b * 1.15);
-    vec3 board = vec3(0.075, 0.085, 0.105);
-    vec3 sketch = mix(board, vec3(0.94, 0.93, 0.9), edge * drawn);
+    // The sketch is drawn on the board: light lines on a dark one, or (paper = 1, a light page) ink lines on paper.
+    vec3 board = mix(vec3(0.075, 0.085, 0.105), vec3(0.985, 0.985, 0.98), paper);
+    vec3 line = mix(vec3(0.94, 0.93, 0.9), vec3(0.11, 0.12, 0.15), paper);
+    vec3 sketch = mix(board, line, edge * drawn);
     col = mix(col, sketch, smoothstep(0.3, 0.5, p));
     // C: colour.
     float c = smoothstep(0.6, 1.0, p);

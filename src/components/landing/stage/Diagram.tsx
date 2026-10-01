@@ -3,15 +3,23 @@ import { useTexture } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import { Group, MeshBasicMaterial, SRGBColorSpace, ShaderMaterial, Vector2 } from "three";
 import { clockOf } from "../play";
-import { PICTURE_T, PICTURE_URL } from "./scripts";
+import { PICTURE_PLACE, PICTURE_T, PICTURE_URL } from "./scripts";
 import { DIAGRAM_FRAG, DIAGRAM_VERT } from "./shaders";
 import { host } from "./host";
-import { BOARD } from "./spots";
+
 import { seg, smooth } from "./timeline";
 import { warmUp } from "./warm";
 
+/** Set back from the board and enlarged to look the same, so his pointing hand passes in front (scripts.ts). */
+const { position: POS, size: SIZE, k: K } = PICTURE_PLACE;
 /** The white frame around the picture: the product's (Experience FRAME_SIZE 1.525 for IMG_SIZE 1.455). */
-const FRAME = BOARD.size + 0.07;
+const FRAME = SIZE + 0.07 * K;
+
+/** The page is dark: the theme the reader chose, or the system's. */
+const darkPage = () => {
+  const t = document.documentElement.getAttribute("data-theme");
+  return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+};
 
 /**
  * It Draws the Picture (V8.3b): the volcano lesson's real cross-section resolving where the classroom shows a
@@ -25,7 +33,7 @@ export function Diagram() {
   const mat = useMemo(
     () => new ShaderMaterial({
       uniforms: {
-        map: { value: tex }, p: { value: 0 }, time: { value: 0 }, opacity: { value: 0 },
+        map: { value: tex }, p: { value: 0 }, time: { value: 0 }, opacity: { value: 0 }, paper: { value: 1 },
         texel: { value: new Vector2(1.2 / 1024, 1.2 / 1024) },
       },
       vertexShader: DIAGRAM_VERT,
@@ -60,18 +68,19 @@ export function Diagram() {
     g.visible = t > 0;
     if (!g.visible) return;
     mat.uniforms.p.value = p;
+    mat.uniforms.paper.value = darkPage() ? 0 : 1;
     mat.uniforms.time.value = state.clock.elapsedTime;
     mat.uniforms.opacity.value = smooth(seg(t, 0, PICTURE_T.resolve[0]));
     frame.opacity = smooth(seg(p, 0.7, 1)) * 0.95;
   });
 
   return (
-    <group ref={group} name="landing-picture" position={BOARD.center as unknown as [number, number, number]} visible={false}>
+    <group ref={group} name="landing-picture" position={POS as [number, number, number]} visible={false}>
       <mesh position={[0, 0, -0.004]} material={frame}>
         <planeGeometry args={[FRAME, FRAME]} />
       </mesh>
       <mesh material={mat}>
-        <planeGeometry args={[BOARD.size, BOARD.size]} />
+        <planeGeometry args={[SIZE, SIZE]} />
       </mesh>
     </group>
   );

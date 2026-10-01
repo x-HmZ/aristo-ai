@@ -9,6 +9,7 @@ import { ForParents } from "./ForParents";
 import { Hero } from "./sections/Hero";
 import { Idea } from "./sections/Idea";
 import { Ideas } from "./sections/Ideas";
+import { Picture } from "./sections/Picture";
 import { Close } from "./sections/Close";
 import { ModelBuild } from "./sections/ModelBuild";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
@@ -145,6 +146,7 @@ export function LandingRoot() {
         <Hero mode={mode} />
         <Idea mode={mode} />
         <Ideas mode={mode} />
+        <Picture mode={mode} />
         <ModelBuild mode={mode} />
         <ForParents />
         <Close />

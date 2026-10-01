@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { HEART, IDEAS_T, IDEA_T, MODEL_T, PICTURE_AIM, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, signalsFor } from "./scripts";
-import { BOARD } from "./spots";
+import { HEART, IDEAS_T, IDEA_T, MODEL_T, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, signalsFor } from "./scripts";
+import { BOARD, EYE } from "./spots";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
 
@@ -86,10 +86,16 @@ describe("the idea, the ideas and the picture", () => {
     expect(signalsFor("picture", { ...ctx, t: PICTURE_T.point[0] }).gesture).toBe("pointing");
     expect(signalsFor("picture", { ...ctx, t: PICTURE_T.point[0] - 0.01 }).gesture).toBe("idle");
   });
-  it("aims at a point on the board's picture", () => {
-    const half = BOARD.size / 2;
-    expect(Math.abs(PICTURE_AIM[0] - BOARD.center[0])).toBeLessThan(half);
-    expect(Math.abs(PICTURE_AIM[1] - BOARD.center[1])).toBeLessThan(half);
-    expect(PICTURE_AIM[2]).toBe(BOARD.center[2]);
+  it("aims at a point on the picture", () => {
+    const half = PICTURE_PLACE.size / 2;
+    expect(Math.abs(PICTURE_AIM[0] - PICTURE_PLACE.position[0])).toBeLessThan(half);
+    expect(Math.abs(PICTURE_AIM[1] - PICTURE_PLACE.position[1])).toBeLessThan(half);
+    expect(PICTURE_AIM[2]).toBe(PICTURE_PLACE.position[2]);
+  });
+  it("sets the picture back behind his hand, looking exactly like the board from the eye", () => {
+    expect(PICTURE_PLACE.position[2]).toBeLessThan(BOARD.center[2]);
+    const seen = (x: number, z: number) => x / (EYE[2] - z);
+    expect(seen(PICTURE_PLACE.position[0], PICTURE_PLACE.position[2])).toBeCloseTo(seen(BOARD.center[0], BOARD.center[2]));
+    expect(seen(PICTURE_PLACE.size, PICTURE_PLACE.position[2])).toBeCloseTo(seen(BOARD.size, BOARD.center[2]));
   });
 });

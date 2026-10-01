@@ -145,6 +145,13 @@ export const IDEAS_COPY = {
   aim: "chamber",
 } as const;
 
+/** It Draws a Diagram for the Lesson (V8.3b, the volcano lesson's cross-section). */
+export const PICTURE_COPY = {
+  title: "It Draws a Diagram for the Lesson",
+  line: "Each lesson gets a picture drawn for its topic, and your teacher talks you through it on the board.",
+  real: "The picture is real output from the volcano demo lesson. Its drawing-in is an illustration.",
+} as const;
+
 /** It Builds a Model You Can Turn (mockup E). */
 export const MODEL_COPY = {
   title: "It Builds a Model You Can Turn",

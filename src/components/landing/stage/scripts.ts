@@ -6,7 +6,7 @@
  * gestures (the greeting, PresentModel) fire on their own edges.
  */
 import type { DirectorSignals } from "@/lib/avatar/director";
-import { BOARD, BOARD_ASPECT, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
+import { BOARD, BOARD_ASPECT, EYE, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
 
 export const IDLE: DirectorSignals = {
   gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
@@ -175,7 +175,21 @@ export const PICTURE_T = { resolve: [0.5, 3.6], point: [2.9, 6.1], length: 6.6 }
 /** The picture: the volcano lesson's own cross-section (seg_008), resized for the landing. */
 export const PICTURE_URL = "/landing/volcano-picture.webp";
 /**
- * Where his pointing lands on it: the crater, at about 34% down the image and in its middle, on the board (BOARD).
- * Level with his shoulder, so the aim correction stays small.
+ * Where the picture is: the board's place (BOARD), set back 0.3 m and enlarged to look exactly the same size and in
+ * the same place from the classroom eye (3.9 m from the board), so the hand PointNear brings to the board's plane
+ * passes in front of it rather than into it.
  */
-export const PICTURE_AIM: V3 = [BOARD.center[0], BOARD.center[1] + (0.5 - 0.34) * BOARD.size, BOARD.center[2]];
+export const PICTURE_PLACE = (() => {
+  const z = BOARD.center[2] - 0.3;
+  const k = (EYE[2] - z) / (EYE[2] - BOARD.center[2]);
+  return { position: [BOARD.center[0] * k, BOARD.center[1] * k, z] as V3, size: BOARD.size * k, k };
+})();
+/**
+ * Where his pointing lands on it: the crater, at about 34% down the image and in its middle. Level with his
+ * shoulder, so the aim correction stays small.
+ */
+export const PICTURE_AIM: V3 = [
+  PICTURE_PLACE.position[0],
+  PICTURE_PLACE.position[1] + (0.5 - 0.34) * PICTURE_PLACE.size,
+  PICTURE_PLACE.position[2],
+];
