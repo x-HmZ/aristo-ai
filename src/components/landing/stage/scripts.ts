@@ -6,7 +6,7 @@
  * gestures (the greeting, PresentModel) fire on their own edges.
  */
 import type { DirectorSignals } from "@/lib/avatar/director";
-import { SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
+import { BOARD, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
 
 export const IDLE: DirectorSignals = {
   gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
@@ -119,6 +119,21 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
       // The product's greeting: sceneReady's rising edge plays the wave, once per mount.
       s.sceneReady = ctx.mayWave && ctx.liveFor >= WAVE_AFTER_S;
       break;
+    case "idea":
+      // The product's explain beat: a new explain segment plays HoldIdea once (hands in front of the chest, palms
+      // facing with a gap), and the lit flute appears between them (Idea.tsx).
+      if (ctx.t >= IDEA_T.hold) { s.phase = "explain"; s.segmentId = "idea:hold"; }
+      break;
+    case "ideas":
+      // The product's "it is thinking" (OneMoment, then Thinking) while the topic is read, then its pointing clip
+      // while the ideas link up, the hand aimed at one of them (LandingStage, aim.ts).
+      s.isLoading = ctx.t >= IDEAS_T.think[0] && ctx.t < IDEAS_T.think[1];
+      if (ctx.t >= IDEAS_T.point[0] && ctx.t < IDEAS_T.point[1]) s.gesture = "pointing";
+      break;
+    case "picture":
+      // Pointing at the picture once it has mostly resolved, the hand aimed at its crater (PICTURE_AIM).
+      if (ctx.t >= PICTURE_T.point[0] && ctx.t < PICTURE_T.point[1]) s.gesture = "pointing";
+      break;
     case "model":
       // The product's "a model appears": modelShown's rising edge plays PresentModel and turns the head to it.
       s.modelShown = ctx.t >= MODEL_T.present;
@@ -126,3 +141,30 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
   }
   return s;
 }
+
+/**
+ * A Teacher of Your Own, in seconds of its clock: the three beats rise (0, 1.2, 2.4) and the colonnade draws itself;
+ * at `hold` he holds the idea (his hands are up about 1.6 s later). The idea, an orb of light, shows between his
+ * palms while they are up, then flies (`flyS`) into the column's empty place and lights it. If his hands are not up
+ * by `giveUp` (the clip pack has not loaded), the place just lights.
+ */
+export const IDEA_T = { beats: [0, 1.2, 2.4], draw: [0.3, 2.6], hold: 2.9, flyS: 0.7, giveUp: 6.4, length: 8 } as const;
+
+/**
+ * It Finds the Ideas (the volcano lesson): the topic types, he thinks, the ideas appear one by one and link up, and
+ * he points at them.
+ */
+export const IDEAS_T = { type: [0.2, 1.4], think: [0.5, 2.4], ideas: 2.3, step: 0.22, point: [2.7, 6.0], length: 6.6 } as const;
+
+/**
+ * It Draws the Picture (the volcano lesson's cross-section): it resolves from noise to lines to colour on the
+ * classroom board's own place, and he points at it once it has mostly formed.
+ */
+export const PICTURE_T = { resolve: [0.5, 3.6], point: [2.9, 6.1], length: 6.6 } as const;
+/** The picture: the volcano lesson's own cross-section (seg_008), resized for the landing. */
+export const PICTURE_URL = "/landing/volcano-picture.webp";
+/**
+ * Where his pointing lands on it: the crater, at about 34% down the image and in its middle, on the board (BOARD).
+ * Level with his shoulder, so the aim correction stays small.
+ */
+export const PICTURE_AIM: V3 = [BOARD.center[0], BOARD.center[1] + (0.5 - 0.34) * BOARD.size, BOARD.center[2]];

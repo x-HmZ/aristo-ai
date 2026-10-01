@@ -31,6 +31,10 @@ export const IDEA = {
     "In 1984 the researcher Benjamin Bloom described why it matters: students taught one to one learn more. There have never been enough tutors.",
     "Aristo is an attempt at that tutor for every student.",
   ],
+  /** Each beat's marker (the story's own dates; Aristotle tutored Alexander from 343 BC). */
+  marks: ["343 BC", "1984", "Today"],
+  /** Under the column (messaging.md, the idea: the mark carries the second half of the story). */
+  mark: "Our mark is the colonnade where Aristotle taught, its middle flute lit.",
 } as const;
 
 /** The heart demo lesson's topic, as generated. */

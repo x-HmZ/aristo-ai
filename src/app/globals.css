@@ -388,6 +388,53 @@
     color: rgb(var(--accent-text));
   }
 
+  /* A Teacher of Your Own (Idea.tsx): the beats rise in turn and the colonnade draws itself on the section's clock
+     (data-on, data-drawn, data-lit). Without data-armed (lite, no JS) everything is in place. */
+  .landing-idea-beat {
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+  }
+  .landing-idea[data-armed] .landing-idea-beat:not([data-on]) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .landing-column-ink {
+    fill: rgb(var(--ink));
+    stroke: rgb(var(--ink));
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.3s var(--ease-in-out), fill-opacity 600ms var(--ease-out) 2.1s;
+  }
+  .landing-idea[data-armed] .landing-column:not([data-drawn]) .landing-column-ink {
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+    transition: none;
+  }
+  .landing-column-slot {
+    fill: rgb(var(--accent));
+    stroke: none;
+    transition: fill-opacity 900ms var(--ease-out);
+  }
+  .landing-column-slot:not([data-lit]) {
+    fill-opacity: 0;
+    stroke: rgb(var(--line));
+    stroke-width: 4;
+    stroke-dasharray: 10 10;
+  }
+  /* The idea Jake holds: warm light, brightest at its heart, in the accent. */
+  .landing-orb {
+    background: radial-gradient(circle at 50% 45%, rgb(255 236 214) 0%, rgb(var(--accent)) 46%, rgb(var(--accent) / 0.85) 70%);
+    box-shadow: 0 0 28px 8px rgb(var(--glow) / 0.5);
+    will-change: transform, opacity, width, height;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-idea-beat,
+    .landing-column-ink,
+    .landing-column-slot {
+      transition: none;
+    }
+  }
+
   /* The nav's sheet below lg drops in from the pill. */
   @media (prefers-reduced-motion: no-preference) {
     .landing-sheet:not([hidden]) {

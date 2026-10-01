@@ -20,7 +20,7 @@ export const TEACHER: { position: [number, number, number]; rotationY: number } 
 /** The depth of the plane a spot's rectangle is measured on: the teacher's. */
 export const PLANE_Z = TEACHER.position[2];
 
-export type SpotId = "hero" | "model" | "close";
+export type SpotId = "hero" | "idea" | "ideas" | "picture" | "model" | "close";
 
 export interface SpotFraming {
   /** World y at the teacher's plane shown at the box's top and bottom edges. */
@@ -45,9 +45,21 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   // The hero has him on the left, a little closer, with his reach to his left (screen right, towards the buttons)
   // kept in frame: his right arm at rest (-1.42, with a margin) to past his offering fingertip (PresentModel, 0.01).
   hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.5, 0.1] },
+  // A Teacher of Your Own: him alone, centred, his hands in front of his chest (HoldIdea).
+  idea: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.55, -0.45] },
+  // The two volcano sections: him on the left and, to his left, the classroom board's own place (Experience
+  // SCENE_*: centre 0.37, 0.18, the image 1.455 m square), where the product's pointing clips land. Fixed aspect
+  // (BOARD_ASPECT), so the composition and the stills are the same at every width.
+  ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
+  picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
+
+/** The volcano spots' box aspect (width / height): Jake and the board, -1.55 to 1.21 m across, 2.12 m high. */
+export const BOARD_ASPECT = 1.3;
+/** The classroom board: its centre and the side of its square image (Experience SCENE_* and IMG_SIZE). */
+export const BOARD = { center: [0.37, 0.18, -3] as V3, size: 1.455 } as const;
 
 /** A frustum as tangents at unit distance from the eye (multiply by `near` for three's makePerspective). */
 export interface Frustum { left: number; right: number; top: number; bottom: number }

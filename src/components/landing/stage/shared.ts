@@ -22,7 +22,13 @@ export const shared: {
    *   (performance.now ms).
    */
   hero: { hover: "try" | null; seq: number; greet: number; look: { el: HTMLElement; until: number } | null };
+  /**
+   * A Teacher of Your Own: his palms' centres on the page (viewport px), and whether both hands are up in front of
+   * him (HoldIdea), written by the stage each frame there.
+   */
+  idea: { palms: { l: { x: number; y: number }; r: { x: number; y: number } } | null; raised: boolean };
 } = {
   mode: "lite", live: false, speaking: false, heart: { turn: 0, user: false }, pointer: null,
   hero: { hover: null, seq: 0, greet: 0, look: null },
+  idea: { palms: null, raised: false },
 };

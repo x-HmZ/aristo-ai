@@ -11,8 +11,8 @@
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { Component, Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
-import { Group, Vector3, type PerspectiveCamera } from "three";
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { Group, Vector3, type Object3D, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { RendererConfig, SceneLights } from "@/components/three/Experience";
 import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/components/three/Teacher";
@@ -20,18 +20,19 @@ import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
 import { createAim } from "./aim";
+import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { GESTURE_Z, HEART, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, IDEAS_T, PICTURE_AIM, PICTURE_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
-import { EYE, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
+import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
 import { warmUp } from "./warm";
 
 const NEAR = 0.05;
 const FAR = 60;
 /** The section clock each spot's script reads. */
-const SECTION_OF: Record<SpotId, string> = { hero: "hero", model: "model", close: "close" };
+const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", ideas: "ideas", picture: "picture", model: "model", close: "close" };
 
 const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}`, () => "null|false|0");
 
@@ -86,11 +87,37 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
 }
 
 /**
- * Where the head turns when a model is shown (the director's look target); the camera otherwise. At the hero the
- * "model" is the button he offers his hand to: a point the viewer below keeps on it (Teacher reads it every frame).
+ * What his hand and eyes go to at each spot, while a gesture plays (gestureAt): the point is kept in TARGET[spot],
+ * which is also the director's look target for "model" (PresentModel) and "board" (the pointing clips), so the head,
+ * the eyes and the aimed hand (aim.ts) all go to the same place. The heart's place is fixed.
  */
-const HERO_LOOK: [number, number, number] = [0, 0, VIEWER_Z];
-const LOOK: Partial<Record<SpotId, LookTargets>> = { model: { model: HEART.position }, hero: { model: HERO_LOOK } };
+const TARGET: Record<SpotId, [number, number, number]> = {
+  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], ideas: [0, 0, PLANE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], close: [0, 0, GESTURE_Z],
+};
+const LOOK = Object.fromEntries(
+  Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
+) as unknown as Record<SpotId, LookTargets>;
+/** For the stills (`?still`): the section time whose gesture target a still is captured with. */
+const HOLD_AT: Partial<Record<SpotId, number>> = { ideas: IDEAS_T.point[0] + 1, picture: PICTURE_T.point[0] + 1 };
+/** The spots where a gesture's hand is aimed at its target. */
+const AIMED: ReadonlySet<SpotId> = new Set(["hero", "ideas", "picture"]);
+
+/**
+ * The gesture target at a spot now, or null when no gesture is aimed: an element on the page (the hero's button, the
+ * idea the pointing lands on), taken at `z` along the ray from the eye through its centre, or a world point.
+ */
+function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { world: readonly number[] } | null {
+  if (spot === "hero") {
+    const look = shared.hero.look;
+    return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
+  }
+  if (spot === "ideas" && t >= IDEAS_T.point[0] && t < IDEAS_T.point[1]) {
+    const el = document.querySelector("[data-aim=ideas]");
+    return el ? { el, z: PLANE_Z } : null;
+  }
+  if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
+  return null;
+}
 
 /** Mounts its children in the first idle moment. */
 function Idle({ children }: { children: ReactNode }) {
@@ -114,6 +141,11 @@ class PartBoundary extends Component<{ children: ReactNode }, { failed: boolean 
   render() { return this.state.failed ? null : this.props.children; }
 }
 
+/** A wrist above this (world y) is raised in front of him. */
+const RAISED_Y = -0.12;
+/** Each palm's wrist and index knuckle, left then right. */
+const PALM_BONES = ["CC_Base_L_Hand", "CC_Base_L_Index1", "CC_Base_R_Hand", "CC_Base_R_Index1"] as const;
+
 /** When each spot last waved (performance.now seconds), for the cool-down. Survives remounts. */
 const lastWave: Partial<Record<SpotId, number>> = {};
 
@@ -136,6 +168,24 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
   const ray = useMemo(() => new Vector3(), []);
   const aim = useRef<ReturnType<typeof createAim> | null>(null);
   const aimAt = useMemo(() => new Vector3(), []);
+  const aimed = useRef(false);
+  // His wrists and knuckles on the page (viewport px), for the flute he holds at the idea spot (Idea.tsx).
+  const hands = useRef<Object3D[] | null>(null);
+  const pv = useMemo(() => new Vector3(), []);
+  const reportPalms = useCallback((root: Object3D) => {
+    hands.current ??= PALM_BONES.map((n) => root.getObjectByName(n)).filter((o): o is Object3D => !!o);
+    if (hands.current.length !== PALM_BONES.length) return;
+    root.updateMatrixWorld(true);
+    const r = gl.domElement.getBoundingClientRect();
+    // Up in front of him: both wrists above his belt (at rest they hang at about -0.45; HoldIdea brings them to 0.05).
+    shared.idea.raised = hands.current[0].getWorldPosition(pv).y > RAISED_Y && hands.current[2].getWorldPosition(pv).y > RAISED_Y;
+    const [lw, lk, rw, rk] = hands.current.map((o) => {
+      o.getWorldPosition(pv).project(camera);
+      return { x: r.left + ((pv.x + 1) / 2) * r.width, y: r.top + ((1 - pv.y) / 2) * r.height };
+    });
+    // A palm's centre is about halfway from the wrist to the knuckles.
+    shared.idea.palms = { l: { x: (lw.x + lk.x) / 2, y: (lw.y + lk.y) / 2 }, r: { x: (rw.x + rk.x) / 2, y: (rw.y + rk.y) / 2 } };
+  }, [camera, gl, pv]);
   const driver = useMemo<TeacherDriver>(() => ({
     signals: () => {
       const now = performance.now() / 1000;
@@ -147,42 +197,43 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
+      // The other stills: at rest beside the lit column; pointing at the ideas and at the picture.
+      if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
+      if (hold && (spot === "ideas" || spot === "picture")) s.gesture = liveFor > 0.5 ? "pointing" : "idle";
       if (s.sceneReady && mayWave) lastWave[spot] = now;
       return s;
     },
     viseme: visemeNow,
-    // At the hero, while he offers his hand to Try a lesson, the hand is aimed at it (aim.ts): the same point his
-    // head turns to, so the palm, the reach and the gaze all go to the button.
-    afterPose: spot === "hero" ? (root, delta) => {
-      aim.current ??= createAim(root);
-      const look = shared.hero.look;
-      aim.current(aimAt.fromArray(HERO_LOOK), !!look && performance.now() < look.until, delta);
-    } : undefined,
-    clipPacks: warm,
-    // At the hero and the close he looks at the reader's pointer: the ray from the eye through it, where it crosses
-    // a plane in front of him (VIEWER_Z). Elsewhere, and with no mouse, the camera, as in a lesson.
-    viewer: () => {
-      // During a gesture to an element (the hero's Try a lesson) he looks at that element; else at the pointer.
-      const look = shared.hero.look;
-      let p = shared.pointer;
-      if (look && performance.now() < look.until) {
-        const b = look.el.getBoundingClientRect();
-        p = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+    // While a gesture is aimed (the hero's offer, the volcano sections' pointing), the hand is aimed at its target
+    // (aim.ts), the same point the head and eyes go to. At the idea spot, his palms are reported for the flute he holds.
+    afterPose: (root, delta) => {
+      if (AIMED.has(spot)) {
+        aim.current ??= createAim(root);
+        aim.current(aimAt.fromArray(TARGET[spot]), aimed.current, delta);
       }
-      if (!p || hold || (spot !== "hero" && spot !== "close")) return null;
+      if (spot === "idea") reportPalms(root);
+    },
+    clipPacks: warm,
+    // Where he looks when the director says "the student": the gesture's target while one is aimed; at the hero and
+    // the close, the reader's pointer (the ray from the eye through it, where it crosses VIEWER_Z in front of him);
+    // otherwise, and with no mouse, the camera, as in a lesson.
+    viewer: () => {
+      const g = gestureAt(spot, hold ? HOLD_AT[spot] ?? -1 : clockOf(SECTION_OF[spot]).t);
+      aimed.current = !!g;
+      if (g && "world" in g) { viewer.fromArray(g.world); viewer.toArray(TARGET[spot]); return viewer; }
+      let p = shared.pointer, z = VIEWER_Z;
+      if (g) { const b = g.el.getBoundingClientRect(); p = { x: b.left + b.width / 2, y: b.top + b.height / 2 }; z = g.z; }
+      else if (spot !== "hero" && spot !== "close") return null;
+      if (!p || (hold && !g)) return null;
       const r = gl.domElement.getBoundingClientRect();
       if (!r.width || !r.height) return null;
       ray.set(((p.x - r.left) / r.width) * 2 - 1, 1 - ((p.y - r.top) / r.height) * 2, 0.5).unproject(camera).sub(camera.position).normalize();
       if (ray.z > -1e-3) return null;
-      // A gesture's target is taken beside him, at his hand's depth, so his head turns to where his hand goes; the
-      // pointer is taken in front of him (VIEWER_Z), so he looks out at the reader.
-      const z = look && performance.now() < look.until ? GESTURE_Z : VIEWER_Z;
       viewer.copy(camera.position).addScaledVector(ray, (z - camera.position.z) / ray.z);
-      // The head's "model" target is the same point while he offers his hand to the button (HERO_LOOK).
-      if (look && spot === "hero") viewer.toArray(HERO_LOOK);
+      if (g) viewer.toArray(TARGET[spot]);
       return viewer;
     },
-  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray, aimAt]);
+  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray, aimAt, reportPalms]);
 
   useFrame(() => {
     if (!warm || liveAt.current !== null) return;
@@ -243,6 +294,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
           ready before the reader reaches its section. A heart that fails to load drops out; Jake carries on. */}
       {warm && (
         <Idle>
+          <PartBoundary><Suspense fallback={null}><Diagram /></Suspense></PartBoundary>
           <PartBoundary><Suspense fallback={null}><HeartBuild /></Suspense></PartBoundary>
         </Idle>
       )}

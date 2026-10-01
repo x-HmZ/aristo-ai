@@ -25,6 +25,7 @@ const READ = () => {
     box: { x: box.left + scrollX, y: box.top + scrollY, w: box.width, h: box.height },
     target: tr ? { x: tr.left + scrollX, y: tr.top + scrollY, w: tr.width, h: tr.height } : null,
     heart: L.bounds('landing-heart-solid'),
+    flute: (() => { const f = document.querySelector('.landing-orb'); if (!f || +getComputedStyle(f).opacity < 0.5) return null; const r = f.getBoundingClientRect(); return { x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height }; })(),
   };
 };
 
@@ -60,6 +61,8 @@ const READ = () => {
   const m = (f) => {
     const L = f.page.CC_Base_L_Hand, R = f.page.CC_Base_R_Hand;
     if (spot === "model") return f.bones.CC_Base_L_Index3[0];
+    // HoldIdea: both hands furthest forward (towards the reader), while the flute is held.
+    if (spot === "idea") return (f.flute ? 10 : 0) + f.bones.CC_Base_L_Hand[2] + f.bones.CC_Base_R_Hand[2];
     return -Math.min(L.y, R.y);
   };
   const peak = report.frames.reduce((a, f) => (m(f) > m(a) ? f : a), report.frames[0]);
@@ -75,6 +78,14 @@ const READ = () => {
     hb = `<rect x="${Math.min(...xs)}" y="${Math.min(...ys)}" width="${Math.max(...xs) - Math.min(...xs)}" height="${Math.max(...ys) - Math.min(...ys)}" fill="none" stroke="#1fa36a" stroke-width="2"/>`;
     report.gap = { worldM: +(a[0] - peak.bones.CC_Base_L_Index3[0]).toFixed(3), handLowerThird: +((peak.bones.CC_Base_L_Index3[1] - a[1]) / (b2[1] - a[1])).toFixed(2) };
   }
+  // The flute against the palms: their centres (wrist to knuckle, halfway), the gap between them, its box.
+  if (spot === "idea" && peak.flute) {
+    const palm = (w, k) => ({ x: (peak.page[w].x + peak.page[k].x) / 2, y: (peak.page[w].y + peak.page[k].y) / 2 });
+    const l = palm("CC_Base_L_Hand", "CC_Base_L_Index1"), r = palm("CC_Base_R_Hand", "CC_Base_R_Index1");
+    const f = peak.flute, cx = f.x + f.w / 2, cy = f.y + f.h / 2;
+    report.hold = { palmGapPx: +Math.hypot(l.x - r.x, l.y - r.y).toFixed(1), orbW: f.w, orbH: f.h, centreOffsetPx: +Math.hypot(cx - (l.x + r.x) / 2, cy - (l.y + r.y) / 2).toFixed(1), clearEachSidePx: +((Math.abs(l.x - r.x) - f.w) / 2).toFixed(1) };
+    hb += `<rect x="${f.x - peak.clip.x}" y="${f.y - peak.clip.y}" width="${f.w}" height="${f.h}" fill="none" stroke="#1fa36a" stroke-width="2"/><circle cx="${l.x - peak.clip.x}" cy="${l.y - peak.clip.y}" r="6" fill="none" stroke="#2f7cf9" stroke-width="3"/><circle cx="${r.x - peak.clip.x}" cy="${r.y - peak.clip.y}" r="6" fill="none" stroke="#2f7cf9" stroke-width="3"/>`;
+  }
   const tb = peak.target ? `<rect x="${peak.target.x - peak.clip.x}" y="${peak.target.y - peak.clip.y}" width="${peak.target.w}" height="${peak.target.h}" fill="none" stroke="#2f7cf9" stroke-width="2" stroke-dasharray="6 4"/>` : "";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${peak.clip.width}" height="${peak.clip.height}">${tb}${hb}${dot(peak.page.CC_Base_L_Hand, "#f97b2f")}${dot(peak.page.CC_Base_R_Hand, "#f97b2f")}${dot(peak.page.CC_Base_L_Index3, "#fff", 4)}${dot(peak.page.CC_Base_R_Index3, "#fff", 4)}</svg>`;
   await sharp(path.join(OUT, peak.file)).composite([{ input: Buffer.from(svg) }]).png().toFile(path.join(OUT, "peak-marked.png"));
@@ -86,7 +97,7 @@ const READ = () => {
   await sharp({ create: { width: tw * Math.min(6, tiles.length), height: th * Math.ceil(tiles.length / 6), channels: 3, background: "#222" } })
     .composite(tiles.map((t, k) => ({ input: t, left: (k % 6) * tw, top: Math.floor(k / 6) * th }))).png().toFile(path.join(OUT, "strip.png"));
   fs.writeFileSync(path.join(OUT, "peaks.json"), JSON.stringify(report, null, 1));
-  console.log(JSON.stringify({ frames: report.frames.length, peak: peak.i, ms: peak.ms, hands: { L: peak.bones.CC_Base_L_Hand, R: peak.bones.CC_Base_R_Hand, Li: peak.bones.CC_Base_L_Index3, Ri: peak.bones.CC_Base_R_Index3 }, target: peak.target, heart: peak.heart, gap: report.gap }));
+  console.log(JSON.stringify({ frames: report.frames.length, peak: peak.i, ms: peak.ms, hands: { L: peak.bones.CC_Base_L_Hand, R: peak.bones.CC_Base_R_Hand, Li: peak.bones.CC_Base_L_Index3, Ri: peak.bones.CC_Base_R_Index3 }, target: peak.target, heart: peak.heart, gap: report.gap, hold: report.hold }));
   console.log(JSON.stringify({ api: report.api.length, paid: report.paid.length }));
   await b.close();
 })();

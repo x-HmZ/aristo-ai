@@ -1,28 +1,25 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
-import { DoubleSide, Group, MeshBasicMaterial, SRGBColorSpace, ShaderMaterial, Vector2, Vector3 } from "three";
-import { getFrame } from "./scroll";
+import { Group, MeshBasicMaterial, SRGBColorSpace, ShaderMaterial, Vector2 } from "three";
+import { clockOf } from "../play";
+import { PICTURE_T, PICTURE_URL } from "./scripts";
 import { DIAGRAM_FRAG, DIAGRAM_VERT } from "./shaders";
-import { mix, roomAt, seg, smooth } from "./timeline";
+import { host } from "./host";
+import { BOARD } from "./spots";
+import { seg, smooth } from "./timeline";
 import { warmUp } from "./warm";
 
-export const DIAGRAM_URL = "/demo/heart/teaching.jpg";
-
-// The board anchor the product shows a lesson image at (Experience.tsx SCENE_* and IMG_SIZE), and a place on the
-// display wall to its right, where the diagram goes while the model has the anchor.
-const IMG = 1.455;
-const ANCHOR = new Vector3(0.37, 0.18, -3);
-// In front of the display mesh (which stands proud of the wall), to the right of where the model floats.
-const WALL = new Vector3(2.1, 0.5, -5.3);
-const WALL_SCALE = 1.0;
+/** The white frame around the picture: the product's (Experience FRAME_SIZE 1.525 for IMG_SIZE 1.455). */
+const FRAME = BOARD.size + 0.07;
 
 /**
- * The lesson diagram (the real `teaching.jpg`) resolving on the board: noise, then sketch lines, then colour
- * (shaders.ts), then sliding up onto the display wall when the model arrives, and back for Demonstrate.
+ * It Draws the Picture (V8.3b): the volcano lesson's real cross-section resolving where the classroom shows a
+ * lesson's picture, at the size it shows it: noise, then sketch lines, then colour (shaders.ts), on the picture
+ * section's clock. Jake points at it once it has mostly formed (scripts.ts PICTURE_T).
  */
 export function Diagram() {
-  const tex = useTexture(DIAGRAM_URL);
+  const tex = useTexture(PICTURE_URL);
   tex.colorSpace = SRGBColorSpace;
   const group = useRef<Group>(null);
   const mat = useMemo(
@@ -38,10 +35,10 @@ export function Diagram() {
     }),
     [tex],
   );
-  const frame = useMemo(() => new MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, toneMapped: false, side: DoubleSide }), []);
+  const frame = useMemo(() => new MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, toneMapped: false }), []);
   useEffect(() => () => { mat.dispose(); frame.dispose(); }, [mat, frame]);
 
-  // Warmed before its beat (warm.ts), then one invisible draw.
+  // Warmed before its section (warm.ts), then one invisible draw.
   const { gl, scene: root, camera } = useThree();
   const warm = useRef(-1);
   useEffect(() => {
@@ -54,28 +51,27 @@ export function Diagram() {
   useFrame((state) => {
     const g = group.current;
     if (!g) return;
-    const r = roomAt(getFrame().S);
     if (warm.current > 0) { warm.current = 0; g.visible = true; mat.uniforms.opacity.value = 0; frame.opacity = 0; return; }
-    g.visible = r.diagram > 0;
+    if (warm.current < 0) return;
+    // Only at its own spot: the heart uses the same place in the model section.
+    if (host.active !== "picture") { g.visible = false; return; }
+    const p = seg(clockOf("picture").t, PICTURE_T.resolve[0], PICTURE_T.resolve[1]);
+    const t = clockOf("picture").t;
+    g.visible = t > 0;
     if (!g.visible) return;
-    mat.uniforms.p.value = r.diagram;
+    mat.uniforms.p.value = p;
     mat.uniforms.time.value = state.clock.elapsedTime;
-    mat.uniforms.opacity.value = smooth(seg(r.diagram, 0, 0.1));
-    frame.opacity = smooth(seg(r.diagram, 0.7, 1)) * 0.95;
-    const k = smooth(r.diagramPlace);
-    g.position.lerpVectors(ANCHOR, WALL, k);
-    // An arc on the way up, so it lifts off the board rather than sliding through the teacher's space.
-    g.position.y += Math.sin(k * Math.PI) * 0.25;
-    g.scale.setScalar(mix(1, WALL_SCALE, k));
+    mat.uniforms.opacity.value = smooth(seg(t, 0, PICTURE_T.resolve[0]));
+    frame.opacity = smooth(seg(p, 0.7, 1)) * 0.95;
   });
 
   return (
-    <group ref={group} visible={false}>
+    <group ref={group} name="landing-picture" position={BOARD.center as unknown as [number, number, number]} visible={false}>
       <mesh position={[0, 0, -0.004]} material={frame}>
-        <planeGeometry args={[IMG + 0.07, IMG + 0.07]} />
+        <planeGeometry args={[FRAME, FRAME]} />
       </mesh>
       <mesh material={mat}>
-        <planeGeometry args={[IMG, IMG]} />
+        <planeGeometry args={[BOARD.size, BOARD.size]} />
       </mesh>
     </group>
   );

@@ -7,6 +7,7 @@ import { LandingNav } from "./LandingNav";
 import { SiteFooter } from "./SiteFooter";
 import { ForParents } from "./ForParents";
 import { Hero } from "./sections/Hero";
+import { Idea } from "./sections/Idea";
 import { Close } from "./sections/Close";
 import { ModelBuild } from "./sections/ModelBuild";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
@@ -141,6 +142,7 @@ export function LandingRoot() {
 
       <main>
         <Hero mode={mode} />
+        <Idea mode={mode} />
         <ModelBuild mode={mode} />
         <ForParents />
         <Close />

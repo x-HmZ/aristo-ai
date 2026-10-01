@@ -8,6 +8,7 @@ import {
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { clockOf } from "../play";
 import { HEART, MODEL_T, heartBuildAt } from "./scripts";
+import { host } from "./host";
 import { shared } from "./shared";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
 import { damp, seg, smooth } from "./timeline";
@@ -218,6 +219,8 @@ export function HeartBuild() {
       return;
     }
     if (warm.current < 0) return;
+    // Only at its own spot: the picture uses the same place in the picture section.
+    if (host.active !== "model") { g.visible = false; return; }
     const { build: b, show } = heartBuildAt(clockOf("model").t);
     g.visible = show > 0.001;
     if (!g.visible) return;
