@@ -1,0 +1,57 @@
+light 360 lite nodes 101 fails 0 min 5.11 small 0 overflow 0
+light 768 full nodes 114 fails 0 min 5.11 small 0 overflow 0
+light 1024 full nodes 208 fails 0 min 5.11 small 0 overflow 0
+light 1280 full nodes 202 fails 0 min 5.11 small 0 overflow 0
+light 1440 full nodes 202 fails 0 min 5.11 small 0 overflow 0
+dark 360 lite nodes 101 fails 0 min 6.06 small 0 overflow 0
+dark 768 full nodes 114 fails 0 min 5.48 small 0 overflow 0
+dark 1024 full nodes 208 fails 0 min 5.48 small 0 overflow 0
+dark 1280 full nodes 202 fails 0 min 5.48 small 0 overflow 0
+dark 1440 full nodes 202 fails 0 min 5.48 small 0 overflow 0
+{"api":0,"paid":0}
+{"spot":"hero","box":[600,600],"seen":{"left":84,"right":84,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":45,"right":184,"top":45},"frames":97,"worst":null}
+{"spot":"idea","box":[474,600],"seen":{"left":119,"right":32,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":87,"right":94,"top":46},"frames":76,"worst":null}
+{"spot":"picture","box":[704,542],"seen":{"left":32,"right":32,"top":135},"out":{"left":0,"right":0,"top":0},"clear":{"left":54,"right":27,"top":19},"frames":51,"worst":null}
+{"spot":"model","box":[600,545],"seen":{"left":84,"right":84,"top":136},"out":{"left":0,"right":0,"top":0},"clear":{"left":27,"right":10,"top":20},"frames":46,"worst":null}
+{"spot":"moves","box":[704,542],"seen":{"left":32,"right":32,"top":135},"out":{"left":0,"right":0,"top":0},"clear":{"left":17,"right":287,"top":33},"frames":232,"worst":null}
+{"spot":"remember","box":[704,542],"seen":{"left":32,"right":32,"top":135},"out":{"left":0,"right":0,"top":0},"clear":{"left":57,"right":249,"top":37},"frames":71,"worst":null}
+{"spot":"close","box":[600,600],"seen":{"left":84,"right":84,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":94,"right":170,"top":40},"frames":45,"worst":null}
+{"spot":"hero","box":[452,600],"seen":{"left":32,"right":113,"top":112},"out":{"left":0,"right":0,"top":0},"clear":{"left":28,"right":127,"top":35},"frames":91,"worst":null}
+{"spot":"idea","box":[348,600],"seen":{"left":87,"right":32,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":25,"right":31,"top":46},"frames":78,"worst":null}
+{"spot":"picture","box":[527,406],"seen":{"left":132,"right":32,"top":101},"out":{"left":0,"right":0,"top":0},"clear":{"left":42,"right":20,"top":14},"frames":66,"worst":null}
+{"spot":"model","box":[527,479],"seen":{"left":32,"right":132,"top":120},"out":{"left":0,"right":0,"top":0},"clear":{"left":23,"right":9,"top":17},"frames":55,"worst":null}
+{"spot":"moves","box":[603,464],"seen":{"left":151,"right":32,"top":116},"out":{"left":0,"right":0,"top":0},"clear":{"left":15,"right":243,"top":27},"frames":252,"worst":null}
+{"spot":"remember","box":[603,464],"seen":{"left":151,"right":32,"top":116},"out":{"left":0,"right":0,"top":0},"clear":{"left":44,"right":213,"top":31},"frames":82,"worst":null}
+{"spot":"close","box":[452,600],"seen":{"left":32,"right":113,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":90,"right":36,"top":39},"frames":44,"worst":null}
+{"spot":"hero","box":[530,600],"seen":{"left":133,"right":133,"top":112},"out":{"left":0,"right":0,"top":0},"clear":{"left":35,"right":150,"top":41},"frames":84,"worst":null}
+{"spot":"idea","box":[413,600],"seen":{"left":103,"right":103,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":58,"right":63,"top":46},"frames":74,"worst":null}
+{"spot":"picture","box":[618,476],"seen":{"left":155,"right":155,"top":119},"out":{"left":0,"right":0,"top":0},"clear":{"left":50,"right":23,"top":16},"frames":57,"worst":null}
+{"spot":"model","box":[618,562],"seen":{"left":155,"right":155,"top":141},"out":{"left":0,"right":0,"top":0},"clear":{"left":27,"right":10,"top":20},"frames":45,"worst":null}
+{"spot":"moves","box":[707,544],"seen":{"left":177,"right":162,"top":136},"out":{"left":0,"right":0,"top":0},"clear":{"left":17,"right":287,"top":32},"frames":211,"worst":null}
+{"spot":"remember","box":[707,544],"seen":{"left":177,"right":162,"top":136},"out":{"left":0,"right":0,"top":0},"clear":{"left":57,"right":250,"top":36},"frames":67,"worst":null}
+{"spot":"close","box":[530,600],"seen":{"left":133,"right":133,"top":150},"out":{"left":0,"right":0,"top":0},"clear":{"left":129,"right":75,"top":39},"frames":42,"worst":null}
+{"spot":"hero","box":[530,600],"meanDiff":0.68,"live":{"x0":43,"y0":50,"x1":260,"y1":359,"w":217,"h":309},"poster":{"x0":43,"y0":51,"x1":260,"y1":359,"w":217,"h
+{"spot":"idea","box":[413,600],"meanDiff":1.08,"live":{"x0":73,"y0":47,"x1":291,"y1":359,"w":218,"h":312},"poster":{"x0":73,"y0":47,"x1":290,"y1":359,"w":217,"h
+{"spot":"picture","box":[618,476],"meanDiff":9.51,"live":{"x0":52,"y0":24,"x1":587,"y1":284,"w":535,"h":260},"poster":{"x0":53,"y0":33,"x1":212,"y1":284,"w":159
+{"spot":"model","box":[618,562],"meanDiff":5.67,"live":{"x0":29,"y0":31,"x1":590,"y1":336,"w":561,"h":305},"poster":{"x0":30,"y0":42,"x1":224,"y1":336,"w":194,"
+{"spot":"moves","box":[707,544],"meanDiff":0.67,"live":{"x0":118,"y0":20,"x1":705,"y1":324,"w":587,"h":304},"poster":{"x0":118,"y0":20,"x1":705,"y1":324,"w":587
+{"spot":"remember","box":[707,544],"meanDiff":0.7,"live":{"x0":60,"y0":37,"x1":674,"y1":324,"w":614,"h":287},"poster":{"x0":60,"y0":37,"x1":674,"y1":324,"w":614
+{"spot":"room","box":[1280,720],"meanDiff":1.97,"live":{"x0":0,"y0":0,"x1":1279,"y1":431,"w":1279,"h":431},"poster":{"x0":0,"y0":0,"x1":1279,"y1":431,"w":1279,"
+{"spot":"close","box":[530,600],"meanDiff":0.59,"live":{"x0":132,"y0":47,"x1":349,"y1":359,"w":217,"h":312},"poster":{"x0":132,"y0":47,"x1":349,"y1":359,"w":217
+{"samples":136,"api":0,"paid":0,"out":"C:\\Users\\Pc\\Desktop\\Empire\\Artisto\\Aristo 2.0\\Aristo-AI\\.claude\\eval\\2026-09-30-v8-3b-landing\\build\\track-final\\moves-light-1280"}
+  "t": 21.2,
+  "measures": {
+   "palmGapPx": 117.9,
+   "ideaToRightPalmPx": 18,
+   "nextToLeftPalmPx": 17
+  }
+ }
+]
+{"samples":53,"api":0,"paid":0,"out":"C:\\Users\\Pc\\Desktop\\Empire\\Artisto\\Aristo 2.0\\Aristo-AI\\.claude\\eval\\2026-09-30-v8-3b-landing\\build\\track-final\\remember-light-1280"}
+[{"tap":1,"day":2,"t":1.8,"arrivesAt":1.8,"deg":6.9,"tipToPointPx":2.9,"missPx":2.8,"handUp":true},{"tap":2,"day":6,"t":3,"arrivesAt":2.9,"deg":1,"tipToPointPx":39.8,"missPx":1.1,"handUp":true},{"tap":3,"day":13,"t":4.7,"arrivesAt":4.8,"deg":0.5,"tipToPointPx":107.6,"missPx":1.2,"handUp":true}]
+{"frames":47,"peak":8,"ms":1337,"hands":{"L":[-0.4512716961768128,0.2970016735943959,-2.5742437857303386],"R":[-1.312560804538549,-0.4284480142378567,-2.8104421521756193],"Li":[-0.4440364658281774,0.5415950466569838,-2.5134461402883805],"Ri":[-1.2552300483993422,-0.6689518226575363,-2.7690531280287707]},"target":{"x":476.234375,"y":2376.53125,"w":190.734375,"h":249.546875},"heart":{"min":[0.029864298319816573,0.04000063925981523,-3.115399874746799],"max":[0.521923280274868,0.8649496951699257,-2.5846690669655796]},"pointing":{"deg":171.6,"tipToTargetPx":2266,"tgt":{"x":571.6015625,"y":2501.3046875}}}
+{"api":0,"paid":0}
+{"frames":53,"peak":29,"ms":3870,"hands":{"L":[-0.19805218686042375,0.2197001517863187,-2.857873776881274],"R":[-1.3564712552739915,-0.45814610392172933,-2.8529411284510804],"Li":[0.007476413439554942,0.3481767258065185,-2.7892185161180056],"Ri":[-1.3158593081871968,-0.7061779173875394,-2.8329517832873634]},"target":{"x":476.234375,"y":2376.53125,"w":190.734375,"h":249.546875},"heart":{"min":[0.029864298319816573,0.04000063925981523,-3.115399874746799],"max":[0.521923280274868,0.8649496951699257,-2.5846690669655796]},"gap":{"worldM":0.022,"handLowerThird":0.37},"pointing":{"deg":11.4,"tipToTargetPx":79,"tgt":{"x":571.6015625,"y":2501.3046875}}}
+{"api":0,"paid":0}
+{"theme":"light","width":1440,"point":{"t":10.26,"file":"f004.png","fingerDeg":0.4,"armDeg":3.1,"lineMissPx":0.7,"tipToTargetPx":84},"present":{"t":19.43,"file":"f014.png","tipToSurfaceM":0.045,"tipLeftOfBounds":0.035,"nearestVertex":[0.003,0.358,-2.715],"tip":[-0.038,0.376,-2.718],"tipInsideDepth":true,"tipZ":-2.718,"modelZ":[-3.103,-2.262],"palmHeightOnModel":-0.12,"model":{"min":[-0.003,0.3,-3.103],"max":[0.844,0.787,-2.262]}},"api":0,"paid":0}
+VERIFY-DONE
