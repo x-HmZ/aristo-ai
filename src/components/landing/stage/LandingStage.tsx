@@ -14,12 +14,12 @@ import { Environment } from "@react-three/drei";
 import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Group, Vector3, type Object3D, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
-import { RendererConfig, SceneLights } from "@/components/three/Experience";
+import { RendererConfig, SceneLights } from "@/components/three/SceneBits";
 import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/components/three/Teacher";
 import { PAPER_ANCHOR } from "@/components/three/deskFraming";
 import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
-import { host, setLive, subscribe } from "./host";
+import { host, roomFailed, setLive, subscribe } from "./host";
 import { createAim } from "./aim";
 import { damp } from "./ease";
 import { Diagram } from "./Diagram";
@@ -65,6 +65,10 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
   const cam = camera as PerspectiveCamera;
   const samples = useRef<number[]>([]);
   const judged = useRef(false);
+  // The room is heavier than Jake alone (the classroom, its lights and the quiz's DOM): its own first frames are
+  // judged too, once it is live, and a slow room hands the page to the stills like a slow start does.
+  const roomSamples = useRef<number[]>([]);
+  const roomJudged = useRef(false);
   const still = useMemo(stillParams, []);
   const tour = useRef({ shot: -1, settling: false });
   const judge = (dt: number) => {
@@ -104,6 +108,13 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
     cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
     judge(dt);
+    if (judging && !roomJudged.current && host.live === "room") {
+      roomSamples.current.push(dt * 1000);
+      if (roomSamples.current.length >= SLOW_SAMPLE_FRAMES) {
+        roomJudged.current = true;
+        if (isSlow(roomSamples.current)) onSlow();
+      }
+    }
   }, -2);
   useFrame((_, dt) => {
     if (spot === "room") return;
@@ -219,9 +230,10 @@ function Idle({ children }: { children: ReactNode }) {
 }
 
 /** An optional part (the heart) that fails to load drops out on its own; the stage carries on. */
-class PartBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+class PartBoundary extends Component<{ children: ReactNode; onError?: () => void }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch() { this.props.onError?.(); }
   render() { return this.state.failed ? null : this.props.children; }
 }
 
@@ -419,7 +431,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       )}
       {/* The room, once the reader is near its section (Immersive.tsx), after Jake is warm. Loaded once, kept. */}
       {warm && nearKey === "true" && (
-        <PartBoundary><Suspense fallback={null}><RoomScene /></Suspense></PartBoundary>
+        <PartBoundary onError={roomFailed}><Suspense fallback={null}><RoomScene /></Suspense></PartBoundary>
       )}
       {probe && <Probe spot={active} />}
     </Canvas>

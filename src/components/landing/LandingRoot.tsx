@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
+import { Component, useCallback, useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { displayFont } from "./fonts";
 import { LandingNav } from "./LandingNav";
@@ -16,7 +16,8 @@ import { Remember } from "./sections/Remember";
 import { Immersive } from "./sections/Immersive";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
 import { host, resetHost, spotBox, subscribe } from "./stage/host";
-import { shared } from "./stage/shared";
+import { resetShared, shared } from "./stage/shared";
+import { resetClocks } from "./play";
 import { stopAll } from "./stage/sound";
 
 interface StageProps { onLive: () => void; onSlow: () => void }
@@ -46,12 +47,13 @@ export function LandingRoot() {
   const root = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
 
-  // Leaving / by a client-side link: nothing of the landing plays or lingers on the next page.
+  // Leaving / by a client-side link: nothing of the landing plays or lingers on the next page, and coming back starts
+  // it fresh (its clocks and shared state are module-level, and outlive this component).
   useEffect(() => () => {
     stopAll();
-    shared.live = false;
-    shared.speaking = false;
     resetHost();
+    resetClocks();
+    resetShared();
     delete document.documentElement.dataset.stage;
   }, []);
 
@@ -113,18 +115,18 @@ export function LandingRoot() {
     return () => { off(); ro.disconnect(); window.removeEventListener("resize", place); };
   }, [Stage]);
 
-  const onLive = () => {
+  const onLive = useCallback(() => {
     shared.live = true;
     document.documentElement.dataset.stage = "live";
-  };
-  const onSlow = () => {
+  }, []);
+  const onSlow = useCallback(() => {
     shared.live = false;
     shared.mode = "lite";
     resetHost();
     document.documentElement.dataset.stage = "off";
     setStage(null);
     setMode("lite");
-  };
+  }, []);
 
   return (
     <div

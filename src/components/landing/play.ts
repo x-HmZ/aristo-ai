@@ -35,6 +35,13 @@ const listeners = new Map<string, Set<() => void>>();
 let frame = 0;
 let last = 0;
 
+/** Leaving / by a client-side link: every clock goes, so coming back plays each section from its start. */
+export function resetClocks(): void {
+  if (frame) cancelAnimationFrame(frame);
+  frame = 0;
+  clocks.clear();
+}
+
 export function clockOf(id: string): Clock {
   let c = clocks.get(id);
   if (!c) { c = { t: 0, playing: false, length: FINAL, run: 0, want: false, paused: false }; clocks.set(id, c); }

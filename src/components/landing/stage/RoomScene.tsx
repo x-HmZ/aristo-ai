@@ -125,7 +125,7 @@ function RoomQuiz() {
         ref={paper}
         {...INERT}
         aria-hidden
-        className="theme-paper landing-room-paper rounded-2xl border border-line bg-surface px-5 py-[18px] text-ink"
+        className="theme-paper landing-room-paper pointer-events-none select-none rounded-2xl border border-line bg-surface px-5 py-[18px] text-ink"
         style={{ width: `${cardWidth}px`, maxHeight: `${maxHeight}px`, overflow: "hidden", display: "none", boxShadow: "0 32px 90px rgba(30,14,6,0.65)" }}
       >
         <QuizView conceptId="volcano-eruption" questions={VOLCANO_QUIZ} userId="landing" onComplete={() => {}} localOnly />

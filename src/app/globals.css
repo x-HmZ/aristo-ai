@@ -350,6 +350,13 @@
     transition: opacity 200ms var(--ease-out);
   }
   /* Step Into the Classroom: the room runs edge to edge, so neither its canvas nor its stills fade. */
+  /* A room that could not load shows the tour's end, as lite does. */
+  [data-mode="full"] .landing-room[data-failed] .landing-still-start {
+    display: none;
+  }
+  [data-mode="full"] .landing-room[data-failed] .landing-still-end {
+    display: block;
+  }
   [data-stage-layer][data-at="room"] {
     -webkit-mask-image: none;
     mask-image: none;

@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
 import { Box, Pause, Play, Presentation, RotateCcw, Target, UserRound, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { ROOM_COPY } from "../content";
 import { clockOf, restart, seek, setPaused, subscribeClock, useCue, useSectionPlay } from "../play";
 import type { LandingMode } from "../stage/gate";
-import { host, nearRoom, registerSpot } from "../stage/host";
+import { host, nearRoom, registerSpot, subscribe as subscribeHost } from "../stage/host";
 import { LOOK_PITCH, LOOK_YAW, ROOM_ASPECT, ROOM_T, lineAt } from "../stage/room";
 import { shared } from "../stage/shared";
 import { isSoundOn, lineData, loadLine, setSound, speak, subscribe as subscribeSound, syncAudio, wordsSpoken } from "../stage/sound";
@@ -26,7 +26,7 @@ const CONTROL = cn(SHAPE.control, PRESS, FOCUS, "inline-flex min-h-[44px] items-
  */
 function Caption({ className }: { className?: string }) {
   const [index, setIndex] = useState(0);
-  const [sound, setSoundState] = useState(false);
+  const [sound, setSoundState] = useState(isSoundOn);
   const words = useRef<(HTMLSpanElement | null)[]>([]);
   const shown = useRef({ index: 0, lit: -2 });
 
@@ -125,21 +125,15 @@ function Tour({ className }: { className?: string }) {
         );
       })}
       <span aria-hidden className="mx-1 h-6 w-px bg-line" />
-      {done ? (
-        <button type="button" onClick={() => restart("room")} className={cn(CONTROL, "text-body hover:bg-sunk hover:text-ink")}>
-          <RotateCcw className="size-4" aria-hidden />
-          Replay
-        </button>
-      ) : (
-        <button
-          type="button"
-          aria-label={paused ? "Play the tour" : "Pause the tour"}
-          onClick={() => setPaused("room", !paused)}
-          className={cn(CONTROL, "w-11 justify-center px-0 text-body hover:bg-sunk hover:text-ink")}
-        >
-          {paused ? <Play className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
-        </button>
-      )}
+      {/* One button that changes (pause, play, replay), so a keyboard user's focus stays on it when the tour ends. */}
+      <button
+        type="button"
+        aria-label={done ? "Replay the tour" : paused ? "Play the tour" : "Pause the tour"}
+        onClick={() => (done ? restart("room") : setPaused("room", !paused))}
+        className={cn(CONTROL, "w-11 justify-center px-0 text-body hover:bg-sunk hover:text-ink")}
+      >
+        {done ? <RotateCcw className="size-4" aria-hidden /> : paused ? <Play className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
+      </button>
     </div>
   );
 }
@@ -154,7 +148,9 @@ function Tour({ className }: { className?: string }) {
 export function Immersive({ mode }: { mode: LandingMode | null }) {
   const section = useRef<HTMLElement>(null);
   const box = useRef<HTMLDivElement>(null);
-  const live = mode === "full";
+  // A room that could not load leaves the section as on the lite path: its end still, no controls.
+  const failed = useSyncExternalStore(subscribeHost, () => shared.room.failed, () => false);
+  const live = mode === "full" && !failed;
   useSectionPlay("room", box, ROOM_T.length, { mode, spot: "room" });
 
   useEffect(() => (box.current ? registerSpot("room", box.current) : undefined), []);
@@ -168,6 +164,8 @@ export function Immersive({ mode }: { mode: LandingMode | null }) {
 
   const drag = useRef<{ id: number; x: number; y: number } | null>(null);
   const onDown = (e: PointerEvent<HTMLDivElement>) => {
+    // The main button only: a right or ctrl click opens a menu and may never send its pointerup.
+    if (e.button !== 0) return;
     drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
     shared.room.dragging = true;
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -195,6 +193,7 @@ export function Immersive({ mode }: { mode: LandingMode | null }) {
       <div
         ref={box}
         data-spot="room"
+        data-failed={failed || undefined}
         className="landing-spot landing-room relative w-full overflow-hidden bg-sunk max-sm:![aspect-ratio:4/3]"
         style={{ aspectRatio: String(ROOM_ASPECT), maxHeight: "88svh" }}
       >
@@ -212,6 +211,7 @@ export function Immersive({ mode }: { mode: LandingMode | null }) {
               onPointerMove={onMove}
               onPointerUp={onUp}
               onPointerCancel={onUp}
+              onLostPointerCapture={onUp}
               className="absolute inset-0 z-20 cursor-grab touch-pan-y select-none active:cursor-grabbing"
             />
           </>

@@ -140,6 +140,12 @@ export function syncAudio(segment: string | null, t: number, playing: boolean): 
   return audio.paused ? null : audio.currentTime;
 }
 
+// A hidden tab gets no frames, so the clocks stop and nothing calls syncAudio: pause the recording too, or it plays on
+// to the end of its line unseen. Coming back, the next tick resumes it at the line's time.
+if (typeof document !== "undefined") {
+  document.addEventListener("visibilitychange", () => { if (document.hidden && audio && !audio.paused) audio.pause(); });
+}
+
 /** Leaving the page: silence. */
 export function stopAll(): void {
   soundOn = false;

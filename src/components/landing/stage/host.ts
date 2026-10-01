@@ -120,6 +120,12 @@ export function enterClose(leftAt: number): void {
   emit();
 }
 
+/** The room could not load (a missing or broken GLB): its section stays a still, with no controls (Immersive.tsx). */
+export function roomFailed(): void {
+  shared.room.failed = true;
+  emit();
+}
+
 /** Leaving the page by a client-side link: nothing lingers. */
 export function resetHost(): void {
   setLive(null);
