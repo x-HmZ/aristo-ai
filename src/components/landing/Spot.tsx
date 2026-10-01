@@ -1,7 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { registerSpot } from "./stage/host";
-import { stillCss, type SpotId } from "./stage/spots";
+import { stillCss, type FramedSpotId } from "./stage/spots";
 
 /**
  * A box Jake presents from (V8.3b). The live canvas moves onto whichever spot is most in view (stage/host.ts); every
@@ -16,7 +16,7 @@ const HIGH = { fetchpriority: "high" } as Record<string, string>;
 export function Spot({
   id, still, start, alt, className, style, pool, priority, under, children,
 }: {
-  id: SpotId;
+  id: FramedSpotId;
   /** Jake in this spot's pose, on a transparent ground (`/images/landing/v3b/<id>.webp`): the section's end. */
   still?: string;
   /**

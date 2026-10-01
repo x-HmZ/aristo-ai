@@ -93,6 +93,18 @@ export function replayMoves(): void {
   emit();
 }
 
+/** The reader is near Step Into the Classroom: the stage loads the room from now on (once). */
+export function nearRoom(): void {
+  if (shared.room.near) return;
+  shared.room.near = true;
+  emit();
+}
+
+/** The room is loaded and warm (RoomScene sets shared.room.ready first): the teacher there may go live. */
+export function roomReady(): void {
+  emit();
+}
+
 /** Leaving the page by a client-side link: nothing lingers. */
 export function resetHost(): void {
   setLive(null);

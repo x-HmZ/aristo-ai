@@ -186,3 +186,22 @@ export const CLOSE = {
   title: "Your teacher is ready",
   line: "About five minutes, in your browser, with nothing to sign up for or install.",
 } as const;
+
+/**
+ * Step Into the Classroom (V8.3b, "Immersive"): the product's room, the volcano demo lesson taught in it while the
+ * camera tours it (stage/room.ts). `lines` are the lesson's own sentences, verbatim (each the start of its segment, to
+ * the end of the last sentence shown; content.test.ts pins them), in the order of room.ts ROOM_T.lines.
+ */
+export const ROOM_COPY = {
+  title: "Step Into the Classroom",
+  /** Live, where the reader can drag to look around; on the stills, without that. */
+  line: "Everything above, together in one room. Look around while your teacher teaches the volcano.",
+  lineStill: "Everything above, together in one room, where your teacher teaches the volcano.",
+  shots: ["Your teacher", "The board", "The model", "Your desk"],
+  lines: [
+    "Picture the soda bottle again: dissolved gas is trapped in the liquid under pressure.",
+    "Take a look at this cross-section. At the bottom is the magma chamber, filling up with molten rock and dissolved gas.",
+    "As more magma rises from below and gas bubbles keep forming, pressure inside the chamber climbs.",
+  ],
+  real: "Live 3D, the product's own classroom. The lesson is the real volcano demo lesson, at its real pace; the tour is an illustration.",
+} as const;

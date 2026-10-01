@@ -37,3 +37,17 @@ describe("wordsSpoken", () => {
     expect(wordsSpoken(words, 5)).toBe(3);
   });
 });
+
+describe("the room's lines (volcano demo lesson)", () => {
+  const volcano = (segment: string) =>
+    JSON.parse(readFileSync(path.join(__dirname, "..", "..", "..", "..", "public", "demo", "volcano-eruption", `${segment}.align.json`), "utf8"));
+  it("each line is spoken until its last word ends, by the recording's own timings", async () => {
+    const { ROOM_COPY } = await import("../content");
+    const { ROOM_T } = await import("./room");
+    ROOM_COPY.lines.forEach((line, i) => {
+      const w = wordsOf(volcano(ROOM_T.lines[i].segment).characters);
+      const n = line.split(" ").length;
+      expect(w[n - 1].end).toBeCloseTo(ROOM_T.lines[i].until, 2);
+    });
+  });
+});

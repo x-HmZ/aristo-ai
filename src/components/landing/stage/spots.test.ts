@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CAPTURE_ASPECT, EYE, SPOTS, TEACHER, frustumFor, pickSpot, project, stillCss, type SpotId, type V3 } from "./spots";
+import { CAPTURE_ASPECT, EYE, SPOTS, TEACHER, frustumFor, pickSpot, project, stillCss, type FramedSpotId, type V3 } from "./spots";
 
 describe("frustumFor", () => {
   it("shows the spot's vertical range edge to edge", () => {
@@ -42,14 +42,14 @@ describe("pickSpot", () => {
     expect(pickSpot({ hero: 0.2, model: 0.8 }, null)).toBe("model");
   });
   it("keeps the current spot until another shows clearly more", () => {
-    expect(pickSpot<SpotId>({ hero: 0.5, model: 0.6 }, "hero")).toBe("hero");
-    expect(pickSpot<SpotId>({ hero: 0.4, model: 0.6 }, "hero")).toBe("model");
+    expect(pickSpot<FramedSpotId>({ hero: 0.5, model: 0.6 }, "hero")).toBe("hero");
+    expect(pickSpot<FramedSpotId>({ hero: 0.4, model: 0.6 }, "hero")).toBe("model");
   });
   it("leaves a spot that has left the screen", () => {
-    expect(pickSpot<SpotId>({ hero: 0, model: 0.05 }, "hero")).toBe("model");
+    expect(pickSpot<FramedSpotId>({ hero: 0, model: 0.05 }, "hero")).toBe("model");
   });
   it("returns null when nothing is in view", () => {
-    expect(pickSpot<SpotId>({ hero: 0, model: 0 }, "hero")).toBeNull();
+    expect(pickSpot<FramedSpotId>({ hero: 0, model: 0 }, "hero")).toBeNull();
     expect(pickSpot({}, null)).toBeNull();
   });
 });
@@ -74,7 +74,7 @@ describe("frustumFor with a reach to keep in frame", () => {
 
 describe("stillCss: the still and the canvas agree at any box size", () => {
   /** Evaluates the CSS for a box (container units, clamp, the @container branch) to px. */
-  function rectOf(id: SpotId, W: number, H: number) {
+  function rectOf(id: FramedSpotId, W: number, H: number) {
     const css = stillCss(id);
     const [base, narrow] = css.split("@container");
     let rule = base;
@@ -92,7 +92,7 @@ describe("stillCss: the still and the canvas agree at any box size", () => {
     return { left: prop("left"), top: prop("top"), width: prop("width"), height: prop("height") };
   }
 
-  const ids = Object.keys(SPOTS) as SpotId[];
+  const ids = Object.keys(SPOTS) as FramedSpotId[];
   const boxes: [number, number][] = [[300, 470], [413, 600], [464, 600], [530, 600], [600, 600], [707, 544], [618, 562], [360, 470]];
   it.each(ids)("%s: a world point lands on the same pixel in both", (id) => {
     const cap = frustumFor(SPOTS[id], CAPTURE_ASPECT[id]);

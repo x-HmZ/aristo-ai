@@ -77,6 +77,16 @@ export function restart(id: string): void {
   setPlaying(id, true);
 }
 
+/** The reader jumps a section to `t` (a tab): it plays on from there, unpaused, if the section wants to run. */
+export function seek(id: string, t: number): void {
+  const c = clockOf(id);
+  c.t = Math.max(0, Math.min(c.length, t));
+  c.paused = false;
+  c.playing = false;
+  emit(id);
+  setPlaying(id, c.want);
+}
+
 /** The reader pauses or plays a section (WCAG 2.2.2). Playing again resumes only if the section still wants to run. */
 export function setPaused(id: string, paused: boolean): void {
   const c = clockOf(id);

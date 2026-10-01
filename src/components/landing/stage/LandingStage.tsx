@@ -11,11 +11,12 @@
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { Component, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Group, Vector3, type Object3D, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { RendererConfig, SceneLights } from "@/components/three/Experience";
 import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/components/three/Teacher";
+import { PAPER_ANCHOR } from "@/components/three/deskFraming";
 import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
@@ -24,18 +25,35 @@ import { damp } from "./timeline";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
+import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, VOLCANO, lookAround, roomAimAt, roomCameraAt, roomFov, roomSignals, shotAt } from "./room";
 import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
-import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
+import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type FramedSpotId, type SpotId } from "./spots";
 import { warmUp } from "./warm";
 
 const NEAR = 0.05;
 const FAR = 60;
 /** The section clock each spot's script reads. */
-const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", remember: "remember", close: "close" };
+const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", remember: "remember", room: "room", close: "close" };
+/**
+ * Step Into the Classroom's room: its own chunk (Classroom preloads the room's GLB when its module loads), imported
+ * only once the reader is near the section.
+ */
+const RoomScene = lazy(() => import("./RoomScene"));
 
-const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}`, () => "null|false|0|0");
+const useHost = () => useSyncExternalStore(
+  subscribe,
+  () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}|${shared.room.near}|${shared.room.ready}`,
+  () => "null|false|0|0|false|false",
+);
+
+/** The verification's still captures (`?still`, and `?still&start` for a section's first frame). */
+const stillParams = () => {
+  if (typeof window === "undefined") return { hold: false, start: false };
+  const q = new URLSearchParams(window.location.search);
+  return { hold: q.has("still"), start: q.has("still") && q.has("start") };
+};
 
 /**
  * Runs first each frame: the camera stays at the classroom's eye, looking straight ahead, and the active spot's
@@ -46,26 +64,9 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
   const cam = camera as PerspectiveCamera;
   const samples = useRef<number[]>([]);
   const judged = useRef(false);
-  useEffect(() => {
-    cam.position.set(EYE[0], EYE[1], EYE[2]);
-    cam.rotation.set(0, 0, 0);
-    cam.near = NEAR;
-    cam.far = FAR;
-    cam.updateMatrixWorld();
-  }, [cam]);
-  useFrame((_, dt) => {
-    // `?probe&wide=m` (verification only): LandingRoot grows the layer past the spot's box by m of its width on each
-    // side and m of its height above, and the view grows by the same, so the box shows exactly what it does live and
-    // whatever of him falls outside it is drawn too, to be measured (eval scripts/bounds.cjs).
-    const aspect = (size.width / (1 + 2 * wide)) / Math.max(1, size.height / (1 + wide));
-    const f = frustumFor(SPOTS[spot], aspect);
-    if (wide > 0) {
-      const w = f.right - f.left, h = f.top - f.bottom;
-      f.left -= wide * w; f.right += wide * w; f.top += wide * h;
-    }
-    // R3F re-derives the projection from fov and aspect on a resize; this replaces it every frame, before the render.
-    cam.projectionMatrix.makePerspective(f.left * NEAR, f.right * NEAR, f.top * NEAR, f.bottom * NEAR, NEAR, FAR);
-    cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+  const still = useMemo(stillParams, []);
+  const tour = useRef({ shot: -1, settling: false });
+  const judge = (dt: number) => {
     if (judging && !judged.current) {
       samples.current.push(dt * 1000);
       if (samples.current.length >= SLOW_SAMPLE_FRAMES) {
@@ -73,6 +74,56 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
         if (isSlow(samples.current)) onSlow();
       }
     }
+  };
+  useFrame((_, dt) => {
+    if (spot !== "room") return;
+    // The room: the tour's camera (room.ts) at the section's time, turned by the reader's look. Once the tour moves on
+    // to a new shot, a look the reader left eases back to the tour's own direction.
+    const t = still.start ? 0 : still.hold ? ROOM_T.length : clockOf("room").t;
+    const pose = roomCameraAt(t);
+    const look = shared.room, shot = shotAt(t);
+    if (shot !== tour.current.shot) { tour.current = { shot, settling: tour.current.shot >= 0 }; }
+    if (look.dragging) tour.current.settling = false;
+    else if (tour.current.settling) {
+      look.yaw = damp(look.yaw, 0, 2.5, dt);
+      look.pitch = damp(look.pitch, 0, 2.5, dt);
+      if (Math.abs(look.yaw) + Math.abs(look.pitch) < 1e-3) { look.yaw = 0; look.pitch = 0; tour.current.settling = false; }
+    }
+    const yaw = Math.max(-LOOK_YAW, Math.min(LOOK_YAW, look.yaw)), pitch = Math.max(-LOOK_PITCH, Math.min(LOOK_PITCH, look.pitch));
+    const aim = lookAround(pose, yaw, pitch);
+    cam.position.set(pose.pos[0], pose.pos[1], pose.pos[2]);
+    cam.up.set(0, 1, 0);
+    cam.lookAt(aim[0], aim[1], aim[2]);
+    const aspect = size.width / Math.max(1, size.height);
+    const fov = roomFov(aspect);
+    if (cam.fov !== fov || cam.aspect !== aspect || cam.near !== NEAR || cam.far !== FAR) {
+      cam.fov = fov; cam.aspect = aspect; cam.near = NEAR; cam.far = FAR;
+    }
+    // R3F re-derives the projection on a resize, and the framed spots replace it every frame: set it each frame.
+    cam.updateProjectionMatrix();
+    cam.updateMatrixWorld();
+    judge(dt);
+  }, -2);
+  useFrame((_, dt) => {
+    if (spot === "room") return;
+    cam.position.set(EYE[0], EYE[1], EYE[2]);
+    cam.rotation.set(0, 0, 0);
+    cam.near = NEAR;
+    cam.far = FAR;
+    cam.updateMatrixWorld();
+    // `?probe&wide=m` (verification only): LandingRoot grows the layer past the spot's box by m of its width on each
+    // side and m of its height above, and the view grows by the same, so the box shows exactly what it does live and
+    // whatever of him falls outside it is drawn too, to be measured (eval scripts/bounds.cjs).
+    const aspect = (size.width / (1 + 2 * wide)) / Math.max(1, size.height / (1 + wide));
+    const f = frustumFor(SPOTS[spot as FramedSpotId], aspect);
+    if (wide > 0) {
+      const w = f.right - f.left, h = f.top - f.bottom;
+      f.left -= wide * w; f.right += wide * w; f.top += wide * h;
+    }
+    // R3F re-derives the projection from fov and aspect on a resize; this replaces it every frame, before the render.
+    cam.projectionMatrix.makePerspective(f.left * NEAR, f.right * NEAR, f.top * NEAR, f.bottom * NEAR, NEAR, FAR);
+    cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+    judge(dt);
   }, -2);
   return null;
 }
@@ -101,11 +152,13 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
  * the eyes and the aimed hand (aim.ts) all go to the same place. The heart's place is fixed.
  */
 const TARGET: Record<SpotId, [number, number, number]> = {
-  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], remember: [0, 0, PLANE_Z], close: [0, 0, GESTURE_Z],
+  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], remember: [0, 0, PLANE_Z], room: [...AIM_PICTURE], close: [0, 0, GESTURE_Z],
 };
 const LOOK = Object.fromEntries(
   Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
 ) as unknown as Record<SpotId, LookTargets>;
+// The room: his pointing (the board) as the other spots, and the classroom's own model and desk.
+LOOK.room = { board: TARGET.room, model: VOLCANO.position, desk: PAPER_ANCHOR };
 /** For the stills (`?still`): the section time whose gesture target a still is captured with. */
 const HOLD_AT: Partial<Record<SpotId, number>> = { picture: PICTURE_T.point[0] + 1 };
 /**
@@ -120,7 +173,7 @@ const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
  */
 const HERO_WITHHELD: ReadonlySet<string> = new Set(["Pointing", "Talking6"]);
 /** The spots where a gesture's hand is aimed at its target. */
-const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture", "remember"]);
+const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture", "remember", "room"]);
 
 /**
  * The gesture target at a spot now, or null when no gesture is aimed: an element on the page (the hero's button, the
@@ -132,6 +185,8 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
+  // The room: the cross-section, then its magma chamber as he names it (room.ts).
+  if (spot === "room") { const aim = roomAimAt(t); return aim ? { world: aim } : null; }
   // The review point his finger is on (Remember.tsx marks the next one the line will reach).
   if (spot === "remember" && t >= REMEMBER_T.point[0] && t < REMEMBER_T.point[1]) {
     const el = document.querySelector("[data-spot=remember] [data-aim=remember]");
@@ -229,13 +284,16 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       const now = performance.now() / 1000;
       const liveFor = liveAt.current === null ? 0 : now - liveAt.current;
       const h = shared.hero;
-      const s = signalsFor(spot, {
-        liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: h.hover, seq: h.seq,
-      });
+      const s = spot === "room"
+        ? roomSignals(clockOf("room").t, shared.speaking)
+        : signalsFor(spot, {
+          liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: h.hover, seq: h.seq,
+        });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
       // Five Moves and It Remembers end at rest too, so their one still is this.
-      if (start || (hold && (spot === "moves" || spot === "remember"))) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
+      // The room's stills: its first frame, and (lite) its end, both with him at rest.
+      if (start || (hold && (spot === "moves" || spot === "remember" || spot === "room"))) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
       // The other stills: at rest beside the lit column; pointing at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
@@ -284,7 +342,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
   }), [spot, warm, mayWave, hold, start, camera, gl, viewer, ray, aimAt, reportPalms]);
 
   useFrame(() => {
-    if (!warm || liveAt.current !== null) return;
+    // The room's spot keeps its poster until the room is loaded and warm (RoomScene).
+    if (!warm || liveAt.current !== null || (spot === "room" && !shared.room.ready)) return;
     frames.current += 1;
     if (frames.current >= 2) {
       liveAt.current = performance.now() / 1000;
@@ -306,7 +365,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
 
 export default function LandingStage({ onLive, onSlow }: { onLive: () => void; onSlow: () => void }) {
   const [warm, setWarm] = useState(false);
-  const [activeKey, onScreenKey, greetKey, movesKey] = useHost().split("|");
+  const [activeKey, onScreenKey, greetKey, movesKey, nearKey] = useHost().split("|");
   const greet = Number(greetKey);
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
@@ -323,7 +382,8 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
     <Canvas
       frameloop={onScreen ? "always" : "never"}
       shadows
-      dpr={[1, 2]}
+      // The room fills a wide box: at most 1.5 device pixels per CSS pixel there (Jake alone, up to 2).
+      dpr={active === "room" ? [1, 1.5] : [1, 2]}
       resize={{ scroll: false, debounce: 0 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       className="!h-full !w-full"
@@ -346,6 +406,10 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
           <PartBoundary><Suspense fallback={null}><Diagram /></Suspense></PartBoundary>
           <PartBoundary><Suspense fallback={null}><HeartBuild /></Suspense></PartBoundary>
         </Idle>
+      )}
+      {/* The room, once the reader is near its section (Immersive.tsx), after Jake is warm. Loaded once, kept. */}
+      {warm && nearKey === "true" && (
+        <PartBoundary><Suspense fallback={null}><RoomScene /></Suspense></PartBoundary>
       )}
       {probe && <Probe spot={active} />}
     </Canvas>

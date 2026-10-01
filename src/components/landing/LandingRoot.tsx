@@ -13,6 +13,7 @@ import { Close } from "./sections/Close";
 import { ModelBuild } from "./sections/ModelBuild";
 import { Moves } from "./sections/Moves";
 import { Remember } from "./sections/Remember";
+import { Immersive } from "./sections/Immersive";
 import { decideMode, readEnv, type LandingMode } from "./stage/gate";
 import { host, resetHost, spotBox, subscribe } from "./stage/host";
 import { shared } from "./stage/shared";
@@ -97,6 +98,8 @@ export function LandingRoot() {
       if (s.width !== `${Math.round(a.width + 2 * dx)}px`) s.width = `${Math.round(a.width + 2 * dx)}px`;
       if (s.height !== `${Math.round(a.height + dy)}px`) s.height = `${Math.round(a.height + dy)}px`;
       // It fades in once live; it goes out at once, so a move never shows the teacher mid-mount at the new spot.
+      // The room is edge to edge: no fade at its foot (globals.css, by the layer's spot).
+      if (el.dataset.at !== host.active) el.dataset.at = host.active ?? "";
       const on = host.live !== null && host.live === host.active;
       s.transition = on ? "" : "none";
       s.opacity = on ? "1" : "0";
@@ -155,6 +158,7 @@ export function LandingRoot() {
         <ModelBuild mode={mode} />
         <Moves mode={mode} />
         <Remember mode={mode} />
+        <Immersive mode={mode} />
         <ForParents />
         <Close />
       </main>

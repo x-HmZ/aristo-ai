@@ -36,3 +36,16 @@ describe("copy rules (messaging.md)", () => {
     }
   });
 });
+
+describe("volcano lesson excerpts (Step Into the Classroom)", async () => {
+  const { lesson: volcano } = await import("@/data/demo/volcano-eruption");
+  const { ROOM_COPY } = await import("./content");
+  const { ROOM_T } = await import("./stage/room");
+  it("each line starts its segment, verbatim, and ends where a sentence does", () => {
+    ROOM_COPY.lines.forEach((line, i) => {
+      const seg = volcano.segments!.find((s) => s.id === ROOM_T.lines[i].segment)!;
+      expect(seg.text.startsWith(line)).toBe(true);
+      expect(/[.?!]$/.test(line)).toBe(true);
+    });
+  });
+});

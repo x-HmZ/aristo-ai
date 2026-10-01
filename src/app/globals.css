@@ -372,6 +372,11 @@
   .landing-spot-still {
     transition: opacity 200ms var(--ease-out);
   }
+  /* Step Into the Classroom: the room runs edge to edge, so neither its canvas nor its stills fade. */
+  [data-stage-layer][data-at="room"] {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .landing-spot[data-live] .landing-spot-still {
     opacity: 0;
   }

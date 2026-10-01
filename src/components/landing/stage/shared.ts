@@ -43,9 +43,17 @@ export const shared: {
   };
   /** One Lesson, Five Moves: the section's run, bumped by Replay, so the teacher there starts again from rest. */
   moves: { run: number };
+  /**
+   * Step Into the Classroom: `near`, the reader is near the section (the room loads from then on); `ready`, the room
+   * is loaded and warm (until then the spot keeps its poster); the reader's look
+   * around (radians, a drag over the room: `yaw` right, `pitch` up) and whether they are dragging. A tab or Replay
+   * only moves the tour's clock: the director takes the new signals from wherever he is, as in a lesson.
+   */
+  room: { near: boolean; ready: boolean; yaw: number; pitch: number; dragging: boolean };
 } = {
   mode: "lite", live: false, speaking: false, heart: { turn: 0, user: false }, pointer: null,
   hero: { hover: null, seq: 0, greet: 0, look: null },
   hands: { spot: null, palms: null, raised: false, lift: { l: -0.45, r: -0.45 }, low: null, onReport: null },
   moves: { run: 0 },
+  room: { near: false, ready: false, yaw: 0, pitch: 0, dragging: false },
 };

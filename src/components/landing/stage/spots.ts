@@ -20,7 +20,10 @@ export const TEACHER: { position: [number, number, number]; rotationY: number } 
 /** The depth of the plane a spot's rectangle is measured on: the teacher's. */
 export const PLANE_Z = TEACHER.position[2];
 
-export type SpotId = "hero" | "idea" | "picture" | "model" | "moves" | "remember" | "close";
+/** A box Jake presents from. "room" is Step Into the Classroom: the room itself, toured by its own camera (room.ts). */
+export type SpotId = "hero" | "idea" | "picture" | "model" | "moves" | "remember" | "room" | "close";
+/** The spots framed as a crop of the classroom's lesson view (all but the room). */
+export type FramedSpotId = Exclude<SpotId, "room">;
 
 export interface SpotFraming {
   /** World y at the teacher's plane shown at the box's top and bottom edges. */
@@ -41,7 +44,7 @@ export interface SpotFraming {
  * Jake is 2.57 m in world units (standScale 1.3824 x 1.859): feet at -1.7, the top of his head at about 0.87.
  * Each spot shows him from above the head to about the knee; the box's CSS mask fades him out below mid-thigh.
  */
-export const SPOTS: Record<SpotId, SpotFraming> = {
+export const SPOTS: Record<FramedSpotId, SpotFraming> = {
   // The hero has him on the left, a little closer, with his reach to his left (screen right, towards the buttons)
   // kept in frame: his right arm at rest (-1.42, its hand to about -1.47, with a margin) to past his offering
   // fingertip (PresentModel, 0.01).
@@ -98,7 +101,7 @@ export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
 }
 
 /** The box aspect each spot's stills are captured at (eval scripts/stills.cjs): the fixed-aspect spots at theirs. */
-export const CAPTURE_ASPECT: Record<SpotId, number> = {
+export const CAPTURE_ASPECT: Record<FramedSpotId, number> = {
   hero: 1, idea: 1, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, remember: BOARD_ASPECT, close: 1,
 };
 
@@ -113,7 +116,7 @@ const n = (v: number) => +v.toFixed(4);
  * range is the spot's own (the still is the box's height) and the horizontal placement follows frustumFor's clamp, in
  * container units. In a narrower box the range grows to fit `need` across the width (an @container aspect query).
  */
-export function stillCss(id: SpotId): string {
+export function stillCss(id: FramedSpotId): string {
   const spot = SPOTS[id];
   const d = EYE[2] - PLANE_Z;
   const cap = frustumFor(spot, CAPTURE_ASPECT[id]);

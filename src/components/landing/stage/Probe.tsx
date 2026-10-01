@@ -1,6 +1,6 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
-import { Box3, Vector3, type Object3D } from "three";
+import { Box3, Vector3, type Mesh, type Object3D } from "three";
 import { clockOf } from "../play";
 import { SPOTS, frustumFor, type SpotId } from "./spots";
 
@@ -15,9 +15,12 @@ declare global {
       bones: () => Record<string, [number, number, number]>;
       /** A world point on the page, in CSS px (through this frame's camera and the canvas's box). */
       toPage: (p: [number, number, number]) => { x: number; y: number };
-      frustum: () => ReturnType<typeof frustumFor>;
+      /** The framed spot's frustum (null in the room, which has a moving camera). */
+      frustum: () => ReturnType<typeof frustumFor> | null;
       /** An object's world bounds by name (the heart's model is "landing-heart-solid", visible or not), or null. */
       bounds: (name: string) => { min: [number, number, number]; max: [number, number, number] } | null;
+      /** The nearest vertex of an object's meshes to a world point, and its distance (m), or null. */
+      nearest: (name: string, p: [number, number, number]) => { point: [number, number, number]; distance: number } | null;
       /** Frames rendered so far. */
       frame: number;
       /** The spot's section clock (play.ts), in seconds. */
@@ -49,12 +52,29 @@ export function Probe({ spot }: { spot: SpotId }) {
         const r = gl.domElement.getBoundingClientRect();
         return { x: r.left + window.scrollX + ((v.x + 1) / 2) * r.width, y: r.top + window.scrollY + ((1 - v.y) / 2) * r.height };
       },
-      frustum: () => frustumFor(SPOTS[spot], size.width / Math.max(1, size.height)),
+      frustum: () => (spot === "room" ? null : frustumFor(SPOTS[spot], size.width / Math.max(1, size.height))),
       bounds: (name) => {
         const o = find(name);
         if (!o) return null;
         const b = new Box3().setFromObject(o, true);
         return b.isEmpty() ? null : { min: b.min.toArray() as [number, number, number], max: b.max.toArray() as [number, number, number] };
+      },
+      nearest: (name, p) => {
+        const o = find(name);
+        if (!o) return null;
+        o.updateWorldMatrix(true, true);
+        const q = new Vector3(...p), w = new Vector3();
+        let best: [number, number, number] | null = null, d = Infinity;
+        o.traverse((m) => {
+          const pos = (m as Mesh).isMesh ? (m as Mesh).geometry.getAttribute("position") : null;
+          if (!pos) return;
+          for (let i = 0; i < pos.count; i++) {
+            w.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld);
+            const e = w.distanceTo(q);
+            if (e < d) { d = e; best = w.toArray() as [number, number, number]; }
+          }
+        });
+        return best ? { point: best, distance: d } : null;
       },
     };
     return () => { delete window.__landing; };
