@@ -14,7 +14,7 @@ const [, , out = "build/bounds", base = "http://localhost:3000", width = "1280",
 const OUT = path.join(__dirname, "..", out, width);
 fs.mkdirSync(OUT, { recursive: true });
 const M = 0.25;
-const SECS = { hero: 10, idea: 8.5, picture: 7, model: 6, moves: 24.5, remember: 8, close: 5 };
+const SECS = { hero: 10, idea: 8.5, picture: 7, model: 6, moves: 24.5, remember: 8, close: 8.5 };
 
 async function opaqueBox(file) {
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -60,11 +60,18 @@ async function opaqueBox(file) {
       const ms = Date.now() - t0;
       if (spot === "hero" && !hovered && ms > 3000) {
         hovered = true;
-        await p.evaluate(() => { const b = [...document.querySelectorAll("a, button")].find((x) => /Try a lesson/.test(x.textContent) && x.closest("#top")); b?.dispatchEvent(new PointerEvent("pointerenter", { bubbles: false })); });
+        // React builds onPointerEnter from a bubbling pointerover (a dispatched pointerenter never reaches it; a real
+        // mouse hover can be intercepted by the hidden page at some widths).
+        await p.evaluate((s) => document.querySelector(s)?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, relatedTarget: document.body })), '#top a[href="/demo"]');
+      }
+      // The close: its wave, then the offer to its Try a lesson.
+      if (spot === "close" && !hovered && ms > 4500) {
+        hovered = true;
+        await p.evaluate((s) => document.querySelector(s)?.dispatchEvent(new PointerEvent("pointerover", { bubbles: true, relatedTarget: document.body })), '#start a[href="/demo"]');
       }
       if (spot === "hero" && !tapped && ms > 6500) {
         tapped = true;
-        await p.evaluate(() => { const b = [...document.querySelectorAll("a, button")].find((x) => /Try a lesson/.test(x.textContent) && x.closest("#top")); b?.dispatchEvent(new PointerEvent("pointerleave", { bubbles: false })); document.querySelector('[aria-label="Say hi to Jake"]')?.click(); });
+        await p.evaluate(() => { document.querySelector('#top a[href="/demo"]')?.dispatchEvent(new PointerEvent("pointerout", { bubbles: true, relatedTarget: document.body })); document.querySelector('[aria-label="Say hi to Jake"]')?.click(); });
       }
       const file = path.join(OUT, `${spot}-${String(i).padStart(3, "0")}.png`);
       await p.screenshot({ path: file, clip, omitBackground: true });

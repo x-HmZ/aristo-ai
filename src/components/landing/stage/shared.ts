@@ -54,10 +54,11 @@ export interface Shared {
   /**
    * When each spot's greeting was last on (performance.now seconds), for the wave's cool-down; and the close's entries,
    * bumped each time the close comes into view once the cool-down has passed, so the teacher there remounts and waves,
-   * with when the teacher there last mounted (seconds; an entry that brings him there fresh needs no remount).
+   * with when the teacher there last mounted (seconds; an entry that brings him there fresh needs no remount). The
+   * close's Try a lesson earns the hero's palm-up offer: `hover` and `look` as the hero's (Close.tsx writes them).
    */
   waves: Partial<Record<string, number>>;
-  close: { enter: number; mountedAt: number };
+  close: { enter: number; mountedAt: number; hover: "try" | null; look: { el: HTMLElement; until: number } | null };
 }
 
 const initial = (): Shared => ({
@@ -67,7 +68,7 @@ const initial = (): Shared => ({
   moves: { run: 0 },
   room: { near: false, ready: false, failed: false, yaw: 0, pitch: 0, dragging: false },
   waves: {},
-  close: { enter: 0, mountedAt: Number.NEGATIVE_INFINITY },
+  close: { enter: 0, mountedAt: Number.NEGATIVE_INFINITY, hover: null, look: null },
 });
 
 export const shared: Shared = initial();

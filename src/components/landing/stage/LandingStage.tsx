@@ -205,7 +205,7 @@ const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
  */
 const HERO_WITHHELD: ReadonlySet<string> = new Set(["Pointing", "Talking6"]);
 /** The spots where a gesture's hand is aimed at its target. */
-const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture", "remember", "room"]);
+const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture", "remember", "room", "close"]);
 
 /**
  * The gesture target at a spot now, or null when no gesture is aimed: an element on the page (the hero's button, the
@@ -216,6 +216,9 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
     const look = shared.hero.look;
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
   }
+  if (spot === "close") {
+    const look = shared.close.look;
+    return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
   // The room: the cross-section, then its magma chamber as he names it (room.ts).
@@ -323,7 +326,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       const s = spot === "room"
         ? roomSignals(clockOf("room").t, shared.speaking)
         : signalsFor(spot, {
-          liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: h.hover, seq: h.seq,
+          liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: spot === "close" ? shared.close.hover : h.hover, seq: h.seq,
         });
       // The model's still is its end with Jake presenting: the section shows its end at once, so the model's edge comes
       // half a second after he is live instead.
@@ -342,8 +345,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     // (aim.ts), the same point the head and eyes go to. At the idea spot, his palms are reported for the flute he holds.
     afterPose: (root, delta) => {
       if (AIMED.has(spot)) {
-        // The pointing spots aim the finger too; the hero's open palm only the arm and the wrist.
-        aim.current ??= createAim(root, "L", { finger: spot !== "hero" });
+        // The pointing spots aim the finger too; the open palm (the hero's and the close's offer) only the arm and wrist.
+        aim.current ??= createAim(root, "L", { finger: spot !== "hero" && spot !== "close" });
         // The aimed point glides to a new target (It Remembers moves the finger from one review point to the next)
         // and is taken at once when a gesture starts.
         const [tx, ty, tz] = TARGET[spot];

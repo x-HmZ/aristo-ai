@@ -3,10 +3,10 @@ import { CAPTURE_ASPECT, EYE, SPOTS, TEACHER, frustumFor, pickSpot, project, sti
 
 describe("frustumFor", () => {
   it("shows the spot's vertical range edge to edge", () => {
-    const f = frustumFor(SPOTS.close, 0.9);
+    const f = frustumFor(SPOTS.model, 0.9);
     const d = EYE[2] - TEACHER.position[2];
-    expect(f.top * d + EYE[1]).toBeCloseTo(SPOTS.close.top);
-    expect(f.bottom * d + EYE[1]).toBeCloseTo(SPOTS.close.bottom);
+    expect(f.top * d + EYE[1]).toBeCloseTo(SPOTS.model.top);
+    expect(f.bottom * d + EYE[1]).toBeCloseTo(SPOTS.model.bottom);
   });
 
   it("puts the spot's x at fx of the width, whatever the aspect", () => {
@@ -18,14 +18,14 @@ describe("frustumFor", () => {
   });
 
   it("keeps the proportions: the width follows the aspect at the same scale as the height", () => {
-    const f = frustumFor(SPOTS.close, 1.25);
+    const f = frustumFor(SPOTS.model, 1.25);
     expect((f.right - f.left) / (f.top - f.bottom)).toBeCloseTo(1.25);
   });
 
   it("maps the top and bottom of the range to the box's top and bottom", () => {
-    const f = frustumFor(SPOTS.close, 1);
-    expect(project(f, [-1, SPOTS.close.top, TEACHER.position[2]]).v).toBeCloseTo(0);
-    expect(project(f, [-1, SPOTS.close.bottom, TEACHER.position[2]]).v).toBeCloseTo(1);
+    const f = frustumFor(SPOTS.model, 1);
+    expect(project(f, [-1, SPOTS.model.top, TEACHER.position[2]]).v).toBeCloseTo(0);
+    expect(project(f, [-1, SPOTS.model.bottom, TEACHER.position[2]]).v).toBeCloseTo(1);
   });
 
   it("frames Jake from above his head: to mid-thigh, or the upper thigh in the closer hero", () => {

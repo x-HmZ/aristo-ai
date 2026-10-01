@@ -127,8 +127,10 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
       s.modelShown = ctx.hover === "try";
       break;
     case "close":
-      // The product's greeting: sceneReady's rising edge plays the wave, once per mount.
+      // The product's greeting: sceneReady's rising edge plays the wave, once per mount. Try a lesson here earns the
+      // hero's offer: his left palm up towards it (PresentModel), his head and eyes on it.
       s.sceneReady = ctx.mayWave && ctx.liveFor >= WAVE_AFTER_S;
+      s.modelShown = ctx.hover === "try";
       break;
     case "idea":
       // The product's explain beat: a new explain segment plays HoldIdea once (hands in front of the chest, palms

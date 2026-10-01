@@ -47,8 +47,8 @@ export interface SpotFraming {
 export const SPOTS: Record<FramedSpotId, SpotFraming> = {
   // The hero has him on the left, a little closer, with his reach to his left (screen right, towards the buttons)
   // kept in frame: his right arm at rest (-1.42, its hand to about -1.47, with a margin) to past his offering
-  // fingertip (PresentModel, 0.01).
-  hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.56, 0.1] },
+  // fingertip, aimed at the button (PresentModel: to about 0.1; measured 3 px from the edge with 0.1, so 0.22).
+  hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.56, 0.22] },
   // A Teacher of Your Own: him alone, centred, his hands in front of his chest (HoldIdea).
   idea: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.55, -0.45] },
   // It Draws a Diagram: him on the left and, to his left, the classroom board's own place (Experience SCENE_*: centre
@@ -65,7 +65,9 @@ export const SPOTS: Record<FramedSpotId, SpotFraming> = {
   // It Remembers What You Know: as the picture spot, him on the left and, at the board's place, the paper card whose
   // review points he taps (PointNear, aimed).
   remember: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
-  close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
+  // The close: as the hero, him on the left and Try a lesson to his left (screen right). `need` keeps his offered
+  // fingertip (PresentModel towards the button, about 0.1) and either wave (the right hand reaches about -1.75) in the box.
+  close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.42, need: [-1.85, 0.2] },
 };
 
 /** The board spots' box aspect (width / height): Jake and the board, -1.55 to 1.21 m across, 2.12 m high. */

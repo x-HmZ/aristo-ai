@@ -4,7 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CLOSE } from "../content";
 import { Spot } from "../Spot";
-import { enterClose } from "../stage/host";
+import { enterClose, host } from "../stage/host";
+import { shared } from "../stage/shared";
 import { BTN_LG, BTN_PRIMARY, LEDE, WRAP } from "../ui";
 
 /**
@@ -12,15 +13,31 @@ import { BTN_LG, BTN_PRIMARY, LEDE, WRAP } from "../ui";
  * stays in view, so it leaves only upwards; scrolled up part way it is still the active spot, with no remount of its own).
  */
 const IN_VIEW = 0.5;
+/** A call to action earns one offer at most this often; he looks at it while the offer plays (as the hero). */
+const REACT_EVERY_MS = 3000;
+const GESTURE_LOOK_MS = 3000;
 const OUT_OF_VIEW = 0.25;
 
 /**
  * The close (V8.3b): the closing line in wide caps, one call to action, and Jake beside it, who waves goodbye each time
  * his box comes into view (half of it, after under a quarter of it was), unless he waved there in the last 8 s (host.ts
- * enterClose; the stage remounts him there and a fresh mount waves).
+ * enterClose; the stage remounts him there and a fresh mount waves). Pointing at or focusing Try a lesson earns the
+ * hero's offer: his left palm up towards it, his head and eyes on it.
  */
 export function Close() {
   const section = useRef<HTMLElement>(null);
+  const lastReact = useRef(0);
+  // Pointing at, or focusing, Try a lesson: his left palm offered towards it, his head and eyes on it (the hero's offer,
+  // LandingStage gestureAt). Only while he is live here.
+  const hover = (on: boolean) => (e: { currentTarget: HTMLElement }) => {
+    if (on) {
+      const now = performance.now();
+      if (host.live !== "close" || now - lastReact.current < REACT_EVERY_MS) return;
+      lastReact.current = now;
+      shared.close.look = { el: e.currentTarget, until: now + GESTURE_LOOK_MS };
+    }
+    shared.close.hover = on ? "try" : null;
+  };
   useEffect(() => {
     const box = section.current?.querySelector("[data-spot=close]");
     if (!box) return;
@@ -41,7 +58,11 @@ export function Close() {
             {CLOSE.title}
           </h2>
           <p className={LEDE}>{CLOSE.line}</p>
-          <Link href="/demo" className={cn(BTN_PRIMARY, BTN_LG, "mt-1 w-full sm:w-auto")}>
+          <Link
+            href="/demo"
+            onPointerEnter={hover(true)} onPointerLeave={hover(false)} onFocus={hover(true)} onBlur={hover(false)}
+            className={cn(BTN_PRIMARY, BTN_LG, "mt-1 w-full sm:w-auto")}
+          >
             Try a lesson
             <ArrowRight className="size-4" strokeWidth={2.4} />
           </Link>

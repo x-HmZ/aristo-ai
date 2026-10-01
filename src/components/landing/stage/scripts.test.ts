@@ -62,11 +62,13 @@ describe("the hero's reactions", () => {
     expect(signalsFor("hero", { ...ctx, hover: "try", seq: 3 }).modelShown).toBe(true);
     expect(signalsFor("hero", { ...ctx, hover: null, seq: 3 }).modelShown).toBe(false);
   });
-  it("does nothing extra with no hover, and never outside the hero", () => {
+  it("does nothing extra with no hover, and only at the hero and the close's Try a lesson", () => {
     const s = signalsFor("hero", { ...ctx, hover: null, seq: 5 });
     expect(s.segmentId).toBeNull();
     expect(s.reaction).toBeNull();
-    expect(signalsFor("close", { ...ctx, hover: "try", seq: 5 }).modelShown).toBe(false);
+    expect(signalsFor("close", { ...ctx, hover: "try", seq: 5 }).modelShown).toBe(true);
+    expect(signalsFor("close", { ...ctx, hover: null, seq: 5 }).modelShown).toBe(false);
+    expect(signalsFor("idea", { ...ctx, hover: "try", seq: 5 }).modelShown).toBe(false);
   });
 });
 
