@@ -34,6 +34,8 @@ import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type FramedSpotId, type SpotI
 import { drawEach, warmUp } from "./warm";
 
 const NEAR = 0.05;
+/** Frames left out of the speed check after the canvas arrives at a spot (the teacher's mount there). */
+const SETTLE_FRAMES = 20;
 const FAR = 60;
 /** The section clock each spot's script reads. */
 const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", remember: "remember", room: "room", close: "close" };
@@ -69,15 +71,23 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
   // judged too, once it is live, and a slow room hands the page to the stills like a slow start does.
   const roomSamples = useRef<number[]>([]);
   const roomJudged = useRef(false);
+  const roomSkip = useRef(SETTLE_FRAMES);
   const still = useMemo(stillParams, []);
   const tour = useRef({ shot: -1, settling: false });
+  // The speed check judges frames at one spot where he is live, a run of them: a reader who scrolls on at once
+  // passes spots that mount and load as they go, and those frames say nothing about this machine (judged with them,
+  // a fast machine scrolling straight down was sent to the stills). A new spot starts the run again, after its first
+  // SETTLE_FRAMES.
+  const run = useRef({ spot: null as SpotId | null, skip: 0 });
   const judge = (dt: number) => {
-    if (judging && !judged.current) {
-      samples.current.push(dt * 1000);
-      if (samples.current.length >= SLOW_SAMPLE_FRAMES) {
-        judged.current = true;
-        if (isSlow(samples.current)) onSlow();
-      }
+    if (!judging || judged.current) return;
+    if (host.live !== spot) return;
+    if (run.current.spot !== spot) { run.current = { spot, skip: SETTLE_FRAMES }; samples.current = []; }
+    if (run.current.skip > 0) { run.current.skip -= 1; return; }
+    samples.current.push(dt * 1000);
+    if (samples.current.length >= SLOW_SAMPLE_FRAMES) {
+      judged.current = true;
+      if (isSlow(samples.current)) onSlow();
     }
   };
   useFrame((_, dt) => {
@@ -108,7 +118,10 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
     cam.updateProjectionMatrix();
     cam.updateMatrixWorld();
     judge(dt);
-    if (judging && !roomJudged.current && host.live === "room") {
+    // The room's own run: unbroken while it is live, after its first frames (as the start's).
+    if (host.live !== "room") { roomSamples.current = []; roomSkip.current = SETTLE_FRAMES; }
+    else if (roomSkip.current > 0) roomSkip.current -= 1;
+    else if (judging && !roomJudged.current) {
       roomSamples.current.push(dt * 1000);
       if (roomSamples.current.length >= SLOW_SAMPLE_FRAMES) {
         roomJudged.current = true;
@@ -202,6 +215,7 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
   if (spot === "hero") {
     const look = shared.hero.look;
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
+  }
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
   // The room: the cross-section, then its magma chamber as he names it (room.ts).
