@@ -2,37 +2,63 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-09-30 - V8.3b build: nav, hero and the model build live; waiting for Hmz's review before the rest
+## 2026-10-01 - V8.3b build, session 1 done: nav, hero, idea, ideas, picture, model built and reviewed by Hmz
 
-- Commits on `dev/v8-3b-landing` (no upstream): a5b0ad9 static page, 1526c27 nav, 3b8b324 stage on spots, 2e8b024
-  hero, 9b42095 model build. Evidence: `.claude/eval/2026-09-30-v8-3b-landing/first-sections/` and its README.
-- **Stage:** one transparent canvas placed over the most visible spot (`stage/host.ts`), the classroom's own camera
-  and Jake's classroom placement, each spot a crop of that view (`stage/spots.ts`). Jake remounts per spot visit;
-  spots show stills (`public/images/landing/v3b/`) until he is live, and on the lite path.
-- **Measured:** proportions within 2% of the classroom render; PresentModel fingertip 1.8 cm from the heart's edge;
-  0 AA fails, 0 small targets, 0 overflow at 5 widths x 2 themes; `/` 116 kB; LCP 152 to 368 ms; CLS 0; tests 511.
-- **Deviations from the plan:** HeartBuild and shaders.ts kept (round 3's model build is 3D); the nav has mockup E's
-  four links; the hero's round of lines enters at Explain.
-- **Open:** one 100 to 150 ms frame at stage start-up; the 3D picture card is a plain white square (source.jpg);
-  `scroll.ts`, `timeline.ts` and `Diagram.tsx` stay until the sections that reuse them.
-- **Hmz's review (round 2), done in f84e1dd and 93fa477:**
-  - The hero is a hello: Jake follows the pointer, gives "your turn" on Try a lesson, and waves on a tap or when
-    the reader comes back. No lesson card.
-  - The model build starts from the infographic.
-  - Topics: volcano for the ideas and the picture, the heart for the model, the volcano for Immersive; Five Moves in
-    plain words. Memory: `landing_features_not_a_lesson.md`.
-- **Round 3 (4a6ae40, 1317bf0):** the hero is mirrored (Jake left, text right, top-aligned). Try a lesson gets the
-  one-hand palm-up offer, with his head and eyes on the button: 14 degrees from the line to it. MoveOn was tried and
-  rejected (49 degrees off). Tests 510.
-- **Round 4 (6ecee7a):** the offered palm is aimed at Try a lesson after the pose (`stage/aim.ts`, via Teacher's
-  new optional `afterPose`). Measured: reach 5.4 to 5.9 degrees and hand 0.7 to 3.6 degrees from the button. Tests 514.
-- **Next sections built (72ab2bc, 0ab9cd5, 747b148):** A Teacher of Your Own (he holds the idea, an orb that lights the
-  mark's flute), It Finds the Ideas Inside and It Draws a Diagram (volcano; PointNear aimed at a node and at the crater,
-  3.6 to 6.2 degrees). Teacher's driver gained `withhold`. `/` 118 kB; 0 AA fails; sections play at 0% dropped.
-  Tests 519.
-- **Next:** Hmz's review of these three; then Five Moves (plain words), It Remembers, Immersive (volcano), For Parents,
-  the close; then steps 10 to 12 (A Teacher of Your Own, the ideas, the picture,
-  Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
+Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last commit b73e4e0 plus the docs commit after it.
+Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first-sections/`, `sections-r5/`,
+`sections-r6/`).
+
+- **Built, in page order:**
+  - nav (pill, sheet below lg);
+  - **hero:** Jake left, text right. He waves with his left hand and follows the pointer. On Try a lesson he offers
+    his left palm, aimed at the button, with his head and eyes on it. A tap waves; coming back waves.
+  - **A Teacher of Your Own:** the beats rise and the colonnade draws. He holds the idea, an orb that flies into the
+    mark's middle flute and lights it.
+  - **It Finds the Ideas Inside (volcano):** the classroom's dark display; the ideas come out of a thinking glow as
+    orbs and form a constellation. He points (PointNear) at the magma chamber's orb.
+  - **It Draws a Diagram (volcano):** the cross-section resolves (noise, lines, colour) and he points at the crater.
+  - **It Builds a Model (heart):** the infographic lifts into points onto the heart. PresentModel's palm meets its
+    edge. Drag or Turn it.
+  - **For Parents:** the old V8.3 one, not yet restyled.
+  - **Close:** a spot that waves.
+  - Footer.
+- **How the stage works** (read before adding a section):
+  - `stage/host.ts`: one canvas over the most visible spot.
+  - `stage/spots.ts`: the classroom eye, plus a crop per spot; `need` keeps a reach in frame.
+  - `stage/scripts.ts`: the per-spot director signals and the timelines.
+  - `stage/aim.ts`: aims a hand at a target after the pose.
+  - LandingStage: `TARGET`, `gestureAt`, `withhold` (never Pointing; the hero also never Talking6).
+  - `play.ts`: the section clocks; a spot's graphic plays once Jake is live there.
+  - Posters: `<spot>-start.webp` on the live path and `<spot>.webp` on lite.
+- **Teacher.tsx** (product) gained three optional driver fields, used only by the landing: `viewer`, `afterPose`,
+  `withhold`. The classroom passes no driver and is unchanged.
+- **Hmz's rules learned this session** (memory `landing_features_not_a_lesson`):
+  - features, not a lesson;
+  - every gesture lands on a real thing, verified from the bones with peak frames;
+  - a section's poster is its first frame;
+  - one visual language: the idea's orb of light, the dark display, chalk and paper.
+- **Measured** (`sections-r5/perf.json`, `sections-r6/check.json`):
+  - `/` 118 kB first load (budget 135); `/demo` and `/learn` unchanged;
+  - LCP 152 to 428 ms; CLS 0;
+  - every section plays at p95 16.8 ms with 0% dropped;
+  - 0 AA failures in both themes; 0 targets under 44px; 0 overflow at 360 to 1440;
+  - tests 519, lint 0 errors and 10 warnings.
+- **Open:**
+  - the hero's single 83 to 150 ms start-up frame, and one 133 ms frame in a steady scroll at 1440 light (likely
+    Jake's remount at a spot change): find both with long-frame attribution;
+  - `stage/scroll.ts` and `timeline.ts` are now used only by `timeline.test.ts` and the old V8.3 camera poses
+    (Immersive may reuse the poses; delete the rest);
+  - three unused `public/images/landing/classroom-*.webp` and the old `public/images/landing/v3/*` stills (except
+    `idea.webp`, the proportions reference) go in step 10.
+- **Next (new session):** plan section 8 from the rest of step 7 on.
+  1. Five Moves (in plain words);
+  2. It Remembers (map and curve);
+  3. Immersive (the classroom room, volcano, camera tour, drag to look);
+  4. For Parents restyled on the system;
+  5. the close;
+  6. then steps 10 to 12: stills and lite, verification plus the `code-reviewer` (and `security-reviewer`: the
+     driver hooks touch Teacher), then docs (decisions, brand-system, messaging). Then the PR into `deploy-prep`,
+     superseding #18.
 
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
 

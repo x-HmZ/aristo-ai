@@ -161,3 +161,20 @@ Commits 72ab2bc, 0ab9cd5, 747b148. Evidence: `sections-r5/` (`review-round5.webp
 - **Frames:** every section plays at p95 16.7 to 16.8 ms with 0% dropped.
 - **Open:** the hero's one 83 to 150 ms start-up frame, and one 133 ms frame in the steady scroll at 1440 light
   (probably Jake remounting at a spot change). Both are for the verification step.
+
+### Round 6 (Hmz: no jump into the first frame, the cut-off wave, a better ideas section)
+
+Commits a080b10, 495030a, b73e4e0. Evidence: `sections-r6/`.
+- **First frames:** on the live path each spot's poster is now its section's first frame (`<spot>-start.webp`:
+  Jake at rest, nothing built), captured with `stills.cjs <spots> <base> <wait> start` (`?still&start`). Going live
+  no longer jumps from the finished state to the start. Lite and the stack keep the finished stills; the CSS swaps
+  them by `data-mode`, and a lazy image that is not displayed is never fetched.
+- **The wave:** decoded from the clip pack, Talking6 waves the right arm and Talking6M the left. The hero withholds
+  Talking6. Three runs (`measures.json`): his left hand is up each time (y 0.30, right hand -0.43).
+- **It Finds the Ideas Inside, redrawn:**
+  - The panel is the classroom's dark display (`.theme-ink`).
+  - A thinking glow gathers in its middle, and the ideas come out of it as orbs of the idea's own light: rings for
+    what the topic builds on, filled for its own ideas.
+  - The links draw like a constellation.
+  - The pointing lands on the chamber's orb: 5.3 to 5.4 degrees, with the labels clear of his arm.
+- **Checks:** at 360 to 1440, both themes: 0 AA failures, 0 small targets, 0 overflow. Tests 519.
