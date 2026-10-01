@@ -1,0 +1,51 @@
+{
+ "api": [],
+ "paid": [],
+ "visits": [
+  {
+   "visit": "arrive",
+   "wristTop": 0.29,
+   "hand": "left",
+   "waved": true
+  },
+  {
+   "away": "part way",
+   "active": "close",
+   "shown": 0.1
+  },
+  {
+   "visit": "back from part way after 9 s",
+   "wristTop": 0.29,
+   "hand": "right",
+   "waved": true
+  },
+  {
+   "away": "part way",
+   "active": "close",
+   "shown": 0.1
+  },
+  {
+   "visit": "back from part way within the cool-down",
+   "wristTop": -0.42,
+   "hand": "left",
+   "waved": false
+  },
+  {
+   "away": "room",
+   "active": "room",
+   "shown": 0
+  },
+  {
+   "visit": "back from the room after 9 s",
+   "wristTop": 0.29,
+   "hand": "right",
+   "waved": true
+  }
+ ],
+ "geo": {
+  "top": 7023.390625,
+  "h": 600,
+  "page": 8026,
+  "vh": 800
+ }
+}
