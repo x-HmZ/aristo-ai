@@ -87,7 +87,8 @@ const fresh = (run: number): State => ({
  * - Explain (HoldIdea): the idea, an orb of light between his palms;
  * - Demonstrate (StepBeat, three chops): each chop sets a step down under his hand;
  * - Challenge (YourTurn, palms up, offered): the question card, paper, resting on his palms;
- * - Connect (BringTogether): the idea in one hand and what comes next in the other, linked as his hands close.
+ * - Connect (BringTogether): what you have just learned in one hand and what comes next in the other, linked as his
+ *   hands close.
  * Once his hands let a piece go it rests a moment, then flies to its place on the board, which lights. In Challenge
  * the answer arrives on the board and is marked right. Only on the live path.
  */
@@ -245,8 +246,9 @@ export function MovesHands({ wrap, board }: { wrap: RefObject<HTMLDivElement | n
         }
       }
 
-      // Connect: the idea in his right hand (screen left), what comes next in his left; the link closes with his
-      // hands; when they come down, what comes next flies to its place on the board, linked from the idea.
+      // Connect: what you have just learned (the answer, lit) in his right hand (screen left), what comes next in his
+      // left; the link closes with his hands; when they come down, what comes next flies to its place on the board,
+      // under the answer it follows from.
       if (beat.move === "connect" || st.next) {
         const held = beat.move === "connect" && both && (!st.next || st.next.left === null);
         if (held) {

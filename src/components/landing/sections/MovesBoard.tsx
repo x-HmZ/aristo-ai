@@ -19,17 +19,17 @@ export const BOARD_NODES = {
 export type BoardNode = keyof typeof BOARD_NODES;
 
 /**
- * The board's links, each drawn once both its ends are on the board: the lesson's spine, top to bottom, and Connect's
- * arc from the idea to what comes next.
+ * The board's links, each drawn once both its ends are on the board: the lesson's spine, top to bottom. What comes
+ * next hangs from the answer, because that is where the next lesson starts: the volcano lesson's answer (thick magma
+ * traps the gas) is why eruptions differ, and its next concept is the types of volcano and their eruption styles.
  */
 export const BOARD_LINKS: readonly [BoardNode, BoardNode][] = [
-  ["k0", "k1"], ["k1", "idea"], ["idea", "s0"], ["s0", "s1"], ["s1", "s2"], ["s2", "q"], ["idea", "next"],
+  ["k0", "k1"], ["k1", "idea"], ["idea", "s0"], ["s0", "s1"], ["s1", "s2"], ["s2", "q"], ["q", "next"],
 ];
 
-/** A link's path in the board's 0 to 100 box: down the spine, except the idea to what comes next, an arc to its left. */
+/** A link's path in the board's 0 to 100 box: straight down the spine. */
 function linkPath(a: BoardNode, b: BoardNode): string {
   const p = BOARD_NODES[a], q = BOARD_NODES[b];
-  if (a === "idea" && b === "next") return `M ${p.x} ${p.y} C ${p.x - 9} ${p.y + 6}, ${q.x - 9} ${q.y - 6}, ${q.x} ${q.y}`;
   return `M ${p.x} ${p.y} L ${q.x} ${q.y}`;
 }
 
