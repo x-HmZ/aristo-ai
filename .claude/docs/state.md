@@ -2,6 +2,43 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-01 - V8.3b build, session 2 done: Five Moves and It Remembers built and reviewed; Ideas removed
+
+Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last code commit 613917b, evidence 4c7cce0. Evidence:
+`.claude/eval/2026-09-30-v8-3b-landing/session2/` (moves/, remember/, posters/, bounds).
+
+- **Page order now:** hero, A Teacher of Your Own (#idea), It Draws a Diagram, It Builds a Model, One Lesson, Five
+  Moves (#how, nav "How it works"), It Remembers What You Know (#map), For Parents (old, not restyled), Close (old),
+  footer. **It Finds the Ideas Inside was removed** (Hmz: Five Moves covers it and looks better).
+- **Five Moves (story, Hmz approved):** Jake beside the classroom's dark display. Each move's gesture (director
+  signals: hook/Imagine, explain/HoldIdea, demo_step/StepBeat x3, challenge_setup/YourTurn, connect/BringTogether, plus
+  the "that's right" reaction) makes a piece at his hands (placed per frame from bones via `shared.hands.onReport`,
+  same frame as the render), which then flies to its place on the board: the volcano lesson's outline (summaries, not
+  lines). "Next" hangs from the answer (Hmz). Files: `sections/Moves.tsx`, `MovesBoard.tsx`, `MovesHands.tsx`.
+- **It Remembers (built, shown to Hmz, not yet commented on):** a paper card with one real concept (Variables and
+  Assignment) over three weeks; Jake points (PointNear, aimed) at each review point as the line reaches it, all inside
+  the clip's ~3.7 s hold; then the real course map on the dark display. `sections/Remember.tsx`.
+- **Fixes Hmz asked for:**
+  - posters = first live frame everywhere: stills placed by the live framing in CSS (`spots.ts stillCss`,
+    unit-tested), recaptured at the first live frame; `idea.webp` had been clipped by the capture viewport.
+  - Jake never out of bounds: `scripts/bounds.cjs` (probe-only `?probe&wide=` view); Five Moves' Imagine spread was
+    85 px out. Fixed with `need` per spot; now >= 23 px clear at 768 to 1440.
+- **Stage additions:** aim glides between targets and, on pointing spots, turns the index finger (`aim.ts` `finger`);
+  picture pointing now 0.4 deg. Section clocks have a reader pause (`play.ts setPaused`).
+- **Measured:** AA 0 failures (min 4.74 light, 5.48 dark), 0 targets under 44 px, 0 overflow 360 to 1440, tests 89,
+  lint 0 errors, 0 API and 0 paid calls. Gesture peaks: every piece within 4 px of its hand; taps within 4 px.
+- **Open / next session:**
+  1. Immersive ("Step Into the Classroom"): the room, the volcano lesson, a camera tour you can drag; loads only near
+     the section.
+  2. For Parents restyled on the system.
+  3. The close: waves goodbye each time it comes into view (today it remounts only on a spot change).
+  4. Steps 10 to 12: stills (recapture `picture.webp` end still: the finger aim changed) and the lite/stack paths;
+     verification (perf, the two long frames: hero start-up 83 to 150 ms, 133 ms in a steady scroll at 1440);
+     `code-reviewer` + `security-reviewer` (driver hooks touch Teacher.tsx) with fixes; docs (decisions,
+     brand-system, messaging; delete `stage/scroll.ts`, `timeline.ts` leftovers, old `HeartBuild`? check use,
+     unused `classroom-*.webp` and `v3/*` except `idea.webp`); then the PR into `deploy-prep`, superseding #18.
+- **Gotcha:** never run `next dev` with a stray `next start`/`build` on the same `.next` (500s on localhost).
+
 ## 2026-10-01 - V8.3b build, session 1 done: nav, hero, idea, ideas, picture, model built and reviewed by Hmz
 
 Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last commit b73e4e0 plus the docs commit after it.

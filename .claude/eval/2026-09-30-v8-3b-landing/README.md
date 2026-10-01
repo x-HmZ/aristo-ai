@@ -178,3 +178,24 @@ Commits a080b10, 495030a, b73e4e0. Evidence: `sections-r6/`.
   - The links draw like a constellation.
   - The pointing lands on the chamber's orb: 5.3 to 5.4 degrees, with the labels clear of his arm.
 - **Checks:** at 360 to 1440, both themes: 0 AA failures, 0 small targets, 0 overflow. Tests 519.
+
+## Session 2 (2026-10-01): Five Moves, the posters, the bounds, It Remembers
+
+Evidence in `session2/`. New scripts:
+
+| Script | What it does |
+|---|---|
+| `track.cjs` | A spot over its whole clock: bones, `[data-track]` marks and a screenshot per sample (`NOSHOT=1` for bones only) |
+| `keysheet.cjs` | A sheet of a track's frames nearest given section times |
+| `moves-peaks.cjs` | Five Moves: each gesture's peak, the piece against the hand that makes it |
+| `remember-peaks.cjs` | It Remembers: the finger against each review point as the line reaches it (angle, miss px) |
+| `handover.cjs` | Each poster against the first live frame (mean difference, silhouette shift) |
+| `bounds.cjs` | Jake's mesh outside his box through each timeline (`?probe&wide=0.25`) |
+
+- **Five Moves** (`session2/moves/`): round 1 (gestures with graphics at his hands) was "too vague" (Hmz); round 2
+  tells one story on the board. Every piece within 4 px of its hand, both themes.
+- **Posters** (`session2/posters/`): 0 px shift at 1024 to 1440 after the stillCss placement and the recapture.
+- **Bounds** (`session2/bounds*`): before, Five Moves 85 px out and Ideas 5 px; after, 0 out, >= 23 px clear.
+- **It Finds the Ideas Inside** removed (Hmz).
+- **It Remembers** (`session2/remember/`): taps within 4 px, map and curve in both themes; checks.txt has the full
+  AA/targets/overflow run.
