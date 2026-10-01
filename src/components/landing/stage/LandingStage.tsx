@@ -45,8 +45,8 @@ const RoomScene = lazy(() => import("./RoomScene"));
 
 const useHost = () => useSyncExternalStore(
   subscribe,
-  () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}|${shared.room.near}|${shared.room.ready}`,
-  () => "null|false|0|0|false|false",
+  () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}|${shared.room.near}|${shared.room.ready}|${shared.close.enter}`,
+  () => "null|false|0|0|false|false|0",
 );
 
 /** The verification's still captures (`?still`, and `?still&start` for a section's first frame). */
@@ -234,8 +234,6 @@ const PALM_BONES = [
   "CC_Base_R_Index3", "CC_Base_R_Mid3", "CC_Base_R_Pinky3", "CC_Base_R_Thumb3",
 ] as const;
 
-/** When each spot last waved (performance.now seconds), for the cool-down. Survives remounts. */
-const lastWave: Partial<Record<SpotId, number>> = {};
 
 /**
  * Jake at one spot: mounted fresh per visit (keyed by the spot), driven by the spot's script. Two frames after he
@@ -244,12 +242,16 @@ const lastWave: Partial<Record<SpotId, number>> = {};
 function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: boolean; greet: number; lookTargets?: LookTargets }) {
   const frames = useRef(0);
   const liveAt = useRef<number | null>(null);
+  const waved = useRef(false);
   // A fresh mount asked for by the reader (a tap on Jake, coming back to the page) always waves: those have their
-  // own cool-downs (Hero.tsx). Arriving at a spot waves unless it waved in the last WAVE_COOLDOWN_S.
+  // own cool-downs (Hero.tsx). Arriving at a spot waves unless he waved there in the last WAVE_COOLDOWN_S (stamped
+  // once, when the greeting is cued: stamped every frame, a spot still drawing at the edge of the view never cooled).
   const mayWave = useMemo(() => {
     const now = performance.now() / 1000;
-    return greet > 0 || lastWave[spot] === undefined || now - lastWave[spot]! > WAVE_COOLDOWN_S;
+    return greet > 0 || shared.waves[spot] === undefined || now - shared.waves[spot]! > WAVE_COOLDOWN_S;
   }, [spot, greet]);
+  // The close's entries remount him only if he was there before its box last left the view (host.ts enterClose).
+  useEffect(() => { if (spot === "close") shared.close.mountedAt = performance.now() / 1000; }, [spot]);
   const hold = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("still"), []);
   // `?still&start`: a section's first frame (him at rest, nothing built yet), the poster the live path shows first.
   const start = useMemo(() => hold && new URLSearchParams(window.location.search).has("start"), [hold]);
@@ -306,7 +308,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       // The other stills: at rest beside the lit column; pointing at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
       if (hold && spot === "picture") s.gesture = liveFor > 0.5 ? "pointing" : "idle";
-      if (s.sceneReady && mayWave) lastWave[spot] = now;
+      if (s.sceneReady && mayWave && !waved.current) { waved.current = true; shared.waves[spot] = now; }
       return s;
     },
     viseme: visemeNow,
@@ -373,7 +375,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
 
 export default function LandingStage({ onLive, onSlow }: { onLive: () => void; onSlow: () => void }) {
   const [warm, setWarm] = useState(false);
-  const [activeKey, onScreenKey, greetKey, movesKey, nearKey] = useHost().split("|");
+  const [activeKey, onScreenKey, greetKey, movesKey, nearKey, , closeKey] = useHost().split("|");
   const greet = Number(greetKey);
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
@@ -404,7 +406,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onWarm={onWarm}>
-          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active}spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
+          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active === "close" ? `close:${closeKey}` : active} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
         </Warmed>
       </Suspense>
       {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is

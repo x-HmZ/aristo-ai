@@ -1,4 +1,5 @@
 import { shared } from "./shared";
+import { WAVE_COOLDOWN_S } from "./scripts";
 import { pickSpot, type SpotId } from "./spots";
 
 /**
@@ -102,6 +103,20 @@ export function nearRoom(): void {
 
 /** The room is loaded and warm (RoomScene sets shared.room.ready first): the teacher there may go live. */
 export function roomReady(): void {
+  emit();
+}
+
+/**
+ * The close has come into view again (Close.tsx; `leftAt`, when its box last left the view, in performance.now
+ * seconds): the teacher there remounts and a fresh mount waves goodbye (plan note 6: every time it comes into view, 8 s
+ * cool-down). Not when he mounted there since it left (the canvas just arrived from another spot: he is already
+ * fresh), nor within the cool-down.
+ */
+export function enterClose(leftAt: number): void {
+  if (shared.close.mountedAt > leftAt) return;
+  const last = shared.waves.close;
+  if (last !== undefined && performance.now() / 1000 - last <= WAVE_COOLDOWN_S) return;
+  shared.close.enter += 1;
   emit();
 }
 

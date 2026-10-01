@@ -50,10 +50,19 @@ export const shared: {
    * only moves the tour's clock: the director takes the new signals from wherever he is, as in a lesson.
    */
   room: { near: boolean; ready: boolean; yaw: number; pitch: number; dragging: boolean };
+  /**
+   * When each spot's greeting was last on (performance.now seconds), for the wave's cool-down; and the close's entries,
+   * bumped each time the close comes into view once the cool-down has passed, so the teacher there remounts and waves,
+   * with when the teacher there last mounted (seconds; an entry that brings him there fresh needs no remount).
+   */
+  waves: Partial<Record<string, number>>;
+  close: { enter: number; mountedAt: number };
 } = {
   mode: "lite", live: false, speaking: false, heart: { turn: 0, user: false }, pointer: null,
   hero: { hover: null, seq: 0, greet: 0, look: null },
   hands: { spot: null, palms: null, raised: false, lift: { l: -0.45, r: -0.45 }, low: null, onReport: null },
   moves: { run: 0 },
   room: { near: false, ready: false, yaw: 0, pitch: 0, dragging: false },
+  waves: {},
+  close: { enter: 0, mountedAt: Number.NEGATIVE_INFINITY },
 };
