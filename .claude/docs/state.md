@@ -24,7 +24,9 @@ _Update this at the end of every significant session: done / next / blockers, co
 - **Round 3 (4a6ae40, 1317bf0):** the hero is mirrored (Jake left, text right, top-aligned). Try a lesson gets the
   one-hand palm-up offer, with his head and eyes on the button: 14 degrees from the line to it. MoveOn was tried and
   rejected (49 degrees off). Tests 510.
-- **Next:** Hmz's go on round 3; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
+- **Round 4 (6ecee7a):** the offered palm is aimed at Try a lesson after the pose (`stage/aim.ts`, via Teacher's
+  new optional `afterPose`). Measured: reach 5.4 to 5.9 degrees and hand 0.7 to 3.6 degrees from the button. Tests 514.
+- **Next:** Hmz's go on round 4; then plan section 8 from step 6 (A Teacher of Your Own, the ideas, the picture,
   Five Moves, the map, Immersive, For Parents, the close), then steps 10 to 12.
 
 ## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
