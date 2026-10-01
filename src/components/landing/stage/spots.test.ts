@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EYE, SPOTS, TEACHER, frustumFor, pickSpot, project, type SpotId } from "./spots";
+import { CAPTURE_ASPECT, EYE, SPOTS, TEACHER, frustumFor, pickSpot, project, stillCss, type SpotId, type V3 } from "./spots";
 
 describe("frustumFor", () => {
   it("shows the spot's vertical range edge to edge", () => {
@@ -69,5 +69,41 @@ describe("frustumFor with a reach to keep in frame", () => {
     const f = frustumFor(SPOTS.hero, 0.6);
     expect(f.top * d + EYE[1]).toBeCloseTo(SPOTS.hero.top);
     expect(f.bottom * d + EYE[1]).toBeLessThan(SPOTS.hero.bottom);
+  });
+});
+
+describe("stillCss: the still and the canvas agree at any box size", () => {
+  /** Evaluates the CSS for a box (container units, clamp, the @container branch) to px. */
+  function rectOf(id: SpotId, W: number, H: number) {
+    const css = stillCss(id);
+    const [base, narrow] = css.split("@container");
+    let rule = base;
+    if (narrow) {
+      const [num, den] = narrow.match(/max-aspect-ratio: (\d+)\/(\d+)/)!.slice(1).map(Number);
+      if (W / H <= num / den) rule = narrow;
+    }
+    const prop = (name: string) => {
+      const expr = rule.match(new RegExp(`${name}:([^;}]+)`))![1]
+        .replace(/(-?[\d.]+)cqh/g, `($1*${H}/100)`).replace(/(-?[\d.]+)cqw/g, `($1*${W}/100)`).replace(/100cqw/g, `${W}`);
+      const clamp = (a: number, b: number, c: number) => Math.min(Math.max(b, a), c);
+      const calc = (v: number) => v;
+      return Function("clamp", "calc", `return ${expr}`)(clamp, calc) as number;
+    };
+    return { left: prop("left"), top: prop("top"), width: prop("width"), height: prop("height") };
+  }
+
+  const ids = Object.keys(SPOTS) as SpotId[];
+  const boxes: [number, number][] = [[300, 470], [413, 600], [464, 600], [530, 600], [600, 600], [707, 544], [618, 562], [360, 470]];
+  it.each(ids)("%s: a world point lands on the same pixel in both", (id) => {
+    const cap = frustumFor(SPOTS[id], CAPTURE_ASPECT[id]);
+    for (const [W, H] of boxes) {
+      const live = frustumFor(SPOTS[id], W / H);
+      const r = rectOf(id, W, H);
+      for (const p of [[-1, 0.5, -3], [-1.4, -0.3, -3], [-0.6, 0.8, -3], [0, 0, -3]] as V3[]) {
+        const s = project(cap, p), b = project(live, p);
+        expect(r.left + s.u * r.width).toBeCloseTo(b.u * W, 1);
+        expect(r.top + s.v * r.height).toBeCloseTo(b.v * H, 1);
+      }
+    }
   });
 });

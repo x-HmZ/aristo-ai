@@ -1,15 +1,14 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { registerSpot } from "./stage/host";
-import { SPOTS, type SpotId } from "./stage/spots";
+import { stillCss, type SpotId } from "./stage/spots";
 
 /**
  * A box Jake presents from (V8.3b). The live canvas moves onto whichever spot is most in view (stage/host.ts); every
  * other spot, and every spot on the lite path and under reduced motion, shows its still: Jake in that section's pose,
- * captured from the same stage, faded out at the bottom the same way. A still is captured wider than any box at the
- * same vertical range (spots.ts), so covering the box by height and pinning Jake's x at the spot's `fx` shows exactly
- * what the live canvas would. Overlays (a line card, a control) go in
- * `children` and sit above the canvas (z-20).
+ * captured from the same stage, faded out at the bottom the same way. Each still is placed in the box by the same
+ * framing the canvas uses (spots.ts stillCss, in container units), so at any box size the poster and the first live
+ * frame are the same picture. Overlays (a line card, a control) go in `children` and sit above the canvas (z-20).
  */
 // React 18 passes the attribute through only in lowercase (fetchPriority is a React 19 prop).
 const HIGH = { fetchpriority: "high" } as Record<string, string>;
@@ -39,19 +38,24 @@ export function Spot({
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => (ref.current ? registerSpot(id, ref.current) : undefined), [id]);
   return (
-    <div ref={ref} data-spot={id} className={cn("landing-spot relative", className)} style={style}>
+    <div ref={ref} data-spot={id} className={cn("landing-spot relative [container-type:size]", className)} style={style}>
+      <style>{stillCss(id)}</style>
       {pool && <div aria-hidden className={cn("glow-pool pointer-events-none absolute", pool)} />}
       {under}
       {still ? (
-        // eslint-disable-next-line @next/next/no-img-element -- a fixed-size box; next/image adds nothing here
-        <img src={still} alt={alt} className={cn("landing-spot-still landing-fade absolute inset-0 h-full w-full object-cover", start && "landing-still-end")} style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />
+        <div className={cn("landing-spot-still landing-fade absolute inset-0 overflow-hidden", start && "landing-still-end")}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- placed by container units; next/image adds nothing here */}
+          <img src={still} alt={alt} className={`landing-still-${id} absolute max-w-none`} decoding="async" loading={priority ? undefined : "lazy"} {...(priority ? HIGH : {})} />
+        </div>
       ) : (
         <span role="img" aria-label={alt} className="absolute inset-0" />
       )}
       {start && (
         // The live path's poster (globals.css swaps the two by data-mode; a lazy image that is not displayed never loads).
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={start} alt="" aria-hidden className="landing-spot-still landing-still-start landing-fade absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${SPOTS[id].fx * 100}% 0` }} decoding="async" loading="lazy" />
+        <div aria-hidden className="landing-spot-still landing-still-start landing-fade absolute inset-0 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={start} alt="" className={`landing-still-${id} absolute max-w-none`} decoding="async" loading="lazy" />
+        </div>
       )}
       {children}
     </div>

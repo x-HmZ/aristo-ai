@@ -90,6 +90,48 @@ export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
   return { left, right: left + width, top, bottom };
 }
 
+/** The box aspect each spot's stills are captured at (eval scripts/stills.cjs): the fixed-aspect spots at theirs. */
+export const CAPTURE_ASPECT: Record<SpotId, number> = {
+  hero: 1, idea: 1, ideas: BOARD_ASPECT, picture: BOARD_ASPECT, model: 1.1, moves: 1, close: 1,
+};
+
+const n = (v: number) => +v.toFixed(4);
+
+/**
+ * Where a spot's still goes in its box, as CSS for `.landing-still-<id>`, so the still and the live canvas show every
+ * world point at the same place in a box of any size: the poster and the first live frame are the same picture (Hmz).
+ *
+ * The still is the spot's view captured at CAPTURE_ASPECT; the canvas shows frustumFor(box aspect). Both are crops of
+ * one view from one eye, so one is the other scaled and moved. In a box at least as wide as `need`, the vertical
+ * range is the spot's own (the still is the box's height) and the horizontal placement follows frustumFor's clamp, in
+ * container units. In a narrower box the range grows to fit `need` across the width (an @container aspect query).
+ */
+export function stillCss(id: SpotId): string {
+  const spot = SPOTS[id];
+  const d = EYE[2] - PLANE_Z;
+  const cap = frustumFor(spot, CAPTURE_ASPECT[id]);
+  const capW = cap.right - cap.left, capV = cap.top - cap.bottom;
+  const top = (spot.top - EYE[1]) / d, V = top - (spot.bottom - EYE[1]) / d;
+  const x = (spot.x - EYE[0]) / d;
+  const k = 100 / V; // tangent units to cqh, while the vertical range is the spot's own
+  const sel = `.landing-still-${id}`;
+  let left: string;
+  if (spot.need) {
+    const n0 = (spot.need[0] - EYE[0]) / d, n1 = (spot.need[1] - EYE[0]) / d;
+    left = `calc(${n(cap.left * k)}cqh - clamp(${n(n1 * k)}cqh - 100cqw, ${n(x * k)}cqh - ${n(spot.fx * 100)}cqw, ${n(n0 * k)}cqh))`;
+  } else {
+    left = `calc(${n((cap.left - x) * k)}cqh + ${n(spot.fx * 100)}cqw)`;
+  }
+  let css = `${sel}{left:${left};top:${n((top - cap.top) * k)}cqh;width:${n(capW * k)}cqh;height:${n(capV * k)}cqh}`;
+  if (spot.need) {
+    const n0 = (spot.need[0] - EYE[0]) / d, needW = (spot.need[1] - spot.need[0]) / d;
+    const kw = 100 / needW; // tangent units to cqw, once the width is the need's
+    const ratio = Math.round((needW / V) * 1000);
+    css += `@container (max-aspect-ratio: ${ratio}/1000){${sel}{left:${n((cap.left - n0) * kw)}cqw;top:${n((top - cap.top) * kw)}cqw;width:${n(capW * kw)}cqw;height:${n(capV * kw)}cqw}}`;
+  }
+  return css;
+}
+
 /** Where a world point lands in a spot's box, as fractions of its width and height (0,0 = top left). */
 export function project(f: Frustum, p: V3): { u: number; v: number } {
   const d = EYE[2] - p[2];
