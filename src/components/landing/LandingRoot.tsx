@@ -81,16 +81,21 @@ export function LandingRoot() {
   // The layer follows the active spot: its box in the root's coordinates, and shown once the teacher is live there.
   useEffect(() => {
     if (!Stage) return;
+    // `?probe&wide=m` (verification only): the layer reaches past the box, m of its width each side and m of its
+    // height above (LandingStage's Framing grows the view to match), so what falls outside the box can be measured.
+    const params = new URLSearchParams(window.location.search);
+    const wide = params.has("probe") ? Number(params.get("wide")) || 0 : 0;
     const place = () => {
       const el = layer.current, r = root.current;
       const spot = host.active ? spotBox(host.active) : null;
       if (!el || !r || !spot) return;
       const a = spot.getBoundingClientRect(), b = r.getBoundingClientRect();
       const s = el.style;
-      const t = `translate3d(${Math.round(a.left - b.left)}px, ${Math.round(a.top - b.top)}px, 0)`;
+      const dx = wide * a.width, dy = wide * a.height;
+      const t = `translate3d(${Math.round(a.left - b.left - dx)}px, ${Math.round(a.top - b.top - dy)}px, 0)`;
       if (s.transform !== t) s.transform = t;
-      if (s.width !== `${Math.round(a.width)}px`) s.width = `${Math.round(a.width)}px`;
-      if (s.height !== `${Math.round(a.height)}px`) s.height = `${Math.round(a.height)}px`;
+      if (s.width !== `${Math.round(a.width + 2 * dx)}px`) s.width = `${Math.round(a.width + 2 * dx)}px`;
+      if (s.height !== `${Math.round(a.height + dy)}px`) s.height = `${Math.round(a.height + dy)}px`;
       // It fades in once live; it goes out at once, so a move never shows the teacher mid-mount at the new spot.
       const on = host.live !== null && host.live === host.active;
       s.transition = on ? "" : "none";

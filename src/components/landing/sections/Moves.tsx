@@ -15,6 +15,11 @@ import { MovesHands } from "./MovesHands";
 
 const CUES = MOVES_T.at;
 const BOX = boardBox("moves");
+/**
+ * The board is the classroom board's width at its place, and a little taller, an outline's shape: nothing he does
+ * points at it (each piece flies to its place), so it can be, and the outline's rows need the room.
+ */
+const BOARD_TALL = 1.18;
 
 /**
  * One Lesson, Five Moves (V8.3b): the five moves in plain words (messaging.md), told as one story. Jake makes each
@@ -91,11 +96,11 @@ export function Moves({ mode }: { mode: LandingMode | null }) {
                 ref={board}
                 armed={armed}
                 className="absolute"
-                style={{ left: `${BOX.left}%`, top: `${BOX.top}%`, width: `${BOX.width}%`, height: `${BOX.height}%` }}
+                style={{ left: `${BOX.left}%`, top: `${BOX.top}%`, width: `${BOX.width}%`, height: `${BOX.height * BOARD_TALL}%` }}
               />
             }
           />
-          <MovesBoard armed={false} className="relative aspect-square w-full sm:hidden" />
+          <MovesBoard armed={false} className="relative aspect-[1/1.18] w-full sm:hidden" />
         </div>
         {armed && <MovesHands wrap={wrap} board={board} />}
       </div>

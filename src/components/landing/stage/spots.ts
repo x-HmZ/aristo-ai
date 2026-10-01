@@ -43,19 +43,24 @@ export interface SpotFraming {
  */
 export const SPOTS: Record<SpotId, SpotFraming> = {
   // The hero has him on the left, a little closer, with his reach to his left (screen right, towards the buttons)
-  // kept in frame: his right arm at rest (-1.42, with a margin) to past his offering fingertip (PresentModel, 0.01).
-  hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.5, 0.1] },
+  // kept in frame: his right arm at rest (-1.42, its hand to about -1.47, with a margin) to past his offering
+  // fingertip (PresentModel, 0.01).
+  hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.56, 0.1] },
   // A Teacher of Your Own: him alone, centred, his hands in front of his chest (HoldIdea).
   idea: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.55, -0.45] },
   // The two volcano sections: him on the left and, to his left, the classroom board's own place (Experience
   // SCENE_*: centre 0.37, 0.18, the image 1.455 m square), where the product's pointing clips land. Fixed aspect
-  // (BOARD_ASPECT), so the composition and the stills are the same at every width.
-  ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
-  picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
+  // (BOARD_ASPECT), so the composition and the stills are the same at every width. `need` keeps his right hand in the
+  // box while he thinks (it reaches -1.57; eval bounds.cjs) and the board's right edge (1.1; the picture, set back
+  // and enlarged, reaches 1.18), with a margin.
+  ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
+  picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
   // One Lesson, Five Moves: as the volcano spots, him on the left and the classroom's display at the board's place,
-  // where what each move's gesture makes in his hands is set down.
-  moves: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2 },
+  // where what each move's gesture makes in his hands is set down. `need` keeps Imagine's spread in the box (his right
+  // fingertips reach -1.88; eval bounds.cjs) with the board's right edge (1.1): the view grows, he and the board are
+  // drawn a little smaller, and nothing of him is cut off.
+  moves: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.98, 1.16] },
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
 

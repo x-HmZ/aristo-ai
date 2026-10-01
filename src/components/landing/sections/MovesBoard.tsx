@@ -50,7 +50,7 @@ export const MovesBoard = forwardRef<HTMLDivElement, { armed: boolean; className
         style={style}
       >
         <div aria-hidden className="landing-display-glow absolute inset-0" />
-        <p className="absolute inset-x-0 top-[5%] flex items-center justify-center gap-2 whitespace-nowrap text-[13px] font-semibold text-ink sm:text-[15px]">
+        <p className="absolute inset-x-0 top-[3.5%] flex items-center justify-center gap-2 whitespace-nowrap text-[13px] font-semibold text-ink sm:text-[14px]">
           <Sparkles className="size-4 text-accent-text" aria-hidden />
           {MOVES_COPY.topic}
         </p>
@@ -84,8 +84,8 @@ export const MovesBoard = forwardRef<HTMLDivElement, { armed: boolean; className
                 </span>
                 {/* Its words, to the right of the spine; the first line level with the orb. */}
                 <span className="absolute left-[18px] top-0 flex w-[18rem] max-w-[70cqw] -translate-y-[0.65em] flex-col items-start gap-0.5">
-                  <span className="text-[11.5px] font-semibold leading-tight text-ink sm:text-[13px]">{n.label}</span>
-                  {"tag" in n && <span className="text-[11px] italic leading-tight text-body sm:text-[12px]">{n.tag}</span>}
+                  <span className="text-[11.5px] font-semibold leading-tight text-ink sm:text-[12px] lg:text-[12.5px]">{n.label}</span>
+                  {"tag" in n && <span className="text-[11px] italic leading-tight text-body">{n.tag}</span>}
                   {"answer" in n && (
                     <span data-part="answer" className="landing-board-answer mt-0.5 inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-line bg-surface px-2 py-0.5 text-[11px] font-semibold text-ink sm:text-[12px]">
                       {n.answer}

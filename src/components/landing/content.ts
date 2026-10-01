@@ -173,17 +173,17 @@ export const MOVES_COPY = {
   topic: "How Volcanoes Erupt",
   board: {
     known: [
-      { label: "Trapped gas pushes out", x: 14, y: 16 },
-      { label: "Hot things rise", x: 14, y: 26 },
+      { label: "Trapped gas pushes out", x: 14, y: 15 },
+      { label: "Hot things rise", x: 14, y: 22.5 },
     ],
-    idea: { label: "Pressure builds underground", tag: "Like a shaken soda bottle", x: 14, y: 39 },
+    idea: { label: "Pressure builds underground", tag: "Like a shaken soda bottle", x: 14, y: 31.5 },
     steps: [
-      { label: "Magma fills the chamber", x: 14, y: 52 },
-      { label: "Forced up the vent", x: 14, y: 61 },
-      { label: "Out as lava", x: 14, y: 70 },
+      { label: "Magma fills the chamber", x: 14, y: 43 },
+      { label: "Forced up the vent", x: 14, y: 50 },
+      { label: "Out as lava", x: 14, y: 57 },
     ],
-    question: { label: "Why does one explode and one ooze?", answer: "Thick magma traps the gas", x: 14, y: 81 },
-    next: { label: "Next: types of volcanoes", x: 14, y: 93 },
+    question: { label: "Why does one explode and one ooze?", answer: "Thick magma traps the gas", x: 14, y: 67 },
+    next: { label: "Next: types of volcanoes", x: 14, y: 88 },
   },
 } as const;
 

@@ -40,7 +40,7 @@ const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${ho
  * Runs first each frame: the camera stays at the classroom's eye, looking straight ahead, and the active spot's
  * frustum is applied for the canvas's aspect. Then the stage's own speed check.
  */
-function Framing({ spot, onSlow, judging }: { spot: SpotId; onSlow: () => void; judging: boolean }) {
+function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: () => void; judging: boolean; wide?: number }) {
   const { camera, size } = useThree();
   const cam = camera as PerspectiveCamera;
   const samples = useRef<number[]>([]);
@@ -53,7 +53,15 @@ function Framing({ spot, onSlow, judging }: { spot: SpotId; onSlow: () => void; 
     cam.updateMatrixWorld();
   }, [cam]);
   useFrame((_, dt) => {
-    const f = frustumFor(SPOTS[spot], size.width / Math.max(1, size.height));
+    // `?probe&wide=m` (verification only): LandingRoot grows the layer past the spot's box by m of its width on each
+    // side and m of its height above, and the view grows by the same, so the box shows exactly what it does live and
+    // whatever of him falls outside it is drawn too, to be measured (eval scripts/bounds.cjs).
+    const aspect = (size.width / (1 + 2 * wide)) / Math.max(1, size.height / (1 + wide));
+    const f = frustumFor(SPOTS[spot], aspect);
+    if (wide > 0) {
+      const w = f.right - f.left, h = f.top - f.bottom;
+      f.left -= wide * w; f.right += wide * w; f.top += wide * h;
+    }
     // R3F re-derives the projection from fov and aspect on a resize; this replaces it every frame, before the render.
     cam.projectionMatrix.makePerspective(f.left * NEAR, f.right * NEAR, f.top * NEAR, f.bottom * NEAR, NEAR, FAR);
     cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
@@ -293,6 +301,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
   const probe = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("probe"), []);
+  const wide = useMemo(() => (probe ? Number(new URLSearchParams(window.location.search).get("wide")) || 0 : 0), [probe]);
   // The teacher reads a few transient lesson fields from the store (the thinking badge). Coming back to / from
   // /demo by a link keeps them in memory, so clear them. Persisted fields (teacher, course, progress) are untouched.
   useEffect(() => {
@@ -310,7 +319,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       className="!h-full !w-full"
       aria-hidden
     >
-      <Framing spot={active} onSlow={onSlow} judging={warm} />
+      <Framing spot={active} onSlow={onSlow} judging={warm} wide={wide} />
       <RendererConfig />
       <SceneLights />
       {/* One boundary: the environment and Jake arrive together, then warm up before he is shown. */}
