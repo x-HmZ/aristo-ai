@@ -309,5 +309,43 @@
     ]
    }
   }
+ },
+ "heroOffer": {
+  "light": {
+   "frames": 21,
+   "peakMs": 2288,
+   "reachVsButtonDeg": 5.4,
+   "handVsButtonDeg": 2.6,
+   "reachPx": 225,
+   "movedPx": 210,
+   "restReachPx": 257
+  },
+  "dark": {
+   "frames": 21,
+   "peakMs": 2267,
+   "reachVsButtonDeg": 5.4,
+   "handVsButtonDeg": 1.5,
+   "reachPx": 223,
+   "movedPx": 213,
+   "restReachPx": 257
+  },
+  "light-1024": {
+   "frames": 17,
+   "peakMs": 2277,
+   "reachVsButtonDeg": 5.9,
+   "handVsButtonDeg": 0.7,
+   "reachPx": 189,
+   "movedPx": 173,
+   "restReachPx": 219
+  },
+  "light-1440": {
+   "frames": 18,
+   "peakMs": 2332,
+   "reachVsButtonDeg": 5.6,
+   "handVsButtonDeg": 3.6,
+   "reachPx": 226,
+   "movedPx": 207,
+   "restReachPx": 257
+  }
  }
 }

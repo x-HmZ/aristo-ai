@@ -19,6 +19,7 @@ import { AVATAR_ASSETS, Teacher, type LookTargets, type TeacherDriver } from "@/
 import { clockOf } from "../play";
 import { SLOW_SAMPLE_FRAMES, isSlow } from "./gate";
 import { host, setLive, subscribe } from "./host";
+import { createAim } from "./aim";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
 import { GESTURE_Z, HEART, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
@@ -133,6 +134,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
   const { camera, gl } = useThree();
   const viewer = useMemo(() => new Vector3(), []);
   const ray = useMemo(() => new Vector3(), []);
+  const aim = useRef<ReturnType<typeof createAim> | null>(null);
+  const aimAt = useMemo(() => new Vector3(), []);
   const driver = useMemo<TeacherDriver>(() => ({
     signals: () => {
       const now = performance.now() / 1000;
@@ -148,6 +151,13 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       return s;
     },
     viseme: visemeNow,
+    // At the hero, while he offers his hand to Try a lesson, the hand is aimed at it (aim.ts): the same point his
+    // head turns to, so the palm, the reach and the gaze all go to the button.
+    afterPose: spot === "hero" ? (root, delta) => {
+      aim.current ??= createAim(root);
+      const look = shared.hero.look;
+      aim.current(aimAt.fromArray(HERO_LOOK), !!look && performance.now() < look.until, delta);
+    } : undefined,
     clipPacks: warm,
     // At the hero and the close he looks at the reader's pointer: the ray from the eye through it, where it crosses
     // a plane in front of him (VIEWER_Z). Elsewhere, and with no mouse, the camera, as in a lesson.
@@ -172,7 +182,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       if (look && spot === "hero") viewer.toArray(HERO_LOOK);
       return viewer;
     },
-  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray]);
+  }), [spot, warm, mayWave, hold, camera, gl, viewer, ray, aimAt]);
 
   useFrame(() => {
     if (!warm || liveAt.current !== null) return;

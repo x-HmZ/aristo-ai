@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   AnimationClip, Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, Quaternion, SRGBColorSpace, Vector3,
-  type AnimationAction, type Bone, type SkinnedMesh,
+  type AnimationAction, type Bone, type Object3D, type SkinnedMesh,
 } from "three";
 import { getCurrentViseme } from "@/hooks/useTTS";
 import {
@@ -379,6 +379,11 @@ export interface TeacherDriver {
    * the reader's pointer). Unset or null: the camera, as in a lesson.
    */
   viewer?: () => Vector3 | null;
+  /**
+   * Runs last each frame, on the posed skeleton (the clips, the director's layers, the look and the eyes applied),
+   * before the render (V8.3b: the landing aims an offered hand at a button). Unset: nothing.
+   */
+  afterPose?: (root: Object3D, delta: number) => void;
 }
 
 interface TeacherProps {
@@ -846,6 +851,7 @@ export function Teacher({
     applyLook(out.look, viewer, delta);
     faceRef.current!.hint = out.face;
     applyEyes(out.look, viewer, now, delta);
+    drive?.afterPose?.(scene, delta);
   });
 
   // Morph targets per frame

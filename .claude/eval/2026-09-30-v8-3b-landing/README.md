@@ -113,3 +113,15 @@ demo's); the lesson's picture is an infographic; spread the topics (volcano, hea
   width (`need` in `spots.ts`, unit-tested). The hero still was recaptured to match.
 - **Checks** (`check.json`): 360 to 1440, both themes. 0 AA failures (minimum 4.74 light, 6.42 dark), 0 targets
   under 44px, 0 overflow.
+
+### Round 4 (Hmz: the palm should point at the button)
+
+- **Aim** (`src/components/landing/stage/aim.ts`, unit-tested): after the pose each frame, the shoulder turns (at
+  most 25 degrees) so the shoulder-to-fingertip line meets the button, then the wrist (at most 30) so the hand does,
+  which tips the palm towards it.
+  - It is weighted by how far the arm is raised, so it grows and fades with the offer and never moves the arm at rest.
+  - It never compounds when the mixer skips a bone.
+  - It runs through a new optional `afterPose` on Teacher's driver; the classroom path is unchanged.
+- **Measured** (`peaks.json` heroOffer, `hero-offer-peak*.webp`): at the peak, shoulder to fingertip is 5.4 to 5.9
+  degrees from the line to the button's centre, and wrist to fingertip 0.7 to 3.6. That holds at 1024, 1280 and 1440
+  in light, and at 1280 in dark (was 14 and not measured).
