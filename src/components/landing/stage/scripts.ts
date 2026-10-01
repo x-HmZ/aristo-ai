@@ -88,7 +88,7 @@ export function heartBox(): { left: number; top: number; width: number; height: 
  * The classroom board's square in a volcano spot's box, as percentages (BOARD through the spot's frustum at
  * BOARD_ASPECT): where the ideas panel sits, under the canvas, so his pointing hand is drawn in front of it.
  */
-export function boardBox(spot: "ideas" | "picture" | "moves"): { left: number; top: number; width: number; height: number } {
+export function boardBox(spot: "picture" | "moves"): { left: number; top: number; width: number; height: number } {
   const f = frustumFor(SPOTS[spot], BOARD_ASPECT);
   const [x, y, z] = BOARD.center, h = BOARD.size / 2;
   const a = project(f, [x - h, y + h, z]), b = project(f, [x + h, y - h, z]);
@@ -134,12 +134,6 @@ export function signalsFor(spot: SpotId, ctx: SpotContext): DirectorSignals {
       // The product's explain beat: a new explain segment plays HoldIdea once (hands in front of the chest, palms
       // facing with a gap), and the lit flute appears between them (Idea.tsx).
       if (ctx.t >= IDEA_T.hold) { s.phase = "explain"; s.segmentId = "idea:hold"; }
-      break;
-    case "ideas":
-      // The product's "it is thinking" (OneMoment, then Thinking) while the topic is read, then its pointing clip
-      // while the ideas link up, the hand aimed at one of them (LandingStage, aim.ts).
-      s.isLoading = ctx.t >= IDEAS_T.think[0] && ctx.t < IDEAS_T.think[1];
-      if (ctx.t >= IDEAS_T.point[0] && ctx.t < IDEAS_T.point[1]) s.gesture = "pointing";
       break;
     case "picture":
       // Pointing at the picture once it has mostly resolved, the hand aimed at its crater (PICTURE_AIM).
@@ -210,12 +204,6 @@ export function moveBeatAt(t: number): { move: MoveId; index: number; step: numb
  * by `giveUp` (the clip pack has not loaded), the place just lights.
  */
 export const IDEA_T = { beats: [0, 1.2, 2.4], draw: [0.3, 2.6], hold: 2.9, flyS: 0.7, giveUp: 6.4, length: 8 } as const;
-
-/**
- * It Finds the Ideas (the volcano lesson): the topic types, he thinks, the ideas appear one by one and link up, and
- * he points at them.
- */
-export const IDEAS_T = { type: [0.2, 1.4], think: [0.5, 2.4], ideas: 2.3, step: 0.22, point: [2.7, 6.0], length: 6.6 } as const;
 
 /**
  * It Draws the Picture (the volcano lesson's cross-section): it resolves from noise to lines to colour on the

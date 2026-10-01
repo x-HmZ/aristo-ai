@@ -20,7 +20,7 @@ export const TEACHER: { position: [number, number, number]; rotationY: number } 
 /** The depth of the plane a spot's rectangle is measured on: the teacher's. */
 export const PLANE_Z = TEACHER.position[2];
 
-export type SpotId = "hero" | "idea" | "ideas" | "picture" | "model" | "moves" | "close";
+export type SpotId = "hero" | "idea" | "picture" | "model" | "moves" | "close";
 
 export interface SpotFraming {
   /** World y at the teacher's plane shown at the box's top and bottom edges. */
@@ -48,15 +48,13 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   hero: { top: 1.02, bottom: -0.7, x: -1, fx: 0.26, need: [-1.56, 0.1] },
   // A Teacher of Your Own: him alone, centred, his hands in front of his chest (HoldIdea).
   idea: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5, need: [-1.55, -0.45] },
-  // The two volcano sections: him on the left and, to his left, the classroom board's own place (Experience
-  // SCENE_*: centre 0.37, 0.18, the image 1.455 m square), where the product's pointing clips land. Fixed aspect
-  // (BOARD_ASPECT), so the composition and the stills are the same at every width. `need` keeps his right hand in the
-  // box while he thinks (it reaches -1.57; eval bounds.cjs) and the board's right edge (1.1; the picture, set back
-  // and enlarged, reaches 1.18), with a margin.
-  ideas: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
+  // It Draws a Diagram: him on the left and, to his left, the classroom board's own place (Experience SCENE_*: centre
+  // 0.37, 0.18, the image 1.455 m square), where the product's pointing clips land. Fixed aspect (BOARD_ASPECT), so
+  // the composition and the stills are the same at every width. `need` keeps his right hand in the box with a margin
+  // (eval bounds.cjs) and the picture's right edge (set back and enlarged, it reaches 1.18).
   picture: { top: 1.02, bottom: -1.1, x: -1, fx: 0.2, need: [-1.7, 1.24] },
   model: { top: 1.02, bottom: -1.1, x: -1, fx: 0.24 },
-  // One Lesson, Five Moves: as the volcano spots, him on the left and the classroom's display at the board's place,
+  // One Lesson, Five Moves: as the picture spot, him on the left and the classroom's display at the board's place,
   // where what each move's gesture makes in his hands is set down. `need` keeps Imagine's spread in the box (his right
   // fingertips reach -1.88; eval bounds.cjs) with the board's right edge (1.1): the view grows, he and the board are
   // drawn a little smaller, and nothing of him is cut off.
@@ -64,7 +62,7 @@ export const SPOTS: Record<SpotId, SpotFraming> = {
   close: { top: 1.02, bottom: -0.98, x: -1, fx: 0.5 },
 };
 
-/** The volcano spots' box aspect (width / height): Jake and the board, -1.55 to 1.21 m across, 2.12 m high. */
+/** The board spots' box aspect (width / height): Jake and the board, -1.55 to 1.21 m across, 2.12 m high. */
 export const BOARD_ASPECT = 1.3;
 /** The classroom board: its centre and the side of its square image (Experience SCENE_* and IMG_SIZE). */
 export const BOARD = { center: [0.37, 0.18, -3] as V3, size: 1.455 } as const;
@@ -98,7 +96,7 @@ export function frustumFor(spot: SpotFraming, aspect: number): Frustum {
 
 /** The box aspect each spot's stills are captured at (eval scripts/stills.cjs): the fixed-aspect spots at theirs. */
 export const CAPTURE_ASPECT: Record<SpotId, number> = {
-  hero: 1, idea: 1, ideas: BOARD_ASPECT, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, close: 1,
+  hero: 1, idea: 1, picture: BOARD_ASPECT, model: 1.1, moves: BOARD_ASPECT, close: 1,
 };
 
 const n = (v: number) => +v.toFixed(4);

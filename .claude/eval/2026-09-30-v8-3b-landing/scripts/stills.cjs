@@ -28,7 +28,7 @@ fs.mkdirSync(RAW, { recursive: true });
     await guardApi(p, report);
     // Each spot at its capture size: 600 px wide at its own aspect (the volcano and model spots have fixed ones), so a
     // still covers every box the spot gets.
-    const aspect = { model: 1.1, ideas: 1.3, picture: 1.3, moves: 1.3 }[spot] ?? 1;
+    const aspect = { model: 1.1, picture: 1.3, moves: 1.3 }[spot] ?? 1;
     await ctx.addInitScript(([s, h]) => { const st = document.createElement("style"); st.textContent = `[data-spot="${s}"] { width: 600px !important; height: ${h}px !important; max-width: none !important; aspect-ratio: auto !important; }`; document.addEventListener("DOMContentLoaded", () => document.head.appendChild(st)); }, [spot, Math.round(600 / aspect)]);
     // The canvas layer shows at once (no fade), so the frame taken is the first one he is live in.
     if (START) await ctx.addInitScript(() => { const st = document.createElement("style"); st.textContent = "[data-stage-layer] { transition: none !important; }"; document.addEventListener("DOMContentLoaded", () => document.head.appendChild(st)); });

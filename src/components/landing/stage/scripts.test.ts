@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
-import { HEART, IDEAS_T, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
+import { HEART, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, WAVE_AFTER_S, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
 import { BOARD, EYE } from "./spots";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
@@ -69,18 +69,12 @@ describe("the hero's reactions", () => {
   });
 });
 
-describe("the idea, the ideas and the picture", () => {
+describe("the idea and the picture", () => {
   it("holds the idea with the product's explain beat, from its cue", () => {
     expect(signalsFor("idea", { ...ctx, t: IDEA_T.hold - 0.01 }).segmentId).toBeNull();
     const s = signalsFor("idea", { ...ctx, t: IDEA_T.hold });
     expect(s.phase).toBe("explain");
     expect(s.segmentId).toBe("idea:hold");
-  });
-  it("thinks while the topic is read, then points while the ideas link", () => {
-    expect(signalsFor("ideas", { ...ctx, t: IDEAS_T.think[0] }).isLoading).toBe(true);
-    expect(signalsFor("ideas", { ...ctx, t: IDEAS_T.think[1] }).isLoading).toBe(false);
-    expect(signalsFor("ideas", { ...ctx, t: IDEAS_T.point[0] }).gesture).toBe("pointing");
-    expect(signalsFor("ideas", { ...ctx, t: IDEAS_T.point[1] }).gesture).toBe("idle");
   });
   it("points at the picture only once it has mostly resolved", () => {
     expect(PICTURE_T.point[0]).toBeGreaterThan(PICTURE_T.resolve[0] + 0.7 * (PICTURE_T.resolve[1] - PICTURE_T.resolve[0]));

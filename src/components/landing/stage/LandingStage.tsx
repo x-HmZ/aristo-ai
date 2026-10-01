@@ -23,7 +23,7 @@ import { createAim } from "./aim";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { GESTURE_Z, HEART, IDEAS_T, PICTURE_AIM, PICTURE_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type SpotId } from "./spots";
@@ -32,7 +32,7 @@ import { warmUp } from "./warm";
 const NEAR = 0.05;
 const FAR = 60;
 /** The section clock each spot's script reads. */
-const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", ideas: "ideas", picture: "picture", model: "model", moves: "moves", close: "close" };
+const SECTION_OF: Record<SpotId, string> = { hero: "hero", idea: "idea", picture: "picture", model: "model", moves: "moves", close: "close" };
 
 const useHost = () => useSyncExternalStore(subscribe, () => `${host.active}|${host.onScreen}|${shared.hero.greet}|${shared.moves.run}`, () => "null|false|0|0");
 
@@ -100,13 +100,13 @@ function Warmed({ onWarm, children }: { onWarm: () => void; children: React.Reac
  * the eyes and the aimed hand (aim.ts) all go to the same place. The heart's place is fixed.
  */
 const TARGET: Record<SpotId, [number, number, number]> = {
-  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], ideas: [0, 0, PLANE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], close: [0, 0, GESTURE_Z],
+  hero: [0, 0, GESTURE_Z], idea: [0, 0, GESTURE_Z], picture: [...PICTURE_AIM], model: [...HEART.position], moves: [0, 0, GESTURE_Z], close: [0, 0, GESTURE_Z],
 };
 const LOOK = Object.fromEntries(
   Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
 ) as unknown as Record<SpotId, LookTargets>;
 /** For the stills (`?still`): the section time whose gesture target a still is captured with. */
-const HOLD_AT: Partial<Record<SpotId, number>> = { ideas: IDEAS_T.point[0] + 1, picture: PICTURE_T.point[0] + 1 };
+const HOLD_AT: Partial<Record<SpotId, number>> = { picture: PICTURE_T.point[0] + 1 };
 /**
  * Clips the landing never asks for: Pointing, the pointing pool's Mixamo half, raises his right hand across his body,
  * away from the board on his left, past where aim.ts can bring a hand to a target. PointNear (his left index into
@@ -119,7 +119,7 @@ const WITHHELD: ReadonlySet<string> = new Set(["Pointing"]);
  */
 const HERO_WITHHELD: ReadonlySet<string> = new Set(["Pointing", "Talking6"]);
 /** The spots where a gesture's hand is aimed at its target. */
-const AIMED: ReadonlySet<SpotId> = new Set(["hero", "ideas", "picture"]);
+const AIMED: ReadonlySet<SpotId> = new Set(["hero", "picture"]);
 
 /**
  * The gesture target at a spot now, or null when no gesture is aimed: an element on the page (the hero's button, the
@@ -129,10 +129,6 @@ function gestureAt(spot: SpotId, t: number): { el: Element; z: number } | { worl
   if (spot === "hero") {
     const look = shared.hero.look;
     return look && performance.now() < look.until ? { el: look.el, z: GESTURE_Z } : null;
-  }
-  if (spot === "ideas" && t >= IDEAS_T.point[0] && t < IDEAS_T.point[1]) {
-    const el = document.querySelector("[data-spot=ideas] [data-aim=ideas]");
-    return el ? { el, z: PLANE_Z } : null;
   }
   if (spot === "picture" && t >= PICTURE_T.point[0] && t < PICTURE_T.point[1]) return { world: PICTURE_AIM };
   return null;
@@ -234,9 +230,9 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       // Five Moves ends at rest too, so its one still is this.
       if (start || (hold && spot === "moves")) return { ...s, modelShown: false, gesture: "idle", phase: null, role: null, segmentId: null, isLoading: false };
       if (hold && spot === "model") s.modelShown = liveFor > 0.5;
-      // The other stills: at rest beside the lit column; pointing at the ideas and at the picture.
+      // The other stills: at rest beside the lit column; pointing at the picture.
       if (hold && spot === "idea") { s.phase = null; s.segmentId = null; }
-      if (hold && (spot === "ideas" || spot === "picture")) s.gesture = liveFor > 0.5 ? "pointing" : "idle";
+      if (hold && spot === "picture") s.gesture = liveFor > 0.5 ? "pointing" : "idle";
       if (s.sceneReady && mayWave) lastWave[spot] = now;
       return s;
     },

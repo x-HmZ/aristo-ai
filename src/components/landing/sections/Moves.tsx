@@ -40,7 +40,7 @@ export function Moves({ mode }: { mode: LandingMode | null }) {
   const done = armed && cue === CUES.length - 1 && !playing && !paused;
 
   return (
-    <section id="moves" aria-labelledby="moves-title" className="overflow-x-clip py-24">
+    <section id="how" aria-labelledby="moves-title" className="overflow-x-clip py-24">
       <div ref={wrap} className={cn(WRAP, "landing-moves relative grid items-center gap-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-14")} data-armed={armed || undefined}>
         <div>
           <h2 id="moves-title" className={H2}>{MOVES_COPY.title}</h2>

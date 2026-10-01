@@ -8,7 +8,6 @@ import { SiteFooter } from "./SiteFooter";
 import { ForParents } from "./ForParents";
 import { Hero } from "./sections/Hero";
 import { Idea } from "./sections/Idea";
-import { Ideas } from "./sections/Ideas";
 import { Picture } from "./sections/Picture";
 import { Close } from "./sections/Close";
 import { ModelBuild } from "./sections/ModelBuild";
@@ -151,7 +150,6 @@ export function LandingRoot() {
       <main>
         <Hero mode={mode} />
         <Idea mode={mode} />
-        <Ideas mode={mode} />
         <Picture mode={mode} />
         <ModelBuild mode={mode} />
         <Moves mode={mode} />

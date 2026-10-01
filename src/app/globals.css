@@ -445,40 +445,19 @@
     }
   }
 
-  /* It Finds the Ideas Inside (Ideas.tsx): the classroom's display (.theme-ink), where the ideas come out of a
-     thinking glow as orbs of light (the idea's own light, .landing-orb) and link up like a constellation. */
+  /* The classroom's display (.theme-ink) on the landing (Five Moves' board): orbs of the idea's own light
+     (.landing-orb), rings for what a topic builds on, and links that draw once both their ends are lit. */
   .landing-display {
     container-type: size;
   }
   .landing-display-glow {
     background: radial-gradient(60% 50% at 50% 48%, rgb(var(--glow) / 0.16), transparent 72%);
   }
-  .landing-thinking {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 45%, rgb(255 236 214) 0%, rgb(var(--accent)) 55%, rgb(var(--accent) / 0.8) 75%);
-    box-shadow: 0 0 26px 8px rgb(var(--glow) / 0.5);
-    opacity: 0;
-    transition: opacity 400ms var(--ease-out);
-  }
-  .landing-thinking[data-on] {
-    opacity: 1;
-    animation: landing-think 1.2s var(--ease-in-out) infinite alternate;
-  }
-  @keyframes landing-think {
-    from { scale: 0.8; }
-    to { scale: 1.15; }
-  }
   .landing-idea-orb {
     display: block;
     width: 14px;
     height: 14px;
     border-radius: 50%;
-  }
-  .landing-idea-big {
-    width: 20px;
-    height: 20px;
   }
   .landing-idea-lit {
     background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
@@ -488,19 +467,6 @@
     border: 2px solid rgb(var(--accent-text));
     box-shadow: 0 0 12px 2px rgb(var(--glow) / 0.45), inset 0 0 6px rgb(var(--glow) / 0.35);
   }
-  .landing-idea-node {
-    transition: transform 650ms var(--ease-out), opacity 300ms var(--ease-out);
-  }
-  .landing-idea-label {
-    transition: opacity 400ms var(--ease-out) 250ms;
-  }
-  .landing-ideas[data-armed] .landing-idea-node:not([data-on]) {
-    opacity: 0;
-    transform: translate(calc(var(--dx) * 1cqw), calc(var(--dy) * 1cqh)) scale(0.3);
-  }
-  .landing-ideas[data-armed] .landing-idea-node:not([data-on]) .landing-idea-label {
-    opacity: 0;
-  }
   .landing-link {
     stroke: rgb(var(--accent-text));
     stroke-width: 0.45;
@@ -509,9 +475,6 @@
     stroke-dasharray: 1;
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 600ms var(--ease-in-out) 200ms;
-  }
-  .landing-ideas[data-armed] .landing-link:not([data-on]) {
-    stroke-dashoffset: 1;
   }
   .landing-caret {
     display: inline-block;
@@ -524,13 +487,8 @@
     50% { opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .landing-idea-node,
-    .landing-idea-label,
     .landing-link {
       transition: none;
-    }
-    .landing-thinking[data-on] {
-      animation: none;
     }
     .landing-caret {
       animation: none;
@@ -563,7 +521,7 @@
     color: rgb(var(--muted));
   }
   /* What he holds or sets down at each move (MovesHands.tsx): rings of what you know, lit steps and the idea, in the
-     idea's own light (.landing-orb, the Ideas section's rings); the question card is paper (.theme-paper). */
+     idea's own light (.landing-orb, the display's rings); the question card is paper (.theme-paper). */
   .landing-move-ring {
     border-radius: 50%;
     border: 2px solid rgb(var(--accent-text));
@@ -588,7 +546,7 @@
     will-change: transform, opacity;
   }
   /* Five Moves' board (MovesBoard.tsx): the classroom's display, where each place lights as its piece lands
-     (data-on, MovesHands); the links draw once both ends are lit, as in It Finds the Ideas Inside. The question
+     (data-on, MovesHands); the links draw once both ends are lit. The question
      is a ring with a question mark; its answer arrives under it, then its tick. Without data-armed it is whole. */
   .landing-board-node {
     transition: opacity 260ms var(--ease-out);
