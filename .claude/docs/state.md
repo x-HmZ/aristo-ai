@@ -2,6 +2,29 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)
+
+PR #19 merged into `deploy-prep` (production deploys from it). Evidence for the last round:
+`.claude/eval/2026-09-30-v8-3b-landing/session3/fixes/`.
+
+- **Hmz's review fixes (2026-10-02), all in #19:**
+  - Five Moves: the board is a list in normal flow, its links drawn from the orbs' measured centres (they started
+    and stopped at the wrong orbs); each group under its move's name; what you know feeds the idea (no chain); the
+    mountain icon replaces the sparkle.
+  - The map: the next lesson ("for Loops") named in a legend; its link from Lists drawn lit and flowing; the course
+    named.
+  - For Parents: the page's one tint band.
+  - The close: Try a lesson gets the hero's palm offer; the close and hero framings keep the offer in the box (hero
+    need 0.22; it was 3 px from the edge once the offer was really triggered).
+  - The speed check judges 90 frames in a row at one live spot (a fast machine scrolling at once went to lite).
+- **Measured:** every gesture lands (Five Moves pieces within 4 px, the close's offer 1.7 degrees off the button);
+  0 px out of every box; AA 0 failures both themes (min 4.74 light, the parents' eyebrow on the tint); 0 small
+  targets; 0 overflow at 360 to 1440; `/` 130 kB; tests 86; lint 0 errors.
+- **Open (not urgent):** hero frames up to about 150 ms just after he is live (clip-pack binding); a resized room
+  texture for the landing (decide with Hmz); the per-frame `getBoundingClientRect` reads in the stage driver.
+- **Next:** Hmz's small fixes in a new session (not landing-build work); then V8.4 / V8.6 (classroom, admin and
+  create-teacher onto the brand system).
+
 ## 2026-10-01 - V8.3b build, session 3 done: Immersive, For Parents, the close, review, verification; PR open
 
 Branch `dev/v8-3b-landing`, pushed, PR into `deploy-prep` (supersedes #18). Evidence:
