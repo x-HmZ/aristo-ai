@@ -125,6 +125,25 @@ expressions are smile levels plus eyes. Rigs without `CC_Base_[LR]_Eye` bones (l
 every shipped asset.
 **Tests:** `director`, `manifest` (integrity and the coverage table), `skeletonMasks`, `look`, `face` (with `gaze`).
 
+## Landing (`/`, V8.3b)
+
+`pages/index.tsx` (Pages Router, static) renders `src/components/landing/LandingRoot.tsx`: a nav, one section per
+feature (`sections/*`), the footer. Design: brand-system.md "Landing (V8.3b)"; why: decisions.md (V8.3b rows).
+
+- **Modes** (`stage/gate.ts`): full, lite (stills), stack (reduced motion). On full, `stage/LandingStage.tsx` is
+  imported after `load` and an idle moment; it hands over to lite if slow, if it throws, or if its chunk fails.
+- **One canvas, many spots:** sections register boxes (`Spot.tsx`, `stage/host.ts`); the canvas layer sits over the
+  most visible one. `stage/spots.ts` frames each as a crop of the classroom's lesson view; the room spot has its own
+  camera (`stage/roomCamera.ts`). Jake is the product's `Teacher` with a `driver` (signals per spot in
+  `stage/scripts.ts` and `stage/room.ts`; `aim.ts` after the pose), remounted per spot.
+- **Clocks** (`play.ts`): each section's graphic and Jake's script read one clock that plays while the section is in
+  view and he is live there. `stage/shared.ts` is what the page and the stage share per frame.
+- **Lazy parts:** the diagram and the heart mount in an idle moment once Jake is warm; the room (`stage/RoomScene.tsx`:
+  Classroom, the volcano picture and model, the desk quiz) is its own chunk, imported near its section. `stage/warm.ts`
+  compiles, uploads and first-draws each part before it shows.
+- **Verification:** `?probe` exposes `window.__landing` (bones, bounds, renderer counts); `?still[&start]` holds
+  a spot for its stills. Scripts in `.claude/eval/2026-09-30-v8-3b-landing/scripts/` (README lists them).
+
 ## Hooks
 - `useSessionFlush.ts` — signals ref pattern; `beforeunload` keepalive flush
 - `useCourseAutoTeach.ts` — auto-fetches next lesson when course advances

@@ -33,6 +33,9 @@ const AA = (scope) => {
     }
     // A parent with reduced opacity dims the text too.
     let op = 1; for (let p = el; p && p !== document.body; p = p.parentElement) op *= +getComputedStyle(p).opacity;
+    // Fully transparent through an ancestor: not on screen (a place not yet lit), so not text to read. Any partial
+    // opacity still counts, composited.
+    if (op === 0) continue;
     const grounds = opaque ? [null] : [[255, 255, 255, 1], [0, 0, 0, 1]];
     let worst = Infinity, worstBg = null;
     for (const g of grounds) {

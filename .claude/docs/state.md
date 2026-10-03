@@ -2,6 +2,258 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)
+
+PR #19 merged into `deploy-prep` (production deploys from it). Evidence for the last round:
+`.claude/eval/2026-09-30-v8-3b-landing/session3/fixes/`.
+
+- **Hmz's review fixes (2026-10-02), all in #19:**
+  - Five Moves: the board is a list in normal flow, its links drawn from the orbs' measured centres (they started
+    and stopped at the wrong orbs); each group under its move's name; what you know feeds the idea (no chain); the
+    mountain icon replaces the sparkle.
+  - The map: the next lesson ("for Loops") named in a legend; its link from Lists drawn lit and flowing; the course
+    named.
+  - For Parents: the page's one tint band.
+  - The close: Try a lesson gets the hero's palm offer; the close and hero framings keep the offer in the box (hero
+    need 0.22; it was 3 px from the edge once the offer was really triggered).
+  - The speed check judges 90 frames in a row at one live spot (a fast machine scrolling at once went to lite).
+- **Measured:** every gesture lands (Five Moves pieces within 4 px, the close's offer 1.7 degrees off the button);
+  0 px out of every box; AA 0 failures both themes (min 4.74 light, the parents' eyebrow on the tint); 0 small
+  targets; 0 overflow at 360 to 1440; `/` 130 kB; tests 86; lint 0 errors.
+- **Open (not urgent):** hero frames up to about 150 ms just after he is live (clip-pack binding); a resized room
+  texture for the landing (decide with Hmz); the per-frame `getBoundingClientRect` reads in the stage driver.
+- **Next:** Hmz's small fixes in a new session (not landing-build work); then V8.4 / V8.6 (classroom, admin and
+  create-teacher onto the brand system).
+
+## 2026-10-01 - V8.3b build, session 3 done: Immersive, For Parents, the close, review, verification; PR open
+
+Branch `dev/v8-3b-landing`, pushed, PR into `deploy-prep` (supersedes #18). Evidence:
+`.claude/eval/2026-09-30-v8-3b-landing/session3/` (immersive/, parents/, close/, verify/, perf/; README "Session 3").
+
+- **Built:** Step Into the Classroom (the product's room, a camera tour on the section's clock: in to the seat, he
+  explains; the board, he points at the volcano cross-section; the model it becomes, presented from his fingertip;
+  a glance at the quiz on your desk. Tabs, drag to look around, Pause, Hear it; loads only near the section). For
+  Parents on the system (promises on the product's paper). The close waves each time it comes into view.
+- **Shown to Hmz, no reply yet:** Immersive (tour, peaks, controls), For Parents, the close's wave peaks. It
+  Remembers still has no comment from him; ask before changing it.
+- **Perf:** the hero start-up frame (500 to 850 ms of shader first-draws) is fixed by `warm.ts drawEach`; the room
+  never warms into a render target. Left: frames up to about 180 ms at the hero after he is live and during a very
+  fast scroll near the room (its one-off load). p95 16.7 to 16.8 ms everywhere; `/` 129 kB.
+- **Reviews:** security nothing above low; code review fixes in 8d6da5a (room preload, reset on leaving, failed room,
+  focus). Not done from it: per-frame `getBoundingClientRect` and small allocations in the driver (measured frames
+  are fine), the module-level TARGET arrays.
+- **Measured:** 0 AA failures (min 5.11 light, 5.48 dark), 0 targets under 44 px, 0 overflow at 360 to 1440, bounds
+  0 px out, tests 86, lint 0 errors and 10 warnings, 0 API and 0 paid calls.
+- **Next:** Hmz's review of the PR and of Immersive / For Parents / the close; then merge into `deploy-prep`; close
+  #18 (not done: ask). Optional: a resized copy of the room's 4096 px texture for the landing (decide with Hmz).
+
+## 2026-10-01 - V8.3b build, session 2 done: Five Moves and It Remembers built and reviewed; Ideas removed
+
+Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last code commit 613917b, evidence 4c7cce0. Evidence:
+`.claude/eval/2026-09-30-v8-3b-landing/session2/` (moves/, remember/, posters/, bounds).
+
+- **Page order now:** hero, A Teacher of Your Own (#idea), It Draws a Diagram, It Builds a Model, One Lesson, Five
+  Moves (#how, nav "How it works"), It Remembers What You Know (#map), For Parents (old, not restyled), Close (old),
+  footer. **It Finds the Ideas Inside was removed** (Hmz: Five Moves covers it and looks better).
+- **Five Moves (story, Hmz approved):** Jake beside the classroom's dark display. Each move's gesture (director
+  signals: hook/Imagine, explain/HoldIdea, demo_step/StepBeat x3, challenge_setup/YourTurn, connect/BringTogether, plus
+  the "that's right" reaction) makes a piece at his hands (placed per frame from bones via `shared.hands.onReport`,
+  same frame as the render), which then flies to its place on the board: the volcano lesson's outline (summaries, not
+  lines). "Next" hangs from the answer (Hmz). Files: `sections/Moves.tsx`, `MovesBoard.tsx`, `MovesHands.tsx`.
+- **It Remembers (built, shown to Hmz, not yet commented on):** a paper card with one real concept (Variables and
+  Assignment) over three weeks; Jake points (PointNear, aimed) at each review point as the line reaches it, all inside
+  the clip's ~3.7 s hold; then the real course map on the dark display. `sections/Remember.tsx`.
+- **Fixes Hmz asked for:**
+  - posters = first live frame everywhere: stills placed by the live framing in CSS (`spots.ts stillCss`,
+    unit-tested), recaptured at the first live frame; `idea.webp` had been clipped by the capture viewport.
+  - Jake never out of bounds: `scripts/bounds.cjs` (probe-only `?probe&wide=` view); Five Moves' Imagine spread was
+    85 px out. Fixed with `need` per spot; now >= 23 px clear at 768 to 1440.
+- **Stage additions:** aim glides between targets and, on pointing spots, turns the index finger (`aim.ts` `finger`);
+  picture pointing now 0.4 deg. Section clocks have a reader pause (`play.ts setPaused`).
+- **Measured:** AA 0 failures (min 4.74 light, 5.48 dark), 0 targets under 44 px, 0 overflow 360 to 1440, tests 89,
+  lint 0 errors, 0 API and 0 paid calls. Gesture peaks: every piece within 4 px of its hand; taps within 4 px.
+- **Open / next session:**
+  1. Immersive ("Step Into the Classroom"): the room, the volcano lesson, a camera tour you can drag; loads only near
+     the section.
+  2. For Parents restyled on the system.
+  3. The close: waves goodbye each time it comes into view (today it remounts only on a spot change).
+  4. Steps 10 to 12: stills (recapture `picture.webp` end still: the finger aim changed) and the lite/stack paths;
+     verification (perf, the two long frames: hero start-up 83 to 150 ms, 133 ms in a steady scroll at 1440);
+     `code-reviewer` + `security-reviewer` (driver hooks touch Teacher.tsx) with fixes; docs (decisions,
+     brand-system, messaging; delete `stage/scroll.ts`, `timeline.ts` leftovers, old `HeartBuild`? check use,
+     unused `classroom-*.webp` and `v3/*` except `idea.webp`); then the PR into `deploy-prep`, superseding #18.
+- **Gotcha:** never run `next dev` with a stray `next start`/`build` on the same `.next` (500s on localhost).
+
+## 2026-10-01 - V8.3b build, session 1 done: nav, hero, idea, ideas, picture, model built and reviewed by Hmz
+
+Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last commit b73e4e0 plus the docs commit after it.
+Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first-sections/`, `sections-r5/`,
+`sections-r6/`).
+
+- **Built, in page order:**
+  - nav (pill, sheet below lg);
+  - **hero:** Jake left, text right. He waves with his left hand and follows the pointer. On Try a lesson he offers
+    his left palm, aimed at the button, with his head and eyes on it. A tap waves; coming back waves.
+  - **A Teacher of Your Own:** the beats rise and the colonnade draws. He holds the idea, an orb that flies into the
+    mark's middle flute and lights it.
+  - **It Finds the Ideas Inside (volcano):** the classroom's dark display; the ideas come out of a thinking glow as
+    orbs and form a constellation. He points (PointNear) at the magma chamber's orb.
+  - **It Draws a Diagram (volcano):** the cross-section resolves (noise, lines, colour) and he points at the crater.
+  - **It Builds a Model (heart):** the infographic lifts into points onto the heart. PresentModel's palm meets its
+    edge. Drag or Turn it.
+  - **For Parents:** the old V8.3 one, not yet restyled.
+  - **Close:** a spot that waves.
+  - Footer.
+- **How the stage works** (read before adding a section):
+  - `stage/host.ts`: one canvas over the most visible spot.
+  - `stage/spots.ts`: the classroom eye, plus a crop per spot; `need` keeps a reach in frame.
+  - `stage/scripts.ts`: the per-spot director signals and the timelines.
+  - `stage/aim.ts`: aims a hand at a target after the pose.
+  - LandingStage: `TARGET`, `gestureAt`, `withhold` (never Pointing; the hero also never Talking6).
+  - `play.ts`: the section clocks; a spot's graphic plays once Jake is live there.
+  - Posters: `<spot>-start.webp` on the live path and `<spot>.webp` on lite.
+- **Teacher.tsx** (product) gained three optional driver fields, used only by the landing: `viewer`, `afterPose`,
+  `withhold`. The classroom passes no driver and is unchanged.
+- **Hmz's rules learned this session** (memory `landing_features_not_a_lesson`):
+  - features, not a lesson;
+  - every gesture lands on a real thing, verified from the bones with peak frames;
+  - a section's poster is its first frame;
+  - one visual language: the idea's orb of light, the dark display, chalk and paper.
+- **Measured** (`sections-r5/perf.json`, `sections-r6/check.json`):
+  - `/` 118 kB first load (budget 135); `/demo` and `/learn` unchanged;
+  - LCP 152 to 428 ms; CLS 0;
+  - every section plays at p95 16.8 ms with 0% dropped;
+  - 0 AA failures in both themes; 0 targets under 44px; 0 overflow at 360 to 1440;
+  - tests 519, lint 0 errors and 10 warnings.
+- **Open:**
+  - the hero's single 83 to 150 ms start-up frame, and one 133 ms frame in a steady scroll at 1440 light (likely
+    Jake's remount at a spot change): find both with long-frame attribution;
+  - `stage/scroll.ts` and `timeline.ts` are now used only by `timeline.test.ts` and the old V8.3 camera poses
+    (Immersive may reuse the poses; delete the rest);
+  - three unused `public/images/landing/classroom-*.webp` and the old `public/images/landing/v3/*` stills (except
+    `idea.webp`, the proportions reference) go in step 10.
+- **Next (new session):** plan section 8 from the rest of step 7 on.
+  1. Five Moves (in plain words);
+  2. It Remembers (map and curve);
+  3. Immersive (the classroom room, volcano, camera tour, drag to look);
+  4. For Parents restyled on the system;
+  5. the close;
+  6. then steps 10 to 12: stills and lite, verification plus the `code-reviewer` (and `security-reviewer`: the
+     driver hooks touch Teacher), then docs (decisions, brand-system, messaging). Then the PR into `deploy-prep`,
+     superseding #18.
+
+## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
+
+- **Direction E, "Jake Presents"** (`mockups/e.html`, `shots/sheet-e.webp`): A's page. Jake appears on his own in
+  each section beside its short motion graphic, and does something with it. The room is one "Immersive" section with
+  a camera tour. Nothing is pinned or scrubbed.
+- **The plan:** `.claude/plans/V8.3b-landing-plan.md`. Round 3 at the top is the direction and the two hard
+  requirements; sections 5 to 8 give the perf plan, the notes, what is kept and deleted, and the build order.
+- **Hard requirements (Hmz):**
+  - nothing may look wrong (the mockup's slim hero Jake was the capture framing; the build renders the product's
+    `Teacher`, compared side by side with the classroom render);
+  - gestures land on real things at the right scale, placed from Jake's hand bone at the gesture's peak and verified
+    with peak frames.
+- **Already done:** note 7, the face (54f15a6); note 8, the paper (cc03e22).
+- **Next session:** start at plan section 8, step 2. Build a section at a time, and show Hmz the first live sections
+  (nav, hero, the model build) before the rest. Evidence goes in `.claude/eval/2026-09-30-v8-3b-landing/` (its
+  README lists the scripts).
+
+## 2026-09-30 - V8.3b: direction D (A's page + the V8.3 immersion) mocked; face and desk paper done
+
+- Round 2 (Hmz): A's style plus B's teacher as a main part of the look, with the V8.3 immersion but none of its UX.
+  D is mocked (`mockups/d.html`, `shots/sheet-d.png`). No tilted cards. The Idea keeps its own section.
+- Committed: 54f15a6 (resting face smile 0.8 and lids 0.12, app-wide, gain-scaled; Jake and MJ checked in
+  `face/pair-sheet.png`) and cc03e22 (the placeholder paper removed from the classroom). Tests 485, lint 0 errors
+  and 10 warnings.
+- **Next:** Hmz's go on D and the desk-card question (plan section 9), then the build order in plan section 8.
+
+## 2026-09-30 - V8.3b planned: waiting for Hmz to pick a direction (no product code yet)
+
+- Branch `dev/v8-3b-landing` from `origin/dev/v8-3-landing` (93e913a), upstream unset.
+- Plan: `.claude/plans/V8.3b-landing-plan.md`, covering the research with links, three directions (A Lesson Objects,
+  recommended; B The Lit Window; C Line and Light), the section list with motion, where Jake appears, the perf plan,
+  the 8 notes, and 4 questions.
+- Evidence in `.claude/eval/2026-09-30-v8-3b-landing/`: `mockups/` (real HTML on the tokens, and `shots/sheet-*.png`
+  at 1280 and 360, light and dark) and `face/sheet.png` (note 7, five idle faces).
+- `scripts/`: `mockups.cjs`, `sheets.cjs`, `face.cjs`, `measure.cjs`, `overflow.cjs`.
+- Dev harness only: `/dev/avatar-lab` reads `?who=&view=&clip=&smile=&lid=&blink=0`.
+- **Next:** Hmz answers the plan's section 10, then the build order in section 9.
+
+## 2026-09-30 - V8.3 reviewed by Hmz: redo the landing as a website (next session; PR #18 not merged)
+
+Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new session, as V8.3b.
+
+- **The direction:**
+  - The page must look like a landing page: a modern, creative, real website, with a much better navbar and proper
+    sections and components.
+  - The whole page being the classroom is fine only if immersion is a deliberate, emphasised part of the story.
+  - Motion graphics need not come from Jake or the room: design them freely to the Night Class vibe.
+  - Reference the lesson rather than replaying it. Anything that plays runs like a short demo at a readable pace, not
+    scroll-scrubbed; the pinned scroll-through felt unintuitive.
+- **His notes on this build:**
+  1. Start with Jake idle, not facing the board.
+  2. The dark ink-glass title chips ("A Teacher of Your Own") do not carry the app's vibe.
+  3. The Column mark drawn in ink blends into the room in dark mode.
+  4. The scroll-through is not intuitive.
+  5. "It Remembers What You Know" and "For Parents" feel out of place with the rest of the page.
+  6. The goodbye wave plays only once.
+  7. Jake's idle face is too blank: friendlier, not a full smile.
+  8. The classroom's old placeholder paper (Classroom.tsx StudentDeskPaper) shows under the desk card.
+- **Reusable from dev/v8-3-landing:**
+  - `/` in the Pages Router, and the gate (full / lite / stack);
+  - the poster-as-LCP approach;
+  - the opt-in sound (`stage/sound.ts`);
+  - the KG snapshot, Jake's credit and the 44px footer;
+  - the `Teacher` `driver` prop and the warm-up (`stage/warm.ts`);
+  - the resized `public/landing/heart.glb`;
+  - the eval scripts and the perf lessons in the eval README (lazy parts warmed before use, no per-frame SVG filters,
+    host-level pause state, idle writers skipped).
+- **Next:** V8.3b in a new session (prompt given to Hmz); V8.6; V8.7.
+
+## 2026-09-30 - V8.3 landing v3 done: a scroll-driven story with the live classroom (Opus plan approved by Hmz)
+
+Branch `dev/v8-3-landing` off `origin/deploy-prep` (83c6f37, #15 and #17 in it; no upstream set); PR into
+`deploy-prep`. Plan and storyboard: `.claude/plans/V8.3-landing-plan.md` (Hmz: the recommendations plus 6B desk
+challenge, 7C editorial map, 8B goodbye wave). Decisions: the eight V8.3 rows in decisions.md. System: brand-system.md
+"Landing (V8.3)" and Motion. Copy: messaging.md "Landing copy, V8.3". Evidence: `.claude/eval/2026-09-30-v8-3-landing/`.
+
+- **Shipped:**
+  - `/` moved to the Pages Router (`pages/index.tsx`, static). `src/components/landing/`: `LandingRoot`, pinned
+    sections, `content.ts`, `mapStory.ts` and `stage/` (timeline, scroll driver, gate, the R3F stage, diagram and heart
+    shaders, warm-up, opt-in sound).
+  - The story, section by section:
+    - the opening window opens to full bleed as the camera enters the room;
+    - the idea: the Column draws itself, and the story shows on the display;
+    - from a question to a lesson: the topic types itself, the ideas link up, five cards with the real first lines,
+      the real `teaching.jpg` resolves from noise through sketch to colour, and `source.jpg` lifts into points onto
+      the real model;
+    - one lesson, five moves, with the challenge on the desk;
+    - the map beside one concept's memory curve (a real course, an example learner);
+    - the parents;
+    - the close, where Jake waves goodbye.
+  - `Teacher` gained an optional `driver` prop. The landing drives the director from scroll with the product's own
+    signals.
+  - `Experience.tsx` exports its lights and renderer config. Nothing in `src/lib`, `src/store`, `src/hooks` or
+    `src/app/api` changed.
+  - Modes: full, lite (phones, weak GPUs; 12 stills captured from the stage), and the stack (reduced motion, no JS).
+    The stage hands over to lite if it is slow, throws, or its chunk fails.
+  - `scripts/snapshot-kg.ts`, local only (anon key; published courses only). `public/landing/heart.glb`: the real
+    model resized, 624 kB. Footer links are 44px and carry Jake's CC BY credit.
+- **Measured** (headless on the GPU, production build):
+  - `/` is 127 kB first load (was 122; budget 135). `/demo` and `/learn` are unchanged.
+  - The LCP is the poster everywhere (188 to 504 ms). CLS 0.
+  - Scroll p95 16.8 ms at 360 to 1440 in both themes, with 0.4 to 3.6% of frames dropped. Lite under a 4x CPU
+    throttle drops 8.4 to 8.6%.
+  - AA: 5,412 nodes, 0 failures, minimum 5.11 light and 5.48 dark (the stack 4.74). No target under 44px, no overflow.
+  - 0 API and 0 paid calls in every run.
+- **Deviation:** GlanceBoard has no director signal (only the 25 s long wait), so the idea and diagram beats use
+  Pointing and PresentModel instead. A scripted cue would need `src/lib/avatar/director.ts`: ask Hmz.
+- **Gates:** type-check clean; lint 0 errors and 10 warnings; tests 482 (441 + 41); build green. The `code-reviewer`
+  found 2 high, 7 medium and 4 low; all fixed (eval README, "Review").
+- **Next:** V8.6 (admin, then onboarding, course map, dashboard and create-teacher onto the tokens); V8.7 (re-capture,
+  cleanup: the three `public/images/landing/classroom-*.webp` are now unused).
+
 ## 2026-09-30 - Desk quiz at portrait sizes done: the whole card on every phone, 44px targets (Opus plan approved by Hmz, Sonnet execution)
 
 Branch `dev/desk-quiz-portrait` off `origin/deploy-prep` (b3cc79b, #15 and #16 in it; no upstream set); PR into

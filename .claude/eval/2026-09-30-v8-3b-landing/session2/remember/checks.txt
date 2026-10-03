@@ -1,0 +1,19 @@
+remember 17 kB
+{"api":0,"paid":0}
+1024 remember out {"left":0,"right":0,"top":0} clear {"left":45,"right":213,"top":31}
+1280 remember out {"left":0,"right":0,"top":0} clear {"left":57,"right":250,"top":36}
+1440 remember out {"left":0,"right":0,"top":0} clear {"left":51,"right":250,"top":36}
+{"spot":"remember","box":[707,544],"meanDiff":0.69,"live":{"x0":60,"y0":37,"x1":674,"y1":324,"w":614,"h":287},"poster":{"x0":60,"y0":37,"x1":674,"y1":324,"w":614,"h":287},"shift":{"x0":0,"y0":0,"w":0,"h":0}}
+light 360 lite nodes 95 fails 0 min 4.74 small 0 overflow 0
+light 768 full nodes 89 fails 0 min 4.74 small 0 overflow 0
+light 1024 full nodes 177 fails 0 min 4.74 small 0 overflow 0
+light 1280 full nodes 172 fails 0 min 4.74 small 0 overflow 0
+light 1440 full nodes 172 fails 0 min 4.74 small 0 overflow 0
+dark 360 lite nodes 95 fails 0 min 6.06 small 0 overflow 0
+dark 768 full nodes 89 fails 0 min 5.48 small 0 overflow 0
+dark 1024 full nodes 177 fails 0 min 5.48 small 0 overflow 0
+dark 1280 full nodes 172 fails 0 min 5.48 small 0 overflow 0
+dark 1440 full nodes 172 fails 0 min 5.48 small 0 overflow 0
+{"api":0,"paid":0}
+
+[exited with code 0]

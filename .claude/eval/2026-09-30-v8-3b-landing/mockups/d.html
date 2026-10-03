@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V8.3b mockup D: Lesson Objects in the Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mock.css">
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* A's nav: the floating pill. */
+  .nav-shell { position: fixed; inset: 12px 0 auto; z-index: 40; pointer-events: none; }
+  .nav { pointer-events: auto; display: flex; align-items: center; gap: 8px; height: 60px; padding: 0 8px 0 20px; border: 1px solid var(--line); border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 12px 30px var(--shadow); }
+  .nav .links { display: none; margin: 0 auto; gap: 4px; }
+  .nav .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--body); }
+  .nav .links a:hover, .nav .links a.on { color: var(--ink); background: var(--sunk); }
+  .nav .end { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .nav .btn-primary { border-radius: 999px; }
+  .only-lg { display: none; } .only-sm { display: inline-grid; }
+  .sm-up { display: none !important; }
+  @media (min-width: 640px) { .sm-up { display: inline-grid !important; } }
+  @media (min-width: 1024px) { .nav .links { display: flex; } .nav .end { margin-left: 0; } .only-lg { display: inline-flex; } .only-sm { display: none; } }
+  @media (max-width: 639px) { .nav { padding-left: 16px; gap: 4px; } .nav .mark { height: 16px; } .nav .btn-primary { padding: 0 14px; } }
+
+  /* Hero: A's text, and the live room as a window that runs off the right edge of the page. */
+  .hero { position: relative; padding: 108px 0 64px; overflow-x: clip; }
+  @media (min-width: 1024px) { .hero { padding: 120px 0 96px; } }
+  .hero-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 1024px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; } }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  h1 { font-size: 36px; margin: 0; }
+  @media (min-width: 640px) { h1 { font-size: 56px; } }
+  @media (min-width: 1024px) { h1 { font-size: 48px; } }
+  @media (min-width: 1200px) { h1 { font-size: 56px; } }
+  h1 span { display: block; white-space: nowrap; }
+  .hero .lede { margin-top: 24px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  @media (max-width: 479px) { .ctas .btn { flex: 1 1 100%; } }
+  .win-col { position: relative; }
+  .win-col .glow-pool { position: absolute; inset: -14% -10% -20% -14%; pointer-events: none; }
+  .win { position: relative; overflow: hidden; background: #cfd6dd; aspect-ratio: 4 / 5; margin: 0 -16px; box-shadow: 0 30px 70px var(--shadow), 0 6px 18px var(--shadow); }
+  .win img { width: 100%; height: 100%; object-fit: cover; object-position: 18% 50%; }
+  @media (min-width: 640px) { .win { margin: 0; border-radius: 20px; aspect-ratio: 5 / 4; } }
+  /* At lg the window bleeds to the viewport's right edge: the room is right there, beside the line. */
+  @media (min-width: 1024px) { .win { aspect-ratio: auto; height: 600px; border-radius: 20px 0 0 20px; margin-right: calc((100vw - min(100vw, 1180px)) / -2 - 32px); } .win img { object-position: 12% 40%; } }
+  .say { position: relative; z-index: 2; margin: -48px 8px 0; padding: 16px 18px 16px; }
+  @media (min-width: 640px) { .say { position: absolute; left: -32px; bottom: -36px; width: min(460px, 86%); margin: 0; } }
+  .who { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .avatar { width: 32px; height: 32px; border-radius: 999px; background: var(--sunk); display: grid; place-items: center; flex: none; }
+  .avatar svg { height: 18px; fill: var(--ink); }
+  .name { font-size: 14px; font-weight: 600; }
+  .who .wave { margin-left: auto; }
+  .hear { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; margin: -8px -8px -8px 0; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--body); }
+  .hear:hover { background: var(--sunk); color: var(--ink); }
+  @media (max-width: 479px) { .who .wave { display: none; } .hear { margin-left: auto; } }
+  .words { font-size: 17px; line-height: 1.5; font-weight: 500; margin: 0; }
+  .real-row { margin-top: 16px; }
+  @media (min-width: 640px) { .real-row { margin-top: 52px; text-align: right; } }
+
+  /* Mid: one lesson, taught in the room. The room runs edge to edge; A's cards sit on it, straight, in the page theme. */
+  .lesson { padding: 88px 0 0; }
+  .lesson header { max-width: 40rem; margin-bottom: 32px; }
+  .lesson header .lede { margin-top: 16px; }
+  .room { position: relative; background: #cfd6dd; overflow: hidden; aspect-ratio: 4 / 5; }
+  .room img { width: 100%; height: 100%; object-fit: cover; object-position: 26% 50%; }
+  @media (min-width: 768px) { .room { aspect-ratio: auto; height: min(820px, 100svh); } .room img { object-position: 50% 45%; } }
+  .over { position: absolute; inset: 0; }
+  .over .wrap { position: relative; height: 100%; }
+  .moves-card { display: none; }
+  @media (min-width: 1024px) { .moves-card { display: block; position: absolute; right: 32px; top: 32px; width: 360px; padding: 8px; } }
+  .move { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 12px; text-align: left; }
+  .move:hover { background: var(--sunk); }
+  .move .num { width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; font-size: 13px; font-weight: 700; background: var(--sunk); color: var(--body); }
+  .move .icon { color: var(--muted); }
+  .move .name { font-size: 16px; font-weight: 600; }
+  .move .does { display: none; grid-column: 3; font-size: 14px; color: var(--body); line-height: 1.45; }
+  .move .bar { display: none; grid-column: 1 / -1; height: 2px; border-radius: 2px; background: var(--accent-text); transform-origin: left; transform: scaleX(0.55); margin-top: 4px; }
+  .move.cur { background: var(--sunk); }
+  .move.cur .num { background: var(--accent); color: var(--accent-ink); }
+  .move.cur .icon { color: var(--accent-text); }
+  .move.cur .does, .move.cur .bar { display: block; }
+  .line-card { position: relative; z-index: 2; margin: -56px 8px 0; padding: 16px 18px 18px; }
+  @media (min-width: 768px) { .line-card { position: absolute; margin: 0; right: 32px; bottom: 32px; width: 480px; } }
+  @media (min-width: 1024px) { .line-card { width: 360px; } }
+  /* Phones: the room is a picture in the flow and the line card overlaps its bottom edge. */
+  @media (max-width: 767px) { .room { aspect-ratio: auto; background: none; overflow: visible; } .room img { aspect-ratio: 4 / 5; height: auto; } .over { position: static; } }
+  .ctrl { display: flex; gap: 4px; margin-left: 8px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; margin: 16px -16px 0; padding: 0 16px 4px; scrollbar-width: none; }
+  @media (min-width: 1024px) { .chips { display: none; } }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 15px; font-weight: 600; }
+  .chip b { width: 28px; height: 28px; border-radius: 99px; display: grid; place-items: center; font-size: 13px; background: var(--sunk); color: var(--body); }
+  .chip.cur b { background: var(--accent); color: var(--accent-ink); }
+  .under { padding-top: 16px; padding-bottom: 112px; }
+  @media (max-width: 479px) { .line-card .avatar, .line-card .name { display: none; } }
+</style>
+</head>
+<body>
+  <div class="nav-shell"><div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-label="Aristo home" style="display:inline-flex;min-height:44px;align-items:center"><svg class="mark" data-mark="wordmark" aria-hidden="true"></svg></a>
+      <div class="links"><a href="#idea">The idea</a><a href="#how">How it works</a><a href="#lesson">A lesson</a><a href="#map">The map</a><a href="#parents">For parents</a></div>
+      <div class="end">
+        <button class="icon-btn sm-up" onclick="toggleTheme()" aria-label="Switch theme"><i data-lucide="sun-moon"></i></button>
+        <a class="btn btn-ghost only-lg" href="#">Sign in</a>
+        <a class="btn btn-primary" href="#">Try a lesson</a>
+        <button class="icon-btn only-sm" aria-label="Menu"><i data-lucide="menu"></i></button>
+      </div>
+    </nav>
+  </div></div>
+
+  <main>
+    <section class="hero"><div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Grades 6 to 8</p>
+        <h1 class="display-wide"><span>One teacher.</span><span>One student.</span><span class="hl">Every kid.</span></h1>
+        <p class="lede">Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.</p>
+        <div class="ctas"><a class="btn btn-primary btn-lg" href="#"><i data-lucide="play"></i>Try a lesson</a><a class="btn btn-outline btn-lg" href="#">Create an account</a></div>
+      </div>
+      <div class="win-col">
+        <div class="glow-pool" aria-hidden="true"></div>
+        <div class="win"><img src="../../../../public/images/landing/v3/idea.webp" alt="Jake, your teacher, in the 3D classroom"></div>
+        <div class="say card e2">
+          <div class="who"><span class="avatar"><svg data-mark="column" aria-hidden="true"></svg></span><span style="display:grid;line-height:1.3"><span class="name">Jake</span><span class="phase" style="white-space:nowrap">Explain, step 2 of 5</span></span><span class="wave" id="wave"></span><button class="hear" aria-pressed="false"><i data-lucide="volume-2"></i>Hear it</button></div>
+          <p class="words" id="cap"></p>
+          <p class="real" style="margin:10px 0 0">Real output from the heart demo lesson, in the live 3D classroom.</p>
+        </div>
+      </div>
+    </div></section>
+
+    <section class="lesson" id="lesson">
+      <div class="wrap"><header><h2 class="h2">One Lesson, Five Moves</h2><p class="lede">Watch your teacher take the heart through the five moves. It plays on its own; pick a move to jump to it.</p></header></div>
+      <div class="room">
+        <img src="../../../../public/images/landing/v3/move-3.webp" alt="Jake points at the heart diagram on the board">
+        <div class="over"><div class="wrap">
+          <div class="moves-card card e2" role="tablist" aria-label="The five moves">
+            <button class="move" role="tab"><span class="num">1</span><i data-lucide="history"></i><span class="name">Activate</span></button>
+            <button class="move" role="tab"><span class="num">2</span><i data-lucide="audio-lines"></i><span class="name">Explain</span></button>
+            <button class="move cur" role="tab" aria-selected="true"><span class="num">3</span><i data-lucide="presentation"></i><span class="name">Demonstrate</span><span class="does">It works through an example on the board, step by step.</span><span class="bar"></span></button>
+            <button class="move" role="tab"><span class="num">4</span><i data-lucide="target"></i><span class="name">Challenge</span></button>
+            <button class="move" role="tab"><span class="num">5</span><i data-lucide="waypoints"></i><span class="name">Connect</span></button>
+          </div>
+          <div class="line-card card e2">
+            <div class="who"><span class="avatar"><svg data-mark="column" aria-hidden="true"></svg></span><span style="display:grid;line-height:1.3"><span class="name">Jake</span><span class="phase" style="white-space:nowrap">Demonstrate, step 3 of 5</span></span><span class="ctrl" style="margin-left:auto"><button class="hear" aria-pressed="false"><i data-lucide="volume-2"></i>Hear it</button><button class="icon-btn" aria-label="Pause"><i data-lucide="pause"></i></button></span></div>
+            <p class="words" id="cap2"></p>
+          </div>
+        </div></div>
+      </div>
+      <div class="wrap under">
+        <div class="chips" role="tablist" aria-label="The five moves"><span class="chip"><b>1</b>Activate</span><span class="chip"><b>2</b>Explain</span><span class="chip cur"><b>3</b>Demonstrate</span><span class="chip"><b>4</b>Challenge</span><span class="chip"><b>5</b>Connect</span></div>
+        <p class="real" style="margin-top:12px">Live 3D, the product's own classroom. Every line, the diagram and the model are real output from the heart demo lesson.</p>
+      </div>
+    </section>
+  </main>
+<script>
+  window.init = function () {
+    caption(document.getElementById("cap"), 18, 11); wave(document.getElementById("wave"), 12);
+    // The Demonstrate line's first sentence, verbatim from the lesson (seg_009), part lit.
+    var el = document.getElementById("cap2");
+    var words = "Look at the diagram: blood low on oxygen flows into the right atrium first — that's the receiving room on the right.".split(" ");
+    el.innerHTML = words.map(function (w, i) { return '<span class="w' + (i < 9 ? " on" : i === 9 ? " now" : "") + '">' + w + "</span>"; }).join(" ");
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+{
+ "api": [],
+ "paid": [],
+ "runs": [
+  {
+   "theme": "light",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 428,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 160,
+   "hero": {
+    "n": 241,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 66,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "light",
+   "w": 1024,
+   "mode": "full",
+   "liveMs": 2591,
+   "lcp": {
+    "t": 180,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 271200
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 235,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 83,
+    "dropped": 0.9
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 47,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "mode": "full",
+   "liveMs": 1214,
+   "lcp": {
+    "t": 184,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 318000
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 234,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 117,
+    "dropped": 0.9
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 49,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "light",
+   "w": 1440,
+   "mode": "full",
+   "liveMs": 1496,
+   "lcp": {
+    "t": 172,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 318000
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 223,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 150,
+    "dropped": 1.3
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 46,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 133,
+    "dropped": 2.2
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 156,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 160,
+   "hero": {
+    "n": 241,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 66,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 1024,
+   "mode": "full",
+   "liveMs": 1179,
+   "lcp": {
+    "t": 152,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 271200
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 234,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 117,
+    "dropped": 0.9
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 45,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "mode": "full",
+   "liveMs": 1216,
+   "lcp": {
+    "t": 188,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 318000
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 233,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 133,
+    "dropped": 0.9
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 49,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 1440,
+   "mode": "full",
+   "liveMs": 1181,
+   "lcp": {
+    "t": 172,
+    "el": "IMG.landing-spot-still landing-fade absolute",
+    "size": 318000
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 453,
+   "hero": {
+    "n": 225,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 133,
+    "dropped": 1.3
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "ideas": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 48,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   }
+  }
+ ]
+}

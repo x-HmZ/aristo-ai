@@ -1,0 +1,1116 @@
+{
+ "label": "before",
+ "task": "check",
+ "base": "http://localhost:3100",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 12,
+     "min": 5.11,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 955,
+     "nodes": 12,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1529,
+     "nodes": 9,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102,
+     "nodes": 4,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2882,
+     "nodes": 5,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-mid",
+     "y": 3353,
+     "nodes": 6,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-end",
+     "y": 3823,
+     "nodes": 7,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4603,
+     "nodes": 7,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "h": 1024,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 12,
+     "min": 5.11,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1143,
+     "nodes": 12,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1790,
+     "nodes": 3,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2437,
+     "nodes": 3,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3461,
+     "nodes": 9,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4858,
+     "nodes": 11,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1024,
+   "h": 768,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 15,
+     "min": 5.11,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 922,
+     "nodes": 12,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1465,
+     "nodes": 9,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2008,
+     "nodes": 3,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2776,
+     "nodes": 9,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 3906,
+     "nodes": 9,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "h": 800,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 14,
+     "min": 5.11,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066,
+     "nodes": 12,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1634,
+     "nodes": 9,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2202,
+     "nodes": 3,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002,
+     "nodes": 9,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052,
+     "nodes": 9,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1440,
+   "h": 900,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 15,
+     "min": 5.11,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066,
+     "nodes": 15,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1584,
+     "nodes": 10,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102,
+     "nodes": 3,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002,
+     "nodes": 9,
+     "min": 8.86,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052,
+     "nodes": 10,
+     "min": 4.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "h": 780,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 12,
+     "min": 5.97,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 955,
+     "nodes": 12,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1529,
+     "nodes": 9,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102,
+     "nodes": 4,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2882,
+     "nodes": 5,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-mid",
+     "y": 3353,
+     "nodes": 6,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-end",
+     "y": 3823,
+     "nodes": 7,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4603,
+     "nodes": 7,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 113x15",
+      "Aristo home 113x15",
+      "Try a lesson 320x20",
+      "Sign in 320x20",
+      "Create an account 320x20",
+      "aitchemmzi@gmail.com 320x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "h": 1024,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 12,
+     "min": 5.97,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1143,
+     "nodes": 12,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1790,
+     "nodes": 3,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2437,
+     "nodes": 3,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3461,
+     "nodes": 9,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4858,
+     "nodes": 11,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 704x20",
+      "Sign in 704x20",
+      "Create an account 704x20",
+      "aitchemmzi@gmail.com 704x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1024,
+   "h": 768,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 15,
+     "min": 5.97,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 922,
+     "nodes": 12,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1465,
+     "nodes": 9,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2008,
+     "nodes": 3,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2776,
+     "nodes": 9,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 3906,
+     "nodes": 9,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 216x20",
+      "Sign in 216x20",
+      "Create an account 216x20",
+      "aitchemmzi@gmail.com 216x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "h": 800,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 14,
+     "min": 5.97,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066,
+     "nodes": 12,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1634,
+     "nodes": 9,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2202,
+     "nodes": 3,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002,
+     "nodes": 9,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052,
+     "nodes": 9,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1440,
+   "h": 900,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0,
+     "nodes": 15,
+     "min": 5.97,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066,
+     "nodes": 15,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1584,
+     "nodes": 10,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102,
+     "nodes": 3,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002,
+     "nodes": 9,
+     "min": 9.31,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052,
+     "nodes": 10,
+     "min": 7.74,
+     "fails": [],
+     "small": [
+      "Aristo home 145x19",
+      "Aristo home 145x19",
+      "Try a lesson 248x20",
+      "Sign in 248x20",
+      "Create an account 248x20",
+      "aitchemmzi@gmail.com 248x20"
+     ],
+     "overflow": 0
+    }
+   ]
+  }
+ ]
+}

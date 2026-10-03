@@ -1,0 +1,774 @@
+{
+ "label": "after",
+ "task": "perf",
+ "base": "http://localhost:49834",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": "off",
+   "lcp": {
+    "t": 504,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 86178
+   },
+   "lcpAll": [
+    {
+     "t": 504,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 86178
+    }
+   ],
+   "cls": 0,
+   "load": 141,
+   "jsKB": 204.4,
+   "cssKB": 15.5,
+   "glbKB": 0,
+   "imgKB": 94.4,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 29,
+     "kb": 2.7
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 29,
+     "kb": 43.9
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 29,
+     "kb": 34
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 29,
+     "kb": 4.9
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 29,
+     "kb": 2.3
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 29,
+     "kb": 6.6
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 29,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 29,
+     "kb": 22.4
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 29,
+     "kb": 1
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 30,
+     "kb": 0.1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 329,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 330,
+     "kb": 3.6
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 512,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 512,
+     "kb": 3.6
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "h": 1024,
+   "stage": "live",
+   "lcp": {
+    "t": 240,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 374166
+   },
+   "lcpAll": [
+    {
+     "t": 240,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 374166
+    }
+   ],
+   "cls": 0,
+   "load": 114,
+   "jsKB": 505.4,
+   "cssKB": 15.5,
+   "glbKB": 3274,
+   "imgKB": 128.3,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 17,
+     "kb": 2.7
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 17,
+     "kb": 43.9
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 17,
+     "kb": 4.9
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 17,
+     "kb": 6.6
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 17,
+     "kb": 34
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 18,
+     "kb": 2.3
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 18,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 18,
+     "kb": 22.4
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 18,
+     "kb": 1
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 18,
+     "kb": 0.1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 252,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 252,
+     "kb": 3.6
+    },
+    {
+     "n": "69b51223.1b200d07a24cc136.js",
+     "start": 265,
+     "kb": 163.2
+    },
+    {
+     "n": "5195-dd1d6ba0c02f80d7.js",
+     "start": 265,
+     "kb": 2.4
+    },
+    {
+     "n": "9476.234f002e2e404a48.js",
+     "start": 265,
+     "kb": 68
+    },
+    {
+     "n": "7928.bdbb8ce64b058d62.js",
+     "start": 265,
+     "kb": 21.5
+    },
+    {
+     "n": "6623.357ca8d52ea035e5.js",
+     "start": 266,
+     "kb": 13.6
+    },
+    {
+     "n": "8716-99d31f8865ab21e0.js",
+     "start": 266,
+     "kb": 4.8
+    },
+    {
+     "n": "8133.2fa65553f7b7f885.js",
+     "start": 266,
+     "kb": 8
+    },
+    {
+     "n": "7272.13168efabc16a05f.js",
+     "start": 266,
+     "kb": 7.9
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 292,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 292,
+     "kb": 3.6
+    },
+    {
+     "n": "draco_wasm_wrapper.js",
+     "start": 400,
+     "kb": 11.5
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "h": 800,
+   "stage": "live",
+   "lcp": {
+    "t": 208,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 285600
+   },
+   "lcpAll": [
+    {
+     "t": 208,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 285600
+    }
+   ],
+   "cls": 0,
+   "load": 93,
+   "jsKB": 505.4,
+   "cssKB": 15.5,
+   "glbKB": 3274,
+   "imgKB": 282.2,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 15,
+     "kb": 2.7
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 15,
+     "kb": 4.9
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 15,
+     "kb": 34
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 15,
+     "kb": 43.9
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 15,
+     "kb": 2.3
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 15,
+     "kb": 6.6
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 15,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 15,
+     "kb": 22.4
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 15,
+     "kb": 0.1
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 15,
+     "kb": 1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 222,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 222,
+     "kb": 3.6
+    },
+    {
+     "n": "69b51223.1b200d07a24cc136.js",
+     "start": 236,
+     "kb": 163.2
+    },
+    {
+     "n": "5195-dd1d6ba0c02f80d7.js",
+     "start": 237,
+     "kb": 2.4
+    },
+    {
+     "n": "9476.234f002e2e404a48.js",
+     "start": 237,
+     "kb": 68
+    },
+    {
+     "n": "7928.bdbb8ce64b058d62.js",
+     "start": 237,
+     "kb": 21.5
+    },
+    {
+     "n": "6623.357ca8d52ea035e5.js",
+     "start": 237,
+     "kb": 13.6
+    },
+    {
+     "n": "8716-99d31f8865ab21e0.js",
+     "start": 238,
+     "kb": 4.8
+    },
+    {
+     "n": "8133.2fa65553f7b7f885.js",
+     "start": 238,
+     "kb": 8
+    },
+    {
+     "n": "7272.13168efabc16a05f.js",
+     "start": 238,
+     "kb": 7.9
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 264,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 265,
+     "kb": 3.6
+    },
+    {
+     "n": "draco_wasm_wrapper.js",
+     "start": 383,
+     "kb": 11.5
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "h": 780,
+   "stage": "off",
+   "lcp": {
+    "t": 244,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 86178
+   },
+   "lcpAll": [
+    {
+     "t": 244,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 86178
+    }
+   ],
+   "cls": 0,
+   "load": 107,
+   "jsKB": 204.4,
+   "cssKB": 15.5,
+   "glbKB": 0,
+   "imgKB": 94.4,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 18,
+     "kb": 2.7
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 18,
+     "kb": 43.9
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 18,
+     "kb": 34
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 18,
+     "kb": 4.9
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 19,
+     "kb": 6.6
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 19,
+     "kb": 2.3
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 19,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 19,
+     "kb": 22.4
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 19,
+     "kb": 0.1
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 19,
+     "kb": 1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 263,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 263,
+     "kb": 3.6
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 287,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 287,
+     "kb": 3.6
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "h": 1024,
+   "stage": "live",
+   "lcp": {
+    "t": 188,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 374166
+   },
+   "lcpAll": [
+    {
+     "t": 188,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 374166
+    }
+   ],
+   "cls": 0,
+   "load": 79,
+   "jsKB": 505.4,
+   "cssKB": 15.5,
+   "glbKB": 3274,
+   "imgKB": 128.3,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 11,
+     "kb": 2.7
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 11,
+     "kb": 43.9
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 11,
+     "kb": 34
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 11,
+     "kb": 6.6
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 11,
+     "kb": 4.9
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 11,
+     "kb": 2.3
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 11,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 11,
+     "kb": 22.4
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 11,
+     "kb": 1
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 11,
+     "kb": 0.1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 199,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 199,
+     "kb": 3.6
+    },
+    {
+     "n": "69b51223.1b200d07a24cc136.js",
+     "start": 209,
+     "kb": 163.2
+    },
+    {
+     "n": "5195-dd1d6ba0c02f80d7.js",
+     "start": 209,
+     "kb": 2.4
+    },
+    {
+     "n": "9476.234f002e2e404a48.js",
+     "start": 209,
+     "kb": 68
+    },
+    {
+     "n": "7928.bdbb8ce64b058d62.js",
+     "start": 210,
+     "kb": 21.5
+    },
+    {
+     "n": "8716-99d31f8865ab21e0.js",
+     "start": 210,
+     "kb": 4.8
+    },
+    {
+     "n": "6623.357ca8d52ea035e5.js",
+     "start": 210,
+     "kb": 13.6
+    },
+    {
+     "n": "8133.2fa65553f7b7f885.js",
+     "start": 210,
+     "kb": 8
+    },
+    {
+     "n": "7272.13168efabc16a05f.js",
+     "start": 210,
+     "kb": 7.9
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 223,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 223,
+     "kb": 3.6
+    },
+    {
+     "n": "draco_wasm_wrapper.js",
+     "start": 347,
+     "kb": 11.5
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "h": 800,
+   "stage": "live",
+   "lcp": {
+    "t": 224,
+    "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+    "size": 285600
+   },
+   "lcpAll": [
+    {
+     "t": 224,
+     "tag": "IMG /_next/image?url=%2Fimages%2Flanding%2Fv3%2Fposter.webp&w=3840&q=75",
+     "size": 285600
+    }
+   ],
+   "cls": 0,
+   "load": 90,
+   "jsKB": 505.4,
+   "cssKB": 15.5,
+   "glbKB": 3274,
+   "imgKB": 282.2,
+   "mp3KB": 0,
+   "scripts": [
+    {
+     "n": "webpack-3aa6fb8dcb27ecba.js",
+     "start": 14,
+     "kb": 2.7
+    },
+    {
+     "n": "2749-f173ce4f43111fd8.js",
+     "start": 14,
+     "kb": 6.6
+    },
+    {
+     "n": "_app-0f8cd5f01b6d384a.js",
+     "start": 14,
+     "kb": 4.9
+    },
+    {
+     "n": "main-7dca61d467265710.js",
+     "start": 14,
+     "kb": 34
+    },
+    {
+     "n": "framework-2f3de63929c73f88.js",
+     "start": 14,
+     "kb": 43.9
+    },
+    {
+     "n": "8230-50ab02359d650f34.js",
+     "start": 14,
+     "kb": 2.3
+    },
+    {
+     "n": "880-158312687f8f6a57.js",
+     "start": 14,
+     "kb": 7.1
+    },
+    {
+     "n": "index-47c786df0e75ccb9.js",
+     "start": 14,
+     "kb": 22.4
+    },
+    {
+     "n": "_buildManifest.js",
+     "start": 14,
+     "kb": 1
+    },
+    {
+     "n": "_ssgManifest.js",
+     "start": 14,
+     "kb": 0.1
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 236,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 237,
+     "kb": 3.6
+    },
+    {
+     "n": "69b51223.1b200d07a24cc136.js",
+     "start": 251,
+     "kb": 163.2
+    },
+    {
+     "n": "5195-dd1d6ba0c02f80d7.js",
+     "start": 251,
+     "kb": 2.4
+    },
+    {
+     "n": "9476.234f002e2e404a48.js",
+     "start": 252,
+     "kb": 68
+    },
+    {
+     "n": "7928.bdbb8ce64b058d62.js",
+     "start": 252,
+     "kb": 21.5
+    },
+    {
+     "n": "6623.357ca8d52ea035e5.js",
+     "start": 252,
+     "kb": 13.6
+    },
+    {
+     "n": "8716-99d31f8865ab21e0.js",
+     "start": 252,
+     "kb": 4.8
+    },
+    {
+     "n": "8133.2fa65553f7b7f885.js",
+     "start": 252,
+     "kb": 8
+    },
+    {
+     "n": "7272.13168efabc16a05f.js",
+     "start": 252,
+     "kb": 7.9
+    },
+    {
+     "n": "7983-7c8d2a8f2c2dfc08.js",
+     "start": 253,
+     "kb": 36.1
+    },
+    {
+     "n": "demo-f10efb3c175ee242.js",
+     "start": 254,
+     "kb": 3.6
+    },
+    {
+     "n": "draco_wasm_wrapper.js",
+     "start": 379,
+     "kb": 11.5
+    }
+   ]
+  }
+ ]
+}

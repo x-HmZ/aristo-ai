@@ -1,0 +1,21 @@
+{
+  "classroom": {
+    "headToBelt": 363,
+    "chest": 216,
+    "waist": 142,
+    "chestPerHeight": 0.595,
+    "waistPerHeight": 0.391
+  },
+  "landing": {
+    "headToBelt": 665,
+    "chest": 390,
+    "waist": 265,
+    "chestPerHeight": 0.586,
+    "waistPerHeight": 0.398,
+    "scaledBy": 0.5459
+  },
+  "difference": {
+    "chest": "-1.5%",
+    "waist": "1.8%"
+  }
+}

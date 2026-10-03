@@ -15,6 +15,11 @@ import { Box, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CameraController } from "./CameraController";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
+import { RendererConfig, SceneLights } from "./SceneBits";
+
+// Re-exported for existing importers; they live in SceneBits so the landing can use them without this module (and
+// Classroom's preload of the room) in its stage chunk.
+export { RendererConfig, SceneLights };
 
 // In-scene controls (the image and model toolbars): the system's secondary
 // button and a status chip, inside `.theme-ink`. Classes only; the <Html>
@@ -23,12 +28,6 @@ const SCENE_BUTTON = "whitespace-nowrap border border-line shadow-e1";
 const SCENE_CHIP =
   "pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
 
-// Bump tone-mapping exposure for PBR avatar materials (Avaturn dark suit benefits from this)
-function RendererConfig() {
-  const { gl } = useThree();
-  useEffect(() => { gl.toneMappingExposure = 0.83; }, [gl]);
-  return null;
-}
 
 // Shared anchor for the image panel and the 3D model.
 // Image plane is IMG_SIZE × IMG_SIZE (≈1.46), so shifting the anchor by
@@ -78,20 +77,6 @@ function Floor() {
   );
 }
 
-function SceneLights() {
-  return (
-    <>
-      <ambientLight intensity={0.38} color="#ffffff" />
-      {/* Key light — from front-right, brightens face */}
-      <directionalLight position={[2, 5, 3]} intensity={1.22} color="#ffffff" castShadow />
-      {/* Fill light — front-left, soft warmth */}
-      <directionalLight position={[-2, 3, 2]} intensity={0.51} color="#fff4e8" />
-      {/* Rim — neutral warm, low intensity. Saturated colour here reflects in eye corneas. */}
-      <pointLight position={[3, 4, -5]} intensity={0.26} color="#fff4e8" />
-      <hemisphereLight args={["#ffffff", "#f5e8d8", 0.38]} />
-    </>
-  );
-}
 
 // Teaching image rendered as a crisp WebGL plane — avoids CSS-transform blurriness.
 // SRGBColorSpace fixes the black-texture bug in Three.js r152+.

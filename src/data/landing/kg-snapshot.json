@@ -1,0 +1,236 @@
+{
+  "note": "A real course's concepts and prerequisites (scripts/snapshot-kg.ts). No learner data: the landing's progress is an illustrative example.",
+  "course": {
+    "id": "course_python_programming_1776606305463",
+    "title": "Complete Python Programming: From Basics to Advanced"
+  },
+  "taken": "2026-09-30",
+  "nodes": [
+    {
+      "id": "python_what_is_programming",
+      "name": "What is Programming?",
+      "layer": 0,
+      "x": 0,
+      "y": 0.5
+    },
+    {
+      "id": "python_installation",
+      "name": "Installing Python & Running Your First Script",
+      "layer": 1,
+      "x": 0.125,
+      "y": 0.5
+    },
+    {
+      "id": "python_print",
+      "name": "Printing Output",
+      "layer": 2,
+      "x": 0.25,
+      "y": 0.5
+    },
+    {
+      "id": "python_comments",
+      "name": "Comments",
+      "layer": 3,
+      "x": 0.375,
+      "y": 0.25
+    },
+    {
+      "id": "python_variables",
+      "name": "Variables and Assignment",
+      "layer": 3,
+      "x": 0.375,
+      "y": 0.75
+    },
+    {
+      "id": "python_types_int_float",
+      "name": "Integers and Floats",
+      "layer": 4,
+      "x": 0.5,
+      "y": 0.25
+    },
+    {
+      "id": "python_types_string",
+      "name": "Strings",
+      "layer": 4,
+      "x": 0.5,
+      "y": 0.75
+    },
+    {
+      "id": "python_types_bool",
+      "name": "Booleans and Comparisons",
+      "layer": 5,
+      "x": 0.625,
+      "y": 0.25
+    },
+    {
+      "id": "python_types_none",
+      "name": "None",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.083
+    },
+    {
+      "id": "python_if_else",
+      "name": "if / elif / else",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.25
+    },
+    {
+      "id": "python_logical_operators",
+      "name": "Logical Operators (and, or, not)",
+      "layer": 7,
+      "x": 0.875,
+      "y": 0.125
+    },
+    {
+      "id": "python_while_loop",
+      "name": "while Loops",
+      "layer": 7,
+      "x": 0.875,
+      "y": 0.375
+    },
+    {
+      "id": "python_for_loop",
+      "name": "for Loops",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.417
+    },
+    {
+      "id": "python_list_basics",
+      "name": "Lists",
+      "layer": 5,
+      "x": 0.625,
+      "y": 0.75
+    },
+    {
+      "id": "python_list_comprehension",
+      "name": "List Comprehensions",
+      "layer": 7,
+      "x": 0.875,
+      "y": 0.625
+    },
+    {
+      "id": "python_tuple",
+      "name": "Tuples",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.583
+    },
+    {
+      "id": "python_set",
+      "name": "Sets",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.75
+    },
+    {
+      "id": "python_dict",
+      "name": "Dictionaries",
+      "layer": 6,
+      "x": 0.75,
+      "y": 0.917
+    },
+    {
+      "id": "python_comprehensions_dict_set",
+      "name": "Dict and Set Comprehensions",
+      "layer": 8,
+      "x": 1,
+      "y": 0.5
+    },
+    {
+      "id": "python_functions_basics",
+      "name": "Defining and Calling Functions",
+      "layer": 7,
+      "x": 0.875,
+      "y": 0.875
+    }
+  ],
+  "edges": [
+    [
+      "python_what_is_programming",
+      "python_installation"
+    ],
+    [
+      "python_installation",
+      "python_print"
+    ],
+    [
+      "python_print",
+      "python_comments"
+    ],
+    [
+      "python_print",
+      "python_variables"
+    ],
+    [
+      "python_variables",
+      "python_types_int_float"
+    ],
+    [
+      "python_variables",
+      "python_types_string"
+    ],
+    [
+      "python_types_int_float",
+      "python_types_bool"
+    ],
+    [
+      "python_types_bool",
+      "python_types_none"
+    ],
+    [
+      "python_types_bool",
+      "python_if_else"
+    ],
+    [
+      "python_if_else",
+      "python_logical_operators"
+    ],
+    [
+      "python_if_else",
+      "python_while_loop"
+    ],
+    [
+      "python_types_int_float",
+      "python_list_basics"
+    ],
+    [
+      "python_types_string",
+      "python_list_basics"
+    ],
+    [
+      "python_list_basics",
+      "python_for_loop"
+    ],
+    [
+      "python_for_loop",
+      "python_list_comprehension"
+    ],
+    [
+      "python_list_basics",
+      "python_tuple"
+    ],
+    [
+      "python_list_basics",
+      "python_dict"
+    ],
+    [
+      "python_list_basics",
+      "python_set"
+    ],
+    [
+      "python_for_loop",
+      "python_functions_basics"
+    ],
+    [
+      "python_list_comprehension",
+      "python_comprehensions_dict_set"
+    ],
+    [
+      "python_dict",
+      "python_comprehensions_dict_set"
+    ]
+  ]
+}

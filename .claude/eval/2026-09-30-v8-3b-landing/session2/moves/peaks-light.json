@@ -1,0 +1,91 @@
+[
+ {
+  "move": "activate",
+  "gesture": "Imagine",
+  "t": 2.5,
+  "measures": [
+   {
+    "side": "R",
+    "ringTopBelowHandPx": 4,
+    "ringOffPalmXPx": 0,
+    "ringPx": 22
+   },
+   {
+    "side": "L",
+    "ringTopBelowHandPx": 4,
+    "ringOffPalmXPx": 0,
+    "ringPx": 22
+   }
+  ]
+ },
+ {
+  "move": "explain",
+  "gesture": "HoldIdea",
+  "t": 4.8,
+  "measures": {
+   "palmGapPx": 142.1,
+   "orbPx": 88.1,
+   "centreOffPx": 0,
+   "clearEachSidePx": 26.9
+  }
+ },
+ {
+  "move": "demonstrate",
+  "gesture": "StepBeat",
+  "step": 0,
+  "t": 8.6,
+  "measures": {
+   "stepTopBelowHandPx": -4,
+   "stepOffHandXPx": 1.8,
+   "handLift": 0
+  }
+ },
+ {
+  "move": "demonstrate",
+  "gesture": "StepBeat",
+  "step": 1,
+  "t": 10.3,
+  "measures": {
+   "stepTopBelowHandPx": -3.2,
+   "stepOffHandXPx": 1.9,
+   "handLift": 0
+  }
+ },
+ {
+  "move": "demonstrate",
+  "gesture": "StepBeat",
+  "step": 2,
+  "t": 12,
+  "measures": {
+   "stepTopBelowHandPx": -2.5,
+   "stepOffHandXPx": 2.3,
+   "handLift": 0
+  }
+ },
+ {
+  "move": "challenge",
+  "gesture": "YourTurn",
+  "t": 14.4,
+  "measures": {
+   "cardBottomAbovePalmsPx": 2,
+   "palmsAlongCard": [
+    0.1,
+    0.9
+   ],
+   "cardPx": [
+    228.1,
+    112
+   ]
+  }
+ },
+ {
+  "move": "connect",
+  "gesture": "BringTogether",
+  "t": 21.2,
+  "measures": {
+   "palmGapPx": 134.7,
+   "ideaToRightPalmPx": 18,
+   "nextToLeftPalmPx": 17
+  }
+ }
+]

@@ -1,0 +1,36 @@
+{
+ "heroWave3Runs": [
+  {
+   "L_hand_y": 0.3,
+   "R_hand_y": -0.43
+  },
+  {
+   "L_hand_y": 0.3,
+   "R_hand_y": -0.43
+  },
+  {
+   "L_hand_y": 0.3,
+   "R_hand_y": -0.43
+  }
+ ],
+ "ideasPointingAtOrb": [
+  {
+   "deg": 5.4,
+   "tipToTargetPx": 65
+  },
+  {
+   "deg": 5.3,
+   "tipToTargetPx": 65
+  }
+ ],
+ "waveClipsDecoded": {
+  "Talking6": {
+   "R_Upperarm_deg": 22,
+   "L_Upperarm_deg": 2
+  },
+  "Talking6M": {
+   "L_Upperarm_deg": 22,
+   "R_Upperarm_deg": 2
+  }
+ }
+}

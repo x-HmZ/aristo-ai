@@ -174,6 +174,12 @@ strength a theme token) is atmosphere behind hero media and inside a closing ban
 Under `prefers-reduced-motion` every duration token is 0ms, `PRESS` drops its transform, and reveals render
 in place.
 
+**Scroll-driven motion (the landing, V8.3).** Scroll drives scene time, damped (λ 8, frame-rate independent), so
+motion arrives soft rather than stepped; nothing hijacks the scroll. Beats move by opacity and transform only (their
+own layers), fade over about 3% of a section, and hold still in between. The hero lines rise in with CSS at first
+paint (80ms apart). The camera eases (smoothstep) between held poses. Under reduced motion none of it runs: the page
+is a stack.
+
 ## Components
 
 - **Button** (`ui/button`): control radius, `PRESS`, `FOCUS`. Heights are 44 (default), 36 (sm) and 48 (lg),
@@ -197,8 +203,7 @@ in place.
   gets it.
 - **Mark:** `AristoMark`: ink letters, accent flute. A standalone mark passes `decorative={false}` so it is
   named "Aristo".
-- **Nav, hero, capability strip, cards, closing band:** the landing's own components, unchanged from
-  T04b / V8.1.
+- **Nav, hero, sections, close:** the landing's own components; see "Landing (V8.3b)" below.
 - **Segmented control** (TeacherControls; the Tabs pattern for buttons): a 10px `sunk` rail with 4px padding,
   44px items with a 6px radius, the chosen one `bg-surface text-ink shadow-e1` and `aria-pressed`.
 
@@ -283,6 +288,44 @@ in place.
   an icon in a tint circle; the result is one line with an icon and words in `success`, `warning` or `danger`; the
   quiz header is a `surface/95` bar with a ghost Skip; QuizView sits in the panel's column.
 - **Lightbox:** `bg-black/80` scrim, the image at 16px radius with `shadow-e2`, a 44px ink-glass close button.
+
+### Landing (V8.3b): Jake presents
+
+- **Structure:** a website, nothing pinned or scrubbed. A floating pill nav, then one section per feature: the hero,
+  A Teacher of Your Own, It Draws a Diagram, It Builds a Model, One Lesson, Five Moves, It Remembers What You Know,
+  Step Into the Classroom, For Parents, the close, the footer. Copy in `landing/content.ts` (messaging.md for the
+  deck); the plan is `.claude/plans/V8.3b-landing-plan.md`.
+- **Columns:** `WRAP` (1180px, 16px gutter, 32px from md); a heading column (`H2`: Title Case Geist 650, 30/44px;
+x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
+  `BTN_GHOST`, all 44px; `BTN_LG` 52px for the hero and the close). The hero eyebrow and the parents' eyebrow are
+  13px uppercase `muted` text, no pill.
+- **One visual language, nothing generic:**
+  - the idea's **orb of light** (`.landing-idea-orb`, lit or ringed): an idea, a concept, a review point;
+  - the classroom's **dark display** (`.theme-ink`, `bg-sunk`, `.landing-display-glow`): Five Moves' board, the
+    map;
+  - **chalk on dark, ink on paper:** a drawing's line phase follows the page (chalk on a dark page); a sheet is the
+    product's paper (`.theme-paper`, light in both themes): the memory card, the desk quiz.
+  - **For Parents** is the page's one tint band (`bg-tint`, `border-tint-line`, edge to edge): the one place the
+    page turns to the adult. Its eyebrow is `accent-text` (4.74 on the light tint), its promises sit under hairlines.
+  - On a display a hollow ring is filled with the display's ground, so a line meets its edge.
+- **Jake** is the product's `Teacher`, live on one canvas that moves to the section's spot (a crop of the
+  classroom's lesson view, `stage/spots.ts`), fading out below mid-thigh (`.landing-fade`) onto a warm pool. He
+  always has room in his box (`need`, checked by `eval/.../bounds.cjs`). Every gesture lands on a real thing,
+  placed from his bones and checked at its peak frame.
+- **Posters:** a section's poster is its first live frame (`<spot>-start.webp` on the live path, placed by
+  `stillCss` in container units); lite and the stack show its end (`<spot>.webp`).
+- **Step Into the Classroom:** the room edge to edge (16:9, at most 88svh; 4:3 under sm), no fade. Over it, solid
+  cards in the page theme (`surface`, `border-line`, `shadow-e2`): the tour (four 44px shot buttons with icons,
+  the current one `bg-sunk text-ink` with an `accent-text` icon and `aria-current`, then Pause/Replay) bottom left,
+  and his line bottom right (the words light from `muted` to `ink`, the one being said `accent-text`; Hear it, a
+  44px `aria-pressed` toggle). Below lg both follow the room. The room's poster covers the box from the centre, as
+  the camera does (`room.ts roomFov`).
+- **Real output** is labelled under each graphic in `REAL` (13px `muted`): which demo lesson it is from and what
+  is an illustration.
+- **Contrast (measured, both themes, 360 to 1440):** 0 AA failures; minimum 5.11 light and 5.48 dark on the lite and
+  stack paths, 5.48 and 5.97 over the room's cards. Every target at least 44px.
+- **Modes:** full (live stage), lite (stills of each section's end; phones, weak GPUs, Save-Data), stack (reduced
+  motion: the same stills, nothing plays). See decisions.md, "Landing modes".
 
 ### shadcn mapping (for `npx shadcn add`)
 

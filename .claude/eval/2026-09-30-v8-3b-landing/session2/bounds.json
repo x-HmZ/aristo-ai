@@ -1,0 +1,566 @@
+{
+ "768": [
+  {
+   "spot": "hero",
+   "box": [
+    600,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 45,
+    "right": 184,
+    "top": 45
+   }
+  },
+  {
+   "spot": "idea",
+   "box": [
+    474,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 88,
+    "right": 94,
+    "top": 46
+   }
+  },
+  {
+   "spot": "ideas",
+   "box": [
+    704,
+    542
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 17,
+    "right": 253,
+    "top": 38
+   }
+  },
+  {
+   "spot": "picture",
+   "box": [
+    704,
+    542
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 23,
+    "right": 19,
+    "top": 20
+   }
+  },
+  {
+   "spot": "model",
+   "box": [
+    600,
+    545
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 27,
+    "right": 10,
+    "top": 20
+   }
+  },
+  {
+   "spot": "moves",
+   "box": [
+    704,
+    542
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 18,
+    "right": 283,
+    "top": 33
+   }
+  },
+  {
+   "spot": "close",
+   "box": [
+    600,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 164,
+    "right": 110,
+    "top": 39
+   }
+  }
+ ],
+ "1024": [
+  {
+   "spot": "hero",
+   "box": [
+    452,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 28,
+    "right": 128,
+    "top": 35
+   }
+  },
+  {
+   "spot": "idea",
+   "box": [
+    348,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 28,
+    "right": 28,
+    "top": 46
+   }
+  },
+  {
+   "spot": "ideas",
+   "box": [
+    603,
+    464
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 12,
+    "right": 216,
+    "top": 32
+   }
+  },
+  {
+   "spot": "picture",
+   "box": [
+    527,
+    406
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 17,
+    "right": 15,
+    "top": 15
+   }
+  },
+  {
+   "spot": "model",
+   "box": [
+    527,
+    479
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 23,
+    "right": 9,
+    "top": 17
+   }
+  },
+  {
+   "spot": "moves",
+   "box": [
+    603,
+    464
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 15,
+    "right": 243,
+    "top": 27
+   }
+  },
+  {
+   "spot": "close",
+   "box": [
+    452,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 90,
+    "right": 36,
+    "top": 39
+   }
+  }
+ ],
+ "1280": [
+  {
+   "spot": "hero",
+   "box": [
+    530,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 35,
+    "right": 148,
+    "top": 41
+   }
+  },
+  {
+   "spot": "idea",
+   "box": [
+    413,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 60,
+    "right": 70,
+    "top": 46
+   }
+  },
+  {
+   "spot": "ideas",
+   "box": [
+    707,
+    544
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 14,
+    "right": 253,
+    "top": 38
+   }
+  },
+  {
+   "spot": "picture",
+   "box": [
+    618,
+    476
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 18,
+    "right": 17,
+    "top": 17
+   }
+  },
+  {
+   "spot": "model",
+   "box": [
+    618,
+    562
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 27,
+    "right": 10,
+    "top": 20
+   }
+  },
+  {
+   "spot": "moves",
+   "box": [
+    707,
+    544
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 18,
+    "right": 285,
+    "top": 32
+   }
+  },
+  {
+   "spot": "close",
+   "box": [
+    530,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 60,
+    "right": 135,
+    "top": 40
+   }
+  }
+ ],
+ "1440": [
+  {
+   "spot": "hero",
+   "box": [
+    530,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 35,
+    "right": 150,
+    "top": 41
+   }
+  },
+  {
+   "spot": "idea",
+   "box": [
+    413,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 60,
+    "right": 59,
+    "top": 46
+   }
+  },
+  {
+   "spot": "ideas",
+   "box": [
+    707,
+    544
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 20,
+    "right": 254,
+    "top": 38
+   }
+  },
+  {
+   "spot": "picture",
+   "box": [
+    618,
+    476
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 18,
+    "right": 17,
+    "top": 17
+   }
+  },
+  {
+   "spot": "model",
+   "box": [
+    618,
+    562
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 27,
+    "right": 10,
+    "top": 20
+   }
+  },
+  {
+   "spot": "moves",
+   "box": [
+    707,
+    544
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 18,
+    "right": 285,
+    "top": 32
+   }
+  },
+  {
+   "spot": "close",
+   "box": [
+    530,
+    600
+   ],
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 129,
+    "right": 76,
+    "top": 39
+   }
+  }
+ ],
+ "before1280": [
+  {
+   "spot": "idea",
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 58,
+    "right": 62,
+    "top": 46
+   }
+  },
+  {
+   "spot": "ideas",
+   "out": {
+    "left": 4.66796875,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": -5,
+    "right": 270,
+    "top": 39
+   }
+  },
+  {
+   "spot": "picture",
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 20,
+    "right": 17,
+    "top": 17
+   }
+  },
+  {
+   "spot": "model",
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 27,
+    "right": 10,
+    "top": 20
+   }
+  },
+  {
+   "spot": "moves",
+   "out": {
+    "left": 84.66796875,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": -85,
+    "right": 339,
+    "top": 37
+   }
+  },
+  {
+   "spot": "close",
+   "out": {
+    "left": 0,
+    "right": 0,
+    "top": 0
+   },
+   "clear": {
+    "left": 59,
+    "right": 135,
+    "top": 40
+   }
+  }
+ ]
+}

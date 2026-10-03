@@ -1,0 +1,11 @@
+{"theme":"light","w":360,"h":780,"stage":"off","frames":504,"seconds":8.5,"p50":16.7,"p95":16.8,"p99":16.8,"max":50,"dropped":0.8,"dropped2":0,"loaf":1,"loafMax":50}
+{"theme":"light","w":768,"h":1024,"stage":"live","frames":651,"seconds":11.2,"p50":16.7,"p95":16.8,"p99":33.4,"max":100,"dropped":2.3,"dropped2":0.2,"loaf":1,"loafMax":104}
+{"theme":"light","w":1024,"h":768,"stage":"live","frames":509,"seconds":8.7,"p50":16.7,"p95":16.8,"p99":33.3,"max":66.7,"dropped":1.4,"dropped2":0.2,"loaf":1,"loafMax":76}
+{"theme":"light","w":1280,"h":800,"stage":"live","frames":518,"seconds":8.9,"p50":16.7,"p95":16.8,"p99":33.3,"max":116.6,"dropped":1.7,"dropped2":0.2,"loaf":1,"loafMax":115}
+{"theme":"light","w":1440,"h":900,"stage":"live","frames":589,"seconds":10.3,"p50":16.7,"p95":16.8,"p99":33.4,"max":216.7,"dropped":2.4,"dropped2":0.3,"loaf":2,"loafMax":225}
+{"theme":"dark","w":360,"h":780,"stage":"off","frames":503,"seconds":8.4,"p50":16.7,"p95":16.7,"p99":16.8,"max":33.3,"dropped":0.4,"dropped2":0,"loaf":0,"loafMax":0}
+{"theme":"dark","w":768,"h":1024,"stage":"live","frames":642,"seconds":10.9,"p50":16.7,"p95":16.8,"p99":33.3,"max":66.6,"dropped":1.6,"dropped2":0.2,"loaf":1,"loafMax":78}
+{"theme":"dark","w":1024,"h":768,"stage":"live","frames":502,"seconds":8.6,"p50":16.7,"p95":16.8,"p99":33.3,"max":116.6,"dropped":1.6,"dropped2":0.2,"loaf":1,"loafMax":111}
+{"theme":"dark","w":1280,"h":800,"stage":"live","frames":523,"seconds":9.1,"p50":16.7,"p95":16.8,"p99":33.4,"max":83.3,"dropped":2.9,"dropped2":0.4,"loaf":2,"loafMax":90}
+{"theme":"dark","w":1440,"h":900,"stage":"live","frames":585,"seconds":10.5,"p50":16.7,"p95":16.8,"p99":33.4,"max":250,"dropped":3.6,"dropped2":0.5,"loaf":3,"loafMax":253}
+api 0 paid 0

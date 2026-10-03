@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V8.3b mockup C: Line and Light</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mock.css">
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+  /* Nav: compact, left-aligned; a 2px reading line under it follows the page (CSS scroll timeline). */
+  .bar { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .nav { display: flex; align-items: center; gap: 4px; height: 64px; }
+  .sep { display: none; width: 1px; height: 24px; background: var(--line); margin: 0 16px 0 20px; }
+  .links { display: none; gap: 2px; }
+  .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--body); }
+  .links a:hover { color: var(--ink); background: var(--sunk); }
+  .end { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .only-lg { display: none; } .only-sm { display: inline-grid; }
+  .sm-up { display: none !important; }
+  @media (min-width: 640px) { .sm-up { display: inline-grid !important; } }
+  @media (min-width: 1024px) { .sep, .links { display: flex; } .only-lg { display: inline-flex; } .only-sm { display: none; } }
+  @media (max-width: 639px) { .nav .mark { height: 16px; } .nav .btn-primary { padding: 0 14px; } }
+  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent-text); transform-origin: left; transform: scaleX(0.04); }
+  @supports (animation-timeline: scroll()) {
+    .progress { animation: grow linear both; animation-timeline: scroll(root); }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  }
+
+  /* Hero: the line, and a lesson taking shape beside it. */
+  .hero { padding: 64px 0 96px; }
+  @media (min-width: 1024px) { .hero { padding: 88px 0 120px; } }
+  .grid { display: grid; gap: 48px; align-items: center; }
+  @media (min-width: 1024px) { .grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); } }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+  h1 { font-size: 36px; margin: 0; }
+  @media (min-width: 640px) { h1 { font-size: 56px; } }
+  @media (min-width: 1024px) { h1 { font-size: 48px; } }
+  @media (min-width: 1200px) { h1 { font-size: 56px; } }
+  h1 span { display: block; white-space: nowrap; }
+  .hero .lede { margin-top: 24px; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  @media (max-width: 479px) { .ctas .btn { flex: 1 1 100%; } }
+
+  .shape { position: relative; aspect-ratio: 5 / 6; }
+  @media (min-width: 640px) { .shape { aspect-ratio: 1 / 1; } }
+  .shape svg.lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .node { position: absolute; width: 14px; height: 14px; margin: -7px; border-radius: 99px; background: var(--surface); border: 1.5px solid var(--accent-text); }
+  .node.lit { background: var(--accent-text); }
+  .lab { position: absolute; transform: translate(12px, -50%); font-size: 13px; line-height: 1.2; color: var(--body); white-space: nowrap; background: var(--bg); padding: 2px 4px; border-radius: 4px; }
+  .lab.left { transform: translate(calc(-100% - 12px), -50%); }
+  @media (max-width: 639px) { .lab.below { transform: translate(-30%, 10px); } }
+  .topic { position: absolute; left: 50%; top: 5%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 15px; font-weight: 600; white-space: nowrap; box-shadow: 0 12px 30px var(--shadow); }
+  .topic .icon { color: var(--accent-text); width: 16px; height: 16px; }
+  .caret { width: 2px; height: 18px; background: var(--accent-text); }
+  .step { position: absolute; top: 88%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; }
+  .step b { width: 32px; height: 32px; border-radius: 99px; display: grid; place-items: center; font-size: 13px; background: var(--surface); border: 1.5px solid var(--line); color: var(--body); }
+  .step.done b { border-color: var(--accent-text); color: var(--accent-text); }
+  .step.cur b { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .step span { font-size: 13px; color: var(--body); }
+  @media (max-width: 479px) { .step span { display: none; } .lab { font-size: 12px; } }
+  .real-under { margin-top: 8px; }
+
+  /* Mid: the map and one concept's memory, in the same line language as the hero. */
+  .remember { padding: 88px 0 112px; border-top: 1px solid var(--line); }
+  .remember header { max-width: 40rem; margin-bottom: 40px; }
+  .remember header .lede { margin-top: 16px; }
+  .pair { display: grid; gap: 40px; }
+  @media (min-width: 1024px) { .pair { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; } }
+  .panel-title { font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+  .map { position: relative; height: 300px; margin-top: 20px; }
+  @media (min-width: 640px) { .map { height: 360px; } }
+  .map svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .k { position: absolute; width: 14px; height: 14px; margin: -7px; border-radius: 99px; background: var(--surface); border: 1.5px solid var(--line); }
+  .k.m { background: var(--accent-text); border-color: var(--accent-text); }
+  .k.n { border: 2px solid var(--accent-text); box-shadow: 0 0 0 6px rgb(var(--glow) / 0.22); }
+  .klab { position: absolute; transform: translate(-50%, -150%); font-size: 13px; font-weight: 600; white-space: nowrap; background: var(--bg); padding: 2px 6px; border-radius: 4px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .legend i { width: 12px; height: 12px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--surface); }
+  .legend i.m { background: var(--accent-text); border-color: var(--accent-text); }
+  .legend i.n { border: 2px solid var(--accent-text); }
+  .curve { position: relative; margin-top: 20px; }
+  .curve svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .axis { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+  <header class="bar"><div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-label="Aristo home" style="display:inline-flex;min-height:44px;align-items:center"><svg class="mark" data-mark="wordmark" aria-hidden="true"></svg></a>
+      <span class="sep" aria-hidden="true"></span>
+      <div class="links"><a href="#lesson">How it works</a><a href="#teacher">Your teacher</a><a href="#map">The map</a><a href="#parents">For parents</a></div>
+      <div class="end">
+        <button class="icon-btn sm-up" onclick="toggleTheme()" aria-label="Switch theme"><i data-lucide="sun-moon"></i></button>
+        <a class="btn btn-ghost only-lg" href="#">Sign in</a>
+        <a class="btn btn-primary" href="#">Try a lesson</a>
+        <button class="icon-btn only-sm" aria-label="Menu"><i data-lucide="menu"></i></button>
+      </div>
+    </nav>
+  </div><span class="progress" aria-hidden="true"></span></header>
+
+  <main>
+    <section class="hero"><div class="wrap grid">
+      <div>
+        <p class="eyebrow">Grades 6 to 8</p>
+        <h1 class="display-wide"><span>One teacher.</span><span>One student.</span><span class="hl">Every kid.</span></h1>
+        <p class="lede">Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.</p>
+        <div class="ctas"><a class="btn btn-primary btn-lg" href="#"><i data-lucide="play"></i>Try a lesson</a><a class="btn btn-outline btn-lg" href="#">Create an account</a></div>
+      </div>
+      <div>
+        <div class="shape" id="shape" role="img" aria-label="A topic becomes a lesson: the heart topic, the ideas inside it, then the five moves"></div>
+        <p class="real real-under">The topic and its ideas are real output from the heart demo lesson.</p>
+      </div>
+    </div></section>
+
+    <section class="remember" id="map"><div class="wrap">
+      <header><h2 class="h2">It Remembers What You Know</h2><p class="lede">Every concept comes back just before you would forget it, and the next lesson starts from what you have mastered.</p></header>
+      <div class="pair">
+        <div>
+          <p class="panel-title">The Map of a Real Course</p>
+          <p class="cap" style="margin:0">Complete Python Programming, its first 20 concepts.</p>
+          <div class="map" id="kg"></div>
+          <div class="legend"><span><i class="m"></i>Mastered</span><span><i class="n"></i>Up next</span><span><i></i>Not yet</span></div>
+        </div>
+        <div>
+          <p class="panel-title">One Concept, Three Weeks</p>
+          <p class="cap" style="margin:0">Each review lifts it back up, and it fades more slowly after each one.</p>
+          <div class="curve" id="curve"></div>
+          <div class="axis"><span>Today</span><span>1 week</span><span>2 weeks</span><span>3 weeks</span></div>
+        </div>
+      </div>
+      <p class="real" style="margin-top:32px">Example learner. The map is a real course's concepts; the progress is illustrative.</p>
+    </div></section>
+  </main>
+<script>
+  var IDEAS = [
+    { id: "pumps", label: "Two pumps in one", x: 0.5, y: 0.1 }, { id: "ra", label: "Right atrium", x: 0.14, y: 0.34, left: 0 },
+    { id: "la", label: "Left atrium", x: 0.86, y: 0.3, left: 1 }, { id: "rv", label: "Right ventricle", x: 0.2, y: 0.72, below: 1 },
+    { id: "lv", label: "Left ventricle", x: 0.8, y: 0.7, left: 1 }, { id: "valves", label: "Valves", x: 0.5, y: 0.52 },
+    { id: "aorta", label: "Aorta", x: 0.62, y: 0.92 },
+  ];
+  var LINKS = [["pumps", "ra"], ["pumps", "la"], ["ra", "rv"], ["la", "lv"], ["valves", "rv"], ["valves", "lv"], ["lv", "aorta"]];
+  var MOVES = ["Activate", "Explain", "Demonstrate", "Challenge", "Connect"];
+  window.init = function () {
+    // The lesson taking shape. Positions in % of the square; ideas from the lesson's own layout (content.ts IDEAS).
+    var el = document.getElementById("shape"), P = {};
+    IDEAS.forEach(function (n) { P[n.id] = { x: 10 + n.x * 80, y: 20 + n.y * 50 }; });
+    var L = function (a, b, lit) { return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="' + (lit ? "var(--accent-text)" : "var(--line)") + '" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'; };
+    var rail = MOVES.map(function (_, i) { return { x: 10 + i * 20, y: 88 }; });
+    var svg = L({ x: 50, y: 8 }, P.pumps, true) + LINKS.map(function (l) { return L(P[l[0]], P[l[1]], true); }).join("") +
+      L(P.rv, rail[1], false) + L(P.aorta, rail[2], false) + L(P.lv, rail[3], false) + L(rail[0], rail[4], false) + L(rail[0], rail[2], true);
+    el.innerHTML = '<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + svg + "</svg>" +
+      '<span class="topic"><i data-lucide="search"></i>How the Heart Pumps Blood<span class="caret"></span></span>' +
+      IDEAS.map(function (n) { var p = P[n.id]; return '<span class="node lit" style="left:' + p.x + "%;top:" + p.y + '%"></span><span class="lab' + (n.left ? " left" : "") + (n.below ? " below" : "") + '" style="left:' + p.x + "%;top:" + p.y + '%">' + n.label + "</span>"; }).join("") +
+      MOVES.map(function (m, i) { return '<span class="step ' + (i < 2 ? "done" : i === 2 ? "cur" : "") + '" style="left:' + rail[i].x + '%"><b>' + (i + 1) + "</b><span>" + m + "</span></span>"; }).join("");
+    lucide.createIcons({ attrs: { "stroke-width": 2, class: "icon" } });
+
+    // The real course map: first 11 concepts mastered (example learner), the 12th up next.
+    var kg = DATA.kg, pos = {}, box = document.getElementById("kg");
+    kg.nodes.forEach(function (n, i) { pos[n.id] = { x: 3 + n.x * 94, y: 6 + n.y * 88, i: i, name: n.name }; });
+    var lines = kg.edges.map(function (e) { var a = pos[e[0]], b = pos[e[1]]; var lit = a.i < 11 && b.i < 11;
+      return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="' + (lit ? "var(--accent-text)" : "var(--line)") + '" stroke-width="' + (lit ? 1.8 : 1.4) + '" vector-effect="non-scaling-stroke"/>'; }).join("");
+    var next = kg.nodes[11];
+    box.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' + lines + "</svg>" +
+      kg.nodes.map(function (n, i) { var p = pos[n.id]; return '<span class="k' + (i < 11 ? " m" : i === 11 ? " n" : "") + '" style="left:' + p.x + "%;top:" + p.y + '%"></span>'; }).join("") +
+      '<span class="klab" style="left:' + Math.min(pos[next.id].x, 80) + "%;top:" + pos[next.id].y + '%">' + next.name + "</span>";
+
+    // One concept over 21 days: reviews on days 2, 6 and 13, each one slowing the fade (illustrative).
+    var W = 400, H = 220, reviews = [2, 6, 13], S = [1.6, 4, 9, 20], d = "", t0 = 0, k = 0;
+    for (var day = 0; day <= 21.001; day += 0.1) {
+      if (k < reviews.length && day >= reviews[k]) { t0 = reviews[k]; k++; var x = day / 21 * W; d += " L" + x.toFixed(1) + " " + (H * 0.06).toFixed(1); }
+      var r = Math.exp(-(day - t0) / S[k]); d += (d ? " L" : "M") + (day / 21 * W).toFixed(1) + " " + (H * 0.06 + (1 - r) * H * 0.88).toFixed(1);
+    }
+    var dots = reviews.map(function (r) { return '<circle cx="' + (r / 21 * W) + '" cy="' + (H * 0.06) + '" r="5" fill="var(--accent-text)"/>'; }).join("");
+    var grid = [0.06, 0.5, 0.94].map(function (g) { return '<line x1="0" x2="' + W + '" y1="' + g * H + '" y2="' + g * H + '" stroke="var(--line)" stroke-width="1"/>'; }).join("");
+    document.getElementById("curve").innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Memory of one concept over three weeks: it fades, each review lifts it back, and it fades more slowly each time">' + grid +
+      '<path d="' + d + '" fill="none" stroke="var(--accent-text)" stroke-width="2.5" stroke-linejoin="round"/>' + dots + "</svg>";
+  };
+</script>
+</body>
+</html>

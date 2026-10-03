@@ -1,0 +1,28 @@
+{
+ "label": "after-throttle4-slow",
+ "task": "scroll",
+ "base": "http://localhost:49834",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": "off",
+   "frames": 1552,
+   "seconds": 29.8,
+   "p50": 16.7,
+   "p95": 33.4,
+   "p99": 66.7,
+   "max": 100,
+   "dropped": 8.6,
+   "dropped2": 2.2,
+   "loaf": 45,
+   "loafMax": 98
+  }
+ ]
+}

@@ -333,28 +333,391 @@
     color: transparent;
   }
 
-  /* Scroll reveal. The class is toggled by src/components/landing/Reveal.tsx;
-     the motion itself lives here so that prefers-reduced-motion is honoured
-     without any JS involvement. */
-  .landing-reveal {
+
+  /* The hero lines rise in at first paint (CSS only, so the H1 paints at once and stays the LCP). */
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-rise {
+      animation: landing-rise var(--dur-reveal) var(--ease-out) both;
+    }
+  }
+  /* A spot (V8.3b): Jake fades out below mid-thigh, live or still, so the crop is never a hard edge in either
+     theme. The still gives way to the live canvas once it has drawn there (host.ts sets data-live). */
+  .landing-fade {
+    -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 96%);
+  }
+  .landing-spot-still {
+    transition: opacity 200ms var(--ease-out);
+  }
+  /* Step Into the Classroom: the room runs edge to edge, so neither its canvas nor its stills fade. */
+  /* A room that could not load shows the tour's end, as lite does. */
+  [data-mode="full"] .landing-room[data-failed] .landing-still-start {
+    display: none;
+  }
+  [data-mode="full"] .landing-room[data-failed] .landing-still-end {
+    display: block;
+  }
+  [data-stage-layer][data-at="room"] {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .landing-spot[data-live] .landing-spot-still {
     opacity: 0;
-    transform: translateY(18px);
-    transition:
-      opacity var(--dur-reveal) var(--ease-out),
-      transform var(--dur-reveal) var(--ease-out);
+  }
+  /* On the live path a spot's poster is its first frame; elsewhere (lite, the stack, no JS) its end. */
+  .landing-still-start {
+    display: none;
+  }
+  [data-mode="full"] .landing-still-start {
+    display: block;
+  }
+  [data-mode="full"] .landing-still-end {
+    display: none;
   }
 
-  .landing-reveal.is-visible {
-    opacity: 1;
-    transform: none;
+  /* A spoken line's words (HeroLine): not yet said, said, and the one being said. */
+  .landing-word {
+    color: rgb(var(--muted));
+    transition: color 160ms var(--ease-out);
+  }
+  .landing-word[data-s="on"] {
+    color: rgb(var(--ink));
+  }
+  .landing-word[data-s="now"] {
+    color: rgb(var(--accent-text));
   }
 
+  /* A Teacher of Your Own (Idea.tsx): the beats rise in turn and the colonnade draws itself on the section's clock
+     (data-on, data-drawn, data-lit). Without data-armed (lite, no JS) everything is in place. */
+  .landing-idea-beat {
+    transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out);
+  }
+  .landing-idea[data-armed] .landing-idea-beat:not([data-on]) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .landing-column-ink {
+    fill: rgb(var(--ink));
+    stroke: rgb(var(--ink));
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 2.3s var(--ease-in-out), fill-opacity 600ms var(--ease-out) 2.1s;
+  }
+  .landing-idea[data-armed] .landing-column:not([data-drawn]) .landing-column-ink {
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+    transition: none;
+  }
+  .landing-column-slot {
+    fill: rgb(var(--accent));
+    stroke: none;
+    transition: fill-opacity 900ms var(--ease-out);
+  }
+  .landing-column-slot:not([data-lit]) {
+    fill-opacity: 0;
+    stroke: rgb(var(--line));
+    stroke-width: 4;
+    stroke-dasharray: 10 10;
+  }
+  /* The idea Jake holds: warm light, brightest at its heart, in the accent. */
+  .landing-orb {
+    background: radial-gradient(circle at 50% 45%, rgb(255 236 214) 0%, rgb(var(--accent)) 46%, rgb(var(--accent) / 0.85) 70%);
+    box-shadow: 0 0 28px 8px rgb(var(--glow) / 0.5);
+    will-change: transform, opacity, width, height;
+  }
   @media (prefers-reduced-motion: reduce) {
-    .landing-reveal {
-      opacity: 1;
-      transform: none;
+    .landing-idea-beat,
+    .landing-column-ink,
+    .landing-column-slot {
       transition: none;
     }
+  }
+
+  /* The classroom's display (.theme-ink) on the landing (Five Moves' board): orbs of the idea's own light
+     (.landing-orb), rings for what a topic builds on, and links that draw once both their ends are lit. */
+  /* inline-size, not size: a display holds a list that sets its own height (Five Moves board). */
+  .landing-display {
+    container-type: inline-size;
+  }
+  .landing-display-glow {
+    background: radial-gradient(60% 50% at 50% 48%, rgb(var(--glow) / 0.16), transparent 72%);
+  }
+  .landing-idea-orb {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+  }
+  .landing-idea-lit {
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55);
+  }
+  .landing-idea-ring {
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 12px 2px rgb(var(--glow) / 0.45), inset 0 0 6px rgb(var(--glow) / 0.35);
+  }
+  .landing-link {
+    stroke: rgb(var(--accent-text));
+    stroke-width: 0.45;
+    stroke-linecap: round;
+    opacity: 0.85;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 600ms var(--ease-in-out) 200ms;
+  }
+  .landing-caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 1em;
+    background: rgb(var(--ink));
+    animation: landing-caret 1s steps(1) infinite;
+  }
+  @keyframes landing-caret {
+    50% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-link {
+      transition: none;
+    }
+    .landing-caret {
+      animation: none;
+    }
+  }
+
+  /* One Lesson, Five Moves (Moves.tsx): the move now playing is lit (the accent, as the classroom's phase rail);
+     the ones before it stay in ink, the ones to come wait in muted ink. Without data-armed everything is in place. */
+  .landing-move {
+    border-color: rgb(var(--line));
+    background: rgb(var(--surface));
+    transition: border-color 300ms var(--ease-out), background-color 300ms var(--ease-out), opacity 300ms var(--ease-out);
+  }
+  .landing-move-icon {
+    border-color: rgb(var(--line));
+    background: rgb(var(--bg));
+    color: rgb(var(--accent-text));
+    transition: background-color 300ms var(--ease-out), color 300ms var(--ease-out), border-color 300ms var(--ease-out);
+  }
+  .landing-move[aria-current] {
+    border-color: rgb(var(--accent) / 0.55);
+    background: rgb(var(--tint));
+  }
+  .landing-move[aria-current] .landing-move-icon {
+    border-color: rgb(var(--accent));
+    background: rgb(var(--accent));
+    color: rgb(var(--accent-ink));
+  }
+  .landing-moves[data-armed] .landing-move:not([data-on]) :is(.text-ink, .text-body) {
+    color: rgb(var(--muted));
+  }
+  /* What he holds or sets down at each move (MovesHands.tsx): rings of what you know, lit steps and the idea, in the
+     idea's own light (.landing-orb, the display's rings); the question card is paper (.theme-paper). */
+  .landing-move-ring {
+    border-radius: 50%;
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.45), inset 0 0 8px rgb(var(--glow) / 0.35);
+    will-change: transform, opacity;
+  }
+  .landing-move-dot {
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 16px 4px rgb(var(--glow) / 0.55);
+    will-change: transform, opacity;
+  }
+  .landing-move-link {
+    height: 2px;
+    border-radius: 1px;
+    background: rgb(var(--accent-text));
+    box-shadow: 0 0 8px rgb(var(--glow) / 0.5);
+    will-change: transform, opacity;
+  }
+  .landing-move-card {
+    box-shadow: 0 18px 40px rgb(var(--shadow));
+    will-change: transform, opacity;
+  }
+  /* Five Moves' board (MovesBoard.tsx): the classroom's display, where each place lights as its piece lands
+     (data-on, MovesHands); the links draw once both ends are lit. The question
+     is a ring with a question mark; its answer arrives under it, then its tick. Without data-armed it is whole. */
+  .landing-board-node {
+    transition: opacity 260ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-board .landing-link {
+    stroke-width: 1.5px;
+  }
+  /* On the displays a hollow ring is filled with the display's ground, so a line meets its edge and never shows
+     through it (Five Moves' board, the map). */
+  :is(.landing-board, .landing-map) .landing-idea-ring,
+  .landing-board-question {
+    background: rgb(var(--sunk));
+  }
+  .landing-board-group {
+    transition: opacity 260ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-group:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-board[data-armed] .landing-link:not([data-on]) {
+    stroke-dashoffset: 1;
+  }
+  .landing-board-idea {
+    width: 22px;
+    height: 22px;
+  }
+  .landing-board-question {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: 0 0 12px 2px rgb(var(--glow) / 0.45);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgb(var(--accent-text));
+  }
+  .landing-board-answer {
+    transition: opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-answer]) .landing-board-answer {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  .landing-board-tick {
+    transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+  }
+  .landing-board[data-armed] .landing-board-node:not([data-tick]) .landing-board-tick {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-board-node,
+    .landing-board-group,
+    .landing-board-answer,
+    .landing-board-tick {
+      transition: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-move,
+    .landing-move-icon {
+      transition: none;
+    }
+  }
+
+  /* It Remembers What You Know (Remember.tsx). The memory card is paper (.theme-paper): the line in ink's accent, the
+     review points orbs of the idea's light that wait ringed until the line reaches them, then light with one pulse
+     (his tap). The map is the classroom's display: mastered concepts lit, the next one ringed and pulsing, the rest
+     waiting in the display's line colour. Without data-armed (lite, reduced motion) everything is in place. */
+  .landing-memory-grid {
+    stroke: rgb(var(--line));
+    stroke-width: 1px;
+    stroke-dasharray: 4 4;
+  }
+  .landing-memory-line {
+    fill: none;
+    stroke: rgb(var(--accent-text));
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .landing-memory-tap {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, rgb(255 236 214) 0%, rgb(var(--accent)) 52%, rgb(var(--accent) / 0.85) 72%);
+    box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55);
+  }
+  .landing-memory[data-armed] .landing-memory-tap:not([data-on]) {
+    background: rgb(var(--surface));
+    border: 2px solid rgb(var(--accent-text));
+    box-shadow: none;
+  }
+  .landing-memory[data-armed] .landing-memory-tap[data-on] {
+    animation: landing-tap 500ms var(--ease-out) both;
+  }
+  @keyframes landing-tap {
+    0% { scale: 1.6; box-shadow: 0 0 0 10px rgb(var(--glow) / 0.35); }
+    100% { scale: 1; box-shadow: 0 0 14px 3px rgb(var(--glow) / 0.55); }
+  }
+  .landing-memory-head {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--accent-text));
+    box-shadow: 0 0 10px 3px rgb(var(--glow) / 0.5);
+  }
+  .landing-memory-mark {
+    transition: opacity 400ms var(--ease-out);
+  }
+  .landing-memory[data-armed] .landing-memory-mark:not([data-on]) {
+    opacity: 0;
+  }
+  .landing-map-edge {
+    stroke: rgb(var(--line));
+    stroke-width: 1.5px;
+    transition: stroke 300ms var(--ease-out);
+  }
+  .landing-map-edge-lit {
+    stroke: rgb(var(--accent-text));
+  }
+  /* The link the next lesson starts from: once the next lesson's ring shows, lit and dashed, flowing towards it (from
+     what you have mastered into what comes next); still under reduced motion. */
+  .landing-map-edge-next.landing-map-edge-drawn {
+    stroke: rgb(var(--accent-text));
+    stroke-width: 2px;
+    stroke-dasharray: 5 4;
+    animation: landing-flow 900ms linear infinite;
+  }
+  @keyframes landing-flow {
+    to { stroke-dashoffset: -9; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-map-edge-next.landing-map-edge-drawn {
+      animation: none;
+    }
+  }
+  .landing-map-later {
+    border: 1.5px solid rgb(var(--muted) / 0.6);
+    background: rgb(var(--sunk));
+  }
+  .landing-map-next {
+    animation: landing-next 1.1s var(--ease-in-out) 2 both;
+  }
+  @keyframes landing-next {
+    50% { box-shadow: 0 0 0 9px rgb(var(--glow) / 0.3), 0 0 12px 2px rgb(var(--glow) / 0.45); }
+  }
+  .landing-map-mark {
+    transition: opacity 400ms var(--ease-out);
+  }
+  .landing-map-mark:not([data-on]) {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-memory[data-armed] .landing-memory-tap[data-on],
+    .landing-map-next {
+      animation: none;
+    }
+    .landing-memory-mark,
+    .landing-map-edge,
+    .landing-map-mark {
+      transition: none;
+    }
+  }
+
+  /* The nav's sheet below lg drops in from the pill. */
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-sheet:not([hidden]) {
+      animation: landing-rise 200ms var(--ease-out) both;
+    }
+  }
+  @keyframes landing-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
   }
 
   /* Wide display type: Archivo at its widest, set in capitals. The hero line

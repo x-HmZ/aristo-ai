@@ -1,0 +1,164 @@
+{
+ "api": [],
+ "paid": [],
+ "runs": [
+  {
+   "theme": "light",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 1112,
+    "el": "IMG.landing-still-hero absolute max-w-none",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 170,
+   "hero": {
+    "n": 242,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "moves": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "remember": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "room": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 421,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 93,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 17,
+    "dropped": 0
+   }
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "mode": "lite",
+   "liveMs": null,
+   "lcp": {
+    "t": 496,
+    "el": "IMG.landing-still-hero absolute max-w-none",
+    "size": 83255
+   },
+   "cls": 0,
+   "clsAfterScroll": 0,
+   "jsKB": 170,
+   "hero": {
+    "n": 241,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "sections": {
+    "idea": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "picture": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "model": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "moves": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    },
+    "remember": {
+     "n": 422,
+     "p50": 16.7,
+     "p95": 16.8,
+     "worst": 17,
+     "dropped": 0
+    },
+    "room": {
+     "n": 421,
+     "p50": 16.7,
+     "p95": 16.7,
+     "worst": 17,
+     "dropped": 0
+    }
+   },
+   "model": {
+    "n": 422,
+    "p50": 16.7,
+    "p95": 16.8,
+    "worst": 17,
+    "dropped": 0
+   },
+   "scroll": {
+    "n": 94,
+    "p50": 16.7,
+    "p95": 16.7,
+    "worst": 33,
+    "dropped": 1.1
+   }
+  }
+ ]
+}

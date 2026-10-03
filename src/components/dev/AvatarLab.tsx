@@ -30,6 +30,7 @@ import {
   type VisemeSpan,
 } from "@/lib/lipsync/visemes";
 import { FADE, overlayBlend, overlayWeight } from "@/lib/avatar/director";
+import { LID_REST, SMILE_REST } from "@/lib/avatar/face";
 import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { BRAND_HEX } from "@/lib/brandColors";
@@ -100,6 +101,18 @@ const VISEMES = [
 ];
 
 const DEMO = "heart";
+
+// Review overrides from the query string (?who=jake&view=face&clip=Idle&smile=0.5&lid=0.1&blink=0): the resting
+// smile and lid (the product's by default, face.ts), for comparing idle faces side by side (V8.3b). Read once.
+const QS = typeof window === "undefined" ? null : new URLSearchParams(window.location.search);
+const qsNum = (k: string, d: number) => {
+  const v = Number(QS?.get(k));
+  return QS?.has(k) && Number.isFinite(v) ? v : d;
+};
+const REST_SMILE = qsNum("smile", SMILE_REST.neutral);
+const REST_LID = qsNum("lid", LID_REST);
+const NO_BLINK = QS?.get("blink") === "0"; // stills only
+
 const SEGMENTS = Array.from({ length: 15 }, (_, i) =>
   `/demo/${DEMO}/seg_${String(i + 1).padStart(3, "0")}.mp3`);
 
@@ -273,11 +286,11 @@ function Teacher({
       onViseme(now, timeline.length);   // only on change, so this is cheap
     }
 
-    // A resting smile plus a blink loop, so a still face does not read as dead.
-    setMorph("mouthSmile", v ? 0 : 0.15, 0.1);
+    // The product's resting smile and lids plus a blink loop (face.ts), so a still face reads as in a lesson.
+    setMorph("mouthSmile", v ? 0 : REST_SMILE, 0.1);
     blink.current -= dt;
     if (blink.current < -0.12) blink.current = 2 + Math.random() * 3;
-    const closed = blink.current < 0 ? 1 : 0;
+    const closed = blink.current < 0 && !NO_BLINK ? 1 : REST_LID;
     setMorph("eyeBlinkLeft", closed, 0.5);
     setMorph("eyeBlinkRight", closed, 0.5);
   });
@@ -338,12 +351,12 @@ function Framing({ view, controls }: { view: ViewKey; controls: React.RefObject<
 }
 
 export default function AvatarLab() {
-  const [candidate, setCandidate] = useState<CandidateKey>("mj");
-  const [clip, setClip] = useState<string>("Talking");
+  const [candidate, setCandidate] = useState<CandidateKey>(() => (QS?.get("who") as CandidateKey | null) ?? "mj");
+  const [clip, setClip] = useState<string>(() => QS?.get("clip") ?? "Talking");
   const [seg, setSeg] = useState(0);
   const [report, setReport] = useState({ morphs: [] as string[], clips: [] as string[], current: "—" });
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
-  const [view, setView] = useState<ViewKey>("lesson");
+  const [view, setView] = useState<ViewKey>(() => (QS?.get("view") as ViewKey | null) ?? "lesson");
   const [live, setLive] = useState("—");
   const [spans, setSpans] = useState(0);
   const [gesture, setGesture] = useState<GestureCue | null>(null);

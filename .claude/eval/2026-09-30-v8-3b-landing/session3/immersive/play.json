@@ -1,0 +1,24 @@
+{
+ "api": [],
+ "paid": [],
+ "mp3": [
+  "/demo/volcano-eruption/seg_008.mp3"
+ ],
+ "checks": {
+  "tab": {
+   "landed": 17.22,
+   "after2s": 19.45,
+   "current": "The model"
+  },
+  "pause": {
+   "held": true,
+   "at": 20.85
+  },
+  "hear": {
+   "pressed": "true",
+   "mp3": [
+    "/demo/volcano-eruption/seg_008.mp3"
+   ]
+  }
+ }
+}

@@ -1,0 +1,220 @@
+{
+ "label": "before",
+ "task": "shots",
+ "base": "http://localhost:3100",
+ "reduced": false,
+ "lite": false,
+ "nogl": false,
+ "api": [],
+ "paid": [],
+ "rows": [
+  {
+   "theme": "light",
+   "w": 360,
+   "h": 780,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 955
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1529
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2882
+    },
+    {
+     "name": "what-it-does-mid",
+     "y": 3353
+    },
+    {
+     "name": "what-it-does-end",
+     "y": 3823
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4603
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "h": 1024,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1143
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1790
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2437
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3461
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4858
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "h": 800,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1634
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2202
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "h": 780,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 955
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1529
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2102
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 2882
+    },
+    {
+     "name": "what-it-does-mid",
+     "y": 3353
+    },
+    {
+     "name": "what-it-does-end",
+     "y": 3823
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4603
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "h": 1024,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1143
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1790
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2437
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3461
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4858
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "h": 800,
+   "stage": null,
+   "stops": [
+    {
+     "name": "top",
+     "y": 0
+    },
+    {
+     "name": "how-it-works-start",
+     "y": 1066
+    },
+    {
+     "name": "how-it-works-mid",
+     "y": 1634
+    },
+    {
+     "name": "how-it-works-end",
+     "y": 2202
+    },
+    {
+     "name": "what-it-does-start",
+     "y": 3002
+    },
+    {
+     "name": "for-parents-start",
+     "y": 4052
+    }
+   ]
+  }
+ ]
+}

@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   AnimationClip, Group, LoopOnce, LoopRepeat, MathUtils, MeshStandardMaterial, Quaternion, SRGBColorSpace, Vector3,
-  type AnimationAction, type Bone, type SkinnedMesh,
+  type AnimationAction, type Bone, type Object3D, type SkinnedMesh,
 } from "three";
 import { getCurrentViseme } from "@/hooks/useTTS";
 import {
@@ -19,7 +19,7 @@ import {
   createDirectorState, overlayBlend, overlayWeight, phaseOf, roleOf, stepDirector,
   type BasePlay, type DirectorSignals, type DirectorState, type OverlayPlay, type ReactionKind,
 } from "@/lib/avatar/director";
-import { SMILE_GAIN_UNTUNED, createBlinkState, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
+import { SMILE_GAIN_UNTUNED, createBlinkState, lidClosure, stepBlink, stepSmile, type BlinkState } from "@/lib/avatar/face";
 import {
   EYE_RATE, EYE_WEIGHT, createGazeState, eyeAim, gazeTarget, stepSaccade, type GazeState,
 } from "@/lib/avatar/gaze";
@@ -362,6 +362,35 @@ const _X = new Vector3(1, 0, 0), _Y = new Vector3(0, 1, 0);
 /** World-space points the head can look at (V9.3); the camera is always available. */
 export type LookTargets = Partial<Record<"board" | "model" | "desk", readonly [number, number, number]>>;
 
+/**
+ * What drives the teacher when it is not the lesson store (V8.3: the landing page's scroll timeline). The
+ * director and every layer run exactly as in a lesson; only the source of the signals, the viseme and the
+ * clip-pack go-ahead changes. Unset (the classroom): all three come from `useAristoStore`, as before.
+ */
+export interface TeacherDriver {
+  /** Read once per frame by the director. Nod and shake arrive as `reaction`, with a new `id` per nod. */
+  signals: () => DirectorSignals;
+  /** The mouth shape now, or null when silent. Unset: none (the store path uses useTTS's audio). */
+  viseme?: () => { viseme: string; intensity: number } | null;
+  /** Load the clip packs (the store path waits for `sceneReady`). */
+  clipPacks: boolean;
+  /**
+   * Where the viewer is, in world space, when the director looks at the student (V8.3b: the landing's hero follows
+   * the reader's pointer). Unset or null: the camera, as in a lesson.
+   */
+  viewer?: () => Vector3 | null;
+  /**
+   * Runs last each frame, on the posed skeleton (the clips, the director's layers, the look and the eyes applied),
+   * before the render (V8.3b: the landing aims an offered hand at a button). Unset: nothing.
+   */
+  afterPose?: (root: Object3D, delta: number) => void;
+  /**
+   * Clips the director may not pick for this teacher (V8.3b: the landing keeps pointing to the one clip whose aim it
+   * corrects). Unset: every clip in the avatar's set, as in a lesson.
+   */
+  withhold?: ReadonlySet<string>;
+}
+
 interface TeacherProps {
   teacher:    TeacherAvatar;
   /** Where the head looks for the board, a shown model and the quiz desk. Unset: the camera. */
@@ -369,6 +398,8 @@ interface TeacherProps {
   position?:  [number, number, number];
   scale?:     number;
   rotationY?: number;
+  /** Drive the teacher from something other than the lesson store. See `TeacherDriver`. */
+  driver?:    TeacherDriver;
 }
 
 export function Teacher({
@@ -377,7 +408,10 @@ export function Teacher({
   scale     = 1.5,
   rotationY = 0.35,
   lookTargets,
+  driver,
 }: TeacherProps) {
+  const driverRef = useRef(driver);
+  driverRef.current = driver;
   const group               = useRef<Group>(null);
   const customTeacherGlbUrl = useAristoStore((s) => s.customTeacherGlbUrl);
 
@@ -459,6 +493,18 @@ export function Teacher({
   useLayoutEffect(() => {
     for (const clip of animations) if (allowed.has(clip.name)) availableRef.current.set(clip.name, clip.duration);
   }, [animations, allowed]);
+  // What the director may pick for a driver that withholds clips (rebuilt only when a pack adds clips).
+  const heldBack = useRef<{ size: number; map: Map<string, number> } | null>(null);
+  const availableFor = (drive: TeacherDriver | undefined): ReadonlyMap<string, number> => {
+    const available = availableRef.current;
+    if (!drive?.withhold?.size) return available;
+    if (heldBack.current?.size !== available.size) {
+      const map = new Map(available);
+      for (const name of drive.withhold) map.delete(name);
+      heldBack.current = { size: available.size, map };
+    }
+    return heldBack.current.map;
+  };
   const onPackLoad  = useCallback((clips: AnimationClip[]) => {
     const root = group.current;
     if (!root) return;
@@ -635,7 +681,9 @@ export function Teacher({
   // The teacher is keyed by avatar in SafeTeacher, so a switch is a new mount
   // and a new director.
   const directorRef = useRef<DirectorState | null>(null);
-  directorRef.current ??= createDirectorState(MOUNT_CLIP, signalsOf(useAristoStore.getState(), null));
+  directorRef.current ??= createDirectorState(MOUNT_CLIP, driver ? driver.signals() : signalsOf(useAristoStore.getState(), null));
+  // The driver's speaking flag, as the director last read it, for the face loop below.
+  const drivenSpeaking = useRef(false);
   const clockRef       = useRef(0);
   const appliedBase    = useRef({ seq: 0, clip: MOUNT_CLIP as string });
   const appliedOverlay = useRef(0);
@@ -798,10 +846,13 @@ export function Teacher({
   useFrame((state, delta) => {
     const now = (clockRef.current += delta);
     const store = useAristoStore.getState();
+    const drive = driverRef.current;
+    const signals = drive ? drive.signals() : signalsOf(store, reactionRef.current);
+    drivenSpeaking.current = signals.isSpeaking;
     const step = stepDirector(directorRef.current!, {
       now,
-      signals:   signalsOf(store, reactionRef.current),
-      available: availableRef.current,
+      signals,
+      available: availableFor(drive),
       masks:     rig.maskSet,
       rng:       Math.random,
     });
@@ -810,11 +861,14 @@ export function Teacher({
 
     applyBase(out.base);
     applyOverlay(out.overlay, now);
-    // The old auto-revert: hand a finished nod or shake back to the store.
-    if (out.release && store.gesture === out.release) store.setGesture("idle");
-    applyLook(out.look, state.camera.position, delta);
+    // The old auto-revert: hand a finished nod or shake back to the store. A driver owns its own signals.
+    if (!drive && out.release && store.gesture === out.release) store.setGesture("idle");
+    // "Look at the student" means the camera, unless a driver says where the viewer is (the landing's pointer).
+    const viewer = drive?.viewer?.() ?? state.camera.position;
+    applyLook(out.look, viewer, delta);
     faceRef.current!.hint = out.face;
-    applyEyes(out.look, state.camera.position, now, delta);
+    applyEyes(out.look, viewer, now, delta);
+    drive?.afterPose?.(scene, delta);
   });
 
   // Morph targets per frame
@@ -830,23 +884,26 @@ export function Teacher({
   // mouthSmile open/closed behaviour as a fallback.
   useFrame((_, delta) => {
     const face = faceRef.current!;
+    const drive = driverRef.current;
+    const speaking = drive ? drivenSpeaking.current : isSpeaking;
     if (cfg.morphs.visemes) {
-      const v = isSpeaking ? getCurrentViseme() : null;
+      const v = speaking ? (drive ? drive.viseme?.() ?? null : getCurrentViseme()) : null;
       for (const name of AVATURN_VISEMES) {
         const target = (v && v.viseme === name) ? Math.min(1, v.intensity * 1.4) : 0;
         lerpMorphTarget(name, target, 0.4);
       }
-      face.smile = stepSmile(face.smile, face.hint, isSpeaking, delta, cfg.morphs.smileGain ?? SMILE_GAIN_UNTUNED);
+      face.smile = stepSmile(face.smile, face.hint, speaking, delta, cfg.morphs.smileGain ?? SMILE_GAIN_UNTUNED);
       if (cfg.morphs.mouthSmile) lerpMorphTarget(cfg.morphs.mouthSmile, face.smile, 1);
     } else if (cfg.morphs.mouthSmile) {
-      lerpMorphTarget(cfg.morphs.mouthSmile, isSpeaking ? 0.5 : 0.2, isSpeaking ? 0.1 : 0.5);
+      lerpMorphTarget(cfg.morphs.mouthSmile, speaking ? 0.5 : 0.2, speaking ? 0.1 : 0.5);
     }
 
     if (cfg.morphs.eyeClose) {
       const blink = stepBlink(face.blink, clockRef.current, Math.random);
       face.blink = blink.state;
       const lids = typeof cfg.morphs.eyeClose === "string" ? [cfg.morphs.eyeClose] : cfg.morphs.eyeClose;
-      for (const lid of lids) lerpMorphTarget(lid, blink.closure, 1);
+      const closure = lidClosure(blink.closure, cfg.morphs.smileGain ?? SMILE_GAIN_UNTUNED);
+      for (const lid of lids) lerpMorphTarget(lid, closure, 1);
     }
   });
 
@@ -871,7 +928,7 @@ export function Teacher({
         </Html>
       )}
       <primitive object={scene} />
-      {sceneReady && cfg.clipPacks?.map((file) => (
+      {(driver ? driver.clipPacks : sceneReady) && cfg.clipPacks?.map((file) => (
         <ClipPackBoundary key={file} url={`/models/${file}`}>
           <Suspense fallback={null}>
             <ClipPack url={`/models/${file}`} onLoad={onPackLoad} />
