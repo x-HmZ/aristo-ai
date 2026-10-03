@@ -1,3 +1,4 @@
+import { boneOf } from "./bones";
 import { Quaternion, Vector3, type Object3D } from "three";
 import { damp } from "./ease";
 
@@ -52,10 +53,10 @@ function turn(bone: Object3D, end: Object3D, target: Vector3, w: number, max: nu
  * Remembers' last review point, V8.3b eval). Off for an open palm (the hero's offer).
  */
 export function createAim(root: Object3D, side: "L" | "R" = "L", opts: { finger?: boolean } = {}) {
-  const shoulder = root.getObjectByName(`CC_Base_${side}_Upperarm`);
-  const hand = root.getObjectByName(`CC_Base_${side}_Hand`);
-  const tip = root.getObjectByName(`CC_Base_${side}_Index3`);
-  const knuckle = opts.finger ? root.getObjectByName(`CC_Base_${side}_Index1`) : undefined;
+  const shoulder = boneOf(root, `CC_Base_${side}_Upperarm`);
+  const hand = boneOf(root, `CC_Base_${side}_Hand`);
+  const tip = boneOf(root, `CC_Base_${side}_Index3`);
+  const knuckle = opts.finger ? boneOf(root, `CC_Base_${side}_Index1`) : undefined;
   const hs = held(), hh = held(), hk = held();
   let weight = 0;
 

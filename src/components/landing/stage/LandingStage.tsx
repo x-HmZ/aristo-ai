@@ -27,11 +27,12 @@ import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
 import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, roomAimAt, roomFov, roomModel, roomSignals, shotAt } from "./room";
 import { lookAround, roomCameraAt } from "./roomCamera";
-import { GESTURE_Z, HEART, IDLE, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, IDLE, heartFor, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type FramedSpotId, type SpotId } from "./spots";
 import { drawEach, warmUp } from "./warm";
+import { boneOf } from "./bones";
 import { dissolvable, fx } from "./dissolve";
 import { getLeaning, getServerTeacher, getTeacher, subscribeLeaning, subscribeTeacher, type LandingTeacher } from "../teacher";
 
@@ -344,6 +345,9 @@ function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId
     swap.wave = false;
     return switched || greet > 0 || shared.waves[spot] === undefined || now - shared.waves[spot]! > WAVE_COOLDOWN_S;
   }, [spot, greet]);
+  // The heart is placed from this teacher's offering hand: the gesture's target and the head's look go there too (in
+  // place, so LOOK.model, which holds the same array, follows).
+  useMemo(() => { if (spot === "model") heartFor(teacher).position.forEach((v, i) => { TARGET.model[i] = v; }); }, [spot, teacher]);
   // The close's entries remount him only if he was there before its box last left the view (host.ts enterClose).
   useEffect(() => { if (spot === "close") shared.close.mountedAt = performance.now() / 1000; }, [spot]);
   const hold = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("still"), []);
@@ -361,7 +365,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId
   const hands = useRef<Object3D[] | null>(null);
   const pv = useMemo(() => new Vector3(), []);
   const reportPalms = useCallback((root: Object3D) => {
-    hands.current ??= PALM_BONES.map((n) => root.getObjectByName(n)).filter((o): o is Object3D => !!o);
+    hands.current ??= PALM_BONES.map((n) => boneOf(root, n)).filter((o): o is Object3D => !!o);
     if (hands.current.length !== PALM_BONES.length) return;
     root.updateMatrixWorld(true);
     const r = gl.domElement.getBoundingClientRect();

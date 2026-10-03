@@ -14,7 +14,7 @@ fs.mkdirSync(OUT, { recursive: true });
   const ctx = await themedContext(b, theme, { width: Number(width), height: 900 });
   const p = await ctx.newPage();
   await guardApi(p, report);
-  await p.goto(base + "/?probe", { waitUntil: "load" });
+  await p.goto(base + `/?teacher=${process.env.TEACHER || "jake"}&probe`, { waitUntil: "load" });
   await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 120000 });
   await sleep(5000);
   const y = await p.evaluate(() => { const r = document.querySelector("[data-spot=close]").getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); });

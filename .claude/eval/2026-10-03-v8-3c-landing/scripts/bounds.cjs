@@ -33,7 +33,7 @@ async function opaqueBox(file) {
     const ctx = await themedContext(b, "light", { width: Number(width), height: 900 });
     const p = await ctx.newPage();
     await guardApi(p, report);
-    await p.goto(base + `/?probe&wide=${M}`, { waitUntil: "load" });
+    await p.goto(base + `/?teacher=${process.env.TEACHER || "jake"}&probe&wide=${M}`, { waitUntil: "load" });
     await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 120000 });
     if (spot !== "hero") {
       const y = await p.evaluate((s) => { const r = document.querySelector(`[data-spot="${s}"]`).getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); }, spot);

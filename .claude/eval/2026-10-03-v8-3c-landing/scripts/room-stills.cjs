@@ -10,7 +10,7 @@ const path = require("path");
 const { chromium, sleep, LAUNCH, guardApi } = require("../../2026-09-30-desk-framing/scripts/common.cjs");
 const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules", "sharp"));
 const [, , base = "http://localhost:3000", which = "both"] = process.argv;
-const PUB = path.join(__dirname, "..", "..", "..", "..", "public", "images", "landing", "v3b");
+const PUB = path.join(__dirname, "..", "..", "..", "..", "public", "images", "landing", "v3b", ...(process.env.TEACHER === "mj" ? ["mj"] : []));
 const RAW = path.join(__dirname, "..", "build", "stills");
 fs.mkdirSync(RAW, { recursive: true });
 const W = 1600, H = 900;
@@ -28,7 +28,7 @@ const W = 1600, H = 900;
         [data-stage-layer] { transition: none !important; }`;
       document.addEventListener("DOMContentLoaded", () => document.head.appendChild(st));
     }, [W, H]);
-    await p.goto(base + `/?probe&full=1&still=room${kind === "start" ? "&start" : ""}`, { waitUntil: "load" });
+    await p.goto(base + `/?teacher=${process.env.TEACHER || "jake"}&probe&full=1&still=room${kind === "start" ? "&start" : ""}`, { waitUntil: "load" });
     await p.waitForFunction(() => document.querySelector("[data-spot][data-live]"), null, { timeout: 90000 });
     const y = await p.evaluate(() => { const r = document.querySelector("[data-spot=room]").getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); });
     for (let v = 0; v <= y; v += 200) { await p.evaluate((q) => scrollTo(0, q), Math.min(v, y)); await sleep(30); }

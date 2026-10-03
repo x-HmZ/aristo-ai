@@ -31,7 +31,7 @@ const READ = () => {
   const ctx = await themedContext(b, theme, { width: W, height: 900 });
   const p = await ctx.newPage();
   await guardApi(p, report);
-  await p.goto(base + "/?probe", { waitUntil: "load" });
+  await p.goto(base + `/?teacher=${process.env.TEACHER || "jake"}&probe`, { waitUntil: "load" });
   await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 120000 });
   const y = await p.evaluate(() => { const r = document.querySelector("[data-spot=room]").getBoundingClientRect(); return Math.max(0, r.top + scrollY - (innerHeight - r.height) / 2); });
   for (let v = 0; v <= y; v += 160) { await p.evaluate((q) => scrollTo(0, q), Math.min(v, y)); await sleep(30); }

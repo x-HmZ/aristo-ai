@@ -1,13 +1,14 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import {
   BufferAttribute, BufferGeometry, CanvasTexture, Color, Group, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial,
   MeshStandardMaterial, Points, SRGBColorSpace, ShaderMaterial, Vector2, Vector3, type Object3D,
 } from "three";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { clockOf } from "../play";
-import { HEART, MODEL_T, heartBuildAt } from "./scripts";
+import { MODEL_T, heartBuildAt, heartFor } from "./scripts";
+import { getServerTeacher, getTeacher, subscribeTeacher } from "../teacher";
 import { host } from "./host";
 import { shared } from "./shared";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
@@ -176,6 +177,9 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
  * eased towards; the slow turn stops once the reader has turned it. Replaying the build unwinds it to face them.
  */
 export function HeartBuild() {
+  // Placed from the chosen teacher's offering hand (scripts.ts heartFor).
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
+  const HEART = useMemo(() => heartFor(teacher), [teacher]);
   const { scene } = useGLTF(MODEL_URL);
   const photo = useTexture(SOURCE_URL);
   photo.colorSpace = SRGBColorSpace;
@@ -243,6 +247,7 @@ export function HeartBuild() {
       turned.current = damp(turned.current, h.turn, 6, dt);
     }
     g.rotation.y = spin.current + turned.current;
+    g.position.x = HEART.position[0];
     g.position.y = HEART.position[1] + Math.sin(state.clock.elapsedTime * 1.1) * 0.02 * smooth(seg(clockOf("model").t, MODEL_T.built, MODEL_T.length));
   });
 

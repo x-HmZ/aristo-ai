@@ -38,7 +38,7 @@ const READ = () => {
   if (spot === "picture") await ctx.addInitScript(() => { const k = 4.2 / 3.9; window.__aimWorld = [0.37 * k, (0.18 + (0.5 - 0.34) * 1.455) * k, -3.3]; });
   const p = await ctx.newPage();
   await guardApi(p, report);
-  await p.goto(base + "/?probe", { waitUntil: "load" });
+  await p.goto(base + `/?teacher=${process.env.TEACHER || "jake"}&probe`, { waitUntil: "load" });
   await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 90000 });
   if (spot !== "hero") {
     // Scroll the spot to the middle of the viewport in small steps, as a reader would.

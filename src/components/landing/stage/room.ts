@@ -122,24 +122,26 @@ export const AIM_PICTURE = onPicture(0.5, 0.46);
  */
 export const ROOM_PRESENT_TIP: Record<LandingTeacher, V3> = {
   jake: [-0.01, 0.33, -2.67],
-  mj: [-0.01, 0.33, -2.67],
+  mj: [-0.136, 0.278, -2.797],
 };
 
 /**
  * The brain's model (the lesson's own demo_model_url, resized for the landing as the heart is), placed from that
- * fingertip (Hmz's second hard requirement), as the heart is. The GLB is centred, +-0.497 x 0.454 x 0.5 local, its back
- * (the cerebellum) at -z. At `scale` it reaches a rounded `half` to the teacher's side of its centre in any turn; that
- * edge sits `gap` past the fingertip, its base level with it: the model is offered from beside its foot, never reached
- * into.
+ * fingertip (Hmz's second hard requirement). The GLB is centred, +-0.497 x 0.454 x 0.5 local, its back (the
+ * cerebellum) at -z. A brain has no foot to offer it from (the volcano's base was): it floats beside the open hand, its
+ * middle a little above the fingertip, where it is widest, its near side `gap` past the fingertip. `half` is its
+ * surface's reach to that side at that height, in any of its turns (read from the bones and the mesh: room-peaks.cjs).
  */
 const MODEL_SCALE = 0.72;
 export function roomModel(teacher: LandingTeacher) {
   const scale = MODEL_SCALE;
-  const half = 0.45 * scale;
+  // Measured per teacher: her head turns her arm a little further in as it follows the model.
+  const half = teacher === "mj" ? 0.345 : 0.32;
   const height = 0.907 * scale;
-  const gap = 0.02;
+  const lift = 0.06;
+  const gap = 0.03;
   const [ix, iy, iz] = ROOM_PRESENT_TIP[teacher];
-  return { url: "/landing/brain.glb", scale, half, height, gap, position: [ix + gap + half, iy - 0.03 + height / 2, iz - 0.02] as V3 };
+  return { url: "/landing/brain.glb", scale, half, height, lift, gap, position: [ix + gap + half, iy + lift, iz - 0.02] as V3 };
 }
 
 /**

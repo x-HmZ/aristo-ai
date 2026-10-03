@@ -129,11 +129,12 @@ describe("roomSignals", () => {
 });
 
 describe("placement", () => {
-  it("puts the model's near edge 2 cm past each teacher's presenting fingertip, its base level with it", () => {
+  it("floats the model beside each teacher's presenting fingertip: its near side a few cm past it, its middle just above", () => {
     for (const teacher of ["jake", "mj"] as const) {
       const m = roomModel(teacher), tip = ROOM_PRESENT_TIP[teacher];
       expect(m.position[0] - m.half - tip[0]).toBeCloseTo(m.gap, 10);
-      expect(Math.abs(m.position[1] - m.height / 2 - tip[1])).toBeLessThan(0.05);
+      expect(m.position[1] - tip[1]).toBeGreaterThan(0);
+      expect(m.position[1] - tip[1]).toBeLessThan(m.height / 4);
     }
   });
 

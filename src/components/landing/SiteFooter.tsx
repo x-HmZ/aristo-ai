@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { FOCUS } from "@/lib/design/shape";
 import { Wordmark } from "@/components/landing/Wordmark";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { JAKE_CREDIT } from "@/components/landing/credit";
+import { TEACHER_CREDITS } from "@/components/landing/credit";
 
 const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
@@ -86,14 +86,19 @@ export function SiteFooter() {
           {/* The nav hides its toggle below sm; this is where it lives there. */}
           <ThemeToggle className="sm:hidden" />
         </div>
-        {/* The teacher on this page is a third-party model (CC BY 4.0): the credit sits where he is shown. */}
+        {/* The teachers on this page are third-party models (CC BY 4.0): the credits sit where they are shown. */}
         <p className="max-w-[640px] leading-snug">
-          Teacher model:{" "}
-          <a href={JAKE_CREDIT.sourceUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>&ldquo;{JAKE_CREDIT.title}&rdquo;</a>{" "}
-          by{" "}
-          <a href={JAKE_CREDIT.authorUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>{JAKE_CREDIT.author}</a>,{" "}
-          <a href={JAKE_CREDIT.licenseUrl} target="_blank" rel="license noopener noreferrer" className={creditLink}>{JAKE_CREDIT.license}</a>
-          {JAKE_CREDIT.modified ? ", modified" : ""}
+          Teacher models:{" "}
+          {TEACHER_CREDITS.map((c, i) => (
+            <span key={c.title}>
+              {i > 0 && "; "}
+              <a href={c.sourceUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>&ldquo;{c.title}&rdquo;</a>{" "}
+              by{" "}
+              <a href={c.authorUrl} target="_blank" rel="noopener noreferrer" className={creditLink}>{c.author}</a>,{" "}
+              <a href={c.licenseUrl} target="_blank" rel="license noopener noreferrer" className={creditLink}>{c.license}</a>
+              {c.modified ? ", modified" : ""}
+            </span>
+          ))}
         </p>
         {LEGAL_LINKS.length > 0 && (
           <div className="flex items-center gap-4">

@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import path from "path";
 import { describe, expect, it } from "vitest";
-import { JAKE_CREDIT } from "./credit";
+import { JAKE_CREDIT, MJ_CREDIT } from "./credit";
 
 // Vitest here has no JSX transform, so Teacher.tsx cannot be imported; its source text is checked instead.
 const teacher = readFileSync(path.join(__dirname, "..", "three", "Teacher.tsx"), "utf8");
@@ -18,5 +18,15 @@ describe("JAKE_CREDIT", () => {
     expect(canino).toContain(`license:    "${JAKE_CREDIT.license}"`);
     expect(canino).toContain(`licenseUrl: "${JAKE_CREDIT.licenseUrl}"`);
     expect(canino).toContain(`modified:   ${JAKE_CREDIT.modified}`);
+  });
+});
+
+describe("MJ_CREDIT", () => {
+  it("matches the credit the classroom shows (AVATAR_ASSETS.mj.credit and CANINO3D in Teacher.tsx)", () => {
+    const mj = teacher.slice(teacher.indexOf("  mj: {"));
+    expect(mj).toContain(`title:     "${MJ_CREDIT.title}"`);
+    expect(mj).toContain(`sourceUrl: "${MJ_CREDIT.sourceUrl}"`);
+    expect(mj).toContain("...CANINO3D");
+    expect({ ...MJ_CREDIT, title: "", sourceUrl: "" }).toEqual({ ...JAKE_CREDIT, title: "", sourceUrl: "" });
   });
 });
