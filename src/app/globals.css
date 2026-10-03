@@ -374,6 +374,12 @@
   [data-mode="full"] .landing-still-end {
     display: none;
   }
+  /* The chosen teacher's stills only (V8.3c; `_document` sets data-teacher before the first paint). A hidden lazy
+     image is never fetched. */
+  html:not([data-teacher="mj"]) .landing-teacher-mj,
+  html[data-teacher="mj"] .landing-teacher-jake {
+    display: none;
+  }
 
   /* A spoken line's words (HeroLine): not yet said, said, and the one being said. */
   .landing-word {

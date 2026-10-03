@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
@@ -7,6 +7,7 @@ import { Wordmark } from "@/components/landing/Wordmark";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NAV_LINKS } from "./content";
 import { BTN_GHOST, BTN_PRIMARY, WRAP } from "./ui";
+import { demoHref, getServerTeacher, getTeacher, subscribeTeacher } from "./teacher";
 
 /**
  * The section in view: the last linked section whose top has passed a line 45% down the viewport, and whose bottom
@@ -48,6 +49,7 @@ const IDS = NAV_LINKS.map((l) => l.id);
  * sheet under the pill, behind a menu button.
  */
 export function LandingNav() {
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
   const current = useCurrentSection(IDS);
   const [open, setOpen] = useState(false);
   const sheetId = useId();
@@ -102,7 +104,7 @@ export function LandingNav() {
             <Link href="/sign-in" className={cn(BTN_GHOST, "hidden text-sm lg:inline-flex")}>
               Sign in
             </Link>
-            <Link href="/demo" className={cn(BTN_PRIMARY, SHAPE.pill, "px-3.5 text-sm sm:px-[18px]")}>
+            <Link href={demoHref(teacher)} className={cn(BTN_PRIMARY, SHAPE.pill, "px-3.5 text-sm sm:px-[18px]")}>
               Try a lesson
             </Link>
             <button

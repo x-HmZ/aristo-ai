@@ -23,16 +23,21 @@ describe("wordsSpoken", () => {
   });
 });
 
-describe("the room's lines (volcano demo lesson)", () => {
-  const volcano = (segment: string) =>
-    JSON.parse(readFileSync(path.join(__dirname, "..", "..", "..", "..", "public", "demo", "volcano-eruption", `${segment}.align.json`), "utf8"));
-  it("each line is spoken until its last word ends, by the recording's own timings", async () => {
+describe("the room's lines (brain demo lesson, in each teacher's voice)", () => {
+  const voice = (segment: string) =>
+    JSON.parse(readFileSync(path.join(__dirname, "..", "..", "..", "..", "public", "landing", "voice", `${segment}.align.json`), "utf8"));
+  it("each line lasts its recording, its words and its last one ending a breath before the line does", async () => {
     const { ROOM_COPY } = await import("../content");
-    const { ROOM_T } = await import("./room");
-    ROOM_COPY.lines.forEach((line, i) => {
-      const w = wordsOf(volcano(ROOM_T.lines[i].segment).characters);
-      const n = line.split(" ").length;
-      expect(w[n - 1].end).toBeCloseTo(ROOM_T.lines[i].until, 2);
-    });
+    const { ROOM_T, lineUntil, voiceOf } = await import("./room");
+    for (const teacher of ["jake", "mj"] as const) {
+      ROOM_COPY.lines.forEach((line, i) => {
+        const w = wordsOf(voice(voiceOf(i, teacher)).characters);
+        expect(w).toHaveLength(line.split(" ").length);
+        const gap = lineUntil(i, teacher) - w[w.length - 1].end;
+        expect(gap).toBeGreaterThan(0);
+        expect(gap).toBeLessThan(0.2);
+      });
+    }
+    expect(ROOM_T.lines).toHaveLength(ROOM_COPY.lines.length);
   });
 });

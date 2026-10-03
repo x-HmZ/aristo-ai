@@ -58,7 +58,7 @@ export function ModelBuild({ mode }: { mode: LandingMode | null }) {
             id="model"
             still="/images/landing/v3b/model.webp"
             start="/images/landing/v3b/model-start.webp"
-            alt="Jake presents the 3D heart built from the lesson's picture"
+            alt="{teacher} presents the 3D heart built from the lesson's picture"
             className="w-full"
             style={{ aspectRatio: String(MODEL_ASPECT) }}
             pool="left-[38%] -right-[2%] top-0 h-[72%]"

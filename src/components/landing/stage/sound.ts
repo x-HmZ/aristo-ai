@@ -1,5 +1,6 @@
 /**
- * The landing's spoken lines (V8.3b): the volcano demo lesson's real narration, never anything else.
+ * The landing's spoken lines (V8.3b; since V8.3c three sentences of the brain demo lesson, recorded in each teacher's
+ * voice), never anything else.
  *
  * A line plays on a clock, silent by default: its player (the room's caption, Immersive.tsx) says which segment is
  * being spoken and how far in, every frame (`speak`). The words light, and Jake's mouth moves, from the recording's
@@ -12,9 +13,9 @@
 import { parseAlignment, visemeAt, type VisemeSpan } from "@/lib/lipsync/visemes";
 import { shared } from "./shared";
 
-/** The lesson whose recordings the landing plays: the volcano demo (Step Into the Classroom). */
-const LESSON = "/demo/volcano-eruption";
-const SEGMENT = /^seg_\d{3}$/;
+/** Where the room's recordings are (scripts/landing-voice.mjs): `<teacher>/line_<n>.mp3` and its `.align.json`. */
+const VOICE = "/landing/voice";
+const SEGMENT = /^(jake|mj)\/line_[1-3]$/;
 
 export interface Word { start: number; end: number }
 export interface LineData { timeline: VisemeSpan[] | null; words: Word[] }
@@ -47,7 +48,7 @@ export function loadLine(segment: string): Promise<LineData> {
   if (!SEGMENT.test(segment)) return Promise.resolve({ timeline: null, words: [] });
   let p = cache.get(segment);
   if (!p) {
-    p = fetch(`${LESSON}/${segment}.align.json`)
+    p = fetch(`${VOICE}/${segment}.align.json`)
       .then((r) => (r.ok ? r.json() : null))
       .then((raw: unknown): LineData => {
         const chars = raw && typeof raw === "object" ? (raw as { characters?: unknown }).characters : null;
@@ -128,7 +129,7 @@ export function syncAudio(segment: string | null, t: number, playing: boolean): 
     loaded = segment;
     audio.preload = "auto";
     // A media fragment starts it at the line's time now (setting currentTime before the metadata loads is ignored).
-    audio.src = `${LESSON}/${segment}.mp3#t=${Math.max(0, t).toFixed(2)}`;
+    audio.src = `${VOICE}/${segment}.mp3#t=${Math.max(0, t).toFixed(2)}`;
     void audio.play().catch(() => {});
     return null;
   }

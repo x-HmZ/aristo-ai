@@ -25,13 +25,15 @@ import { damp } from "./ease";
 import { Diagram } from "./Diagram";
 import { HeartBuild } from "./HeartBuild";
 import { Probe } from "./Probe";
-import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, VOLCANO, roomAimAt, roomFov, roomSignals, shotAt } from "./room";
+import { AIM_PICTURE, LOOK_PITCH, LOOK_YAW, ROOM_T, roomAimAt, roomFov, roomModel, roomSignals, shotAt } from "./room";
 import { lookAround, roomCameraAt } from "./roomCamera";
-import { GESTURE_Z, HEART, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
+import { GESTURE_Z, HEART, IDLE, PICTURE_AIM, PICTURE_T, REMEMBER_T, VIEWER_Z, WAVE_COOLDOWN_S, signalsFor } from "./scripts";
 import { shared } from "./shared";
 import { visemeNow } from "./sound";
 import { EYE, PLANE_Z, SPOTS, TEACHER, frustumFor, type FramedSpotId, type SpotId } from "./spots";
 import { drawEach, warmUp } from "./warm";
+import { dissolvable, fx } from "./dissolve";
+import { getLeaning, getServerTeacher, getTeacher, subscribeLeaning, subscribeTeacher, type LandingTeacher } from "../teacher";
 
 const NEAR = 0.05;
 /** Frames left out of the speed check after the canvas arrives at a spot (the teacher's mount there). */
@@ -58,11 +60,65 @@ const stillParams = () => {
   return { hold: q.has("still"), start: q.has("still") && q.has("start") };
 };
 
+/** The teacher switch (V8.3c): the one teaching dissolves out, the other forms in, then waves. */
+const OUT_S = 0.5;
+const IN_S = 0.9;
+const swap = { phase: null as "out" | "in" | null, mounted: false, wave: false };
+
+/**
+ * Drives the dissolve each frame (dissolve.ts fx): out to 1, then `onSwap` mounts the other teacher, fully dissolved,
+ * and once it has drawn (`swap.mounted`, SpotTeacher) it forms back to 0.
+ */
+function Switch({ onSwap }: { onSwap: () => void }) {
+  useFrame((_, dt) => {
+    if (swap.phase === "out") {
+      fx.dir.value = 1;
+      fx.value.value = Math.min(1, fx.value.value + dt / OUT_S);
+      if (fx.value.value >= 1) { swap.phase = "in"; swap.mounted = false; swap.wave = true; fx.dir.value = -1; onSwap(); }
+    } else if (swap.phase === "in" && swap.mounted) {
+      fx.value.value = Math.max(0, fx.value.value - Math.min(dt, 0.05) / IN_S);
+      if (fx.value.value <= 0) { swap.phase = null; fx.dir.value = 1; }
+    }
+  });
+  return null;
+}
+
+/**
+ * The teacher the reader leans towards (a pointer over, or focus on, a chooser chip), mounted hidden and warmed as
+ * Jake is at the start (warm.ts), and kept mounted until it is the one on stage: let go before, its materials' copies
+ * would be freed and their programs with them (measured: one 2.2 s frame at the switch). Its own Suspense boundary, so
+ * the one teaching is never touched by its load.
+ */
+const PREWARM_DRIVER: TeacherDriver = { signals: () => IDLE, clipPacks: true, materials: dissolvable };
+function Prewarm({ teacher }: { teacher: LandingTeacher }) {
+  const group = useRef<Group>(null);
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    let alive = true;
+    const g = group.current;
+    if (!g) return;
+    // The renderer compiles only what is visible, and takes what to compile when the call is made: shown for that
+    // moment only (no frame is drawn in between), it compiles every program the teacher will draw with.
+    g.visible = true;
+    const compiled = warmUp(gl, scene, camera, g);
+    g.visible = false;
+    void compiled
+      .then(() => drawEach(gl, scene, camera, g, () => alive))
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [gl, scene, camera]);
+  return (
+    <group ref={group} visible={false}>
+      <Teacher teacher={teacher} position={TEACHER.position} scale={AVATAR_ASSETS[teacher].standScale} rotationY={TEACHER.rotationY} driver={PREWARM_DRIVER} />
+    </group>
+  );
+}
+
 /**
  * Runs first each frame: the camera stays at the classroom's eye, looking straight ahead, and the active spot's
  * frustum is applied for the canvas's aspect. Then the stage's own speed check.
  */
-function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: () => void; judging: boolean; wide?: number }) {
+function Framing({ spot, onSlow, judging, wide = 0, teacher }: { spot: SpotId; onSlow: () => void; judging: boolean; wide?: number; teacher: LandingTeacher }) {
   const { camera, size } = useThree();
   const cam = camera as PerspectiveCamera;
   const samples = useRef<number[]>([]);
@@ -78,11 +134,12 @@ function Framing({ spot, onSlow, judging, wide = 0 }: { spot: SpotId; onSlow: ()
   // passes spots that mount and load as they go, and those frames say nothing about this machine (judged with them,
   // a fast machine scrolling straight down was sent to the stills). A new spot starts the run again, after its first
   // SETTLE_FRAMES.
-  const run = useRef({ spot: null as SpotId | null, skip: 0 });
+  const run = useRef({ spot: null as SpotId | null, teacher: null as LandingTeacher | null, skip: 0 });
   const judge = (dt: number) => {
     if (!judging || judged.current) return;
     if (host.live !== spot) return;
-    if (run.current.spot !== spot) { run.current = { spot, skip: SETTLE_FRAMES }; samples.current = []; }
+    // A new spot, or a switched teacher (its first draws), starts the run again.
+    if (run.current.spot !== spot || run.current.teacher !== teacher) { run.current = { spot, teacher, skip: SETTLE_FRAMES }; samples.current = []; }
     if (run.current.skip > 0) { run.current.skip -= 1; return; }
     samples.current.push(dt * 1000);
     if (samples.current.length >= SLOW_SAMPLE_FRAMES) {
@@ -189,8 +246,13 @@ const TARGET: Record<SpotId, [number, number, number]> = {
 const LOOK = Object.fromEntries(
   Object.entries(TARGET).map(([id, p]) => [id, { model: p, board: p }]),
 ) as unknown as Record<SpotId, LookTargets>;
-// The room: his pointing (the board) as the other spots, and the classroom's own model and desk.
-LOOK.room = { board: TARGET.room, model: VOLCANO.position, desk: PAPER_ANCHOR };
+// The room: the pointing (the board) as the other spots, and the classroom's own model and desk (the model is placed
+// from each teacher's own presenting hand).
+const ROOM_LOOK: Record<LandingTeacher, LookTargets> = {
+  jake: { board: TARGET.room, model: roomModel("jake").position, desk: PAPER_ANCHOR },
+  mj: { board: TARGET.room, model: roomModel("mj").position, desk: PAPER_ANCHOR },
+};
+const lookFor = (spot: SpotId, teacher: LandingTeacher): LookTargets => (spot === "room" ? ROOM_LOOK[teacher] : LOOK[spot]);
 /** For the stills (`?still`): the section time whose gesture target a still is captured with. */
 const HOLD_AT: Partial<Record<SpotId, number>> = { picture: PICTURE_T.point[0] + 1 };
 /**
@@ -268,16 +330,19 @@ const PALM_BONES = [
  * Jake at one spot: mounted fresh per visit (keyed by the spot), driven by the spot's script. Two frames after he
  * mounts he has drawn in his idle pose, and the spot goes live (its still hides and the canvas shows).
  */
-function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: boolean; greet: number; lookTargets?: LookTargets }) {
+function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId; warm: boolean; greet: number; lookTargets?: LookTargets; teacher: LandingTeacher }) {
   const frames = useRef(0);
   const liveAt = useRef<number | null>(null);
   const waved = useRef(false);
   // A fresh mount asked for by the reader (a tap on Jake, coming back to the page) always waves: those have their
   // own cool-downs (Hero.tsx). Arriving at a spot waves unless he waved there in the last WAVE_COOLDOWN_S (stamped
   // once, when the greeting is cued: stamped every frame, a spot still drawing at the edge of the view never cooled).
+  // A teacher just switched in always waves (taken once, by the mount it is for).
   const mayWave = useMemo(() => {
     const now = performance.now() / 1000;
-    return greet > 0 || shared.waves[spot] === undefined || now - shared.waves[spot]! > WAVE_COOLDOWN_S;
+    const switched = swap.wave;
+    swap.wave = false;
+    return switched || greet > 0 || shared.waves[spot] === undefined || now - shared.waves[spot]! > WAVE_COOLDOWN_S;
   }, [spot, greet]);
   // The close's entries remount him only if he was there before its box last left the view (host.ts enterClose).
   useEffect(() => { if (spot === "close") shared.close.mountedAt = performance.now() / 1000; }, [spot]);
@@ -324,7 +389,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       const liveFor = liveAt.current === null ? 0 : now - liveAt.current;
       const h = shared.hero;
       const s = spot === "room"
-        ? roomSignals(clockOf("room").t, shared.speaking)
+        ? roomSignals(clockOf("room").t, shared.speaking, teacher)
         : signalsFor(spot, {
           liveFor, t: clockOf(SECTION_OF[spot]).t, mayWave: mayWave && !hold, speaking: shared.speaking, hover: spot === "close" ? shared.close.hover : h.hover, seq: h.seq,
         });
@@ -359,6 +424,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     },
     clipPacks: warm,
     withhold: spot === "hero" ? HERO_WITHHELD : WITHHELD,
+    // Every mount carries the switch's dissolve (at 0 it draws as before), so the warm-up compiles it once.
+    materials: dissolvable,
     // Where he looks when the director says "the student": the gesture's target while one is aimed; at the hero and
     // the close, the reader's pointer (the ray from the eye through it, where it crosses VIEWER_Z in front of him);
     // otherwise, and with no mouse, the camera, as in a lesson.
@@ -378,7 +445,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
       if (g) viewer.toArray(TARGET[spot]);
       return viewer;
     },
-  }), [spot, warm, mayWave, hold, start, camera, gl, viewer, ray, aimAt, reportPalms]);
+  }), [spot, warm, mayWave, hold, start, camera, gl, viewer, ray, aimAt, reportPalms, teacher]);
 
   useFrame(() => {
     // The room's spot keeps its poster until the room is loaded and warm (RoomScene).
@@ -387,14 +454,16 @@ function SpotTeacher({ spot, warm, greet, lookTargets }: { spot: SpotId; warm: b
     if (frames.current >= 2) {
       liveAt.current = performance.now() / 1000;
       if (host.live !== spot) setLive(spot);
+      // A teacher switched in starts forming once it has drawn (its first frames compile nothing: dissolve.ts).
+      swap.mounted = true;
     }
   });
 
   return (
     <Teacher
-      teacher="jake"
+      teacher={teacher}
       position={TEACHER.position}
-      scale={AVATAR_ASSETS.jake.standScale}
+      scale={AVATAR_ASSETS[teacher].standScale}
       rotationY={TEACHER.rotationY}
       lookTargets={lookTargets}
       driver={driver}
@@ -408,6 +477,23 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
   const greet = Number(greetKey);
   const active = (activeKey === "null" ? null : activeKey) as SpotId | null;
   const onScreen = onScreenKey === "true";
+  // The teacher the reader chose, and the one on stage: they differ for the length of a switch.
+  const chosen = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
+  const [teacher, setShown] = useState<LandingTeacher>(chosen);
+  useEffect(() => {
+    if (chosen === teacher || swap.phase) return;
+    // Seen: dissolve out, then in (Switch). Not seen (scrolled away, not live yet): at once.
+    if (warm && onScreen && host.live !== null) { fx.value.value = 0; swap.phase = "out"; }
+    else setShown(chosen);
+  }, [chosen, teacher, warm, onScreen]);
+  const teacherRef = useRef(teacher);
+  teacherRef.current = teacher;
+  // The switch's middle: the one now chosen (a reader who switched back meanwhile gets the same teacher back, formed).
+  const onSwap = useCallback(() => { setShown(getTeacher()); swap.mounted = getTeacher() === teacherRef.current; }, []);
+  useEffect(() => () => { swap.phase = null; swap.mounted = false; swap.wave = false; fx.value.value = 0; fx.dir.value = 1; }, []);
+  // The teacher to get ready: the one leaned towards, while it is not the one on stage.
+  const leaning = useSyncExternalStore(subscribeLeaning, getLeaning, () => null);
+  const prewarm = warm && leaning && leaning !== teacher ? leaning : null;
   const probe = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("probe"), []);
   const wide = useMemo(() => (probe ? Number(new URLSearchParams(window.location.search).get("wide")) || 0 : 0), [probe]);
   // The teacher reads a few transient lesson fields from the store (the thinking badge). Coming back to / from
@@ -428,16 +514,20 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       className="!h-full !w-full"
       aria-hidden
     >
-      <Framing spot={active} onSlow={onSlow} judging={warm} wide={wide} />
+      <Framing spot={active} onSlow={onSlow} judging={warm} wide={wide} teacher={teacher} />
+      <Switch onSwap={onSwap} />
       <RendererConfig />
       <SceneLights />
       {/* One boundary: the environment and Jake arrive together, then warm up before he is shown. */}
       <Suspense fallback={null}>
         <Environment preset="studio" environmentIntensity={0.5} />
         <Warmed onWarm={onWarm}>
-          <SpotTeacher key={active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active === "close" ? `close:${closeKey}` : active} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={LOOK[active]} />
+          <SpotTeacher key={`${teacher}:${active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active === "close" ? `close:${closeKey}` : active}`} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={lookFor(active, teacher)} teacher={teacher} />
         </Warmed>
       </Suspense>
+      {prewarm && (
+        <PartBoundary><Suspense fallback={null}><Prewarm key={prewarm} teacher={prewarm} /></Suspense></PartBoundary>
+      )}
       {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is
           ready before the reader reaches its section. A heart that fails to load drops out; Jake carries on. */}
       {warm && (

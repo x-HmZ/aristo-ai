@@ -33,6 +33,7 @@ import {
   TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
 } from "@/components/learn/ClassroomChrome";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
+import { demoTeacherFrom } from "./demoTeacher";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 
@@ -184,13 +185,16 @@ export function DemoClient() {
     // Remember whatever the visitor had chosen so an authed /learn session
     // later in the same tab does not inherit the demo's avatar.
     const previousTeacher = useAristoStore.getState().teacher;
-    setTeacher(DEMO_TEACHER);
+    // The landing's choice comes in as ?teacher= (V8.3c); MJ then speaks with the demo's male narration, as when
+    // switched here.
+    const opening = demoTeacherFrom(window.location.search, DEMO_TEACHER);
+    setTeacher(opening);
 
     // Warm the avatar while the topic picker is on screen: Teacher.tsx does not
     // preload at module scope, so without this the download does not start
     // until the visitor picks a topic.
-    useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].sceneFile}`);
-    useGLTF.preload(`/models/${AVATAR_ASSETS[DEMO_TEACHER].animFile}`);
+    useGLTF.preload(`/models/${AVATAR_ASSETS[opening].sceneFile}`);
+    useGLTF.preload(`/models/${AVATAR_ASSETS[opening].animFile}`);
 
     return () => {
       stopAudio();
