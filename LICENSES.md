@@ -15,7 +15,7 @@ and inside each GLB as `asset.copyright`.
 
 | File | Work | Author | Licence | Source | Modified |
 |---|---|---|---|---|---|
-| `public/models/Teacher_Jake.glb`, `Teacher_Jake_clips.glb` | "Free Cartoon Game Man Character (Rigged)" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411 | Yes: retargeted animation, 14 baked visemes (the m/b/p shape softened to 60%, V9.6), materials rebuilt, hidden skin masked, knee smoothing, finger relax, 13 hand-keyed gestures (see "Authored animation clips") |
+| `public/models/Teacher_Jake.glb`, `Teacher_Jake_clips.glb` | "Free Cartoon Game Man Character (Rigged)" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411 | Yes: retargeted animation, 14 baked visemes (the m/b/p shape softened to 60%, V9.6), materials rebuilt (shirt recoloured at runtime, V8.3c), hidden skin masked, knee smoothing, finger relax, 13 hand-keyed gestures (see "Authored animation clips") |
 | `public/models/Teacher_MJ.glb`, `Teacher_MJ_clips.glb` | "Free Stylized Cartoon Girl Rigged Character" | Canino3d (https://sketchfab.com/Canino3d) | CC BY 4.0, verified against Sketchfab's API | https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4 | Yes: as Jake, plus a new skirt and a re-grown tee built in-house, and the base file's collar and sleeves fixed (V9.7, arm and head skin pushed clear of the cloth) |
 
 Licence text: https://creativecommons.org/licenses/by/4.0/
@@ -106,6 +106,9 @@ credit; the authors are listed as a courtesy.
 | `heart/teaching.jpg` | Nano Banana Pro (per the same README) | **Unverified** |
 | `volcano-eruption/seg_*.png` | The app's own image generator, run by `scripts/generate-demo-content.ts` | **Unverified**: which model and terms were not recorded |
 | `<slug>/seg_*.mp3`, `*.align.json`, `audio.json` | ElevenLabs text-to-speech (model `eleven_turbo_v2_5`, voice "Antoni"), with character timings | ElevenLabs terms depend on the plan that rendered them (commercial use needs a paid plan). **Unverified**: the plan at render time was not recorded |
+| `brain/model.glb`, `public/landing/brain.glb` (V8.3c) | Tripo3D v2.5 through fal.ai from a FLUX Schnell image, run by the V8.3c eval (`.claude/eval/2026-10-03-v8-3c-landing/scripts/volcano-model.ts`, ledger there); resized, simplified (landing copy), WebP textures and Draco by Aristo | Output terms of Tripo3D and fal.ai. **Unverified**, as above |
+| `brain/seg_004.png`, `public/landing/brain-picture.webp` (V8.3c) | Nano Banana Pro through the app's own generator, run by `scripts/generate-demo-brain.ts` | **Unverified**: fal's output terms were not recorded |
+| `public/landing/voice/<teacher>/line_*.mp3`, `*.align.json` (V8.3c) | ElevenLabs text-to-speech (`eleven_turbo_v2_5`; Jake "Antoni", MJ "Jessica") with timestamps, by `scripts/landing-voice.mjs` | Rendered on the **free** ElevenLabs plan, whose terms require attribution and do not allow commercial use: re-render on a paid plan before any commercial launch |
 
 ## The wordmark and OG image (Archivo outlines, SIL OFL 1.1)
 

@@ -1,0 +1,8 @@
+dark 768 full nodes 134 fails 0 min 5.48 small 0 overflow 0
+dark 1280 full nodes 228 fails 0 min 5.48 small 0 overflow 0
+dark 1440 full nodes 228 fails 0 min 5.48 small 0 overflow 0
+{"api":0,"paid":0}
+light 1280 full nodes 228 fails 0 min 4.74 small 0 overflow 0
+dark 360 lite nodes 117 fails 0 min 6.06 small 0 overflow 0
+dark 1280 full nodes 228 fails 0 min 5.48 small 0 overflow 0
+{"api":0,"paid":0}

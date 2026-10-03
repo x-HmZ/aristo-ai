@@ -2,6 +2,31 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-03 - V8.3c: a model worth turning, coloured shirts, Jake or MJ, the opening (PR into deploy-prep)
+
+Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.claude/eval/2026-10-03-v8-3c-landing/`
+(README; `video/dark.webm`). Plan approved by Hmz; he picked at each stop (shirts, topic, model, voice, opening).
+
+- **Shirts:** Jake forest, MJ plum, app-wide, at mount (`three/outfit.ts`, `AVATAR_ASSETS.*.outfit`).
+- **The room teaches the brain:** a new real demo lesson (`src/data/demo/brain.ts`, `scripts/generate-demo-brain.ts`;
+  not in DEMO_TOPICS until it is narrated), its NB Pro diagram on the board, the Tripo3D brain turning so the
+  cerebellum and brainstem come round as named, with labels; the brain quiz on the desk; three of its sentences in
+  each teacher's voice (`scripts/landing-voice.mjs`). The volcano's rock is gone from the room (/demo still has it).
+- **Teacher chooser:** hero "Your teacher: Jake | MJ", page-wide, kept for the tab, posters per teacher
+  (`v3b/mj/`), Try a lesson opens `/demo?teacher=`; the live switch dissolves into light and forms the other, who
+  waves (`stage/dissolve.ts`); a hover pre-warms the other teacher (kept mounted). MJ's bones are suffixed:
+  `stage/bones.ts`. Placements per teacher (`heartFor`, `roomModel`), measured from the bones.
+- **The opening, Spark to Teacher** (`landing/intro/`): about five seconds, once per tab, raw WebGL2 in its own
+  chunk; a pre-paint cover with failsafes; the stage waits for it.
+- **Measured:** `/` 131 kB; 0 AA failures (min 4.74) for both teachers, 0 small targets, 0 overflow 360 to 1440;
+  p95 16.7 to 16.8 ms everywhere; switch longest frame 17 ms; opening p95 16.8 ms with 1 to 3 GPU-side spikes;
+  LCP unchanged; tests 554; lint 0 errors. fal $1.37 of $2.
+- **Reviews:** security nothing above medium (the eval ledger); code review's high and mediums fixed (README).
+- **Open:** narrate the brain lesson and add it to /demo (male and female); ElevenLabs renders are on the free plan
+  (not for commercial use: re-render on a paid plan before launch); /demo's volcano model is still the rock; the
+  chooser shows Jake pressed for a moment on an MJ-first load; the hero start-up frame (V8.3b's).
+- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+
 ## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)
 
 PR #19 merged into `deploy-prep` (production deploys from it). Evidence for the last round:

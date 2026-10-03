@@ -37,7 +37,7 @@ const stats = (d) => {
     await p.addInitScript(INIT);
     if (process.env.THROTTLE) { const c = await ctx.newCDPSession(p); await c.send("Emulation.setCPUThrottlingRate", { rate: Number(process.env.THROTTLE) }); }
     const t0 = Date.now();
-    await p.goto(base + "/", { waitUntil: "load" });
+    await p.goto(base + "/?nointro" + (process.env.TEACHER ? `&teacher=${process.env.TEACHER}` : ""), { waitUntil: "load" });
     const mode = await p.evaluate(() => new Promise((r) => setTimeout(() => r(document.querySelector(".landing").dataset.mode), 300)));
     let liveMs = null;
     if (mode === "full") { await p.waitForFunction(() => document.querySelector("[data-spot=hero][data-live]"), null, { timeout: 90000 }); liveMs = Date.now() - t0; }
