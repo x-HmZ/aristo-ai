@@ -19,6 +19,7 @@ import { host, resetHost, spotBox, subscribe } from "./stage/host";
 import { resetShared, shared } from "./stage/shared";
 import { resetClocks } from "./play";
 import { stopAll } from "./stage/sound";
+import { INTRO_DONE_EVENT, introPending } from "./intro/gate";
 
 interface StageProps { onLive: () => void; onSlow: () => void }
 
@@ -46,6 +47,18 @@ export function LandingRoot() {
   const [Stage, setStage] = useState<ComponentType<StageProps> | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const layer = useRef<HTMLDivElement>(null);
+  // The opening (intro/Intro.tsx), imported at once when `_document` turned its cover on (intro/gate.ts).
+  const [Intro, setIntro] = useState<ComponentType<{ onDone: () => void }> | null>(null);
+  useEffect(() => {
+    if (!introPending()) return;
+    let cancelled = false;
+    import("./intro/Intro")
+      .then((mod) => { if (!cancelled) setIntro(() => mod.default); })
+      // The chunk did not load: the cover's failsafe lifts it (globals.css); the page carries on without it.
+      .catch(() => { document.documentElement.dataset.intro = "done"; window.dispatchEvent(new Event(INTRO_DONE_EVENT)); });
+    return () => { cancelled = true; };
+  }, []);
+  const introDone = useCallback(() => setIntro(null), []);
 
   // Leaving / by a client-side link: nothing of the landing plays or lingers on the next page, and coming back starts
   // it fresh (its clocks and shared state are module-level, and outlive this component).
@@ -76,9 +89,15 @@ export function LandingRoot() {
       if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(go, { timeout: 1500 });
       else setTimeout(go, 200);
     };
-    if (document.readyState === "complete") idle();
-    else window.addEventListener("load", idle, { once: true });
-    return () => { cancelled = true; window.removeEventListener("load", idle); };
+    // During the opening the stage waits: its shader warm-up would take the opening's frames. It ends on the poster
+    // the live teacher then replaces.
+    const afterIntro = () => {
+      if (!introPending()) { idle(); return; }
+      window.addEventListener(INTRO_DONE_EVENT, idle, { once: true });
+    };
+    if (document.readyState === "complete") afterIntro();
+    else window.addEventListener("load", afterIntro, { once: true });
+    return () => { cancelled = true; window.removeEventListener("load", afterIntro); window.removeEventListener(INTRO_DONE_EVENT, idle); };
   }, []);
 
   // The layer follows the active spot: its box in the root's coordinates, and shown once the teacher is live there.
@@ -134,6 +153,9 @@ export function LandingRoot() {
       data-mode={mode ?? undefined}
       className={cn(displayFont.variable, "landing relative min-h-screen overflow-x-clip bg-bg font-sans text-ink antialiased")}
     >
+      {/* The opening's ink, there from the first paint when it plays (globals.css); the opening itself over it. */}
+      <div aria-hidden className="landing-intro-cover" />
+      {Intro && <Intro onDone={introDone} />}
       <header>
         <LandingNav />
       </header>
