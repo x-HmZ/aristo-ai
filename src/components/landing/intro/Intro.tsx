@@ -32,7 +32,12 @@ export default function Intro({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     const html = document.documentElement;
+    // Too late (the failsafe lifted the cover while this loaded): never cover a page being read.
+    if (html.dataset.intro !== "on") { onDone(); return; }
     html.dataset.intro = "playing";
+    // The page under the cover is out of reach (no focus, no reading) until the lights come on.
+    const under = Array.from(document.querySelectorAll<HTMLElement>(".landing > header, .landing > main, .landing > footer"));
+    for (const el of under) el.inert = true;
     try { sessionStorage.setItem(INTRO_KEY, "1"); } catch { /* plays again next load: fine */ }
     const cv = canvas.current;
     let rate = 1, t = 0, last = performance.now(), raf = 0, headline = false, cover = false, ended = false;
@@ -63,21 +68,37 @@ export default function Intro({ onDone }: { onDone: () => void }) {
       },
     };
     engine.morphTo(spark);
+    // Each shape is built ahead of its beat, in an idle moment (a beat that starts before its shape is ready builds it
+    // then): built on the frame its morph starts, the samplers cost that frame 50 to 180 ms.
+    const ready = new Map<number, Cloud>();
+    const ahead = (i: number) => {
+      if (i >= BEATS.length || ready.has(i) || BEATS[i].shape === "teacher") return; // the poster is read at its beat
+      const run = () => { if (!ended && !ready.has(i)) ready.set(i, shapes[BEATS[i].shape]()); };
+      if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 400 });
+      else window.setTimeout(run, 30);
+    };
+    ready.set(0, shapes.mark());
+    ahead(1);
     // `?introdebug` (verification only): the clock holds and the capture script seeks it (eval intro.cjs).
-    const debug = new URLSearchParams(location.search).has("introdebug");
+    const debug = process.env.NODE_ENV !== "production" && new URLSearchParams(location.search).has("introdebug");
     if (debug) (window as unknown as { __introSeek?: (to: number) => void }).__introSeek = (to: number) => { t = to; };
     let current = -1;
     let built: Cloud | null = null;
     let markHead: Float32Array | null = null;
 
     const frame = (now: number) => {
+      try { step(now); } catch { finish(); }
+    };
+    const step = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (!debug) t += dt * rate;
       const { beat, k } = morphAt(t);
       if (beat !== current && beat >= 0) {
         current = beat;
-        built = shapes[BEATS[beat].shape]();
+        built = ready.get(beat) ?? shapes[BEATS[beat].shape]();
+        ready.delete(beat);
+        ahead(beat + 1);
         if (BEATS[beat].shape === "mark") markHead = built.pos;
         engine!.morphTo(built, "next");
       }
@@ -110,17 +131,21 @@ export default function Intro({ onDone }: { onDone: () => void }) {
       // The ideas' names, with their links.
       const la = ramp(t, [LINKS.in[0] + 0.05, LINKS.in[1]]) * (1 - ramp(t, LINKS.out));
       for (const el of labels.current) if (el) el.style.opacity = la.toFixed(2);
-      if (!cover && t >= COVER[0]) { cover = true; html.dataset.intro = "lifting"; }
+      if (!cover && t >= COVER[0]) { cover = true; html.dataset.intro = "lifting"; for (const el of under) el.inert = false; }
       if (!headline && t >= HEADLINE_AT) { headline = true; html.dataset.introHeadline = ""; }
       if (t >= LENGTH) { finish(); return; }
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
+    // Whatever happens (a hidden tab, a stalled frame loop), the page is never left covered.
+    const watchdog = window.setTimeout(() => finish(), (LENGTH + 4) * 1000);
 
     function finish() {
       if (ended) return;
       ended = true;
       cancelAnimationFrame(raf);
+      window.clearTimeout(watchdog);
+      for (const el of under) el.inert = false;
       html.dataset.intro = "done";
       delete html.dataset.introHeadline;
       window.dispatchEvent(new Event(INTRO_DONE_EVENT));
@@ -129,13 +154,16 @@ export default function Intro({ onDone }: { onDone: () => void }) {
     // Any of these runs the rest faster.
     const hurry = () => { rate = SKIP_RATE; };
     skip.current = hurry;
-    const onKey = (e: KeyboardEvent) => { if (!e.metaKey && !e.ctrlKey && !e.altKey) hurry(); };
+    // Tab moves to Skip: it does not hurry.
+    const onKey = (e: KeyboardEvent) => { if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key !== "Tab" && e.key !== "Shift") hurry(); };
     window.addEventListener("keydown", onKey);
     window.addEventListener("wheel", hurry, { passive: true });
     window.addEventListener("touchmove", hurry, { passive: true });
     return () => {
       ended = true;
       cancelAnimationFrame(raf);
+      window.clearTimeout(watchdog);
+      for (const el of under) el.inert = false;
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("wheel", hurry);
       window.removeEventListener("touchmove", hurry);

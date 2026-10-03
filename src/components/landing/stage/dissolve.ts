@@ -63,9 +63,9 @@ function patch(mat: Material): Material {
 
 /**
  * The driver's `materials` pass (Teacher.tsx): each mesh's material swapped for a patched copy, and the teacher's
- * height read for the sweep. Returns the cleanup that puts the originals back and frees the copies.
+ * height read for the sweep (`measure`: only the teacher on stage sets it). Returns the cleanup that puts the originals back and frees the copies.
  */
-export function dissolvable(root: Object3D): () => void {
+export function dissolvable(root: Object3D, measure: boolean): () => void {
   const swapped: { mesh: Mesh; was: Material | Material[] }[] = [];
   const copies = new Map<Material, Material>();
   const one = (m: Material) => {
@@ -79,12 +79,17 @@ export function dissolvable(root: Object3D): () => void {
     swapped.push({ mesh, was: mesh.material });
     mesh.material = Array.isArray(mesh.material) ? mesh.material.map(one) : one(mesh.material);
   });
+  if (!measure) return restore(swapped, copies);
   root.updateWorldMatrix(true, true);
   const box = new Box3().setFromObject(root);
   if (Number.isFinite(box.min.y) && box.max.y > box.min.y) {
     fx.base.value = box.min.y;
     fx.height.value = box.max.y - box.min.y;
   }
+  return restore(swapped, copies);
+}
+
+function restore(swapped: { mesh: Mesh; was: Material | Material[] }[], copies: Map<Material, Material>): () => void {
   return () => {
     for (const { mesh, was } of swapped) mesh.material = was;
     for (const c of copies.values()) c.dispose();

@@ -142,7 +142,9 @@ export class Engine {
     const gl = this.gl;
     this.a = this.b ?? next;
     this.b = next;
-    const set = (name: keyof Engine["buf"], data: Float32Array) => { gl.bindBuffer(gl.ARRAY_BUFFER, this.buf[name]); gl.bufferSubData(gl.ARRAY_BUFFER, 0, data); };
+    // Fresh storage each time (orphaning): updating a buffer the GPU may still be drawing from stalls (ANGLE: 70 to
+    // 180 ms at a beat change, measured).
+    const set = (name: keyof Engine["buf"], data: Float32Array) => { gl.bindBuffer(gl.ARRAY_BUFFER, this.buf[name]); gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW); };
     set("aA", this.a.pos); set("aCA", this.a.col);
     set("aB", this.b.pos); set("aCB", this.b.col);
     for (let i = 0; i < this.n; i++) this.rand[i * 4 + 2] = orderFrom === "next" ? next.order[i] : this.rand[i * 4 + 3];

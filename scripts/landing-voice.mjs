@@ -80,7 +80,7 @@ async function main() {
   }
   if (cmd === "render") {
     if (who !== "jake" && who !== "mj") throw new Error("render jake | render mj --voice=<name>");
-    const voiceId = who === "jake" ? JAKE : FEMALE[voiceArg];
+    const voiceId = who === "jake" ? JAKE : Object.hasOwn(FEMALE, voiceArg ?? "") ? FEMALE[voiceArg] : null;
     if (!voiceId) throw new Error(`MJ needs --voice= one of ${Object.keys(FEMALE).join(", ")}`);
     const chars = LINES.reduce((n, l) => n + l.length, 0);
     console.log(`${who}: 3 lines, ${chars} characters`);

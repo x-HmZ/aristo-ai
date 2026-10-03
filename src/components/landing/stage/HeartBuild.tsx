@@ -1,6 +1,6 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, useTexture } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   BufferAttribute, BufferGeometry, CanvasTexture, Color, Group, LineBasicMaterial, LineSegments, Material, Mesh, MeshBasicMaterial,
   MeshStandardMaterial, Points, SRGBColorSpace, ShaderMaterial, Vector2, Vector3, type Object3D,
@@ -8,7 +8,7 @@ import {
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { clockOf } from "../play";
 import { MODEL_T, heartBuildAt, heartFor } from "./scripts";
-import { getServerTeacher, getTeacher, subscribeTeacher } from "../teacher";
+import type { LandingTeacher } from "../teacher";
 import { host } from "./host";
 import { shared } from "./shared";
 import { POINTS_FRAG, POINTS_VERT } from "./shaders";
@@ -176,9 +176,8 @@ function build(scene: Object3D, photo: HTMLImageElement): Built {
  * Once built it turns slowly and can be turned: `shared.heart.turn` is the reader's own turn (a drag, or Turn it),
  * eased towards; the slow turn stops once the reader has turned it. Replaying the build unwinds it to face them.
  */
-export function HeartBuild() {
-  // Placed from the chosen teacher's offering hand (scripts.ts heartFor).
-  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
+export function HeartBuild({ teacher }: { teacher: LandingTeacher }) {
+  // Placed from the offering hand of the teacher on stage (scripts.ts heartFor): it moves at the switch's middle.
   const HEART = useMemo(() => heartFor(teacher), [teacher]);
   const { scene } = useGLTF(MODEL_URL);
   const photo = useTexture(SOURCE_URL);

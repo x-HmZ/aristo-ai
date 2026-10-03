@@ -1,47 +1,27 @@
 /**
- * The opening's samplers that read the DOM (V8.3c): the Column mark along its outline, in drawing order; a line of
- * text; and the hero's poster, pixel for pixel where it is on the page. Each returns a Cloud (targets.ts) of `n`
+ * The opening's samplers (V8.3c): the Column mark along its outline, in drawing order; and, reading the DOM, a line of
+ * text and the hero's poster, pixel for pixel where it is on the page. Each returns a Cloud (targets.ts) of `n`
  * points in CSS px from the viewport's centre.
  */
-import { COLUMN } from "@/components/brand/markPaths";
+import { MARK_INK, MARK_LIT, MARK_VIEWBOX } from "./markPoints";
 import { CREAM, ORANGE, fill, opaquePixels, type Cloud } from "./targets";
-
-const SVG = "http://www.w3.org/2000/svg";
 
 /**
  * The Column mark at `height` px, centred: points along its outline in the order a pen would draw it (the path's own
- * order), the lit flute last and in orange, so the spark draws the column and then lights it.
+ * order, precomputed in markPoints.ts), the lit flute last and in orange, so the spark draws the column and then
+ * lights it. The flute gets more than its length's share: it is the one lit.
  */
 export function markCloud(n: number, height: number): Cloud {
-  const [, , vw, vh] = COLUMN.viewBox.split(" ").map(Number);
-  const k = height / vh;
-  const svg = document.createElementNS(SVG, "svg");
-  svg.setAttribute("style", "position:absolute;width:0;height:0;overflow:hidden");
-  const ink = document.createElementNS(SVG, "path");
-  ink.setAttribute("d", COLUMN.ink);
-  const lit = document.createElementNS(SVG, "path");
-  lit.setAttribute("d", COLUMN.lit);
-  svg.append(ink, lit);
-  document.body.appendChild(svg);
-  try {
-    const li = ink.getTotalLength(), ll = lit.getTotalLength();
-    const total = li + ll * 2.2; // the flute gets more than its length's share: it is the one lit
-    const nInk = Math.round(n * (li / total));
-    return fill(n, n, 7, 1.4, (i, p, c) => {
-      const onLit = i >= nInk;
-      const path = onLit ? lit : ink;
-      const len = onLit ? ll : li;
-      const t = onLit ? (i - nInk) / Math.max(1, n - nInk) : i / Math.max(1, nInk);
-      const q = path.getPointAtLength(t * len);
-      p[0] = (q.x - vw / 2) * k;
-      p[1] = (q.y - vh / 2) * k;
-      p[2] = 0;
-      const col = onLit ? ORANGE : CREAM;
-      c[0] = col[0]; c[1] = col[1]; c[2] = col[2];
-    });
-  } finally {
-    svg.remove();
-  }
+  const [, , vw, vh] = MARK_VIEWBOX.split(" ").map(Number);
+  const scale = height / vh;
+  const ink = MARK_INK.length / 2, lit = MARK_LIT.length / 2;
+  return fill(n, ink + lit, 7, 1.6, (i, p, c) => {
+    const onLit = i >= ink;
+    const src = onLit ? MARK_LIT : MARK_INK, j = onLit ? i - ink : i;
+    p[0] = (src[j * 2] - vw / 2) * scale; p[1] = (src[j * 2 + 1] - vh / 2) * scale; p[2] = 0;
+    const col = onLit ? ORANGE : CREAM;
+    c[0] = col[0]; c[1] = col[1]; c[2] = col[2];
+  });
 }
 
 /**

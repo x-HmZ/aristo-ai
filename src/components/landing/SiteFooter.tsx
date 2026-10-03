@@ -99,6 +99,7 @@ export function SiteFooter() {
               {c.modified ? ", modified" : ""}
             </span>
           ))}
+          . Teacher voices: ElevenLabs.
         </p>
         {LEGAL_LINKS.length > 0 && (
           <div className="flex items-center gap-4">

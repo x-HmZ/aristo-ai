@@ -70,7 +70,7 @@ const swap = { phase: null as "out" | "in" | null, mounted: false, wave: false }
  * Drives the dissolve each frame (dissolve.ts fx): out to 1, then `onSwap` mounts the other teacher, fully dissolved,
  * and once it has drawn (`swap.mounted`, SpotTeacher) it forms back to 0.
  */
-function Switch({ onSwap }: { onSwap: () => void }) {
+function Switch({ onSwap, onEnd }: { onSwap: () => void; onEnd: () => void }) {
   useFrame((_, dt) => {
     if (swap.phase === "out") {
       fx.dir.value = 1;
@@ -78,7 +78,8 @@ function Switch({ onSwap }: { onSwap: () => void }) {
       if (fx.value.value >= 1) { swap.phase = "in"; swap.mounted = false; swap.wave = true; fx.dir.value = -1; onSwap(); }
     } else if (swap.phase === "in" && swap.mounted) {
       fx.value.value = Math.max(0, fx.value.value - Math.min(dt, 0.05) / IN_S);
-      if (fx.value.value <= 0) { swap.phase = null; fx.dir.value = 1; }
+      // Done: the stage looks again at what the reader has chosen meanwhile (a click during the switch).
+      if (fx.value.value <= 0) { swap.phase = null; fx.dir.value = 1; onEnd(); }
     }
   });
   return null;
@@ -86,11 +87,11 @@ function Switch({ onSwap }: { onSwap: () => void }) {
 
 /**
  * The teacher the reader leans towards (a pointer over, or focus on, a chooser chip), mounted hidden and warmed as
- * Jake is at the start (warm.ts), and kept mounted until it is the one on stage: let go before, its materials' copies
- * would be freed and their programs with them (measured: one 2.2 s frame at the switch). Its own Suspense boundary, so
- * the one teaching is never touched by its load.
+ * Jake is at the start (warm.ts), and kept mounted (hidden, never drawn) so its programs stay alive. Its own Suspense
+ * boundary, so the one teaching is never touched by its load.
  */
-const PREWARM_DRIVER: TeacherDriver = { signals: () => IDLE, clipPacks: true, materials: dissolvable };
+// Hidden: it must not set the sweep's height for the one on stage (dissolve.ts).
+const PREWARM_DRIVER: TeacherDriver = { signals: () => IDLE, clipPacks: true, materials: (root) => dissolvable(root, false) };
 function Prewarm({ teacher }: { teacher: LandingTeacher }) {
   const group = useRef<Group>(null);
   const { gl, scene, camera } = useThree();
@@ -341,8 +342,8 @@ function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId
   // A teacher just switched in always waves (taken once, by the mount it is for).
   const mayWave = useMemo(() => {
     const now = performance.now() / 1000;
+    // Read, not taken: a mount that suspends (the teacher still loading) is rendered again; it is cleared once live.
     const switched = swap.wave;
-    swap.wave = false;
     return switched || greet > 0 || shared.waves[spot] === undefined || now - shared.waves[spot]! > WAVE_COOLDOWN_S;
   }, [spot, greet]);
   // The heart is placed from this teacher's offering hand: the gesture's target and the head's look go there too (in
@@ -429,7 +430,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId
     clipPacks: warm,
     withhold: spot === "hero" ? HERO_WITHHELD : WITHHELD,
     // Every mount carries the switch's dissolve (at 0 it draws as before), so the warm-up compiles it once.
-    materials: dissolvable,
+    materials: (root) => dissolvable(root, true),
     // Where he looks when the director says "the student": the gesture's target while one is aimed; at the hero and
     // the close, the reader's pointer (the ray from the eye through it, where it crosses VIEWER_Z in front of him);
     // otherwise, and with no mouse, the camera, as in a lesson.
@@ -460,6 +461,7 @@ function SpotTeacher({ spot, warm, greet, lookTargets, teacher }: { spot: SpotId
       if (host.live !== spot) setLive(spot);
       // A teacher switched in starts forming once it has drawn (its first frames compile nothing: dissolve.ts).
       swap.mounted = true;
+      swap.wave = false;
     }
   });
 
@@ -484,20 +486,28 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
   // The teacher the reader chose, and the one on stage: they differ for the length of a switch.
   const chosen = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
   const [teacher, setShown] = useState<LandingTeacher>(chosen);
+  // Bumped when a switch ends, so a choice made during it is acted on.
+  const [ended, setEnded] = useState(0);
+  const onEnd = useCallback(() => setEnded((n) => n + 1), []);
   useEffect(() => {
     if (chosen === teacher || swap.phase) return;
     // Seen: dissolve out, then in (Switch). Not seen (scrolled away, not live yet): at once.
     if (warm && onScreen && host.live !== null) { fx.value.value = 0; swap.phase = "out"; }
     else setShown(chosen);
-  }, [chosen, teacher, warm, onScreen]);
+  }, [chosen, teacher, warm, onScreen, ended]);
   const teacherRef = useRef(teacher);
   teacherRef.current = teacher;
   // The switch's middle: the one now chosen (a reader who switched back meanwhile gets the same teacher back, formed).
   const onSwap = useCallback(() => { setShown(getTeacher()); swap.mounted = getTeacher() === teacherRef.current; }, []);
   useEffect(() => () => { swap.phase = null; swap.mounted = false; swap.wave = false; fx.value.value = 0; fx.dir.value = 1; }, []);
-  // The teacher to get ready: the one leaned towards, while it is not the one on stage.
+  // The teachers to get ready: each one leaned towards while another is on stage, kept mounted from then on. Let go,
+  // their material copies are freed with their programs in the very commit the switch mounts the live one, which then
+  // compiles them again (measured: one 1.9 to 2.3 s frame at the first switch).
   const leaning = useSyncExternalStore(subscribeLeaning, getLeaning, () => null);
-  const prewarm = warm && leaning && leaning !== teacher ? leaning : null;
+  const [prewarmed, setPrewarmed] = useState<readonly LandingTeacher[]>([]);
+  useEffect(() => {
+    if (warm && leaning && leaning !== teacher && !prewarmed.includes(leaning)) setPrewarmed((list) => [...list, leaning]);
+  }, [warm, leaning, teacher, prewarmed]);
   const probe = useMemo(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).has("probe"), []);
   const wide = useMemo(() => (probe ? Number(new URLSearchParams(window.location.search).get("wide")) || 0 : 0), [probe]);
   // The teacher reads a few transient lesson fields from the store (the thinking badge). Coming back to / from
@@ -519,7 +529,7 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
       aria-hidden
     >
       <Framing spot={active} onSlow={onSlow} judging={warm} wide={wide} teacher={teacher} />
-      <Switch onSwap={onSwap} />
+      <Switch onSwap={onSwap} onEnd={onEnd} />
       <RendererConfig />
       <SceneLights />
       {/* One boundary: the environment and Jake arrive together, then warm up before he is shown. */}
@@ -529,15 +539,15 @@ export default function LandingStage({ onLive, onSlow }: { onLive: () => void; o
           <SpotTeacher key={`${teacher}:${active === "hero" ? `hero:${greet}` : active === "moves" ? `moves:${movesKey}` : active === "close" ? `close:${closeKey}` : active}`} spot={active} warm={warm} greet={active === "hero" ? greet : 0} lookTargets={lookFor(active, teacher)} teacher={teacher} />
         </Warmed>
       </Suspense>
-      {prewarm && (
-        <PartBoundary><Suspense fallback={null}><Prewarm key={prewarm} teacher={prewarm} /></Suspense></PartBoundary>
-      )}
+      {prewarmed.map((t) => (
+        <PartBoundary key={t}><Suspense fallback={null}><Prewarm teacher={t} /></Suspense></PartBoundary>
+      ))}
       {/* The heart mounts in the first idle moment after Jake is warm, and warms up hidden (HeartBuild), so it is
           ready before the reader reaches its section. A heart that fails to load drops out; Jake carries on. */}
       {warm && (
         <Idle>
           <PartBoundary><Suspense fallback={null}><Diagram /></Suspense></PartBoundary>
-          <PartBoundary><Suspense fallback={null}><HeartBuild /></Suspense></PartBoundary>
+          <PartBoundary><Suspense fallback={null}><HeartBuild teacher={teacher} /></Suspense></PartBoundary>
         </Idle>
       )}
       {/* The room, once the reader is near its section (Immersive.tsx), after Jake is warm. Loaded once, kept. */}
