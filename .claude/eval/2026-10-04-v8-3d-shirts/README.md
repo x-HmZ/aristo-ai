@@ -107,15 +107,19 @@ shirts (`baseline=True`). The new meshes are about 3x denser, so the counts of t
 
 | Check | Jake new L/R (worst) | Jake shipped | MJ new L/R (worst) | MJ shipped |
 |---|---|---|---|---|
-| skin: body skin through the shirt | 2/0 (59 mm) | 1/0 (49 mm) | 2/0 (59 mm) | 10/0 (60 mm) |
+| skin: body skin through the shirt | 18/47 (60 mm), none under 40 mm | 1/0 (49 mm) | 2/0 (59 mm) | 10/0 (60 mm) |
 | under: trousers or skirt through the hem | 0/0 | 0/9 (0.8 mm) | 0/0 | 11/21 (1.3 mm) |
-| arm: torso cloth inside the arm skin | 0/0 | 0/0 | 1204/264 (24 mm) | 290/65 (21 mm) |
-| cloth: sleeve and torso cloth through each other | 3972/3160 (30 mm cap) | 722/501 | 5343/3991 (30 mm cap) | 1432/941 |
+| arm: torso cloth inside the arm skin | 0/0 | 0/0 | 1223/290 (25 mm) | 290/65 (21 mm) |
+| cloth: sleeve and torso cloth through each other | 4607/4071 (30 mm cap) | 722/501 | 5306/4170 (30 mm cap) | 1432/941 |
 
-- **skin**: the 50 to 60 mm single-vertex events (Jake Talking2M and Talking4, MJ Talking2M) do not reproduce when the
-  frame is evaluated alone (`v9_loose_qa.which`) and their depth is the probe crossing the body; the shipped shirts
-  have the same kind. MJ HoldIdea frame 21, 2.8 mm: a vertex of her inner upper arm in the armpit, under the sleeve;
-  not visible from the front or either side (`qa/pokes/MJ_HoldIdea_21.webp`).
+Round 2 numbers (round 1 gave the same picture, with Jake's skin at 2/0).
+
+- **skin**: every Jake event is 55 to 60 mm deep and sits at the wrist (0.96 to 0.97 of the arm line), 12 to 18 mm
+  past the shortened cuff's edge (`v9_loose_qa.which`, `qa/pokes/J_Talking_19.webp`): skin the old slanted cuff
+  covered at rest, now outside the cuff, with the probe meeting the far side of the cuff through the wrist. Not skin
+  through cloth. MJ's 59 mm event is the same kind (the shipped shirts have ten); her one shallow one, HoldIdea, 2.6 mm,
+  is a vertex of her inner upper arm in the armpit, under the sleeve, not visible from the front or either side
+  (`qa/pokes/MJ_HoldIdea_21.webp`).
 - **under**: the new hems cover the trousers and skirt in every frame (the shipped ones did not quite).
 - **arm, cloth**: all in the armpits, where the arm presses into the torso and the sleeve folds into it, hidden between
   arm and body; the shipped shirts have the same contacts. Allowing for density, about 1.4x (MJ arm) and 1.7x (cloth)
