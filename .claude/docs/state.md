@@ -22,9 +22,13 @@ Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.cla
   p95 16.7 to 16.8 ms everywhere; switch longest frame 17 ms; opening p95 16.8 ms with 1 to 3 GPU-side spikes;
   LCP unchanged; tests 554; lint 0 errors. fal $1.37 of $2.
 - **Reviews:** security nothing above medium (the eval ledger); code review's high and mediums fixed (README).
-- **Open:** narrate the brain lesson and add it to /demo (male and female); ElevenLabs renders are on the free plan
-  (not for commercial use: re-render on a paid plan before launch); /demo's volcano model is still the rock; the
-  chooser shows Jake pressed for a moment on an MJ-first load; the hero start-up frame (V8.3b's).
+- **Follow-up (2026-10-04, Hmz: "fix the not done"):** the room's diagram now lifts off the board as points onto the
+  brain before it solidifies (`RoomScene.tsx buildPoints`, `room.ts MODEL_BUILD`); the brain lesson is narrated
+  (Antoni, 3,918 characters, the free plan's last for the month, until 9 Oct) and is /demo's third topic; /demo's
+  volcano lesson no longer offers a 3D model (Hmz; its GLB deleted); the chooser's pressed look comes from
+  `html[data-teacher]` in CSS, so an MJ-first load is right from the first paint, and a change is announced.
+- **Open:** ElevenLabs renders are on the free plan (not for commercial use: re-render on a paid plan before launch);
+  in /demo MJ still speaks with the male narration; the hero start-up frame (V8.3b's).
 - **Next:** Hmz's review of the PR; then V8.4 / V8.6.
 
 ## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)

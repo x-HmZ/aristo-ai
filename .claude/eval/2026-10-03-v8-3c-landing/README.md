@@ -47,6 +47,19 @@ boards, a teacher chooser that shows both teachers, and an opening that amazes. 
   (the heart follows the teacher on stage). Left: the chooser's pressed state renders Jake for a moment on an MJ-first
   load until hydration; MJ visitors also fetch Jake's eager hero poster (display none).
 
+## Follow-up (2026-10-04)
+
+Hmz: fix what was left. Done and checked on a production build:
+- **The room's picture becomes the model** (`switch/room-build-jake.webp`, `scripts/room-build.cjs`): the diagram's
+  drawn brain lifts off the board as points onto the brain, which then solidifies; the model holds its turn until it is
+  built. Present peaks after it: Jake 2.9 cm, MJ 4.0 cm past the fingertip.
+- **The brain in /demo** (`demo/`, `scripts/demo-brain.cjs`): three topics in the picker; the brain lesson plays its
+  narration (16 segments, aligned), its board picture and "View in 3D"; the volcano lesson offers no 3D model. 0 API,
+  0 paid calls, no page errors. ElevenLabs: 3,918 characters, leaving 12 this month.
+- **The chooser on an MJ-first load**: with the page's scripts blocked (before hydration), MJ's chip is already
+  pressed (`html[data-teacher]` CSS) and Jake's is not.
+- Tests 554; `/` 131 kB, `/demo` 135 kB.
+
 ## Scripts (in `scripts/`; the V8.3b ones copied, `TEACHER=mj` where they load the page)
 
 `shirts.cjs`, `shirt-sample.cjs` (sheet A); `volcano-model.ts` (guarded fal runs and the ledger), `turntable.cjs`,
