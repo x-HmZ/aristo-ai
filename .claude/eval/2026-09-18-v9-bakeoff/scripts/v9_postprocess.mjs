@@ -262,11 +262,19 @@ if (packOut) {
 }
 log.push(`base: ${root.listAnimations().map((a) => `${a.getName()}(${a.listChannels().length})`).join(" ")}`);
 
-await doc.transform(
-  prune(),
-  dedup(),
-  textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024] }),
-  draco(),
-);
+// Textures whose name matches --full-size keep 2048 (added in V8.3d for a baked weave that was then dropped;
+// unused by v9_ship.sh). Everything else is 1024.
+// textureCompress matches a pattern against name OR URI (an empty URI passed a negative pattern), so the kept
+// textures are set aside before the pass and encoded here, at full size, after it.
+const fullSize = flag("--full-size")[0];
+const fullRe = fullSize ? new RegExp(fullSize) : null;
+await doc.transform(prune(), dedup());
+const kept = fullRe ? root.listTextures().filter((t) => fullRe.test(t.getName())).map((t) => [t, t.getImage()]) : [];
+await doc.transform(textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024] }), draco());
+for (const [t, img] of kept) {
+  const webp = await sharp(Buffer.from(img)).resize(2048, 2048, { fit: "inside", withoutEnlargement: true }).webp().toBuffer();
+  t.setImage(new Uint8Array(webp)).setMimeType("image/webp");
+  log.push(`full size: ${t.getName()} ${(webp.length / 1024).toFixed(0)} KB`);
+}
 await io.write(out, doc);
 console.log(log.join("\n"));
