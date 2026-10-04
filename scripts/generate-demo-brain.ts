@@ -8,8 +8,8 @@
  * (.claude/eval/2026-10-03-v8-3c-landing/volcano/ledger.json), resized into public/demo/brain/model.glb.
  * The eval ledger is checked and appended to, so the session's $2 fal budget (cap $1.80) holds.
  *
- * Narration is not rendered here (see scripts/prerender-demo-tts.mjs); until it is, the topic is not listed in
- * DEMO_TOPICS.
+ * Narration is rendered and aligned by scripts/prerender-demo-tts.mjs (2026-10-04), after which the topic was
+ * listed in DEMO_TOPICS.
  *
  * Run: npx tsx scripts/generate-demo-brain.ts [--dry-run]
  */

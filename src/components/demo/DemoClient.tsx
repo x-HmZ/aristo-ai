@@ -18,7 +18,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, CircleCheck, HeartPulse, Mountain, TrendingUp } from "lucide-react";
+import { ArrowRight, BookOpen, Brain, CircleCheck, HeartPulse, Mountain, TrendingUp } from "lucide-react";
 import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
@@ -54,6 +54,7 @@ const DEMO_TEACHER = "jake" as const;
 const TOPIC_ICON: Record<string, typeof BookOpen> = {
   "volcano-eruption": Mountain,
   heart: HeartPulse,
+  brain: Brain,
 };
 const topicIcon = (slug: string) => TOPIC_ICON[slug] ?? BookOpen;
 

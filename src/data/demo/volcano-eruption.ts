@@ -2,6 +2,10 @@
  * FROZEN DEMO CONTENT — generated once by scripts/generate-demo-content.ts.
  * Do not hand-edit; regenerate via the script if the source concept changes.
  * Served with zero Anthropic/fal.ai calls at runtime (public/demo/volcano-eruption/...).
+ *
+ * One hand edit (V8.3c, Hmz): no 3D model. Its Tripo3D model was a rock exterior that showed nothing the diagrams do
+ * not, so `should_generate_model` is false and `demo_model_url` is gone (no "View in 3D"); no narration refers to it.
+ * The heart and the brain carry 3D in /demo.
  */
 import type { LessonPayload } from "@/lib/agents/teaching";
 import type { QuizQuestion }  from "@/lib/agents/assessment";
@@ -203,7 +207,7 @@ export const lesson: LessonPayload = {
     "estimated_read_time_minutes": 6,
     "bloom_level_taught": "Understand",
     "depth_level": "moderate",
-    "should_generate_model": true,
+    "should_generate_model": false,
     "model_image_prompt": "Cross-section diagram of a volcano showing labeled magma chamber underground, narrow vent rising to the surface, layers of crust rock around the chamber, arrows showing gas bubbles rising through magma, and lava erupting from the top crater. Educational textbook style, labeled parts, white background.",
     "model_3d_prompt": "Cross-section of a volcano cone, rocky brown and gray exterior, glowing red-orange magma chamber visible inside, narrow central vent filled with molten rock, isolated, centered, white background, realistic geological model",
     "model_annotations": [
@@ -237,8 +241,7 @@ export const lesson: LessonPayload = {
       "This narrow tube is the vent, the pathway magma travels through to reach the surface.",
       "At the top, you can see molten rock erupting out as lava once it breaks through the crater.",
       "Some volcanoes even have side vents, letting pressure escape from the flanks instead of just the top."
-    ],
-    "demo_model_url": "/demo/volcano-eruption/model.glb"
+    ]
   }
 };
 

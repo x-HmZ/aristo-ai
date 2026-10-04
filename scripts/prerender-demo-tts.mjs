@@ -39,7 +39,7 @@ const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // Keep in sync with DEMO_TOPICS in src/data/demo/index.ts. "black-holes" was
 // retired on 2026-09-10 (its 3D model reconstructed as a flat sliver; a black
 // hole is light, not a surface) and replaced by "heart".
-const SLUGS  = ["heart", "volcano-eruption"];
+const SLUGS  = ["heart", "volcano-eruption", "brain"];
 
 // Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "ryan" because that
 // is useAristoStore's default teacher, i.e. the avatar the demo actually renders.
