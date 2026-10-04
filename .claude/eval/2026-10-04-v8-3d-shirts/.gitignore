@@ -21,3 +21,7 @@ blender/*
 !blender/mj_geo4_shoulder.webp
 a2-*.log
 qa/pokes/*.png
+!blender/jake_r2_idle.webp
+!blender/mj_r2_idle.webp
+!blender/wrists.webp
+!blender/cuffbtn.webp

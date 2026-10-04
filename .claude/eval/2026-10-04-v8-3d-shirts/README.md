@@ -82,6 +82,23 @@ pair is solved again on the shipped GLBs (`scripts/shirts.cjs` with only those t
   MJ's right shoulder (the envelope smoothing reaching across the shoulder outline) was found on the peak sheets and
   fixed; the guard now reads max 30.7 mm (Jake) and 36.5 mm (MJ), none over 40 mm.
 
+## Round 2 (Hmz, 2026-10-05): sage + lavender; Jake's sleeves, the arms, the V
+
+Hmz picked **Jake sage + MJ lavender**, and on the fit: "the sleeves for Jake can be a little shorter, the arm looks a
+bit too tight and deformed, and I don't like how the V is showing in both of their torso lower halves".
+
+- **The V**: the front hung flat while the sides were pulled in fast (a narrow cos^4 side term at 0.8 per metre), so
+  the lower front read as a wedge. Now cos^2 at 0.25 per metre and the envelopes smoothed over 30 degrees, not 14:
+  a round section (`blender/jake_r2_idle.webp`, `mj_r2_idle.webp`).
+- **Jake's arms**: the underside kept a third of the ease (an oval sleeve) and the forearm carried stacked rings and a
+  cuff gather (lumps). Now an even 12 to 14 mm, the underside keeps 70%, a gentle taper into the cuff, no rings.
+- **Jake's sleeves 3 cm shorter**: the forearm part slides up the arm, most at the cuff. The forearm skin under the
+  sleeve had been deleted in V9.1c (`v9_mask.mask_under`), so `v9_loose.restore_skin` puts 233 faces back from the
+  same body before the mask (`bakeoff_scene_pre_v91c.blend`, same local coordinates), welded, with the donor's
+  weights and UVs and the basis position in every shape key (`blender/wrists.webp`: closed in two poses).
+- **Buttons ride the cloth**: each button island moves rigidly with its nearest cloth vertex; the cuff buttons had
+  come off the shortened sleeve and floated below the cuff.
+
 ## QA (Blender, before showing Hmz)
 
 `v9_loose_qa.run`: every 2nd frame of all 34 clips in `CANINO_CLIP_SET` (the 17 Mixamo clips and all 17 hand-keyed
