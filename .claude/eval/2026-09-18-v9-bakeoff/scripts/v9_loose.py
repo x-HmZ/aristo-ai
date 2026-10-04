@@ -66,18 +66,21 @@ BUTTON_FACES = 200  # Jake's buttons are islands of 57-78 faces; the shirt itsel
 JAKE = dict(
     shirt="TrendyLongSleevesShirt_v01_7902_Shape", arm="Armature.002", under=("Pants_14249_Shape",),
     z_cut=1.16, clear=0.013, z_top=1.47, z_chest=1.38, z_waist=1.13, ease_chest=0.010, ease_waist=0.025,
-    side=0.45, drape=0.10, drape_back=0.16, drape_side=0.8, rise=0.25, flare=0.0, hem_side=1.000, tail=0.025, ring_dz=0.012, seam_band=0.03,
+    side=0.45, drape=0.10, drape_back=0.16, drape_side=0.25, rise=0.25, flare=0.0, hem_side=1.000, tail=0.025, ring_dz=0.012, seam_band=0.03,
     # Along the arm line, 0 = shoulder joint, 1 = wrist (hand head); his elbow is at about 0.58, the cuff from 0.88.
-    sleeve=((0.0, 0.0), (0.06, 0.005), (0.45, 0.007), (0.58, 0.009), (0.80, 0.009), (0.88, 0.004), (1.0, 0.003)),
-    cuff_rings=(0.66, 0.88), wave_amp=0.005, wave_n=9, seed=3.0, buttons=True,
+    # Hmz (2026-10-05) on the first fit: the arm read tight and deformed, the sleeve a little long. Now an even
+    # 12 to 14 mm down the arm with a gentle taper into the cuff, no stacked rings, and the sleeve 3 cm shorter.
+    sleeve=((0.0, 0.0), (0.06, 0.009), (0.45, 0.012), (0.60, 0.014), (0.85, 0.014), (0.95, 0.009), (1.0, 0.007)),
+    underside=0.7, shorten=0.03,
+    cuff_rings=None, wave_amp=0.005, wave_n=9, seed=3.0, buttons=True,
 )
 MJ = dict(
     shirt="Object_31.001", arm="Object_4.001", under=("MJ_skirt",),
     z_cut=1.21, clear=0.006, z_top=1.46, z_chest=1.39, z_waist=1.14, ease_chest=0.010, ease_waist=0.028,
-    side=0.3, drape=0.12, drape_back=0.16, drape_side=0.8, rise=0.25, flare=0.10, hem_side=1.052, tail=0.008, ring_dz=0.010, seam_band=0.03,
+    side=0.3, drape=0.12, drape_back=0.16, drape_side=0.25, rise=0.25, flare=0.10, hem_side=1.052, tail=0.008, ring_dz=0.010, seam_band=0.03,
     # Her short sleeve ends at about 0.3 of the arm line.
     sleeve=((0.0, 0.0), (0.05, 0.008), (0.20, 0.013), (0.35, 0.016), (1.0, 0.016)),
-    cuff_rings=None, wave_amp=0.004, wave_n=8, seed=7.0, buttons=False,
+    underside=0.7, cuff_rings=None, wave_amp=0.004, wave_n=8, seed=7.0, buttons=False,
 )
 
 
@@ -291,7 +294,9 @@ def _loosen(ob, arm, cfg, N):
     drape_th = cfg["drape"] + (cfg["drape_back"] - cfg["drape"]) * (0.5 + 0.5 * np.sin(th))  # +y is the back
     # The sides follow the body in: the slice is widest under the armpits, and holding it out there (the drape
     # rule) pushed the torso cloth into the hanging arms.
-    drape_th = drape_th + cfg["drape_side"] * np.cos(th) ** 4
+    # cos^2, not cos^4, and a quarter of the earlier strength: the narrow cos^4 band made the front a flat panel
+    # with the sides falling away, which shaded as a V on both lower torsos (Hmz).
+    drape_th = drape_th + cfg["drape_side"] * np.cos(th) ** 2
 
     # Buttons of the source: small islands on the front.
     bm = bmesh.new()
@@ -343,12 +348,14 @@ def _loosen(ob, arm, cfg, N):
     torso = 1.0 - np.clip(L + R, 0, 1)
     W = np.array([(mw @ v.co)[:] for v in me.vertices])
     small = set()
+    button_islands = []
     bm = bmesh.new()
     bm.from_mesh(me)
     bm.faces.ensure_lookup_table()
     for isl in _islands(bm):
         if len(isl) <= BUTTON_FACES:
             small |= {f.index for f in isl}
+            button_islands.append(sorted({v.index for f in isl for v in f.verts}))
     bm.free()
     cloth_face = lambda o, p: p.index not in small and all(torso[i] > 0.6 for i in p.vertices)
     bvh_s = _bvh_world([ob], cloth_face)
@@ -370,7 +377,7 @@ def _loosen(ob, arm, cfg, N):
     for k in range(len(zs) - 2, -1, -1):
         if zs[k] < cfg["z_chest"]:
             T[k] = np.where(np.isnan(T[k]), T[k], np.fmax(T[k], T[k + 1] - drape_th * 0.01))
-    H = _smooth_rows(T)
+    H = _smooth_rows(T, 15)
     lines = {"L": arm_line(arm, "L"), "R": arm_line(arm, "R")}
     for i, p in enumerate(W):
         P = Vector(p)
@@ -401,12 +408,32 @@ def _loosen(ob, arm, cfg, N):
                 t, q = _on_line(lines[s], P)
                 u = P - q
                 if u.length > 1e-6:
-                    # The underside (down and in, in the rest A-pose) lies against the body when the arm hangs:
-                    # it gets a third of the ease.
+                    # The underside (down and in, in the rest A-pose) lies against the body when the arm hangs.
+                    # It had a third of the ease, which made the sleeve oval: Hmz read the arm as tight and
+                    # deformed. Now it keeps `underside` of it.
                     un = u.normalized()
                     under_ = max(0.0, un.dot(Vector((-0.45 if s == "L" else 0.45, 0.0, -0.9)).normalized()))
-                    move += un * _interp(cfg["sleeve"], t) * a * (1.0 - 0.67 * under_)
+                    move += un * _interp(cfg["sleeve"], t) * a * (1.0 - (1.0 - cfg["underside"]) * under_)
+                    # A shorter sleeve (Hmz, Jake): the forearm part slides up the arm, most at the cuff.
+                    if cfg.get("shorten"):
+                        seg = (lines[s][2] - lines[s][1]).normalized()
+                        move -= seg * cfg["shorten"] * _smoothstep(0.55, 0.9, t) * a
         me.vertices[i].co = mwi @ (P + move)
+    # Buttons ride on the cloth under them: each island moves rigidly with its nearest cloth vertex. Moved one
+    # vertex at a time, Jake's cuff buttons came off the shortened, eased sleeve and floated below the cuff.
+    from mathutils.kdtree import KDTree
+    in_button = {i for isl in button_islands for i in isl}
+    cloth_idx = [i for i in range(len(W)) if i not in in_button]
+    kd = KDTree(len(cloth_idx))
+    for i in cloth_idx:
+        kd.insert(Vector(W[i]), i)
+    kd.balance()
+    for isl in button_islands:
+        c = Vector(W[isl].mean(axis=0))
+        j = kd.find(c)[1]
+        d = (mw @ me.vertices[j].co) - Vector(W[j])
+        for i in isl:
+            me.vertices[i].co = mwi @ (Vector(W[i]) + d)
     me.update()
 
     # 6. Regrow the lower part.
@@ -449,7 +476,7 @@ def _loosen(ob, arm, cfg, N):
     for k in range(len(zs2) - 2, -1, -1):  # bottom up: widen gradually above the garment under it
         Hd[k] = np.fmax(Hd[k], Hd[k + 1] - cfg["rise"] * 0.01)
     Hd[0] = R0
-    Hd = _smooth_rows(Hd, 5)
+    Hd = _smooth_rows(Hd, 15)  # wide round the body: a narrow kernel kept the V (Hmz)
     Hd[0] = R0
     grid2 = _Grid(zs2[::-1].copy(), N)
     Hup = Hd[::-1].copy()
@@ -605,6 +632,99 @@ def _loosen(ob, arm, cfg, N):
                               "max": round(float(off.max()) * 1000, 1),
                               "over_40mm": int((off > 0.04).sum())}
     return log
+
+
+def restore_skin(body, donor, arm, t0, t1, reach=0.08):
+    """
+    Put back forearm skin that v9_mask.mask_under deleted under the sleeves (V9.1c), between t0 and t1 along each
+    arm line (0 shoulder, 1 wrist), from `donor`: the same body before the mask (same local coordinates; it lives in
+    bakeoff_scene_pre_v91c.blend). V8.3d shortens Jake's sleeves, which would otherwise show the hole.
+
+    Donor vertices that coincide with the body's are reused, so the new skin is welded to the old; new vertices take
+    the donor's weights and UVs, sit at their basis position in every shape key (no viseme moves the arms), and keep
+    their faces' materials by name. The body's own mesh is kept as `<mesh>_v83c` (fake user) the first time, and
+    every run starts from it.
+    """
+    from mathutils.kdtree import KDTree
+    key = body.get("v83d_src")
+    if key and key in bpy.data.meshes:
+        old = body.data
+        body.data = bpy.data.meshes[key].copy()
+        if old.users == 0:
+            bpy.data.meshes.remove(old)
+    else:
+        src = body.data.copy()
+        src.name = body.data.name + "_v83c"
+        src.use_fake_user = True
+        body["v83d_src"] = src.name
+    me, dm = body.data, donor.data
+    mw = body.matrix_world
+    lines = {"L": arm_line(arm, "L"), "R": arm_line(arm, "R")}
+    kd = KDTree(len(me.vertices))
+    for i, v in enumerate(me.vertices):
+        kd.insert(v.co, i)
+    kd.balance()
+
+    def in_band(co):
+        p = mw @ co
+        for s in ("L", "R"):
+            t, q = _on_line(lines[s], p)
+            if t0 <= t <= t1 and (p - q).length < reach:
+                return True
+        return False
+
+    have = [kd.find(v.co)[2] < 1e-4 for v in dm.vertices]
+    faces = [p for p in dm.polygons if all(in_band(dm.vertices[i].co) for i in p.vertices)
+             and not all(have[i] for i in p.vertices)]
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bm.verts.ensure_lookup_table()
+    dl = bm.verts.layers.deform.active
+    uvl = bm.loops.layers.uv.active
+    shape = [bm.verts.layers.shape[k.name] for k in me.shape_keys.key_blocks] if me.shape_keys else []
+    dnames = {g.index: g.name for g in donor.vertex_groups}
+    gidx = {g.name: g.index for g in body.vertex_groups}
+    duv = dm.uv_layers.active.data
+    mat_of = {m.name.split(".")[0]: i for i, m in enumerate(me.materials) if m}
+    made = {}
+
+    def vert(i):
+        co = dm.vertices[i].co
+        j = kd.find(co)
+        if j[2] < 1e-4:
+            return bm.verts[j[1]]
+        if i in made:
+            return made[i]
+        v = bm.verts.new(co)
+        for layer in shape:
+            v[layer] = co.copy()
+        for g in dm.vertices[i].groups:
+            n = dnames.get(g.group)
+            if n:
+                gi = gidx.get(n)
+                if gi is None:
+                    gi = body.vertex_groups.new(name=n).index
+                    gidx[n] = gi
+                v[dl][gi] = g.weight
+        made[i] = v
+        return v
+
+    added = 0
+    for p in faces:
+        vs = [vert(i) for i in p.vertices]
+        if len(set(vs)) < 3 or bm.faces.get(vs):
+            continue
+        f = bm.faces.new(vs)
+        dmat = dm.materials[p.material_index].name.split(".")[0] if dm.materials else ""
+        f.material_index = mat_of.get(dmat, 0)
+        f.smooth = p.use_smooth
+        for l, li in zip(f.loops, p.loop_indices):
+            l[uvl].uv = duv[li].uv
+        added += 1
+    bm.to_mesh(me)
+    bm.free()
+    me.update()
+    return {"faces_added": added, "verts_added": len(made)}
 
 
 def _bvh_world_mesh(me, mw):
