@@ -153,6 +153,19 @@ export const BACK_AT = 20.2;
 export const turnAt = (t: number): number => Math.PI + 0.45 + TURN_RATE * (t - BACK_AT);
 
 /**
+ * The picture becoming the model (V8.3c): from the model's cue, the diagram's drawn brain lifts off the board as
+ * points that fly onto the real mesh, then the solid fades in and the points go. The model holds its turn until it is
+ * built (\`modelTurnAt\`), so the points land where the solid then is.
+ */
+export const MODEL_BUILD = [17.5, 19.1] as const;
+export const modelTurnAt = (t: number): number => turnAt(Math.max(t, MODEL_BUILD[1]));
+/** Where the brain is drawn in the board picture (brain-picture.webp), in shares of its side: the points start there. */
+export const PICTURE_BRAIN = { u0: 0.15, u1: 0.86, v0: 0.22, v1: 0.84 } as const;
+/** The build's progress at \`t\`, 0 to 1. */
+export const modelBuildAt = (t: number): number =>
+  Math.min(1, Math.max(0, (t - MODEL_BUILD[0]) / (MODEL_BUILD[1] - MODEL_BUILD[0])));
+
+/**
  * The parts named on the model (V8.3c): their places on the GLB (model units, read from its grey texels and placed by
  * eye on marked renders: eval scripts/brain-parts.mjs, markers.cjs), the way each faces, and when each comes in (seconds
  * into the third line, as its word is said). A label shows only while its part faces the camera. Only parts the model

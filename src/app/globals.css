@@ -819,3 +819,14 @@ html:not([data-teacher="mj"]) .landing-teacher-mj,
 html[data-teacher="mj"] .landing-teacher-jake {
   display: none;
 }
+
+/* The teacher chooser's pressed chip (V8.3c, Hero.tsx), from the same attribute, so it is right from the first paint. */
+html:not([data-teacher="mj"]) [data-chooser] [data-t="jake"],
+html[data-teacher="mj"] [data-chooser] [data-t="mj"] {
+  background-color: rgb(var(--ink));
+  color: rgb(var(--bg));
+}
+html:not([data-teacher="mj"]) [data-chooser] [data-t="jake"] img,
+html[data-teacher="mj"] [data-chooser] [data-t="mj"] img {
+  box-shadow: 0 0 0 2px rgb(var(--accent));
+}
