@@ -1,0 +1,1061 @@
+{
+ "teacher": "Jake",
+ "step": 2,
+ "clips": {
+  "Idle": {
+   "frames": [
+    1,
+    201
+   ],
+   "peak_frame": 153,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 123,
+    "R": 66,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "Idle2": {
+   "frames": [
+    1,
+    267
+   ],
+   "peak_frame": 249,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 73,
+    "R": 54,
+    "worst_mm": 29.9,
+    "worst_frame": 113
+   }
+  },
+  "Idle3": {
+   "frames": [
+    1,
+    250
+   ],
+   "peak_frame": 209,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 173,
+    "R": 97,
+    "worst_mm": 30.0,
+    "worst_frame": 233
+   }
+  },
+  "Idle4": {
+   "frames": [
+    1,
+    73
+   ],
+   "peak_frame": 31,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 125,
+    "R": 61,
+    "worst_mm": 30.0,
+    "worst_frame": 59
+   }
+  },
+  "Thinking": {
+   "frames": [
+    1,
+    99
+   ],
+   "peak_frame": 51,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 154,
+    "R": 135,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "ThinkingM": {
+   "frames": [
+    1,
+    99
+   ],
+   "peak_frame": 51,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 115,
+    "R": 191,
+    "worst_mm": 30.0,
+    "worst_frame": 51
+   }
+  },
+  "Talking": {
+   "frames": [
+    1,
+    95
+   ],
+   "peak_frame": 23,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 219,
+    "R": 142,
+    "worst_mm": 29.9,
+    "worst_frame": 69
+   }
+  },
+  "Talking2": {
+   "frames": [
+    1,
+    81
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 171,
+    "R": 245,
+    "worst_mm": 30.0,
+    "worst_frame": 21
+   }
+  },
+  "Talking2M": {
+   "frames": [
+    1,
+    81
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 1,
+    "R": 0,
+    "worst_mm": 48.6,
+    "worst_frame": 21
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 210,
+    "R": 228,
+    "worst_mm": 30.0,
+    "worst_frame": 55
+   }
+  },
+  "Talking3": {
+   "frames": [
+    1,
+    71
+   ],
+   "peak_frame": 19,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 119,
+    "R": 176,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "Talking3M": {
+   "frames": [
+    1,
+    71
+   ],
+   "peak_frame": 19,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 129,
+    "R": 151,
+    "worst_mm": 30.0,
+    "worst_frame": 17
+   }
+  },
+  "Talking4": {
+   "frames": [
+    1,
+    250
+   ],
+   "peak_frame": 181,
+   "skin": {
+    "L": 1,
+    "R": 0,
+    "worst_mm": 59.3,
+    "worst_frame": 177
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 69,
+    "R": 21,
+    "worst_mm": 30.0,
+    "worst_frame": 29
+   }
+  },
+  "Talking6": {
+   "frames": [
+    1,
+    25
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 36,
+    "R": 3,
+    "worst_mm": 27.0,
+    "worst_frame": 25
+   }
+  },
+  "Talking6M": {
+   "frames": [
+    1,
+    25
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 5,
+    "R": 33,
+    "worst_mm": 29.6,
+    "worst_frame": 1
+   }
+  },
+  "Pointing": {
+   "frames": [
+    1,
+    90
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 76,
+    "R": 31,
+    "worst_mm": 30.0,
+    "worst_frame": 35
+   }
+  },
+  "Nodding": {
+   "frames": [
+    1,
+    63
+   ],
+   "peak_frame": 19,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 114,
+    "R": 61,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "ShakeNo": {
+   "frames": [
+    1,
+    74
+   ],
+   "peak_frame": 23,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 116,
+    "R": 66,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "PresentModel": {
+   "frames": [
+    1,
+    63
+   ],
+   "peak_frame": 43,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 112,
+    "R": 59,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "Encourage": {
+   "frames": [
+    1,
+    61
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 107,
+    "R": 81,
+    "worst_mm": 29.9,
+    "worst_frame": 41
+   }
+  },
+  "Almost": {
+   "frames": [
+    1,
+    49
+   ],
+   "peak_frame": 33,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 107,
+    "R": 74,
+    "worst_mm": 29.8,
+    "worst_frame": 1
+   }
+  },
+  "Exactly": {
+   "frames": [
+    1,
+    44
+   ],
+   "peak_frame": 9,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 111,
+    "R": 59,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "WellDone": {
+   "frames": [
+    1,
+    59
+   ],
+   "peak_frame": 23,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 112,
+    "R": 60,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "ThatsIt": {
+   "frames": [
+    1,
+    63
+   ],
+   "peak_frame": 21,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 118,
+    "R": 76,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "GlanceBoard": {
+   "frames": [
+    1,
+    68
+   ],
+   "peak_frame": 45,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 117,
+    "R": 60,
+    "worst_mm": 30.0,
+    "worst_frame": 65
+   }
+  },
+  "Imagine": {
+   "frames": [
+    1,
+    54
+   ],
+   "peak_frame": 35,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 118,
+    "R": 81,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "HoldIdea": {
+   "frames": [
+    1,
+    61
+   ],
+   "peak_frame": 31,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 128,
+    "R": 92,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "StepBeat": {
+   "frames": [
+    1,
+    35
+   ],
+   "peak_frame": 13,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 108,
+    "R": 70,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "MoveOn": {
+   "frames": [
+    1,
+    39
+   ],
+   "peak_frame": 25,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 108,
+    "R": 79,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "YourTurn": {
+   "frames": [
+    1,
+    49
+   ],
+   "peak_frame": 27,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 118,
+    "R": 81,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "BringTogether": {
+   "frames": [
+    1,
+    59
+   ],
+   "peak_frame": 17,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 119,
+    "R": 83,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "OneMoment": {
+   "frames": [
+    1,
+    49
+   ],
+   "peak_frame": 15,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 108,
+    "R": 263,
+    "worst_mm": 30.0,
+    "worst_frame": 1
+   }
+  },
+  "PointNear": {
+   "frames": [
+    1,
+    145
+   ],
+   "peak_frame": 41,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 123,
+    "R": 62,
+    "worst_mm": 30.0,
+    "worst_frame": 3
+   }
+  },
+  "PatientTilt": {
+   "frames": [
+    1,
+    73
+   ],
+   "peak_frame": 1,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 107,
+    "R": 59,
+    "worst_mm": 29.8,
+    "worst_frame": 1
+   }
+  },
+  "BackToBoard": {
+   "frames": [
+    1,
+    49
+   ],
+   "peak_frame": 23,
+   "skin": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "under": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "arm": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0.0,
+    "worst_frame": null
+   },
+   "cloth": {
+    "L": 124,
+    "R": 60,
+    "worst_mm": 29.9,
+    "worst_frame": 47
+   }
+  }
+ },
+ "seconds": 287
+}
