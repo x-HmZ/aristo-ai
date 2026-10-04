@@ -374,6 +374,39 @@
   [data-mode="full"] .landing-still-end {
     display: none;
   }
+  /* The opening (V8.3c, intro/gate.ts): the page's ink over everything from the first paint while it plays. Set by
+     `_document` before the first paint; Intro.tsx moves it on (playing, lifting: the lights come on, done). If the
+     intro never starts, the cover lifts by itself after a few seconds. The headline holds back its rise for the end. */
+  .landing-intro-cover {
+    display: none;
+  }
+  html[data-intro="on"] .landing-intro-cover,
+  html[data-intro="playing"] .landing-intro-cover,
+  html[data-intro="lifting"] .landing-intro-cover {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: #0e1117;
+    transition: opacity 550ms var(--ease-out);
+  }
+  html[data-intro="on"] .landing-intro-cover {
+    animation: landing-intro-failsafe 400ms var(--ease-out) 6s forwards;
+  }
+  html[data-intro="lifting"] .landing-intro-cover {
+    opacity: 0;
+  }
+  html[data-intro="playing"] .landing-rise,
+  html[data-intro="lifting"]:not([data-intro-headline]) .landing-rise {
+    animation: none;
+    opacity: 0;
+  }
+  @keyframes landing-intro-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
 
   /* A spoken line's words (HeroLine): not yet said, said, and the one being said. */
   .landing-word {
@@ -778,4 +811,22 @@
   .aristo-scroll::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--muted));
   }
+}
+
+/* The chosen teacher's stills only (V8.3c; `_document` sets data-teacher before the first paint). A hidden lazy image
+   is never fetched. Outside the layers: the class names are built in code (Spot.tsx), so Tailwind would drop them. */
+html:not([data-teacher="mj"]) .landing-teacher-mj,
+html[data-teacher="mj"] .landing-teacher-jake {
+  display: none;
+}
+
+/* The teacher chooser's pressed chip (V8.3c, Hero.tsx), from the same attribute, so it is right from the first paint. */
+html:not([data-teacher="mj"]) [data-chooser] [data-t="jake"],
+html[data-teacher="mj"] [data-chooser] [data-t="mj"] {
+  background-color: rgb(var(--ink));
+  color: rgb(var(--bg));
+}
+html:not([data-teacher="mj"]) [data-chooser] [data-t="jake"] img,
+html[data-teacher="mj"] [data-chooser] [data-t="mj"] img {
+  box-shadow: 0 0 0 2px rgb(var(--accent));
 }

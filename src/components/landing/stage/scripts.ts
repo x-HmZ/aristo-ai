@@ -7,6 +7,7 @@
  */
 import type { DirectorSignals } from "@/lib/avatar/director";
 import { BOARD, BOARD_ASPECT, EYE, SPOTS, frustumFor, project, type SpotId, type V3 } from "./spots";
+import type { LandingTeacher } from "../teacher";
 
 export const IDLE: DirectorSignals = {
   gesture: "idle", isLoading: false, isSpeaking: false, phase: null, role: null, segmentId: null,
@@ -39,11 +40,17 @@ export const MODEL_T = {
 } as const;
 
 /**
- * Jake's left hand at PresentModel's peak, in world space: a palm-up offer at shoulder height, held from about 0.8s to
- * 2.1s after the cue. Read from his bones in the running stage (`?probe`; the V8.3b eval's
- * `build/probe/model-light-1280/peaks.json`, frames 14 to 23), not by eye.
+ * Each teacher's left hand at PresentModel's peak, in world space: a palm-up offer at shoulder height, held from about
+ * 0.8s to 2.1s after the cue. Read from the bones in the running stage (`?probe`; Jake: the V8.3b eval's
+ * `build/probe/model-light-1280/peaks.json`, frames 14 to 23; MJ: the V8.3c eval's `build/peaks-mj`), not by eye. MJ is
+ * shorter and her reach shorter: her fingertip stops 13 cm before his.
  */
-export const PRESENT_PEAK = { hand: [-0.2, 0.21, -2.86] as V3, index: [0.01, 0.34, -2.8] as V3 };
+export const PRESENT_PEAKS: Record<LandingTeacher, { hand: V3; index: V3 }> = {
+  jake: { hand: [-0.2, 0.21, -2.86], index: [0.01, 0.34, -2.8] },
+  mj: { hand: [-0.296, 0.212, -2.874], index: [-0.127, 0.319, -2.822] },
+};
+/** Jake's (the default teacher's), for what is placed for him alone. */
+export const PRESENT_PEAK = PRESENT_PEAKS.jake;
 
 /**
  * The heart, placed from that hand (Hmz's second hard requirement): at the product's own spawn scale (Experience
@@ -52,13 +59,13 @@ export const PRESENT_PEAK = { hand: [-0.2, 0.21, -2.86] as V3, index: [0.01, 0.3
  * half-width from its centre: that edge sits 2 cm past his fingertip, and his open hand is at its lower-left, level
  * with its lower third. He offers it; he never reaches through it or past it.
  */
-export const HEART = (() => {
+export function heartFor(teacher: LandingTeacher) {
   const scale = 0.825;
   /** Half the model's width seen from the front (its bounds are +-0.298 local). */
   const half = 0.298 * scale;
   const height = 1.0 * scale;
   const gap = 0.02;
-  const [ix, iy, iz] = PRESENT_PEAK.index;
+  const [ix, iy, iz] = PRESENT_PEAKS[teacher].index;
   return {
     scale,
     half,
@@ -67,7 +74,8 @@ export const HEART = (() => {
     /** The model's centre (its bounding box is centred on its origin). */
     position: [ix + gap + half, iy - 0.3 + height / 2, iz - 0.05] as V3,
   };
-})();
+}
+export const HEART = heartFor("jake");
 
 /** The model spot's box aspect (width / height): fixed, so its composition, and its still, are the same at every width. */
 export const MODEL_ASPECT = 1.1;

@@ -112,7 +112,7 @@ export function Idea({ mode }: { mode: LandingMode | null }) {
           <Spot
             id="idea"
             still="/images/landing/v3b/idea.webp"
-            alt="Jake holds his hands together as if holding an idea"
+            alt="{teacher} holds both hands together as if holding an idea"
             className="h-[470px] sm:h-[600px]"
             pool="inset-x-[8%] -bottom-[6%] h-3/5"
           />

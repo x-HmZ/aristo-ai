@@ -3,6 +3,8 @@ import { useEffect, useMemo } from "react";
 import { Box3, Vector3, type Mesh, type Object3D } from "three";
 import { clockOf } from "../play";
 import { SPOTS, frustumFor, type SpotId } from "./spots";
+import { fx } from "./dissolve";
+import { boneOf } from "./bones";
 
 /** Jake's bones the verification reads: the hands, the index fingertips' last joints and the shoulders, both sides. */
 const BONES = ["CC_Base_L_Hand", "CC_Base_R_Hand", "CC_Base_L_Index1", "CC_Base_R_Index1", "CC_Base_L_Index3", "CC_Base_R_Index3", "CC_Base_L_Mid1", "CC_Base_R_Mid1", "CC_Base_L_Mid3", "CC_Base_R_Mid3", "CC_Base_L_Thumb3", "CC_Base_R_Thumb3", "CC_Base_L_Pinky3", "CC_Base_R_Pinky3", "CC_Base_Head", "CC_Base_L_Upperarm", "CC_Base_R_Upperarm"] as const;
@@ -23,6 +25,10 @@ declare global {
       nearest: (name: string, p: [number, number, number]) => { point: [number, number, number]; distance: number } | null;
       /** The renderer's counts: shader programs, geometries and textures on the GPU (for long-frame attribution). */
       gl: () => { programs: number; geometries: number; textures: number };
+      /** Every live GL program's material type and cache key (what a new variant is, when one compiles mid-scene). */
+      programKeys: () => string[];
+      /** The teacher switch's dissolve now (dissolve.ts fx): 0 whole, 1 gone. */
+      dissolve: () => number;
       /** Frames rendered so far. */
       frame: number;
       /** The spot's section clock (play.ts), in seconds. */
@@ -40,7 +46,7 @@ export function Probe({ spot }: { spot: SpotId }) {
   const { scene, camera, gl, size } = useThree();
   const v = useMemo(() => new Vector3(), []);
   useEffect(() => {
-    const find = (name: string): Object3D | undefined => scene.getObjectByName(name);
+    const find = (name: string): Object3D | undefined => (name.startsWith("CC_Base_") ? boneOf(scene, name) : scene.getObjectByName(name));
     window.__landing = {
       spot,
       frame: 0,
@@ -62,6 +68,8 @@ export function Probe({ spot }: { spot: SpotId }) {
         return b.isEmpty() ? null : { min: b.min.toArray() as [number, number, number], max: b.max.toArray() as [number, number, number] };
       },
       gl: () => ({ programs: gl.info.programs?.length ?? -1, geometries: gl.info.memory.geometries, textures: gl.info.memory.textures }),
+      dissolve: () => fx.value.value,
+      programKeys: () => (gl.info.programs ?? []).map((q) => `${q.name}|${q.cacheKey}`),
       nearest: (name, p) => {
         const o = find(name);
         if (!o) return null;

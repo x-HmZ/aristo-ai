@@ -9,6 +9,7 @@ import type { QuizQuestion }  from "@/lib/agents/assessment";
 
 import { lesson as volcanoLesson, quiz as volcanoQuiz } from "./volcano-eruption";
 import { lesson as heartLesson, quiz as heartQuiz } from "./heart";
+import { lesson as brainLesson, quiz as brainQuiz } from "./brain";
 
 export interface DemoTopic {
   slug:   string;
@@ -35,6 +36,14 @@ export const DEMO_TOPICS: DemoTopic[] = [
     emoji:  "🫀",
     lesson: heartLesson,
     quiz:   heartQuiz,
+  },
+  {
+    slug:   "brain",
+    title:  "How Your Brain Is Organised",
+    blurb:  "Four lobes, a balance coach, and the part that keeps you breathing.",
+    emoji:  "🧠",
+    lesson: brainLesson,
+    quiz:   brainQuiz,
   },
 ];
 

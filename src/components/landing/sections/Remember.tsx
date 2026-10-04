@@ -292,7 +292,7 @@ export function Remember({ mode }: { mode: LandingMode | null }) {
             <Spot
               id="remember"
               still="/images/landing/v3b/remember.webp"
-              alt="Jake beside one concept's memory over three weeks"
+              alt="{teacher} beside one concept's memory over three weeks"
               className="hidden w-full sm:block"
               style={{ aspectRatio: String(BOARD_ASPECT) }}
               pool="left-[30%] -right-[4%] top-[4%] h-[80%]"

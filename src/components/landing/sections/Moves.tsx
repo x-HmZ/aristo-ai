@@ -87,7 +87,7 @@ export function Moves({ mode }: { mode: LandingMode | null }) {
           <Spot
             id="moves"
             still="/images/landing/v3b/moves.webp"
-            alt="Jake beside the volcano lesson, set out on the board in five moves"
+            alt="{teacher} beside the volcano lesson, set out on the board in five moves"
             className="hidden w-full sm:block"
             style={{ aspectRatio: String(BOARD_ASPECT) }}
             pool="left-[30%] -right-[4%] top-[4%] h-[80%]"

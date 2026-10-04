@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CLOSE } from "../content";
@@ -7,6 +7,7 @@ import { Spot } from "../Spot";
 import { enterClose, host } from "../stage/host";
 import { shared } from "../stage/shared";
 import { BTN_LG, BTN_PRIMARY, LEDE, WRAP } from "../ui";
+import { demoHref, getServerTeacher, getTeacher, subscribeTeacher } from "../teacher";
 
 /**
  * In view: at least half of Jake's box. Out of view: under a quarter of it (at the page's end about two thirds of it
@@ -25,6 +26,7 @@ const OUT_OF_VIEW = 0.25;
  * hero's offer: his left palm up towards it, his head and eyes on it.
  */
 export function Close() {
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
   const section = useRef<HTMLElement>(null);
   const lastReact = useRef(0);
   // Pointing at, or focusing, Try a lesson: his left palm offered towards it, his head and eyes on it (the hero's offer,
@@ -52,14 +54,14 @@ export function Close() {
   return (
     <section ref={section} id="start" aria-labelledby="close-title" className="overflow-x-clip py-24">
       <div className={cn(WRAP, "grid items-center gap-10 lg:grid-cols-2 lg:gap-14")}>
-        <Spot id="close" still="/images/landing/v3b/close.webp" alt="Jake waves goodbye" className="order-2 mx-auto h-[470px] w-full max-w-[600px] sm:h-[600px] lg:order-1 lg:max-w-none" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
+        <Spot id="close" still="/images/landing/v3b/close.webp" alt="{teacher} waves goodbye" className="order-2 mx-auto h-[470px] w-full max-w-[600px] sm:h-[600px] lg:order-1 lg:max-w-none" pool="inset-x-[8%] -bottom-[6%] h-3/5" />
         <div className="order-1 flex flex-col items-start gap-5 lg:order-2">
           <h2 id="close-title" className="display-wide text-[30px] font-extrabold leading-none tracking-[-0.02em] sm:text-[40px] lg:text-[48px]">
             {CLOSE.title}
           </h2>
           <p className={LEDE}>{CLOSE.line}</p>
           <Link
-            href="/demo"
+            href={demoHref(teacher)}
             onPointerEnter={hover(true)} onPointerLeave={hover(false)} onFocus={hover(true)} onBlur={hover(false)}
             className={cn(BTN_PRIMARY, BTN_LG, "mt-1 w-full sm:w-auto")}
           >

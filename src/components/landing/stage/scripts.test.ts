@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
 import { CURVE_DAYS, CURVE_REVIEWS } from "../mapStory";
-import { HEART, IDEA_T, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, REMEMBER_T, WAVE_AFTER_S, curveDayAt, curveTimeOf, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
+import { HEART, IDEA_T, PRESENT_PEAKS, heartFor, MODEL_T, MOVES_T, MOVE_IDS, PICTURE_AIM, PICTURE_PLACE, PICTURE_T, PRESENT_PEAK, REMEMBER_T, WAVE_AFTER_S, curveDayAt, curveTimeOf, heartBox, heartBuildAt, moveBeatAt, signalsFor } from "./scripts";
 import { BOARD, EYE } from "./spots";
 
 const ctx = { liveFor: 0, t: 0, mayWave: true, speaking: false };
@@ -31,16 +31,23 @@ describe("signalsFor", () => {
 });
 
 describe("the heart's placement from the hand", () => {
-  it("puts its near edge just past the fingertip at the peak, not behind or through it", () => {
-    const edge = HEART.position[0] - HEART.half;
-    expect(edge - PRESENT_PEAK.index[0]).toBeGreaterThan(0);
-    expect(edge - PRESENT_PEAK.index[0]).toBeLessThan(0.05);
+  it("puts its near edge just past each teacher's fingertip at the peak, not behind or through it", () => {
+    for (const t of ["jake", "mj"] as const) {
+      const h = heartFor(t), tip = PRESENT_PEAKS[t].index;
+      const edge = h.position[0] - h.half;
+      expect(edge - tip[0]).toBeGreaterThan(0);
+      expect(edge - tip[0]).toBeLessThan(0.05);
+    }
+    expect(HEART).toEqual(heartFor("jake"));
+    expect(PRESENT_PEAK).toBe(PRESENT_PEAKS.jake);
   });
-  it("has the open hand level with its lower third", () => {
-    const bottom = HEART.position[1] - HEART.height / 2;
-    const k = (PRESENT_PEAK.index[1] - bottom) / HEART.height;
-    expect(k).toBeGreaterThan(0.25);
-    expect(k).toBeLessThan(0.45);
+  it("has each open hand level with its lower third", () => {
+    for (const t of ["jake", "mj"] as const) {
+      const h = heartFor(t);
+      const k = (PRESENT_PEAKS[t].index[1] - (h.position[1] - h.height / 2)) / h.height;
+      expect(k).toBeGreaterThan(0.25);
+      expect(k).toBeLessThan(0.45);
+    }
   });
   it("keeps it inside the model spot's box, turning included", () => {
     const b = heartBox();

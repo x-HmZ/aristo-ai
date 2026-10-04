@@ -1,0 +1,5 @@
+# Raw outputs too big for git; the sheets, sources, ledger and scripts are the evidence.
+volcano/*.glb
+shirts/raw/
+switch/*.png
+build/

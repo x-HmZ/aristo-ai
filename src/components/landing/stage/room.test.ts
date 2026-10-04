@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CLIPS_BY_ID } from "@/lib/avatar/animationManifest";
 import {
-  AIM_PICTURE, ROOM_ASPECT, ROOM_FOV, ROOM_PICTURE, ROOM_PRESENT_TIP, ROOM_T, VOLCANO, lineAt, roomAimAt, roomFov,
-  roomSignals, roomStateAt, shotAt,
+  AIM_PICTURE, BACK_AT, MODEL_LABELS, ROOM_ASPECT, ROOM_FOV, ROOM_PICTURE, ROOM_PRESENT_TIP, ROOM_T, lineAt, lineUntil,
+  roomAimAt, roomFov, roomModel, roomSignals, roomStateAt, shotAt, turnAt,
 } from "./room";
 import { LESSON, OUTSIDE, lookAround, roomCameraAt } from "./roomCamera";
 
@@ -62,32 +62,36 @@ describe("lookAround", () => {
 describe("the tour's timeline", () => {
   it("has its shots in order and its lines one after another, never overlapping", () => {
     for (let i = 1; i < ROOM_T.shots.length; i++) expect(ROOM_T.shots[i]).toBeGreaterThan(ROOM_T.shots[i - 1]);
-    for (let i = 1; i < ROOM_T.lines.length; i++) {
-      const a = ROOM_T.lines[i - 1], b = ROOM_T.lines[i];
-      expect(b.at).toBeGreaterThan(a.at + a.until);
+    for (const teacher of ["jake", "mj"] as const) {
+      for (let i = 1; i < ROOM_T.lines.length; i++) {
+        expect(ROOM_T.lines[i].at).toBeGreaterThan(ROOM_T.lines[i - 1].at + lineUntil(i - 1, teacher));
+      }
+      const n = ROOM_T.lines.length - 1;
+      expect(ROOM_T.lines[n].at + lineUntil(n, teacher)).toBeLessThan(ROOM_T.length);
     }
-    const last = ROOM_T.lines[ROOM_T.lines.length - 1];
-    expect(last.at + last.until).toBeLessThan(ROOM_T.length);
   });
 
   it("says each line in its own shot", () => {
-    ROOM_T.lines.forEach((l, i) => {
-      expect(shotAt(l.at)).toBe(i);
-      expect(shotAt(l.at + l.until - 0.01)).toBe(i);
-    });
+    for (const teacher of ["jake", "mj"] as const) {
+      ROOM_T.lines.forEach((l, i) => {
+        expect(shotAt(l.at)).toBe(i);
+        expect(shotAt(l.at + lineUntil(i, teacher) - 0.01)).toBe(i);
+      });
+    }
   });
 
   it("finds the line being said", () => {
     expect(lineAt(0)).toBeNull();
     const l = ROOM_T.lines[1];
     expect(lineAt(l.at + 1)).toEqual({ index: 1, t: 1 });
-    expect(lineAt(l.at + l.until)).toBeNull();
+    expect(lineAt(l.at + lineUntil(1, "jake"))).toBeNull();
+    expect(lineAt(l.at + lineUntil(1, "mj") + 0.01, "mj")).toBeNull();
   });
 
-  it("points while he says 'Take a look at this cross-section' (the first 1.62 s of seg_008), with the picture up", () => {
+  it("points while he says 'The top floor rooms are called lobes' (the first 2.1 s of line 2), with the picture up", () => {
     const l = ROOM_T.lines[1];
     expect(ROOM_T.point[0]).toBeLessThanOrEqual(l.at);
-    expect(ROOM_T.point[1]).toBeGreaterThan(l.at + 1.62);
+    expect(ROOM_T.point[1]).toBeGreaterThan(l.at + 2.1);
     expect(roomStateAt(ROOM_T.point[0]).picture).toBe(true);
     expect(roomAimAt(l.at + 1)).toEqual(AIM_PICTURE);
     expect(roomAimAt(ROOM_T.point[1])).toBeNull();
@@ -104,8 +108,8 @@ describe("the tour's timeline", () => {
 describe("roomSignals", () => {
   it("speaks each line in its lesson phase, as its own segment", () => {
     const s = roomSignals(ROOM_T.lines[0].at + 0.5, true);
-    expect(s).toMatchObject({ isSpeaking: true, phase: "explain", segmentId: "room:seg_003" });
-    expect(roomSignals(ROOM_T.lines[2].at + 0.5, false).phase).toBe("demonstrate");
+    expect(s).toMatchObject({ isSpeaking: true, phase: "explain", segmentId: "room:jake/line_1" });
+    expect(roomSignals(ROOM_T.lines[2].at + 0.5, false, "mj").segmentId).toBe("room:mj/line_3");
   });
 
   it("points, shows the model (PresentModel's edge) and puts the quiz on the desk at their times", () => {
@@ -125,10 +129,20 @@ describe("roomSignals", () => {
 });
 
 describe("placement", () => {
-  it("puts the model's near edge 2 cm past his presenting fingertip, its base level with it", () => {
-    expect(VOLCANO.position[0] - VOLCANO.half - ROOM_PRESENT_TIP[0]).toBeCloseTo(VOLCANO.gap, 10);
-    const base = VOLCANO.position[1] - VOLCANO.height / 2;
-    expect(Math.abs(base - ROOM_PRESENT_TIP[1])).toBeLessThan(0.05);
+  it("floats the model beside each teacher's presenting fingertip: its near side a few cm past it, its middle just above", () => {
+    for (const teacher of ["jake", "mj"] as const) {
+      const m = roomModel(teacher), tip = ROOM_PRESENT_TIP[teacher];
+      expect(m.position[0] - m.half - tip[0]).toBeCloseTo(m.gap, 10);
+      expect(m.position[1] - tip[1]).toBeGreaterThan(0);
+      expect(m.position[1] - tip[1]).toBeLessThan(m.height / 4);
+    }
+  });
+
+  it("turns the model's back (-z, the cerebellum) to the camera while the parts are named", () => {
+    const back = (t: number) => -Math.cos(turnAt(t)); // world z of the model's local -z
+    expect(back(BACK_AT)).toBeGreaterThan(0.85);
+    const l = ROOM_T.lines[2];
+    for (const label of MODEL_LABELS) expect(back(l.at + label.from)).toBeGreaterThan(0.8);
   });
 
   it("aims his finger at the picture's middle, on the picture", () => {

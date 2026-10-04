@@ -1,14 +1,63 @@
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Hand, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FOCUS, SHAPE } from "@/lib/design/shape";
+import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { HERO } from "../content";
 import { Spot } from "../Spot";
 import type { LandingMode } from "../stage/gate";
 import { greetHero, host } from "../stage/host";
 import { shared } from "../stage/shared";
 import { BTN_LG, BTN_OUTLINE, BTN_PRIMARY, LEDE, WRAP } from "../ui";
+import {
+  LANDING_TEACHERS, TEACHER_NAME, demoHref, getServerTeacher, getTeacher, leanTowards, setTeacher, subscribeTeacher, type LandingTeacher,
+} from "../teacher";
+
+/**
+ * The teacher chooser (V8.3c): Jake or MJ, for the whole page and Try a lesson. Two pressed-state buttons, each with
+ * the teacher's face; a pointer over one, or focus on it, gets that teacher ready on the stage before the click. The
+ * pressed look comes from `html[data-teacher]` (globals.css), set before the first paint, so an MJ-first load never
+ * shows Jake pressed while it hydrates; a change is announced.
+ */
+function TeacherChooser({ className }: { className?: string }) {
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
+  const [said, setSaid] = useState("");
+  const choose = (t: LandingTeacher) => {
+    if (t === getTeacher()) return;
+    setTeacher(t);
+    setSaid(`${TEACHER_NAME[t]} is now your teacher.`);
+  };
+  return (
+    <div role="group" aria-label={HERO.choose} data-chooser className={cn("flex flex-wrap items-center gap-3", className)}>
+      <span className="sr-only" role="status">{said}</span>
+      <span aria-hidden className="text-[13px] font-semibold uppercase tracking-[0.14em] text-muted">{HERO.choose}</span>
+      <div className={cn(SHAPE.pill, "inline-flex gap-1 border border-line bg-surface p-1 shadow-e1")}>
+        {LANDING_TEACHERS.map((t) => {
+          const on = t === teacher;
+          return (
+            <button
+              key={t}
+              type="button"
+              aria-pressed={on}
+              data-t={t}
+              onClick={() => choose(t)}
+              onPointerEnter={() => leanTowards(t)}
+              onFocus={() => leanTowards(t)}
+              className={cn(
+                SHAPE.pill, PRESS, FOCUS,
+                "inline-flex min-h-[44px] items-center gap-2 py-1 pl-1 pr-4 text-sm font-semibold text-body transition-colors hover:bg-sunk hover:text-ink",
+              )}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- a 36 px face; next/image adds nothing here */}
+              <img src={`/images/landing/v3b/face-${t}.webp`} alt="" width={36} height={36} className="size-9 rounded-full bg-sunk object-cover" decoding="async" />
+              {TEACHER_NAME[t]}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /** A call to action earns one reaction at most this often. */
 const REACT_EVERY_MS = 3000;
@@ -33,6 +82,7 @@ const WELCOME_EVERY_MS = 8000;
  */
 export function Hero({ mode }: { mode: LandingMode | null }) {
   const live = mode === "full";
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
   const section = useRef<HTMLElement>(null);
   const lastReact = useRef(0);
   const lastTap = useRef(0);
@@ -110,7 +160,7 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
           <p className={cn(LEDE, "mt-6")}>{HERO.sub}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/demo"
+              href={demoHref(teacher)}
               onPointerEnter={hover("try")} onPointerLeave={hover(null)} onFocus={hover("try")} onBlur={hover(null)}
               className={cn(BTN_PRIMARY, BTN_LG, "max-[479px]:flex-[1_1_100%]")}
             >
@@ -124,13 +174,14 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
               Create an account
             </Link>
           </div>
+          <TeacherChooser className="mt-7" />
         </div>
         <div className="relative mx-auto w-full max-w-[600px] lg:order-1 lg:max-w-none">
           <Spot
             id="hero"
             still="/images/landing/v3b/hero.webp"
             priority
-            alt="Jake, your teacher, waves hello"
+            alt="{teacher}, your teacher, waves hello"
             className="h-[470px] sm:h-[600px]"
             pool="inset-x-[8%] -bottom-[6%] h-3/5"
           >
@@ -138,7 +189,7 @@ export function Hero({ mode }: { mode: LandingMode | null }) {
               // Over his figure: a tap waves again. Invisible, with a focus ring for the keyboard.
               <button
                 type="button"
-                aria-label="Say hi to Jake"
+                aria-label={`Say hi to ${TEACHER_NAME[teacher]}`}
                 onClick={tap}
                 className={cn(SHAPE.surface, FOCUS, "absolute left-[4%] top-[4%] z-20 h-[72%] w-[52%] cursor-pointer")}
               />

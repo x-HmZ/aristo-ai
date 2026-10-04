@@ -19,8 +19,10 @@ export const HERO = {
   eyebrow: "Grades 6 to 8",
   lines: ["One teacher.", "One student.", "Every kid."],
   sub: "Your own AI teacher explains the topic you pick out loud, shows it on the board, then checks that it stuck.",
-  /** Under Jake on the live path: how to play with him. */
-  hint: "He follows your pointer. Tap him to say hi.",
+  /** Under the teacher on the live path: how to play along. */
+  hint: "Your teacher follows your pointer. Tap to say hi.",
+  /** The teacher chooser (V8.3c): its label, and what each choice says to a screen reader. */
+  choose: "Your teacher",
 } as const;
 
 export const IDEA = {
@@ -116,22 +118,22 @@ export const CLOSE = {
 } as const;
 
 /**
- * Step Into the Classroom (V8.3b, "Immersive"): the product's room, the volcano demo lesson taught in it while the
- * camera tours it (stage/room.ts). `lines` are the lesson's own sentences, verbatim (each the start of its segment, to
- * the end of the last sentence shown; content.test.ts pins them), in the order of room.ts ROOM_T.lines.
+ * Step Into the Classroom (V8.3b, "Immersive"; the brain lesson since V8.3c): the product's room, the brain demo
+ * lesson taught in it while the camera tours it (stage/room.ts). `lines` are three of the lesson's own sentences,
+ * verbatim (content.test.ts pins them), in the order of room.ts ROOM_T.lines.
  */
 export const ROOM_COPY = {
   title: "Step Into the Classroom",
   /** Live, where the reader can drag to look around; on the stills, without that. */
-  line: "Everything above, together in one room. Look around while your teacher teaches the volcano.",
-  lineStill: "Everything above, together in one room, where your teacher teaches the volcano.",
+  line: "Everything above, together in one room. Look around while your teacher teaches how the brain is organised.",
+  lineStill: "Everything above, together in one room, where your teacher teaches how the brain is organised.",
   shots: ["Your teacher", "The board", "The model", "Your desk"],
   lines: [
-    "Picture the soda bottle again: dissolved gas is trapped in the liquid under pressure.",
-    "Take a look at this cross-section. At the bottom is the magma chamber, filling up with molten rock and dissolved gas.",
-    "As more magma rises from below and gas bubbles keep forming, pressure inside the chamber climbs.",
+    "Picture your brain as a house with four main rooms on the top floor, plus a basement.",
+    "The top floor rooms are called lobes, and the basement houses the parts that keep you alive and steady without you ever noticing.",
+    "Below and behind the cerebrum sit the cerebellum and the brainstem.",
   ],
-  real: "Live 3D, the product's own classroom. The lesson is the real volcano demo lesson, at its real pace; the tour is an illustration.",
+  real: "Live 3D, the product's own classroom. The lesson, its picture and its model are real output from the brain demo lesson; the tour and the model's labels are an illustration.",
 } as const;
 
 /**

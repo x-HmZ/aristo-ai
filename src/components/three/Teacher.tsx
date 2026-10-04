@@ -25,6 +25,7 @@ import {
 } from "@/lib/avatar/gaze";
 import { LOOK_RATE, LOOK_WEIGHT, aimAngles, damp, lookOffset, yawPitchOf } from "@/lib/avatar/look";
 import { headBoneOf, maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
+import { applyOutfit, devShirt, type Outfit } from "./outfit";
 
 // ─── Avatar config ────────────────────────────────────────────────────────────
 //
@@ -135,6 +136,8 @@ interface AvatarConfig {
    * whose licence demands credit cannot ship without it.
    */
   credit?: AvatarCreditInfo;
+  /** The shirt's colour, set at mount (outfit.ts, V8.3c): both teachers shipped in white. */
+  outfit?: Outfit;
 }
 
 export interface AvatarCreditInfo {
@@ -233,6 +236,8 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411",
       ...CANINO3D,
     },
+    // Forest (Hmz, V8.3c sheet A), set darker than its swatch #2F5D50: lit, the shirt reads about twice as light.
+    outfit: { material: "lambert3SG", color: "#1E4338" },
   },
   mj: {
     label:     "MJ",
@@ -256,6 +261,8 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4",
       ...CANINO3D,
     },
+    // Plum (Hmz, V8.3c sheet A), set darker than its swatch #6E3B6E for the same reason.
+    outfit: { material: "lambert7.003", color: "#542853" },
   },
 };
 
@@ -389,6 +396,11 @@ export interface TeacherDriver {
    * corrects). Unset: every clip in the avatar's set, as in a lesson.
    */
   withhold?: ReadonlySet<string>;
+  /**
+   * Runs once on this mount's materials, after the shirt colour, and returns its cleanup (V8.3c: the landing's
+   * dissolve between teachers). Read at mount. Unset: nothing.
+   */
+  materials?: (root: Object3D) => () => void;
 }
 
 interface TeacherProps {
@@ -432,7 +444,7 @@ export function Teacher({
         cfg: {
           ...CUSTOM_CONFIG,
           spawnLabelHeight: 1.25,
-        } as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks">,
+        } as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks" | "outfit">,
       };
     }
     const key = teacher === "custom"
@@ -442,7 +454,7 @@ export function Teacher({
     return {
       sceneUrl: `/models/${asset.sceneFile}`,
       animUrl:  `/models/${asset.animFile}`,
-      cfg: asset as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks">,
+      cfg: asset as Pick<AvatarConfig, "clips" | "morphs" | "pbrMaterials" | "spawnLabelHeight" | "clipPacks" | "outfit">,
     };
   }, [teacher, customTeacherGlbUrl]);
 
@@ -579,6 +591,14 @@ export function Teacher({
       }
     });
   }, [scene, cfg.pbrMaterials]);
+
+  // The shirt's colour (outfit.ts), on this mount's own copy of the material; then a driver's own material pass.
+  useEffect(() => {
+    const color = devShirt(typeof window === "undefined" ? undefined : window.location.search) ?? cfg.outfit?.color ?? "";
+    const clones = cfg.outfit ? applyOutfit(scene, { ...cfg.outfit, color }) : [];
+    const undo = driverRef.current?.materials?.(scene);
+    return () => { undo?.(); for (const m of clones) m.dispose(); };
+  }, [scene, cfg.outfit]);
 
   // Thinking dots animation
   useEffect(() => {

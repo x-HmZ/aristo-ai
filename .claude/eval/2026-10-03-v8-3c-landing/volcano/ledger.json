@@ -1,0 +1,290 @@
+[
+  {
+    "at": "2026-10-03T16:23:21.637Z",
+    "kind": "flux",
+    "id": "block-1",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceacb/cl5WVOSYZNRlwJRCYGOvj.jpg",
+    "prompt": "Educational geology block model of a volcano: a solid rectangular block of earth with a cone-shaped volcano rising from its top, the front face and right side face cut flat to reveal the inside, layered rock strata in browns and greys, a large glowing orange magma chamber deep in the block, a bright molten vent rising from the chamber up through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:25.967Z",
+    "kind": "flux",
+    "id": "block-2",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceacc/wo7c1H8KXY8k8a5920JsK.jpg",
+    "prompt": "Educational geology block model of a volcano: a solid rectangular block of earth with a cone-shaped volcano rising from its top, the front face and right side face cut flat to reveal the inside, layered rock strata in browns and greys, a large glowing orange magma chamber deep in the block, a bright molten vent rising from the chamber up through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:32.066Z",
+    "kind": "flux",
+    "id": "wedge-1",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceacc/-hKtis3wXZPk0xqdAa_63.jpg",
+    "prompt": "Cutaway model of a volcano with a quarter wedge removed from the cone, the two flat cut faces showing a glowing orange magma chamber at the base and a bright molten vent rising to the crater through layers of grey and brown rock, on a round rock base, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:36.295Z",
+    "kind": "flux",
+    "id": "wedge-2",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceacd/eeNluTDzEssDB9TuRdPkv.jpg",
+    "prompt": "Cutaway model of a volcano with a quarter wedge removed from the cone, the two flat cut faces showing a glowing orange magma chamber at the base and a bright molten vent rising to the crater through layers of grey and brown rock, on a round rock base, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:40.510Z",
+    "kind": "flux",
+    "id": "halved-1",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceacd/GnTHmAqRN9oH95poVw7sm.jpg",
+    "prompt": "Volcano diorama on a thick square earth base, the model sliced in half down the middle so the flat cut face shows the inside: a glowing orange magma chamber, a molten vent up to the crater, layers of ash and lava in the cone, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:44.649Z",
+    "kind": "flux",
+    "id": "halved-2",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceace/2HSydf8aBQsd1PQkV7Fio.jpg",
+    "prompt": "Volcano diorama on a thick square earth base, the model sliced in half down the middle so the flat cut face shows the inside: a glowing orange magma chamber, a molten vent up to the crater, layers of ash and lava in the cone, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:23:48.448Z",
+    "kind": "flux",
+    "id": "earth-1",
+    "cost": 0.003,
+    "url": "https://v3b.fal.media/files/b/0aaceace/CmIj46UNR0lLBDB0-4eBB.jpg",
+    "prompt": "Cutaway model of planet Earth with a wedge removed, showing the thin rocky crust, the thick orange mantle, the glowing yellow outer core and a bright white-hot inner core, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:24:25.873Z",
+    "kind": "flux",
+    "id": "chamber-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/25146e0ac422350191bc95c5.png",
+    "prompt": "Educational geology block model of a volcano cut open: a tall square block of layered rock with a cone volcano on top, the whole front face cut flat like a cross-section, showing horizontal rock strata, a large glowing orange magma chamber in the lower middle of the block and a bright molten vent rising straight up from the chamber through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:24:29.738Z",
+    "kind": "flux",
+    "id": "chamber-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/25146e0ac422350191bc95c5.png",
+    "prompt": "Educational geology block model of a volcano cut open: a tall square block of layered rock with a cone volcano on top, the whole front face cut flat like a cross-section, showing horizontal rock strata, a large glowing orange magma chamber in the lower middle of the block and a bright molten vent rising straight up from the chamber through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:24:32.554Z",
+    "kind": "flux",
+    "id": "chamber-3",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/25146e0ac422350191bc95c5.png",
+    "prompt": "Educational geology block model of a volcano cut open: a tall square block of layered rock with a cone volcano on top, the whole front face cut flat like a cross-section, showing horizontal rock strata, a large glowing orange magma chamber in the lower middle of the block and a bright molten vent rising straight up from the chamber through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:30:38.566Z",
+    "kind": "tripo",
+    "id": "block-1",
+    "cost": 0.3,
+    "url": "https://v3b.fal.media/files/b/0aaceaf7/QYKhl9bbeWEJf9Kqk_oUx_tripo_pbr_model_68f58512-6ba1-4e70-96b9-b7fbf0c31cb1.glb",
+    "prompt": "Educational geology block model of a volcano: a solid rectangular block of earth with a cone-shaped volcano rising from its top, the front face and right side face cut flat to reveal the inside, layered rock strata in browns and greys, a large glowing orange magma chamber deep in the block, a bright molten vent rising from the chamber up through the cone to the crater, three-quarter view from slightly above"
+  },
+  {
+    "at": "2026-10-03T16:31:31.154Z",
+    "kind": "flux",
+    "id": "heart-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/04d85fa65582e9027ab4e5fa.png",
+    "prompt": "Anatomical model of the human heart cut open from the front, the flat cut surface facing the camera showing the four chambers, the valves and the thick muscle walls, the right side tinted blue and the left side red, aorta and vessels on top, museum anatomy model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:31:34.842Z",
+    "kind": "flux",
+    "id": "heart-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/04d85fa65582e9027ab4e5fa.png",
+    "prompt": "Anatomical model of the human heart cut open from the front, the flat cut surface facing the camera showing the four chambers, the valves and the thick muscle walls, the right side tinted blue and the left side red, aorta and vessels on top, museum anatomy model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:31:38.713Z",
+    "kind": "flux",
+    "id": "brain-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/41ef1096f30e9c19e764ce8f.png",
+    "prompt": "Anatomical model of the human brain with each lobe a different solid colour: frontal lobe blue, parietal lobe yellow, temporal lobe green, occipital lobe red, cerebellum purple, brainstem grey, glossy plastic school model, three-quarter side view"
+  },
+  {
+    "at": "2026-10-03T16:31:43.216Z",
+    "kind": "flux",
+    "id": "brain-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/41ef1096f30e9c19e764ce8f.png",
+    "prompt": "Anatomical model of the human brain with each lobe a different solid colour: frontal lobe blue, parietal lobe yellow, temporal lobe green, occipital lobe red, cerebellum purple, brainstem grey, glossy plastic school model, three-quarter side view"
+  },
+  {
+    "at": "2026-10-03T16:31:46.895Z",
+    "kind": "flux",
+    "id": "earth2-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/a4246df4c1d0d6742eb62796.png",
+    "prompt": "Model globe of planet Earth with a large wedge cut out, the cut showing clean concentric layers: thin brown crust, thick red-orange mantle, bright orange outer core, glowing yellow inner core, oceans and continents on the outside, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:31:50.943Z",
+    "kind": "flux",
+    "id": "earth2-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/a4246df4c1d0d6742eb62796.png",
+    "prompt": "Model globe of planet Earth with a large wedge cut out, the cut showing clean concentric layers: thin brown crust, thick red-orange mantle, bright orange outer core, glowing yellow inner core, oceans and continents on the outside, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:31:54.042Z",
+    "kind": "flux",
+    "id": "cell-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/58390602efb820bbbf359b06.png",
+    "prompt": "Plastic school model of an animal cell sliced in half, the flat cut face showing a large purple nucleus, orange bean-shaped mitochondria, blue folded endoplasmic reticulum, green golgi stacks and small vesicles inside pink cytoplasm, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T16:31:58.115Z",
+    "kind": "flux",
+    "id": "cell-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/58390602efb820bbbf359b06.png",
+    "prompt": "Plastic school model of an animal cell sliced in half, the flat cut face showing a large purple nucleus, orange bean-shaped mitochondria, blue folded endoplasmic reticulum, green golgi stacks and small vesicles inside pink cytoplasm, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T16:32:01.600Z",
+    "kind": "flux",
+    "id": "flower-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/94366b62d09bcba145b2e22e.png",
+    "prompt": "Large botanical model of a flower cut in half lengthwise, the cut face showing the ovary with seeds, the style and stigma in the centre, stamens with yellow anthers around it, pink petals and green sepals, museum botany model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:05.514Z",
+    "kind": "flux",
+    "id": "flower-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/94366b62d09bcba145b2e22e.png",
+    "prompt": "Large botanical model of a flower cut in half lengthwise, the cut face showing the ovary with seeds, the style and stigma in the centre, stamens with yellow anthers around it, pink petals and green sepals, museum botany model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:08.851Z",
+    "kind": "flux",
+    "id": "eye-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/4516449dc1b83d295176b97f.png",
+    "prompt": "Anatomical model of the human eye with the front quarter cut away, showing the clear cornea, the blue iris, the lens, the jelly inside, the red retina lining the back and the yellow optic nerve leaving the back, school anatomy model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:13.069Z",
+    "kind": "flux",
+    "id": "eye-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/4516449dc1b83d295176b97f.png",
+    "prompt": "Anatomical model of the human eye with the front quarter cut away, showing the clear cornea, the blue iris, the lens, the jelly inside, the red retina lining the back and the yellow optic nerve leaving the back, school anatomy model, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:16.591Z",
+    "kind": "flux",
+    "id": "tooth-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/b9988c3d19fb9cb6fe4871d3.png",
+    "prompt": "Large school model of a human molar tooth cut in half, the cut face showing white enamel, cream dentin, red pulp with nerves and two long roots in pink gum and bone, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:20.179Z",
+    "kind": "flux",
+    "id": "tooth-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/b9988c3d19fb9cb6fe4871d3.png",
+    "prompt": "Large school model of a human molar tooth cut in half, the cut face showing white enamel, cream dentin, red pulp with nerves and two long roots in pink gum and bone, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:24.019Z",
+    "kind": "flux",
+    "id": "plates-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/547ede69a1b527a4ac1c5feb.png",
+    "prompt": "Geology block model of a subduction zone: a rectangular block of earth with an ocean plate sliding under a continental plate, the front face cut to show the layers, a glowing magma chamber rising to a volcano on the continent, blue ocean on top, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T16:32:27.569Z",
+    "kind": "flux",
+    "id": "plates-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/547ede69a1b527a4ac1c5feb.png",
+    "prompt": "Geology block model of a subduction zone: a rectangular block of earth with an ocean plate sliding under a continental plate, the front face cut to show the layers, a glowing magma chamber rising to a volcano on the continent, blue ocean on top, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T16:32:31.045Z",
+    "kind": "flux",
+    "id": "volcano2-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/c320ea932129d5411c32e706.png",
+    "prompt": "Museum-quality model of a volcano split exactly in half vertically, the flat vertical cut surface facing the camera, on the cut surface a large glowing orange magma chamber at the bottom, a bright straight conduit rising to the crater, and alternating dark grey and brown layers of ash and lava in the cone, front view"
+  },
+  {
+    "at": "2026-10-03T16:32:34.911Z",
+    "kind": "flux",
+    "id": "volcano2-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/c320ea932129d5411c32e706.png",
+    "prompt": "Museum-quality model of a volcano split exactly in half vertically, the flat vertical cut surface facing the camera, on the cut surface a large glowing orange magma chamber at the bottom, a bright straight conduit rising to the crater, and alternating dark grey and brown layers of ash and lava in the cone, front view"
+  },
+  {
+    "at": "2026-10-03T16:32:38.812Z",
+    "kind": "flux",
+    "id": "dna-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/9e4694749814142a4bf25b7f.png",
+    "prompt": "Chunky plastic school model of a DNA double helix, two twisting blue backbones joined by thick colourful rungs in red, yellow, green and orange, a short vertical segment standing on a round base, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:43.625Z",
+    "kind": "flux",
+    "id": "dna-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/9e4694749814142a4bf25b7f.png",
+    "prompt": "Chunky plastic school model of a DNA double helix, two twisting blue backbones joined by thick colourful rungs in red, yellow, green and orange, a short vertical segment standing on a round base, three-quarter view"
+  },
+  {
+    "at": "2026-10-03T16:32:46.921Z",
+    "kind": "flux",
+    "id": "temple-1",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/fd702f6b16259f5714309a91.png",
+    "prompt": "Detailed model of an ancient Greek temple like the Parthenon, white marble columns around all four sides, a triangular pediment with carved figures, standing on a stepped base, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T16:32:50.782Z",
+    "kind": "flux",
+    "id": "temple-2",
+    "cost": 0.003,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/flux_source/fd702f6b16259f5714309a91.png",
+    "prompt": "Detailed model of an ancient Greek temple like the Parthenon, white marble columns around all four sides, a triangular pediment with carved figures, standing on a stepped base, three-quarter view from above"
+  },
+  {
+    "at": "2026-10-03T18:13:03.868Z",
+    "kind": "tripo",
+    "id": "brain-1",
+    "cost": 0.3,
+    "url": "https://v3b.fal.media/files/b/0aaced5c/dmdgKAV0GfYAGRQWOSzZi_tripo_pbr_model_f44c1a8a-5355-41f3-891a-bc188245221e.glb",
+    "prompt": "Anatomical model of the human brain with each lobe a different solid colour: frontal lobe blue, parietal lobe yellow, temporal lobe green, occipital lobe red, cerebellum purple, brainstem grey, glossy plastic school model, three-quarter side view"
+  },
+  {
+    "at": "2026-10-03T18:23:46.657Z",
+    "kind": "multiview",
+    "id": "brain-1",
+    "cost": 0.52,
+    "url": "https://v3b.fal.media/files/b/0aaced9e/mHBHt181UhZB4SJ7xGwak_tripo_pbr_model_8a1761da-66af-43cf-85ed-5b12b4c7a259.glb",
+    "prompt": "Anatomical model of the human brain with each lobe a different solid colour: frontal lobe blue, parietal lobe yellow, temporal lobe green, occipital lobe red, cerebellum purple, brainstem grey, glossy plastic school model, three-quarter side view"
+  },
+  {
+    "at": "2026-10-03T18:25:22.239Z",
+    "kind": "nb-pro",
+    "id": "brain-teaching-seg_004",
+    "cost": 0.15,
+    "url": "https://thivgkbxgfchhystlyvh.supabase.co/storage/v1/object/public/generated-assets/infographic/f790097878e4f544362d0c9c.png",
+    "prompt": "Simple labeled side-view diagram of the brain divided into four colored regions: frontal lobe (blue, front), parietal lobe (green, top), temporal lobe (yellow, side), occipital lobe (red, back), with cerebellum and brainstem labeled below, clean infographic style"
+  }
+]

@@ -18,14 +18,16 @@ describe("copy rules (messaging.md)", () => {
   });
 });
 
-describe("volcano lesson excerpts (Step Into the Classroom)", async () => {
-  const { lesson: volcano } = await import("@/data/demo/volcano-eruption");
+describe("brain lesson excerpts (Step Into the Classroom)", async () => {
+  const { lesson: brain } = await import("@/data/demo/brain");
   const { ROOM_COPY } = await import("./content");
   const { ROOM_T } = await import("./stage/room");
-  it("each line starts its segment, verbatim, and ends where a sentence does", () => {
+  it("each line is a whole sentence of its segment, verbatim", () => {
     ROOM_COPY.lines.forEach((line, i) => {
-      const seg = volcano.segments!.find((s) => s.id === ROOM_T.lines[i].segment)!;
-      expect(seg.text.startsWith(line)).toBe(true);
+      const seg = brain.segments!.find((s) => s.id === ROOM_T.lines[i].from)!;
+      const at = seg.text.indexOf(line);
+      expect(at).toBeGreaterThanOrEqual(0);
+      expect(at === 0 || /[.?!] $/.test(seg.text.slice(at - 2, at))).toBe(true);
       expect(/[.?!]$/.test(line)).toBe(true);
     });
   });

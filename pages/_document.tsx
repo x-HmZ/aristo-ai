@@ -1,5 +1,7 @@
 import { Html, Head, Main, NextScript } from "next/document";
 import { THEME_INIT_SCRIPT } from "@/components/theme/theme";
+import { TEACHER_INIT_SCRIPT } from "@/components/landing/teacher";
+import { INTRO_INIT_SCRIPT } from "@/components/landing/intro/gate";
 
 /**
  * The Pages Router document (/learn, /demo, /dev/*).
@@ -18,6 +20,10 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* The landing's chosen teacher (V8.3c), for its posters: harmless elsewhere. */}
+        <script dangerouslySetInnerHTML={{ __html: TEACHER_INIT_SCRIPT }} />
+        {/* The landing's opening (V8.3c): its ink cover from the first paint, when it will play. Only on "/". */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_INIT_SCRIPT }} />
       </Head>
       <body>
         <Main />

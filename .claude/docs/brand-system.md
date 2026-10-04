@@ -327,6 +327,20 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
 - **Modes:** full (live stage), lite (stills of each section's end; phones, weak GPUs, Save-Data), stack (reduced
   motion: the same stills, nothing plays). See decisions.md, "Landing modes".
 
+### Landing (V8.3c): two teachers, the brain, the opening
+
+- **Teachers:** Jake (forest shirt) and MJ (plum shirt); colours set at mount (`outfit.ts`), app-wide. The hero's
+  "Your teacher" control: a 13px uppercase `muted` label and a `surface` pill of two 44px chips (a 36px face, the
+  name); the chosen one is `bg-ink text-bg` with an `accent` ring on the face, `aria-pressed`. Every poster
+  exists per teacher (`v3b/` and `v3b/mj/`); `html[data-teacher]` shows the chosen one from the first paint.
+- **The switch:** the teacher dissolves into light from the feet up with a thin orange edge (`accent` #F97B2F,
+  `stage/dissolve.ts`), the other forms the same way and waves. About 1.5 s.
+- **The room's model labels:** small `.theme-ink` pills, a 6px `accent` dot on the part, 13px semibold; shown only
+  while the part faces the camera.
+- **The opening (`landing/intro`):** always on ink (#0E1117) whatever the theme, its points cream #F4ECE1 with the
+  one orange (#F97B2F, ember #FFB27A) as the light; the idea labels 13 to 14px, cream at 85%; Skip is a 44px pill top
+  right. It ends on the page in its own theme (the cover lifts: "the lights come on").
+
 ### shadcn mapping (for `npx shadcn add`)
 
 shadcn's colour vocabulary was removed in V8.2: its `accent` means a hover tint, which contradicts the
@@ -407,6 +421,7 @@ with an owner:
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
 | `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
 | `AvatarLab.tsx`, `DeskQuizPreview.tsx`, `FreeModelPreview.tsx` | dev-page neutrals | `/dev` only | V8.7 |
+| `landing/intro/*`, `globals.css` `.landing-intro-cover` | the opening's ink, cream and ember | the opening is on ink in both themes (the tokens follow the theme); WebGL colours are numbers | stays |
 
 ## Known AA gaps (inside locked surfaces)
 

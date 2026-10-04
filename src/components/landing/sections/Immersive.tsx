@@ -6,10 +6,12 @@ import { ROOM_COPY } from "../content";
 import { clockOf, restart, seek, setPaused, subscribeClock, useCue, useSectionPlay } from "../play";
 import type { LandingMode } from "../stage/gate";
 import { host, nearRoom, registerSpot, subscribe as subscribeHost } from "../stage/host";
-import { LOOK_PITCH, LOOK_YAW, ROOM_ASPECT, ROOM_T, lineAt } from "../stage/room";
+import { LOOK_PITCH, LOOK_YAW, ROOM_ASPECT, ROOM_T, lineAt, voiceOf } from "../stage/room";
 import { shared } from "../stage/shared";
 import { isSoundOn, lineData, loadLine, setSound, speak, subscribe as subscribeSound, syncAudio, wordsSpoken } from "../stage/sound";
 import { H2, LEDE, REAL, WRAP } from "../ui";
+import { stillOf } from "../Spot";
+import { LANDING_TEACHERS, TEACHER_NAME, getServerTeacher, getTeacher, subscribeTeacher } from "../teacher";
 
 const SHOT_ICONS = [UserRound, Presentation, Box, Target] as const;
 /** Radians of look per CSS pixel dragged. */
@@ -25,6 +27,7 @@ const CONTROL = cn(SHAPE.control, PRESS, FOCUS, "inline-flex min-h-[44px] items-
  * words whose state changed are touched, one per change.
  */
 function Caption({ className }: { className?: string }) {
+  const teacher = useSyncExternalStore(subscribeTeacher, getTeacher, getServerTeacher);
   const [index, setIndex] = useState(0);
   const [sound, setSoundState] = useState(isSoundOn);
   const words = useRef<(HTMLSpanElement | null)[]>([]);
@@ -32,7 +35,7 @@ function Caption({ className }: { className?: string }) {
 
   useEffect(() => subscribeSound(() => setSoundState(isSoundOn())), []);
   useEffect(() => {
-    for (const l of ROOM_T.lines) void loadLine(l.segment);
+    ROOM_T.lines.forEach((_, i) => void loadLine(voiceOf(i, teacher)));
     const paint = (lit: number) => {
       const total = ROOM_COPY.lines[shown.current.index].split(" ").length;
       for (let k = 0; k < total; k++) {
@@ -44,7 +47,7 @@ function Caption({ className }: { className?: string }) {
     };
     const tick = () => {
       const c = clockOf("room");
-      const now = lineAt(c.t);
+      const now = lineAt(c.t, teacher);
       // Between lines the last one said stays, whole; before the first, the first waits unlit.
       let index = now?.index ?? -1;
       if (index < 0) for (let i = ROOM_T.lines.length - 1; i >= 0; i--) if (c.t >= ROOM_T.lines[i].at) { index = i; break; }
@@ -61,24 +64,25 @@ function Caption({ className }: { className?: string }) {
         return;
       }
       const line = ROOM_T.lines[now.index];
-      const heard = syncAudio(line.segment, now.t, true);
+      const voice = voiceOf(now.index, teacher);
+      const heard = syncAudio(voice, now.t, true);
       let t = now.t;
       // With the sound on, the recording leads: the clock follows it.
       if (heard !== null && Math.abs(heard - t) > 0.05) { c.t = line.at + heard; t = heard; }
-      speak(host.live === "room" ? line.segment : null, t);
-      const d = lineData(line.segment);
+      speak(host.live === "room" ? voice : null, t);
+      const d = lineData(voice);
       const lit = d ? Math.min(ROOM_COPY.lines[now.index].split(" ").length, wordsSpoken(d.words, t)) : 0;
       if (lit !== shown.current.lit) paint(lit);
     };
     tick();
     return subscribeClock("room", tick);
-  }, []);
+  }, [teacher]);
   useEffect(() => () => { speak(null); syncAudio(null, 0, false); }, []);
 
   return (
     <div className={cn(SHAPE.surface, "border border-line bg-surface px-4 pb-4 pt-3 shadow-e2", className)}>
       <div className="mb-1 flex items-center gap-2.5">
-        <span className="text-sm font-semibold text-ink">Jake</span>
+        <span className="text-sm font-semibold text-ink">{TEACHER_NAME[teacher]}</span>
         <span className="text-[13px] font-semibold text-accent-text">{ROOM_COPY.shots[index]}</span>
         <button
           type="button"
@@ -199,10 +203,14 @@ export function Immersive({ mode }: { mode: LandingMode | null }) {
       >
         {/* The tour's end (lite, the stack, no JS) and, on the live path, its first frame: placed as the camera frames a box of
             any aspect (room.ts roomFov), centred and covering. */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- a covering still; next/image adds nothing here */}
-        <img src="/images/landing/v3b/room.webp" alt="Jake in the classroom beside the volcano model, the lesson's picture on the board" className="landing-spot-still landing-still-end absolute inset-0 h-full w-full object-cover" decoding="async" loading="lazy" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/landing/v3b/room-start.webp" alt="" aria-hidden className="landing-spot-still landing-still-start absolute inset-0 h-full w-full object-cover" decoding="async" loading="lazy" />
+        {LANDING_TEACHERS.map((t) => (
+          // eslint-disable-next-line @next/next/no-img-element -- a covering still; next/image adds nothing here
+          <img key={t} src={stillOf("/images/landing/v3b/room.webp", t)} alt={`${TEACHER_NAME[t]} in the classroom beside the 3D brain model`} className={`landing-spot-still landing-still-end landing-teacher-${t} absolute inset-0 h-full w-full object-cover`} decoding="async" loading="lazy" />
+        ))}
+        {LANDING_TEACHERS.map((t) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={t} src={stillOf("/images/landing/v3b/room-start.webp", t)} alt="" aria-hidden className={`landing-spot-still landing-still-start landing-teacher-${t} absolute inset-0 h-full w-full object-cover`} decoding="async" loading="lazy" />
+        ))}
         {live && (
           <>
             <div
