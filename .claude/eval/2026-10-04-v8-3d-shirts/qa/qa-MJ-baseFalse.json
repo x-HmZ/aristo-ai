@@ -21,16 +21,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 32,
+    "L": 35,
     "R": 0,
     "worst_mm": 16.0,
     "worst_frame": 157
    },
    "cloth": {
-    "L": 95,
-    "R": 99,
+    "L": 90,
+    "R": 107,
     "worst_mm": 30.0,
-    "worst_frame": 21
+    "worst_frame": 1
    }
   },
   "Idle2": {
@@ -54,14 +54,14 @@
    "arm": {
     "L": 2,
     "R": 0,
-    "worst_mm": 1.7,
+    "worst_mm": 1.9,
     "worst_frame": 89
    },
    "cloth": {
-    "L": 136,
-    "R": 84,
+    "L": 132,
+    "R": 82,
     "worst_mm": 30.0,
-    "worst_frame": 7
+    "worst_frame": 9
    }
   },
   "Idle3": {
@@ -83,14 +83,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 50,
+    "L": 52,
     "R": 13,
     "worst_mm": 14.9,
     "worst_frame": 209
    },
    "cloth": {
-    "L": 233,
-    "R": 165,
+    "L": 232,
+    "R": 169,
     "worst_mm": 30.0,
     "worst_frame": 9
    }
@@ -114,14 +114,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 31,
     "R": 0,
     "worst_mm": 15.5,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 104,
-    "R": 97,
+    "L": 101,
+    "R": 104,
     "worst_mm": 30.0,
     "worst_frame": 11
    }
@@ -145,14 +145,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 33,
+    "L": 36,
     "R": 0,
     "worst_mm": 15.5,
-    "worst_frame": 97
+    "worst_frame": 55
    },
    "cloth": {
-    "L": 133,
-    "R": 109,
+    "L": 131,
+    "R": 118,
     "worst_mm": 30.0,
     "worst_frame": 3
    }
@@ -176,14 +176,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 20,
-    "R": 0,
+    "L": 21,
+    "R": 1,
     "worst_mm": 10.7,
     "worst_frame": 69
    },
    "cloth": {
-    "L": 166,
-    "R": 125,
+    "L": 168,
+    "R": 120,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -207,14 +207,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 31,
+    "L": 35,
     "R": 0,
     "worst_mm": 24.0,
     "worst_frame": 33
    },
    "cloth": {
-    "L": 209,
-    "R": 96,
+    "L": 212,
+    "R": 103,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -238,14 +238,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 18,
+    "L": 19,
     "R": 11,
-    "worst_mm": 8.0,
+    "worst_mm": 8.7,
     "worst_frame": 29
    },
    "cloth": {
-    "L": 181,
-    "R": 116,
+    "L": 177,
+    "R": 113,
     "worst_mm": 30.0,
     "worst_frame": 3
    }
@@ -269,16 +269,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 45,
+    "L": 48,
     "R": 0,
     "worst_mm": 20.0,
     "worst_frame": 39
    },
    "cloth": {
-    "L": 205,
-    "R": 98,
+    "L": 206,
+    "R": 96,
     "worst_mm": 30.0,
-    "worst_frame": 17
+    "worst_frame": 3
    }
   },
   "Talking3": {
@@ -300,14 +300,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 33,
-    "R": 21,
+    "L": 35,
+    "R": 25,
     "worst_mm": 15.6,
     "worst_frame": 59
    },
    "cloth": {
-    "L": 164,
-    "R": 181,
+    "L": 142,
+    "R": 180,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -331,14 +331,14 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 66,
-    "R": 1,
+    "L": 70,
+    "R": 2,
     "worst_mm": 21.2,
     "worst_frame": 17
    },
    "cloth": {
     "L": 241,
-    "R": 131,
+    "R": 130,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -362,16 +362,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 37,
+    "L": 38,
     "R": 0,
     "worst_mm": 16.4,
     "worst_frame": 227
    },
    "cloth": {
     "L": 232,
-    "R": 135,
+    "R": 141,
     "worst_mm": 30.0,
-    "worst_frame": 11
+    "worst_frame": 5
    }
   },
   "Talking6": {
@@ -399,10 +399,10 @@
     "worst_frame": 7
    },
    "cloth": {
-    "L": 107,
+    "L": 102,
     "R": 19,
     "worst_mm": 30.0,
-    "worst_frame": 15
+    "worst_frame": 25
    }
   },
   "Talking6M": {
@@ -431,7 +431,7 @@
    },
    "cloth": {
     "L": 28,
-    "R": 76,
+    "R": 79,
     "worst_mm": 28.8,
     "worst_frame": 11
    }
@@ -461,10 +461,10 @@
     "worst_frame": 7
    },
    "cloth": {
-    "L": 145,
-    "R": 158,
+    "L": 140,
+    "R": 157,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 37
    }
   },
   "Nodding": {
@@ -486,16 +486,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 30,
+    "L": 33,
     "R": 0,
     "worst_mm": 15.8,
     "worst_frame": 59
    },
    "cloth": {
-    "L": 97,
-    "R": 99,
+    "L": 98,
+    "R": 104,
     "worst_mm": 30.0,
-    "worst_frame": 13
+    "worst_frame": 11
    }
   },
   "ShakeNo": {
@@ -517,16 +517,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 29,
+    "L": 33,
     "R": 0,
     "worst_mm": 15.5,
     "worst_frame": 73
    },
    "cloth": {
-    "L": 116,
-    "R": 100,
+    "L": 105,
+    "R": 108,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 7
    }
   },
   "PresentModel": {
@@ -548,16 +548,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 34,
+    "L": 37,
     "R": 0,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 195,
-    "R": 96,
+    "L": 204,
+    "R": 103,
     "worst_mm": 30.0,
-    "worst_frame": 27
+    "worst_frame": 3
    }
   },
   "Encourage": {
@@ -579,16 +579,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 31,
     "R": 13,
     "worst_mm": 15.5,
     "worst_frame": 61
    },
    "cloth": {
-    "L": 89,
-    "R": 147,
+    "L": 80,
+    "R": 150,
     "worst_mm": 30.0,
-    "worst_frame": 31
+    "worst_frame": 1
    }
   },
   "Almost": {
@@ -610,16 +610,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 31,
     "R": 3,
     "worst_mm": 15.5,
     "worst_frame": 49
    },
    "cloth": {
-    "L": 89,
-    "R": 138,
+    "L": 80,
+    "R": 141,
     "worst_mm": 30.0,
-    "worst_frame": 39
+    "worst_frame": 1
    }
   },
   "Exactly": {
@@ -641,16 +641,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 43,
+    "L": 46,
     "R": 0,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
     "L": 210,
-    "R": 96,
+    "R": 102,
     "worst_mm": 30.0,
-    "worst_frame": 3
+    "worst_frame": 1
    }
   },
   "WellDone": {
@@ -672,16 +672,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 30,
+    "L": 34,
     "R": 0,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 185,
-    "R": 111,
-    "worst_mm": 29.9,
-    "worst_frame": 49
+    "L": 186,
+    "R": 113,
+    "worst_mm": 30.0,
+    "worst_frame": 1
    }
   },
   "ThatsIt": {
@@ -703,16 +703,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 58,
+    "L": 61,
     "R": 5,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 218,
-    "R": 149,
+    "L": 216,
+    "R": 154,
     "worst_mm": 30.0,
-    "worst_frame": 57
+    "worst_frame": 1
    }
   },
   "GlanceBoard": {
@@ -734,16 +734,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 31,
     "R": 0,
     "worst_mm": 15.5,
     "worst_frame": 67
    },
    "cloth": {
-    "L": 89,
-    "R": 96,
-    "worst_mm": 29.5,
-    "worst_frame": 1
+    "L": 80,
+    "R": 102,
+    "worst_mm": 29.9,
+    "worst_frame": 67
    }
   },
   "Imagine": {
@@ -765,16 +765,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 64,
+    "L": 69,
     "R": 16,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 231,
-    "R": 168,
+    "L": 235,
+    "R": 176,
     "worst_mm": 30.0,
-    "worst_frame": 9
+    "worst_frame": 1
    }
   },
   "HoldIdea": {
@@ -796,16 +796,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 83,
+    "L": 88,
     "R": 35,
     "worst_mm": 18.7,
     "worst_frame": 23
    },
    "cloth": {
-    "L": 194,
-    "R": 175,
+    "L": 182,
+    "R": 179,
     "worst_mm": 30.0,
-    "worst_frame": 11
+    "worst_frame": 1
    }
   },
   "StepBeat": {
@@ -827,16 +827,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 32,
     "R": 5,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 89,
-    "R": 140,
+    "L": 80,
+    "R": 145,
     "worst_mm": 30.0,
-    "worst_frame": 9
+    "worst_frame": 1
    }
   },
   "MoveOn": {
@@ -858,16 +858,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
-    "R": 9,
+    "L": 32,
+    "R": 10,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 89,
-    "R": 159,
+    "L": 80,
+    "R": 162,
     "worst_mm": 30.0,
-    "worst_frame": 19
+    "worst_frame": 1
    }
   },
   "YourTurn": {
@@ -889,16 +889,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 64,
+    "L": 68,
     "R": 17,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 216,
-    "R": 160,
+    "L": 210,
+    "R": 165,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 1
    }
   },
   "BringTogether": {
@@ -920,16 +920,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 74,
+    "L": 78,
     "R": 19,
     "worst_mm": 15.6,
     "worst_frame": 53
    },
    "cloth": {
-    "L": 233,
-    "R": 169,
+    "L": 235,
+    "R": 173,
     "worst_mm": 30.0,
-    "worst_frame": 7
+    "worst_frame": 1
    }
   },
   "OneMoment": {
@@ -951,16 +951,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
-    "R": 110,
-    "worst_mm": 24.8,
-    "worst_frame": 15
+    "L": 32,
+    "R": 150,
+    "worst_mm": 26.2,
+    "worst_frame": 33
    },
    "cloth": {
-    "L": 89,
-    "R": 187,
-    "worst_mm": 29.9,
-    "worst_frame": 11
+    "L": 80,
+    "R": 191,
+    "worst_mm": 30.0,
+    "worst_frame": 1
    }
   },
   "PointNear": {
@@ -982,16 +982,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 43,
+    "L": 45,
     "R": 0,
     "worst_mm": 15.5,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 203,
-    "R": 97,
+    "L": 204,
+    "R": 104,
     "worst_mm": 30.0,
-    "worst_frame": 9
+    "worst_frame": 13
    }
   },
   "PatientTilt": {
@@ -1013,16 +1013,16 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 28,
+    "L": 31,
     "R": 0,
     "worst_mm": 15.5,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 89,
-    "R": 97,
-    "worst_mm": 29.5,
-    "worst_frame": 1
+    "L": 80,
+    "R": 103,
+    "worst_mm": 29.7,
+    "worst_frame": 73
    }
   },
   "BackToBoard": {
@@ -1044,18 +1044,18 @@
     "worst_frame": null
    },
    "arm": {
-    "L": 46,
+    "L": 50,
     "R": 0,
     "worst_mm": 15.6,
     "worst_frame": 1
    },
    "cloth": {
-    "L": 206,
-    "R": 97,
+    "L": 210,
+    "R": 103,
     "worst_mm": 30.0,
-    "worst_frame": 29
+    "worst_frame": 23
    }
   }
  },
- "seconds": 313
+ "seconds": 319
 }

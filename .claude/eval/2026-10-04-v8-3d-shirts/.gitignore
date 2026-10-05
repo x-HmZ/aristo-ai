@@ -25,3 +25,6 @@ qa/pokes/*.png
 !blender/mj_r2_idle.webp
 !blender/wrists.webp
 !blender/cuffbtn.webp
+!blender/jake_r4_low.webp
+!blender/mj_r5_low.webp
+!blender/mj_r5_full.webp

@@ -27,10 +27,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 128,
-    "R": 89,
+    "L": 124,
+    "R": 120,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 3
    }
   },
   "Idle2": {
@@ -58,10 +58,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 93,
-    "R": 89,
+    "L": 119,
+    "R": 118,
     "worst_mm": 30.0,
-    "worst_frame": 193
+    "worst_frame": 81
    }
   },
   "Idle3": {
@@ -89,10 +89,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 201,
-    "R": 132,
+    "L": 239,
+    "R": 168,
     "worst_mm": 30.0,
-    "worst_frame": 29
+    "worst_frame": 13
    }
   },
   "Idle4": {
@@ -120,8 +120,8 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 137,
-    "R": 90,
+    "L": 136,
+    "R": 119,
     "worst_mm": 30.0,
     "worst_frame": 3
    }
@@ -151,10 +151,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 175,
-    "R": 164,
+    "L": 186,
+    "R": 207,
     "worst_mm": 30.0,
-    "worst_frame": 11
+    "worst_frame": 9
    }
   },
   "ThinkingM": {
@@ -182,10 +182,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 144,
-    "R": 228,
+    "L": 167,
+    "R": 260,
     "worst_mm": 30.0,
-    "worst_frame": 27
+    "worst_frame": 25
    }
   },
   "Talking": {
@@ -213,8 +213,8 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 247,
-    "R": 175,
+    "L": 281,
+    "R": 208,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -244,10 +244,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 204,
-    "R": 284,
+    "L": 229,
+    "R": 308,
     "worst_mm": 30.0,
-    "worst_frame": 21
+    "worst_frame": 13
    }
   },
   "Talking2M": {
@@ -275,10 +275,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 236,
-    "R": 262,
+    "L": 254,
+    "R": 289,
     "worst_mm": 30.0,
-    "worst_frame": 7
+    "worst_frame": 5
    }
   },
   "Talking3": {
@@ -306,10 +306,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 139,
-    "R": 201,
+    "L": 157,
+    "R": 227,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 9
    }
   },
   "Talking3M": {
@@ -337,10 +337,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 156,
-    "R": 177,
+    "L": 179,
+    "R": 204,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 11
    }
   },
   "Talking4": {
@@ -368,10 +368,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 84,
-    "R": 40,
+    "L": 102,
+    "R": 69,
     "worst_mm": 30.0,
-    "worst_frame": 1
+    "worst_frame": 5
    }
   },
   "Talking6": {
@@ -399,7 +399,7 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 58,
+    "L": 79,
     "R": 6,
     "worst_mm": 29.7,
     "worst_frame": 25
@@ -430,8 +430,8 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 7,
-    "R": 71,
+    "L": 8,
+    "R": 100,
     "worst_mm": 29.8,
     "worst_frame": 13
    }
@@ -461,10 +461,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 93,
-    "R": 53,
+    "L": 104,
+    "R": 72,
     "worst_mm": 30.0,
-    "worst_frame": 51
+    "worst_frame": 27
    }
   },
   "Nodding": {
@@ -492,10 +492,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 127,
-    "R": 85,
+    "L": 131,
+    "R": 118,
     "worst_mm": 30.0,
-    "worst_frame": 17
+    "worst_frame": 7
    }
   },
   "ShakeNo": {
@@ -523,10 +523,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 138,
-    "R": 99,
+    "L": 158,
+    "R": 125,
     "worst_mm": 30.0,
-    "worst_frame": 35
+    "worst_frame": 3
    }
   },
   "PresentModel": {
@@ -554,10 +554,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 138,
-    "R": 83,
+    "L": 161,
+    "R": 116,
     "worst_mm": 30.0,
-    "worst_frame": 5
+    "worst_frame": 63
    }
   },
   "Encourage": {
@@ -586,7 +586,7 @@
    },
    "cloth": {
     "L": 113,
-    "R": 108,
+    "R": 143,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -617,7 +617,7 @@
    },
    "cloth": {
     "L": 113,
-    "R": 98,
+    "R": 135,
     "worst_mm": 30.0,
     "worst_frame": 1
    }
@@ -647,10 +647,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 139,
-    "R": 83,
-    "worst_mm": 29.7,
-    "worst_frame": 1
+    "L": 159,
+    "R": 116,
+    "worst_mm": 29.9,
+    "worst_frame": 43
    }
   },
   "WellDone": {
@@ -678,8 +678,8 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 138,
-    "R": 84,
+    "L": 158,
+    "R": 117,
     "worst_mm": 30.0,
     "worst_frame": 5
    }
@@ -709,10 +709,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 144,
-    "R": 100,
+    "L": 163,
+    "R": 137,
     "worst_mm": 30.0,
-    "worst_frame": 59
+    "worst_frame": 3
    }
   },
   "GlanceBoard": {
@@ -740,10 +740,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 124,
-    "R": 83,
-    "worst_mm": 30.0,
-    "worst_frame": 1
+    "L": 125,
+    "R": 117,
+    "worst_mm": 29.9,
+    "worst_frame": 7
    }
   },
   "Imagine": {
@@ -771,10 +771,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 145,
-    "R": 107,
+    "L": 164,
+    "R": 144,
     "worst_mm": 30.0,
-    "worst_frame": 9
+    "worst_frame": 5
    }
   },
   "HoldIdea": {
@@ -802,10 +802,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 150,
-    "R": 115,
+    "L": 170,
+    "R": 155,
     "worst_mm": 30.0,
-    "worst_frame": 37
+    "worst_frame": 7
    }
   },
   "StepBeat": {
@@ -833,10 +833,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 114,
-    "R": 95,
-    "worst_mm": 30.0,
-    "worst_frame": 29
+    "L": 112,
+    "R": 130,
+    "worst_mm": 29.9,
+    "worst_frame": 13
    }
   },
   "MoveOn": {
@@ -864,8 +864,8 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 114,
-    "R": 104,
+    "L": 112,
+    "R": 138,
     "worst_mm": 29.9,
     "worst_frame": 11
    }
@@ -895,10 +895,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 142,
-    "R": 106,
-    "worst_mm": 30.0,
-    "worst_frame": 43
+    "L": 164,
+    "R": 141,
+    "worst_mm": 29.9,
+    "worst_frame": 9
    }
   },
   "BringTogether": {
@@ -926,10 +926,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 147,
-    "R": 111,
-    "worst_mm": 30.0,
-    "worst_frame": 7
+    "L": 168,
+    "R": 147,
+    "worst_mm": 29.9,
+    "worst_frame": 55
    }
   },
   "OneMoment": {
@@ -957,10 +957,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 114,
-    "R": 296,
+    "L": 112,
+    "R": 317,
     "worst_mm": 30.0,
-    "worst_frame": 15
+    "worst_frame": 35
    }
   },
   "PointNear": {
@@ -988,10 +988,10 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 145,
-    "R": 87,
+    "L": 164,
+    "R": 120,
     "worst_mm": 30.0,
-    "worst_frame": 121
+    "worst_frame": 19
    }
   },
   "PatientTilt": {
@@ -1019,9 +1019,9 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 113,
-    "R": 83,
-    "worst_mm": 29.6,
+    "L": 112,
+    "R": 116,
+    "worst_mm": 29.5,
     "worst_frame": 73
    }
   },
@@ -1050,12 +1050,12 @@
     "worst_frame": null
    },
    "cloth": {
-    "L": 147,
-    "R": 83,
+    "L": 167,
+    "R": 117,
     "worst_mm": 29.9,
-    "worst_frame": 47
+    "worst_frame": 7
    }
   }
  },
- "seconds": 265
+ "seconds": 278
 }

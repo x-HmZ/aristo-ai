@@ -99,6 +99,22 @@ bit too tight and deformed, and I don't like how the V is showing in both of the
 - **Buttons ride the cloth**: each button island moves rigidly with its nearest cloth vertex; the cuff buttons had
   come off the shortened sleeve and floated below the cuff.
 
+## Round 3 (Hmz, 2026-10-05): the V is the leg-torso indent
+
+Hmz: "the V-shaped indents from torso muscles joining with the legs shouldn't be visible on the shirts". Round 2 had
+read "the V" as the side taper. The real cause: below the waist the cloth must clear the garment under it, and that
+clearance followed the trousers' and the skirt waistband's own sections, groove included where the legs meet the
+torso; and the cloth narrowed under the belly and widened again over the hips, which shaded as the same V.
+
+- Every section the cloth sits on is made **convex** first (`v9_loose._convex`): the clearance, the hanging envelope
+  below the cut, and the fill below the chest. Loose cloth bridges hollows.
+- The cloth **drops nearly straight** from its fullest point: it may narrow 4 to 6 cm per metre at the front (was 10 to
+  12), 8 at the back, 15 more at the sides; Jake widens over the hips at most 15 cm per metre, smoothed over 7 cm in
+  height. MJ gets an even A-line from the waist over the skirt (35 cm per metre) and overlaps it 4 cm (was 5): with
+  Jake's slow widening her tee stepped out at the hips.
+- MJ's tee now hangs from the bust instead of following under it: the spike guard counts 220 vertices 40 to 51 mm
+  off the source surface there. That is the fill (capped at the ease + 4 cm), not a spike.
+
 ## QA (Blender, before showing Hmz)
 
 `v9_loose_qa.run`: every 2nd frame of all 34 clips in `CANINO_CLIP_SET` (the 17 Mixamo clips and all 17 hand-keyed
@@ -109,10 +125,10 @@ shirts (`baseline=True`). The new meshes are about 3x denser, so the counts of t
 |---|---|---|---|---|
 | skin: body skin through the shirt | 18/47 (60 mm), none under 40 mm | 1/0 (49 mm) | 2/0 (59 mm) | 10/0 (60 mm) |
 | under: trousers or skirt through the hem | 0/0 | 0/9 (0.8 mm) | 0/0 | 11/21 (1.3 mm) |
-| arm: torso cloth inside the arm skin | 0/0 | 0/0 | 1223/290 (25 mm) | 290/65 (21 mm) |
-| cloth: sleeve and torso cloth through each other | 4607/4071 (30 mm cap) | 722/501 | 5306/4170 (30 mm cap) | 1432/941 |
+| arm: torso cloth inside the arm skin | 0/0 | 0/0 | 1318/337 (26 mm) | 290/65 (21 mm) |
+| cloth: sleeve and torso cloth through each other | 5090/5124 (30 mm cap) | 722/501 | 5189/4296 (30 mm cap) | 1432/941 |
 
-Round 2 numbers (round 1 gave the same picture, with Jake's skin at 2/0).
+Round 3 numbers (rounds 1 and 2 gave the same picture; Jake's skin was 2/0 before his sleeves were shortened).
 
 - **skin**: every Jake event is 55 to 60 mm deep and sits at the wrist (0.96 to 0.97 of the arm line), 12 to 18 mm
   past the shortened cuff's edge (`v9_loose_qa.which`, `qa/pokes/J_Talking_19.webp`): skin the old slanted cuff
