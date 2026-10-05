@@ -9,7 +9,8 @@
  * `getMasteryTier`): Not started, In progress, Learned, Mastered. The
  * current concept has an accent border and a "Now" pill.
  *
- * Clicking an available concept calls onSelectConcept(flatIndex).
+ * Clicking an available concept calls onSelectConcept(flatIndex); Escape or
+ * Back closes it (useModalDialog: role, focus held inside, focus returned).
  * "Start / Continue" button advances to the next un-mastered concept.
  *
  * On the design system since V8.6: it follows the theme. The system scrim
@@ -23,6 +24,7 @@ import { Button }                           from "@/components/ui/button";
 import { MASTERY_ORDER, MASTERY_TIER, MasteryBadge, MasteryIcon } from "@/components/learn/mastery";
 import { FOCUS, PRESS, SHAPE }              from "@/lib/design/shape";
 import { cn }                               from "@/lib/utils";
+import { useModalDialog }                   from "@/hooks/useModalDialog";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -117,6 +119,7 @@ export function CourseMapView({
   const [data,       setData]       = useState<CourseMapData | null>(null);
   const [loading,    setLoading]    = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const dialog = useModalDialog<HTMLElement>(onClose);
 
   useEffect(() => {
     fetch(`/api/courses/${courseId}`)
@@ -155,8 +158,9 @@ export function CourseMapView({
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <section
+        {...dialog}
         aria-labelledby="course-map-title"
-        className={cn(SHAPE.surface, "flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden border border-line bg-surface shadow-e2")}
+        className={cn(SHAPE.surface, "flex max-h-[88vh] outline-none w-full max-w-lg flex-col overflow-hidden border border-line bg-surface shadow-e2")}
       >
 
         {/* Header */}

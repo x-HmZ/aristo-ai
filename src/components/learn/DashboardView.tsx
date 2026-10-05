@@ -15,6 +15,7 @@ import { Clock, Flame, GraduationCap, RotateCcw, Target, TrendingUp, X, type Luc
 import { Button } from "@/components/ui/button";
 import { SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { useModalDialog } from "@/hooks/useModalDialog";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -88,6 +89,7 @@ interface DashboardViewProps {
 export function DashboardView({ onClose }: DashboardViewProps) {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading,   setLoading]   = useState(true);
+  const dialog = useModalDialog<HTMLElement>(onClose);
 
   useEffect(() => {
     fetch("/api/profile/analytics")
@@ -100,8 +102,9 @@ export function DashboardView({ onClose }: DashboardViewProps) {
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <section
+        {...dialog}
         aria-labelledby="dashboard-title"
-        className={cn(SHAPE.surface, "aristo-scroll max-h-[85vh] w-full max-w-lg overflow-y-auto border border-line bg-surface shadow-e2")}
+        className={cn(SHAPE.surface, "aristo-scroll outline-none max-h-[85vh] w-full max-w-lg overflow-y-auto border border-line bg-surface shadow-e2")}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-3 px-6 pb-4 pt-6">
