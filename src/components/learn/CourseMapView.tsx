@@ -79,6 +79,7 @@ function ConceptNode({
   return (
     <button
       onClick={() => onSelect(flatIndex)}
+      title={meta?.name ?? conceptId}
       aria-current={isCurrent ? "step" : undefined}
       className={cn(
         SHAPE.control,
@@ -90,7 +91,7 @@ function ConceptNode({
           : "border-line bg-surface hover:border-muted/50 hover:bg-sunk",
       )}
     >
-      <div className="flex w-full items-center gap-2">
+      <span className="flex w-full items-center gap-2">
         <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">
           {meta?.name ?? conceptId}
         </span>
@@ -99,7 +100,7 @@ function ConceptNode({
             Now
           </span>
         )}
-      </div>
+      </span>
       <MasteryBadge score={score} />
     </button>
   );

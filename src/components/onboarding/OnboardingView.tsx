@@ -80,7 +80,7 @@ function Choice({
         className,
       )}
     >
-      <div className="min-w-0 flex-1">{children}</div>
+      <span className="block min-w-0 flex-1">{children}</span>
       {selected
         ? <CircleCheck aria-hidden className="size-5 shrink-0 text-accent-text" />
         : <Circle aria-hidden className="size-5 shrink-0 text-muted" />}
@@ -171,8 +171,8 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               <div className="space-y-3">
                 {GOALS.map((g) => (
                   <Choice key={g.value} selected={goal === g.value} onSelect={() => setGoal(g.value)}>
-                    <div className="text-sm font-semibold text-ink">{g.label}</div>
-                    <div className="mt-0.5 text-sm text-body">{g.description}</div>
+                    <span className="block text-sm font-semibold text-ink">{g.label}</span>
+                    <span className="mt-0.5 block text-sm text-body">{g.description}</span>
                   </Choice>
                 ))}
               </div>
@@ -187,7 +187,7 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
                 {TIMES.map((t) => (
                   <Choice key={t.value} selected={time === t.value} onSelect={() => setTime(t.value)}>
-                    <div className="text-sm font-semibold text-ink">{t.label}</div>
+                    <span className="block text-sm font-semibold text-ink">{t.label}</span>
                   </Choice>
                 ))}
               </div>
@@ -202,10 +202,10 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
               <div className="space-y-3">
                 {DOMAINS.map((d) => (
                   <Choice key={d.value} selected={domain === d.value} onSelect={() => setDomain(d.value)}>
-                    <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-4">
                       <OptionIcon><d.Icon aria-hidden /></OptionIcon>
                       <span className="text-sm font-semibold text-ink">{d.label}</span>
-                    </div>
+                    </span>
                   </Choice>
                 ))}
               </div>
