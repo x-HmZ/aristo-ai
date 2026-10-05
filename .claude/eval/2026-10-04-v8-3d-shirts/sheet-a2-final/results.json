@@ -1,0 +1,133 @@
+{
+  "jake": {
+    "A9C6A4": {
+      "name": "sage",
+      "swatch": "A9C6A4",
+      "code": "7CA772",
+      "rendered": "B1CDAD",
+      "residual": 1.99,
+      "steps": [
+        {
+          "input": "A9C6A4",
+          "rendered": "CEDCCF",
+          "de": 10.7
+        },
+        {
+          "input": "8AB281",
+          "rendered": "BCD3B9",
+          "de": 4.73
+        },
+        {
+          "input": "7CA772",
+          "rendered": "B1CDAD",
+          "de": 1.99
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.86,
+          "de": 22.5
+        },
+        "page": {
+          "ratio": 1.69,
+          "de": 21.7
+        },
+        "wall": {
+          "ratio": 2.17,
+          "de": 31.3
+        },
+        "ink": {
+          "ratio": 10.17,
+          "de": 67.2
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.72,
+          "de": 20.9
+        },
+        "page": {
+          "ratio": 1.56,
+          "de": 20.2
+        },
+        "wall": {
+          "ratio": 2.34,
+          "de": 32
+        },
+        "ink": {
+          "ratio": 10.98,
+          "de": 70.5
+        }
+      },
+      "separates": true
+    }
+  },
+  "mj": {
+    "C3B1E1": {
+      "name": "lavender",
+      "swatch": "C3B1E1",
+      "code": "AA89E5",
+      "rendered": "C6B3E1",
+      "residual": 0.88,
+      "steps": [
+        {
+          "input": "C3B1E1",
+          "rendered": "D1CCDF",
+          "de": 11.23
+        },
+        {
+          "input": "B699E3",
+          "rendered": "CCBEE0",
+          "de": 4.91
+        },
+        {
+          "input": "AE8EE4",
+          "rendered": "C8B7E0",
+          "de": 2.36
+        },
+        {
+          "input": "AA89E5",
+          "rendered": "C6B3E1",
+          "de": 0.88
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.96,
+          "de": 24.3
+        },
+        "page": {
+          "ratio": 1.78,
+          "de": 22.2
+        },
+        "wall": {
+          "ratio": 2.05,
+          "de": 24.3
+        },
+        "ink": {
+          "ratio": 9.63,
+          "de": 63.7
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.92,
+          "de": 23.8
+        },
+        "page": {
+          "ratio": 1.74,
+          "de": 21.7
+        },
+        "wall": {
+          "ratio": 2.1,
+          "de": 25
+        },
+        "ink": {
+          "ratio": 9.84,
+          "de": 64.6
+        }
+      },
+      "separates": true
+    }
+  }
+}

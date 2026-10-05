@@ -11,12 +11,15 @@
 //   against both white and the light page.
 // - A pair panel: Jake and MJ side by side, with dE00 between their renders.
 // Usage: node shirts.cjs [base] [jake|mj|both]   -> ../sheet-a2/
+// ONLY=A9C6A4,C3B1E1 limits the candidates; SHEET=<dir> writes elsewhere (the picked pair, solved again on the
+// shipped cloth: SHEET=sheet-a2-final).
 const fs = require("fs");
 const path = require("path");
 const { chromium, sleep, LAUNCH, guardApi } = require("../../2026-09-30-desk-framing/scripts/common.cjs");
 const sharp = require(path.join(__dirname, "..", "..", "..", "..", "node_modules", "sharp"));
 const [, , base = "http://localhost:3000", which = "both"] = process.argv;
-const OUT = path.join(__dirname, "..", "sheet-a2");
+const OUT = path.join(__dirname, "..", process.env.SHEET || "sheet-a2");
+const ONLY = process.env.ONLY ? process.env.ONLY.split(",") : null;
 const RAW = path.join(OUT, "raw");
 fs.mkdirSync(RAW, { recursive: true });
 
@@ -140,7 +143,7 @@ const label = (w, h, lines) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/s
     console.log(teacher, "mask", m.idx.length, "inner", m.inner.length);
     results[teacher] = {};
     const rows = [];
-    for (const [swatch, name] of Object.entries(CANDIDATES[teacher])) {
+    for (const [swatch, name] of Object.entries(CANDIDATES[teacher]).filter(([h]) => !ONLY || ONLY.includes(h))) {
       // Solve the hex: up to four renders, stop within dE00 2 of the swatch.
       let input = swatch, rendered, pic, steps = [];
       for (let k = 0; k < 4; k++) {
