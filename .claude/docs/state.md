@@ -2,6 +2,17 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-05 - The opening's Skip never cream on the lit page (PR into deploy-prep)
+
+Branch `fix/intro-skip-contrast` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-intro-skip/`.
+`check.cjs` without `?nointro` had caught "Skip intro" at 1.05:1 (360 lite light) as the cover faded.
+- `.landing-intro` is ink while `on`/`playing` (under its canvas; looks the same), clears at `lifting`; Skip is hidden
+  there and at `done` (visibility, opacity, pointer events, no transition). The cover's fade is unchanged.
+- Measured (production): check.cjs no `?nointro` 360/768/1280 light+dark 0 failures (min 4.74); every frame of 18
+  plays (`skip.cjs`) Skip min 10.49, never visible after the lift; plays and skips (key, tap) to `done`; tests 556,
+  lint 0 errors.
+- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+
 ## 2026-10-05 - V8.3d: softer, looser teacher shirts (PR into deploy-prep)
 
 Branch `dev/v8-3d-shirts` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-04-v8-3d-shirts/` (README: sheet A2,

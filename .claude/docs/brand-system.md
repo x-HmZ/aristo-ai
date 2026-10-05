@@ -343,7 +343,9 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
   while the part faces the camera.
 - **The opening (`landing/intro`):** always on ink (#0E1117) whatever the theme, its points cream #F4ECE1 with the
   one orange (#F97B2F, ember #FFB27A) as the light; the idea labels 13 to 14px, cream at 85%; Skip is a 44px pill top
-  right. It ends on the page in its own theme (the cover lifts: "the lights come on").
+  right, on the opening's own ink layer and only while it plays: when the lights come on it goes at once (hidden, out
+  of the a11y tree, no pointer events), never cream over the lit page. It ends on the page in its own theme (the
+  cover lifts: "the lights come on").
 
 ### shadcn mapping (for `npx shadcn add`)
 
@@ -425,7 +427,7 @@ with an owner:
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
 | `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
 | `AvatarLab.tsx`, `DeskQuizPreview.tsx`, `FreeModelPreview.tsx` | dev-page neutrals | `/dev` only | V8.7 |
-| `landing/intro/*`, `globals.css` `.landing-intro-cover` | the opening's ink, cream and ember | the opening is on ink in both themes (the tokens follow the theme); WebGL colours are numbers | stays |
+| `landing/intro/*`, `globals.css` `.landing-intro-cover`, `.landing-intro` | the opening's ink, cream and ember | the opening is on ink in both themes (the tokens follow the theme); WebGL colours are numbers | stays |
 
 ## Known AA gaps (inside locked surfaces)
 
