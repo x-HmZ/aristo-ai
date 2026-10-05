@@ -66,7 +66,7 @@ BUTTON_FACES = 200  # Jake's buttons are islands of 57-78 faces; the shirt itsel
 JAKE = dict(
     shirt="TrendyLongSleevesShirt_v01_7902_Shape", arm="Armature.002", under=("Pants_14249_Shape",),
     z_cut=1.16, clear=0.013, z_top=1.47, z_chest=1.38, z_waist=1.13, ease_chest=0.010, ease_waist=0.025,
-    side=0.45, drape=0.10, drape_back=0.16, drape_side=0.25, rise=0.25, flare=0.0, hem_side=1.000, tail=0.025, ring_dz=0.012, seam_band=0.03,
+    side=0.45, drape=0.04, drape_back=0.08, drape_side=0.15, rise=0.15, flare=0.0, hem_side=1.000, tail=0.025, ring_dz=0.012, seam_band=0.03,
     # Along the arm line, 0 = shoulder joint, 1 = wrist (hand head); his elbow is at about 0.58, the cuff from 0.88.
     # Hmz (2026-10-05) on the first fit: the arm read tight and deformed, the sleeve a little long. Now an even
     # 12 to 14 mm down the arm with a gentle taper into the cuff, no stacked rings, and the sleeve 3 cm shorter.
@@ -77,7 +77,7 @@ JAKE = dict(
 MJ = dict(
     shirt="Object_31.001", arm="Object_4.001", under=("MJ_skirt",),
     z_cut=1.21, clear=0.006, z_top=1.46, z_chest=1.39, z_waist=1.14, ease_chest=0.010, ease_waist=0.028,
-    side=0.3, drape=0.12, drape_back=0.16, drape_side=0.25, rise=0.25, flare=0.10, hem_side=1.052, tail=0.008, ring_dz=0.010, seam_band=0.03,
+    side=0.3, drape=0.06, drape_back=0.08, drape_side=0.15, rise=0.35, flare=0.10, hem_side=1.062, tail=0.008, ring_dz=0.010, seam_band=0.03,
     # Her short sleeve ends at about 0.3 of the arm line.
     sleeve=((0.0, 0.0), (0.05, 0.008), (0.20, 0.013), (0.35, 0.016), (1.0, 0.016)),
     underside=0.7, cuff_rings=None, wave_amp=0.004, wave_n=8, seed=7.0, buttons=False,
@@ -158,13 +158,54 @@ def _smooth_periodic(r, width):
     return np.convolve(np.concatenate([r[-h:], r, r[:h]]), k, mode="valid")[: len(r)]
 
 
-def _smooth_rows(G, width_theta=7):
+def _smooth_rows(G, width_theta=7, half_z=1):
     G = G.copy()
     for k in range(len(G)):
         if not np.isnan(G[k]).all():
             G[k] = _smooth_periodic(_fill(G[k]), width_theta)
     with np.errstate(all="ignore"):
-        return np.array([np.nanmean(G[max(0, k - 1):k + 2], axis=0) for k in range(len(G))])
+        return np.array([np.nanmean(G[max(0, k - half_z):k + half_z + 1], axis=0) for k in range(len(G))])
+
+
+def _convex(r):
+    """
+    The convex hull of a closed polar profile (radii at evenly spaced angles round the axis), as radii again.
+    Loose cloth bridges hollows: it does not follow them. Without this the hem followed the groove where the legs
+    meet the torso (the trousers' and the skirt's sections), and the lower front of both shirts showed the body's V
+    (Hmz).
+    """
+    n = len(r)
+    if np.isnan(r).all():
+        return r
+    r = _fill(r)
+    th = np.arange(n) * 2 * math.pi / n
+    pts = sorted(zip(r * np.cos(th), r * np.sin(th)))
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    lower, upper = [], []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    hull = np.array(lower[:-1] + upper[:-1])
+    out = np.empty(n)
+    a, b = hull, np.roll(hull, -1, axis=0)
+    for i, t in enumerate(th):
+        d = np.array([math.cos(t), math.sin(t)])
+        e = b - a
+        den = d[0] * e[:, 1] - d[1] * e[:, 0]
+        with np.errstate(all="ignore"):
+            s = (a[:, 0] * e[:, 1] - a[:, 1] * e[:, 0]) / den        # distance along the ray
+            u = (a[:, 0] * d[1] - a[:, 1] * d[0]) / den              # position along the edge
+        ok = (np.abs(den) > 1e-12) & (u >= -1e-9) & (u <= 1 + 1e-9) & (s > 0)
+        out[i] = s[ok].max() if ok.any() else r[i]
+    return np.maximum(out, r)
 
 
 def _smoothstep(a, b, x):
@@ -377,6 +418,9 @@ def _loosen(ob, arm, cfg, N):
     for k in range(len(zs) - 2, -1, -1):
         if zs[k] < cfg["z_chest"]:
             T[k] = np.where(np.isnan(T[k]), T[k], np.fmax(T[k], T[k + 1] - drape_th * 0.01))
+    for k in range(len(zs)):  # the cloth bridges hollows below the chest (_convex)
+        if zs[k] < cfg["z_chest"] - 0.03 and not np.isnan(T[k]).all():
+            T[k] = _convex(T[k])
     H = _smooth_rows(T, 15)
     lines = {"L": arm_line(arm, "L"), "R": arm_line(arm, "R")}
     for i, p in enumerate(W):
@@ -466,6 +510,7 @@ def _loosen(ob, arm, cfg, N):
     under = [bpy.data.objects[n] for n in cfg["under"]]
     bvh_u = _bvh_world(under)
     C = np.array([_profile(bvh_u, z, ax, N) + cfg["clear"] for z in zs2])
+    C = np.array([row if np.isnan(row).all() else _convex(row) for row in C])  # not into the leg-torso groove
     Hd = np.zeros((len(zs2), N))
     Hd[0] = R0
     for k in range(1, len(zs2)):
@@ -475,8 +520,11 @@ def _loosen(ob, arm, cfg, N):
         Hd[k] = np.where(np.isnan(C[k]), row, np.fmax(row, C[k]))
     for k in range(len(zs2) - 2, -1, -1):  # bottom up: widen gradually above the garment under it
         Hd[k] = np.fmax(Hd[k], Hd[k + 1] - cfg["rise"] * 0.01)
+    for k in range(1, len(zs2)):
+        Hd[k] = _convex(Hd[k])
     Hd[0] = R0
-    Hd = _smooth_rows(Hd, 15)  # wide round the body: a narrow kernel kept the V (Hmz)
+    # Wide round the body and over 7 cm in height: narrower kernels kept the V and the under-belly curve (Hmz).
+    Hd = _smooth_rows(Hd, 15, 3)
     Hd[0] = R0
     grid2 = _Grid(zs2[::-1].copy(), N)
     Hup = Hd[::-1].copy()
