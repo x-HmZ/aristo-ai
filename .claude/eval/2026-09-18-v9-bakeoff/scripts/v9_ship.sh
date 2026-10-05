@@ -6,6 +6,10 @@
 # the BASE clips; Teacher_<T>_clips.glb carries every other clip and is
 # fetched after sceneReady (clipPacks in Teacher.tsx). v9_verify_anim.mjs then
 # checks both against the raw export in three.js.
+#
+# The copyright strings stay as they are (V8.3d): the pack carries the same
+# string, and its bytes should only change when its animation does. The
+# shirt work is recorded in LICENSES.md.
 set -e
 E=.claude/eval/2026-09-18-v9-bakeoff
 P=$E/scripts/v9_postprocess.mjs

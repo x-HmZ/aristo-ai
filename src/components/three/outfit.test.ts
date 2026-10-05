@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { applyOutfit, devShirt } from "./outfit";
+import { BoxGeometry, Group, Mesh, MeshPhysicalMaterial, MeshStandardMaterial } from "three";
+import { SHEEN_STRENGTH, applyOutfit, devShirt } from "./outfit";
 
 function rig() {
   const shirt = new MeshStandardMaterial({ name: "lambert3SG", color: "#ffffff" });
@@ -36,6 +36,23 @@ describe("applyOutfit", () => {
     applyOutfit(root, { material: "lambert3SG", color: "#123456" });
     expect(c.material).toBe(skin);
     expect((b.material as MeshStandardMaterial[])[0]).toBe(skin);
+  });
+
+  it("gives a cloth shirt's sheen the shirt's colour, halfway to white, at the set strength", () => {
+    const shirt = new MeshPhysicalMaterial({ name: "lambert3SG", color: "#ffffff", sheen: 1, sheenColor: "#ffffff" });
+    const root = new Group();
+    root.add(new Mesh(new BoxGeometry(), shirt));
+    const [copy] = applyOutfit(root, { material: "lambert3SG", color: "#000000" }) as MeshPhysicalMaterial[];
+    const s = copy.sheenColor;
+    expect(s.r).toBeCloseTo(0.5 * SHEEN_STRENGTH, 5);
+    expect(s.g).toBeCloseTo(0.5 * SHEEN_STRENGTH, 5);
+    expect(shirt.sheenColor.getHexString()).toBe("ffffff");
+  });
+
+  it("leaves a material without sheen as it was", () => {
+    const { root } = rig();
+    const [copy] = applyOutfit(root, { material: "lambert3SG", color: "#123456" }) as MeshPhysicalMaterial[];
+    expect(copy.sheenColor).toBeUndefined();
   });
 
   it("returns nothing for a name it cannot find", () => {

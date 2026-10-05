@@ -236,8 +236,9 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411",
       ...CANINO3D,
     },
-    // Forest (Hmz, V8.3c sheet A), set darker than its swatch #2F5D50: lit, the shirt reads about twice as light.
-    outfit: { material: "lambert3SG", color: "#1E4338" },
+    // Sage (Hmz, V8.3d sheet A2): swatch #A9C6A4, solved on the shipped cloth so the lit shirt renders as it
+    // (#B1CDAD, dE00 2.0); the lit shirt reads lighter than the hex it is given.
+    outfit: { material: "lambert3SG", color: "#7CA772" },
   },
   mj: {
     label:     "MJ",
@@ -261,8 +262,8 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4",
       ...CANINO3D,
     },
-    // Plum (Hmz, V8.3c sheet A), set darker than its swatch #6E3B6E for the same reason.
-    outfit: { material: "lambert7.003", color: "#542853" },
+    // Lavender (Hmz, V8.3d sheet A2): swatch #C3B1E1, solved the same way (renders #C6B3E1, dE00 0.9).
+    outfit: { material: "lambert7.003", color: "#AA89E5" },
   },
 };
 

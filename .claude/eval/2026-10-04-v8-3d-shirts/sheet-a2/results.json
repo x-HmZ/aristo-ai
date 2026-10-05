@@ -1,0 +1,773 @@
+{
+  "jake": {
+    "A9C6A4": {
+      "name": "sage",
+      "swatch": "A9C6A4",
+      "code": "7FAA75",
+      "rendered": "AFCDAA",
+      "residual": 1.75,
+      "steps": [
+        {
+          "input": "A9C6A4",
+          "rendered": "CCDACD",
+          "de": 10.41
+        },
+        {
+          "input": "8CB483",
+          "rendered": "BAD2B7",
+          "de": 4.23
+        },
+        {
+          "input": "7FAA75",
+          "rendered": "AFCDAA",
+          "de": 1.75
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.86,
+          "de": 22.5
+        },
+        "page": {
+          "ratio": 1.69,
+          "de": 21.7
+        },
+        "wall": {
+          "ratio": 2.17,
+          "de": 31.3
+        },
+        "ink": {
+          "ratio": 10.17,
+          "de": 67.2
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.73,
+          "de": 21.6
+        },
+        "page": {
+          "ratio": 1.57,
+          "de": 21
+        },
+        "wall": {
+          "ratio": 2.33,
+          "de": 32.6
+        },
+        "ink": {
+          "ratio": 10.92,
+          "de": 70.5
+        }
+      },
+      "separates": true
+    },
+    "A6C1DD": {
+      "name": "powder blue",
+      "swatch": "A6C1DD",
+      "code": "759BD0",
+      "rendered": "A9C4DF",
+      "residual": 0.85,
+      "steps": [
+        {
+          "input": "A6C1DD",
+          "rendered": "CBD8E3",
+          "de": 8.81
+        },
+        {
+          "input": "87ACD7",
+          "rendered": "B8CEE1",
+          "de": 4.56
+        },
+        {
+          "input": "79A1D3",
+          "rendered": "ACC8E0",
+          "de": 2.42
+        },
+        {
+          "input": "759BD0",
+          "rendered": "A9C4DF",
+          "de": 0.85
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.86,
+          "de": 19.3
+        },
+        "page": {
+          "ratio": 1.69,
+          "de": 17.1
+        },
+        "wall": {
+          "ratio": 2.17,
+          "de": 19.8
+        },
+        "ink": {
+          "ratio": 10.16,
+          "de": 64.9
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.8,
+          "de": 18.6
+        },
+        "page": {
+          "ratio": 1.64,
+          "de": 16.4
+        },
+        "wall": {
+          "ratio": 2.24,
+          "de": 20.5
+        },
+        "ink": {
+          "ratio": 10.48,
+          "de": 66.3
+        }
+      },
+      "separates": true
+    },
+    "9ED2C6": {
+      "name": "seafoam",
+      "swatch": "9ED2C6",
+      "code": "62BAA0",
+      "rendered": "A4D5CA",
+      "residual": 1.15,
+      "steps": [
+        {
+          "input": "9ED2C6",
+          "rendered": "CADFDC",
+          "de": 10.22
+        },
+        {
+          "input": "7BC6B2",
+          "rendered": "B6DBD4",
+          "de": 4.97
+        },
+        {
+          "input": "6ABEA6",
+          "rendered": "AAD7CD",
+          "de": 2.3
+        },
+        {
+          "input": "62BAA0",
+          "rendered": "A4D5CA",
+          "de": 1.15
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.68,
+          "de": 21.3
+        },
+        "page": {
+          "ratio": 1.53,
+          "de": 20.2
+        },
+        "wall": {
+          "ratio": 2.4,
+          "de": 28.5
+        },
+        "ink": {
+          "ratio": 11.24,
+          "de": 71.4
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.62,
+          "de": 20.3
+        },
+        "page": {
+          "ratio": 1.47,
+          "de": 19.2
+        },
+        "wall": {
+          "ratio": 2.49,
+          "de": 28.8
+        },
+        "ink": {
+          "ratio": 11.65,
+          "de": 73
+        }
+      },
+      "separates": true
+    },
+    "A9B3E3": {
+      "name": "periwinkle",
+      "swatch": "A9B3E3",
+      "code": "808CE0",
+      "rendered": "AFB8E4",
+      "residual": 1.66,
+      "steps": [
+        {
+          "input": "A9B3E3",
+          "rendered": "CBD2E5",
+          "de": 11.4
+        },
+        {
+          "input": "8C98E1",
+          "rendered": "B8C2E4",
+          "de": 5.08
+        },
+        {
+          "input": "808CE0",
+          "rendered": "AFB8E4",
+          "de": 1.66
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 2.05,
+          "de": 23.9
+        },
+        "page": {
+          "ratio": 1.86,
+          "de": 21.7
+        },
+        "wall": {
+          "ratio": 1.97,
+          "de": 19.7
+        },
+        "ink": {
+          "ratio": 9.22,
+          "de": 61.3
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.94,
+          "de": 22.4
+        },
+        "page": {
+          "ratio": 1.77,
+          "de": 20.1
+        },
+        "wall": {
+          "ratio": 2.07,
+          "de": 20.8
+        },
+        "ink": {
+          "ratio": 9.72,
+          "de": 63.4
+        }
+      },
+      "separates": true
+    },
+    "EBD891": {
+      "name": "butter",
+      "swatch": "EBD891",
+      "code": "F7C550",
+      "rendered": "EADB98",
+      "residual": 1.47,
+      "steps": [
+        {
+          "input": "EBD891",
+          "rendered": "E5E1C6",
+          "de": 11.31
+        },
+        {
+          "input": "F1CF69",
+          "rendered": "E7DEAC",
+          "de": 5.28
+        },
+        {
+          "input": "F5C958",
+          "rendered": "E9DC9F",
+          "de": 2.67
+        },
+        {
+          "input": "F7C550",
+          "rendered": "EADB98",
+          "de": 1.47
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.42,
+          "de": 22
+        },
+        "page": {
+          "ratio": 1.29,
+          "de": 22.8
+        },
+        "wall": {
+          "ratio": 2.84,
+          "de": 43.1
+        },
+        "ink": {
+          "ratio": 13.29,
+          "de": 82.1
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.39,
+          "de": 21.2
+        },
+        "page": {
+          "ratio": 1.27,
+          "de": 22
+        },
+        "wall": {
+          "ratio": 2.9,
+          "de": 42.7
+        },
+        "ink": {
+          "ratio": 13.57,
+          "de": 83
+        }
+      },
+      "separates": false
+    },
+    "BFAED6": {
+      "name": "dusty lilac",
+      "swatch": "BFAED6",
+      "code": "A285C6",
+      "rendered": "C5B3DB",
+      "residual": 1.43,
+      "steps": [
+        {
+          "input": "BFAED6",
+          "rendered": "D5D0E1",
+          "de": 11.54
+        },
+        {
+          "input": "AB91CC",
+          "rendered": "CABDDD",
+          "de": 4.44
+        },
+        {
+          "input": "A285C6",
+          "rendered": "C5B3DB",
+          "de": 1.43
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 2.05,
+          "de": 23.9
+        },
+        "page": {
+          "ratio": 1.86,
+          "de": 21.8
+        },
+        "wall": {
+          "ratio": 1.97,
+          "de": 24
+        },
+        "ink": {
+          "ratio": 9.22,
+          "de": 61.6
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.94,
+          "de": 23
+        },
+        "page": {
+          "ratio": 1.76,
+          "de": 21
+        },
+        "wall": {
+          "ratio": 2.08,
+          "de": 25.2
+        },
+        "ink": {
+          "ratio": 9.76,
+          "de": 64
+        }
+      },
+      "separates": true
+    }
+  },
+  "mj": {
+    "C3B1E1": {
+      "name": "lavender",
+      "swatch": "C3B1E1",
+      "code": "AA8CDF",
+      "rendered": "C8B7E2",
+      "residual": 1.96,
+      "steps": [
+        {
+          "input": "C3B1E1",
+          "rendered": "D4CFE2",
+          "de": 11.61
+        },
+        {
+          "input": "B397E0",
+          "rendered": "CDBFE2",
+          "de": 4.85
+        },
+        {
+          "input": "AA8CDF",
+          "rendered": "C8B7E2",
+          "de": 1.96
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.96,
+          "de": 24.3
+        },
+        "page": {
+          "ratio": 1.78,
+          "de": 22.2
+        },
+        "wall": {
+          "ratio": 2.05,
+          "de": 24.3
+        },
+        "ink": {
+          "ratio": 9.63,
+          "de": 63.7
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.85,
+          "de": 22.6
+        },
+        "page": {
+          "ratio": 1.68,
+          "de": 20.6
+        },
+        "wall": {
+          "ratio": 2.18,
+          "de": 25.6
+        },
+        "ink": {
+          "ratio": 10.19,
+          "de": 66
+        }
+      },
+      "separates": true
+    },
+    "A8DCC4": {
+      "name": "mint",
+      "swatch": "A8DCC4",
+      "code": "6ED49E",
+      "rendered": "B2DDC8",
+      "residual": 2.15,
+      "steps": [
+        {
+          "input": "A8DCC4",
+          "rendered": "CCDFD9",
+          "de": 11.06
+        },
+        {
+          "input": "8AD9B1",
+          "rendered": "C0DFD2",
+          "de": 6.32
+        },
+        {
+          "input": "78D6A5",
+          "rendered": "B7DECC",
+          "de": 3.52
+        },
+        {
+          "input": "6ED49E",
+          "rendered": "B2DDC8",
+          "de": 2.15
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.53,
+          "de": 21.3
+        },
+        "page": {
+          "ratio": 1.39,
+          "de": 20.6
+        },
+        "wall": {
+          "ratio": 2.63,
+          "de": 32.5
+        },
+        "ink": {
+          "ratio": 12.33,
+          "de": 76.5
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.49,
+          "de": 19.4
+        },
+        "page": {
+          "ratio": 1.36,
+          "de": 18.8
+        },
+        "wall": {
+          "ratio": 2.7,
+          "de": 32.1
+        },
+        "ink": {
+          "ratio": 12.66,
+          "de": 77.5
+        }
+      },
+      "separates": true
+    },
+    "A5CDE8": {
+      "name": "sky",
+      "swatch": "A5CDE8",
+      "code": "6EB4F2",
+      "rendered": "ABD0E6",
+      "residual": 1.82,
+      "steps": [
+        {
+          "input": "A5CDE8",
+          "rendered": "CADBE4",
+          "de": 8.44
+        },
+        {
+          "input": "86C0EC",
+          "rendered": "BAD6E5",
+          "de": 4.92
+        },
+        {
+          "input": "76B8EF",
+          "rendered": "B0D2E5",
+          "de": 2.98
+        },
+        {
+          "input": "6EB4F2",
+          "rendered": "ABD0E6",
+          "de": 1.82
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.68,
+          "de": 18.6
+        },
+        "page": {
+          "ratio": 1.53,
+          "de": 16.7
+        },
+        "wall": {
+          "ratio": 2.4,
+          "de": 22.6
+        },
+        "ink": {
+          "ratio": 11.25,
+          "de": 70
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.63,
+          "de": 17.4
+        },
+        "page": {
+          "ratio": 1.48,
+          "de": 15.4
+        },
+        "wall": {
+          "ratio": 2.48,
+          "de": 23.3
+        },
+        "ink": {
+          "ratio": 11.61,
+          "de": 71.5
+        }
+      },
+      "separates": true
+    },
+    "A3B4E8": {
+      "name": "periwinkle",
+      "swatch": "A3B4E8",
+      "code": "758CF1",
+      "rendered": "A6B6E7",
+      "residual": 0.85,
+      "steps": [
+        {
+          "input": "A3B4E8",
+          "rendered": "C6D0E4",
+          "de": 11.09
+        },
+        {
+          "input": "869CEC",
+          "rendered": "B3C2E5",
+          "de": 5.09
+        },
+        {
+          "input": "7A91EF",
+          "rendered": "AABAE6",
+          "de": 2.18
+        },
+        {
+          "input": "758CF1",
+          "rendered": "A6B6E7",
+          "de": 0.85
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 2.05,
+          "de": 24.5
+        },
+        "page": {
+          "ratio": 1.86,
+          "de": 22.2
+        },
+        "wall": {
+          "ratio": 1.97,
+          "de": 19.3
+        },
+        "ink": {
+          "ratio": 9.23,
+          "de": 61.5
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 2.01,
+          "de": 23.6
+        },
+        "page": {
+          "ratio": 1.82,
+          "de": 21.4
+        },
+        "wall": {
+          "ratio": 2.01,
+          "de": 19.7
+        },
+        "ink": {
+          "ratio": 9.42,
+          "de": 62.3
+        }
+      },
+      "separates": true
+    },
+    "F0DC8C": {
+      "name": "butter",
+      "swatch": "F0DC8C",
+      "code": "FFD348",
+      "rendered": "E9DD95",
+      "residual": 2.63,
+      "steps": [
+        {
+          "input": "F0DC8C",
+          "rendered": "E4E0C2",
+          "de": 11.82
+        },
+        {
+          "input": "FDD864",
+          "rendered": "E8DFA9",
+          "de": 5.85
+        },
+        {
+          "input": "FFD552",
+          "rendered": "E9DE9D",
+          "de": 3.68
+        },
+        {
+          "input": "FFD348",
+          "rendered": "E9DD95",
+          "de": 2.63
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.37,
+          "de": 22.8
+        },
+        "page": {
+          "ratio": 1.25,
+          "de": 23.8
+        },
+        "wall": {
+          "ratio": 2.94,
+          "de": 44.8
+        },
+        "ink": {
+          "ratio": 13.79,
+          "de": 84.5
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.38,
+          "de": 21.8
+        },
+        "page": {
+          "ratio": 1.25,
+          "de": 22.6
+        },
+        "wall": {
+          "ratio": 2.93,
+          "de": 43.5
+        },
+        "ink": {
+          "ratio": 13.72,
+          "de": 83.8
+        }
+      },
+      "separates": false
+    },
+    "C9BEDC": {
+      "name": "lilac grey",
+      "swatch": "C9BEDC",
+      "code": "B69ED5",
+      "rendered": "CEC4DE",
+      "residual": 1.96,
+      "steps": [
+        {
+          "input": "C9BEDC",
+          "rendered": "D6D5E0",
+          "de": 9.76
+        },
+        {
+          "input": "BDA9D8",
+          "rendered": "D1CBDF",
+          "de": 4.91
+        },
+        {
+          "input": "B69ED5",
+          "rendered": "CEC4DE",
+          "de": 1.96
+        }
+      ],
+      "swatchVs": {
+        "white": {
+          "ratio": 1.77,
+          "de": 19.1
+        },
+        "page": {
+          "ratio": 1.61,
+          "de": 17.1
+        },
+        "wall": {
+          "ratio": 2.28,
+          "de": 25.8
+        },
+        "ink": {
+          "ratio": 10.69,
+          "de": 67.5
+        }
+      },
+      "renderVs": {
+        "white": {
+          "ratio": 1.67,
+          "de": 17.2
+        },
+        "page": {
+          "ratio": 1.52,
+          "de": 15.3
+        },
+        "wall": {
+          "ratio": 2.42,
+          "de": 26.6
+        },
+        "ink": {
+          "ratio": 11.32,
+          "de": 70.1
+        }
+      },
+      "separates": true
+    }
+  }
+}
