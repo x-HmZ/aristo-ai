@@ -28,3 +28,4 @@ qa/pokes/*.png
 !blender/jake_r4_low.webp
 !blender/mj_r5_low.webp
 !blender/mj_r5_full.webp
+build/

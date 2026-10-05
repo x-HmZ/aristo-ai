@@ -2,6 +2,28 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-05 - V8.3d: softer, looser teacher shirts (PR into deploy-prep)
+
+Branch `dev/v8-3d-shirts` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-04-v8-3d-shirts/` (README: sheet A2,
+three fit rounds, QA, files). Hmz picked at each stop; no paid generation.
+
+- **Colours:** Jake sage (swatch #A9C6A4, code #7CA772), MJ lavender (#C3B1E1, code #AA89E5), each solved on the
+  shipped cloth so the lit shirt renders as its swatch (`shirts.cjs`, ONLY= / SHEET=). Butter merged with the page.
+- **Cloth:** both shirts cut above the waist and regrown loose (`v9_loose.py`): untucked (Jake 7 cm below his
+  waistband, shirt-tail curve; MJ 4 cm over the skirt, A-line), relaxed ease, every section convex (no leg-torso V),
+  Jake's sleeves 3 cm shorter with the forearm skin V9.1c masked put back (`restore_skin`), buttons ride the cloth.
+  Fold normal map baked in-house (`v9_fabric.py`); roughness 0.88, sheen in the shirt's colour (`outfit.ts`); no
+  weave (it baked as moire). GLBs: Jake 2.36 MB (+79 KB), MJ 1.81 MB (+33 KB); clip packs byte-identical.
+- **QA:** `v9_loose_qa.py`, 34 clips, every 2nd frame, per side, against the V8.3c shirts: no garment through a hem
+  (the old shirts let some out), no shallow skin poke but one hidden in MJ's armpit; armpit cloth contacts about 1.5x
+  the old ones and hidden; left and right joints matched on the peak sheets.
+- **Shipped:** every landing poster and both chooser faces recaptured; /demo checked for both teachers (0 API).
+- **Measured (production):** AA 0 failures (min 4.74, `?nointro`), 0 small targets, 0 overflow, both teachers; bounds
+  0 px out at every spot; section p95 16.7 to 16.8 ms, CLS 0, LCP the hero poster (V8.3b's hero start-up frames as
+  before); switch longest frame 17 ms; room pointing 8.3 / 6.6 deg; tests 556; lint 0 errors; 0 API calls.
+- **Not done:** /learn not checked signed-in (Hmz skipped it; /demo uses the same Teacher and was checked).
+- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+
 ## 2026-10-03 - V8.3c: a model worth turning, coloured shirts, Jake or MJ, the opening (PR into deploy-prep)
 
 Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.claude/eval/2026-10-03-v8-3c-landing/`

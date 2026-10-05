@@ -329,7 +329,11 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
 
 ### Landing (V8.3c): two teachers, the brain, the opening
 
-- **Teachers:** Jake (forest shirt) and MJ (plum shirt); colours set at mount (`outfit.ts`), app-wide. The hero's
+- **Teachers:** Jake (sage shirt, swatch #A9C6A4, code #7CA772) and MJ (lavender tee, swatch #C3B1E1, code #AA89E5)
+  since V8.3d (V8.3c: forest and plum); colours set at mount (`outfit.ts`), app-wide, each hex solved so the lit
+  cloth renders as its swatch. Both shirts are loose cloth (roughness 0.88, a sheen in the shirt's own colour, a
+  baked fold map). The pastels separate from the white diagram (1.72 and 1.92:1, dE00 21 and 24) and the light page
+  (1.56 and 1.74:1), are far from the ink, and stay away from the one orange and MJ's red hair. The hero's
   "Your teacher" control: a 13px uppercase `muted` label and a `surface` pill of two 44px chips (a 36px face, the
   name); the chosen one is `bg-ink text-bg` with an `accent` ring on the face, `aria-pressed`. Every poster
   exists per teacher (`v3b/` and `v3b/mj/`); `html[data-teacher]` shows the chosen one from the first paint.

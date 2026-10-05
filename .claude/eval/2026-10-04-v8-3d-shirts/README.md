@@ -159,3 +159,31 @@ counts), `-joints-1..3.webp`, `-hem.webp` (Talking4, ShakeNo, WellDone through t
 | Teacher_*_clips.glb | | byte-identical | the base clips verify within 0.017 degrees, 0.24 mm (`v9_verify_anim.mjs`) |
 
 Sizes before the copyright string (v9_ship.sh adds the same one as today).
+
+## Shipped and verified (Hmz approved round 3, 2026-10-05)
+
+- `v9_ship.sh`: Jake 2,363,200 bytes (was 2,284,144), MJ 1,809,808 (was 1,776,888); both clip packs byte-identical
+  (git sees no change); base clips within 0.017 deg, 0.24 mm.
+- Colours solved on the shipped cloth (`SHEET=sheet-a2-final ONLY=A9C6A4,C3B1E1 node scripts/shirts.cjs`): sage
+  #7CA772 renders #B1CDAD (dE00 2.0; 1.72:1 on white, 1.56 on the page), lavender #AA89E5 renders #C6B3E1 (dE00 0.9;
+  1.92 and 1.74). `sheet-a2-final/`.
+- Every landing poster recaptured for both teachers (`stills.cjs` first / start / end, `room-stills.cjs`,
+  `faces.cjs`), 0 API calls.
+- `/demo` in both shirts (`scripts/demo-shirts.cjs`, `demo/`): the classroom and the teacher draw, a lesson plays,
+  no console errors, 0 API calls.
+- Production build (`build/`, logs only kept out of git):
+
+| Check | Jake | MJ |
+|---|---|---|
+| AA, 44 px, overflow (`check.cjs`, `?nointro`, 360 to 1440, both themes) | 1,894 nodes, 0 failures, min 4.74, 0, 0 | same |
+| Bounds (`bounds.cjs`, 1280) | 0 px out at all 7 spots, least clearance 10 px | 0 px out, least 16 px |
+| Room peaks (`room-peaks.cjs`) | pointing 8.3 deg (V8.3c 8.4) | 6.6 deg (6.5) |
+| Model peaks (`peaks.cjs model`) | peak at 3.9 s | peak at 3.9 s |
+| Perf (`perf.cjs`) | sections p95 16.7 to 16.8 ms, CLS 0, LCP the hero poster 220 to 532 ms | same, LCP 280 to 600 ms |
+| Switch (`switch-timing.cjs`) | longest frame 17 ms both ways, out 0.53 s, formed 1.47 s | |
+
+  The hero's worst frames (67 to 217 ms) are V8.3b's start-up frames, as in V8.3c. Without `?nointro` the AA check
+  meets the opening's "Skip intro" (cream at 80% on the light page as the overlay fades, 1.05:1 at 360 lite): not a
+  shirt change, flagged separately.
+- `/learn` signed in: not checked (Hmz skipped it). Tests 556 pass, lint 0 errors (10 warnings as before), type-check
+  clean.
