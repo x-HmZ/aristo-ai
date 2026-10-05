@@ -2,7 +2,7 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-10-05 - The opening's Skip never cream on the lit page (PR into deploy-prep)
+## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 
 Branch `fix/intro-skip-contrast` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-intro-skip/`.
 `check.cjs` without `?nointro` had caught "Skip intro" at 1.05:1 (360 lite light) as the cover faded.
@@ -11,9 +11,9 @@ Branch `fix/intro-skip-contrast` off `origin/deploy-prep`. Evidence: `.claude/ev
 - Measured (production): check.cjs no `?nointro` 360/768/1280 light+dark 0 failures (min 4.74); every frame of 18
   plays (`skip.cjs`) Skip min 10.49, never visible after the lift; plays and skips (key, tap) to `done`; tests 556,
   lint 0 errors.
-- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+- **Next:** V8.6, the app pages onto the brand system (`dev/v8-6-app-pages`), then V8.7.
 
-## 2026-10-05 - V8.3d: softer, looser teacher shirts (PR into deploy-prep)
+## 2026-10-05 - V8.3d: softer, looser teacher shirts (merged into deploy-prep, #21)
 
 Branch `dev/v8-3d-shirts` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-04-v8-3d-shirts/` (README: sheet A2,
 three fit rounds, QA, files). Hmz picked at each stop; no paid generation.
@@ -33,9 +33,9 @@ three fit rounds, QA, files). Hmz picked at each stop; no paid generation.
   0 px out at every spot; section p95 16.7 to 16.8 ms, CLS 0, LCP the hero poster (V8.3b's hero start-up frames as
   before); switch longest frame 17 ms; room pointing 8.3 / 6.6 deg; tests 556; lint 0 errors; 0 API calls.
 - **Not done:** /learn not checked signed-in (Hmz skipped it; /demo uses the same Teacher and was checked).
-- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+- **Next:** merged as #21 after Hmz's review; V8.6 is next (see the entry above).
 
-## 2026-10-03 - V8.3c: a model worth turning, coloured shirts, Jake or MJ, the opening (PR into deploy-prep)
+## 2026-10-03 - V8.3c: a model worth turning, coloured shirts, Jake or MJ, the opening (merged into deploy-prep, #20)
 
 Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.claude/eval/2026-10-03-v8-3c-landing/`
 (README; `video/dark.webm`). Plan approved by Hmz; he picked at each stop (shirts, topic, model, voice, opening).
@@ -62,7 +62,7 @@ Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.cla
   `html[data-teacher]` in CSS, so an MJ-first load is right from the first paint, and a change is announced.
 - **Open:** ElevenLabs renders are on the free plan (not for commercial use: re-render on a paid plan before launch);
   in /demo MJ still speaks with the male narration; the hero start-up frame (V8.3b's).
-- **Next:** Hmz's review of the PR; then V8.4 / V8.6.
+- **Next:** merged as #20 after Hmz's review.
 
 ## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)
 
