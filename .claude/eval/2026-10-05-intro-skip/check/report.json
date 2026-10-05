@@ -1,0 +1,576 @@
+{
+ "api": [],
+ "paid": [],
+ "runs": [
+  {
+   "theme": "light",
+   "w": 360,
+   "mode": "lite",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 6,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 8,
+     "min": 5.11,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 7,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 6,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 14,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 12,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 18,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 5,
+     "min": 4.74,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 10,
+     "min": 4.74,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 3,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 30,
+     "min": 5.26,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "mode": "full",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 5,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 8,
+     "min": 5.11,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 3,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 5,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 15,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 17,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 13,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 27,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 10,
+     "min": 4.74,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 2,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 30,
+     "min": 5.26,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "mode": "full",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 17,
+     "min": 5.11,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 14,
+     "min": 5.11,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 13,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 15,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 32,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 24,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 19,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 32,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 16,
+     "min": 4.74,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 9,
+     "min": 5.55,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 38,
+     "min": 5.26,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "mode": "lite",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 6,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 8,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 7,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 6,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 14,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 12,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 18,
+     "min": 6.06,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 5,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 10,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 3,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 30,
+     "min": 6.6,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "mode": "full",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 5,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 8,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 3,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 5,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 15,
+     "min": 5.97,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 17,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 13,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 27,
+     "min": 5.97,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 10,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 2,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 30,
+     "min": 6.6,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "mode": "full",
+   "stops": [
+    {
+     "name": "top",
+     "nodes": 17,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "idea",
+     "nodes": 14,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "picture",
+     "nodes": 13,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "model",
+     "nodes": 15,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "moves",
+     "nodes": 32,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "remember",
+     "nodes": 24,
+     "min": 5.48,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "map",
+     "nodes": 19,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "immersive",
+     "nodes": 32,
+     "min": 5.97,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "parents",
+     "nodes": 16,
+     "min": 6.42,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "start",
+     "nodes": 9,
+     "min": 6.75,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    },
+    {
+     "name": "footer",
+     "nodes": 38,
+     "min": 6.6,
+     "fails": [],
+     "small": [],
+     "overflow": 0
+    }
+   ]
+  }
+ ]
+}

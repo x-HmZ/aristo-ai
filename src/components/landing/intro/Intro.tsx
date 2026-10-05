@@ -194,7 +194,7 @@ export default function Intro({ onDone }: { onDone: () => void }) {
       <button
         type="button"
         onClick={() => skip.current()}
-        className={cn(SHAPE.pill, PRESS, FOCUS, "absolute right-4 top-4 inline-flex min-h-[44px] items-center px-4 text-sm font-semibold text-[#F4ECE1]/80 hover:bg-white/10 hover:text-[#F4ECE1] sm:right-6 sm:top-6")}
+        className={cn(SHAPE.pill, PRESS, FOCUS, "landing-intro-skip absolute right-4 top-4 inline-flex min-h-[44px] items-center px-4 text-sm font-semibold text-[#F4ECE1]/80 hover:bg-white/10 hover:text-[#F4ECE1] sm:right-6 sm:top-6")}
       >
         Skip intro
       </button>

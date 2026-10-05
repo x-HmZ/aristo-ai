@@ -1,0 +1,755 @@
+{
+ "api": [],
+ "paid": [],
+ "runs": [
+  {
+   "theme": "light",
+   "w": 360,
+   "how": "watch",
+   "frames": 316,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 371,
+   "liftAt": 4947,
+   "doneAt": 5597,
+   "playMs": 5226,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5580,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5597,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 360,
+   "how": "key",
+   "frames": 101,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 180,
+   "liftAt": 1616,
+   "doneAt": 1749,
+   "playMs": 1569,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1733,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1749,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 360,
+   "how": "tap",
+   "frames": 99,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 168,
+   "liftAt": 1596,
+   "doneAt": 1731,
+   "playMs": 1563,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1713,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1731,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "how": "watch",
+   "frames": 318,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 206,
+   "liftAt": 4853,
+   "doneAt": 5504,
+   "playMs": 5298,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5488,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5504,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "how": "key",
+   "frames": 98,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 215,
+   "liftAt": 1641,
+   "doneAt": 1774,
+   "playMs": 1559,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1758,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1774,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 768,
+   "how": "tap",
+   "frames": 98,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 230,
+   "liftAt": 1647,
+   "doneAt": 1787,
+   "playMs": 1557,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1763,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1787,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "how": "watch",
+   "frames": 317,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 210,
+   "liftAt": 4936,
+   "doneAt": 5587,
+   "playMs": 5377,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5569,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5587,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "how": "key",
+   "frames": 97,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 234,
+   "liftAt": 1672,
+   "doneAt": 1805,
+   "playMs": 1571,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1788,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1805,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "light",
+   "w": 1280,
+   "how": "tap",
+   "frames": 97,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 219,
+   "liftAt": 1655,
+   "doneAt": 1796,
+   "playMs": 1577,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1772,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1796,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "how": "watch",
+   "frames": 319,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 197,
+   "liftAt": 4781,
+   "doneAt": 5432,
+   "playMs": 5235,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5414,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5432,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "how": "key",
+   "frames": 99,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 173,
+   "liftAt": 1593,
+   "doneAt": 1727,
+   "playMs": 1554,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1710,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1727,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 360,
+   "how": "tap",
+   "frames": 99,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 183,
+   "liftAt": 1600,
+   "doneAt": 1735,
+   "playMs": 1552,
+   "skipShownIn": [
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1718,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1735,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "how": "watch",
+   "frames": 318,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 298,
+   "liftAt": 4940,
+   "doneAt": 5591,
+   "playMs": 5293,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5574,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5591,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "how": "key",
+   "frames": 98,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 236,
+   "liftAt": 1650,
+   "doneAt": 1783,
+   "playMs": 1547,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1766,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1783,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 768,
+   "how": "tap",
+   "frames": 99,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 250,
+   "liftAt": 1670,
+   "doneAt": 1813,
+   "playMs": 1563,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1786,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1813,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "how": "watch",
+   "frames": 317,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 278,
+   "liftAt": 5009,
+   "doneAt": 5658,
+   "playMs": 5380,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 5642,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 5658,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "how": "key",
+   "frames": 98,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 260,
+   "liftAt": 1698,
+   "doneAt": 1830,
+   "playMs": 1570,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1814,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1830,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": {
+    "skipFocused": "Skip intro",
+    "next": "header: A"
+   },
+   "errors": []
+  },
+  {
+   "theme": "dark",
+   "w": 1280,
+   "how": "tap",
+   "frames": 98,
+   "states": [
+    "on",
+    "playing",
+    "lifting",
+    "done"
+   ],
+   "startedAt": 257,
+   "liftAt": 1704,
+   "doneAt": 1846,
+   "playMs": 1589,
+   "skipShownIn": [
+    "on",
+    "playing"
+   ],
+   "skipMinRatio": 10.49,
+   "skipFails": 0,
+   "low": [],
+   "tail": [
+    {
+     "ms": 1822,
+     "s": "lifting",
+     "vis": "hidden",
+     "op": 0,
+     "pe": "none",
+     "ratio": null,
+     "bg": null
+    },
+    {
+     "ms": 1846,
+     "s": "done"
+    }
+   ],
+   "afterLiftLeaks": 0,
+   "focusAfter": null,
+   "errors": []
+  }
+ ]
+}
