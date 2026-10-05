@@ -399,10 +399,12 @@
   /* The opening's own layer is the same ink while it plays, under its canvas, so Skip sits on ink of its own. When the
      lights come on, that layer clears at once (the cover fades alone) and Skip goes with it, at once and out of reach:
      cream on the lit page would be unreadable, and a fade would pass through it. */
+  html[data-intro="on"] .landing-intro,
   html[data-intro="playing"] .landing-intro {
     background: #0e1117;
   }
-  html:not([data-intro="playing"]) .landing-intro-skip {
+  html[data-intro="lifting"] .landing-intro-skip,
+  html[data-intro="done"] .landing-intro-skip {
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
