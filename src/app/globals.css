@@ -69,9 +69,7 @@
  *   2. prefers-color-scheme.
  * The dark values appear twice, once per route in. Keep them equal. Every
  * page follows the theme since V8.6, which retired the light lock (the
- * aristo-theme-lock meta and its :has() rules). The first selector in each
- * scrollbar pair below is the viewport scrollbar (the root itself); the
- * second is nested scroll containers. */
+ * aristo-theme-lock meta and its :has() rules). */
 @layer base {
   /* `.theme-paper` pins the light values on a subtree whatever the page theme:
    * the desk quiz is a sheet of paper lying in the lit room, which never

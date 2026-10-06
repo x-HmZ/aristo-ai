@@ -14,7 +14,7 @@
  * Only the topmost open dialog handles keys, so stacked dialogs do not fight.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -24,7 +24,7 @@ const stack: HTMLElement[] = [];
 export function useModalDialog<T extends HTMLElement>(onClose?: () => void) {
   const ref = useRef<T>(null);
   const closeRef = useRef(onClose);
-  closeRef.current = onClose;
+  useLayoutEffect(() => { closeRef.current = onClose; });
 
   useEffect(() => {
     const panel = ref.current;
@@ -34,7 +34,8 @@ export function useModalDialog<T extends HTMLElement>(onClose?: () => void) {
     panel.focus({ preventScroll: true });
 
     const onKey = (e: KeyboardEvent) => {
-      if (stack[stack.length - 1] !== panel) return;
+      // Something inside (a menu, a popover) already handled the key.
+      if (e.defaultPrevented || stack[stack.length - 1] !== panel) return;
       if (e.key === "Escape" && closeRef.current) {
         e.stopPropagation();
         closeRef.current();

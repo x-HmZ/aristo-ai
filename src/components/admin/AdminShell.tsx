@@ -76,6 +76,14 @@ export function AdminShell({ children, admin }: AdminShellProps) {
   // A link in the drawer changes the route: close the drawer behind it.
   React.useEffect(() => { setNavOpen(false); }, [pathname]);
 
+  // Past md the drawer's trigger is hidden and the sidebar is back: close it.
+  React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => { if (mq.matches) setNavOpen(false); };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <div className="min-h-screen bg-bg text-ink">
       {/* ── Sidebar (md+) ─────────────────────────────────────────────── */}
@@ -106,6 +114,9 @@ export function AdminShell({ children, admin }: AdminShellProps) {
               <SheetContent
                 side="left"
                 className="flex w-72 max-w-[85vw] flex-col gap-0 p-0"
+                aria-describedby={undefined}
+                // A link to the page already open does not change the route: close on any link.
+                onClickCapture={(e) => { if ((e.target as HTMLElement).closest("a")) setNavOpen(false); }}
               >
                 <SheetTitle className="sr-only">Admin navigation</SheetTitle>
                 <SidebarBody />

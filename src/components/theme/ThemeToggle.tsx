@@ -43,8 +43,8 @@ function writeStored(value: Theme | null) {
 
 /**
  * Light/dark switch. It renders on the landing page (nav and footer) and in
- * the classroom top bar (/learn, /demo); the choice applies app-wide, except
- * on surfaces that lock themselves light (admin, create-teacher).
+ * the classroom top bar (/learn, /demo); the choice applies app-wide (every
+ * page follows the theme since V8.6).
  *
  * Which icon shows is decided by CSS (`--theme-icon-sun` / `--theme-icon-moon`,
  * swapped with the rest of the theme tokens), not by state, so the server
