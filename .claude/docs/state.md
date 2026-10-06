@@ -22,7 +22,7 @@ Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, maste
   map); harness-only: `/hx/admin` fails its server render in dev (Next's internal pathname context) and renders client-side.
 - **Not done:** the sign-up to learn flow walk with a test account (Hmz chose screenshots); React Flow canvas
   graphics are not checked as text.
-- **Next:** merged as #23 after Hmz saw the sheets; V8.7 (`dev/v8-7-cleanup`).
+- **Next:** merged as #23 after Hmz saw the sheets; V8.7 (`dev/v8-7-cleanup`), brief in `.claude/plans/V8-7-assets-and-cleanup.md` (Sonnet).
 
 ## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 
