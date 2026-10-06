@@ -23,6 +23,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneProbe } from "@/components/dev/SceneProbe";
+import { DEV_MONO, DEV_OVERLAY, DEV_PANEL, DevButton } from "@/components/dev/devKit";
+import { cn } from "@/lib/utils";
 import { useFrame } from "@react-three/fiber";
 import { useAristoStore } from "@/store/useAristoStore";
 import type { QuizQuestion } from "@/lib/agents/assessment";
@@ -134,10 +136,10 @@ function Knob({
   onChange: (n: number) => void;
 }) {
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11 }}>
-      <span style={{ display: "flex", justifyContent: "space-between" }}>
-        <span style={{ opacity: 0.85 }}>{label}</span>
-        <span style={{ fontVariantNumeric: "tabular-nums", color: "hsl(var(--aristo-orange-main))" }}>
+    <label className="flex flex-col gap-1 text-xs">
+      <span className="flex justify-between">
+        <span className="text-body">{label}</span>
+        <span className="font-semibold tabular-nums text-accent-text">
           {value.toFixed(2)}
         </span>
       </span>
@@ -145,7 +147,7 @@ function Knob({
         type="range"
         min={min} max={max} step={step} value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        style={{ width: "100%" }}
+        className="w-full accent-accent"
       />
     </label>
   );
@@ -160,15 +162,8 @@ function TripleKnob({
   onChange: (next: Triple) => void;
 }) {
   return (
-    <fieldset style={{
-      border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
-      borderRadius: 8,
-      padding: "8px 10px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 6,
-    }}>
-      <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "hsl(var(--aristo-orange-main))" }}>
+    <fieldset className="flex flex-col gap-1.5 rounded-[10px] border border-line px-2.5 py-2">
+      <legend className="px-1.5 text-xs font-semibold text-accent-text">
         {label}
       </legend>
       <Knob label="x" value={value[0]} min={ranges.x[0]} max={ranges.x[1]} step={0.05}
@@ -244,7 +239,7 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
   };
 
   if (!hydrated) {
-    return <div style={{ width: "100vw", height: "100vh", background: "hsl(var(--aristo-backdrop))" }} />;
+    return <div className="h-screen w-screen bg-bg" />;
   }
 
   return (
@@ -256,30 +251,15 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
           <CameraSpy />
         </AristoCanvas>
         {/* Marker overlay — useful sanity reference */}
-        <div style={{
-          position: "absolute", top: 12, left: 12,
-          background: "rgba(0,0,0,0.55)", color: "white",
-          padding: "4px 8px", borderRadius: 6,
-          fontSize: 11, fontFamily: "monospace", pointerEvents: "none",
-        }}>
+        <div className={cn(DEV_OVERLAY, "absolute left-3 top-3")}>
           /dev/desk-quiz — tune until paper sits on the desk surface
         </div>
       </div>
 
       {/* Sidebar */}
-      <aside style={{
-        width: 280,
-        background: "#1a1a2e",
-        color: "#fdf6ee",
-        padding: 14,
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        fontFamily: "system-ui, sans-serif",
-      }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, margin: 0 }}>Desk Quiz tuning</h2>
-        <p style={{ fontSize: 11, opacity: 0.65, margin: 0 }}>
+      <aside className={cn(DEV_PANEL, "flex w-[280px] shrink-0 flex-col gap-2.5")}>
+        <h2 className="text-sm font-bold">Desk Quiz tuning</h2>
+        <p className="text-xs text-muted">
           Sliders update in real time. Save to persist across reload.
         </p>
 
@@ -301,51 +281,31 @@ const PAPER_ANCHOR: [number, number, number] = [${tun.paperAnchor.join(", ")}];`
           ranges={{ x: [-2, 2], y: [-2, 1], z: [-5, 0] }}
           onChange={(v) => setTun((t) => ({ ...t, paperAnchor: v }))}
         />
-        <fieldset style={{
-          border: "1px solid hsl(var(--aristo-orange-main) / 0.3)",
-          borderRadius: 8, padding: "8px 10px",
-        }}>
-          <legend style={{ fontSize: 11, fontWeight: 700, padding: "0 6px", color: "hsl(var(--aristo-orange-main))" }}>
+        <fieldset className="rounded-[10px] border border-line px-2.5 py-2">
+          <legend className="px-1.5 text-xs font-semibold text-accent-text">
             damping
           </legend>
           <Knob label="λ" value={tun.lambda} min={0.5} max={10} step={0.1}
             onChange={(n) => setTun((t) => ({ ...t, lambda: n }))} />
         </fieldset>
 
-        <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
-          <button onClick={save}  style={btnStyle("hsl(var(--aristo-orange-main))")}>Save</button>
-          <button onClick={reset} style={btnStyle("#333")}>Reset</button>
-          <button onClick={dump}  style={btnStyle("#333")}>Dump → console</button>
+        <div className="mt-1 flex gap-1.5">
+          <DevButton primary onClick={save} className="flex-1">Save</DevButton>
+          <DevButton onClick={reset} className="flex-1">Reset</DevButton>
+          <DevButton onClick={dump} className="flex-1">Dump → console</DevButton>
         </div>
-        <button
+        <DevButton
+          selected={quizActive}
           onClick={() => setQuizActive((q) => !q)}
           data-testid="toggle-quiz"
-          style={btnStyle(quizActive ? "#7e2acc" : "#1d8a47")}
         >
           {quizActive ? "Hide Quiz (lesson framing)" : "Show Quiz (desk framing)"}
-        </button>
+        </DevButton>
 
-        <pre style={{
-          fontSize: 10, background: "#0d0d1e", padding: 8, borderRadius: 6,
-          overflow: "auto", margin: 0,
-        }}>
+        <pre className={cn(DEV_MONO, "m-0 overflow-auto rounded-[10px] bg-sunk p-2 text-ink")}>
 {JSON.stringify(tun, null, 2)}
         </pre>
       </aside>
     </div>
   );
-}
-
-function btnStyle(bg: string): React.CSSProperties {
-  return {
-    flex: 1,
-    background: bg,
-    color: "white",
-    border: "none",
-    borderRadius: 6,
-    padding: "6px 8px",
-    fontSize: 11,
-    fontWeight: 700,
-    cursor: "pointer",
-  };
 }

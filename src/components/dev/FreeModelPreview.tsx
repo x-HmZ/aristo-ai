@@ -20,6 +20,8 @@
 import { useEffect, useState } from "react";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
+import { DEV_OVERLAY, DevButton } from "@/components/dev/devKit";
+import { cn } from "@/lib/utils";
 
 // Dev-only query overrides: ?avatar=ryan|sonia|marcus|priya|jake|mj, ?room=alt
 // and ?state=thinking|talking|pointing
@@ -78,28 +80,17 @@ export default function FreeModelPreview() {
   return (
     <div style={{ position: "fixed", inset: 0 }}>
       <AristoCanvas />
-      <div style={{
-        position: "absolute", top: 12, left: 12,
-        display: "flex", gap: 8, alignItems: "center",
-        background: "rgba(0,0,0,0.55)", color: "white",
-        padding: "6px 10px", borderRadius: 8,
-        fontSize: 12, fontFamily: "monospace",
-      }}>
+      <div className={cn(DEV_OVERLAY, "pointer-events-auto absolute left-3 top-3 flex items-center gap-2")}>
         <span>/dev/free-model — stage:</span>
         {(["empty", "image", "model"] as Stage[]).map((s) => (
-          <button
+          <DevButton
             key={s}
             data-testid={`stage-${s}`}
+            selected={stage === s}
             onClick={() => setStage(s)}
-            style={{
-              background: stage === s ? "hsl(var(--aristo-orange-main))" : "#333",
-              color: "white", border: "none", borderRadius: 6,
-              padding: "4px 10px", fontSize: 12, fontWeight: 700,
-              cursor: "pointer",
-            }}
           >
             {s}
-          </button>
+          </DevButton>
         ))}
       </div>
     </div>

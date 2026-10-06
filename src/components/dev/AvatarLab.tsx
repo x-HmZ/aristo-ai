@@ -34,6 +34,7 @@ import { LID_REST, SMILE_REST } from "@/lib/avatar/face";
 import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/devKit";
 
 const CANDIDATES = {
   jake:   { file: "Teacher_Jake.glb",   label: "Jake (Canino, CC4)", pack: "Teacher_Jake_clips.glb" },
@@ -375,8 +376,8 @@ export default function AvatarLab() {
   const missing = expected.filter((v) => !report.morphs.includes(v));
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "system-ui", background: BRAND_HEX.backdrop }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
+    <div className="flex h-screen bg-bg text-ink">
+      <div className="min-w-0 flex-1">
         <Canvas camera={{ position: [0, 0, 0.9], fov: 40, near: 0.01 }} shadows={false}>
           <ambientLight intensity={0.9} />
           <directionalLight position={[2, 4, 3]} intensity={1.6} />
@@ -399,126 +400,106 @@ export default function AvatarLab() {
         </Canvas>
       </div>
 
-      <aside style={{ width: 330, padding: 18, overflowY: "auto", background: "#fff", borderLeft: "1px solid #E9D9C8" }}>
-        <h2 style={{ margin: "0 0 14px", fontSize: 17 }}>V9.1 avatar lab</h2>
+      <aside className={`${DEV_PANEL} w-[330px] shrink-0 p-[18px]`}>
+        <h2 className="type-h4 mb-3.5 font-semibold">V9.1 avatar lab</h2>
 
-        <Section title="Candidate">
+        <DevSection title="Candidate">
           {(Object.keys(CANDIDATES) as CandidateKey[]).map((k) => (
-            <label key={k} style={{ display: "block", marginBottom: 4, fontSize: 13 }}>
-              <input type="radio" checked={candidate === k} onChange={() => setCandidate(k)} />{" "}
+            <label key={k} className="mb-1 block text-[13px]">
+              <input type="radio" className="accent-accent" checked={candidate === k} onChange={() => setCandidate(k)} />{" "}
               {CANDIDATES[k].label}
             </label>
           ))}
-        </Section>
+        </DevSection>
 
-        <Section title="Framing">
+        <DevSection title="Framing">
           {(Object.keys(VIEWS) as ViewKey[]).map((v) => (
-            <button key={v} onClick={() => setView(v)}
-              style={{ ...btn, background: view === v ? BRAND_HEX.orangeMain : "#F3E7DA", color: view === v ? "#fff" : "#4A3A2C" }}>
+            <DevButton key={v} selected={view === v} onClick={() => setView(v)} className="mb-1.5 mr-1.5">
               {v}
-            </button>
+            </DevButton>
           ))}
-        </Section>
+        </DevSection>
 
-        <Section title="Clip">
+        <DevSection title="Clip">
           {CLIPS.map((c) => (
-            <button key={c} onClick={() => setClip(c)}
-              style={{ ...btn, background: clip === c ? BRAND_HEX.orangeMain : "#F3E7DA", color: clip === c ? "#fff" : "#4A3A2C" }}>
+            <DevButton key={c} selected={clip === c} onClick={() => setClip(c)} className="mb-1.5 mr-1.5">
               {c}
-            </button>
+            </DevButton>
           ))}
-        </Section>
+        </DevSection>
 
-        <Section title="Gesture review (over the clip above)">
+        <DevSection title="Gesture review (over the clip above)">
           {GESTURES.map((g) => (
-            <button key={g.name} title={`${g.mask} mask, ${g.note}`}
+            <DevButton key={g.name} title={`${g.mask} mask, ${g.note}`}
+              selected={gesture?.name === g.name}
               onClick={() => setGesture({ name: g.name, id: Date.now(), loop, speed })}
-              style={{ ...btn, marginBottom: 6, background: gesture?.name === g.name ? BRAND_HEX.orangeMain : "#F3E7DA", color: gesture?.name === g.name ? "#fff" : "#4A3A2C" }}>
+              className="mb-1.5 mr-1.5">
               {g.name}
-            </button>
+            </DevButton>
           ))}
-          <div style={{ marginTop: 4, fontSize: 13 }}>
+          <div className="mt-1 text-[13px]">
             <label>
-              <input type="checkbox" checked={loop}
+              <input type="checkbox" className="accent-accent" checked={loop}
                 onChange={(e) => { setLoop(e.target.checked); setGesture((g) => g && { ...g, loop: e.target.checked, id: Date.now() }); }} />{" "}
               replay every time it ends
             </label>{" "}
-            <button style={btn} onClick={() => setGesture(null)}>stop</button>
+            <DevButton onClick={() => setGesture(null)}>stop</DevButton>
           </div>
-          <div style={{ marginTop: 6, fontSize: 13 }}>
+          <div className="mt-1.5 text-[13px]">
             speed{" "}
             {SPEEDS.map((s) => (
-              <button key={s}
+              <DevButton key={s} selected={speed === s}
                 onClick={() => { setSpeed(s); setGesture((g) => g && { ...g, speed: s, id: Date.now() }); }}
-                style={{ ...btn, padding: "3px 8px", background: speed === s ? BRAND_HEX.orangeMain : "#F3E7DA", color: speed === s ? "#fff" : "#4A3A2C" }}>
+                className="mr-1.5 px-2">
                 x{s}
-              </button>
+              </DevButton>
             ))}
           </div>
-          <div style={{ ...mono, marginTop: 6 }}>{gestureStatus}</div>
-          <div style={{ fontSize: 11, color: "#9A8574", marginTop: 4 }}>
+          <div className={`${DEV_MONO} mt-1.5`}>{gestureStatus}</div>
+          <div className="mt-1 text-xs text-muted">
             &quot;classroom&quot; framing is the app&apos;s camera and placement; the orange ball is where the 3D model appears.
             The app also turns the head toward the model, which this page does not.
           </div>
-        </Section>
+        </DevSection>
 
-        <Section title="Demo narration (heart)">
+        <DevSection title="Demo narration (heart)">
           <audio
             ref={audioRef}
             src={SEGMENTS[seg]}
             controls
-            style={{ width: "100%" }}
+            className="w-full"
             onEnded={() => setSeg((s) => Math.min(s + 1, SEGMENTS.length - 1))}
           />
-          <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
-            <button style={btn} onClick={() => setSeg((s) => Math.max(0, s - 1))}>◀ prev</button>
-            <span style={{ fontSize: 12, alignSelf: "center" }}>seg {seg + 1}/{SEGMENTS.length}</span>
-            <button style={btn} onClick={() => setSeg((s) => Math.min(SEGMENTS.length - 1, s + 1))}>next ▶</button>
+          <div className="mt-2 flex gap-1.5">
+            <DevButton onClick={() => setSeg((s) => Math.max(0, s - 1))}>prev</DevButton>
+            <span className="self-center text-xs">seg {seg + 1}/{SEGMENTS.length}</span>
+            <DevButton onClick={() => setSeg((s) => Math.min(SEGMENTS.length - 1, s + 1))}>next</DevButton>
           </div>
-        </Section>
+        </DevSection>
 
-        <Section title="Live viseme">
-          <div style={{ fontSize: 22, fontWeight: 600, color: BRAND_HEX.orangeMain }}>{live}</div>
-          <div style={{ fontSize: 12, color: spans ? "#2E7D32" : "#B23B2E" }}>
+        <DevSection title="Live viseme">
+          <div className="type-h3 font-semibold text-accent-text">{live}</div>
+          <div className={`text-xs ${spans ? "text-success" : "text-danger"}`}>
             {spans ? `alignment loaded — ${spans} spans` : "no alignment timeline"}
           </div>
-        </Section>
+        </DevSection>
 
-        <Section title="Loaded clips">
-          <code style={mono}>{report.clips.join(", ") || "—"}</code>
-        </Section>
+        <DevSection title="Loaded clips">
+          <code className={DEV_MONO}>{report.clips.join(", ") || "—"}</code>
+        </DevSection>
 
-        <Section title="Viseme coverage">
-          <div style={{ fontSize: 13, color: missing.length ? "#B23B2E" : "#2E7D32" }}>
+        <DevSection title="Viseme coverage">
+          <div className={`text-[13px] ${missing.length ? "text-danger" : "text-success"}`}>
             {missing.length ? `missing: ${missing.join(", ")}` : "all 14 non-silent visemes present"}
           </div>
-        </Section>
+        </DevSection>
 
-        <Section title={`Morph targets (${report.morphs.length})`}>
-          <code style={mono}>{report.morphs.join(", ") || "—"}</code>
-        </Section>
+        <DevSection title={`Morph targets (${report.morphs.length})`}>
+          <code className={DEV_MONO}>{report.morphs.join(", ") || "—"}</code>
+        </DevSection>
       </aside>
     </div>
   );
 }
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div style={{ marginBottom: 18 }}>
-      <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: .6, color: "#9A8574", marginBottom: 6 }}>
-        {title}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-const btn: React.CSSProperties = {
-  border: 0, borderRadius: 7, padding: "6px 11px", marginRight: 6,
-  background: "#F3E7DA", color: "#4A3A2C", cursor: "pointer", fontSize: 13,
-};
-const mono: React.CSSProperties = {
-  fontSize: 11, lineHeight: 1.5, wordBreak: "break-word", color: "#4A3A2C",
-};
 
 Object.values(CANDIDATES).forEach((c) => useGLTF.preload(`/models/${c.file}`));
