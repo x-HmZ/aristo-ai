@@ -66,7 +66,7 @@ export default function SystemHealthPage() {
           description="Live ping of provider /v1/models endpoints. Fal.ai is treated as configured if FAL_KEY is set."
         />
         {!data ? (
-          <div className="text-xs text-aristo-brown-main/50 flex items-center gap-2">
+          <div className="text-xs text-muted flex items-center gap-2">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />Loading…
           </div>
         ) : (
@@ -82,9 +82,9 @@ export default function SystemHealthPage() {
                 >
                   <div className="flex items-center gap-2">
                     {status === "ok"
-                      ? <CircleCheck className="h-4 w-4 text-green-600" />
-                      : <CircleAlert className="h-4 w-4 text-amber-600" />}
-                    <span className="text-xs font-bold uppercase tracking-wider text-aristo-brown-main/70">
+                      ? <CircleCheck className="h-4 w-4 text-success" />
+                      : <CircleAlert className="h-4 w-4 text-warning" />}
+                    <span className="text-xs font-bold uppercase tracking-wider text-body">
                       {p}
                     </span>
                   </div>
@@ -105,17 +105,17 @@ export default function SystemHealthPage() {
           description="Live counts from public.* via the service role. Updated on each refresh."
         />
         {!data ? (
-          <div className="text-xs text-aristo-brown-main/50 flex items-center gap-2">
+          <div className="text-xs text-muted flex items-center gap-2">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />Loading…
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {Object.entries(data.rowCounts).map(([t, c]) => (
-              <div key={t} className="bg-white/60 rounded-xl px-3 py-2 flex justify-between items-center">
-                <span className="text-[11px] text-aristo-brown-main/70 font-mono truncate" title={t}>
+              <div key={t} className="bg-surface rounded-xl px-3 py-2 flex justify-between items-center">
+                <span className="text-[11px] text-body font-mono truncate" title={t}>
                   {t}
                 </span>
-                <span className="text-sm font-bold tabular-nums text-aristo-brown-main">
+                <span className="text-sm font-bold tabular-nums text-ink">
                   {c.toLocaleString()}
                 </span>
               </div>
@@ -131,28 +131,28 @@ export default function SystemHealthPage() {
           description="Audit log entries whose diff contains an `error` field. Useful for spotting hot-path bugs without leaving the admin."
         />
         {!data ? (
-          <p className="text-xs text-aristo-brown-main/50">Loading…</p>
+          <p className="text-xs text-muted">Loading…</p>
         ) : data.recentErrors.length === 0 ? (
-          <p className="text-xs text-aristo-brown-main/50 flex items-center gap-2">
+          <p className="text-xs text-muted flex items-center gap-2">
             <Server className="h-3.5 w-3.5" />
             No recent errors — system is happy.
           </p>
         ) : (
           <div className="space-y-2">
             {data.recentErrors.map((e) => (
-              <div key={e.id} className="bg-red-50 border border-red-200 rounded-xl px-3 py-2">
-                <div className="flex items-center gap-2 mb-1">
+              <div key={e.id} className="bg-danger/10 border border-danger/25 rounded-xl px-3 py-2">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
                   <BrandBadge variant="red">{e.action}</BrandBadge>
                   {e.target_type && (
                     <BrandBadge variant="neutral" size="sm">
                       {e.target_type}: {e.target_id ?? "—"}
                     </BrandBadge>
                   )}
-                  <span className="text-[10px] text-aristo-brown-main/40 ml-auto">
+                  <span className="text-xs text-muted ml-auto">
                     {new Date(e.created_at).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-xs text-red-800 leading-snug">
+                <p className="text-xs text-danger leading-snug">
                   {e.diff.error ?? JSON.stringify(e.diff)}
                 </p>
               </div>

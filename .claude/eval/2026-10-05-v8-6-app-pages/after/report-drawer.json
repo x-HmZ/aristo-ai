@@ -1,0 +1,12 @@
+{
+ "api": [],
+ "paid": [],
+ "checks": {
+  "opens": true,
+  "closedOnCurrentLink": true,
+  "stillOnPage": "/hx/admin/overview",
+  "closedOnEscape": true,
+  "closedPastMd": true,
+  "sidebarVisiblePastMd": true
+ }
+}

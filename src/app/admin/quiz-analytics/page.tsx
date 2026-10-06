@@ -15,6 +15,7 @@ import { BrandButton }               from "@/components/admin/ui/BrandButton";
 import { StatCard }                  from "@/components/admin/ui/StatCard";
 import { SectionTitle }              from "@/components/admin/ui/SectionTitle";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE, AXIS_TICK, AXIS_LABEL, GRID, TOOLTIP } from "@/components/admin/chart";
 
 interface Analytics {
   summary: {
@@ -79,16 +80,15 @@ export default function QuizAnalyticsPage() {
           label="Overall accuracy"
           value={data ? `${data.summary.overall_accuracy}%` : "—"}
           color={
-            !data ? BRAND_HEX.orangeMain :
-            data.summary.overall_accuracy >= 70 ? "#22C55E" :
-            data.summary.overall_accuracy >= 50 ? BRAND_HEX.orangeMain : "#EF4444"
+            !data ? undefined :
+            data.summary.overall_accuracy >= 70 ? TONE.success :
+            data.summary.overall_accuracy >= 50 ? TONE.warning : TONE.danger
           }
           icon={<Target className="h-5 w-5" />}
         />
         <StatCard
           label="Avg response time"
           value={data?.summary.avg_response_s != null ? `${data.summary.avg_response_s}s` : "—"}
-          color={BRAND_HEX.purple}
           icon={<Clock className="h-5 w-5" />}
         />
       </div>
@@ -98,26 +98,24 @@ export default function QuizAnalyticsPage() {
         <BrandCard>
           <SectionTitle title="Accuracy by Bloom level" description="How learners perform across cognitive complexity." />
           {sortedBloom.length === 0 ? (
-            <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
+            <p className="text-xs text-muted">No quiz data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={sortedBloom} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
-                <XAxis dataKey="bloom" tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <CartesianGrid {...GRID} />
+                <XAxis dataKey="bloom" tick={AXIS_TICK} />
+                <YAxis domain={[0, 100]} tick={AXIS_TICK} />
                 <Tooltip
-                  contentStyle={{
-                    background: "rgba(253, 248, 239, 0.95)",
-                    border: "1px solid rgba(248, 123, 47, 0.3)",
-                    borderRadius: 12,
-                  }}
+                  contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                   formatter={(value, name) =>
                     name === "accuracy" ? `${value}%` : (value as number | string)
                   }
                 />
                 <Bar dataKey="accuracy" radius={[6, 6, 0, 0]}>
                   {sortedBloom.map((entry) => (
-                    <Cell key={entry.bloom} fill={BLOOM_COLOR_HEX[entry.bloom] ?? BRAND_HEX.orangeMain} />
+                    <Cell key={entry.bloom} fill={BLOOM_COLOR_HEX[entry.bloom] ?? TONE.accent} />
                   ))}
                 </Bar>
               </BarChart>
@@ -128,28 +126,26 @@ export default function QuizAnalyticsPage() {
         <BrandCard>
           <SectionTitle title="Accuracy by question type" description="Which formats trip learners up most?" />
           {data?.byType.length === 0 || !data ? (
-            <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
+            <p className="text-xs text-muted">No quiz data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={data.byType} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                <CartesianGrid {...GRID} />
                 <XAxis
                   dataKey="type"
-                  tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
+                  tick={AXIS_TICK}
                   angle={-30}
                   textAnchor="end"
                   interval={0}
                 />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <YAxis domain={[0, 100]} tick={AXIS_TICK} />
                 <Tooltip
-                  contentStyle={{
-                    background: "rgba(253, 248, 239, 0.95)",
-                    border: "1px solid rgba(248, 123, 47, 0.3)",
-                    borderRadius: 12,
-                  }}
+                  contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                   formatter={(value) => `${value}%`}
                 />
-                <Bar dataKey="accuracy" fill={BRAND_HEX.orangeMain} radius={[6, 6, 0, 0]} />
+                <Bar dataKey="accuracy" fill={TONE.accent} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -163,35 +159,33 @@ export default function QuizAnalyticsPage() {
           description="X: declared difficulty (0–1) · Y: observed accuracy. The diagonal is perfect calibration (50% accuracy at 0.5 difficulty). Buckets with <20 attempts are hidden to avoid noise."
         />
         {!data || data.calibration.length === 0 ? (
-          <p className="text-xs text-aristo-brown-main/50">
+          <p className="text-xs text-muted">
             Not enough data — need at least 20 attempts per 0.1-wide difficulty bucket.
           </p>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <ScatterChart margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+              <CartesianGrid {...GRID} />
               <XAxis
                 type="number"
                 dataKey="difficulty"
                 domain={[0, 1]}
-                tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }}
-                label={{ value: "Declared difficulty", position: "insideBottom", offset: -5, fontSize: 11, fill: BRAND_HEX.brownMuted }}
+                tick={AXIS_TICK}
+                label={{ value: "Declared difficulty", position: "insideBottom", offset: -5, ...AXIS_LABEL }}
               />
               <YAxis
                 type="number"
                 dataKey="accuracy"
                 domain={[0, 1]}
-                tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }}
-                label={{ value: "Actual accuracy", angle: -90, position: "insideLeft", fontSize: 11, fill: BRAND_HEX.brownMuted }}
+                tick={AXIS_TICK}
+                label={{ value: "Actual accuracy", angle: -90, position: "insideLeft", ...AXIS_LABEL }}
               />
               <ZAxis dataKey="n" range={[40, 400]} name="Sample size" />
               <Tooltip
                 cursor={{ strokeDasharray: "3 3" }}
-                contentStyle={{
-                  background: "rgba(253, 248, 239, 0.95)",
-                  border: "1px solid rgba(248, 123, 47, 0.3)",
-                  borderRadius: 12,
-                }}
+                contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                 formatter={(value, name) => {
                   if (name === "difficulty" || name === "accuracy") {
                     return `${((value as number) * 100).toFixed(0)}%`;
@@ -204,12 +198,12 @@ export default function QuizAnalyticsPage() {
                   { x: 0, y: 1 },
                   { x: 1, y: 0 },
                 ]}
-                stroke={BRAND_HEX.purple}
+                stroke={TONE.muted}
                 strokeDasharray="4 4"
                 strokeWidth={1.5}
                 ifOverflow="hidden"
               />
-              <Scatter data={data.calibration} fill={BRAND_HEX.orangeMain} />
+              <Scatter data={data.calibration} fill={TONE.accent} />
             </ScatterChart>
           </ResponsiveContainer>
         )}
@@ -219,23 +213,21 @@ export default function QuizAnalyticsPage() {
       <BrandCard>
         <SectionTitle title="Daily accuracy trend" description="Are recent lesson + curriculum changes moving the needle?" />
         {!data || data.trend.length === 0 ? (
-          <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
+          <p className="text-xs text-muted">No quiz data yet.</p>
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={data.trend} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+              <CartesianGrid {...GRID} />
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
+                tick={AXIS_TICK}
                 tickFormatter={(v) => v.slice(5)}
               />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+              <YAxis domain={[0, 100]} tick={AXIS_TICK} />
               <Tooltip
-                contentStyle={{
-                  background: "rgba(253, 248, 239, 0.95)",
-                  border: "1px solid rgba(248, 123, 47, 0.3)",
-                  borderRadius: 12,
-                }}
+                contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                 formatter={(value, name) =>
                   name === "accuracy" ? `${value}%` : (value as number | string)
                 }
@@ -243,9 +235,9 @@ export default function QuizAnalyticsPage() {
               <Line
                 type="monotone"
                 dataKey="accuracy"
-                stroke={BRAND_HEX.orangeMain}
+                stroke={TONE.accent}
                 strokeWidth={2}
-                dot={{ r: 3, fill: BRAND_HEX.orangeMain }}
+                dot={{ r: 3, fill: TONE.accent }}
                 activeDot={{ r: 5 }}
               />
             </LineChart>

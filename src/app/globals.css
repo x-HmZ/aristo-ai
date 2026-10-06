@@ -42,8 +42,9 @@
     /* Lesson-phase and status hues from before the design system. Deprecated:
      * the system gives the five phases their identity through numbering, icon
      * and position with one accent; the classroom left them in V8.4a to V8.4c.
-     * Kept for the surfaces V8.6 still owns (admin, onboarding, the course
-     * map, the dashboard). */
+     * Since V8.6 they are read only as categorical data-viz hues in admin
+     * charts (providers, Bloom bars, the expertise split, the knowledge-graph
+     * nodes, the misconception heat ramp), through BRAND_HEX. */
     --aristo-purple: 258.31 89.53% 66.27%;     /* #8B5CF6  Activate phase, learner analytics */
     --aristo-purple-hover: 262.12 83.26% 57.84%; /* #7C3AED  hover on purple text */
     --aristo-teal: 160.12 84.08% 39.41%;       /* #10B981  Demonstrate phase, mastered */
@@ -64,18 +65,11 @@
  * ratios are recorded in brand-system.md.
  *
  * Theme resolution, in order:
- *   1. a surface that is not on the system yet declares
- *      <meta name="aristo-theme-lock" content="light"> and stays light;
- *   2. html[data-theme] set by ThemeToggle (an explicit choice);
- *   3. prefers-color-scheme.
- * The dark values appear twice, once per route in. Keep them equal.
- *
- * The lock is read with :has(). A browser without it (Chrome < 105, Safari
- * < 15.4, Firefox < 121) drops both dark rules and the lock rules below, so
- * it renders light everywhere; locked surfaces then lose their old cream page
- * defaults but stay readable. The first selector in each scrollbar pair
- * below is the viewport scrollbar (the root itself); the second is nested
- * scroll containers. */
+ *   1. html[data-theme] set by ThemeToggle (an explicit choice);
+ *   2. prefers-color-scheme.
+ * The dark values appear twice, once per route in. Keep them equal. Every
+ * page follows the theme since V8.6, which retired the light lock (the
+ * aristo-theme-lock meta and its :has() rules). */
 @layer base {
   /* `.theme-paper` pins the light values on a subtree whatever the page theme:
    * the desk quiz is a sheet of paper lying in the lit room, which never
@@ -145,7 +139,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]):not(:has(meta[name="aristo-theme-lock"])) {
+    :root:not([data-theme="light"]) {
       --bg: 14 17 23; /* #0E1117 */
       --surface: 21 25 34; /* #151922 */
       --sunk: 11 13 18; /* #0B0D12 */
@@ -173,12 +167,10 @@
     }
   }
 
-  /* `.theme-ink` resolves the dark values on a subtree whatever the page theme
-   * (and through the lock): the classroom's caption band and in-scene chips sit
-   * on the lit 3D room, which never follows the theme. The list sits in :is()
-   * because :is() is forgiving: a browser without :has() drops only the first
-   * branch and keeps .theme-ink (a plain selector list would drop both). */
-  :is(:root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])), .theme-ink) {
+  /* `.theme-ink` resolves the dark values on a subtree whatever the page theme:
+   * the classroom's caption band and in-scene chips sit on the lit 3D room,
+   * which never follows the theme. */
+  :is(:root[data-theme="dark"], .theme-ink) {
     --bg: 14 17 23;
     --surface: 21 25 34;
     --sunk: 11 13 18;
@@ -203,7 +195,7 @@
     color-scheme: dark;
   }
 
-  :root[data-theme="dark"]:not(:has(meta[name="aristo-theme-lock"])) {
+  :root[data-theme="dark"] {
     --theme-icon-sun: block;
     --theme-icon-moon: none;
   }
@@ -245,36 +237,6 @@
 
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--muted));
-  }
-
-  /* Surfaces not on the system yet (admin and create-teacher; the classroom
-   * left the lock in V8.4c) keep the page defaults they had before V8.2:
-   * cream page, warm near-black text, beige hairlines and an orange
-   * scrollbar. Zero specificity (:where) so any class on an element still
-   * wins, exactly as before. V8.6 deletes the remaining locks. */
-  :where(:root:has(meta[name="aristo-theme-lock"])) body {
-    background-color: hsl(var(--aristo-cream));
-    color: hsl(25 40% 12%); /* #2B1D12, the old shadcn foreground */
-  }
-
-  :where(:root:has(meta[name="aristo-theme-lock"])) * {
-    border-color: hsl(35 35% 86%); /* #E8DDCF, the old shadcn border */
-  }
-
-  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-track,
-  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-track {
-    background: hsl(35 35% 91%); /* #F0E9E0, the old shadcn muted */
-    border-radius: 9999px;
-  }
-
-  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-thumb,
-  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb {
-    background: hsl(var(--aristo-orange-light));
-  }
-
-  :where(:root:has(meta[name="aristo-theme-lock"]))::-webkit-scrollbar-thumb:hover,
-  :where(:root:has(meta[name="aristo-theme-lock"])) ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--aristo-orange-main));
   }
 }
 
@@ -843,4 +805,27 @@ html[data-teacher="mj"] [data-chooser] [data-t="mj"] {
 html:not([data-teacher="mj"]) [data-chooser] [data-t="jake"] img,
 html[data-teacher="mj"] [data-chooser] [data-t="mj"] img {
   box-shadow: 0 0 0 2px rgb(var(--accent));
+}
+
+/* Admin knowledge graph (V8.6): React Flow's zoom controls and minimap on the
+   tokens, with 44px targets. Two classes deep so they beat @xyflow/react's own
+   stylesheet, which the graph imports after this file. */
+.react-flow .react-flow__controls-button {
+  width: 44px;
+  height: 44px;
+  background: rgb(var(--surface));
+  border-bottom: 1px solid rgb(var(--line));
+  color: rgb(var(--ink));
+  fill: currentColor;
+}
+.react-flow .react-flow__controls-button:hover {
+  background: rgb(var(--sunk));
+}
+.react-flow .react-flow__controls-button svg {
+  fill: currentColor;
+  max-width: 14px;
+  max-height: 14px;
+}
+.react-flow .react-flow__minimap {
+  background: rgb(var(--surface));
 }

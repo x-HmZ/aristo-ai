@@ -86,10 +86,10 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-aristo-cream max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-surface max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-aristo-brown-main flex items-center gap-2">
-            <span className="font-mono text-xs text-aristo-brown-main/40">{form.id}</span>
+          <DialogTitle className="text-ink flex items-center gap-2">
+            <span className="font-mono text-xs text-muted">{form.id}</span>
           </DialogTitle>
           <DialogDescription>
             Edit concept fields and prerequisites.
@@ -120,7 +120,7 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
                 value={String(form.difficulty)}
                 onValueChange={(v) => setForm({ ...form, difficulty: parseInt(v, 10) })}
               >
-                <SelectTrigger className="bg-white/60 border-white/60">
+                <SelectTrigger className="bg-surface border-line">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -135,7 +135,7 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
                 value={form.bloom_level}
                 onValueChange={(v) => setForm({ ...form, bloom_level: v })}
               >
-                <SelectTrigger className="bg-white/60 border-white/60">
+                <SelectTrigger className="bg-surface border-line">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -164,18 +164,18 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
           >
             <div className="flex flex-wrap gap-1.5 mb-2 min-h-[28px]">
               {form.prerequisites.length === 0 ? (
-                <span className="text-xs text-aristo-brown-main/40">None — this is a foundational concept.</span>
+                <span className="text-xs text-muted">None — this is a foundational concept.</span>
               ) : (
                 form.prerequisites.map((p) => {
                   const name = allConcepts.find((c) => c.id === p)?.name ?? p;
                   return (
                     <BrandBadge key={p} variant="orange" size="md">
                       <span className="font-mono">{p}</span>
-                      <span className="text-aristo-brown-main/60">· {name}</span>
+                      <span className="text-muted">· {name}</span>
                       <button
                         type="button"
                         onClick={() => removePrereq(p)}
-                        className="ml-1 text-aristo-brown-main/40 hover:text-red-500"
+                        className="ml-1 text-muted hover:text-danger"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -186,7 +186,7 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
             </div>
             <div className="flex gap-2">
               <Select value={newPrereq} onValueChange={setNewPrereq}>
-                <SelectTrigger className="bg-white/60 border-white/60 flex-1">
+                <SelectTrigger className="bg-surface border-line flex-1">
                   <SelectValue placeholder="Add a prerequisite…" />
                 </SelectTrigger>
                 <SelectContent>
@@ -229,9 +229,9 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
             onChange={(items) => setForm({ ...form, tags: items })}
           />
 
-          {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+          {error && <p className="text-xs text-danger font-semibold">{error}</p>}
 
-          <div className="flex justify-between gap-2 pt-2 border-t border-white/60">
+          <div className="flex justify-between gap-2 pt-2 border-t border-line">
             {confirmDelete ? (
               <div className="flex gap-2">
                 <BrandButton variant="destructive" size="sm" onClick={remove} disabled={deleting}>
@@ -265,7 +265,7 @@ export function ConceptEditor({ concept, allConcepts, open, onClose, onSave, onD
 // ─── Field primitives ─────────────────────────────────────────────────────────
 
 const inputCls =
-  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 w-full";
+  "min-h-11 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text w-full";
 
 function Field({
   label, required, hint, children,
@@ -275,10 +275,10 @@ function Field({
   return (
     <div>
       <div className="flex items-end justify-between mb-1.5 gap-3">
-        <label className="block text-xs font-semibold text-aristo-brown-main/70 uppercase tracking-wider">
-          {label}{required && <span className="text-aristo-orange-main ml-0.5">*</span>}
+        <label className="block text-xs font-semibold text-body uppercase tracking-wider">
+          {label}{required && <span className="text-accent-text ml-0.5">*</span>}
         </label>
-        {hint && <span className="text-[10px] text-aristo-brown-main/50 normal-case">{hint}</span>}
+        {hint && <span className="text-[10px] text-muted normal-case">{hint}</span>}
       </div>
       {children}
     </div>
@@ -308,13 +308,13 @@ function ListField({
       {items.length > 0 && (
         <ul className="space-y-1 mb-2">
           {items.map((it, i) => (
-            <li key={i} className="flex items-start gap-2 group bg-white/50 rounded-lg px-2.5 py-1.5">
-              <span className="text-[10px] text-aristo-brown-main/30 mt-0.5 flex-shrink-0">{i + 1}.</span>
-              <span className="flex-1 text-xs text-aristo-brown-main">{it}</span>
+            <li key={i} className="flex items-start gap-2 group bg-surface rounded-lg px-2.5 py-1.5">
+              <span className="text-[10px] text-muted mt-0.5 flex-shrink-0">{i + 1}.</span>
+              <span className="flex-1 text-xs text-ink">{it}</span>
               <button
                 type="button"
                 onClick={() => remove(i)}
-                className="text-aristo-brown-main/40 hover:text-red-500 flex-shrink-0 opacity-0 group-hover:opacity-100"
+                className="text-muted hover:text-danger flex-shrink-0 opacity-0 group-hover:opacity-100"
               >
                 <X className="h-3 w-3" />
               </button>

@@ -1,0 +1,794 @@
+// V8.6 admin harness mock -- local only (src/app/hx is git-excluded).
+// Synthetic JSON bodies for every endpoint the real /admin pages fetch, so the visual-test harness can render
+// them with window.fetch replaced: no session, no database, no network. Deterministic: fixed September and
+// October 2026 dates, no randomness. Names and emails are invented; nothing here is real data.
+
+type Json = Record<string, unknown>;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const BLOOMS = ["remember", "understand", "apply", "analyze", "evaluate", "create"] as const;
+
+/** ISO timestamp `offset` days after 2026-09-07 at the given UTC hour. */
+function at(offset: number, hour = 10, minute = 0): string {
+  return new Date(Date.UTC(2026, 8, 7 + offset, hour, minute)).toISOString();
+}
+
+/** YYYY-MM-DD `offset` days after 2026-09-07. */
+function day(offset: number): string {
+  return at(offset).slice(0, 10);
+}
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+const round4 = (n: number) => Math.round(n * 10000) / 10000;
+
+// ─── Knowledge graph ──────────────────────────────────────────────────────────
+
+interface MockConcept {
+  id:                    string;
+  name:                  string;
+  domain:                string;
+  description:           string;
+  difficulty:            number;
+  bloom_level:           string;
+  estimated_minutes:     number;
+  key_terms:             string[];
+  learning_objectives:   string[];
+  common_misconceptions: string[];
+  tags:                  string[];
+  prerequisites:         string[];
+}
+
+function concept(
+  domain: string, id: string, name: string, bloom: string, difficulty: number, minutes: number,
+  prerequisites: string[], terms: string[], misconception: string,
+): MockConcept {
+  return {
+    id, name, domain,
+    description:           `${name}: a middle-school lesson in ${domain.replace(/_/g, " ")}.`,
+    difficulty,
+    bloom_level:           bloom,
+    estimated_minutes:     minutes,
+    key_terms:             terms,
+    learning_objectives:   [`Explain ${name.toLowerCase()} in your own words`, `Use ${name.toLowerCase()} in a short task`],
+    common_misconceptions: [misconception],
+    tags:                  [domain, bloom],
+    prerequisites,
+  };
+}
+
+const PY = "python_programming";
+const EARTH = "earth_science";
+
+// 10 concepts, all six Bloom levels, 12 prerequisite edges.
+const PYTHON_CONCEPTS: MockConcept[] = [
+  concept(PY, "py_variables",    "Variables",            "remember",   1, 15, [],                                         ["variable", "assignment"], "A variable stores the name, not the value"),
+  concept(PY, "py_data_types",   "Data Types",           "understand", 1, 20, ["py_variables"],                           ["int", "str", "bool"],     "\"5\" and 5 are the same thing"),
+  concept(PY, "py_conditionals", "Conditionals",         "apply",      2, 25, ["py_data_types"],                          ["if", "else", "elif"],     "Both branches of an if run"),
+  concept(PY, "py_loops",        "Loops",                "apply",      2, 30, ["py_conditionals"],                        ["for", "while", "range"],  "range(5) includes 5"),
+  concept(PY, "py_lists",        "Lists",                "apply",      2, 25, ["py_data_types"],                          ["list", "index", "append"],"Lists start at index 1"),
+  concept(PY, "py_functions",    "Functions",            "understand", 3, 30, ["py_loops"],                               ["def", "return", "argument"], "print and return do the same job"),
+  concept(PY, "py_dicts",        "Dictionaries",         "analyze",    3, 30, ["py_lists"],                               ["key", "value", "lookup"], "Dictionaries keep keys in sorted order"),
+  concept(PY, "py_debugging",    "Debugging",            "analyze",    3, 25, ["py_functions"],                           ["traceback", "bug"],       "An error message means the whole program is wrong"),
+  concept(PY, "py_algorithms",   "Comparing Algorithms", "evaluate",   4, 35, ["py_loops", "py_lists"],                   ["efficiency", "steps"],    "Shorter code is always faster"),
+  concept(PY, "py_mini_project", "Build a Mini Game",    "create",     5, 45, ["py_algorithms", "py_debugging", "py_dicts"], ["design", "iteration"], "A project must be planned perfectly before coding"),
+];
+
+const EARTH_CONCEPTS: MockConcept[] = [
+  concept(EARTH, "es_rock_types",      "Rock Types",           "remember",   1, 15, [],                                   ["igneous", "sedimentary", "metamorphic"], "Rocks never change"),
+  concept(EARTH, "es_rock_cycle",      "The Rock Cycle",       "understand", 2, 20, ["es_rock_types"],                    ["weathering", "melting"],  "The rock cycle has one fixed order"),
+  concept(EARTH, "es_plate_tectonics", "Plate Tectonics",      "understand", 2, 25, ["es_rock_cycle"],                    ["plate", "mantle"],        "Continents float on liquid lava"),
+  concept(EARTH, "es_earthquakes",     "Earthquakes",          "apply",      3, 25, ["es_plate_tectonics"],               ["fault", "epicenter"],     "Earthquakes only happen at the equator"),
+  concept(EARTH, "es_volcanoes",       "Volcanoes",            "analyze",    3, 25, ["es_plate_tectonics"],               ["magma", "vent"],          "All mountains are volcanoes"),
+  concept(EARTH, "es_water_cycle",     "The Water Cycle",      "understand", 1, 20, [],                                   ["evaporation", "condensation"], "Clouds are made of water vapour"),
+  concept(EARTH, "es_weather_climate", "Weather vs Climate",   "evaluate",   3, 30, ["es_water_cycle"],                   ["climate", "forecast"],    "A cold week disproves climate trends"),
+  concept(EARTH, "es_climate_models",  "Design a Climate Model","create",    5, 40, ["es_weather_climate", "es_volcanoes"], ["model", "variable"],     "Models must be perfect to be useful"),
+];
+
+const CONCEPTS_BY_DOMAIN: Record<string, MockConcept[]> = {
+  [PY]:    PYTHON_CONCEPTS,
+  [EARTH]: EARTH_CONCEPTS,
+};
+const ALL_CONCEPTS: MockConcept[] = [...PYTHON_CONCEPTS, ...EARTH_CONCEPTS];
+const conceptName = (id: string) => ALL_CONCEPTS.find((c) => c.id === id)?.name ?? id;
+const conceptDomain = (id: string) => ALL_CONCEPTS.find((c) => c.id === id)?.domain ?? PY;
+
+// Chunk counts per concept (zero for a few, so both node variants show).
+const CHUNK_COUNTS: Record<string, number> = {
+  py_variables: 6, py_data_types: 4, py_conditionals: 3, py_loops: 8, py_lists: 2,
+  py_functions: 5, py_dicts: 0, py_debugging: 1, py_algorithms: 0, py_mini_project: 2,
+  es_rock_types: 5, es_rock_cycle: 3, es_plate_tectonics: 7, es_earthquakes: 2, es_volcanoes: 0,
+  es_water_cycle: 4, es_weather_climate: 1, es_climate_models: 0,
+};
+
+function kgDomain(domain: string): Json {
+  return { concepts: CONCEPTS_BY_DOMAIN[domain] ?? [] };
+}
+
+function kgCoverage(domain: string): Json {
+  const concepts = CONCEPTS_BY_DOMAIN[domain] ?? [];
+  const per: Record<string, { chunkCount: number; lastIngestedAt: string | null }> = {};
+  concepts.forEach((c, i) => {
+    const n = CHUNK_COUNTS[c.id] ?? 0;
+    if (n > 0) per[c.id] = { chunkCount: n, lastIngestedAt: at(20 + (i % 6), 9 + i) };
+  });
+  const total = Object.values(per).reduce((s, c) => s + c.chunkCount, 0);
+  return {
+    domain_chunk_count: total + 3,
+    per_concept:        per,
+    last_ingested_at:   concepts.length ? at(26, 15) : null,
+  };
+}
+
+function kgValidate(domain: string): Json {
+  if (domain === PY) {
+    return {
+      ok:     true,
+      valid:  false,
+      errors: [
+        { type: "orphan",               message: "Concept has no dependents and is not a leaf goal.", involved: ["py_dicts"] },
+        { type: "missing_prerequisite", message: "Prerequisite id not found in this domain.",          involved: ["py_algorithms", "py_sorting"] },
+      ],
+    };
+  }
+  return { ok: true, valid: true, errors: [] };
+}
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+interface MockUser {
+  id:                 string;
+  email:              string;
+  full_name:          string;
+  goal:               string | null;
+  daily_time_minutes: number | null;
+  is_admin:           boolean;
+  approval_status:    string;
+  approved_at:        string | null;
+  created_at:         string;
+  expertise_level:    string | null;
+  pace:               string | null;
+  engagement_pattern: string | null;
+  last_quiz_at:       string | null;
+  quiz_attempt_count: number;
+}
+
+function user(
+  n: number, full_name: string, status: string, expertise: string | null, pace: string | null,
+  engagement: string | null, goal: string | null, quizzes: number, isAdmin = false,
+): MockUser {
+  const handle = full_name.toLowerCase().replace(/[^a-z]+/g, ".");
+  const created = at(n * 2, 8 + n);
+  return {
+    id:                 `00000000-0000-4000-8000-0000000000${String(n).padStart(2, "0")}`,
+    email:              `${handle}@example.com`,
+    full_name,
+    goal,
+    daily_time_minutes: goal ? 15 + (n % 4) * 10 : null,
+    is_admin:           isAdmin,
+    approval_status:    status,
+    approved_at:        status === "approved" || status === "auto_approved" ? at(n * 2 + 1, 12) : null,
+    created_at:         created,
+    expertise_level:    expertise,
+    pace,
+    engagement_pattern: engagement,
+    last_quiz_at:       quizzes > 0 ? at(28 + (n % 5), 16) : null,
+    quiz_attempt_count: quizzes,
+  };
+}
+
+const USERS: MockUser[] = [
+  user(1,  "Sam Rivera",     "approved",      "intermediate", "moderate", "steady",    "pass_exams",       42),
+  user(2,  "Priya Nair",     "approved",      "advanced",     "fast",     "bursty",    "get_ahead",        87, true),
+  user(3,  "Leo Okafor",     "pending",       null,           null,       null,        "catch_up",          0),
+  user(4,  "Mina Castillo",  "auto_approved", "beginner",     "careful",  "steady",    "build_confidence", 15),
+  user(5,  "Theo Lindqvist", "rejected",      null,           null,       null,        null,                0),
+  user(6,  "Ava Chen",       "approved",      "beginner",     "moderate", "declining", "pass_exams",        9),
+  user(7,  "Jonah Mbeki",    "pending",       "intermediate", "fast",     "bursty",    "get_ahead",         3),
+  user(8,  "Rosa Delgado",   "auto_approved", "advanced",     "moderate", "steady",    "curiosity",        61),
+  user(9,  "Kai Tanaka",     "approved",      "intermediate", "careful",  "steady",    "catch_up",         28),
+  user(10, "Nora Haddad",    "approved",      "beginner",     "fast",     "bursty",    "build_confidence", 12),
+];
+
+function usersList(q: URLSearchParams): Json {
+  const search = (q.get("search") ?? q.get("q") ?? "").trim().toLowerCase();
+  const expertise = q.get("expertise");
+  const status = q.get("status");
+  const rows = USERS.filter((u) =>
+    (!search || u.full_name.toLowerCase().includes(search) || u.email.includes(search)) &&
+    (!expertise || u.expertise_level === expertise) &&
+    (!status || u.approval_status === status)
+  );
+  return { users: rows, total: rows.length };
+}
+
+function userDetail(id: string): Json {
+  const u = USERS.find((x) => x.id === id) ?? USERS[0];
+  const pyIds = PYTHON_CONCEPTS.map((c) => c.id);
+  const masteryScores = [0.94, 0.86, 0.81, 0.72, 0.63, 0.55, 0.47, 0.33, 0.21, 0.08];
+
+  const mastery = pyIds.map((cid, i) => {
+    const c = PYTHON_CONCEPTS[i];
+    const assessed = i < 9;
+    return {
+      concept_id:              cid,
+      mastery_score:           masteryScores[i],
+      assessment_count:        assessed ? 8 - (i % 6) : 0,
+      last_assessed:           assessed ? at(20 + i, 15) : null,
+      srs_interval_days:       assessed ? [21, 14, 9, 6, 4, 3, 2, 1, 1][i] : null,
+      srs_next_review:         assessed ? at(30 + (i % 8), 9) : null,
+      srs_consecutive_correct: assessed ? Math.max(0, 5 - i) : null,
+      srs_lapses:              assessed ? i % 3 : null,
+      concepts: { name: c.name, domain: c.domain, bloom_level: c.bloom_level, difficulty: c.difficulty },
+    };
+  });
+
+  const misconceptions = [
+    { cid: "py_lists",      text: "Lists start at index 1",                     count: 6, resolved: false, d: 27 },
+    { cid: "py_loops",      text: "range(5) includes 5",                         count: 4, resolved: false, d: 25 },
+    { cid: "py_functions",  text: "print and return do the same job",           count: 3, resolved: true,  d: 19 },
+    { cid: "py_data_types", text: "\"5\" and 5 are the same thing",              count: 2, resolved: true,  d: 14 },
+    { cid: "py_algorithms", text: "Shorter code is always faster",              count: 1, resolved: false, d: 29 },
+  ].map((m, i) => ({
+    id:               `mis-${u.id.slice(-2)}-${i + 1}`,
+    concept_id:       m.cid,
+    misconception:    m.text,
+    occurrence_count: m.count,
+    last_detected:    at(m.d, 14),
+    resolved:         m.resolved,
+    concepts:         { name: conceptName(m.cid) },
+  }));
+
+  const sessionShapes = [
+    { exp: 420, ex: 300, qz: 360, more: 3, show: 2, skip: 0, att: 6, cor: 5 },
+    { exp: 600, ex: 180, qz: 240, more: 5, show: 1, skip: 1, att: 4, cor: 2 },
+    { exp: 240, ex: 420, qz: 300, more: 1, show: 4, skip: 0, att: 5, cor: 3 },
+    { exp: 180, ex: 120, qz: 480, more: 0, show: 0, skip: 2, att: 8, cor: 3 },
+    { exp: 360, ex: 240, qz: 0,   more: 2, show: 3, skip: 0, att: 0, cor: 0 },
+    { exp: 300, ex: 300, qz: 300, more: 1, show: 2, skip: 1, att: 5, cor: 4 },
+  ];
+  const sessions = sessionShapes.map((s, i) => {
+    const start = at(30 - i * 2, 15 + (i % 3), 5);
+    const total = s.exp + s.ex + s.qz;
+    return {
+      id:                           `ses-${u.id.slice(-2)}-${i + 1}`,
+      session_start:                start,
+      session_end:                  i === 4 ? null : new Date(new Date(start).getTime() + total * 1000).toISOString(),
+      time_on_explanations_seconds: s.exp,
+      time_on_examples_seconds:     s.ex,
+      time_on_quizzes_seconds:      s.qz,
+      clicked_explain_more:         s.more,
+      clicked_show_example:         s.show,
+      clicked_skip_to_quiz:         s.skip,
+      quiz_accuracy:                s.att > 0 ? round2(s.cor / s.att) : null,
+      questions_attempted:          s.att,
+      questions_correct:            s.cor,
+    };
+  });
+
+  const quizShapes: { cid: string; type: string; ok: boolean; score: number | null; t: number; mis: string | null }[] = [
+    { cid: "py_variables",    type: "multiple_choice", ok: true,  score: 1,    t: 12, mis: null },
+    { cid: "py_data_types",   type: "true_false",      ok: true,  score: 1,    t: 8,  mis: null },
+    { cid: "py_conditionals", type: "short_answer",    ok: true,  score: 0.85, t: 41, mis: null },
+    { cid: "py_lists",        type: "multiple_choice", ok: false, score: 0,    t: 19, mis: "Lists start at index 1" },
+    { cid: "py_functions",    type: "short_answer",    ok: false, score: 0.4,  t: 66, mis: "print and return do the same job" },
+    { cid: "py_dicts",        type: "multiple_choice", ok: true,  score: null, t: 23, mis: null },
+    { cid: "py_algorithms",   type: "short_answer",    ok: false, score: 0.25, t: 88, mis: "Shorter code is always faster" },
+    { cid: "py_mini_project", type: "open_design",     ok: true,  score: 0.9,  t: 140, mis: null },
+  ];
+  const quizzes = quizShapes.map((q, i) => ({
+    id:                     `qz-${u.id.slice(-2)}-${i + 1}`,
+    concept_id:             q.cid,
+    bloom_level:            PYTHON_CONCEPTS.find((c) => c.id === q.cid)?.bloom_level ?? null,
+    question_type:          q.type,
+    is_correct:             q.ok,
+    score:                  q.score,
+    response_time_seconds:  q.t,
+    misconception_detected: q.mis,
+    context:                i % 2 === 0 ? "lesson" : "review",
+    created_at:             at(31 - i, 16, i * 5),
+    concepts:               { name: conceptName(q.cid) },
+  }));
+
+  return {
+    profile: {
+      id:                 u.id,
+      email:              u.email,
+      full_name:          u.full_name,
+      goal:               u.goal ?? "pass_exams",
+      daily_time_minutes: u.daily_time_minutes ?? 20,
+      is_admin:           u.is_admin,
+      created_at:         u.created_at,
+      updated_at:         at(29, 11),
+    },
+    learnerProfile: {
+      expertise_level:        u.expertise_level ?? "intermediate",
+      pace:                   u.pace ?? "moderate",
+      explanation_depth:      "detailed",
+      example_preference:     "concrete",
+      engagement_pattern:     u.engagement_pattern ?? "steady",
+      weakest_bloom_level:    "evaluate",
+      strongest_bloom_level:  "remember",
+      custom_teacher_glb_url: null,
+      updated_at:             at(29, 11),
+    },
+    mastery,
+    misconceptions,
+    sessions,
+    quizzes,
+  };
+}
+
+// ─── Courses ──────────────────────────────────────────────────────────────────
+
+interface MockCourse {
+  id:              string;
+  domain:          string;
+  title:           string;
+  description:     string | null;
+  structure:       { modules: { id: string; title: string; description: string; lessons: { id: string; title: string; concept_ids: string[] }[] }[] } | null;
+  estimated_hours: number | null;
+  is_published:    boolean;
+  created_at:      string;
+}
+
+function structureFrom(concepts: MockConcept[], perModule: number): NonNullable<MockCourse["structure"]> {
+  const modules: NonNullable<MockCourse["structure"]>["modules"] = [];
+  for (let i = 0; i < concepts.length; i += perModule) {
+    const slice = concepts.slice(i, i + perModule);
+    const n = modules.length + 1;
+    modules.push({
+      id:          `m${n}`,
+      title:       `Module ${n}: ${slice[0].name}`,
+      description: `Covers ${slice.map((c) => c.name).join(", ")}.`,
+      lessons:     slice.map((c) => ({ id: `l-${c.id}`, title: c.name, concept_ids: [c.id] })),
+    });
+  }
+  return { modules };
+}
+
+const COURSES: MockCourse[] = [
+  { id: "course-earth",       domain: EARTH, title: "Our Restless Earth",      description: "Rocks, plates, volcanoes and climate for grades 6 to 8.", structure: structureFrom(EARTH_CONCEPTS, 2),         estimated_hours: 6,    is_published: true,  created_at: at(1, 9) },
+  { id: "course-python",      domain: PY,    title: "Python From Zero",        description: "Variables to a small game, one concept at a time.",        structure: structureFrom(PYTHON_CONCEPTS, 3),        estimated_hours: 8,    is_published: true,  created_at: at(3, 9) },
+  { id: "course-python-lab",  domain: PY,    title: "Python Debugging Lab",    description: "Short practice lessons on reading errors.",                structure: structureFrom(PYTHON_CONCEPTS.slice(5), 2), estimated_hours: 3,  is_published: false, created_at: at(12, 9) },
+  { id: "course-water",       domain: EARTH, title: "Water and Weather",       description: null,                                                       structure: structureFrom(EARTH_CONCEPTS.slice(5), 1), estimated_hours: 2,   is_published: true,  created_at: at(15, 9) },
+  { id: "course-fractions",   domain: "fractions", title: "Fractions in Everyday Life", description: "Draft outline, waiting on a knowledge graph.",     structure: null,                                       estimated_hours: null, is_published: false, created_at: at(22, 9) },
+  { id: "course-ecosystems",  domain: "ecosystems", title: "Food Webs and Ecosystems", description: "Producers, consumers and energy flow.",            structure: { modules: [{ id: "m1", title: "Module 1: Food Chains", description: "Who eats whom.", lessons: [{ id: "l1", title: "Producers", concept_ids: [] }, { id: "l2", title: "Consumers", concept_ids: [] }] }] }, estimated_hours: 1.5, is_published: false, created_at: at(27, 9) },
+];
+
+function courseAnalytics(id: string): Json {
+  const c = COURSES.find((x) => x.id === id) ?? COURSES[0];
+  const concepts = CONCEPTS_BY_DOMAIN[c.domain] ?? EARTH_CONCEPTS;
+  const modules = c.structure?.modules ?? [];
+  const bucketCounts = [1, 2, 3, 4, 6, 7, 9, 8, 6, 4];
+  const avg = [91, 84, 78, 69, 62, 55, 46, 38, 27, 15];
+  return {
+    course: { id: c.id, domain: c.domain, title: c.title, is_published: c.is_published, created_at: c.created_at },
+    enrolled:       34,
+    status_counts:  { in_progress: 21, completed: 9, paused: 4 },
+    completion_pct: 26,
+    moduleDropoff:  modules.map((m, i) => ({ module_id: m.id, module_title: m.title, stalled: [3, 7, 5, 2, 1, 4][i % 6] })),
+    masteryDistribution: bucketCounts.map((count, i) => ({
+      bucket: `${(i / 10).toFixed(1)}-${((i + 1) / 10).toFixed(1)}`,
+      min:    i / 10,
+      max:    (i + 1) / 10,
+      count,
+    })),
+    conceptStats: concepts.map((k, i) => ({ concept_id: k.id, avg_mastery: avg[i % avg.length], learner_count: 30 - i * 3 })),
+  };
+}
+
+// ─── Overview analytics ───────────────────────────────────────────────────────
+
+const BLOOM_ACCURACY: Record<string, { accuracy: number; count: number }> = {
+  remember:   { accuracy: 86, count: 212 },
+  understand: { accuracy: 74, count: 188 },
+  apply:      { accuracy: 61, count: 164 },
+  analyze:    { accuracy: 52, count: 97 },
+  evaluate:   { accuracy: 43, count: 58 },
+  create:     { accuracy: 34, count: 31 },
+};
+
+function overview(): Json {
+  return {
+    stats: {
+      totalStudents:     USERS.filter((u) => !u.is_admin).length + 118,
+      studentsThisWeek:  9,
+      publishedCourses:  COURSES.filter((c) => c.is_published).length,
+      avgQuizScore:      64,
+      totalQuizAttempts: 750,
+    },
+    expertiseDistribution: [
+      { level: "beginner",     count: 54, pct: 42 },
+      { level: "intermediate", count: 49, pct: 38 },
+      { level: "advanced",     count: 25, pct: 20 },
+    ],
+    bloomPerformance: BLOOMS.map((b) => ({ bloom: b, ...BLOOM_ACCURACY[b] })),
+    strugglingTopics: [
+      { topic: "Build a Mini Game",      avgScore: 31, attempts: 14 },
+      { topic: "Comparing Algorithms",   avgScore: 44, attempts: 22 },
+      { topic: "Weather vs Climate",     avgScore: 57, attempts: 18 },
+      { topic: "Dictionaries",           avgScore: 66, attempts: 25 },
+      { topic: "Volcanoes",              avgScore: 72, attempts: 11 },
+      { topic: "Plate Tectonics",        avgScore: 81, attempts: 30 },
+    ],
+    recentAttempts: [
+      { topic: "Variables",              bloom: "remember",   is_correct: true,  at: at(29, 16, 50) },
+      { topic: "The Water Cycle",        bloom: "understand", is_correct: true,  at: at(29, 16, 41) },
+      { topic: "Loops",                  bloom: "apply",      is_correct: false, at: at(29, 16, 30) },
+      { topic: "Volcanoes",              bloom: "analyze",    is_correct: true,  at: at(29, 15, 58) },
+      { topic: "Weather vs Climate",     bloom: "evaluate",   is_correct: false, at: at(29, 15, 40) },
+      { topic: "Build a Mini Game",      bloom: "create",     is_correct: false, at: at(29, 15, 12) },
+      { topic: "Lists",                  bloom: "apply",      is_correct: true,  at: at(29, 14, 47) },
+      { topic: "Debugging",              bloom: "analyze",    is_correct: false, at: at(29, 14, 20) },
+      { topic: "Data Types",             bloom: "understand", is_correct: true,  at: at(29, 13, 55) },
+      { topic: "Design a Climate Model", bloom: "create",     is_correct: true,  at: at(29, 13, 31) },
+    ],
+  };
+}
+
+// ─── RAG chunks ───────────────────────────────────────────────────────────────
+
+const CHUNKS = [
+  { cid: "py_loops",           src: "Python Basics Handbook, ch. 4",  text: "A for loop repeats a block once for every item in a sequence. range(5) produces 0, 1, 2, 3 and 4." },
+  { cid: "py_variables",       src: "Python Basics Handbook, ch. 1",  text: "A variable is a name that points to a value. Assigning again makes the name point somewhere new." },
+  { cid: null,                 src: null,                              text: "Pasted teacher note: start the functions lesson by asking students what a recipe has in common with code." },
+  { cid: "py_functions",       src: "Classroom slides: Functions",     text: "A function bundles steps under a name. return hands a value back to the caller; print only shows it." },
+  { cid: "es_plate_tectonics", src: "Earth Science Reader, unit 2",   text: "Earth's crust is broken into plates that move a few centimetres a year on the slowly flowing mantle." },
+  { cid: "es_rock_types",      src: "Earth Science Reader, unit 1",   text: "Igneous rock forms when melted rock cools. Sedimentary rock forms from layers pressed together." },
+  { cid: "es_water_cycle",     src: "Water Cycle Field Guide",         text: "Water evaporates, condenses into droplets that form clouds, and falls as precipitation." },
+  { cid: null,                 src: "Weather station worksheet",       text: "Record the temperature at the same time every day for two weeks, then compare it to the monthly average." },
+  { cid: "py_lists",           src: "Python Basics Handbook, ch. 5",  text: "Lists keep items in order. The first item is at index 0, so a list of five items ends at index 4." },
+];
+
+function ragChunks(q: URLSearchParams): Json {
+  const domainFilter = q.get("domain");
+  const term = (q.get("q") ?? "").toLowerCase();
+  const all = CHUNKS.map((c, i) => ({
+    id:           `chunk-${String(i + 1).padStart(3, "0")}`,
+    domain:       c.cid ? conceptDomain(c.cid) : i < 4 ? PY : EARTH,
+    source_title: c.src,
+    content:      c.text,
+    metadata:     c.cid ? { concept_id: c.cid, chunk_index: i } : { chunk_index: i },
+    created_at:   at(18 + i, 10),
+  }));
+  const chunks = all.filter((c) =>
+    (!domainFilter || c.domain === domainFilter) && (!term || c.content.toLowerCase().includes(term))
+  );
+  return { chunks, total: chunks.length, domains: [EARTH, PY] };
+}
+
+// ─── Misconceptions ───────────────────────────────────────────────────────────
+
+const MISCONCEPTION_ROWS = [
+  { cid: "py_lists",           text: "Lists start at index 1",                      occ: 24, users: 11, res: 3, d: 30 },
+  { cid: "py_loops",           text: "range(5) includes 5",                         occ: 19, users: 9,  res: 0, d: 29 },
+  { cid: "es_plate_tectonics", text: "Continents float on liquid lava",              occ: 14, users: 8,  res: 2, d: 28 },
+  { cid: "py_functions",       text: "print and return do the same job",            occ: 9,  users: 6,  res: 1, d: 26 },
+  { cid: "es_weather_climate", text: "A cold week disproves climate trends",        occ: 5,  users: 4,  res: 0, d: 24 },
+  { cid: "py_data_types",      text: "\"5\" and 5 are the same thing",               occ: 3,  users: 3,  res: 3, d: 20 },
+  { cid: "es_water_cycle",     text: "Clouds are made of water vapour",             occ: 2,  users: 2,  res: 0, d: 17 },
+  { cid: "py_algorithms",      text: "Shorter code is always faster",               occ: 1,  users: 1,  res: 1, d: 12 },
+];
+
+function misconceptions(q: URLSearchParams): Json {
+  const domainFilter = q.get("domain");
+  const resolved = q.get("resolved");
+  const rows = MISCONCEPTION_ROWS.map((m, i) => ({
+    concept_id:       m.cid,
+    concept_name:     conceptName(m.cid),
+    domain:           conceptDomain(m.cid),
+    misconception:    m.text,
+    occurrence_count: m.occ,
+    user_count:       m.users,
+    resolved_count:   m.res,
+    last_seen:        at(m.d, 13),
+    ids:              Array.from({ length: m.users }, (_, k) => `um-${i + 1}-${k + 1}`),
+  })).filter((r) =>
+    (!domainFilter || r.domain === domainFilter) &&
+    (resolved === "false" ? r.user_count - r.resolved_count > 0 :
+     resolved === "true"  ? r.resolved_count > 0 : true)
+  );
+  return {
+    rows,
+    domains:          [EARTH, PY],
+    total_unresolved: rows.reduce((s, r) => s + (r.user_count - r.resolved_count), 0),
+    total_resolved:   rows.reduce((s, r) => s + r.resolved_count, 0),
+  };
+}
+
+// ─── Quiz analytics ───────────────────────────────────────────────────────────
+
+// 21 days: dips and recoveries, so the line shows both directions.
+const QUIZ_TREND_ACC = [58, 61, 55, 63, 67, 64, 70, 72, 66, 59, 62, 68, 74, 71, 65, 69, 76, 79, 73, 77, 81];
+
+function quizAnalytics(): Json {
+  return {
+    summary: { total_attempts: 750, overall_accuracy: 64, avg_response_s: 27.4 },
+    byBloom: BLOOMS.map((b) => ({ bloom: b, ...BLOOM_ACCURACY[b] })),
+    byType: [
+      { type: "multiple_choice", accuracy: 78, count: 402, avg_response_s: 14.2 },
+      { type: "true_false",      accuracy: 83, count: 121, avg_response_s: 7.9 },
+      { type: "short_answer",    accuracy: 52, count: 176, avg_response_s: 48.6 },
+      { type: "open_design",     accuracy: 41, count: 51,  avg_response_s: null },
+    ],
+    calibration: [
+      { difficulty: 1, accuracy: 88, n: 190 },
+      { difficulty: 2, accuracy: 76, n: 230 },
+      { difficulty: 3, accuracy: 59, n: 180 },
+      { difficulty: 4, accuracy: 47, n: 101 },
+      { difficulty: 5, accuracy: 36, n: 49 },
+    ],
+    trend: QUIZ_TREND_ACC.map((accuracy, i) => ({ day: day(9 + i), accuracy, count: 22 + ((i * 7) % 19) })),
+  };
+}
+
+// ─── Cost ─────────────────────────────────────────────────────────────────────
+
+const FEATURE_COSTS = [
+  { feature: "lesson_generation",  provider: "anthropic", model: "anthropic/teaching", usd: 18.42, count: 214 },
+  { feature: "quiz_generation",    provider: "anthropic", model: "anthropic/assessment", usd: 6.88, count: 173 },
+  { feature: "short_answer_eval",  provider: "anthropic", model: "anthropic/fast",     usd: 1.27,  count: 389 },
+  { feature: "free_chat",          provider: "anthropic", model: "anthropic/fast",     usd: 0.94,  count: 266 },
+  { feature: "rag_embedding",      provider: "openai",    model: "openai/embedding-small", usd: 0.31, count: 512 },
+  { feature: "image_generation",   provider: "fal",       model: "fal/flux-schnell",   usd: 2.15,  count: 43 },
+  { feature: "model_3d",           provider: "fal",       model: "fal/tripo3d",        usd: 7.6,   count: 19 },
+  { feature: "voice_preview",      provider: "voicebox",  model: "voicebox/tts-beta",  usd: 0.42,  count: 12 },
+];
+
+function costSummary(range: string): Json {
+  const scale = range === "24h" ? 0.15 : range === "30d" ? 3.6 : 1;
+  const feats = FEATURE_COSTS.map((f) => ({ ...f, usd: round4(f.usd * scale), count: Math.max(1, Math.round(f.count * scale)) }));
+  const total = round4(feats.reduce((s, f) => s + f.usd, 0));
+  const events = feats.reduce((s, f) => s + f.count, 0);
+
+  const sumBy = <K extends "provider" | "model" | "feature">(key: K) => {
+    const m = new Map<string, { usd: number; count: number }>();
+    for (const f of feats) {
+      const cur = m.get(f[key]) ?? { usd: 0, count: 0 };
+      m.set(f[key], { usd: round4(cur.usd + f.usd), count: cur.count + f.count });
+    }
+    return Array.from(m.entries()).sort((a, b) => b[1].usd - a[1].usd);
+  };
+
+  const days = range === "30d" ? 30 : 14;
+  const wave = [1.0, 1.3, 0.8, 1.6, 1.1, 0.6, 0.9, 1.4, 1.8, 1.2, 0.7, 1.5, 1.9, 1.0];
+  const trendBase = total / days;
+  const trend = Array.from({ length: days }, (_, i) => ({
+    day:   day(30 - days + i),
+    usd:   round4(trendBase * wave[i % wave.length]),
+    count: Math.round((events / days) * wave[i % wave.length]),
+  }));
+
+  const shares = [0.31, 0.22, 0.16, 0.12, 0.09, 0.06, 0.04];
+  const breakdownUsers = [USERS[1], USERS[0], USERS[7], USERS[8], USERS[3], USERS[5], USERS[9]];
+  const userBreakdown = breakdownUsers.map((u, i) => {
+    const share = shares[i];
+    const uf = feats.filter((_, k) => (k + i) % 3 !== 2).map((f) => ({ feature: f.feature, provider: f.provider, model: f.model, usd: round4(f.usd * share), count: Math.max(1, Math.round(f.count * share)) }));
+    const group = (key: "feature" | "provider" | "model") => {
+      const m = new Map<string, { usd: number; count: number }>();
+      for (const f of uf) {
+        const cur = m.get(f[key]) ?? { usd: 0, count: 0 };
+        m.set(f[key], { usd: round4(cur.usd + f.usd), count: cur.count + f.count });
+      }
+      return Array.from(m.entries()).sort((a, b) => b[1].usd - a[1].usd);
+    };
+    return {
+      user_id:    u.id,
+      email:      i === 6 ? null : u.email,
+      usd:        round4(uf.reduce((s, f) => s + f.usd, 0)),
+      count:      uf.reduce((s, f) => s + f.count, 0),
+      byFeature:  group("feature").map(([feature, v]) => ({ feature, ...v })),
+      byProvider: group("provider").map(([provider, v]) => ({ provider, ...v })),
+      byModel:    group("model").map(([model, v]) => ({ model, ...v })),
+    };
+  });
+
+  return {
+    range:                 range === "24h" || range === "30d" ? range : "7d",
+    total_usd:             total,
+    event_count:           events,
+    projected_monthly_usd: round2(range === "24h" ? total * 30 : range === "30d" ? total : (total / 7) * 30),
+    byProvider:            sumBy("provider").map(([provider, v]) => ({ provider, usd: v.usd })),
+    byFeature:             sumBy("feature").map(([feature, v]) => ({ feature, ...v })),
+    byModel:               sumBy("model").map(([model, v]) => ({ model, ...v })),
+    trend,
+    topUsers:              userBreakdown.slice(0, 5).map(({ user_id, email, usd, count }) => ({ user_id, email, usd, count })),
+    userBreakdown,
+    providerFeatureMatrix: sumBy("provider").map(([provider, v]) => ({
+      provider,
+      usd:      v.usd,
+      features: feats.filter((f) => f.provider === provider).map(({ feature, usd, count }) => ({ feature, usd, count })),
+    })),
+  };
+}
+
+// ─── Moderation and lesson cache ──────────────────────────────────────────────
+
+const MODELS_SHOWN = ["anthropic/teaching", "anthropic/teaching", "anthropic/fast", null] as const;
+const PROFILE_SIGS = ["beg-careful-concrete", "int-moderate-mixed", "adv-fast-abstract", "beg-moderate-concrete"];
+
+function conceptJoin(cid: string, i: number) {
+  const c = { name: conceptName(cid), domain: conceptDomain(cid) };
+  return i % 2 === 0 ? c : [c];
+}
+
+function moderationQueue(): Json {
+  const items = [
+    { cid: "py_mini_project",    reason: "low_confidence_quiz" },
+    { cid: "es_volcanoes",       reason: "safety_review" },
+    { cid: "es_weather_climate", reason: null },
+    { cid: "py_debugging",       reason: "length_outlier" },
+  ];
+  return {
+    rows: items.map((it, i) => ({
+      id:                 `mod-${i + 1}`,
+      concept_id:         it.cid,
+      profile_signature:  PROFILE_SIGS[i % PROFILE_SIGS.length],
+      generated_by_model: MODELS_SHOWN[i % MODELS_SHOWN.length],
+      payload: {
+        concept_name: conceptName(it.cid),
+        phases: {
+          activate:    `What do you already know about ${conceptName(it.cid).toLowerCase()}?`,
+          explain:     `A short explanation of ${conceptName(it.cid).toLowerCase()}.`,
+          demonstrate: "A worked example with three steps.",
+          challenge:   "Two questions: one recall, one apply.",
+          connect:     "Link back to the previous lesson.",
+        },
+      },
+      flagged_reason:     it.reason,
+      generated_at:       at(28 + i, 11, i * 9),
+      concepts:           conceptJoin(it.cid, i),
+    })),
+  };
+}
+
+function lessonCache(q: URLSearchParams): Json {
+  const statusFilter = q.get("status");
+  const plan: { cid: string; status: string; flag: string | null; uses: number }[] = [
+    { cid: "py_variables",       status: "auto_approved", flag: null,                  uses: 48 },
+    { cid: "py_loops",           status: "approved",      flag: null,                  uses: 31 },
+    { cid: "py_mini_project",    status: "pending",       flag: "low_confidence_quiz", uses: 0 },
+    { cid: "es_plate_tectonics", status: "auto_approved", flag: null,                  uses: 22 },
+    { cid: "es_volcanoes",       status: "pending",       flag: "safety_review",       uses: 0 },
+    { cid: "py_functions",       status: "rejected",      flag: "factual_error",       uses: 3 },
+    { cid: "es_water_cycle",     status: "approved",      flag: null,                  uses: 17 },
+    { cid: "py_lists",           status: "auto_approved", flag: "length_outlier",      uses: 9 },
+    { cid: "es_rock_cycle",      status: "approved",      flag: null,                  uses: 12 },
+  ];
+  const rows = plan.map((p, i) => ({
+    id:                 `lc-${String(i + 1).padStart(3, "0")}`,
+    concept_id:         p.cid,
+    profile_signature:  PROFILE_SIGS[i % PROFILE_SIGS.length],
+    generated_by_model: MODELS_SHOWN[i % MODELS_SHOWN.length],
+    moderation_status:  p.status,
+    moderator_id:       p.status === "approved" || p.status === "rejected" ? USERS[1].id : null,
+    flagged_reason:     p.flag,
+    generated_at:       at(14 + i * 2, 10, i * 7),
+    approved_at:        p.status === "approved" || p.status === "auto_approved" ? at(15 + i * 2, 9) : null,
+    usage_count:        p.uses,
+    concepts:           conceptJoin(p.cid, i),
+  })).filter((r) => !statusFilter || r.moderation_status === statusFilter);
+  return { rows, total: rows.length };
+}
+
+// ─── Audit log and system health ──────────────────────────────────────────────
+
+const ADMIN = USERS[1];
+
+const AUDIT: { action: string; type: string | null; target: string | null; diff: Json | null; ip: string | null; d: number }[] = [
+  { action: "user.approve",           type: "user",         target: USERS[3].id, diff: { approval_status: { from: "pending", to: "approved" } }, ip: "203.0.113.24", d: 31 },
+  { action: "course.publish",         type: "course",       target: "course-earth", diff: { is_published: { from: false, to: true } }, ip: "203.0.113.24", d: 30 },
+  { action: "concept.create",         type: "concept",      target: "py_dicts", diff: { name: "Dictionaries", bloom_level: "analyze" }, ip: "198.51.100.7", d: 29 },
+  { action: "rag_chunk.delete",       type: "rag_chunk",    target: "chunk-010", diff: null, ip: "203.0.113.24", d: 28 },
+  { action: "user.promote_admin",     type: "user",         target: USERS[7].id, diff: { is_admin: { from: false, to: true } }, ip: "198.51.100.7", d: 27 },
+  { action: "lesson_cache.regenerate",type: "lesson_cache", target: "lc-006", diff: { reason: "factual_error" }, ip: null, d: 26 },
+  { action: "misconception.resolve",  type: "misconception",target: "um-1-2", diff: { resolved: true, count: 3 }, ip: "203.0.113.24", d: 25 },
+  { action: "kg.generate",            type: "domain",       target: EARTH, diff: { error: "Upstream timeout after 60s" }, ip: "198.51.100.7", d: 24 },
+  { action: "user.reject",            type: "user",         target: USERS[4].id, diff: { approval_status: { from: "pending", to: "rejected" } }, ip: "203.0.113.24", d: 23 },
+  { action: "settings.update",        type: null,           target: null, diff: { daily_budget_usd: { from: 5, to: 8 } }, ip: null, d: 22 },
+];
+
+function auditLog(q: URLSearchParams): Json {
+  const actor = (q.get("actor") ?? "").toLowerCase();
+  const action = q.get("action");
+  const type = q.get("target_type");
+  const all = AUDIT.map((a, i) => ({
+    id:          `audit-${String(i + 1).padStart(3, "0")}`,
+    actor_id:    i === 5 ? "svc-cron-0001" : ADMIN.id,
+    actor_email: i === 5 ? null : ADMIN.email,
+    action:      a.action,
+    target_type: a.type,
+    target_id:   a.target,
+    diff:        a.diff,
+    ip:          a.ip,
+    user_agent:  a.ip ? "Mozilla/5.0 (harness)" : null,
+    created_at:  at(a.d, 9 + (i % 8), i * 6),
+  }));
+  const entries = all.filter((e) =>
+    (!actor || (e.actor_email ?? "").includes(actor) || (e.actor_id ?? "").includes(actor)) &&
+    (!action || e.action === action) &&
+    (!type || e.target_type === type)
+  );
+  return {
+    entries,
+    total:        entries.length,
+    actions:      Array.from(new Set(all.map((e) => e.action))).sort(),
+    target_types: Array.from(new Set(all.map((e) => e.target_type).filter((t): t is string => !!t))).sort(),
+  };
+}
+
+function systemHealth(): Json {
+  return {
+    rowCounts: {
+      profiles: 128, learner_profiles: 121, concepts: ALL_CONCEPTS.length, concept_prerequisites: 21,
+      user_concept_mastery: 1840, user_misconceptions: 77, session_logs: 2315, quiz_attempts: 7502,
+      courses: COURSES.length, user_course_progress: 94, reference_chunks: 312, admin_audit_log: 486, usage_events: 12904,
+    },
+    apiKeys: { anthropic: "ok", openai: "missing_key", fal: "error" },
+    recentErrors: [
+      { id: "err-1", actor_email: ADMIN.email, action: "kg.generate",     target_type: "domain",       target_id: EARTH,    diff: { error: "Upstream timeout after 60s" }, created_at: at(29, 14, 12) },
+      { id: "err-2", actor_email: null,        action: "model_3d.create", target_type: "concept",      target_id: "es_volcanoes", diff: { error: "Generation provider returned 502" }, created_at: at(28, 10, 40) },
+      { id: "err-3", actor_email: ADMIN.email, action: "rag.upload",      target_type: "rag_chunk",    target_id: null,     diff: { error: "Embedding key missing", file: "notes.pdf" }, created_at: at(26, 9, 5) },
+    ],
+    server_time: at(30, 12),
+  };
+}
+
+// ─── Router ───────────────────────────────────────────────────────────────────
+
+function nonGet(path: string): Json {
+  let m: RegExpMatchArray | null;
+  if ((m = path.match(/^\/api\/kg\/validate\/([^/]+)$/))) return kgValidate(decodeURIComponent(m[1]));
+  if ((m = path.match(/^\/api\/kg\/generate\/([^/]+)$/))) {
+    const concepts = CONCEPTS_BY_DOMAIN[decodeURIComponent(m[1])] ?? PYTHON_CONCEPTS;
+    return { ok: true, count: concepts.length, concepts };
+  }
+  if (path === "/api/kg/concepts")        return { ok: true, inserted: 0, edges: 0 };
+  if (path === "/api/admin/rag/test")     return { ok: true, matches: [] };
+  if (path === "/api/admin/rag/upload")   return { ok: true, ingested: 0, total_chunks: 0 };
+  return { ok: true };
+}
+
+export function adminMock(url: string, init?: RequestInit): unknown | undefined {
+  let parsed: URL;
+  try {
+    parsed = new URL(url, "http://hx.local");
+  } catch {
+    return undefined;
+  }
+  const path = parsed.pathname.replace(/\/+$/, "");
+  const q = parsed.searchParams;
+  if (!path.startsWith("/api/admin/") && !path.startsWith("/api/kg/")) return undefined;
+
+  const method = (init?.method ?? "GET").toUpperCase();
+  if (method !== "GET" && method !== "HEAD") return nonGet(path);
+
+  let m: RegExpMatchArray | null;
+  switch (path) {
+    case "/api/admin/analytics":         return overview();
+    case "/api/admin/users":             return usersList(q);
+    case "/api/admin/courses":           return { courses: COURSES };
+    case "/api/admin/rag/chunks":        return ragChunks(q);
+    case "/api/admin/misconceptions":    return misconceptions(q);
+    case "/api/admin/quiz-analytics":    return quizAnalytics();
+    case "/api/admin/cost/summary":      return costSummary(q.get("range") ?? "7d");
+    case "/api/admin/moderation/queue":  return moderationQueue();
+    case "/api/admin/lesson-cache":      return lessonCache(q);
+    case "/api/admin/audit-log":         return auditLog(q);
+    case "/api/admin/system/health":     return systemHealth();
+    case "/api/kg/concepts":             return { concepts: ALL_CONCEPTS };
+  }
+
+  if ((m = path.match(/^\/api\/admin\/users\/([^/]+)$/)))               return userDetail(decodeURIComponent(m[1]));
+  if ((m = path.match(/^\/api\/admin\/courses\/([^/]+)\/analytics$/))) return courseAnalytics(decodeURIComponent(m[1]));
+  if ((m = path.match(/^\/api\/admin\/courses\/([^/]+)$/))) {
+    const id = decodeURIComponent(m[1]);
+    return { course: COURSES.find((c) => c.id === id) ?? COURSES[0] };
+  }
+  if ((m = path.match(/^\/api\/admin\/kg\/coverage\/([^/]+)$/)))        return kgCoverage(decodeURIComponent(m[1]));
+  if ((m = path.match(/^\/api\/kg\/validate\/([^/]+)$/)))               return kgValidate(decodeURIComponent(m[1]));
+  if ((m = path.match(/^\/api\/kg\/([^/]+)$/)))                         return kgDomain(decodeURIComponent(m[1]));
+
+  return undefined;
+}

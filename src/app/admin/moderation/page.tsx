@@ -69,14 +69,14 @@ export default function ModerationPage() {
 
       {rows === null ? (
         <BrandCard>
-          <p className="text-xs text-aristo-brown-main/60 flex items-center gap-2">
+          <p className="text-xs text-muted flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />Loading queue…
           </p>
         </BrandCard>
       ) : rows.length === 0 ? (
         <BrandCard className="flex flex-col items-center justify-center py-12 gap-3">
-          <Shield className="h-12 w-12 text-green-500" />
-          <p className="text-sm text-aristo-brown-main/60">Inbox zero — nothing pending review.</p>
+          <Shield className="h-12 w-12 text-success" />
+          <p className="text-sm text-muted">Inbox zero — nothing pending review.</p>
         </BrandCard>
       ) : (
         <div className="space-y-3">
@@ -88,7 +88,7 @@ export default function ModerationPage() {
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-aristo-brown-main">
+                      <h3 className="font-semibold text-ink">
                         {c?.name ?? r.concept_id}
                       </h3>
                       {c?.domain && (
@@ -97,7 +97,7 @@ export default function ModerationPage() {
                       <BrandBadge variant="amber">{r.flagged_reason ?? "manual"}</BrandBadge>
                       <BrandBadge variant="orange">{r.generated_by_model ?? "—"}</BrandBadge>
                     </div>
-                    <div className="text-[11px] text-aristo-brown-main/50 mt-1">
+                    <div className="text-[11px] text-muted mt-1">
                       <span className="font-mono">{r.concept_id}</span>
                       <span className="mx-2">·</span>
                       sig <span className="font-mono">{r.profile_signature}</span>
@@ -112,7 +112,7 @@ export default function ModerationPage() {
                       onChange={(e) => setNotesById((p) => ({ ...p, [r.id]: e.target.value }))}
                       placeholder="Moderator notes (optional)…"
                       rows={2}
-                      className="text-xs bg-white/70 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 resize-none"
+                      className="min-h-11 text-xs bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text resize-none"
                     />
                     <div className="flex gap-2 justify-end">
                       <BrandButton
@@ -149,12 +149,12 @@ export default function ModerationPage() {
                 </div>
 
                 {isExpanded && (
-                  <div className="mt-3 pt-3 border-t border-amber-200">
+                  <div className="mt-3 pt-3 border-t border-warning/25">
                     <SectionTitle
                       title="Generated payload"
                       description="Full LessonPayload JSON as it would be served to the learner."
                     />
-                    <pre className="text-[10px] font-mono text-aristo-brown-main bg-white/70 border border-white/60 rounded-xl p-3 max-h-72 overflow-y-auto whitespace-pre-wrap break-all">
+                    <pre className="text-[10px] font-mono text-ink bg-surface border border-line rounded-xl p-3 max-h-72 overflow-y-auto whitespace-pre-wrap break-all">
                       {JSON.stringify(r.payload, null, 2)}
                     </pre>
                   </div>

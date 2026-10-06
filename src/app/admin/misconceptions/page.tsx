@@ -83,7 +83,7 @@ export default function MisconceptionsPage() {
         meta={
           <div className="flex flex-wrap items-center gap-2">
             <Select value={domain} onValueChange={setDomain}>
-              <SelectTrigger className="w-56 bg-white/60 border-white/60">
+              <SelectTrigger className="w-56 bg-surface border-line">
                 <SelectValue placeholder="All domains" />
               </SelectTrigger>
               <SelectContent>
@@ -94,7 +94,7 @@ export default function MisconceptionsPage() {
               </SelectContent>
             </Select>
             <Select value={filter} onValueChange={(v) => setFilter(v as "all" | "active" | "resolved")}>
-              <SelectTrigger className="w-44 bg-white/60 border-white/60">
+              <SelectTrigger className="w-44 bg-surface border-line">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -116,12 +116,10 @@ export default function MisconceptionsPage() {
         <StatCard
           label="Unresolved (learner-rows)"
           value={data?.total_unresolved ?? 0}
-          color="#EF4444"
         />
         <StatCard
           label="Resolved (learner-rows)"
           value={data?.total_resolved ?? 0}
-          color="#22C55E"
         />
       </div>
 
@@ -133,13 +131,13 @@ export default function MisconceptionsPage() {
           />
         </div>
         {data === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             Loading…
           </div>
         ) : data.rows.length === 0 ? (
           <div className="p-10 text-center">
-            <CheckCircle2 className="h-10 w-10 text-green-500 mx-auto mb-2" />
-            <p className="text-sm text-aristo-brown-main/60">No matching misconceptions.</p>
+            <CheckCircle2 className="h-10 w-10 text-success mx-auto mb-2" />
+            <p className="text-sm text-muted">No matching misconceptions.</p>
           </div>
         ) : (
           <Table>
@@ -161,19 +159,19 @@ export default function MisconceptionsPage() {
                 return (
                   <TableRow key={key}>
                     <TableCell className="max-w-[200px]">
-                      <div className="text-aristo-brown-main font-medium truncate">
+                      <div className="text-ink font-medium truncate">
                         {r.concept_name ?? r.concept_id}
                       </div>
                       {r.domain && (
                         <BrandBadge variant="neutral" size="sm" className="mt-1">{r.domain}</BrandBadge>
                       )}
                     </TableCell>
-                    <TableCell className="text-xs text-aristo-brown-main/80 max-w-[420px]">
+                    <TableCell className="text-xs text-body max-w-[420px]">
                       <span className="line-clamp-2">{r.misconception}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2 min-w-[140px]">
-                        <div className="flex-1 bg-white/60 rounded-full h-2 overflow-hidden">
+                        <div className="flex-1 bg-surface rounded-full h-2 overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{
@@ -185,7 +183,7 @@ export default function MisconceptionsPage() {
                             }}
                           />
                         </div>
-                        <span className="text-xs text-aristo-brown-main/70 tabular-nums w-8 text-right">
+                        <span className="text-xs text-body tabular-nums w-8 text-right">
                           {r.occurrence_count}
                         </span>
                       </div>
@@ -195,7 +193,7 @@ export default function MisconceptionsPage() {
                         {r.user_count - r.resolved_count} / {r.user_count}
                       </BrandBadge>
                     </TableCell>
-                    <TableCell className="text-[11px] text-aristo-brown-main/50">
+                    <TableCell className="text-[11px] text-muted">
                       {r.last_seen ? new Date(r.last_seen).toLocaleDateString() : "—"}
                     </TableCell>
                     <TableCell className="text-right">

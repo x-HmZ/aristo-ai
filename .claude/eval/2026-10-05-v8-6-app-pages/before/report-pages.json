@@ -1,0 +1,892 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "pending-360-light": {
+   "n": 10,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-360-light": {
+   "n": 4,
+   "min": 6.06,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-360-light": {
+   "n": 6,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-360-light": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-360-light": {
+   "n": 6,
+   "min": 1.83,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.89 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "Saving your teacher… | 1.83 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-360-light": {
+   "n": 14,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-360-light": {
+   "n": 20,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-360-light": {
+   "n": 6,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-360-light": {
+   "n": 6,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-360-light": {
+   "n": 8,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-360-light": {
+   "n": 9,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-360-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-360-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-360-light": {
+   "n": 10,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-768-light": {
+   "n": 10,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-768-light": {
+   "n": 4,
+   "min": 6.06,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-768-light": {
+   "n": 3,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-768-light": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-768-light": {
+   "n": 4,
+   "min": 1.89,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.89 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-768-light": {
+   "n": 9,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-768-light": {
+   "n": 13,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-768-light": {
+   "n": 4,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-768-light": {
+   "n": 5,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-768-light": {
+   "n": 8,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-768-light": {
+   "n": 9,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-768-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-768-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-768-light": {
+   "n": 10,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-1280-light": {
+   "n": 10,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-1280-light": {
+   "n": 4,
+   "min": 6.06,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-1280-light": {
+   "n": 3,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-1280-light": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-1280-light": {
+   "n": 7,
+   "min": 1.84,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.87 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "Saving your teacher… | 1.84 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-1280-light": {
+   "n": 14,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-1280-light": {
+   "n": 22,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-1280-light": {
+   "n": 7,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-1280-light": {
+   "n": 7,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-1280-light": {
+   "n": 8,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-1280-light": {
+   "n": 9,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-1280-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-1280-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-1280-light": {
+   "n": 10,
+   "min": 5.33,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-360-dark": {
+   "n": 10,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-360-dark": {
+   "n": 4,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-360-dark": {
+   "n": 6,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-360-dark": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-360-dark": {
+   "n": 6,
+   "min": 1.84,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.87 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "Saving your teacher… | 1.84 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-360-dark": {
+   "n": 14,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-360-dark": {
+   "n": 20,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-360-dark": {
+   "n": 6,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-360-dark": {
+   "n": 6,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-360-dark": {
+   "n": 8,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-360-dark": {
+   "n": 9,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-360-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-360-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-360-dark": {
+   "n": 10,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-768-dark": {
+   "n": 10,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-768-dark": {
+   "n": 4,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-768-dark": {
+   "n": 3,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-768-dark": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-768-dark": {
+   "n": 4,
+   "min": 1.91,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.91 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-768-dark": {
+   "n": 9,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-768-dark": {
+   "n": 13,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-768-dark": {
+   "n": 4,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-768-dark": {
+   "n": 5,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-768-dark": {
+   "n": 8,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-768-dark": {
+   "n": 9,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-768-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-768-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-768-dark": {
+   "n": 10,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-1280-dark": {
+   "n": 10,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "pending-rejected-1280-dark": {
+   "n": 4,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "teacher-1280-dark": {
+   "n": 3,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-unconfigured-1280-dark": {
+   "n": 9,
+   "min": 2.54,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Create a free project at | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "developer.avaturn.me | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    ", then set | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "NEXT_PUBLIC_AVATURN_SUBDOMAIN | 2.54 | rgb(249, 123, 47) on 254,249,244 | 12px",
+    "in your environment variables. | 4.49 | rgb(139, 110, 90) on 254,249,244 | 12px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saving-1280-dark": {
+   "n": 7,
+   "min": 1.84,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "Saving your teacher… | 1.87 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "Saving your teacher… | 1.84 | rgb(196, 90, 16) on 253,228,210 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-saved-1280-dark": {
+   "n": 14,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "https://models.avaturn.me/p/0b4e2f1c/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-downloaded-1280-dark": {
+   "n": 22,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "✓ | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "Avatar exported. | 3.6 | rgb(5, 150, 105) on 240,253,244 | 14px",
+    "(downloaded as avatar-1759700000000.glb  | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-error-1280-dark": {
+   "n": 7,
+   "min": 4.19,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "teacher-existing-1280-dark": {
+   "n": 7,
+   "min": 2.46,
+   "fails": [
+    "Design a photorealistic 3D avatar — it w | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px",
+    "You have an existing teacher. Completing | 3.6 | rgb(5, 150, 105) on 240,253,244 | 12px",
+    "https://models.avaturn.me/p/7a1d9c3e/ava | 2.46 | rgb(184, 149, 122) on 253,240,228 | 10px",
+    "← Back to Aristo | 4.19 | rgb(139, 110, 90) on 253,240,228 | 14px"
+   ],
+   "small": [
+    "← Back to Aristo 111x20"
+   ],
+   "overflow": 0
+  },
+  "sign-in-1280-dark": {
+   "n": 8,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-error-1280-dark": {
+   "n": 9,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-in-message-1280-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-1280-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "sign-up-error-1280-dark": {
+   "n": 10,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  }
+ }
+}

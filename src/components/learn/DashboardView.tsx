@@ -1,7 +1,21 @@
 "use client";
 
+/**
+ * The learner's progress dialog (Phase 9): streak, time, mastery, reviews due,
+ * the inferred profile and the concepts that need practice.
+ *
+ * On the design system since V8.6: it follows the theme. The system scrim over
+ * the room and a surface dialog. Numbers are ink with an accent icon each; a
+ * hue never carries a meaning alone (strongest and needs work have their words
+ * and icons; a weak concept's bar has its percentage).
+ */
+
 import { useEffect, useState } from "react";
-import { BRAND_HEX } from "@/lib/brandColors";
+import { Clock, Flame, GraduationCap, RotateCcw, Target, TrendingUp, X, type LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SHAPE } from "@/lib/design/shape";
+import { cn } from "@/lib/utils";
+import { useModalDialog } from "@/hooks/useModalDialog";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -39,45 +53,29 @@ function fmtMinutes(seconds: number): string {
   return `${Math.floor(m / 60)}h ${m % 60}m`;
 }
 
+const BLOCK = cn(SHAPE.surface, "space-y-3 border border-line bg-bg px-5 py-4");
+const BLOCK_TITLE = "text-xs font-semibold text-muted";
+
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function StatPill({
-  label,
-  value,
-  color = "hsl(var(--aristo-orange-main))",
-}: {
-  label: string;
-  value: string | number;
-  color?: string;
-}) {
+function StatTile({ label, value, Icon }: { label: string; value: string | number; Icon: LucideIcon }) {
   return (
-    <div className="flex flex-col items-center bg-white/60 rounded-2xl px-4 py-4 border border-white/50 flex-1 min-w-0">
-      <div className="text-2xl font-bold tabular-nums" style={{ color }}>
-        {value}
-      </div>
-      <div className="text-[11px] text-aristo-brown-muted mt-0.5 text-center leading-tight">
-        {label}
-      </div>
+    <div className={cn(SHAPE.surface, "flex min-w-0 flex-col items-center border border-line bg-bg px-3 py-4")}>
+      <Icon aria-hidden className="mb-1.5 size-5 text-accent-text" />
+      <div className="type-h3 font-bold tabular-nums text-ink">{value}</div>
+      <div className="mt-0.5 text-center text-xs leading-tight text-muted">{label}</div>
     </div>
   );
 }
 
 function MasteryBar({ score }: { score: number }) {
-  const pct   = Math.round(score * 100);
-  const color =
-    pct >= 80 ? "#22C55E" :
-    pct >= 50 ? "hsl(var(--aristo-orange-main))" : "#EF4444";
+  const pct = Math.round(score * 100);
   return (
-    <div className="flex items-center gap-2 w-28 flex-shrink-0">
-      <div className="flex-1 bg-white/40 rounded-full h-1.5 overflow-hidden">
-        <div
-          className="h-full rounded-full"
-          style={{ width: `${Math.max(pct, 3)}%`, backgroundColor: color }}
-        />
+    <div className="flex w-28 shrink-0 items-center gap-2">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-sunk">
+        <div className="h-full rounded-full bg-accent" style={{ width: `${Math.max(pct, 3)}%` }} />
       </div>
-      <span className="text-xs tabular-nums font-semibold w-8 text-right" style={{ color }}>
-        {pct}%
-      </span>
+      <span className="w-9 text-right text-xs font-semibold tabular-nums text-ink">{pct}%</span>
     </div>
   );
 }
@@ -91,6 +89,7 @@ interface DashboardViewProps {
 export function DashboardView({ onClose }: DashboardViewProps) {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading,   setLoading]   = useState(true);
+  const dialog = useModalDialog<HTMLElement>(onClose);
 
   useEffect(() => {
     fetch("/api/profile/analytics")
@@ -101,66 +100,65 @@ export function DashboardView({ onClose }: DashboardViewProps) {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="w-full max-w-lg mx-4 bg-white/85 backdrop-blur-2xl border border-white/60 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-y-auto max-h-[85vh]">
+    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+      <section
+        {...dialog}
+        aria-labelledby="dashboard-title"
+        className={cn(SHAPE.surface, "aristo-scroll outline-none max-h-[85vh] w-full max-w-lg overflow-y-auto border border-line bg-surface shadow-e2")}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div className="flex items-start justify-between gap-3 px-6 pb-4 pt-6">
           <div>
-            <h2 className="text-lg font-bold text-aristo-brown-main">Your Progress</h2>
-            <p className="text-xs text-aristo-brown-muted">How you're doing across all topics</p>
+            <h2 id="dashboard-title" className="type-h3 font-bold text-ink">Your Progress</h2>
+            <p className="mt-0.5 text-sm text-body">How you&apos;re doing across all topics</p>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/70 text-aristo-brown-muted hover:text-aristo-brown-main hover:bg-white transition-all text-sm font-bold"
-          >
-            ×
-          </button>
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close" className="-mr-2 -mt-1 shrink-0 rounded-full">
+            <X aria-hidden />
+          </Button>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center h-48 text-aristo-brown-muted text-sm">
+          <div role="status" className="flex h-48 items-center justify-center text-sm text-muted">
             Loading…
           </div>
         ) : !analytics ? (
-          <div className="flex items-center justify-center h-48 text-aristo-brown-muted text-sm">
+          <div role="alert" className="flex h-48 items-center justify-center text-sm text-muted">
             Failed to load analytics.
           </div>
         ) : (
-          <div className="px-6 pb-6 space-y-5">
-            {/* Stat pills */}
-            <div className="flex gap-2.5">
-              <StatPill
+          <div className="space-y-5 px-6 pb-6">
+            {/* Stats */}
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              <StatTile
                 label="Day streak"
                 value={analytics.streak === 0 ? "—" : String(analytics.streak)}
-                color="hsl(var(--aristo-orange-main))"
+                Icon={Flame}
               />
-              <StatPill
+              <StatTile
                 label="This week"
                 value={
                   analytics.time_week_seconds < 60
                     ? "—"
                     : fmtMinutes(analytics.time_week_seconds)
                 }
-                color={BRAND_HEX.purple}
+                Icon={Clock}
               />
-              <StatPill
+              <StatTile
                 label="Mastered"
                 value={`${analytics.total_mastered}/${analytics.total_concepts_seen}`}
-                color="#22C55E"
+                Icon={GraduationCap}
               />
-              <StatPill
+              <StatTile
                 label="Reviews due"
                 value={analytics.reviews_due || "—"}
-                color={analytics.reviews_due > 0 ? "#EF4444" : "hsl(var(--aristo-brown-muted))"}
+                Icon={RotateCcw}
               />
             </div>
 
-            {/* Learner profile badges */}
+            {/* Learner profile */}
             {analytics.learner_profile && (
-              <div className="bg-white/60 rounded-2xl border border-white/50 px-5 py-4 space-y-3">
-                <h3 className="text-xs font-semibold text-aristo-brown-muted uppercase tracking-wider">
-                  Your Learning Profile
-                </h3>
+              <div className={BLOCK}>
+                <h3 className={BLOCK_TITLE}>Your learning profile</h3>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { tag: "Level", label: analytics.learner_profile.expertise_level   },
@@ -169,33 +167,31 @@ export function DashboardView({ onClose }: DashboardViewProps) {
                   ].map(({ tag, label }) => (
                     <div
                       key={tag}
-                      className="flex items-center gap-1.5 bg-aristo-wash border border-aristo-orange-main/20 rounded-full px-3 py-1"
+                      className={cn(SHAPE.pill, "flex items-center gap-1.5 border border-line bg-sunk px-3 py-1")}
                     >
-                      <span className="text-[10px] text-aristo-brown-faint font-medium uppercase tracking-wide">
-                        {tag}
-                      </span>
-                      <span className="text-xs font-semibold text-aristo-orange-ink capitalize">
-                        {label}
-                      </span>
+                      <span className="text-xs font-medium text-muted">{tag}</span>
+                      <span className="text-xs font-semibold capitalize text-ink">{label}</span>
                     </div>
                   ))}
                 </div>
 
                 {(analytics.learner_profile.strongest_bloom_level ||
                   analytics.learner_profile.weakest_bloom_level) && (
-                  <div className="flex gap-5 text-xs">
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
                     {analytics.learner_profile.strongest_bloom_level && (
-                      <span>
-                        <span className="text-aristo-brown-muted">Strongest: </span>
-                        <span className="font-semibold text-[#16A34A] capitalize">
+                      <span className="flex items-center gap-1.5">
+                        <TrendingUp aria-hidden className="size-4 text-success" />
+                        <span className="text-body">Strongest:</span>
+                        <span className="font-semibold capitalize text-ink">
                           {analytics.learner_profile.strongest_bloom_level}
                         </span>
                       </span>
                     )}
                     {analytics.learner_profile.weakest_bloom_level && (
-                      <span>
-                        <span className="text-aristo-brown-muted">Needs work: </span>
-                        <span className="font-semibold text-[#DC2626] capitalize">
+                      <span className="flex items-center gap-1.5">
+                        <Target aria-hidden className="size-4 text-warning" />
+                        <span className="text-body">Needs work:</span>
+                        <span className="font-semibold capitalize text-ink">
                           {analytics.learner_profile.weakest_bloom_level}
                         </span>
                       </span>
@@ -207,37 +203,35 @@ export function DashboardView({ onClose }: DashboardViewProps) {
 
             {/* Weak concepts */}
             {analytics.weak_concepts.length > 0 && (
-              <div className="bg-white/60 rounded-2xl border border-white/50 px-5 py-4 space-y-3">
-                <h3 className="text-xs font-semibold text-aristo-brown-muted uppercase tracking-wider">
-                  Needs More Practice
-                </h3>
-                <div className="space-y-2.5">
+              <div className={BLOCK}>
+                <h3 className={BLOCK_TITLE}>Needs more practice</h3>
+                <ul className="space-y-3">
                   {analytics.weak_concepts.map((c) => (
-                    <div key={c.concept_id} className="flex items-center gap-3">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-aristo-brown-main truncate">{c.name}</p>
+                    <li key={c.concept_id} className="flex items-center gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-ink">{c.name}</p>
                         {c.domain && (
-                          <p className="text-[10px] text-aristo-brown-faint">
+                          <p className="text-xs capitalize text-muted">
                             {c.domain.replace(/_/g, " ")}
                           </p>
                         )}
                       </div>
                       <MasteryBar score={c.mastery_score} />
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
 
             {/* Empty state */}
             {analytics.total_concepts_seen === 0 && (
-              <div className="text-center py-6 text-aristo-brown-muted text-sm">
+              <p className="py-6 text-center text-sm text-body">
                 Complete your first lesson to see progress here.
-              </div>
+              </p>
             )}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

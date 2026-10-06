@@ -10,11 +10,6 @@
 import { redirect }                  from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { AdminShell }                from "@/components/admin/AdminShell";
-import { THEME_LOCK_META }           from "@/components/theme/theme";
-
-// Admin is not on the design system yet (V8.6 token pass): the lock keeps it,
-// and the Radix portals it opens, light. See theme.ts.
-export const metadata = { other: { [THEME_LOCK_META]: "light" } };
 
 export const dynamic = "force-dynamic";
 

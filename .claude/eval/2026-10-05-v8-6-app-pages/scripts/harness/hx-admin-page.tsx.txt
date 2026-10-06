@@ -1,0 +1,24 @@
+// LOCAL ONLY (excluded from git): V8.6 admin harness. /hx/admin/<section> renders the real admin page
+// for <section> inside the real AdminShell, with every fetch answered by ../mocks.ts. 404 in production.
+import { notFound } from "next/navigation";
+import { AdminHarness } from "../AdminHarness";
+
+export const dynamic = "force-dynamic";
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ lock?: string }>;
+}) {
+  if (process.env.NODE_ENV === "production") notFound();
+  const { slug } = await params;
+  const { lock } = await searchParams;
+  return (
+    <>
+      {lock === "1" && <meta name="aristo-theme-lock" content="light" />}
+      <AdminHarness slug={(slug ?? ["overview"]).join("/")} />
+    </>
+  );
+}

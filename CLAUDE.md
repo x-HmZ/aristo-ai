@@ -10,7 +10,7 @@ Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D ava
 - **Real teaching, not summarization** — strict 5-phase protocol: Activate → Explain → Demonstrate → Challenge → Connect.
 - **Adaptive** — no fixed learning-style buckets (FSLSM rejected); `DynamicProfile` (expertise / depth / pace / example preference) inferred from behavioral signals every session.
 - **Mastery-based, not time-based** — BKT per concept, FSRS spaced repetition; the KG decides what to teach next.
-- **Visual direction** — one brand system since V8.2 (`.claude/docs/brand-system.md`): "Night Class", dark-first ink with orange as a spark, a real light variant, follows the OS with a toggle, one accent (#F97B2F darkened/lightened for AA). Semantic tokens (`bg`, `surface`, `ink`, `accent`...) app-wide; landing, auth and `ui/*` are on them. The classroom (`/learn`, `/demo`), admin and create-teacher keep the pastel orange + cream `aristo-*` palette under a light lock until V8.4 / V8.6. Not childish, not corporate.
+- **Visual direction** — one brand system since V8.2 (`.claude/docs/brand-system.md`): "Night Class", dark-first ink with orange as a spark, a real light variant, follows the OS with a toggle, one accent (#F97B2F darkened/lightened for AA). Semantic tokens (`bg`, `surface`, `ink`, `accent`...) on every page since V8.6, all following the theme (no light lock). The `aristo-*` palette survives only in 3D scene constants, /dev pages, the email template and admin categorical data-viz. Not childish, not corporate.
 
 ## Stack
 

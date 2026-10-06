@@ -39,7 +39,7 @@ interface UserRow {
 export default function UsersPage() {
   // useSearchParams() must be used inside a Suspense boundary in Next 15.
   return (
-    <Suspense fallback={<div className="text-xs text-aristo-brown-main/50">Loading…</div>}>
+    <Suspense fallback={<div className="text-xs text-muted">Loading…</div>}>
       <UsersPageInner />
     </Suspense>
   );
@@ -118,16 +118,16 @@ function UsersPageInner() {
         meta={
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-aristo-brown-main/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name or email…"
-                className="w-72 text-sm bg-white/60 border border-white/60 rounded-xl pl-9 pr-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+                className="min-h-11 w-72 text-sm bg-surface border border-line rounded-[10px] pl-9 pr-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
               />
             </div>
             <Select value={expertise} onValueChange={setExpertise}>
-              <SelectTrigger className="w-44 bg-white/60 border-white/60">
+              <SelectTrigger className="w-44 bg-surface border-line">
                 <SelectValue placeholder="Expertise" />
               </SelectTrigger>
               <SelectContent>
@@ -138,7 +138,7 @@ function UsersPageInner() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-44 bg-white/60 border-white/60">
+              <SelectTrigger className="w-44 bg-surface border-line">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -148,7 +148,7 @@ function UsersPageInner() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
-            <span className="ml-auto text-xs text-aristo-brown-main/50">
+            <span className="ml-auto text-xs text-muted">
               {users === null ? "Loading…" : `${users.length} of ${total} shown`}
             </span>
           </div>
@@ -157,11 +157,11 @@ function UsersPageInner() {
 
       <BrandCard padding="none">
         {users === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             Loading users…
           </div>
         ) : users.length === 0 ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             No users match your filter.
           </div>
         ) : (
@@ -186,9 +186,9 @@ function UsersPageInner() {
                   className="cursor-pointer"
                   onClick={() => openUser(u.id)}
                 >
-                  <TableCell className="font-medium text-aristo-brown-main">
+                  <TableCell className="font-medium text-ink">
                     <div>{u.full_name ?? "—"}</div>
-                    <div className="text-[10px] text-aristo-brown-main/40 font-normal truncate max-w-[260px]">
+                    <div className="text-[10px] text-muted font-normal truncate max-w-[260px]">
                       {u.email ?? u.id}
                     </div>
                   </TableCell>
@@ -197,7 +197,7 @@ function UsersPageInner() {
                       {u.approval_status}
                     </BrandBadge>
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/70 capitalize">
+                  <TableCell className="text-xs text-body capitalize">
                     {u.goal?.replace(/_/g, " ") ?? "—"}
                   </TableCell>
                   <TableCell>
@@ -206,23 +206,23 @@ function UsersPageInner() {
                         {u.expertise_level}
                       </BrandBadge>
                     ) : (
-                      <span className="text-xs text-aristo-brown-main/30">—</span>
+                      <span className="text-xs text-muted">—</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/70 capitalize">
+                  <TableCell className="text-xs text-body capitalize">
                     {u.engagement_pattern ?? "—"}
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/70 tabular-nums">
+                  <TableCell className="text-xs text-body tabular-nums">
                     {u.quiz_attempt_count ?? 0}
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/50">
+                  <TableCell className="text-xs text-muted">
                     {new Date(u.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
                     {u.is_admin ? (
                       <BrandBadge variant="orange" size="md">Admin</BrandBadge>
                     ) : (
-                      <span className="text-xs text-aristo-brown-main/40">Learner</span>
+                      <span className="text-xs text-muted">Learner</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">

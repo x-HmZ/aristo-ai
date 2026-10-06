@@ -17,9 +17,9 @@ export function SectionTitle({
   return (
     <div className={cn("flex items-start justify-between gap-3 mb-3", className)}>
       <div className="min-w-0">
-        <h3 className="text-sm font-bold text-aristo-brown-main">{title}</h3>
+        <h3 className="text-sm font-bold text-ink">{title}</h3>
         {description && (
-          <p className="text-xs text-aristo-brown-main/60 mt-0.5">{description}</p>
+          <p className="text-xs text-muted mt-0.5">{description}</p>
         )}
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}

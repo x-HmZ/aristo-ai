@@ -75,10 +75,10 @@ export default function AuditLogPage() {
               value={actor}
               onChange={(e) => setActor(e.target.value)}
               placeholder="Filter by actor email…"
-              className="w-64 text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+              className="min-h-11 w-64 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
             />
             <Select value={action} onValueChange={setAction}>
-              <SelectTrigger className="w-48 bg-white/60 border-white/60">
+              <SelectTrigger className="w-48 bg-surface border-line">
                 <SelectValue placeholder="All actions" />
               </SelectTrigger>
               <SelectContent>
@@ -89,7 +89,7 @@ export default function AuditLogPage() {
               </SelectContent>
             </Select>
             <Select value={target} onValueChange={setTarget}>
-              <SelectTrigger className="w-44 bg-white/60 border-white/60">
+              <SelectTrigger className="w-44 bg-surface border-line">
                 <SelectValue placeholder="Any target" />
               </SelectTrigger>
               <SelectContent>
@@ -99,7 +99,7 @@ export default function AuditLogPage() {
                 ))}
               </SelectContent>
             </Select>
-            <span className="ml-auto text-xs text-aristo-brown-main/50">
+            <span className="ml-auto text-xs text-muted">
               {data ? `${data.entries.length} of ${data.total} shown` : "Loading…"}
             </span>
           </div>
@@ -108,14 +108,14 @@ export default function AuditLogPage() {
 
       <BrandCard padding="none">
         {data === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
             Loading audit log…
           </div>
         ) : data.entries.length === 0 ? (
           <div className="p-10 text-center">
-            <ScrollText className="h-10 w-10 text-aristo-brown-main/30 mx-auto mb-3" />
-            <p className="text-sm text-aristo-brown-main/60">No matching entries.</p>
+            <ScrollText className="h-10 w-10 text-muted mx-auto mb-3" />
+            <p className="text-sm text-muted">No matching entries.</p>
           </div>
         ) : (
           <Table>
@@ -136,11 +136,11 @@ export default function AuditLogPage() {
                     className="cursor-pointer"
                     onClick={() => setExpanded(expanded === e.id ? null : e.id)}
                   >
-                    <TableCell className="text-[11px] text-aristo-brown-main/70 whitespace-nowrap">
+                    <TableCell className="text-[11px] text-body whitespace-nowrap">
                       {new Date(e.created_at).toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-xs text-aristo-brown-main max-w-[200px] truncate">
-                      {e.actor_email ?? <span className="text-aristo-brown-main/30">{e.actor_id?.slice(0, 8) ?? "—"}</span>}
+                    <TableCell className="text-xs text-ink max-w-[200px] truncate">
+                      {e.actor_email ?? <span className="text-muted">{e.actor_id?.slice(0, 8) ?? "—"}</span>}
                     </TableCell>
                     <TableCell>
                       <BrandBadge
@@ -153,20 +153,20 @@ export default function AuditLogPage() {
                         {e.action}
                       </BrandBadge>
                     </TableCell>
-                    <TableCell className="text-xs text-aristo-brown-main/70">
+                    <TableCell className="text-xs text-body">
                       {e.target_type && (
                         <BrandBadge variant="neutral" size="sm" className="mr-1">{e.target_type}</BrandBadge>
                       )}
                       <span className="font-mono text-[10px]">{e.target_id ?? "—"}</span>
                     </TableCell>
-                    <TableCell className="text-[11px] text-aristo-brown-main/50 font-mono">
+                    <TableCell className="text-[11px] text-muted font-mono">
                       {e.ip ?? "—"}
                     </TableCell>
                   </TableRow>
                   {expanded === e.id && e.diff && (
                     <TableRow key={`${e.id}-diff`} className="hover:bg-transparent">
-                      <TableCell colSpan={5} className="bg-white/40">
-                        <pre className="text-[10px] font-mono text-aristo-brown-main whitespace-pre-wrap break-all p-2 max-h-72 overflow-y-auto">
+                      <TableCell colSpan={5} className="bg-surface">
+                        <pre className="text-[10px] font-mono text-ink whitespace-pre-wrap break-all p-2 max-h-72 overflow-y-auto">
                           {JSON.stringify(e.diff, null, 2)}
                         </pre>
                       </TableCell>

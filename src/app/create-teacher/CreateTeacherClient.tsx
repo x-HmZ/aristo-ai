@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AvaturnSDK } from "@avaturn/sdk";
-import { AristoMark } from "@/components/brand/AristoMark";
+import { CreateTeacherView, type ExportStatus } from "./CreateTeacherView";
 
 // Set NEXT_PUBLIC_AVATURN_SUBDOMAIN in Vercel / .env.local after creating a
 // free project at https://developer.avaturn.dev — you'll receive a subdomain
@@ -20,7 +20,7 @@ interface CreateTeacherClientProps {
 export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sdkRef       = useRef<AvaturnSDK | null>(null);
-  const [status, setStatus]    = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [status, setStatus]    = useState<ExportStatus>("idle");
   const [savedUrl, setSavedUrl] = useState<string | null>(existingUrl);
 
   useEffect(() => {
@@ -85,100 +85,12 @@ export function CreateTeacherClient({ userId, existingUrl }: CreateTeacherClient
   }, [userId]);
 
   return (
-    <div className="min-h-screen bg-aristo-backdrop flex flex-col items-center justify-center p-6 gap-6">
-
-      {/* Header */}
-      <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <AristoMark
-            decorative={false}
-            className="h-[20px] text-aristo-brown-main"
-            litClassName="text-aristo-orange-main"
-          />
-        </div>
-        <h1 className="text-xl font-bold text-aristo-brown-main">Create Your Teacher</h1>
-        <p className="text-sm text-aristo-brown-muted mt-1">
-          Design a photorealistic 3D avatar — it will appear as your teacher in Aristo.
-        </p>
-      </div>
-
-      {/* Unconfigured state */}
-      {!AVATURN_URL && (
-        <div className="max-w-sm text-center px-6 py-8 rounded-2xl bg-white/60 border border-white/60 shadow-sm">
-          <p className="text-sm font-semibold text-aristo-brown-main mb-2">Avatar creator not configured</p>
-          <p className="text-xs text-aristo-brown-muted leading-relaxed">
-            Create a free project at{" "}
-            <span className="font-mono text-aristo-orange-main">developer.avaturn.me</span>,
-            then set{" "}
-            <span className="font-mono text-aristo-orange-main">NEXT_PUBLIC_AVATURN_SUBDOMAIN</span>{" "}
-            in your environment variables.
-          </p>
-        </div>
-      )}
-
-      {/* Status bar */}
-      {status === "saving" && (
-        <div className="px-4 py-2 rounded-full bg-aristo-orange-main/10 border border-aristo-orange-main/30 text-sm font-medium text-aristo-orange-ink animate-pulse">
-          Saving your teacher…
-        </div>
-      )}
-      {status === "saved" && (
-        <div className="max-w-md px-4 py-3 rounded-2xl bg-[#F0FDF4] border border-aristo-teal/30 text-sm font-medium text-[#059669]">
-          <div className="flex items-center gap-2 mb-1">
-            <span>✓</span>
-            <span>Avatar exported.</span>
-          </div>
-          {savedUrl?.startsWith("(downloaded") ? (
-            <p className="text-xs text-[#047857] leading-relaxed">
-              Check your Downloads folder. Rename the file to{" "}
-              <span className="font-mono">Teacher_Marcus.glb</span> (or{" "}
-              <span className="font-mono">Teacher_Priya.glb</span>) and move it
-              to <span className="font-mono">public/models/</span>.
-            </p>
-          ) : (
-            <p className="text-xs text-[#047857] leading-relaxed">
-              Head back to{" "}
-              <a href="/learn" className="underline font-semibold hover:text-[#047857]">the app</a>
-              {" "}and select "My Teacher".
-            </p>
-          )}
-        </div>
-      )}
-      {status === "error" && (
-        <div className="px-4 py-2 rounded-full bg-red-50 border border-red-200 text-sm font-medium text-red-700">
-          Save failed — check your connection and try again.
-        </div>
-      )}
-      {existingUrl && status === "idle" && (
-        <div className="px-4 py-2 rounded-full bg-[#F0FDF4] border border-aristo-teal/30 text-xs text-[#059669]">
-          You have an existing teacher. Completing the avatar below will replace it.
-        </div>
-      )}
-
-      {/* Avaturn editor container — SDK injects the iframe here */}
-      {AVATURN_URL && (
-        <div
-          className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-[0_8px_40px_hsl(var(--aristo-orange-main)/0.18)] border border-white/60"
-        >
-          <div
-            ref={containerRef}
-            style={{ width: "100%", height: "600px" }}
-          />
-        </div>
-      )}
-
-      {savedUrl && (
-        <p className="text-[10px] text-aristo-tan font-mono break-all max-w-lg text-center">
-          {savedUrl}
-        </p>
-      )}
-
-      <a
-        href="/learn"
-        className="text-sm text-aristo-brown-muted hover:text-aristo-brown-main font-medium transition-colors"
-      >
-        ← Back to Aristo
-      </a>
-    </div>
+    <CreateTeacherView
+      configured={!!AVATURN_URL}
+      editorRef={containerRef}
+      status={status}
+      savedUrl={savedUrl}
+      existingUrl={existingUrl}
+    />
   );
 }

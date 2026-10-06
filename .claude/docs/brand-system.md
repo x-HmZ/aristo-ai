@@ -23,9 +23,9 @@ spark, never a fill: primary actions, one word of a headline, icons, step number
   in it.
 - **On the system:** /learn and /demo, since V8.4c: the lesson panel and band (V8.4a), the quiz and inputs (V8.4b),
   and free mode, the pickers, the loading screen, the daily review and the page shells (V8.4c). They follow the theme.
-  Inside /learn, onboarding, the course map and the dashboard are V8.6's: pinned light with `.theme-paper`.
-- **Not on the system yet:** /admin/* and /create-teacher (V8.6). They declare the theme lock (see Theme) and keep
-  the `aristo-*` palette. /dev/* (V8.7) has no lock since V8.4c and follows the theme; its dev UI keeps literals.
+  Inside /learn, onboarding, the course map and the dashboard joined in V8.6.
+- **Also on the system since V8.6:** /pending, /create-teacher and /admin/*. Every page follows the theme; there is no
+  light lock any more. /dev/* (V8.7) follows the theme; its dev UI keeps literals.
 
 ## Colours
 
@@ -192,10 +192,12 @@ is a stack.
 - **Input / Select trigger:** 44px, control radius, surface fill, line border that darkens to `muted/50` on
   hover, accent focus ring offset against the page.
 - **Card:** surface, line border, 16px radius, no shadow. Titles use `type-h3`.
-- **Dialog / Sheet:** surface, `shadow-e2`, black 50% scrim with blur. The dialog has the 16px radius.
+- **Dialog / Sheet:** surface, `shadow-e2`, black 50% scrim with blur. The dialog has the 16px radius. The close
+  button is a 44px square, `muted` with a `sunk` hover (V8.6).
 - **Popover / Menu / Select content / Tooltip:** surface, line border, `shadow-e1`. Popovers are 16px; menus
   and tooltips are 10px, with 6px items and a `sunk` hover.
-- **Tabs:** a 44px sunk rail; the active tab is a surface.
+- **Tabs:** a `sunk` rail with 4px padding and 44px triggers (V8.6; they were 36); the active tab is a surface with
+  `shadow-e1`.
 - **Toast:** surface (or a danger fill), 16px, `shadow-e2`.
 - **Message boxes** (auth): errors are `bg-danger/10 border-danger/25 text-danger`; notices are
   `bg-tint border-tint-line text-ink`. Both use the 10px radius.
@@ -347,6 +349,24 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
   of the a11y tree, no pointer events), never cream over the lit page. It ends on the page in its own theme (the
   cover lifts: "the lights come on").
 
+### App pages (V8.6)
+
+- **Mastery tier** (`learn/mastery.tsx`): an icon and a word, never a hue alone. Not started `Circle` in `muted`; In
+  progress `CircleDotDashed`, Learned `CircleCheck` and Mastered a solid `Star`, all `accent-text`. The word is
+  `text-xs` `muted`. Thresholds come from `getMasteryTier` (0.3 / 0.7 / 0.9). The course map shows it on every
+  concept and in its legend.
+- **Choice card** (onboarding): the mode picker's option card with `aria-pressed`. Unchosen, a `muted` `Circle`;
+  chosen, `border-accent bg-tint` and a `CircleCheck` in `accent-text`.
+- **In-place dialogs** (mode picker, course map, dashboard): the system scrim, a surface with `shadow-e2`, and
+  `useModalDialog` (role, `aria-modal`, focus in and back, Tab held, Escape where there is a close).
+- **Stat tile** (dashboard): the value in ink with an `accent-text` icon; no per-stat hue.
+- **Admin:** `BrandCard` is a surface with a line border (or a status tint); `BrandButton` is 44px with the control
+  radius, `PRESS` and `FOCUS`, one accent primary; `BrandBadge` uses status colours for status only, neutral for Bloom
+  and expertise. Charts read the tokens through `admin/chart.ts` (`AXIS_TICK`, `GRID`, `TOOLTIP`, `TONE`,
+  `scoreTone`). Below md the sidebar is a left Sheet behind a 44px menu button; the active item is `bg-tint` ink with
+  an `accent-text` icon and `aria-current`. React Flow's controls and minimap are styled on the tokens in
+  `globals.css`.
+
 ### shadcn mapping (for `npx shadcn add`)
 
 shadcn's colour vocabulary was removed in V8.2: its `accent` means a hover tint, which contradicts the
@@ -371,7 +391,7 @@ system's `accent`. After adding a component, translate:
 ## Theme
 
 - `src/components/theme/theme.ts` holds the key (`aristo-theme`), the attribute (`data-theme` on `<html>`),
-  the lock meta name and the pre-paint script.
+  and the pre-paint script.
 - The script runs in the `<head>` of the root layout, so every App Router page paints in the stored theme, and in
   `pages/_document.tsx` (V8.4c) for the Pages Router (/learn, /demo, /dev/*), whose first paint is the loading screen.
   A choice under the pre-V8.2 key `aristo-landing-theme` is copied to the new key once, then deleted.
@@ -379,31 +399,21 @@ system's `accent`. After adding a component, translate:
   Its icon vars (`--theme-icon-*`) follow the page theme only: they are not in the rules `.theme-paper` and
   `.theme-ink` share, so the toggle on the ink pill still shows the page's icon.
 - Resolution, in order:
-  1. A page carrying `<meta name="aristo-theme-lock" content="light">` stays light.
-  2. `data-theme`.
-  3. `prefers-color-scheme`.
-- The lock is read with `:has()`, so it covers Radix portals too. It also restores the pre-V8.2 page defaults
-  on those pages: cream body, #2B1D12 text, #E8DDCF hairlines, the orange scrollbar. Lock sites:
-  - `src/app/admin/layout.tsx`
-  - `src/app/create-teacher/page.tsx`
-
-  Remove the meta when a surface moves onto the tokens. `pages/_app.tsx` (/learn, /demo, /dev/*) lost its lock in
-  V8.4c.
-- A browser without `:has()` (Chrome < 105, Safari < 15.4, Firefox < 121) gets light everywhere. Locked
-  pages then show the system's light neutrals instead of cream, but stay readable.
-- Checked signed in (2026-09-29): /admin and /create-teacher get the lock meta in `<head>` with the first
-  response, so an OS-dark visitor sees no dark frame. Both render light under OS-dark (/learn did too until V8.4c).
+  1. `data-theme` (a stored choice).
+  2. `prefers-color-scheme`.
+- The light lock (`aristo-theme-lock` meta, read with `:has()`) is retired. `pages/_app.tsx` lost it in V8.4c, and
+  /create-teacher and `admin/layout.tsx`, the last two sites, in V8.6, which also deleted `THEME_LOCK_META` and the
+  lock rules in `globals.css`. With no `:has()` left in the theme selectors, dark works in every browser.
+- Checked signed in (2026-10-06): /admin and /create-teacher follow a stored dark choice, with no lock meta.
 - The 3D scene's lighting and backdrop never follow the theme: the room is the lit window in both.
-- **`.theme-ink`** (V8.4a) resolves the dark tokens on a subtree, whatever the page theme and through the lock.
-  It shares the explicit dark rule through a forgiving `:is()` list, so the values exist once per route in and it
-  survives browsers without `:has()`. Use it for anything placed on the lit room: the caption band, the callouts,
+- **`.theme-ink`** (V8.4a) resolves the dark tokens on a subtree, whatever the page theme.
+  It shares the explicit dark rule through an `:is()` list, so the values exist once per route in. Use it for anything placed on the lit room: the caption band, the callouts,
   the image and model toolbars, the classroom top bar's pills (V8.4c). The classroom panel itself follows the theme.
-- V8.4c deleted the Pages Router lock from `pages/_app.tsx`; the V8.4a and V8.4b surfaces needed no edit. Dark is
-  checked by the real theme (OS dark, a stored choice, the toggle), not by removing the meta.
+- Dark is checked by the real theme (OS dark, a stored choice, the toggle).
 - **`.theme-paper`** (V8.4b) is the light twin of `.theme-ink`: it sits in the `:root` rule of `globals.css`, so it
-  pins the light values on a subtree whatever the page theme (and the lock). Use it for anything that lies in the lit
-  room as an object. The desk quiz card is its designed user; since V8.4c it also pins the V8.6 surfaces inside /learn
-  (onboarding, course map, dashboard) light until they move onto the tokens.
+  pins the light values on a subtree whatever the page theme. Use it for anything that lies in the lit room as an
+  object. The desk quiz card is its designed user. The admin knowledge graph's nodes use it too (V8.6), so their
+  labels stay dark on the pale categorical fills. The V8.6 surfaces it pinned in /learn from V8.4c no longer use it.
 - Do not use Tailwind `dark:` variants. Themes switch through the tokens.
 
 ## Responsive behaviour
@@ -421,15 +431,14 @@ with an owner:
 
 | Where | What | Why kept | Owner |
 |---|---|---|---|
-| `DashboardView`, `CourseMapView`, `OnboardingView`, `CreateTeacherClient` | status greens and reds, mastery colours, the aristo palette, emoji | not on the system yet; on /learn they are pinned light with `.theme-paper`. The classroom's own went in V8.4a (`LessonView`), V8.4b (the quiz files) and V8.4c (`FreeTopicCard`, `ModePicker`, `ReviewView`, `LoadingScreenVisual`, the `LearnClient` / `DemoClient` shells, `AvatarCredit`, `.aristo-scroll`): none left there | V8.6 |
 | `DeskQuiz` | the paper's grounding shadow, `rgba(30,14,6,0.65)` | a scene constant: it is a shadow cast on the desk in the lit room, tuned by eye in 3D, and `--shadow` is far too faint for it. Commented at the definition | stays |
-| `src/app/admin/*` (cost, overview, courses, quiz-analytics, misconceptions, knowledge graph) | data-viz and provider colours, status literals | internal; categorical data-viz is not a semantic colour | V8.6 (admin token pass) |
+| `src/app/admin/*`: cost (`PROVIDER_COLOR`), quiz-analytics (`BLOOM_COLOR_HEX`), overview (`EXPERTISE_META`), misconceptions (the heat ramp), `KgGraph` (Bloom node fills and borders) | categorical data-viz hues, partly via `BRAND_HEX` | data, not semantic colour: one hue per provider, Bloom level or expertise band, a sequential ramp for intensity. Surfaces, text, status and chart axes are on the tokens since V8.6 (`admin/chart.ts`) | stays |
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
 | `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
 | `AvatarLab.tsx`, `DeskQuizPreview.tsx`, `FreeModelPreview.tsx` | dev-page neutrals | `/dev` only | V8.7 |
 | `landing/intro/*`, `globals.css` `.landing-intro-cover`, `.landing-intro` | the opening's ink, cream and ember | the opening is on ink in both themes (the tokens follow the theme); WebGL colours are numbers | stays |
 
-## Known AA gaps (inside locked surfaces)
+## Known AA gaps
 
 Fixed in V8.4a inside the lesson panel, TeacherControls, the message panel, the callouts and the in-scene toolbars:
 white on #F97B2F (Next, Submit, Resume, the teacher pill, View in 3D; now `accent` with ink, 7.11, or the
@@ -464,13 +473,26 @@ Fixed in the desk-framing task (2026-09-30): the desk card cropped by the camera
 80% at 768x1024) and its tilted controls measuring 34 to 43px. Measured: the card is fully visible and every control is
 at least 44px in 144 states, and the AA figures are unchanged (`.claude/eval/2026-09-30-desk-framing/`).
 
+Fixed in V8.6 (onboarding, course map, dashboard, /create-teacher, admin; /pending and the auth pages audited and
+already passing). Measured in real themes at 360 / 768 / 1280 (`.claude/eval/2026-10-05-v8-6-app-pages/`):
+
+| Surface | Before: nodes, failures, min | After: nodes, failures, min (light / dark) | Targets under 44px |
+|---|---|---|---|
+| Onboarding, course map, dashboard (10 states) | 1,118, 784, 1.0 | 986, **0**, 5.25 / 5.56 | 114 to 0 |
+| /create-teacher (7 states) | 366, 172, 1.83 | 342, **0**, 4.98 / 6.05 | 42 to 0 |
+| Admin (15 pages, the user drawer, the 360 nav drawer) | 14,075, 4,436, 1.08 | 12,465, **0**, 4.55 / 4.77 | 1,626 to 0 |
+| /pending, /sign-in, /sign-up (audit) | 0 failures, min 4.74 | unchanged | 0 |
+
+The admin "before" is pessimistic in places: its page gradient is a background image the checker cannot composite, so
+text over it was also tried on black. The named gaps closed: the sidebar section labels (now `muted`), the active nav
+item (white on #F97B2F, now ink on `tint` with `aria-current`), the "Aristo Admin" header (now the mark with `muted`
+"Admin"), the learner surfaces' orange and brown-muted text, the gradient "Aristo" title (now the mark), and the 360
+admin layout (a 120px column, now the drawer).
+
 Still open:
 
 - The desk quiz on a landscape phone (844x390, 667x375): 238px of height is left between the top bar and the strip, so
   `deskFraming` keeps today's framing there and the card is cropped, with controls at about 28px on screen. Owner: a
   task on the panel and strip layout, not the camera.
-- The V8.6 surfaces inside /learn (onboarding, course map, dashboard), pinned light: orange and brown-muted text as
-  low as 1.82 (the gradient "Aristo" title reads as transparent to the checker).
-
-Admin, also V8.6: the sidebar's section labels (orange on beige, about 2.35:1), the active nav item (white on
-#F97B2F, 2.66:1) and the "Aristo Admin" header (about 2.5:1). All were lower before V8.2 (#F59047).
+- Admin's React Flow canvas (the knowledge graph): its edges and pale categorical nodes are graphics, not checked as
+  text; the node labels are (on `.theme-paper`, 0 failures).

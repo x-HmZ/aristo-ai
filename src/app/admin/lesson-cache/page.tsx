@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  RefreshCw, PlayCircle, RotateCcw, Trash2, Loader2, FileText, Eraser,
+  RefreshCw, PlayCircle, RotateCcw, Trash2, Loader2, FileText, Eraser, Flag,
 } from "lucide-react";
 import { PageHeader }                from "@/components/admin/PageHeader";
 import { BrandCard }                 from "@/components/admin/ui/BrandCard";
@@ -99,7 +99,7 @@ export default function LessonCachePage() {
         meta={
           <div className="flex flex-wrap items-center gap-2">
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="w-48 bg-white/60 border-white/60">
+              <SelectTrigger className="w-48 bg-surface border-line">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -116,7 +116,7 @@ export default function LessonCachePage() {
                 value={invalidateDomain}
                 onChange={(e) => setInvalidateDomain(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "_"))}
                 placeholder="Domain to wipe…"
-                className="w-44 text-xs bg-white/60 border border-white/60 rounded-xl px-3 py-1.5 font-mono text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-red-500/40"
+                className="min-h-11 w-44 text-xs bg-surface border border-line rounded-[10px] px-3 py-1.5 font-mono text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text/40"
               />
               <BrandButton
                 variant="destructive"
@@ -134,13 +134,13 @@ export default function LessonCachePage() {
 
       <BrandCard padding="none">
         {rows === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />Loading…
           </div>
         ) : rows.length === 0 ? (
           <div className="p-10 text-center">
-            <PlayCircle className="h-10 w-10 text-aristo-brown-main/30 mx-auto mb-3" />
-            <p className="text-sm text-aristo-brown-main/60">No cached lessons in this filter.</p>
+            <PlayCircle className="h-10 w-10 text-muted mx-auto mb-3" />
+            <p className="text-sm text-muted">No cached lessons in this filter.</p>
           </div>
         ) : (
           <Table>
@@ -161,14 +161,14 @@ export default function LessonCachePage() {
                 return (
                   <TableRow key={r.id}>
                     <TableCell className="max-w-[220px]">
-                      <div className="text-aristo-brown-main font-medium truncate">
+                      <div className="text-ink font-medium truncate">
                         {c?.name ?? r.concept_id}
                       </div>
-                      <div className="text-[10px] text-aristo-brown-main/40 font-mono truncate">
+                      <div className="text-[10px] text-muted font-mono truncate">
                         {r.concept_id}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-[10px] text-aristo-brown-main/60 max-w-[200px] truncate">
+                    <TableCell className="font-mono text-[10px] text-muted max-w-[200px] truncate">
                       {r.profile_signature}
                     </TableCell>
                     <TableCell>
@@ -176,16 +176,16 @@ export default function LessonCachePage() {
                         {r.moderation_status}
                       </BrandBadge>
                       {r.flagged_reason && (
-                        <div className="text-[10px] text-amber-700 mt-1">⚑ {r.flagged_reason}</div>
+                        <div className="mt-1 flex items-center gap-1 text-xs text-warning"><Flag aria-hidden className="size-3 shrink-0" />{r.flagged_reason}</div>
                       )}
                     </TableCell>
-                    <TableCell className="text-[11px] font-mono text-aristo-brown-main/60 truncate max-w-[140px]">
+                    <TableCell className="text-[11px] font-mono text-muted truncate max-w-[140px]">
                       {r.generated_by_model ?? "—"}
                     </TableCell>
-                    <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
+                    <TableCell className="text-right text-xs text-body tabular-nums">
                       {r.usage_count}
                     </TableCell>
-                    <TableCell className="text-[11px] text-aristo-brown-main/50">
+                    <TableCell className="text-[11px] text-muted">
                       {new Date(r.generated_at).toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
@@ -229,7 +229,7 @@ export default function LessonCachePage() {
             </span>
           }
         />
-        <ul className="text-xs text-aristo-brown-main/70 list-disc list-inside space-y-1">
+        <ul className="text-xs text-body list-disc list-inside space-y-1">
           <li>Lessons are keyed by <code className="font-mono">concept_id</code> + a <code className="font-mono">profile_signature</code> hash of the learner&apos;s dynamic profile.</li>
           <li>On a learner request: cache hit → serve <code className="font-mono">payload</code> directly (no LLM call); miss → generate + insert.</li>
           <li>Moderation thresholds live in <code className="font-mono">src/lib/admin/moderation-rules.ts</code> — tune there.</li>

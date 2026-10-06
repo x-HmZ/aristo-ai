@@ -1,0 +1,52 @@
+{
+ "api": [],
+ "paid": [],
+ "dialogs": {
+  "picker": {
+   "open": {
+    "open": true,
+    "modal": "true",
+    "label": "What Would You Like to Do?",
+    "inside": true
+   },
+   "tabOut": 0,
+   "shiftTabOut": 0,
+   "afterEscape": {
+    "open": true,
+    "modal": "true",
+    "label": "What Would You Like to Do?",
+    "inside": true
+   }
+  },
+  "map": {
+   "open": {
+    "open": true,
+    "modal": "true",
+    "label": "Earth Science: Inside the Planet",
+    "inside": true
+   },
+   "tabOut": 0,
+   "shiftTabOut": 0,
+   "afterEscape": {
+    "open": true,
+    "modal": "true",
+    "label": "What Would You Like to Do?",
+    "inside": true
+   }
+  },
+  "dash": {
+   "open": {
+    "open": true,
+    "modal": "true",
+    "label": "Your Progress",
+    "inside": true
+   },
+   "tabOut": 0,
+   "shiftTabOut": 0,
+   "afterEscape": {
+    "open": false
+   },
+   "focusReturned": true
+  }
+ }
+}

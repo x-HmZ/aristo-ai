@@ -21,6 +21,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE, AXIS_TICK, GRID, TOOLTIP } from "@/components/admin/chart";
 
 interface Summary {
   range:                  "24h" | "7d" | "30d";
@@ -89,7 +90,7 @@ export default function CostPage() {
         actions={
           <>
             <Select value={range} onValueChange={(v) => setRange(v as "24h" | "7d" | "30d")}>
-              <SelectTrigger className="w-32 bg-white/60 border-white/60">
+              <SelectTrigger className="w-32 bg-surface border-line">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -115,7 +116,6 @@ export default function CostPage() {
         <StatCard
           label="API calls"
           value={data?.event_count ?? 0}
-          color={BRAND_HEX.blue}
           icon={<BarChart3 className="h-5 w-5" />}
         />
         <StatCard
@@ -125,12 +125,10 @@ export default function CostPage() {
               ? `$${(data.total_usd / data.event_count).toFixed(4)}`
               : "—"
           }
-          color={BRAND_HEX.purple}
         />
         <StatCard
           label="Projected monthly"
           value={data ? `$${data.projected_monthly_usd.toFixed(2)}` : "—"}
-          color="#22C55E"
           icon={<TrendingUp className="h-5 w-5" />}
         />
       </div>
@@ -140,35 +138,33 @@ export default function CostPage() {
         <BrandCard>
           <SectionTitle title="Daily spend trend" description={`USD per day over the last ${range}.`} />
           {!data || data.trend.length === 0 ? (
-            <p className="text-xs text-aristo-brown-main/50">No spend recorded in this range.</p>
+            <p className="text-xs text-muted">No spend recorded in this range.</p>
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={data.trend} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                 <defs>
                   <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%"   stopColor={BRAND_HEX.orangeMain} stopOpacity={0.6} />
-                    <stop offset="100%" stopColor={BRAND_HEX.orangeMain} stopOpacity={0.05} />
+                    <stop offset="0%"   stopColor={TONE.accent} stopOpacity={0.6} />
+                    <stop offset="100%" stopColor={TONE.accent} stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                <CartesianGrid {...GRID} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
+                  tick={AXIS_TICK}
                   tickFormatter={(v) => v.slice(5)}
                 />
-                <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <YAxis tick={AXIS_TICK} />
                 <Tooltip
-                  contentStyle={{
-                    background: "rgba(253, 248, 239, 0.95)",
-                    border: "1px solid rgba(248, 123, 47, 0.3)",
-                    borderRadius: 12,
-                  }}
+                  contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                   formatter={(value) => `$${Number(value).toFixed(4)}`}
                 />
                 <Area
                   type="monotone"
                   dataKey="usd"
-                  stroke={BRAND_HEX.orangeMain}
+                  stroke={TONE.accent}
                   strokeWidth={2}
                   fill="url(#costGrad)"
                 />
@@ -180,19 +176,17 @@ export default function CostPage() {
         <BrandCard>
           <SectionTitle title="Spend by provider" description="Which providers account for most cost?" />
           {!data || data.byProvider.length === 0 ? (
-            <p className="text-xs text-aristo-brown-main/50">No spend recorded in this range.</p>
+            <p className="text-xs text-muted">No spend recorded in this range.</p>
           ) : (
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={data.byProvider} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
-                <XAxis dataKey="provider" tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
-                <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                <CartesianGrid {...GRID} />
+                <XAxis dataKey="provider" tick={AXIS_TICK} />
+                <YAxis tick={AXIS_TICK} />
                 <Tooltip
-                  contentStyle={{
-                    background: "rgba(253, 248, 239, 0.95)",
-                    border: "1px solid rgba(248, 123, 47, 0.3)",
-                    borderRadius: 12,
-                  }}
+                  contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                   formatter={(value) => `$${Number(value).toFixed(4)}`}
                 />
                 <Bar dataKey="usd" radius={[6, 6, 0, 0]}>
@@ -215,7 +209,7 @@ export default function CostPage() {
           />
         </div>
         {!data || data.byFeature.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No spend recorded.</p>
+          <p className="px-5 pb-5 text-xs text-muted">No spend recorded.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -229,12 +223,12 @@ export default function CostPage() {
             <TableBody>
               {data.byFeature.map((f) => (
                 <TableRow key={f.feature}>
-                  <TableCell className="font-mono text-xs text-aristo-brown-main">{f.feature}</TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/70 tabular-nums">{f.count}</TableCell>
-                  <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
+                  <TableCell className="font-mono text-xs text-ink">{f.feature}</TableCell>
+                  <TableCell className="text-xs text-body tabular-nums">{f.count}</TableCell>
+                  <TableCell className="text-right text-xs font-bold text-ink tabular-nums">
                     ${f.usd.toFixed(4)}
                   </TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
+                  <TableCell className="text-right text-xs text-body tabular-nums">
                     ${(f.usd / Math.max(1, f.count)).toFixed(4)}
                   </TableCell>
                 </TableRow>
@@ -253,7 +247,7 @@ export default function CostPage() {
           />
         </div>
         {!data || data.byModel.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No data.</p>
+          <p className="px-5 pb-5 text-xs text-muted">No data.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -267,12 +261,12 @@ export default function CostPage() {
             <TableBody>
               {data.byModel.map((m) => (
                 <TableRow key={m.model}>
-                  <TableCell className="font-mono text-[11px] text-aristo-brown-main">{m.model}</TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">{m.count}</TableCell>
-                  <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
+                  <TableCell className="font-mono text-[11px] text-ink">{m.model}</TableCell>
+                  <TableCell className="text-right text-xs text-body tabular-nums">{m.count}</TableCell>
+                  <TableCell className="text-right text-xs text-body tabular-nums">
                     ${(m.usd / Math.max(1, m.count)).toFixed(4)}
                   </TableCell>
-                  <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
+                  <TableCell className="text-right text-xs font-bold text-ink tabular-nums">
                     ${m.usd.toFixed(4)}
                   </TableCell>
                 </TableRow>
@@ -289,22 +283,22 @@ export default function CostPage() {
           description="Cost partitioned by API provider AND by the feature it powers. Use this to spot which service is driving spend on which provider."
         />
         {!data || data.providerFeatureMatrix.length === 0 ? (
-          <p className="text-xs text-aristo-brown-main/50">No spend recorded.</p>
+          <p className="text-xs text-muted">No spend recorded.</p>
         ) : (
           <div className="space-y-4">
             {data.providerFeatureMatrix.map((p) => (
-              <div key={p.provider} className="rounded-xl border border-white/60 bg-white/40 p-4">
+              <div key={p.provider} className="rounded-xl border border-line bg-surface p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span
                       className="h-2.5 w-2.5 rounded-full"
                       style={{ background: PROVIDER_COLOR[p.provider] ?? "#94A3B8" }}
                     />
-                    <span className="font-mono text-xs font-bold text-aristo-brown-main uppercase">
+                    <span className="font-mono text-xs font-bold text-ink uppercase">
                       {p.provider}
                     </span>
                   </div>
-                  <span className="text-xs font-bold text-aristo-brown-main tabular-nums">
+                  <span className="text-xs font-bold text-ink tabular-nums">
                     ${p.usd.toFixed(4)}
                   </span>
                 </div>
@@ -313,10 +307,10 @@ export default function CostPage() {
                     const pct = (f.usd / Math.max(0.0001, p.usd)) * 100;
                     return (
                       <div key={f.feature} className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] text-aristo-brown-main/70 w-40 truncate">
+                        <span className="font-mono text-[10px] text-body w-40 truncate">
                           {f.feature}
                         </span>
-                        <div className="flex-1 h-1.5 rounded-full bg-white/60 overflow-hidden">
+                        <div className="flex-1 h-1.5 rounded-full bg-surface overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{
@@ -325,10 +319,10 @@ export default function CostPage() {
                             }}
                           />
                         </div>
-                        <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-12 text-right">
+                        <span className="text-[10px] text-muted tabular-nums w-12 text-right">
                           {f.count}
                         </span>
-                        <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
+                        <span className="text-[10px] font-bold text-ink tabular-nums w-16 text-right">
                           ${f.usd.toFixed(4)}
                         </span>
                       </div>
@@ -353,7 +347,7 @@ export default function CostPage() {
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
               placeholder="Filter by email…"
-              className="w-56 text-xs bg-white/60 border border-white/60 rounded-xl px-3 py-1.5 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+              className="min-h-11 w-56 text-xs bg-surface border border-line rounded-[10px] px-3 py-1.5 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
             />
             <BrandBadge variant="neutral" size="md">
               {data ? `${filteredUsers.length} / ${data.userBreakdown.length}` : "—"}
@@ -361,9 +355,9 @@ export default function CostPage() {
           </div>
         </div>
         {!data || data.userBreakdown.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No spend tied to users yet.</p>
+          <p className="px-5 pb-5 text-xs text-muted">No spend tied to users yet.</p>
         ) : filteredUsers.length === 0 ? (
-          <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No users match that filter.</p>
+          <p className="px-5 pb-5 text-xs text-muted">No users match that filter.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -390,21 +384,21 @@ export default function CostPage() {
                     >
                       <TableCell>
                         {isOpen
-                          ? <ChevronDown   className="h-3.5 w-3.5 text-aristo-brown-main/50" />
-                          : <ChevronRight  className="h-3.5 w-3.5 text-aristo-brown-main/50" />}
+                          ? <ChevronDown   className="h-3.5 w-3.5 text-muted" />
+                          : <ChevronRight  className="h-3.5 w-3.5 text-muted" />}
                       </TableCell>
                       <TableCell>
-                        <div className="text-xs font-medium text-aristo-brown-main truncate max-w-[260px]">
+                        <div className="text-xs font-medium text-ink truncate max-w-[260px]">
                           {u.email ?? "—"}
                         </div>
-                        <div className="font-mono text-[10px] text-aristo-brown-main/40 truncate max-w-[260px]">
+                        <div className="font-mono text-[10px] text-muted truncate max-w-[260px]">
                           {u.user_id}
                         </div>
                       </TableCell>
-                      <TableCell className="font-mono text-[11px] text-aristo-brown-main/70">
+                      <TableCell className="font-mono text-[11px] text-body">
                         {topFeat ? `${topFeat.feature} ($${topFeat.usd.toFixed(4)})` : "—"}
                       </TableCell>
-                      <TableCell className="text-[11px] text-aristo-brown-main/70">
+                      <TableCell className="text-[11px] text-body">
                         {topProv ? (
                           <span className="inline-flex items-center gap-1.5">
                             <span
@@ -415,10 +409,10 @@ export default function CostPage() {
                           </span>
                         ) : "—"}
                       </TableCell>
-                      <TableCell className="text-right text-xs text-aristo-brown-main/70 tabular-nums">
+                      <TableCell className="text-right text-xs text-body tabular-nums">
                         {u.count}
                       </TableCell>
-                      <TableCell className="text-right text-xs font-bold text-aristo-brown-main tabular-nums">
+                      <TableCell className="text-right text-xs font-bold text-ink tabular-nums">
                         ${u.usd.toFixed(4)}
                       </TableCell>
                       <TableCell className="text-right">
@@ -426,7 +420,8 @@ export default function CostPage() {
                           href={`/admin/users?userId=${u.user_id}`}
                           onClick={(e) => e.stopPropagation()}
                           title="Open user drawer"
-                          className="inline-flex p-1.5 rounded-lg hover:bg-white/70 text-aristo-brown-main/60 hover:text-aristo-orange-main transition-colors"
+                          aria-label="Open user drawer"
+                          className="inline-grid size-11 place-items-center rounded-[10px] hover:bg-sunk text-muted hover:text-accent-text transition-colors"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
@@ -434,10 +429,10 @@ export default function CostPage() {
                     </TableRow>
                     {isOpen && (
                       <TableRow key={`${u.user_id}-detail`} className="hover:bg-transparent">
-                        <TableCell colSpan={7} className="bg-aristo-cream/40">
+                        <TableCell colSpan={7} className="bg-surface">
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-3">
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-muted mb-2">
                                 Per service
                               </div>
                               <div className="space-y-1">
@@ -445,16 +440,16 @@ export default function CostPage() {
                                   const pct = (f.usd / Math.max(0.0001, u.usd)) * 100;
                                   return (
                                     <div key={f.feature} className="flex items-center gap-2">
-                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-32 truncate">
+                                      <span className="font-mono text-[10px] text-body w-32 truncate">
                                         {f.feature}
                                       </span>
-                                      <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
-                                        <div className="h-full bg-aristo-orange-main rounded-full" style={{ width: `${pct}%` }} />
+                                      <div className="flex-1 h-1.5 rounded-full bg-surface overflow-hidden">
+                                        <div className="h-full bg-accent rounded-full" style={{ width: `${pct}%` }} />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-muted tabular-nums w-8 text-right">
                                         {f.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-ink tabular-nums w-16 text-right">
                                         ${f.usd.toFixed(4)}
                                       </span>
                                     </div>
@@ -463,7 +458,7 @@ export default function CostPage() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-muted mb-2">
                                 Per API
                               </div>
                               <div className="space-y-1">
@@ -475,10 +470,10 @@ export default function CostPage() {
                                         className="h-2 w-2 rounded-full"
                                         style={{ background: PROVIDER_COLOR[p.provider] ?? "#94A3B8" }}
                                       />
-                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-24 truncate uppercase">
+                                      <span className="font-mono text-[10px] text-body w-24 truncate uppercase">
                                         {p.provider}
                                       </span>
-                                      <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
+                                      <div className="flex-1 h-1.5 rounded-full bg-surface overflow-hidden">
                                         <div
                                           className="h-full rounded-full"
                                           style={{
@@ -487,10 +482,10 @@ export default function CostPage() {
                                           }}
                                         />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-muted tabular-nums w-8 text-right">
                                         {p.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-ink tabular-nums w-16 text-right">
                                         ${p.usd.toFixed(4)}
                                       </span>
                                     </div>
@@ -499,7 +494,7 @@ export default function CostPage() {
                               </div>
                             </div>
                             <div>
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/50 mb-2">
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-muted mb-2">
                                 Per model
                               </div>
                               <div className="space-y-1">
@@ -507,16 +502,16 @@ export default function CostPage() {
                                   const pct = (m.usd / Math.max(0.0001, u.usd)) * 100;
                                   return (
                                     <div key={m.model} className="flex items-center gap-2">
-                                      <span className="font-mono text-[10px] text-aristo-brown-main/70 w-36 truncate">
+                                      <span className="font-mono text-[10px] text-body w-36 truncate">
                                         {m.model}
                                       </span>
-                                      <div className="flex-1 h-1.5 rounded-full bg-white/70 overflow-hidden">
-                                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: BRAND_HEX.purple }} />
+                                      <div className="flex-1 h-1.5 rounded-full bg-surface overflow-hidden">
+                                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: TONE.accent }} />
                                       </div>
-                                      <span className="text-[10px] text-aristo-brown-main/60 tabular-nums w-8 text-right">
+                                      <span className="text-[10px] text-muted tabular-nums w-8 text-right">
                                         {m.count}
                                       </span>
-                                      <span className="text-[10px] font-bold text-aristo-brown-main tabular-nums w-16 text-right">
+                                      <span className="text-[10px] font-bold text-ink tabular-nums w-16 text-right">
                                         ${m.usd.toFixed(4)}
                                       </span>
                                     </div>

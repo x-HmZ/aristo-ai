@@ -5,6 +5,7 @@ import { BookOpen, ChevronRight, CircleAlert, Compass, LoaderCircle, Route } fro
 import { useAristoStore, type CourseStructure } from "@/store/useAristoStore";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { useModalDialog } from "@/hooks/useModalDialog";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -46,6 +47,8 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
   const [courses,      setCourses]      = useState<PublishedCourse[] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError,     setGenError]     = useState<string | null>(null);
+  // A dialog that must be answered: no Escape, but focus stays inside it.
+  const dialog = useModalDialog<HTMLElement>();
 
   // Read the user's stored domain from course progress (set during onboarding)
   const course = useAristoStore((s) => s.course);
@@ -88,8 +91,9 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <section
+        {...dialog}
         aria-labelledby="mode-picker-title"
-        className={cn(SHAPE.surface, "flex max-h-[80vh] w-full max-w-md flex-col overflow-hidden border border-line bg-surface shadow-e2")}
+        className={cn(SHAPE.surface, "flex max-h-[80vh] outline-none w-full max-w-md flex-col overflow-hidden border border-line bg-surface shadow-e2")}
       >
 
         {/* Header */}

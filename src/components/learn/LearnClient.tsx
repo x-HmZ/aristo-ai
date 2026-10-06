@@ -439,11 +439,9 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
         {renderBottom()}
       </div>
 
-      {/* Onboarding overlay. Onboarding, the course map and the dashboard are
-          not on the design system yet (V8.6): `.theme-paper` keeps them light
-          in both themes, as the lock did. */}
+      {/* Onboarding overlay */}
       {!localOnboarded && (
-        <div className="theme-paper absolute inset-0 z-50 text-ink">
+        <div className="aristo-scroll absolute inset-0 z-50 overflow-y-auto">
           <OnboardingView userName={userName} onComplete={handleOnboardingComplete} />
         </div>
       )}
@@ -455,7 +453,6 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
       {/* Course map overlay */}
       {showCourseMap && pendingCourse && (
-        <div className="theme-paper contents text-ink">
         <CourseMapView
           courseId={pendingCourse.id}
           currentTopicIndex={
@@ -464,14 +461,11 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           onSelectConcept={handleSelectConcept}
           onClose={handleCloseMap}
         />
-        </div>
       )}
 
       {/* Student dashboard overlay — Phase 9 */}
       {showDashboard && (
-        <div className="theme-paper contents text-ink">
-          <DashboardView onClose={() => setShowDashboard(false)} />
-        </div>
+        <DashboardView onClose={() => setShowDashboard(false)} />
       )}
 
       {/* Daily review overlay — Phase 6 */}

@@ -1,8 +1,6 @@
 /**
- * BrandCard — Aristo-flavored wrapper around the shadcn `Card`.
- *
- * Preserves the glassmorphic / cream design language while keeping the
- * registry's primitive untouched. Use this everywhere in the admin
+ * BrandCard — the admin's card, on the design system since V8.6: a surface
+ * with a line border, or a status tint. Use this everywhere in the admin
  * surface so the look is centralised.
  */
 
@@ -11,17 +9,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const brandCardVariants = cva(
-  "rounded-2xl border backdrop-blur-xl transition-all duration-200",
+  "rounded-2xl border",
   {
     variants: {
       variant: {
-        default: "bg-white/70 border-white/40 shadow-aristo-sm",
-        cream:   "bg-aristo-cream/80 border-aristo-beige-dark/60",
-        accent:  "bg-aristo-orange-pale/50 border-aristo-orange-main/30 shadow-aristo-sm",
-        success: "bg-green-50/80 border-green-200",
-        warning: "bg-amber-50/80 border-amber-200",
-        danger:  "bg-red-50/80 border-red-200",
-        muted:   "bg-white/40 border-white/40",
+        default: "bg-surface border-line",
+        cream:   "bg-sunk border-line",
+        accent:  "bg-tint border-tint-line",
+        success: "bg-success/10 border-success/25",
+        warning: "bg-warning/10 border-warning/25",
+        danger:  "bg-danger/10 border-danger/25",
+        muted:   "bg-bg border-line",
       },
       padding: {
         none: "",
