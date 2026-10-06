@@ -35,6 +35,7 @@ import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skele
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { BRAND_HEX } from "@/lib/brandColors";
 import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/devKit";
+import { cn } from "@/lib/utils";
 
 const CANDIDATES = {
   jake:   { file: "Teacher_Jake.glb",   label: "Jake (Canino, CC4)", pack: "Teacher_Jake_clips.glb" },
@@ -400,7 +401,7 @@ export default function AvatarLab() {
         </Canvas>
       </div>
 
-      <aside className={`${DEV_PANEL} w-[330px] shrink-0 p-[18px]`}>
+      <aside className={cn(DEV_PANEL, "w-[330px] shrink-0 p-[18px]")}>
         <h2 className="type-h4 mb-3.5 font-semibold">V9.1 avatar lab</h2>
 
         <DevSection title="Candidate">

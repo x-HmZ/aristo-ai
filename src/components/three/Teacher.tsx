@@ -943,7 +943,7 @@ export function Teacher({
           <div className="flex items-center justify-center -translate-x-1/2">
             <div role="status" className="theme-ink flex items-center gap-1.5 rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-sm font-medium text-ink shadow-e1 backdrop-blur-md">
               <span aria-hidden className="size-2 rounded-full bg-accent motion-safe:animate-pulse-soft" />
-              Thinking{thinkingDots}
+              Thinking<span aria-hidden>{thinkingDots}</span>
             </div>
           </div>
         </Html>
