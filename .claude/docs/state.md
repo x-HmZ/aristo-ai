@@ -2,7 +2,7 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-10-06 - V8.6: the app pages onto the brand system (PR into deploy-prep)
+## 2026-10-06 - V8.6: the app pages onto the brand system (merged into deploy-prep, #23)
 
 Branch `dev/v8-6-app-pages` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-v8-6-app-pages/` (README, sheets).
 Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, mastery icon + word, review by screenshots.
@@ -22,7 +22,7 @@ Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, maste
   map); harness-only: `/hx/admin` fails its server render in dev (Next's internal pathname context) and renders client-side.
 - **Not done:** the sign-up to learn flow walk with a test account (Hmz chose screenshots); React Flow canvas
   graphics are not checked as text.
-- **Next:** Hmz's review of the PR; then V8.7.
+- **Next:** merged as #23 after Hmz saw the sheets; V8.7 (`dev/v8-7-cleanup`).
 
 ## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 
