@@ -941,8 +941,8 @@ export function Teacher({
       {isLoading && (
         <Html position={[0, cfg.spawnLabelHeight, 0]}>
           <div className="flex items-center justify-center -translate-x-1/2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 shadow-aristo text-sm font-medium text-aristo-brown-main">
-              <span className="w-2 h-2 rounded-full bg-aristo-orange-main animate-pulse-soft" />
+            <div role="status" className="theme-ink flex items-center gap-1.5 rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-sm font-medium text-ink shadow-e1 backdrop-blur-md">
+              <span aria-hidden className="size-2 rounded-full bg-accent motion-safe:animate-pulse-soft" />
               Thinking{thinkingDots}
             </div>
           </div>
