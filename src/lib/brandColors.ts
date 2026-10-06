@@ -12,36 +12,20 @@
  *     colour (`${accent}18`),
  *   - HTML email, where clients read neither CSS variables nor a stylesheet.
  *
- * Everywhere else, use the Tailwind `aristo-*` classes or
- * `hsl(var(--aristo-*))`. The source of truth is the `--aristo-*` tokens in
+ * Everywhere else, use the semantic tokens (`bg-surface`, `text-ink`,
+ * `bg-accent`...). Since V8.7 the `--aristo-*` palette is just these four
+ * colours: the orange, the scene backdrop, and admin's purple and amber
+ * data-viz hues. The source of truth is the `--aristo-*` tokens in
  * src/app/globals.css; brandColors.test.ts fails if a value here drifts from
  * the token of the same name, so a palette change edits both and nothing else.
  */
 export const BRAND_HEX = {
   /** --aristo-orange-main: the classroom orange. */
   orangeMain: "#F97B2F",
-  /** --aristo-orange-hover */
-  orangeHover: "#E06A20",
-  /** --aristo-orange-ink */
-  orangeInk: "#C45A10",
-  /** --aristo-wash */
-  wash: "#FFF0E4",
   /** --aristo-backdrop: the classroom scene's background. */
   backdrop: "#FDF0E4",
-  /** --aristo-brown-main: the classroom brown. */
-  brownMain: "#3D2110",
-  /** --aristo-brown-muted */
-  brownMuted: "#8B6E5A",
-  /** --aristo-peach */
-  peach: "#FBA962",
   /** --aristo-purple */
   purple: "#8B5CF6",
-  /** --aristo-purple-hover */
-  purpleHover: "#7C3AED",
-  /** --aristo-teal */
-  teal: "#10B981",
-  /** --aristo-blue */
-  blue: "#3B82F6",
   /** --aristo-amber */
   amber: "#F59E0B",
 } as const;

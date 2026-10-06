@@ -1,0 +1,10 @@
+rules: before 1179, after 1179; removed 1, added 1
+--aristo-* declarations: before 26, after 4; gone 22, new 0
+
+REMOVED rules (selector only):
+  - :root {... 953 chars}
+
+ADDED rules:
+  + :root{--aristo-orange-main:22.57 94.39% 58.04%;--aristo-backdrop:28.8 86.21% 94.31%;--aristo-purple:258.31 89.53% 66.27%;--aristo-amber:37.69 92.13% 50.2%;--radius:0.75rem}
+
+--aristo-* declarations that remain: --aristo-amber --aristo-backdrop --aristo-orange-main --aristo-purple

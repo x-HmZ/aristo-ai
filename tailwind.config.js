@@ -41,30 +41,8 @@ module.exports = {
         // Aristo brand colors. Values live in src/app/globals.css.
         aristo: {
           "orange-main": "hsl(var(--aristo-orange-main))",
-          "orange-hover": "hsl(var(--aristo-orange-hover))",
-          "orange-ink": "hsl(var(--aristo-orange-ink))",
-          "orange-deep": "hsl(var(--aristo-orange-deep))",
-          "orange-light": "hsl(var(--aristo-orange-light))",
-          "orange-pale": "hsl(var(--aristo-orange-pale))",
-          wash: "hsl(var(--aristo-wash))",
-          "wash-light": "hsl(var(--aristo-wash-light))",
-          "wash-faint": "hsl(var(--aristo-wash-faint))",
           backdrop: "hsl(var(--aristo-backdrop))",
-          beige: "hsl(var(--aristo-beige))",
-          "beige-dark": "hsl(var(--aristo-beige-dark))",
-          cream: "hsl(var(--aristo-cream))",
-          "brown-main": "hsl(var(--aristo-brown-main))",
-          "brown-soft": "hsl(var(--aristo-brown-soft))",
-          "brown-muted": "hsl(var(--aristo-brown-muted))",
-          "brown-faint": "hsl(var(--aristo-brown-faint))",
-          tan: "hsl(var(--aristo-tan))",
-          peach: "hsl(var(--aristo-peach))",
-          "peach-pale": "hsl(var(--aristo-peach-pale))",
-          sand: "hsl(var(--aristo-sand))",
           purple: "hsl(var(--aristo-purple))",
-          "purple-hover": "hsl(var(--aristo-purple-hover))",
-          teal: "hsl(var(--aristo-teal))",
-          blue: "hsl(var(--aristo-blue))",
           amber: "hsl(var(--aristo-amber))",
         },
       },
@@ -141,10 +119,6 @@ module.exports = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "aristo-gradient":
-          "linear-gradient(135deg, hsl(var(--aristo-orange-pale)), hsl(var(--aristo-cream)))",
-        "aristo-gradient-warm":
-          "linear-gradient(135deg, hsl(var(--aristo-orange-light)), hsl(var(--aristo-beige)))",
       },
       boxShadow: {
         // Elevation (V8.2): one shadow colour per theme, --shadow carries its
@@ -152,10 +126,6 @@ module.exports = {
         // and hero media.
         e1: "0 12px 30px rgb(var(--shadow))",
         e2: "0 30px 70px rgb(var(--shadow)), 0 6px 18px rgb(var(--shadow))",
-        "aristo-sm": "0 2px 8px hsl(var(--aristo-orange-main) / 0.15)",
-        aristo: "0 4px 20px hsl(var(--aristo-orange-main) / 0.2)",
-        "aristo-lg": "0 8px 40px hsl(var(--aristo-orange-main) / 0.25)",
-        warm: "0 4px 20px hsl(25 50% 50% / 0.12)",
       },
     },
   },
