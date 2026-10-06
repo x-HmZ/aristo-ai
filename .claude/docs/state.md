@@ -2,6 +2,28 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-06 - V8.6: the app pages onto the brand system (PR into deploy-prep)
+
+Branch `dev/v8-6-app-pages` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-v8-6-app-pages/` (README, sheets).
+Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, mastery icon + word, review by screenshots.
+- **Learner (/learn):** onboarding, course map and dashboard on the tokens, `.theme-paper` pins removed, emoji gone.
+  Mastery tiers are an icon and a word (`learn/mastery.tsx`, Mastered a solid star); stats are ink with icons;
+  44px targets; mode picker, course map and dashboard are modal dialogs (`useModalDialog`).
+- **/create-teacher** on the tokens, lock dropped; **/pending** and the auth pages audited (already passing; /pending
+  split into `PendingView` for the harness only).
+- **Admin:** a drawer below md; token pass (`admin-tokens.cjs` codemod plus hand pass; `admin/chart.ts` for
+  Recharts); categorical data-viz keeps its hues (decisions.md). The light lock is retired everywhere.
+- **Measured:** AA 0 failures on every surface in both themes at 360 / 768 / 1280 (learner min 5.25, create-teacher
+  4.98, admin 4.55, from 784 / 172 / 4,436 failures); 0 targets under 44px (from 1,782); 0 overflow; 0 API calls in
+  the harnesses; real admin data checked in the pane, view only. Tests 558, lint 0 errors. Production build: /sign-in,
+  /sign-up and /demo 0 failures, 0 API calls. Two code reviews (typescript-reviewer): no high findings; the mediums
+  (drawer close on same-page links and past md, dialog semantics) fixed.
+- **Open:** the in-place dialogs focus the panel, not a fallback, when their opener unmounts (mode picker to course
+  map); harness-only: `/hx/admin` fails its server render in dev (Next's internal pathname context) and renders client-side.
+- **Not done:** the sign-up to learn flow walk with a test account (Hmz chose screenshots); React Flow canvas
+  graphics are not checked as text.
+- **Next:** Hmz's review of the PR; then V8.7.
+
 ## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 
 Branch `fix/intro-skip-contrast` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-intro-skip/`.
