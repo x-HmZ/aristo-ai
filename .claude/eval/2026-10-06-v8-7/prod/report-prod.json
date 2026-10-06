@@ -1,0 +1,108 @@
+{
+ "og": {
+  "status": 200,
+  "bytes": 510036,
+  "w": 1200,
+  "h": 630
+ },
+ "api": [],
+ "paid": [],
+ "shots": {
+  "landing-360-light": {
+   "n": 11,
+   "min": 5.11,
+   "fails": [],
+   "overflow": 0
+  },
+  "demo-360-light": {
+   "n": 9,
+   "min": 5.78,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-in-360-light": {
+   "n": 8,
+   "min": 5.48,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-up-360-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "overflow": 0
+  },
+  "landing-1280-light": {
+   "n": 17,
+   "min": 5.11,
+   "fails": [],
+   "overflow": 0
+  },
+  "demo-1280-light": {
+   "n": 11,
+   "min": 5.78,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-in-1280-light": {
+   "n": 8,
+   "min": 5.48,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-up-1280-light": {
+   "n": 9,
+   "min": 5.48,
+   "fails": [],
+   "overflow": 0
+  },
+  "landing-360-dark": {
+   "n": 11,
+   "min": 6.42,
+   "fails": [],
+   "overflow": 0
+  },
+  "demo-360-dark": {
+   "n": 9,
+   "min": 5.78,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-in-360-dark": {
+   "n": 8,
+   "min": 5.97,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-up-360-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "overflow": 0
+  },
+  "landing-1280-dark": {
+   "n": 17,
+   "min": 6.42,
+   "fails": [],
+   "overflow": 0
+  },
+  "demo-1280-dark": {
+   "n": 11,
+   "min": 5.78,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-in-1280-dark": {
+   "n": 8,
+   "min": 5.97,
+   "fails": [],
+   "overflow": 0
+  },
+  "sign-up-1280-dark": {
+   "n": 9,
+   "min": 5.97,
+   "fails": [],
+   "overflow": 0
+  }
+ }
+}

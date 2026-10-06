@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 // constraint as /dev/desk-quiz.
 const FreeModelPreview = dynamic(
   () => import("@/components/dev/FreeModelPreview"),
-  { ssr: false, loading: () => <div style={{ minHeight: "100vh", background: "hsl(var(--aristo-backdrop))" }} /> }
+  { ssr: false, loading: () => <div className="min-h-screen bg-bg" /> }
 );
 
 export default function DevFreeModelPage() {

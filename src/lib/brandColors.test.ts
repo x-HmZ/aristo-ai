@@ -38,15 +38,9 @@ describe("--aristo-* tokens in globals.css", () => {
     expect(tokens.length).toBe(declared.length);
   });
 
-  // Legacy integer-HSL values with a channel near x.5, which a browser could
-  // round either way. Chrome 152 renders the documented hex for all three; left
-  // alone because changing them is a visible change outside the classroom.
-  const ON_ROUNDING_BOUNDARY = new Set(["orange-light", "cream", "brown"]);
-
-  it.each(tokens)("--aristo-$name renders $hex", ({ name, hsl, hex }) => {
+  it.each(tokens)("--aristo-$name renders $hex", ({ hsl, hex }) => {
     const rgb = hslToRgb(...hsl);
     expect(toHex(rgb)).toBe(hex);
-    if (ON_ROUNDING_BOUNDARY.has(name)) return;
     // Clear of the .5 rounding boundary, so no browser can land a unit off.
     for (const c of rgb) expect(Math.abs(c - Math.round(c))).toBeLessThan(0.45);
   });

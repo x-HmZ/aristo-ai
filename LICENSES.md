@@ -120,6 +120,10 @@ credit; the authors are listed as a courtesy.
 
 The column itself is Aristo's own drawing. No font file is embedded in the mark or the OG image.
 
+| File | Work | Licence and open item |
+|---|---|---|
+| `public/images/og/room.jpg` (V8.7) | A crop of `public/images/landing/v3b/room.webp` (`scripts/brand/og-still.mjs`, the wide crop): Aristo's own render of the product with Jake and the brain model, shown in the link-preview image | Aristo's own render. It shows Jake (Canino3d, CC BY 4.0: the credit is on the page, not in the image, as with the landing stills) and the Tripo3D brain (the fal output terms are unverified, see the brain rows). **Open:** the licence credit for Jake is not inside the card |
+
 ## Other files in `public/`
 
 | Files | Source | Licence |

@@ -1,0 +1,42 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "avatar-lab-1280-light": {
+   "n": 48,
+   "min": 5.55,
+   "fails": [],
+   "clicked": true
+  },
+  "desk-quiz-1280-light": {
+   "n": 44,
+   "min": 5.48,
+   "fails": [],
+   "clicked": true
+  },
+  "free-model-1280-light": {
+   "n": 5,
+   "min": 6.75,
+   "fails": [],
+   "clicked": true
+  },
+  "avatar-lab-1280-dark": {
+   "n": 48,
+   "min": 5.97,
+   "fails": [],
+   "clicked": true
+  },
+  "desk-quiz-1280-dark": {
+   "n": 44,
+   "min": 5.48,
+   "fails": [],
+   "clicked": true
+  },
+  "free-model-1280-dark": {
+   "n": 5,
+   "min": 6.75,
+   "fails": [],
+   "clicked": true
+  }
+ }
+}

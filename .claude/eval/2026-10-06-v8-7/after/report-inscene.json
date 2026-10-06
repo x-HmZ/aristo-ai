@@ -1,0 +1,114 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "thinking-360-light": {
+   "n": 0,
+   "min": null,
+   "fails": [],
+   "found": []
+  },
+  "your-turn-360-light": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Your turn"
+   ]
+  },
+  "annotations-360-light": {
+   "n": 4,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Crust",
+    "Outer core",
+    "Crust",
+    "Outer core"
+   ]
+  },
+  "thinking-1280-light": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Thinking"
+   ]
+  },
+  "your-turn-1280-light": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Your turn"
+   ]
+  },
+  "annotations-1280-light": {
+   "n": 6,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Crust",
+    "Mantle",
+    "Outer core",
+    "Crust",
+    "Mantle",
+    "Outer core"
+   ]
+  },
+  "thinking-360-dark": {
+   "n": 0,
+   "min": null,
+   "fails": [],
+   "found": []
+  },
+  "your-turn-360-dark": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Your turn"
+   ]
+  },
+  "annotations-360-dark": {
+   "n": 4,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Crust",
+    "Outer core",
+    "Crust",
+    "Outer core"
+   ]
+  },
+  "thinking-1280-dark": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Thinking"
+   ]
+  },
+  "your-turn-1280-dark": {
+   "n": 1,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Your turn"
+   ]
+  },
+  "annotations-1280-dark": {
+   "n": 6,
+   "min": 10.92,
+   "fails": [],
+   "found": [
+    "Crust",
+    "Mantle",
+    "Outer core",
+    "Crust",
+    "Mantle",
+    "Outer core"
+   ]
+  }
+ }
+}

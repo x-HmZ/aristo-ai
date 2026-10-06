@@ -1,0 +1,44 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "avatar-lab-1280-light": {
+   "error": "page.evaluate: SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"hand-wave\"), button' is not a valid selector.\n    at eval (eval at evaluate (:302:30), <anonymous>:1:31)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "desk-quiz-1280-light": {
+   "n": 44,
+   "min": 2.66,
+   "fails": [
+    "Save | 2.66 | rgb(255, 255, 255) on 249,123,47 | 11px"
+   ],
+   "clicked": true
+  },
+  "free-model-1280-light": {
+   "n": 5,
+   "min": 2.66,
+   "fails": [
+    "model | 2.66 | rgb(255, 255, 255) on 249,123,47 | 12px"
+   ],
+   "clicked": true
+  },
+  "avatar-lab-1280-dark": {
+   "error": "page.evaluate: SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"hand-wave\"), button' is not a valid selector.\n    at eval (eval at evaluate (:302:30), <anonymous>:1:31)\n    at UtilityScript.evaluate (<anonymous>:304:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "desk-quiz-1280-dark": {
+   "n": 44,
+   "min": 2.66,
+   "fails": [
+    "Save | 2.66 | rgb(255, 255, 255) on 249,123,47 | 11px"
+   ],
+   "clicked": true
+  },
+  "free-model-1280-dark": {
+   "n": 5,
+   "min": 2.66,
+   "fails": [
+    "model | 2.66 | rgb(255, 255, 255) on 249,123,47 | 12px"
+   ],
+   "clicked": true
+  }
+ }
+}

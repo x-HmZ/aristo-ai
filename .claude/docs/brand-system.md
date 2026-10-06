@@ -25,7 +25,7 @@ spark, never a fill: primary actions, one word of a headline, icons, step number
   and free mode, the pickers, the loading screen, the daily review and the page shells (V8.4c). They follow the theme.
   Inside /learn, onboarding, the course map and the dashboard joined in V8.6.
 - **Also on the system since V8.6:** /pending, /create-teacher and /admin/*. Every page follows the theme; there is no
-  light lock any more. /dev/* (V8.7) follows the theme; its dev UI keeps literals.
+  light lock any more. /dev/* (V8.7) follows the theme too, through `dev/devKit.tsx`.
 
 ## Colours
 
@@ -90,13 +90,21 @@ Danger text on its own 10% tint over surface is 5.35 light and 5.54 dark (the si
 Overlays (dialog, sheet) are `bg-black/50` with `backdrop-blur-sm` in both themes. An ink scrim would turn
 light in dark mode.
 
-### The `aristo-*` palette (classroom)
+### The `aristo-*` palette (four colours left)
 
-`--aristo-*` in `globals.css` (HSL, each with its hex in a comment, checked by `src/lib/brandColors.test.ts`;
-JS reads `BRAND_HEX` from `src/lib/brandColors.ts`) is the classroom's palette: pastel orange, cream, beige
-and brown. It is **not themed**. Since V8.2 there is one orange (`aristo-orange-main` #F97B2F) and one brown
-(`aristo-brown-main` #3D2110). The five phase hues (`purple`, `teal`, `blue`, `amber`) are deprecated. New
-product UI uses the semantic tokens, not this palette.
+The classroom's old pastel palette is gone: V8.7 removed 22 of its 26 tokens, the aristo gradients and shadows, `.text-gradient`
+and 9 `BRAND_HEX` keys, once nothing read them (`.claude/eval/2026-10-06-v8-7/dead-code.md`; the compiled CSS differs only in
+the `:root` block). What remains in `globals.css` (HSL, each with its hex in a comment, checked by
+`src/lib/brandColors.test.ts`; JS reads `BRAND_HEX` from `src/lib/brandColors.ts`) is read by code that cannot use the
+semantic tokens, and is **not themed**:
+
+| Token | Read by |
+|---|---|
+| `--aristo-orange-main` #F97B2F | the 3D scene's lights and markers, the landing's dissolve edge, the HTML email, admin's Anthropic series, the avatar lab's marker |
+| `--aristo-backdrop` #FDF0E4 | the 3D scene's background colour |
+| `--aristo-purple` #8B5CF6, `--aristo-amber` #F59E0B | admin's categorical data-viz (providers, Bloom bars, the expertise split, the knowledge-graph nodes, the heat ramp) |
+
+New product UI uses the semantic tokens, not this palette.
 
 ## Typography
 
@@ -367,6 +375,18 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
   an `accent-text` icon and `aria-current`. React Flow's controls and minimap are styled on the tokens in
   `globals.css`.
 
+### Assets and tools (V8.7)
+
+- **In-room overlays** that were still on the old palette now match the callouts: the "Your turn" bubble (a `Mic` icon; its
+  motion runs only when not reduced), the teacher's "Thinking" chip, and a generated model's annotation labels (ink glass; a hovered label is
+  `bg-accent` with `accent-ink`). All are `.theme-ink` pills: `bg-bg/[0.86]`, line border, `shadow-e1`, ink text.
+- **/dev pages:** `dev/devKit.tsx` (`DevButton` with `aria-pressed`, `DevSection`, `DEV_OVERLAY`, `DEV_PANEL`). Desktop tools,
+  so controls are 36px, not the app's 44px.
+- **Link-preview image** (`opengraph-image.tsx` through `brand/OgCard.tsx`): the wordmark, the outlined headline and sub line on
+  ink, and a wide still of the lit classroom (Jake and the brain; `public/images/og/room.jpg`, cropped from the landing's room
+  still by `scripts/brand/og-still.mjs`) that melts into the ink on its left edge. Chosen by Hmz from three layouts (a hard
+  split, this fade, a framed window). A 1200x630 PNG of about 510 KB.
+
 ### shadcn mapping (for `npx shadcn add`)
 
 shadcn's colour vocabulary was removed in V8.2: its `accent` means a hover tint, which contradicts the
@@ -434,8 +454,7 @@ with an owner:
 | `DeskQuiz` | the paper's grounding shadow, `rgba(30,14,6,0.65)` | a scene constant: it is a shadow cast on the desk in the lit room, tuned by eye in 3D, and `--shadow` is far too faint for it. Commented at the definition | stays |
 | `src/app/admin/*`: cost (`PROVIDER_COLOR`), quiz-analytics (`BLOOM_COLOR_HEX`), overview (`EXPERTISE_META`), misconceptions (the heat ramp), `KgGraph` (Bloom node fills and borders) | categorical data-viz hues, partly via `BRAND_HEX` | data, not semantic colour: one hue per provider, Bloom level or expertise band, a sequential ramp for intensity. Surfaces, text, status and chart axes are on the tokens since V8.6 (`admin/chart.ts`) | stays |
 | `Classroom.tsx`, `Experience.tsx`, `DeskQuiz.tsx` | scene material and light constants | three.js needs strings; commented at the definition | stays |
-| `opengraph-image.tsx`, `apple-icon.tsx` | image colours | rendered outside CSS | stays |
-| `AvatarLab.tsx`, `DeskQuizPreview.tsx`, `FreeModelPreview.tsx` | dev-page neutrals | `/dev` only | V8.7 |
+| `OgCard.tsx` (the link-preview image), `apple-icon.tsx` | image colours: the Night Class dark tokens as literals | an ImageResponse is rendered outside CSS and cannot read the variables | stays |
 | `landing/intro/*`, `globals.css` `.landing-intro-cover`, `.landing-intro` | the opening's ink, cream and ember | the opening is on ink in both themes (the tokens follow the theme); WebGL colours are numbers | stays |
 
 ## Known AA gaps

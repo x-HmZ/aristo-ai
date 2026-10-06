@@ -2,7 +2,29 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-10-06 - V8.6: the app pages onto the brand system (PR into deploy-prep)
+## 2026-10-06 - V8.7: assets and cleanup, the last V8 step (PR into deploy-prep)
+
+Branch `dev/v8-7-cleanup` off `origin/deploy-prep`. Brief: `.claude/plans/V8-7-assets-and-cleanup.md`. Evidence:
+`.claude/eval/2026-10-06-v8-7/` (README). Planned on Opus, built on Sonnet; Hmz picked the OG layout and confirmed the
+dead-code list (two stops).
+- **In-room overlays:** "Your turn" (an emoji, 3.99:1), the teacher's "Thinking" chip and a generated model's annotation
+  labels are ink-glass pills now (10.9:1).
+- **/dev pages** on the tokens through `dev/devKit.tsx` (min contrast 1.17 to 5.48; 36px desktop controls).
+- **Link-preview image:** wordmark, outlined headline and a wide still of the lit classroom (Jake and the brain) that fades
+  into the ink; Hmz picked this "blend" (B) from three. `brand/OgCard.tsx`, `public/images/og/room.jpg`
+  (`scripts/brand/og-still.mjs`), a 510 KB 1200x630 PNG on the production build.
+- **Dead code removed:** 22 of 26 `--aristo-*` tokens, the aristo gradients and shadows, `.text-gradient`, 9 `BRAND_HEX`
+  keys. The compiled CSS differs only in the `:root` block (22 declarations gone, none new). Kept: orange-main, backdrop,
+  purple, amber.
+- **Measured:** AA 0 failures on every changed state and on the production `/`, `/demo`, `/sign-in`, `/sign-up` in both
+  themes at 360 and 1280; tests 505 (the removed tokens' own checks), lint 0 errors; 0 API calls.
+- **Open:**
+  - the OG image does not carry Jake's CC BY credit (it is on the page; LICENSES.md row);
+  - at 510 KB the PNG is over the roughly 300 KB some chat apps (WhatsApp) like for previews, and ImageResponse emits only PNG;
+  - `public/images/landing/v3/idea.webp` stays as the proportions reference.
+- **V8 is complete.** Next: Hmz's review of the PR, then whatever follows V8 (not planned).
+
+## 2026-10-06 - V8.6: the app pages onto the brand system (merged into deploy-prep, #23)
 
 Branch `dev/v8-6-app-pages` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-v8-6-app-pages/` (README, sheets).
 Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, mastery icon + word, review by screenshots.
@@ -22,7 +44,7 @@ Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, maste
   map); harness-only: `/hx/admin` fails its server render in dev (Next's internal pathname context) and renders client-side.
 - **Not done:** the sign-up to learn flow walk with a test account (Hmz chose screenshots); React Flow canvas
   graphics are not checked as text.
-- **Next:** Hmz's review of the PR; then V8.7.
+- **Next:** merged as #23 after Hmz saw the sheets; V8.7 (`dev/v8-7-cleanup`), brief in `.claude/plans/V8-7-assets-and-cleanup.md` (Sonnet).
 
 ## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 

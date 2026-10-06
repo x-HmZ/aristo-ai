@@ -11,7 +11,7 @@ import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
 import { Classroom } from "./Classroom";
 import { Callouts } from "@/components/learn/Callouts";
 import { BRAND_HEX } from "@/lib/brandColors";
-import { Box, Image as ImageIcon } from "lucide-react";
+import { Box, Image as ImageIcon, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CameraController } from "./CameraController";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
@@ -374,29 +374,19 @@ const TEACHER_HEAD_X = -0.25;
 const TEACHER_HEAD_Y = 0.65;
 const TEACHER_HEAD_Z = -3;
 
+// An ink-glass pill like the callouts and chips (V8.4a): placed on the lit room, so `.theme-ink`
+// keeps it dark in both themes. The mic is an icon, not an emoji; the motion only runs when the
+// visitor has not asked for less.
 function YourTurnBubble() {
   return (
     <Html position={[TEACHER_HEAD_X, TEACHER_HEAD_Y, TEACHER_HEAD_Z]} center>
       <div
-        style={{
-          display: "flex", alignItems: "center", gap: "8px",
-          background: "rgba(255,255,255,0.96)",
-          border: "1px solid hsl(var(--aristo-orange-main) / 0.45)",
-          borderRadius: "20px", padding: "6px 14px",
-          fontSize: "12px", fontWeight: 700, color: "hsl(var(--aristo-orange-ink))",
-          whiteSpace: "nowrap",
-          boxShadow: "0 8px 28px hsl(var(--aristo-orange-main) / 0.35)",
-          backdropFilter: "blur(6px)",
-          animation: "aristoBubbleIn 0.3s ease-out, aristoBubblePulse 2.2s ease-in-out 0.3s infinite",
-          pointerEvents: "none",
-        }}
+        role="status"
+        className="aristo-turn-bubble theme-ink pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3.5 py-1.5 text-xs font-bold text-ink shadow-e2 backdrop-blur-md"
       >
-        <span style={{
-          width: "8px", height: "8px", borderRadius: "50%",
-          background: "hsl(var(--aristo-orange-main))",
-          animation: "aristoMicPulse 1.2s ease-in-out infinite",
-        }} />
-        🎙 Your turn
+        <Mic aria-hidden className="size-3.5 text-accent-text" />
+        Your turn
+        <span aria-hidden className="aristo-turn-dot size-2 rounded-full bg-accent" />
       </div>
       <style>{`
         @keyframes aristoBubbleIn {
@@ -410,6 +400,10 @@ function YourTurnBubble() {
         @keyframes aristoMicPulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50%      { opacity: 0.4; transform: scale(0.75); }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+          .aristo-turn-bubble { animation: aristoBubbleIn 0.3s ease-out, aristoBubblePulse 2.2s ease-in-out 0.3s infinite; }
+          .aristo-turn-dot { animation: aristoMicPulse 1.2s ease-in-out infinite; }
         }
       `}</style>
     </Html>

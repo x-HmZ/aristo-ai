@@ -176,11 +176,11 @@ export function GeneratedModel({
         >
           <div
             className={`
-              px-2 py-1 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer
-              transition-all duration-200 select-none
+              theme-ink cursor-pointer select-none whitespace-nowrap rounded-[10px] border px-2.5 py-1 text-xs font-semibold shadow-e1
+              transition-transform duration-fast motion-reduce:transition-none
               ${hoveredAnnotation === label
-                ? "bg-aristo-orange-main text-aristo-cream shadow-aristo scale-110"
-                : "bg-white/90 text-aristo-brown-main shadow-warm border border-aristo-beige-dark"
+                ? "scale-110 border-accent bg-accent text-accent-ink"
+                : "border-line bg-bg/[0.86] text-ink backdrop-blur-md"
               }
             `}
             onMouseEnter={() => setHoveredAnnotation(label)}
