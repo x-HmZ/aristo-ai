@@ -1,0 +1,46 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "avatar-lab-1280-light": {
+   "n": 49,
+   "min": 2.66,
+   "fails": [
+    "Candidate | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Framing | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "lesson | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "Clip | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Talking | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "Gesture review (over the clip above) | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "x | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "1 | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "\"classroom\" framing is the app's camera  | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Demo narration (heart) | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px"
+   ],
+   "clicked": true
+  },
+  "avatar-lab-1280-dark": {
+   "n": 49,
+   "min": 1.17,
+   "fails": [
+    "V9.1 avatar lab | 1.17 | rgb(236, 237, 239) on 255,255,255 | 17px",
+    "Candidate | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Jake (Canino, CC4) | 1.17 | rgb(236, 237, 239) on 255,255,255 | 13px",
+    "MJ (Canino, CC4) | 1.17 | rgb(236, 237, 239) on 255,255,255 | 13px",
+    "Marcus (shipping control) | 1.17 | rgb(236, 237, 239) on 255,255,255 | 13px",
+    "Framing | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "lesson | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "Clip | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Talking | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "Gesture review (over the clip above) | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "replay every time it ends | 1.17 | rgb(236, 237, 239) on 255,255,255 | 13px",
+    "speed | 1.17 | rgb(236, 237, 239) on 255,255,255 | 13px",
+    "x | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "1 | 2.66 | rgb(255, 255, 255) on 249,123,47 | 13px",
+    "\"classroom\" framing is the app's camera  | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px",
+    "Demo narration (heart) | 3.51 | rgb(154, 133, 116) on 255,255,255 | 11px"
+   ],
+   "clicked": true
+  }
+ }
+}
