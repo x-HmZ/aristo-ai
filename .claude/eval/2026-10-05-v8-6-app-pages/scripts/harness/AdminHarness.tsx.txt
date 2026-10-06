@@ -1,0 +1,63 @@
+"use client";
+
+// LOCAL ONLY (excluded from git): see [[...slug]]/page.tsx.
+import { Suspense } from "react";
+import { PathnameContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { adminMock } from "./mocks";
+import Overview from "@/app/admin/overview/page";
+import Users from "@/app/admin/users/page";
+import Courses from "@/app/admin/courses/page";
+import CourseDetail from "@/app/admin/courses/[courseId]/page";
+import CourseNew from "@/app/admin/courses/new/page";
+import KnowledgeGraph from "@/app/admin/knowledge-graph/page";
+import Rag from "@/app/admin/rag/page";
+import Misconceptions from "@/app/admin/misconceptions/page";
+import QuizAnalytics from "@/app/admin/quiz-analytics/page";
+import Cost from "@/app/admin/cost/page";
+import Moderation from "@/app/admin/moderation/page";
+import LessonCache from "@/app/admin/lesson-cache/page";
+import AuditLog from "@/app/admin/audit-log/page";
+import System from "@/app/admin/system/page";
+
+// Answer every /api call in the page before it leaves; anything unmocked gets a 503, never the network.
+if (typeof window !== "undefined" && !(window as unknown as { __adminMocked?: boolean }).__adminMocked) {
+  (window as unknown as { __adminMocked?: boolean }).__adminMocked = true;
+  const orig = window.fetch.bind(window);
+  window.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    if (!url.includes("/api/")) return orig(input, init);
+    const body = adminMock(url, init);
+    const status = body === undefined ? 503 : 200;
+    return Promise.resolve(new Response(JSON.stringify(body ?? { error: "harness: no mock" }), { status, headers: { "content-type": "application/json" } }));
+  };
+}
+
+const COURSE_PARAMS = Promise.resolve({ courseId: "course-earth" });
+const PAGES: Record<string, () => React.ReactNode> = {
+  "overview": () => <Overview />,
+  "users": () => <Users />,
+  "courses": () => <Courses />,
+  "courses/course-earth": () => <CourseDetail params={COURSE_PARAMS} />,
+  "courses/new": () => <CourseNew />,
+  "knowledge-graph": () => <KnowledgeGraph />,
+  "rag": () => <Rag />,
+  "misconceptions": () => <Misconceptions />,
+  "quiz-analytics": () => <QuizAnalytics />,
+  "cost": () => <Cost />,
+  "moderation": () => <Moderation />,
+  "lesson-cache": () => <LessonCache />,
+  "audit-log": () => <AuditLog />,
+  "system": () => <System />,
+};
+
+export function AdminHarness({ slug }: { slug: string }) {
+  const render = PAGES[slug] ?? PAGES.overview;
+  return (
+    <PathnameContext.Provider value={`/admin/${slug}`}>
+      <AdminShell admin={{ email: "admin@example.com", full_name: "Robin Admin" }}>
+        <Suspense fallback={null}>{render()}</Suspense>
+      </AdminShell>
+    </PathnameContext.Provider>
+  );
+}

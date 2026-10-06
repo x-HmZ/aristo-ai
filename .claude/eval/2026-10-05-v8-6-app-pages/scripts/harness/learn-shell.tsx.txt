@@ -1,0 +1,128 @@
+// LOCAL ONLY (excluded from git): V8.4c harness. Mounts the real LearnClient (the /learn shell) with every
+// /api call answered by an in-page mock, so the top bar, mode picker, free mode, course panel, desk quiz,
+// daily review and lightbox can be captured headless in both themes. Nothing leaves the browser: any /api
+// path without a mock rejects. The capture scripts also abort /api/** at the network layer.
+//
+//   ?v=loading | ?v=stalled         the loading screen alone
+//   ?courses=empty                  ModePicker with no courses
+//   ?gen=fail | ?gen=hang           what "Generate" answers with (never the real route)
+//   ?review=empty | hang            what /api/quiz/review answers with (default: two questions)
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { LoadingScreenVisual } from "@/components/learn/LoadingScreenVisual";
+import { useAristoStore } from "@/store/useAristoStore";
+import { DEMO_TOPICS } from "@/data/demo";
+
+const LearnClient = dynamic(() => import("@/components/learn/LearnClient").then((m) => m.LearnClient), { ssr: false });
+
+const COURSES = [
+  { id: "c-earth", domain: "earth_science", title: "Earth Science: Inside the Planet", description: "Layers of the Earth, plates, volcanoes and earthquakes, in the order each one builds on the last.", structure: { modules: [{ id: "m1", title: "Inside the Earth", description: "", lessons: [{ id: "l1", title: "Volcanoes", concept_ids: ["volcano-eruption", "heart"] }] }] }, estimated_hours: 3 },
+  { id: "c-bio", domain: "biology", title: "The Human Body", description: null, structure: { modules: [{ id: "m1", title: "Circulation", description: "", lessons: [{ id: "l1", title: "Heart", concept_ids: ["heart"] }] }] }, estimated_hours: null },
+];
+
+// V8.6 states: a course map that shows every mastery tier, and a dashboard with every block filled.
+const MAP_COURSE = {
+  ...COURSES[0],
+  structure: { modules: [
+    { id: "m1", title: "Inside the Earth", description: "What the planet is made of, from the crust to the core.", lessons: [
+      { id: "l1", title: "Layers", concept_ids: ["crust", "mantle", "core"] },
+      { id: "l2", title: "Volcanoes", concept_ids: ["volcano-eruption", "magma"] },
+    ] },
+    { id: "m2", title: "Plates and Quakes", description: "", lessons: [
+      { id: "l3", title: "Plate tectonics", concept_ids: ["plates", "faults", "earthquakes"] },
+    ] },
+  ] },
+};
+const MAP_MASTERY: Record<string, number> = { crust: 0.95, mantle: 0.92, core: 0.78, "volcano-eruption": 0.55, magma: 0.31, plates: 0.12 };
+const MAP_META: Record<string, { name: string; difficulty: number }> = {
+  crust: { name: "The Crust", difficulty: 0.2 }, mantle: { name: "The Mantle", difficulty: 0.3 }, core: { name: "The Inner and Outer Core", difficulty: 0.4 },
+  "volcano-eruption": { name: "How Volcanoes Erupt", difficulty: 0.4 }, magma: { name: "Magma and Lava", difficulty: 0.4 },
+  plates: { name: "Tectonic Plates", difficulty: 0.5 }, faults: { name: "Faults and Boundaries", difficulty: 0.6 }, earthquakes: { name: "Why Earthquakes Happen", difficulty: 0.6 },
+};
+const DASH_FULL = {
+  streak: 12, time_today_seconds: 1260, time_week_seconds: 5400, total_concepts_seen: 9, total_mastered: 4, reviews_due: 3,
+  weak_concepts: [
+    { concept_id: "plates", name: "Tectonic Plates", domain: "earth_science", mastery_score: 0.12 },
+    { concept_id: "magma", name: "Magma and Lava", domain: "earth_science", mastery_score: 0.45 },
+    { concept_id: "loops", name: "For Loops and the Range Function", domain: "python_programming", mastery_score: 0.62 },
+  ],
+  learner_profile: { expertise_level: "intermediate", pace: "steady", explanation_depth: "detailed", weakest_bloom_level: "analyze", strongest_bloom_level: "remember" },
+};
+
+function installMock(q: URLSearchParams) {
+  const w = window as unknown as { __mocked?: boolean; __calls: string[]; __store: unknown };
+  w.__store = useAristoStore;
+  if (w.__mocked) return;
+  w.__mocked = true;
+  w.__calls = [];
+  const orig = window.fetch.bind(window);
+  const json = (b: unknown, status = 200) => Promise.resolve(new Response(JSON.stringify(b), { status, headers: { "content-type": "application/json" } }));
+  const never = () => new Promise<Response>(() => {});
+  const volcano = DEMO_TOPICS[0];
+  window.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    if (!url.includes("/api/")) return orig(input, init);
+    w.__calls.push(url);
+    if (/\/api\/courses\/generate/.test(url)) return q.get("gen") === "hang" ? never() : json({ error: "mock" }, 500);
+    if (/\/api\/courses\/c-/.test(url)) {
+      // V8.6: ?map=fail (network error), ?map=empty (no modules), default: every mastery tier and a current concept.
+      const m = q.get("map");
+      if (m === "fail") return Promise.reject(new TypeError("harness: map failed"));
+      if (m === "empty") return json({ course: { ...COURSES[0], structure: { modules: [] } }, masteryMap: {}, conceptMeta: {} });
+      return json({ course: MAP_COURSE, masteryMap: MAP_MASTERY, conceptMeta: MAP_META });
+    }
+    if (/\/api\/auth\/onboarding/.test(url)) return json({ error: "harness" }, 500);
+    if (/\/api\/profile\/analytics/.test(url)) {
+      // V8.6: ?dash=empty (a new learner), ?dash=fail (network error), ?dash=hang (loading), default: everything filled.
+      const d = q.get("dash");
+      if (d === "fail") return Promise.reject(new TypeError("harness: analytics failed"));
+      if (d === "hang") return never();
+      if (d === "empty") return json({ streak: 0, time_today_seconds: 0, time_week_seconds: 0, total_concepts_seen: 0, total_mastered: 0, reviews_due: 0, weak_concepts: [], learner_profile: null });
+      return json(DASH_FULL);
+    }
+    if (/\/api\/courses$/.test(url)) return json({ courses: q.get("courses") === "empty" ? [] : COURSES });
+    if (/\/api\/profile$/.test(url)) return json({});
+    if (/\/api\/profile\/session/.test(url)) return json({ ok: true });
+    if (/overdue-count/.test(url)) return json({ overdueCount: 3 });
+    if (/\/api\/learn\/lesson\//.test(url)) return json(volcano.lesson);
+    if (/\/api\/quiz\/lesson\//.test(url)) return json({ questions: volcano.quiz });
+    if (/\/api\/quiz\/review/.test(url)) {
+      const r = q.get("review");
+      if (r === "hang") return never();
+      if (r === "empty") return json({ questions: [], conceptCount: 0 });
+      return json({ questions: volcano.quiz, conceptCount: 2 });
+    }
+    if (/\/api\/quiz\/submit/.test(url)) {
+      const b = JSON.parse(String(init?.body ?? "{}"));
+      const ok = String(b.userAnswer).trim().toLowerCase() === String(b.correctAnswer).trim().toLowerCase();
+      return new Promise((res) => setTimeout(() => res(new Response(JSON.stringify({ is_correct: ok, score: ok ? 1 : 0, feedback: ok ? "Right." : "The correct answer is " + b.correctAnswer + ".", misconception_detected: null }), { headers: { "content-type": "application/json" } })), 400));
+    }
+    if (/\/api\/quiz\/complete/.test(url)) return json({ ok: true });
+    if (/\/api\/learn\/complete/.test(url)) return json({ ok: true });
+    // No generated visuals in the harness: the lesson plays without images.
+    if (/\/api\/learn\/segment-visuals/.test(url)) return json({ results: [] });
+    // Narration: a pre-rendered demo clip from /public (static, no ElevenLabs call).
+    if (/\/api\/tts/.test(url)) return orig("/demo/volcano-eruption/seg_001.mp3");
+    // Anything else (narration from /api/tts included) gets an error response, never the real route.
+    return json({ error: "harness: blocked" }, 503);
+  };
+}
+
+export default function LearnShellHarness() {
+  const [view, setView] = useState<string | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(location.search);
+    installMock(q);
+    setView(q.get("v") ?? "shell");
+  }, []);
+  if (process.env.NODE_ENV === "production") return <div>404</div>;
+  if (!view) return null;
+  if (view === "loading" || view === "stalled") {
+    return (
+      <div className="fixed inset-0 z-[100]">
+        <LoadingScreenVisual progress={40} stalled={view === "stalled"} />
+      </div>
+    );
+  }
+  return <LearnClient userName="Sam" userId="harness-user" onboardingDone={new URLSearchParams(location.search).get("onboarded") !== "0"} domain={null} />;
+}

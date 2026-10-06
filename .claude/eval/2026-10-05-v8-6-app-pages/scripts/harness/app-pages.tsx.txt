@@ -1,0 +1,33 @@
+// LOCAL ONLY (excluded from git): V8.6 harness. Renders the presentational views of /pending and
+// /create-teacher (PendingView, CreateTeacherView) without a session, so every state can be captured
+// headless in both themes. No /api call, no Avaturn SDK: the editor frame stays empty.
+//
+//   ?v=pending | rejected
+//   ?v=teacher | teacher-unconfigured | teacher-saving | teacher-saved | teacher-downloaded | teacher-error | teacher-existing
+import { useEffect, useRef, useState } from "react";
+import { PendingView } from "@/app/pending/PendingView";
+import { CreateTeacherView, type ExportStatus } from "@/app/create-teacher/CreateTeacherView";
+
+const noop = async () => {};
+
+export default function AppPagesHarness() {
+  const [v, setV] = useState<string | null>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { setV(new URLSearchParams(location.search).get("v") ?? "pending"); }, []);
+  if (process.env.NODE_ENV === "production") return <div>404</div>;
+  if (!v) return null;
+  if (v === "pending" || v === "rejected") {
+    return <PendingView email="sam.learner@example.com" rejected={v === "rejected"} signOut={noop} />;
+  }
+  const states: Record<string, { status: ExportStatus; savedUrl: string | null; existingUrl: string | null; configured: boolean }> = {
+    "teacher":              { status: "idle",   savedUrl: null, existingUrl: null, configured: true },
+    "teacher-unconfigured": { status: "idle",   savedUrl: null, existingUrl: null, configured: false },
+    "teacher-saving":       { status: "saving", savedUrl: null, existingUrl: null, configured: true },
+    "teacher-saved":        { status: "saved",  savedUrl: "https://models.avaturn.me/p/0b4e2f1c/avatar.glb", existingUrl: null, configured: true },
+    "teacher-downloaded":   { status: "saved",  savedUrl: "(downloaded as avatar-1759700000000.glb — 4.21 MB)", existingUrl: null, configured: true },
+    "teacher-error":        { status: "error",  savedUrl: null, existingUrl: null, configured: true },
+    "teacher-existing":     { status: "idle",   savedUrl: "https://models.avaturn.me/p/7a1d9c3e/avatar.glb", existingUrl: "https://models.avaturn.me/p/7a1d9c3e/avatar.glb", configured: true },
+  };
+  const s = states[v] ?? states.teacher;
+  return <CreateTeacherView {...s} editorRef={editorRef} />;
+}

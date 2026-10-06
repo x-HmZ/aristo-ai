@@ -1,0 +1,650 @@
+{
+ "api": [],
+ "paid": [],
+ "shots": {
+  "admin-overview-360-light": {
+   "n": 124,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-360-light": {
+   "n": 65,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-360-light": {
+   "n": 76,
+   "min": 5.26,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-360-light": {
+   "n": 142,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-360-light": {
+   "n": 122,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-360-light": {
+   "n": 36,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-360-light": {
+   "n": 90,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-360-light": {
+   "n": 34,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-360-light": {
+   "n": 44,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-360-light": {
+   "n": 66,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-360-light": {
+   "n": 210,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-360-light": {
+   "n": 73,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-360-light": {
+   "n": 69,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-360-light": {
+   "n": 54,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-360-light": {
+   "n": 63,
+   "min": 4.55,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-nav-open-360-light": {
+   "n": 16,
+   "min": 6.06,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-overview-768-light": {
+   "n": 241,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-768-light": {
+   "n": 154,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-768-light": {
+   "n": 86,
+   "min": 4.63,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-768-light": {
+   "n": 221,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-768-light": {
+   "n": 139,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-768-light": {
+   "n": 39,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-768-light": {
+   "n": 194,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-768-light": {
+   "n": 129,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-768-light": {
+   "n": 155,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-768-light": {
+   "n": 105,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-768-light": {
+   "n": 359,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-768-light": {
+   "n": 142,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-768-light": {
+   "n": 160,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-768-light": {
+   "n": 117,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-768-light": {
+   "n": 164,
+   "min": 4.55,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-overview-1280-light": {
+   "n": 241,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-1280-light": {
+   "n": 205,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-1280-light": {
+   "n": 86,
+   "min": 4.63,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-1280-light": {
+   "n": 227,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-1280-light": {
+   "n": 162,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-1280-light": {
+   "n": 37,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-1280-light": {
+   "n": 158,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-1280-light": {
+   "n": 124,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-1280-light": {
+   "n": 166,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-1280-light": {
+   "n": 120,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-1280-light": {
+   "n": 357,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-1280-light": {
+   "n": 160,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-1280-light": {
+   "n": 171,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-1280-light": {
+   "n": 181,
+   "min": 4.74,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-1280-light": {
+   "n": 149,
+   "min": 4.55,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-overview-360-dark": {
+   "n": 124,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-360-dark": {
+   "n": 65,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-360-dark": {
+   "n": 76,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-360-dark": {
+   "n": 142,
+   "min": 5.91,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-360-dark": {
+   "n": 122,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-360-dark": {
+   "n": 36,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-360-dark": {
+   "n": 90,
+   "min": 5.04,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-360-dark": {
+   "n": 34,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-360-dark": {
+   "n": 44,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-360-dark": {
+   "n": 65,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-360-dark": {
+   "n": 210,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-360-dark": {
+   "n": 73,
+   "min": 5.37,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-360-dark": {
+   "n": 69,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-360-dark": {
+   "n": 54,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-360-dark": {
+   "n": 63,
+   "min": 4.77,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-nav-open-360-dark": {
+   "n": 16,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-overview-768-dark": {
+   "n": 241,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-768-dark": {
+   "n": 154,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-768-dark": {
+   "n": 86,
+   "min": 5.22,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-768-dark": {
+   "n": 221,
+   "min": 5.91,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-768-dark": {
+   "n": 139,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-768-dark": {
+   "n": 39,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-768-dark": {
+   "n": 194,
+   "min": 5.04,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-768-dark": {
+   "n": 129,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-768-dark": {
+   "n": 155,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-768-dark": {
+   "n": 105,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-768-dark": {
+   "n": 359,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-768-dark": {
+   "n": 142,
+   "min": 5.37,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-768-dark": {
+   "n": 160,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-768-dark": {
+   "n": 117,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-768-dark": {
+   "n": 164,
+   "min": 4.77,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-overview-1280-dark": {
+   "n": 241,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-users-1280-dark": {
+   "n": 205,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-user-drawer-1280-dark": {
+   "n": 86,
+   "min": 5.22,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-courses-1280-dark": {
+   "n": 227,
+   "min": 5.91,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-detail-1280-dark": {
+   "n": 162,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-course-new-1280-dark": {
+   "n": 37,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-kg-1280-dark": {
+   "n": 158,
+   "min": 5.04,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-rag-1280-dark": {
+   "n": 124,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-misconceptions-1280-dark": {
+   "n": 166,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-quiz-1280-dark": {
+   "n": 120,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-cost-1280-dark": {
+   "n": 357,
+   "min": 5.97,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-moderation-1280-dark": {
+   "n": 160,
+   "min": 5.37,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-lesson-cache-1280-dark": {
+   "n": 171,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-audit-1280-dark": {
+   "n": 181,
+   "min": 5.56,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  },
+  "admin-system-1280-dark": {
+   "n": 149,
+   "min": 4.77,
+   "fails": [],
+   "small": [],
+   "overflow": 0
+  }
+ }
+}
