@@ -1,5 +1,6 @@
 /**
- * BrandBadge — semantic colored pills for status, bloom level, expertise.
+ * BrandBadge — pills for status (status colours) and for Bloom level and
+ * expertise (neutral; the word carries them, as in the classroom since V8.4b).
  * Used across tables, cards, and drawers in the admin surface.
  */
 
@@ -8,43 +9,46 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const brandBadgeVariants = cva(
-  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold leading-none whitespace-nowrap",
+  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold leading-none whitespace-nowrap",
   {
     variants: {
+      // Status variants carry status; the rest are neutral (V8.6: one accent,
+      // no categorical hues on labels; the word carries Bloom and expertise).
       variant: {
-        neutral:  "bg-white/70 border-white/60 text-aristo-brown-main/70",
-        orange:   "bg-aristo-orange-main/15 border-aristo-orange-main/30 text-aristo-orange-main",
-        purple:   "bg-violet-100 border-violet-200 text-violet-700",
-        green:    "bg-green-100 border-green-200 text-green-700",
-        red:      "bg-red-100 border-red-200 text-red-700",
-        amber:    "bg-amber-100 border-amber-200 text-amber-700",
-        blue:     "bg-blue-100 border-blue-200 text-blue-700",
-        slate:    "bg-slate-100 border-slate-200 text-slate-600",
+        neutral:  "bg-sunk border-line text-body",
+        orange:   "bg-tint border-tint-line text-accent-text",
+        purple:   "bg-sunk border-line text-ink",
+        green:    "bg-success/10 border-success/25 text-success",
+        red:      "bg-danger/10 border-danger/25 text-danger",
+        amber:    "bg-warning/10 border-warning/25 text-warning",
+        blue:     "bg-info/10 border-info/25 text-info",
+        slate:    "bg-sunk border-line text-muted",
       },
       size: {
-        sm: "text-[10px] px-2 py-0.5",
-        md: "text-xs px-2.5 py-0.5",
+        sm: "text-xs px-2 py-0.5",
+        md: "text-xs px-2.5 py-1",
       },
     },
     defaultVariants: { variant: "neutral", size: "sm" },
   }
 );
 
-// ─── Semantic color maps (used by the rest of the admin) ──────────────────────
+// ─── Colour maps (used by the rest of the admin) ──────────────────────────────
 
+// Bloom levels and expertise are labels, not statuses: neutral, the word says it.
 export const BLOOM_COLOR: Record<string, VariantProps<typeof brandBadgeVariants>["variant"]> = {
-  remember:   "slate",
-  understand: "blue",
-  apply:      "green",
-  analyze:    "amber",
-  evaluate:   "orange",
-  create:     "purple",
+  remember:   "neutral",
+  understand: "neutral",
+  apply:      "neutral",
+  analyze:    "neutral",
+  evaluate:   "neutral",
+  create:     "neutral",
 };
 
 export const EXPERTISE_COLOR: Record<string, VariantProps<typeof brandBadgeVariants>["variant"]> = {
-  beginner:     "green",
-  intermediate: "orange",
-  advanced:     "purple",
+  beginner:     "neutral",
+  intermediate: "neutral",
+  advanced:     "neutral",
 };
 
 export const STATUS_COLOR: Record<string, VariantProps<typeof brandBadgeVariants>["variant"]> = {

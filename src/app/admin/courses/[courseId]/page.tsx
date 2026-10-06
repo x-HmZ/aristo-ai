@@ -14,7 +14,7 @@ import { BrandButton }       from "@/components/admin/ui/BrandButton";
 import { BrandBadge }        from "@/components/admin/ui/BrandBadge";
 import { StatCard }          from "@/components/admin/ui/StatCard";
 import { SectionTitle }      from "@/components/admin/ui/SectionTitle";
-import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE, AXIS_TICK, GRID, TOOLTIP } from "@/components/admin/chart";
 
 interface Analytics {
   course: {
@@ -88,7 +88,7 @@ export default function CourseDetailPage({
 
       {!data ? (
         <BrandCard>
-          <p className="text-xs text-aristo-brown-main/60 flex items-center gap-2">
+          <p className="text-xs text-muted flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             Loading analytics…
           </p>
@@ -104,20 +104,18 @@ export default function CourseDetailPage({
             <StatCard
               label="In progress"
               value={data.status_counts.in_progress}
-              color={BRAND_HEX.blue}
             />
             <StatCard
               label="Completed"
               value={data.status_counts.completed}
-              color="#22C55E"
               icon={<CheckCircle2 className="h-5 w-5" />}
             />
             <StatCard
               label="Completion %"
               value={`${data.completion_pct}%`}
               color={
-                data.completion_pct >= 70 ? "#22C55E" :
-                data.completion_pct >= 40 ? BRAND_HEX.orangeMain : "#EF4444"
+                data.completion_pct >= 70 ? TONE.success :
+                data.completion_pct >= 40 ? TONE.warning : TONE.danger
               }
               icon={<Target className="h-5 w-5" />}
             />
@@ -130,27 +128,25 @@ export default function CourseDetailPage({
                 description="Learners currently stalled at each module (status ≠ completed)."
               />
               {data.moduleDropoff.length === 0 ? (
-                <p className="text-xs text-aristo-brown-main/50">No module data.</p>
+                <p className="text-xs text-muted">No module data.</p>
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.moduleDropoff} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                    <CartesianGrid {...GRID} />
                     <XAxis
                       dataKey="module_title"
-                      tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
+                      tick={AXIS_TICK}
                       angle={-30}
                       textAnchor="end"
                       interval={0}
                     />
-                    <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                    <YAxis tick={AXIS_TICK} />
                     <Tooltip
-                      contentStyle={{
-                        background: "rgba(253, 248, 239, 0.95)",
-                        border: "1px solid rgba(248, 123, 47, 0.3)",
-                        borderRadius: 12,
-                      }}
+                      contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                     />
-                    <Bar dataKey="stalled" fill={BRAND_HEX.orangeMain} radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="stalled" fill={TONE.accent} radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -162,29 +158,27 @@ export default function CourseDetailPage({
                 description="Histogram of mastery_score across the course's concepts (all enrolled learners)."
               />
               {data.masteryDistribution.every((b) => b.count === 0) ? (
-                <p className="text-xs text-aristo-brown-main/50">No mastery data yet.</p>
+                <p className="text-xs text-muted">No mastery data yet.</p>
               ) : (
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={data.masteryDistribution} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={BRAND_HEX.peach} strokeOpacity={0.2} />
+                    <CartesianGrid {...GRID} />
                     <XAxis
                       dataKey="bucket"
-                      tick={{ fontSize: 10, fill: BRAND_HEX.brownMain }}
+                      tick={AXIS_TICK}
                     />
-                    <YAxis tick={{ fontSize: 11, fill: BRAND_HEX.brownMain }} />
+                    <YAxis tick={AXIS_TICK} />
                     <Tooltip
-                      contentStyle={{
-                        background: "rgba(253, 248, 239, 0.95)",
-                        border: "1px solid rgba(248, 123, 47, 0.3)",
-                        borderRadius: 12,
-                      }}
+                      contentStyle={TOOLTIP.contentStyle}
+                  labelStyle={TOOLTIP.labelStyle}
+                  itemStyle={TOOLTIP.itemStyle}
                     />
                     <Bar dataKey="count" radius={[6, 6, 0, 0]}>
                       {data.masteryDistribution.map((b, i) => {
                         const color =
-                          b.min >= 0.8 ? "#22C55E" :
-                          b.min >= 0.5 ? BRAND_HEX.orangeMain :
-                                         "#EF4444";
+                          b.min >= 0.8 ? TONE.success :
+                          b.min >= 0.5 ? TONE.warning :
+                                         TONE.danger;
                         return <Cell key={i} fill={color} />;
                       })}
                     </Bar>
@@ -200,29 +194,29 @@ export default function CourseDetailPage({
               description="Course-concepts with the lowest average mastery. Candidates for lesson review."
             />
             {data.conceptStats.length === 0 ? (
-              <p className="text-xs text-aristo-brown-main/50">No assessed concepts yet.</p>
+              <p className="text-xs text-muted">No assessed concepts yet.</p>
             ) : (
-              <div className="divide-y divide-white/60">
+              <div className="divide-y divide-line">
                 {data.conceptStats.slice(0, 10).map((c) => (
                   <div key={c.concept_id} className="flex items-center justify-between py-2 gap-3">
-                    <span className="font-mono text-[11px] text-aristo-brown-main/60 truncate flex-1">
+                    <span className="font-mono text-[11px] text-muted truncate flex-1">
                       {c.concept_id}
                     </span>
-                    <span className="text-xs text-aristo-brown-main/50 tabular-nums w-16 text-right">
+                    <span className="text-xs text-muted tabular-nums w-16 text-right">
                       n={c.learner_count}
                     </span>
-                    <div className="w-40 bg-white/60 rounded-full h-2 overflow-hidden">
+                    <div className="w-40 bg-surface rounded-full h-2 overflow-hidden">
                       <div
                         className="h-full rounded-full"
                         style={{
                           width: `${c.avg_mastery}%`,
                           background:
-                            c.avg_mastery >= 80 ? "#22C55E" :
-                            c.avg_mastery >= 50 ? BRAND_HEX.orangeMain : "#EF4444",
+                            c.avg_mastery >= 80 ? TONE.success :
+                            c.avg_mastery >= 50 ? TONE.warning : TONE.danger,
                         }}
                       />
                     </div>
-                    <span className="text-xs text-aristo-brown-main/70 tabular-nums w-10 text-right">
+                    <span className="text-xs text-body tabular-nums w-10 text-right">
                       {c.avg_mastery}%
                     </span>
                   </div>

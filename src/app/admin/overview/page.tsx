@@ -2,7 +2,7 @@
 
 import { useEffect, useState }   from "react";
 import {
-  Users, BookOpen, Target, TrendingUp, RefreshCw,
+  Users, BookOpen, Target, TrendingUp, RefreshCw, Check, X,
 } from "lucide-react";
 import { PageHeader }            from "@/components/admin/PageHeader";
 import { StatCard }              from "@/components/admin/ui/StatCard";
@@ -14,6 +14,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE } from "@/components/admin/chart";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -82,7 +83,7 @@ export default function OverviewPage() {
 
       {error && (
         <BrandCard variant="danger" className="mb-6">
-          <p className="text-sm font-semibold text-red-600">{error}</p>
+          <p className="text-sm font-semibold text-danger">{error}</p>
         </BrandCard>
       )}
 
@@ -105,13 +106,11 @@ export default function OverviewPage() {
             <StatCard
               label="New This Week"
               value={data.stats.studentsThisWeek}
-              color="#22C55E"
               icon={<TrendingUp className="h-5 w-5" />}
             />
             <StatCard
               label="Courses Published"
               value={data.stats.publishedCourses}
-              color={BRAND_HEX.purple}
               icon={<BookOpen className="h-5 w-5" />}
             />
             <StatCard
@@ -119,8 +118,8 @@ export default function OverviewPage() {
               value={`${data.stats.avgQuizScore}%`}
               sub={`${data.stats.totalQuizAttempts} attempts`}
               color={
-                data.stats.avgQuizScore >= 70 ? "#22C55E" :
-                data.stats.avgQuizScore >= 50 ? BRAND_HEX.orangeMain : "#EF4444"
+                data.stats.avgQuizScore >= 70 ? TONE.success :
+                data.stats.avgQuizScore >= 50 ? TONE.warning : TONE.danger
               }
               icon={<Target className="h-5 w-5" />}
             />
@@ -134,11 +133,11 @@ export default function OverviewPage() {
                 description="Inferred from behavioral signals (not self-reported)."
               />
               {data.expertiseDistribution.every((e) => e.count === 0) ? (
-                <p className="text-xs text-aristo-brown-main/50">No learner profiles yet.</p>
+                <p className="text-xs text-muted">No learner profiles yet.</p>
               ) : (
                 <div className="space-y-3">
                   {data.expertiseDistribution.map(({ level, count, pct }) => {
-                    const meta = EXPERTISE_META[level] ?? { label: level, color: BRAND_HEX.brownMuted };
+                    const meta = EXPERTISE_META[level] ?? { label: level, color: TONE.muted };
                     return (
                       <BarRow
                         key={level}
@@ -159,15 +158,15 @@ export default function OverviewPage() {
                 description="Accuracy by cognitive level across recent quiz attempts."
               />
               {data.bloomPerformance.length === 0 ? (
-                <p className="text-xs text-aristo-brown-main/50">No quiz data yet.</p>
+                <p className="text-xs text-muted">No quiz data yet.</p>
               ) : (
                 <div className="space-y-3">
                   {[...data.bloomPerformance]
                     .sort((a, b) => BLOOM_ORDER.indexOf(a.bloom) - BLOOM_ORDER.indexOf(b.bloom))
                     .map(({ bloom, accuracy, count }) => {
                       const color =
-                        accuracy >= 70 ? "#22C55E" :
-                        accuracy >= 50 ? BRAND_HEX.orangeMain : "#EF4444";
+                        accuracy >= 70 ? TONE.success :
+                        accuracy >= 50 ? TONE.warning : TONE.danger;
                       return (
                         <BarRow
                           key={bloom}
@@ -190,22 +189,22 @@ export default function OverviewPage() {
               description="Lowest accuracy among concepts with ≥2 attempts. Investigate the lesson quality or prerequisite chain."
             />
             {data.strugglingTopics.length === 0 ? (
-              <p className="text-xs text-aristo-brown-main/50">
+              <p className="text-xs text-muted">
                 Not enough data yet — needs at least 2 attempts per topic.
               </p>
             ) : (
-              <div className="divide-y divide-white/60">
+              <div className="divide-y divide-line">
                 {data.strugglingTopics.map(({ topic, avgScore, attempts }) => {
                   const variant =
                     avgScore >= 70 ? "green" :
                     avgScore >= 50 ? "orange" : "red";
                   return (
                     <div key={topic} className="flex items-center justify-between py-2">
-                      <span className="text-xs font-medium text-aristo-brown-main truncate pr-3 flex-1">
+                      <span className="text-xs font-medium text-ink truncate pr-3 flex-1">
                         {topic}
                       </span>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="text-xs text-aristo-brown-main/50">{attempts}×</span>
+                        <span className="text-xs text-muted">{attempts}×</span>
                         <BrandBadge variant={variant} size="md">
                           {avgScore}%
                         </BrandBadge>
@@ -238,7 +237,7 @@ export default function OverviewPage() {
                 <TableBody>
                   {data.recentAttempts.map((a, i) => (
                     <TableRow key={i}>
-                      <TableCell className="font-medium text-aristo-brown-main max-w-[260px] truncate">
+                      <TableCell className="font-medium text-ink max-w-[260px] truncate">
                         {a.topic}
                       </TableCell>
                       <TableCell>
@@ -248,10 +247,12 @@ export default function OverviewPage() {
                       </TableCell>
                       <TableCell>
                         <BrandBadge variant={a.is_correct ? "green" : "red"} size="md">
-                          {a.is_correct ? "✓ correct" : "✗ wrong"}
+                          {a.is_correct
+                            ? <><Check aria-hidden className="size-3" />correct</>
+                            : <><X aria-hidden className="size-3" />wrong</>}
                         </BrandBadge>
                       </TableCell>
-                      <TableCell className="text-xs text-aristo-brown-main/60">
+                      <TableCell className="text-xs text-muted">
                         {new Date(a.at).toLocaleString()}
                       </TableCell>
                     </TableRow>
@@ -281,16 +282,16 @@ function BarRow({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-32 text-xs font-semibold text-aristo-brown-main truncate">
+      <div className="w-32 text-xs font-semibold text-ink truncate">
         {label}
       </div>
-      <div className="flex-1 bg-white/60 rounded-full h-2.5 overflow-hidden">
+      <div className="flex-1 bg-surface rounded-full h-2.5 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${Math.max(pct, 2)}%`, backgroundColor: color }}
         />
       </div>
-      <div className="w-16 text-right text-xs text-aristo-brown-main/60 tabular-nums">
+      <div className="w-16 text-right text-xs text-muted tabular-nums">
         {pct}% ({count})
       </div>
     </div>

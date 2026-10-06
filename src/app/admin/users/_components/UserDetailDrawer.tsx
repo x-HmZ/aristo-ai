@@ -4,6 +4,7 @@ import { useEffect, useState }       from "react";
 import {
   ShieldCheck, ShieldOff, RotateCcw, Trash2, Loader2,
   Brain, Activity, FileQuestion, AlertTriangle, User as UserIcon,
+  TrendingUp, TrendingDown, Check, X,
 } from "lucide-react";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
@@ -18,7 +19,7 @@ import { BrandBadge, EXPERTISE_COLOR, BLOOM_COLOR } from "@/components/admin/ui/
 import { BrandButton }   from "@/components/admin/ui/BrandButton";
 import { BrandCard }     from "@/components/admin/ui/BrandCard";
 import { SectionTitle }  from "@/components/admin/ui/SectionTitle";
-import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE } from "@/components/admin/chart";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -184,9 +185,9 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
 
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto bg-aristo-cream">
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto bg-surface">
         <SheetHeader>
-          <SheetTitle className="text-aristo-brown-main">
+          <SheetTitle className="text-ink">
             {data?.profile.full_name ?? "User detail"}
           </SheetTitle>
           <SheetDescription>
@@ -200,27 +201,27 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
 
         {loading && (
           <div className="py-12 flex justify-center">
-            <Loader2 className="h-5 w-5 animate-spin text-aristo-orange-main" />
+            <Loader2 className="h-5 w-5 animate-spin text-accent-text" />
           </div>
         )}
 
         {data && (
           <div className="mt-4">
             <Tabs defaultValue="profile">
-              <TabsList className="bg-white/60 border border-white/40 rounded-xl p-1 flex flex-wrap h-auto">
-                <TabsTrigger value="profile" className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg">
+              <TabsList className="flex flex-wrap h-auto">
+                <TabsTrigger value="profile">
                   <UserIcon className="h-3.5 w-3.5 mr-1.5" />Profile
                 </TabsTrigger>
-                <TabsTrigger value="mastery" className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg">
+                <TabsTrigger value="mastery">
                   <Brain className="h-3.5 w-3.5 mr-1.5" />Mastery
                 </TabsTrigger>
-                <TabsTrigger value="sessions" className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg">
+                <TabsTrigger value="sessions">
                   <Activity className="h-3.5 w-3.5 mr-1.5" />Sessions
                 </TabsTrigger>
-                <TabsTrigger value="quizzes" className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg">
+                <TabsTrigger value="quizzes">
                   <FileQuestion className="h-3.5 w-3.5 mr-1.5" />Quizzes
                 </TabsTrigger>
-                <TabsTrigger value="misconceptions" className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg">
+                <TabsTrigger value="misconceptions">
                   <AlertTriangle className="h-3.5 w-3.5 mr-1.5" />Misconceptions
                 </TabsTrigger>
               </TabsList>
@@ -243,7 +244,7 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                 <BrandCard variant="cream">
                   <SectionTitle title="Dynamic learner profile" description="Inferred from behavioral signals." />
                   {!data.learnerProfile ? (
-                    <p className="text-xs text-aristo-brown-main/50">No learner profile yet.</p>
+                    <p className="text-xs text-muted">No learner profile yet.</p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {data.learnerProfile.expertise_level && (
@@ -252,31 +253,33 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                         </BrandBadge>
                       )}
                       {data.learnerProfile.pace && (
-                        <BrandBadge variant="blue" size="md">Pace · {data.learnerProfile.pace}</BrandBadge>
+                        <BrandBadge variant="neutral" size="md">Pace · {data.learnerProfile.pace}</BrandBadge>
                       )}
                       {data.learnerProfile.explanation_depth && (
-                        <BrandBadge variant="purple" size="md">Depth · {data.learnerProfile.explanation_depth}</BrandBadge>
+                        <BrandBadge variant="neutral" size="md">Depth · {data.learnerProfile.explanation_depth}</BrandBadge>
                       )}
                       {data.learnerProfile.example_preference && (
-                        <BrandBadge variant="amber" size="md">Examples · {data.learnerProfile.example_preference}</BrandBadge>
+                        <BrandBadge variant="neutral" size="md">Examples · {data.learnerProfile.example_preference}</BrandBadge>
                       )}
                       {data.learnerProfile.engagement_pattern && (
-                        <BrandBadge variant="green" size="md">Engagement · {data.learnerProfile.engagement_pattern}</BrandBadge>
+                        <BrandBadge variant="neutral" size="md">Engagement · {data.learnerProfile.engagement_pattern}</BrandBadge>
                       )}
                       {data.learnerProfile.strongest_bloom_level && (
                         <BrandBadge variant={BLOOM_COLOR[data.learnerProfile.strongest_bloom_level] ?? "neutral"} size="md">
-                          ↑ {data.learnerProfile.strongest_bloom_level}
+                          <TrendingUp aria-hidden className="size-3.5 text-success" />
+                          Strongest · {data.learnerProfile.strongest_bloom_level}
                         </BrandBadge>
                       )}
                       {data.learnerProfile.weakest_bloom_level && (
                         <BrandBadge variant={BLOOM_COLOR[data.learnerProfile.weakest_bloom_level] ?? "neutral"} size="md">
-                          ↓ {data.learnerProfile.weakest_bloom_level}
+                          <TrendingDown aria-hidden className="size-3.5 text-warning" />
+                          Weakest · {data.learnerProfile.weakest_bloom_level}
                         </BrandBadge>
                       )}
                     </div>
                   )}
                   {data.learnerProfile?.custom_teacher_glb_url && (
-                    <div className="mt-3 text-[11px] text-aristo-brown-main/60 font-mono break-all">
+                    <div className="mt-3 text-[11px] text-muted font-mono break-all">
                       Custom teacher: {data.learnerProfile.custom_teacher_glb_url}
                     </div>
                   )}
@@ -343,7 +346,7 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                     />
                   </div>
                   {data.mastery.length === 0 ? (
-                    <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No quiz activity yet.</p>
+                    <p className="px-5 pb-5 text-xs text-muted">No quiz activity yet.</p>
                   ) : (
                     <Table>
                       <TableHeader>
@@ -358,22 +361,22 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                       <TableBody>
                         {data.mastery.map((m) => (
                           <TableRow key={m.concept_id}>
-                            <TableCell className="text-aristo-brown-main font-medium max-w-[200px] truncate">
+                            <TableCell className="text-ink font-medium max-w-[200px] truncate">
                               {m.concepts?.name ?? m.concept_id}
                             </TableCell>
-                            <TableCell className="text-xs text-aristo-brown-main/60 font-mono truncate max-w-[140px]">
+                            <TableCell className="text-xs text-muted font-mono truncate max-w-[140px]">
                               {m.concepts?.domain ?? "—"}
                             </TableCell>
                             <TableCell>
                               <MasteryBar value={m.mastery_score} />
                             </TableCell>
-                            <TableCell className="text-xs text-aristo-brown-main/70">
+                            <TableCell className="text-xs text-body">
                               {m.srs_interval_days ? `${m.srs_interval_days}d` : "—"}
-                              <span className="text-aristo-brown-main/40 ml-1">
+                              <span className="text-muted ml-1">
                                 ({m.srs_consecutive_correct ?? 0}/{m.srs_lapses ?? 0})
                               </span>
                             </TableCell>
-                            <TableCell className="text-[11px] text-aristo-brown-main/60">
+                            <TableCell className="text-[11px] text-muted">
                               {m.srs_next_review ? new Date(m.srs_next_review).toLocaleDateString() : "—"}
                             </TableCell>
                           </TableRow>
@@ -394,7 +397,7 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                     />
                   </div>
                   {data.sessions.length === 0 ? (
-                    <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No sessions logged yet.</p>
+                    <p className="px-5 pb-5 text-xs text-muted">No sessions logged yet.</p>
                   ) : (
                     <Table>
                       <TableHeader>
@@ -410,10 +413,10 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                           const totalSec = s.time_on_explanations_seconds + s.time_on_examples_seconds + s.time_on_quizzes_seconds;
                           return (
                             <TableRow key={s.id}>
-                              <TableCell className="text-xs text-aristo-brown-main/70">
+                              <TableCell className="text-xs text-body">
                                 {new Date(s.session_start).toLocaleString()}
                               </TableCell>
-                              <TableCell className="text-xs text-aristo-brown-main/70 tabular-nums">
+                              <TableCell className="text-xs text-body tabular-nums">
                                 {Math.round(totalSec / 60)} min
                               </TableCell>
                               <TableCell>
@@ -424,10 +427,10 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                                   >
                                     {Math.round((s.quiz_accuracy ?? 0) * 100)}% ({s.questions_correct}/{s.questions_attempted})
                                   </BrandBadge>
-                                ) : <span className="text-xs text-aristo-brown-main/40">—</span>}
+                                ) : <span className="text-xs text-muted">—</span>}
                               </TableCell>
-                              <TableCell className="text-[11px] text-aristo-brown-main/60">
-                                {s.clicked_explain_more}🛈 · {s.clicked_show_example}📌 · {s.clicked_skip_to_quiz}⏭
+                              <TableCell className="text-[11px] text-muted">
+                                {s.clicked_explain_more} explain · {s.clicked_show_example} example · {s.clicked_skip_to_quiz} skip
                               </TableCell>
                             </TableRow>
                           );
@@ -448,7 +451,7 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                     />
                   </div>
                   {data.quizzes.length === 0 ? (
-                    <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No quiz attempts yet.</p>
+                    <p className="px-5 pb-5 text-xs text-muted">No quiz attempts yet.</p>
                   ) : (
                     <Table>
                       <TableHeader>
@@ -463,10 +466,10 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                       <TableBody>
                         {data.quizzes.map((q) => (
                           <TableRow key={q.id}>
-                            <TableCell className="text-aristo-brown-main font-medium max-w-[200px] truncate">
+                            <TableCell className="text-ink font-medium max-w-[200px] truncate">
                               {q.concepts?.name ?? q.concept_id}
                             </TableCell>
-                            <TableCell className="text-xs text-aristo-brown-main/60 capitalize truncate max-w-[110px]">
+                            <TableCell className="text-xs text-muted capitalize truncate max-w-[110px]">
                               {q.question_type.replace(/_/g, " ")}
                             </TableCell>
                             <TableCell>
@@ -474,17 +477,19 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                                 <BrandBadge variant={BLOOM_COLOR[q.bloom_level] ?? "neutral"}>
                                   {q.bloom_level}
                                 </BrandBadge>
-                              ) : <span className="text-xs text-aristo-brown-main/40">—</span>}
+                              ) : <span className="text-xs text-muted">—</span>}
                             </TableCell>
                             <TableCell>
                               <BrandBadge variant={q.is_correct ? "green" : "red"} size="md">
-                                {q.is_correct ? "✓" : "✗"}
+                                {q.is_correct
+                                  ? <><Check aria-hidden className="size-3" /><span className="sr-only">Correct</span></>
+                                  : <><X aria-hidden className="size-3" /><span className="sr-only">Wrong</span></>}
                                 {q.score !== null && (
                                   <span className="ml-1 opacity-70">{Math.round(q.score * 100)}%</span>
                                 )}
                               </BrandBadge>
                             </TableCell>
-                            <TableCell className="text-[11px] text-aristo-brown-main/60">
+                            <TableCell className="text-[11px] text-muted">
                               {new Date(q.created_at).toLocaleDateString()}
                             </TableCell>
                           </TableRow>
@@ -505,9 +510,9 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                     />
                   </div>
                   {data.misconceptions.length === 0 ? (
-                    <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">No misconceptions detected.</p>
+                    <p className="px-5 pb-5 text-xs text-muted">No misconceptions detected.</p>
                   ) : (
-                    <div className="divide-y divide-white/60">
+                    <div className="divide-y divide-line">
                       {data.misconceptions.map((m) => (
                         <div
                           key={m.id}
@@ -515,10 +520,10 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <div className="text-sm text-aristo-brown-main font-medium">
+                              <div className="text-sm text-ink font-medium">
                                 {m.concepts?.name ?? m.concept_id}
                               </div>
-                              <div className="text-xs text-aristo-brown-main/70 mt-1">
+                              <div className="text-xs text-body mt-1">
                                 {m.misconception}
                               </div>
                             </div>
@@ -527,7 +532,7 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
                                 {m.occurrence_count}× {m.resolved ? "resolved" : "active"}
                               </BrandBadge>
                               {m.last_detected && (
-                                <span className="text-[10px] text-aristo-brown-main/40">
+                                <span className="text-[10px] text-muted">
                                   {new Date(m.last_detected).toLocaleDateString()}
                                 </span>
                               )}
@@ -552,10 +557,10 @@ export function UserDetailDrawer({ userId, open, onClose, onMutated }: Props) {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <>
-      <dt className="text-aristo-brown-main/50 font-semibold uppercase tracking-wider text-[10px] pt-1">
+      <dt className="text-muted font-semibold uppercase tracking-wider text-[10px] pt-1">
         {label}
       </dt>
-      <dd className="text-aristo-brown-main">{value}</dd>
+      <dd className="text-ink">{value}</dd>
     </>
   );
 }
@@ -563,18 +568,18 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 function MasteryBar({ value }: { value: number }) {
   const pct = Math.round(value * 100);
   const color =
-    pct >= 80 ? "#22C55E" :
-    pct >= 50 ? BRAND_HEX.orangeMain :
-                "#EF4444";
+    pct >= 80 ? TONE.success :
+    pct >= 50 ? TONE.warning :
+                TONE.danger;
   return (
     <div className="flex items-center gap-2 min-w-[140px]">
-      <div className="flex-1 bg-white/60 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-surface rounded-full h-2 overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${pct}%`, backgroundColor: color }}
         />
       </div>
-      <span className="text-[11px] text-aristo-brown-main/70 tabular-nums w-9 text-right">
+      <span className="text-[11px] text-body tabular-nums w-9 text-right">
         {pct}%
       </span>
     </div>

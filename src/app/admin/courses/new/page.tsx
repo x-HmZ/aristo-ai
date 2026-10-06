@@ -58,17 +58,15 @@ export default function NewCoursePage() {
         onValueChange={(v) => setMethod(v as Method)}
         className="w-full max-w-3xl"
       >
-        <TabsList className="bg-white/60 border border-white/40 rounded-xl p-1">
+        <TabsList>
           <TabsTrigger
             value="manual"
-            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Pencil className="h-3.5 w-3.5 mr-1.5" />
             Manual
           </TabsTrigger>
           <TabsTrigger
             value="from-kg"
-            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Wand2 className="h-3.5 w-3.5 mr-1.5" />
             From knowledge graph
@@ -201,10 +199,10 @@ function ManualForm({ onCreated }: { onCreated: () => void }) {
           <ol className="space-y-1.5 mb-3">
             {lessons.map((t, i) => (
               <li key={i} className="flex items-center gap-2 group">
-                <span className="w-5 text-xs text-aristo-brown-main/40 text-right flex-shrink-0">
+                <span className="w-5 text-xs text-muted text-right flex-shrink-0">
                   {i + 1}.
                 </span>
-                <span className="flex-1 text-sm text-aristo-brown-main bg-white/60 rounded-lg px-2.5 py-1.5">
+                <span className="flex-1 text-sm text-ink bg-surface rounded-lg px-2.5 py-1.5">
                   {t}
                 </span>
                 <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -237,7 +235,7 @@ function ManualForm({ onCreated }: { onCreated: () => void }) {
         </div>
       </Field>
 
-      {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-danger font-semibold">{error}</p>}
 
       <div className="flex gap-3 pt-2">
         <BrandButton variant="secondary" onClick={() => save(false)} disabled={saving} className="flex-1">
@@ -386,7 +384,7 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
           value={structureMode}
           onValueChange={(v) => setStructureMode(v as StructureMode)}
         >
-          <SelectTrigger className="bg-white/60 border-white/60">
+          <SelectTrigger className="bg-surface border-line">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -404,38 +402,38 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
             <button
               type="button"
               onClick={toggleAll}
-              className="underline hover:text-aristo-orange-main"
+              className="underline hover:text-accent-text"
             >
               {selected.size === concepts.length ? "Clear all" : "Select all"}
             </button>
           }
         >
           {concepts.length === 0 ? (
-            <p className="text-xs text-aristo-brown-main/50">No concepts in this domain.</p>
+            <p className="text-xs text-muted">No concepts in this domain.</p>
           ) : (
-            <div className="max-h-72 overflow-y-auto rounded-xl bg-white/40 border border-white/40 divide-y divide-white/60">
+            <div className="max-h-72 overflow-y-auto rounded-xl bg-surface border border-line divide-y divide-line">
               {concepts.map((c) => (
                 <label
                   key={c.id}
-                  className="flex items-center gap-3 p-2.5 hover:bg-white/60 cursor-pointer"
+                  className="flex items-center gap-3 p-2.5 hover:bg-sunk cursor-pointer"
                 >
                   <input
                     type="checkbox"
                     checked={selected.has(c.id)}
                     onChange={() => toggle(c.id)}
-                    className="h-3.5 w-3.5 accent-aristo-orange-main"
+                    className="size-4 accent-accent"
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-aristo-brown-main font-medium truncate">
+                    <div className="text-sm text-ink font-medium truncate">
                       {c.name}
                     </div>
-                    <div className="text-[10px] text-aristo-brown-main/40 font-mono truncate">
+                    <div className="text-[10px] text-muted font-mono truncate">
                       {c.id}
                     </div>
                   </div>
                   <BrandBadge variant="orange">L{c.difficulty}</BrandBadge>
                   <BrandBadge variant="purple">{c.bloom_level}</BrandBadge>
-                  <span className="text-[10px] text-aristo-brown-main/40 w-10 text-right">
+                  <span className="text-[10px] text-muted w-10 text-right">
                     {c.estimated_minutes}m
                   </span>
                 </label>
@@ -445,7 +443,7 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
         </Field>
       )}
 
-      {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-danger font-semibold">{error}</p>}
 
       <div className="flex gap-3 pt-2">
         <BrandButton variant="secondary" onClick={() => save(false)} disabled={saving} className="flex-1">
@@ -462,7 +460,7 @@ function FromKgForm({ onCreated }: { onCreated: () => void }) {
 // ─── Internals ────────────────────────────────────────────────────────────────
 
 const inputCls =
-  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 w-full";
+  "min-h-11 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text w-full";
 
 function Field({
   label,
@@ -478,12 +476,12 @@ function Field({
   return (
     <div>
       <div className="flex items-end justify-between mb-1.5 gap-3">
-        <label className="block text-xs font-semibold text-aristo-brown-main/70 uppercase tracking-wider">
+        <label className="block text-xs font-semibold text-body uppercase tracking-wider">
           {label}
-          {required && <span className="text-aristo-orange-main ml-0.5">*</span>}
+          {required && <span className="text-accent-text ml-0.5">*</span>}
         </label>
         {hint && (
-          <span className="text-[10px] text-aristo-brown-main/50 normal-case">
+          <span className="text-[10px] text-muted normal-case">
             {hint}
           </span>
         )}
@@ -511,8 +509,8 @@ function IconBtn({
       className={
         "px-1.5 py-0.5 rounded transition-colors disabled:opacity-30 " +
         (variant === "danger"
-          ? "text-red-400 hover:bg-red-50"
-          : "text-aristo-brown-main/60 hover:bg-white/80")
+          ? "text-danger hover:bg-danger/10"
+          : "text-muted hover:bg-sunk")
       }
     >
       {children}

@@ -24,19 +24,19 @@ export function PageHeader({
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-aristo-brown-main tracking-tight">
+            <h1 className="text-2xl font-bold text-ink tracking-tight">
               {title}
             </h1>
             {badge}
           </div>
           {subtitle && (
-            <p className="text-sm text-aristo-brown-main/60 mt-1 max-w-2xl">
+            <p className="text-sm text-muted mt-1 max-w-2xl">
               {subtitle}
             </p>
           )}
         </div>
         {actions && (
-          <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>
+          <div className="flex min-w-0 flex-wrap items-center gap-2">{actions}</div>
         )}
       </div>
       {meta && <div className="mt-4">{meta}</div>}

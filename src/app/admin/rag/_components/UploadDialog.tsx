@@ -82,10 +82,10 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-aristo-cream max-w-xl">
+      <DialogContent className="bg-surface max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-aristo-brown-main flex items-center gap-2">
-            <Upload className="h-4 w-4 text-aristo-orange-main" />
+          <DialogTitle className="text-ink flex items-center gap-2">
+            <Upload className="h-4 w-4 text-accent-text" />
             Upload reference material
           </DialogTitle>
           <DialogDescription>
@@ -132,7 +132,7 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
             />
           </Field>
 
-          <div className="text-center text-[10px] text-aristo-brown-main/40">— OR —</div>
+          <div className="text-center text-[10px] text-muted">— OR —</div>
 
           <Field label="File upload" hint=".txt or .md only">
             <input
@@ -155,15 +155,15 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
               <button
                 type="button"
                 onClick={() => { setFile(null); if (fileRef.current) fileRef.current.value = ""; }}
-                className="ml-2 text-xs text-aristo-brown-main/50 hover:text-red-500"
+                className="ml-2 text-xs text-muted hover:text-danger"
               >
                 clear
               </button>
             )}
           </Field>
 
-          {error  && <p className="text-xs text-red-500 font-semibold">{error}</p>}
-          {status && !error && <p className="text-xs text-green-700 font-semibold">{status}</p>}
+          {error  && <p className="text-xs text-danger font-semibold">{error}</p>}
+          {status && !error && <p className="text-xs text-success font-semibold">{status}</p>}
 
           <div className="flex justify-end gap-2 pt-2">
             <BrandButton variant="ghost" size="sm" onClick={onClose} disabled={submitting}>
@@ -181,7 +181,7 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
 }
 
 const inputCls =
-  "text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40 w-full";
+  "min-h-11 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text w-full";
 
 function Field({
   label, required, hint, children,
@@ -191,10 +191,10 @@ function Field({
   return (
     <div>
       <div className="flex items-end justify-between mb-1.5 gap-3">
-        <label className="block text-xs font-semibold text-aristo-brown-main/70 uppercase tracking-wider">
-          {label}{required && <span className="text-aristo-orange-main ml-0.5">*</span>}
+        <label className="block text-xs font-semibold text-body uppercase tracking-wider">
+          {label}{required && <span className="text-accent-text ml-0.5">*</span>}
         </label>
-        {hint && <span className="text-[10px] text-aristo-brown-main/50 normal-case">{hint}</span>}
+        {hint && <span className="text-[10px] text-muted normal-case">{hint}</span>}
       </div>
       {children}
     </div>

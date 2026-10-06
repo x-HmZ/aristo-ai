@@ -70,10 +70,10 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && run()}
           placeholder="What is a for-loop and when do I use it?"
-          className="flex-1 min-w-[300px] text-sm bg-white/70 border border-white/60 rounded-xl px-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+          className="min-h-11 flex-1 min-w-[300px] text-sm bg-surface border border-line rounded-[10px] px-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
         />
         <Select value={domain} onValueChange={setDomain}>
-          <SelectTrigger className="w-44 bg-white/70 border-white/60">
+          <SelectTrigger className="w-44 bg-surface border-line">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -84,7 +84,7 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
           </SelectContent>
         </Select>
         <Select value={String(k)} onValueChange={(v) => setK(parseInt(v, 10))}>
-          <SelectTrigger className="w-24 bg-white/70 border-white/60">
+          <SelectTrigger className="w-24 bg-surface border-line">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -100,20 +100,20 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
         </BrandButton>
       </div>
 
-      {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+      {error && <p className="text-xs text-danger font-semibold">{error}</p>}
 
       {matches !== null && matches.length === 0 && (
-        <p className="text-xs text-aristo-brown-main/50">No chunks matched.</p>
+        <p className="text-xs text-muted">No chunks matched.</p>
       )}
       {matches !== null && matches.length > 0 && (
         <div className="space-y-2">
           {matches.map((m, i) => (
             <div
               key={m.id}
-              className="bg-white/70 border border-white/60 rounded-xl px-3 py-2"
+              className="bg-surface border border-line rounded-xl px-3 py-2"
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold text-aristo-brown-main/40">
+                <span className="text-[10px] font-bold text-muted">
                   #{i + 1}
                 </span>
                 <BrandBadge variant={scoreColor(m.score)}>
@@ -121,10 +121,10 @@ export function SimilarityTester({ defaultDomain = "", domains }: Props) {
                 </BrandBadge>
                 <BrandBadge variant="orange">{m.domain}</BrandBadge>
                 {m.source_title && (
-                  <span className="text-[11px] text-aristo-brown-main/60">{m.source_title}</span>
+                  <span className="text-[11px] text-muted">{m.source_title}</span>
                 )}
               </div>
-              <p className="text-xs text-aristo-brown-main leading-snug line-clamp-3">
+              <p className="text-xs text-ink leading-snug line-clamp-3">
                 {m.content}
               </p>
             </div>

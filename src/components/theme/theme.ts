@@ -7,15 +7,10 @@
  * mirrored onto <html> as `data-theme`, which the CSS lets win over the media
  * query. Only "light" and "dark" are ever accepted from storage; anything
  * else is treated as no choice.
- *
- * Surfaces not yet on the design system render
- * <meta name={THEME_LOCK_META} content="light">, and globals.css keeps them
- * light whatever the choice (see .claude/docs/brand-system.md).
  */
 
 export const THEME_STORAGE_KEY = "aristo-theme";
 export const THEME_ATTRIBUTE = "data-theme";
-export const THEME_LOCK_META = "aristo-theme-lock";
 
 /** The landing-only key used before V8.2. Read once, then removed. */
 export const LEGACY_THEME_STORAGE_KEY = "aristo-landing-theme";

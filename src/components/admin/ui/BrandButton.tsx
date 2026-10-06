@@ -1,38 +1,44 @@
 /**
- * BrandButton — Aristo-flavored variants over the shadcn Button.
- * Delegates to the registry Button via the asChild-style composition,
- * so we inherit accessibility + focus rings for free.
+ * BrandButton — the admin's buttons, on the design system since V8.6: the
+ * control radius, 44px targets, `PRESS` and `FOCUS`, the one accent for the
+ * primary action and status fills for success and destructive.
  */
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import { FOCUS, PRESS } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 
 const brandButtonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aristo-orange-main/50 disabled:opacity-50 disabled:cursor-not-allowed",
+  cn(
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[10px] font-semibold duration-fast disabled:opacity-50 disabled:cursor-not-allowed",
+    PRESS,
+    FOCUS,
+  ),
   {
     variants: {
       variant: {
         primary:
-          "bg-aristo-orange-main text-white hover:bg-aristo-orange-main/90 shadow-aristo-sm",
+          "bg-accent text-accent-ink hover:bg-accent-hover",
         secondary:
-          "bg-white/80 border border-white/60 text-aristo-brown-main hover:bg-white",
+          "bg-surface border border-line text-ink hover:bg-sunk hover:border-muted/50",
+        // Kept for callers; no second hue: the same as secondary.
         purple:
-          "bg-violet-500 text-white hover:bg-violet-600 shadow-sm",
+          "bg-surface border border-line text-ink hover:bg-sunk hover:border-muted/50",
         success:
-          "bg-green-500 text-white hover:bg-green-600 shadow-sm",
+          "bg-success text-status-ink hover:bg-success/90",
         destructive:
-          "bg-red-500 text-white hover:bg-red-600 shadow-sm",
+          "bg-danger text-status-ink hover:bg-danger/90",
         ghost:
-          "text-aristo-brown-main/70 hover:text-aristo-brown-main hover:bg-white/60",
+          "text-body hover:text-ink hover:bg-sunk",
         outline:
-          "border border-aristo-orange-main/40 text-aristo-orange-main hover:bg-aristo-orange-main/10",
+          "border border-tint-line text-accent-text hover:bg-tint",
       },
       size: {
-        sm: "text-xs px-3 py-1.5",
-        md: "text-sm px-4 py-2",
-        lg: "text-base px-5 py-2.5",
-        icon: "h-9 w-9 p-0",
+        sm: "h-11 min-w-11 text-xs px-3",
+        md: "h-11 min-w-11 text-sm px-4",
+        lg: "h-12 text-base px-5",
+        icon: "size-11 p-0",
       },
     },
     defaultVariants: {

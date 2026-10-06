@@ -79,7 +79,7 @@ export function SidebarNav() {
     <nav className="px-3 py-4 space-y-6">
       {SECTIONS.map((section) => (
         <div key={section.title}>
-          <div className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-aristo-brown-main/40">
+          <div className="px-3 mb-2 text-xs font-semibold text-muted">
             {section.title}
           </div>
           <ul className="space-y-0.5">
@@ -87,7 +87,7 @@ export function SidebarNav() {
               const Icon       = item.icon;
               const active     = pathname?.startsWith(item.href);
               const baseClass  =
-                "group flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-150";
+                "group flex min-h-11 items-center gap-2.5 rounded-[10px] px-3 py-2 text-sm font-medium transition-colors duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-text focus-visible:ring-offset-2 focus-visible:ring-offset-surface";
 
               if (item.comingSoon) {
                 return (
@@ -95,13 +95,13 @@ export function SidebarNav() {
                     <div
                       className={cn(
                         baseClass,
-                        "text-aristo-brown-main/30 cursor-not-allowed select-none"
+                        "text-muted cursor-not-allowed select-none"
                       )}
                       title="Shipping in a later phase"
                     >
                       <Icon className="h-4 w-4 flex-shrink-0" />
                       <span className="truncate">{item.label}</span>
-                      <span className="ml-auto text-[9px] uppercase tracking-wider font-bold text-aristo-brown-main/30">
+                      <span className="ml-auto text-[9px] uppercase tracking-wider font-bold text-muted">
                         Soon
                       </span>
                     </div>
@@ -113,17 +113,18 @@ export function SidebarNav() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
                       baseClass,
                       active
-                        ? "bg-aristo-orange-main text-white shadow-aristo-sm"
-                        : "text-aristo-brown-main/70 hover:bg-white/70 hover:text-aristo-brown-main"
+                        ? "bg-tint text-ink font-semibold"
+                        : "text-body hover:bg-sunk hover:text-ink"
                     )}
                   >
                     <Icon
                       className={cn(
                         "h-4 w-4 flex-shrink-0",
-                        active ? "text-white" : "text-aristo-brown-main/50 group-hover:text-aristo-orange-main"
+                        active ? "text-accent-text" : "text-muted group-hover:text-accent-text"
                       )}
                     />
                     <span className="truncate">{item.label}</span>

@@ -85,7 +85,7 @@ export default function RagPage() {
         meta={
           <div className="flex flex-wrap items-center gap-2">
             <Select value={domain} onValueChange={setDomain}>
-              <SelectTrigger className="w-56 bg-white/60 border-white/60">
+              <SelectTrigger className="w-56 bg-surface border-line">
                 <SelectValue placeholder="All domains" />
               </SelectTrigger>
               <SelectContent>
@@ -96,15 +96,15 @@ export default function RagPage() {
               </SelectContent>
             </Select>
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-aristo-brown-main/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Substring search in chunk content…"
-                className="w-full text-sm bg-white/60 border border-white/60 rounded-xl pl-9 pr-3 py-2 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+                className="min-h-11 w-full text-sm bg-surface border border-line rounded-[10px] pl-9 pr-3 py-2 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
               />
             </div>
-            <span className="ml-auto text-xs text-aristo-brown-main/50">
+            <span className="ml-auto text-xs text-muted">
               {chunks === null ? "Loading…" : `${chunks.length} of ${total} chunks shown`}
             </span>
           </div>
@@ -128,14 +128,14 @@ export default function RagPage() {
       {/* Chunks table */}
       <BrandCard padding="none">
         {chunks === null ? (
-          <div className="p-8 text-center text-xs text-aristo-brown-main/50">
+          <div className="p-8 text-center text-xs text-muted">
             <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
             Loading chunks…
           </div>
         ) : chunks.length === 0 ? (
           <div className="p-10 text-center">
-            <Database className="h-10 w-10 text-aristo-brown-main/30 mx-auto mb-3" />
-            <p className="text-sm text-aristo-brown-main/60">
+            <Database className="h-10 w-10 text-muted mx-auto mb-3" />
+            <p className="text-sm text-muted">
               {domain === "all" && !q
                 ? "No reference material ingested yet — upload some text to seed the corpus."
                 : "No chunks match your filter."}
@@ -158,10 +158,10 @@ export default function RagPage() {
                   <TableCell>
                     <BrandBadge variant="orange">{c.domain}</BrandBadge>
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main/70 max-w-[180px] truncate">
-                    {c.source_title ?? <span className="text-aristo-brown-main/30">—</span>}
+                  <TableCell className="text-xs text-body max-w-[180px] truncate">
+                    {c.source_title ?? <span className="text-muted">—</span>}
                   </TableCell>
-                  <TableCell className="text-xs text-aristo-brown-main leading-snug max-w-[520px]">
+                  <TableCell className="text-xs text-ink leading-snug max-w-[520px]">
                     <p className="line-clamp-2">{c.content}</p>
                     {c.metadata?.concept_id ? (
                       <BrandBadge variant="purple" size="sm" className="mt-1">
@@ -169,7 +169,7 @@ export default function RagPage() {
                       </BrandBadge>
                     ) : null}
                   </TableCell>
-                  <TableCell className="text-[11px] text-aristo-brown-main/50">
+                  <TableCell className="text-[11px] text-muted">
                     {new Date(c.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">

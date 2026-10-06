@@ -21,7 +21,9 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import type { Concept } from "./types";
+import { BookOpen } from "lucide-react";
 import { BRAND_HEX } from "@/lib/brandColors";
+import { TONE } from "@/components/admin/chart";
 
 // ─── Visual encoding ──────────────────────────────────────────────────────────
 
@@ -60,8 +62,8 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
   const bd    = BLOOM_BORDER[bloom] ?? "#94A3B8";
   return (
     <div
-      className={`rounded-xl px-3 py-2 text-[11px] shadow-md transition-all ${
-        selected ? "ring-2 ring-aristo-orange-main ring-offset-1" : ""
+      className={`theme-paper rounded-xl px-3 py-2 text-[11px] text-ink shadow-e1 transition-all ${
+        selected ? "ring-2 ring-accent-text ring-offset-1" : ""
       }`}
       style={{
         background: bg,
@@ -75,32 +77,32 @@ function ConceptNode({ data, selected }: NodeProps<Node<ConceptNodeData>>) {
       <Handle
         type="target"
         position={Position.Top}
-        style={{ background: BRAND_HEX.orangeMain, width: 8, height: 8 }}
+        style={{ background: TONE.accent, width: 8, height: 8 }}
       />
-      <div className="font-bold text-aristo-brown-main leading-snug line-clamp-2">
+      <div className="font-bold text-ink leading-snug line-clamp-2">
         {data.label}
       </div>
       <div className="flex items-center gap-1 mt-1 flex-wrap">
         <span
-          className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white"
-          style={{ background: bd }}
+          className="text-[10px] font-bold px-1.5 py-0.5 rounded-full border bg-surface text-ink"
+          style={{ borderColor: bd }}
         >
           L{data.difficulty}
         </span>
-        <span className="text-[9px] text-aristo-brown-main/60 capitalize">{bloom}</span>
-        <span className="text-[9px] text-aristo-brown-main/40 tabular-nums">
+        <span className="text-[10px] text-muted capitalize">{bloom}</span>
+        <span className="text-[10px] text-muted tabular-nums">
           {data.minutes}m
         </span>
         {data.chunkCount > 0 && (
-          <span className="text-[9px] font-bold text-green-700">
-            📚 {data.chunkCount}
+          <span className="flex items-center gap-0.5 text-[10px] font-bold text-success" title="RAG chunks">
+            <BookOpen aria-hidden className="size-3" />{data.chunkCount}
           </span>
         )}
       </div>
       <Handle
         type="source"
         position={Position.Bottom}
-        style={{ background: BRAND_HEX.orangeMain, width: 8, height: 8 }}
+        style={{ background: TONE.accent, width: 8, height: 8 }}
       />
     </div>
   );
@@ -209,8 +211,8 @@ function KgGraphInner({ concepts, coverage, onNodeClick, onCreatePrereq }: Props
           id:     `${p}->${c.id}`,
           source: p,           // prerequisite is the source
           target: c.id,        // concept depending on it is the target
-          markerEnd: { type: MarkerType.ArrowClosed, color: BRAND_HEX.orangeMain },
-          style:  { stroke: BRAND_HEX.orangeMain, strokeWidth: 1.5 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: TONE.accent },
+          style:  { stroke: TONE.accent, strokeWidth: 1.5 },
           animated: false,
         });
       }
@@ -257,10 +259,10 @@ function KgGraphInner({ concepts, coverage, onNodeClick, onCreatePrereq }: Props
       fitView
       proOptions={{ hideAttribution: true }}
     >
-      <Background gap={24} color={BRAND_HEX.orangeMain} style={{ opacity: 0.2 }} />
+      <Background gap={24} color={TONE.line} />
       <MiniMap
         nodeColor={(n) => BLOOM_BORDER[(n.data as ConceptNodeData)?.bloom] ?? "#94A3B8"}
-        maskColor="rgba(253, 248, 239, 0.7)"
+        maskColor="rgb(var(--sunk) / 0.7)"
         pannable
         zoomable
       />

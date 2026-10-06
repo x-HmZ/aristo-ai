@@ -25,7 +25,7 @@ import { ConceptEditor }             from "./_components/ConceptEditor";
 const KgGraph = dynamic(() => import("./_components/KgGraph").then((m) => m.KgGraph), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-[500px] text-aristo-brown-main/40">
+    <div className="flex items-center justify-center h-[500px] text-muted">
       <Loader2 className="h-5 w-5 animate-spin mr-2" />
       Loading graph…
     </div>
@@ -36,7 +36,7 @@ const KgGraph = dynamic(() => import("./_components/KgGraph").then((m) => m.KgGr
 
 export default function KnowledgeGraphPage() {
   return (
-    <Suspense fallback={<div className="text-xs text-aristo-brown-main/50">Loading…</div>}>
+    <Suspense fallback={<div className="text-xs text-muted">Loading…</div>}>
       <KgPageInner />
     </Suspense>
   );
@@ -192,7 +192,7 @@ function KgPageInner() {
               onBlur={() => setDomainAndUrl(domain)}
               onKeyDown={(e) => e.key === "Enter" && setDomainAndUrl(domain)}
               placeholder="domain"
-              className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-56 font-mono text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+              className="min-h-11 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 w-56 font-mono text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
             />
             <BrandButton variant="outline" size="sm" onClick={() => load(domain)}>
               Load
@@ -211,15 +211,15 @@ function KgPageInner() {
           </>
         }
         meta={
-          <div className="flex flex-wrap items-center gap-3 text-xs text-aristo-brown-main/60">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
             {concepts !== null && (
               <span>
-                <span className="font-bold text-aristo-brown-main">{concepts.length}</span> concepts
+                <span className="font-bold text-ink">{concepts.length}</span> concepts
               </span>
             )}
             {Object.keys(coverage).length > 0 && (
               <span>·
-                <span className="ml-1.5 font-bold text-aristo-brown-main">
+                <span className="ml-1.5 font-bold text-ink">
                   {Object.values(coverage).reduce((s, c) => s + c.chunkCount, 0)}
                 </span> RAG chunks linked to concepts
               </span>
@@ -241,7 +241,7 @@ function KgPageInner() {
 
       {loadError && (
         <BrandCard variant="danger" className="mb-4">
-          <p className="text-sm font-semibold text-red-600">{loadError}</p>
+          <p className="text-sm font-semibold text-danger">{loadError}</p>
         </BrandCard>
       )}
 
@@ -256,7 +256,7 @@ function KgPageInner() {
             value={customSubject}
             onChange={(e) => setCustomSubject(e.target.value)}
             placeholder={`Subject label (default: "${domain.replace(/_/g, " ")}")`}
-            className="text-sm bg-white/60 border border-white/60 rounded-xl px-3 py-2 w-80 text-aristo-brown-main placeholder:text-aristo-brown-main/40 focus:outline-none focus:ring-2 focus:ring-aristo-orange-main/40"
+            className="min-h-11 text-sm bg-surface border border-line rounded-[10px] px-3 py-2 w-80 text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent-text"
           />
           <BrandButton
             variant="purple"
@@ -272,7 +272,7 @@ function KgPageInner() {
         {genResult && (
           <div className="mt-4 space-y-3">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm text-aristo-brown-main font-semibold">
+              <span className="text-sm text-ink font-semibold">
                 {genResult.count} concepts generated. Review below, then commit.
               </span>
               <BrandButton
@@ -285,34 +285,31 @@ function KgPageInner() {
                 {committing ? "Committing…" : "Commit to DB"}
               </BrandButton>
             </div>
-            <pre className="max-h-64 overflow-y-auto rounded-xl bg-white/60 border border-white/40 p-3 text-[11px] font-mono text-aristo-brown-main">
+            <pre className="max-h-64 overflow-y-auto rounded-xl bg-surface border border-line p-3 text-[11px] font-mono text-ink">
               {JSON.stringify(genResult.concepts.slice(0, 5), null, 2)}{"\n…"}
             </pre>
           </div>
         )}
         {seedStatus && (
-          <div className="mt-3 text-sm font-semibold text-green-700">{seedStatus}</div>
+          <div className="mt-3 text-sm font-semibold text-success">{seedStatus}</div>
         )}
       </BrandCard>
 
       {/* Graph / Table / Validation tabs */}
       <Tabs defaultValue="graph">
-        <TabsList className="bg-white/60 border border-white/40 rounded-xl p-1 mb-3">
+        <TabsList className="mb-3">
           <TabsTrigger
             value="graph"
-            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <Network className="h-3.5 w-3.5 mr-1.5" />Graph
           </TabsTrigger>
           <TabsTrigger
             value="table"
-            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <ListTree className="h-3.5 w-3.5 mr-1.5" />Table
           </TabsTrigger>
           <TabsTrigger
             value="validation"
-            className="data-[state=active]:bg-aristo-orange-main data-[state=active]:text-white rounded-lg"
           >
             <ShieldAlert className="h-3.5 w-3.5 mr-1.5" />Validation
           </TabsTrigger>
@@ -320,11 +317,11 @@ function KgPageInner() {
 
         <TabsContent value="graph">
           {concepts === null ? (
-            <BrandCard><p className="text-xs text-aristo-brown-main/60">Loading…</p></BrandCard>
+            <BrandCard><p className="text-xs text-muted">Loading…</p></BrandCard>
           ) : concepts.length === 0 ? (
             <BrandCard className="flex flex-col items-center justify-center py-10 gap-3">
-              <Network className="h-10 w-10 text-aristo-brown-main/30" />
-              <p className="text-sm text-aristo-brown-main/60">
+              <Network className="h-10 w-10 text-muted" />
+              <p className="text-sm text-muted">
                 No concepts for this domain yet. Generate or seed one above.
               </p>
             </BrandCard>
@@ -351,9 +348,9 @@ function KgPageInner() {
               />
             </div>
             {concepts === null ? (
-              <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">Loading…</p>
+              <p className="px-5 pb-5 text-xs text-muted">Loading…</p>
             ) : concepts.length === 0 ? (
-              <p className="px-5 pb-5 text-xs text-aristo-brown-main/50">
+              <p className="px-5 pb-5 text-xs text-muted">
                 No concepts in this domain.
               </p>
             ) : (
@@ -378,10 +375,10 @@ function KgPageInner() {
                         className="cursor-pointer"
                         onClick={() => setEditing(c)}
                       >
-                        <TableCell className="font-mono text-aristo-brown-main/60 text-[11px] max-w-[180px] truncate">
+                        <TableCell className="font-mono text-muted text-[11px] max-w-[180px] truncate">
                           {c.id}
                         </TableCell>
-                        <TableCell className="font-medium text-aristo-brown-main max-w-[240px] truncate">
+                        <TableCell className="font-medium text-ink max-w-[240px] truncate">
                           {c.name}
                         </TableCell>
                         <TableCell>
@@ -402,7 +399,7 @@ function KgPageInner() {
                             {c.bloom_level}
                           </BrandBadge>
                         </TableCell>
-                        <TableCell className="text-aristo-brown-main/60 tabular-nums text-xs">
+                        <TableCell className="text-muted tabular-nums text-xs">
                           {c.estimated_minutes}m
                         </TableCell>
                         <TableCell>
@@ -410,7 +407,7 @@ function KgPageInner() {
                             {cov}
                           </BrandBadge>
                         </TableCell>
-                        <TableCell className="text-aristo-brown-main/60 text-xs max-w-[200px] truncate">
+                        <TableCell className="text-muted text-xs max-w-[200px] truncate">
                           {c.prerequisites?.length ? c.prerequisites.join(", ") : "—"}
                         </TableCell>
                       </TableRow>
@@ -429,11 +426,11 @@ function KgPageInner() {
               description="Run validate to check this domain for cycles, orphans, and missing prerequisites."
             />
             {!validation ? (
-              <p className="text-xs text-aristo-brown-main/50">
+              <p className="text-xs text-muted">
                 Not validated yet. Click <span className="font-semibold">Validate</span> in the page header.
               </p>
             ) : validation.valid ? (
-              <p className="flex items-center gap-2 text-sm text-green-700 font-semibold">
+              <p className="flex items-center gap-2 text-sm text-success font-semibold">
                 <CheckCircle2 className="h-4 w-4" />
                 Graph is a valid DAG with no detected issues.
               </p>
@@ -442,16 +439,16 @@ function KgPageInner() {
                 {validation.errors.map((e, i) => (
                   <li
                     key={i}
-                    className="rounded-xl bg-red-50 border border-red-200 px-3 py-2 flex items-start gap-2"
+                    className="rounded-xl bg-danger/10 border border-danger/25 px-3 py-2 flex items-start gap-2"
                   >
-                    <XCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+                    <XCircle className="h-4 w-4 text-danger flex-shrink-0 mt-0.5" />
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-red-700 uppercase tracking-wider">
+                      <div className="text-xs font-bold text-danger uppercase tracking-wider">
                         {e.type}
                       </div>
-                      <div className="text-sm text-red-800">{e.message}</div>
+                      <div className="text-sm text-danger">{e.message}</div>
                       {e.involved && (
-                        <div className="mt-1 text-[11px] text-red-600 font-mono">
+                        <div className="mt-1 text-[11px] text-danger font-mono">
                           {e.involved.join(" → ")}
                         </div>
                       )}

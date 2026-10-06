@@ -100,11 +100,11 @@ export default function CoursesPage() {
       />
 
       {courses === null ? (
-        <BrandCard><p className="text-xs text-aristo-brown-main/60">Loading…</p></BrandCard>
+        <BrandCard><p className="text-xs text-muted">Loading…</p></BrandCard>
       ) : courses.length === 0 ? (
         <BrandCard className="flex flex-col items-center justify-center py-12 gap-3">
-          <BookOpen className="h-12 w-12 text-aristo-brown-main/30" />
-          <p className="text-sm text-aristo-brown-main/60">No courses yet.</p>
+          <BookOpen className="h-12 w-12 text-muted" />
+          <p className="text-sm text-muted">No courses yet.</p>
           <Link href="/admin/courses/new">
             <BrandButton variant="primary" size="sm">
               <Plus className="h-3.5 w-3.5" />
@@ -114,7 +114,7 @@ export default function CoursesPage() {
         </BrandCard>
       ) : (
         <div className="space-y-3">
-          <p className="text-xs text-aristo-brown-main/60">
+          <p className="text-xs text-muted">
             {courses.length} course{courses.length !== 1 ? "s" : ""}
           </p>
           {courses.map((course) => {
@@ -126,7 +126,7 @@ export default function CoursesPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/admin/courses/${encodeURIComponent(course.id)}`}
-                        className="font-semibold text-aristo-brown-main hover:text-aristo-orange-main transition-colors"
+                        className="-my-2.5 inline-flex min-h-11 items-center font-semibold text-ink hover:text-accent-text transition-colors"
                       >
                         {course.title}
                       </Link>
@@ -141,12 +141,12 @@ export default function CoursesPage() {
                       )}
                     </div>
                     {course.description && (
-                      <p className="text-xs text-aristo-brown-main/60 mt-1 line-clamp-2">
+                      <p className="text-xs text-muted mt-1 line-clamp-2">
                         {course.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-3 mt-2 text-xs text-aristo-brown-main/50">
-                      <span>📝 {topics.length} lessons</span>
+                    <div className="flex items-center gap-3 mt-2 text-xs text-muted">
+                      <span>{topics.length} lessons</span>
                       <span>·</span>
                       <span>{course.structure?.modules?.length ?? 0} modules</span>
                       <span>·</span>
@@ -203,7 +203,7 @@ export default function CoursesPage() {
                       <BrandBadge key={i} variant="neutral">{t}</BrandBadge>
                     ))}
                     {topics.length > 8 && (
-                      <span className="text-[11px] text-aristo-brown-main/40">
+                      <span className="text-[11px] text-muted">
                         +{topics.length - 8} more
                       </span>
                     )}
