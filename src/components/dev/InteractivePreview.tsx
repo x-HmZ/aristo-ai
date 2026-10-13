@@ -7,11 +7,15 @@
  * call, in either theme and at a phone or desktop width, plus the two failure
  * paths (a widget that throws, a frame that never answers). Query overrides for
  * scripted checks: ?fixture=slope-line|fraction-bars|for-loop&theme=light|dark
- * &w=360&fail=throws|timeout
+ * &w=360&fail=throws|timeout|forbidden|probe
+ *
+ * ?view=room shows the real shell pieces (canvas, lesson panel, widget stage) on a
+ * synthetic lesson that ends its Demonstrate phase in an explore segment.
  */
 
 import { useEffect, useState } from "react";
 import { InteractiveFrame, type FrameStatus } from "@/components/learn/InteractiveFrame";
+import InteractiveRoom from "@/components/dev/InteractiveRoom";
 import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/devKit";
 import { INTERACTIVE_FIXTURES, getFixture } from "@/lib/interactive/fixtures";
 import { validateWidget } from "@/lib/interactive/validate";
@@ -44,7 +48,7 @@ setTimeout(function () { document.getElementById('out').textContent = JSON.strin
 };
 const WIDTHS = [360, 560, 900] as const;
 
-export default function InteractivePreview() {
+function FrameView() {
   const [fixtureId, setFixtureId] = useState(INTERACTIVE_FIXTURES[0].id);
   const [theme, setTheme] = useState<WidgetTheme>("light");
   const [width, setWidth] = useState<number>(560);
@@ -147,4 +151,14 @@ export default function InteractivePreview() {
       </aside>
     </div>
   );
+}
+
+export default function InteractivePreview() {
+  const [room, setRoom] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    setRoom(p.get("view") === "room" ? (getFixture(p.get("fixture") ?? "")?.id ?? INTERACTIVE_FIXTURES[0].id) : null);
+  }, []);
+  if (room === undefined) return <div className="min-h-screen bg-bg" />;
+  return room ? <InteractiveRoom fixtureId={room} /> : <FrameView />;
 }

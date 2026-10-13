@@ -1,0 +1,454 @@
+{
+  "shots": [
+    "slope-line-light-360.png",
+    "slope-line-light-900.png",
+    "slope-line-dark-360.png",
+    "slope-line-dark-900.png",
+    "fraction-bars-light-360.png",
+    "fraction-bars-light-900.png",
+    "fraction-bars-dark-360.png",
+    "fraction-bars-dark-900.png",
+    "for-loop-light-360.png",
+    "for-loop-light-900.png",
+    "for-loop-dark-360.png",
+    "for-loop-dark-900.png"
+  ],
+  "checks": [
+    {
+      "name": "slope-line light 360: ready",
+      "pass": true,
+      "extra": "2296ms"
+    },
+    {
+      "name": "slope-line light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "slope-line light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "slope-line light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line light 900: ready",
+      "pass": true,
+      "extra": "2976ms"
+    },
+    {
+      "name": "slope-line light 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line light 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "slope-line light 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "slope-line light 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line dark 360: ready",
+      "pass": true,
+      "extra": "3201ms"
+    },
+    {
+      "name": "slope-line dark 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line dark 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "slope-line dark 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "slope-line dark 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line dark 900: ready",
+      "pass": true,
+      "extra": "3051ms"
+    },
+    {
+      "name": "slope-line dark 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line dark 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "slope-line dark 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "slope-line dark 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars light 360: ready",
+      "pass": true,
+      "extra": "3273ms"
+    },
+    {
+      "name": "fraction-bars light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "fraction-bars light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "fraction-bars light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars light 900: ready",
+      "pass": true,
+      "extra": "3028ms"
+    },
+    {
+      "name": "fraction-bars light 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars light 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "fraction-bars light 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "fraction-bars light 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars dark 360: ready",
+      "pass": true,
+      "extra": "3121ms"
+    },
+    {
+      "name": "fraction-bars dark 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars dark 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "fraction-bars dark 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "fraction-bars dark 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars dark 900: ready",
+      "pass": true,
+      "extra": "3392ms"
+    },
+    {
+      "name": "fraction-bars dark 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fraction-bars dark 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "fraction-bars dark 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "fraction-bars dark 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop light 360: ready",
+      "pass": true,
+      "extra": "3577ms"
+    },
+    {
+      "name": "for-loop light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "for-loop light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "for-loop light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop light 900: ready",
+      "pass": true,
+      "extra": "3030ms"
+    },
+    {
+      "name": "for-loop light 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop light 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "for-loop light 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "for-loop light 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop dark 360: ready",
+      "pass": true,
+      "extra": "2736ms"
+    },
+    {
+      "name": "for-loop dark 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop dark 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "for-loop dark 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "for-loop dark 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop dark 900: ready",
+      "pass": true,
+      "extra": "3023ms"
+    },
+    {
+      "name": "for-loop dark 900: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop dark 900: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "for-loop dark 900: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "for-loop dark 900: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "no request left any frame",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "slope-line: slider updates the equation",
+      "pass": true,
+      "extra": "y = -3x + 0"
+    },
+    {
+      "name": "slope-line: intercept updates the equation",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slope-line: canvas drew",
+      "pass": true,
+      "extra": "16442px"
+    },
+    {
+      "name": "fraction-bars: cut into 4",
+      "pass": true,
+      "extra": "3/4 = 12/16"
+    },
+    {
+      "name": "fraction-bars: denominator 8",
+      "pass": true,
+      "extra": "3/8 = 12/32"
+    },
+    {
+      "name": "fraction-bars: one choice pressed",
+      "pass": true,
+      "extra": "1"
+    },
+    {
+      "name": "for-loop: ends on print(total) with output 3",
+      "pass": true,
+      "extra": "3"
+    },
+    {
+      "name": "for-loop: step disabled at the end",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "for-loop: n restarts the run",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "failure: a widget that throws is reported",
+      "pass": true,
+      "extra": "status: failed"
+    },
+    {
+      "name": "failure: a frame that never answers fails",
+      "pass": true,
+      "extra": "status: failed"
+    },
+    {
+      "name": "failure: a forbidden widget never runs",
+      "pass": true,
+      "extra": "status: rejected"
+    },
+    {
+      "name": "sandbox: eval blocked",
+      "pass": true,
+      "extra": "blocked: EvalError"
+    },
+    {
+      "name": "sandbox: new Function blocked",
+      "pass": true,
+      "extra": "blocked: EvalError"
+    },
+    {
+      "name": "sandbox: localStorage blocked",
+      "pass": true,
+      "extra": "blocked: SecurityError"
+    },
+    {
+      "name": "sandbox: parent DOM unreachable",
+      "pass": true,
+      "extra": "blocked: SecurityError"
+    },
+    {
+      "name": "sandbox: cookies unreadable",
+      "pass": true,
+      "extra": "blocked: SecurityError"
+    },
+    {
+      "name": "sandbox: fetch blocked",
+      "pass": true,
+      "extra": "blocked: TypeError"
+    },
+    {
+      "name": "sandbox: CSP reported script-src (eval) violations",
+      "pass": true,
+      "extra": "script-src,script-src,connect-src,connect-src,img-src"
+    },
+    {
+      "name": "sandbox: CSP reported a connect violation (fetch/xhr)",
+      "pass": true,
+      "extra": "script-src,script-src,connect-src,connect-src,img-src"
+    },
+    {
+      "name": "sandbox: CSP reported an image violation",
+      "pass": true,
+      "extra": "script-src,script-src,connect-src,connect-src,img-src"
+    },
+    {
+      "name": "sandbox: nothing got a response from the network",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "sandbox: both outbound attempts failed as blocked by CSP",
+      "pass": true,
+      "extra": "https://example.com/ csp | https://example.com/x.png csp"
+    }
+  ],
+  "problems": [],
+  "sandboxProbe": {
+    "violations": [
+      "script-src",
+      "script-src",
+      "connect-src",
+      "connect-src",
+      "img-src"
+    ],
+    "eval": "blocked: EvalError",
+    "newFunction": "blocked: EvalError",
+    "storage": "blocked: SecurityError",
+    "parentDom": "blocked: SecurityError",
+    "cookie": "blocked: SecurityError",
+    "fetch": "blocked: TypeError"
+  }
+}

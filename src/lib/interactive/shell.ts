@@ -57,15 +57,15 @@ function tokenCss(theme: WidgetTheme): string {
 const KIT_CSS = `
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--surface);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:12px;-webkit-text-size-adjust:100%}
+body{background:var(--surface);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:10px;-webkit-text-size-adjust:100%}
 h1,h2,h3{margin:0 0 6px;font-weight:600;line-height:1.25;color:var(--ink)}
 h1{font-size:18px}h2{font-size:16px}h3{font-size:15px}
 p{margin:0 0 8px;color:var(--body)}
-.stack{display:flex;flex-direction:column;gap:12px}
+.stack{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .stage{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:hidden}
 .stage canvas,.stage svg{display:block;width:100%;height:auto}
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 16px;background:var(--sunk);border-radius:12px;padding:10px 12px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px 16px;background:var(--sunk);border-radius:12px;padding:6px 12px 2px}
 .control{display:flex;flex-direction:column;gap:0;min-width:0}
 .control>label,.control>.label{font-size:13px;font-weight:600;color:var(--body);display:flex;justify-content:space-between;gap:8px}
 .value{font-variant-numeric:tabular-nums;color:var(--accent-text);font-weight:600}

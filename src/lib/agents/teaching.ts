@@ -16,6 +16,7 @@ import type Anthropic          from "@anthropic-ai/sdk";
 import type { DynamicProfile } from "@/store/useAristoStore";
 import { MODELS }              from "./models";
 import { getAnthropic }        from "@/lib/llm/anthropic";
+import type { InteractiveSpec } from "@/lib/interactive/spec";
 
 const client = getAnthropic();
 
@@ -48,7 +49,8 @@ export type SegmentRole =
   | "callout"           // points at a feature of an active visual
   | "challenge_setup"   // poses the challenge question
   | "challenge_reveal"  // reveals + explains the answer
-  | "transition";       // bridge between sub-ideas
+  | "transition"        // bridge between sub-ideas
+  | "explore";          // introduces the interactive visual; the lesson pauses on it
 
 export interface SegmentVisual {
   /**
@@ -150,6 +152,13 @@ export interface LessonPayload {
      * — never populated by the live generation pipeline.
      */
     demo_model_url?: string;
+    /**
+     * Set when the topic is understood by changing an input and watching the
+     * result (V10). The widget itself is generated apart from the lesson, from
+     * this spec, by /api/learn/interactive. At most one of this and
+     * should_generate_model per lesson.
+     */
+    interactive?: InteractiveSpec;
   };
 }
 

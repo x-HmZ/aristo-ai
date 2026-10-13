@@ -1,0 +1,37 @@
+{
+  "shots": [],
+  "checks": [
+    {
+      "name": "window: a widget arriving during the wait still pauses the lesson",
+      "pass": true,
+      "extra": "{\"seg\":\"seg_005\",\"exploring\":true,\"status\":\"ready\",\"shown\":true,\"expanded\":false,\"complete\":false}"
+    },
+    {
+      "name": "slow: it gave up waiting and went on",
+      "pass": true,
+      "extra": "14s from start"
+    },
+    {
+      "name": "slow: it never paused for the learner",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "slow: a late widget still arrives, behind the pill",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "no /api request left the stubs",
+      "pass": true,
+      "extra": ""
+    }
+  ],
+  "problems": [],
+  "stubbed": {
+    "/api/learn/interactive": 4,
+    "/api/tts": 12,
+    "/api/learn/complete": 1
+  },
+  "aborted": []
+}

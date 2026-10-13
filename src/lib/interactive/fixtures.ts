@@ -41,9 +41,8 @@ const slopeLine: InteractiveFixture = {
     <div class="control"><label for="m">Slope (m) <span class="value" id="mv">1</span></label>
       <input id="m" type="range" min="-5" max="5" step="0.5" value="1"></div>
     <div class="control"><label for="b">Intercept (b) <span class="value" id="bv">0</span></label>
-      <input id="b" type="range" min="-4" max="4" step="1" value="0"></div>
+      <input id="b" type="range" min="-3" max="3" step="1" value="0"></div>
   </div>
-  <p class="hint" id="note"></p>
 </div>`,
     css: `#eq{text-align:center}`,
     js: `var C = ARISTO.colors;
@@ -74,17 +73,13 @@ var plot = ARISTO.canvas(document.getElementById('plot'), function (ctx, w, h) {
   ctx.fillText('rise ' + fmt(m), X(1) + 7, Y(b + m / 2) + 4);
 
   ctx.fillStyle = C.accentText; ctx.beginPath(); ctx.arc(X(0), Y(b), 6, 0, Math.PI * 2); ctx.fill();
-}, 0.7);
+}, 0.55);
 
 function update() {
   var m = +mIn.value, b = +bIn.value;
   document.getElementById('mv').textContent = fmt(m);
   document.getElementById('bv').textContent = fmt(b);
   document.getElementById('eq').textContent = 'y = ' + fmt(m) + 'x ' + (b < 0 ? '- ' : '+ ') + Math.abs(b);
-  var s = m > 0 ? 'Each step right, the line climbs ' + fmt(m) + '.'
-        : m < 0 ? 'Each step right, the line drops ' + fmt(-m) + '.'
-        : 'A slope of 0 is a flat line.';
-  document.getElementById('note').textContent = s + ' It crosses the y axis at ' + fmt(b) + '.';
   plot.redraw();
 }
 mIn.addEventListener('input', update);
@@ -115,24 +110,27 @@ const fractionBars: InteractiveFixture = {
     markup: `<div class="stack">
   <div class="readout" id="eq" aria-live="polite"></div>
   <div class="stage">
-    <p class="hint" id="topLabel"></p><div class="bar" id="top"></div>
-    <p class="hint" id="botLabel"></p><div class="bar" id="bot"></div>
+    <div class="bar" id="top" role="img" aria-label="Top bar"></div>
+    <div class="bar" id="bot" role="img" aria-label="Bottom bar, every piece cut smaller"></div>
   </div>
   <div class="controls">
     <div class="control"><label for="num">Numerator <span class="value" id="numv"></span></label>
       <input id="num" type="range" min="0" max="12" step="1" value="3"></div>
     <div class="control"><label for="den">Denominator <span class="value" id="denv"></span></label>
       <input id="den" type="range" min="1" max="12" step="1" value="4"></div>
-    <div class="control"><span class="label" id="cutLabel">Cut each piece into</span>
-      <div class="row" role="group" aria-labelledby="cutLabel" id="cuts"></div></div>
+  </div>
+  <div class="row" role="group" aria-labelledby="cutLabel">
+    <span class="hint" id="cutLabel">Cut each piece into</span>
+    <span class="row" id="cuts"></span>
   </div>
 </div>`,
     css: `#eq{text-align:center}
-.bar{display:flex;height:44px;border-radius:8px;overflow:hidden;border:1px solid var(--muted);margin-bottom:10px}
+.stage{display:flex;flex-direction:column;gap:8px;padding:6px}
+.bar{position:relative;display:flex;height:36px;border-radius:8px;overflow:hidden;border:1px solid var(--muted)}
 .cell{flex:1;border-right:1px solid var(--muted);background:var(--surface);transition:background .15s}
 .cell:last-child{border-right:0}
 .cell.on{background:var(--accent-text)}
-#botLabel{margin-top:4px}`,
+.tag{position:absolute;left:6px;top:50%;transform:translateY(-50%);padding:0 8px;border-radius:999px;background:var(--surface);color:var(--ink);border:1px solid var(--muted);font-size:12px;font-weight:600;line-height:20px;pointer-events:none}`,
     js: `var numIn = document.getElementById('num');
 var denIn = document.getElementById('den');
 var cutBox = document.getElementById('cuts');
@@ -153,6 +151,10 @@ function fill(id, parts, shaded) {
     c.className = 'cell' + (i < shaded ? ' on' : '');
     el.appendChild(c);
   }
+  var tag = document.createElement('span');
+  tag.className = 'tag';
+  tag.textContent = shaded + '/' + parts;
+  el.appendChild(tag);
 }
 
 function update() {
@@ -164,8 +166,6 @@ function update() {
   document.getElementById('denv').textContent = String(d);
   fill('top', d, n);
   fill('bot', d * cut, n * cut);
-  document.getElementById('topLabel').textContent = n + '/' + d + ' of the bar';
-  document.getElementById('botLabel').textContent = (n * cut) + '/' + (d * cut) + ' of the same bar';
   document.getElementById('eq').textContent = n + '/' + d + ' = ' + (n * cut) + '/' + (d * cut);
   Array.prototype.forEach.call(cutBox.children, function (b, i) {
     b.setAttribute('aria-pressed', String(i + 1 === cut));
@@ -212,14 +212,14 @@ const forLoop: InteractiveFixture = {
     <label for="n">Loop count (n) <span class="value" id="nv"></span></label>
     <input id="n" type="range" min="1" max="6" step="1" value="3"></div></div>
 </div>`,
-    css: `.code{margin:0;padding:10px 12px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
+    css: `.code{margin:0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
 .code .ln{display:block;border-radius:6px;padding:0 6px}
 .code .ln.on{background:var(--accent-text);color:var(--surface)}
 .vars{gap:8px}
 .var{display:flex;flex-direction:column;min-width:76px;padding:6px 12px;background:var(--sunk);border-radius:10px}
 .var b{font-size:20px;font-variant-numeric:tabular-nums;color:var(--ink)}
 .var.out{flex:1}
-.log{font-size:15px;font-weight:500;min-height:2.9em;margin:0}`,
+.log{font-size:15px;font-weight:500;min-height:2.6em;margin:0}`,
     js: `var nIn = document.getElementById('n');
 var frames = [], k = 0;
 

@@ -5,6 +5,7 @@ import { AristoCanvas }        from "@/components/learn/AristoCanvas";
 import { preloadDefaultAvatar } from "@/components/three/Teacher";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { MessagePanel }     from "@/components/learn/MessagePanel";
+import { InteractiveStage } from "@/components/learn/InteractiveStage";
 import { InputBox }         from "@/components/learn/InputBox";
 import { TeacherControls }  from "@/components/learn/TeacherControls";
 import { ModePicker }       from "@/components/learn/ModePicker";
@@ -438,6 +439,9 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
         </div>
         {renderBottom()}
       </div>
+
+      {/* Interactive visual (V10): the board card or the large view; renders nothing without one */}
+      <InteractiveStage />
 
       {/* Onboarding overlay */}
       {!localOnboarded && (
