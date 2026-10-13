@@ -385,7 +385,8 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
 - **Link-preview image** (`opengraph-image.tsx` through `brand/OgCard.tsx`): the wordmark, the outlined headline and sub line on
   ink, and a wide still of the lit classroom (Jake and the brain; `public/images/og/room.jpg`, cropped from the landing's room
   still by `scripts/brand/og-still.mjs`) that melts into the ink on its left edge. Chosen by Hmz from three layouts (a hard
-  split, this fade, a framed window). A 1200x630 PNG of about 510 KB.
+  split, this fade, a framed window). Served as a 1200x630 JPEG of about 74 KB: the route renders the card with
+  ImageResponse (PNG only) and re-encodes it with sharp at build, 4:4:4 so the orange words stay crisp.
 
 ### shadcn mapping (for `npx shadcn add`)
 
