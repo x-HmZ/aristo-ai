@@ -17,6 +17,7 @@ import { requireApproved }          from "@/lib/auth/approval";
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
+import { INTERACTIVE_SPEC_SCHEMA, parseInteractiveSpec } from "@/lib/interactive/spec";
 
 export const maxDuration = 30;
 
@@ -66,6 +67,7 @@ const structuredTool: Anthropic.Tool = {
         items: { type: "string" },
         description: "3-5 key parts to label on a 3D model. Empty if no model.",
       },
+      interactive: INTERACTIVE_SPEC_SCHEMA,
     },
     required: [
       "definition",
@@ -108,7 +110,8 @@ How to write each field:
 Rules:
 - Age-appropriate for grades 6-8.
 - Set should_generate_model true ONLY for physical/tangible subjects that genuinely benefit from 3D visualization. NOT for abstract concepts, processes, code, math formulas, emotions, or historical events.
-- annotation_hints: 3-5 key physical parts to label on a 3D model.`;
+- annotation_hints: 3-5 key physical parts to label on a 3D model.
+- interactive: set ONLY when the topic is understood by changing an input and watching the result (graphs and slope, fractions and ratios, angles and area, probability with a parameter, speed and time, stepping through a loop or algorithm). Leave it out for facts, definitions and history, and NEVER set it together with should_generate_model: choose one, or neither. When unsure, leave it out. Keep it to 2 or 3 controls: the page is small.`;
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -154,7 +157,7 @@ export async function POST(req: NextRequest) {
 
     const response = await client.messages.create({
       model: MODELS.fast,
-      max_tokens: 1024,
+      max_tokens: 1536,
       system: [
         {
           type: "text",
@@ -177,7 +180,13 @@ export async function POST(req: NextRequest) {
       throw new Error("No structured response from model");
     }
 
-    return NextResponse.json(toolUse.input);
+    // The interactive spec is checked here, and never travels with a 3D model.
+    const out = toolUse.input as Record<string, unknown>;
+    const spec = out.should_generate_model === true ? null : parseInteractiveSpec(out.interactive);
+    if (spec) out.interactive = spec;
+    else delete out.interactive;
+
+    return NextResponse.json(out);
   } catch (error) {
     console.error("Teaching API error:", error);
     return NextResponse.json(

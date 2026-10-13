@@ -224,6 +224,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     clearQuiz();
     setActiveLesson(null);
     setActiveModelUrl(null);
+    useAristoStore.getState().resetInteractive();
     setActiveQuiz(null);
     setQuizResult(null);
     setMode("free");
