@@ -2,6 +2,31 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-13 - V10: interactive visuals, a third kind of teaching visual (branch dev/v10-interactive-visuals, not pushed or merged)
+
+Hmz asked for Gemini-style interactive widgets (sliders, buttons) as a third option beside the image and the 3D model, picked by the
+same decider. Plan: `.claude/plans/V10-interactive-visuals.md` (status and deviations at the bottom). Evidence and scripts:
+`.claude/eval/2026-10-13-v10-interactive/` (README). Hmz chose: generated code in a sandbox, a board card with Expand, the lesson pauses
+on an explore segment. Subsystem in `architecture.md` (Interactive visuals); reasons in `decisions.md` (V10 rows).
+- **Built:** `src/lib/interactive/` (spec, validator, sandbox shell, fixtures, throttle, flag), `agents/interactive.ts`,
+  `POST /api/learn/interactive`, migration 017 (written, NOT applied), `InteractiveFrame` and `InteractiveStage` (a DOM card beside Jake;
+  the large view below 1180x600 or on Expand), the explore pause in `useLessonPlayback`, the decider in `teaching.ts` and `/api/teach`
+  (free mode), `/dev/interactive` (frame view and `?view=room`).
+- **Reviewed:** security (a navigation escape, cache poisoning through `try_this`, quadratic regexes: all fixed and re-measured; residuals
+  in decisions.md) and TypeScript (a pause that could hang for good, stale free-mode replies, Escape and Tab gaps: fixed).
+- **Verified with 0 paid calls:** 110 unit tests in the new areas; frame 84, nav 25, room 65 scripted checks; lint 0 errors; production
+  build ok (/learn 134 kB, /demo 135 kB first load, unchanged).
+- **Off by default:** `NEXT_PUBLIC_INTERACTIVE_VISUALS=true` switches on the agents' option and the route (`.env.example` has it false;
+  `.env.local` and Vercel are untouched). It is also the feature-wide kill switch.
+- **Merged on the way:** PR #26 (the portfolio capture, docs and scripts only) into deploy-prep, as the session brief asked; this
+  branch carries it.
+- **Waiting on Hmz:** (1) apply migration 017 to Supabase; (2) a go-ahead for live runs, about 6 topics well under 1 USD (3 math, 2 Python,
+  1 that should pick 3D or an image) to see what the real decider and generator produce; (3) set the flag in `.env.local` and Vercel.
+- **Open:** lessons already in `cached_lessons` carry no interactive until regenerated; `NEXT_PUBLIC_ADAPTIVE_VISUALS` must be true for any
+  of it; no frozen widget on `/demo` yet (a good follow-up once a generated one is approved); no failure beacon, `created_by` or
+  per-concept switch (decisions.md residuals); a concept's first generation takes tens of seconds, so its first learner may meet the
+  widget behind the Open pill instead of in the pause.
+
 ## 2026-10-07 - Portfolio assets captured; link-preview image a JPEG (#25 merged)
 
 V8 is complete and everything is merged into `deploy-prep` (#23 V8.6, #24 V8.7, #25 the 74 KB JPEG preview image).
