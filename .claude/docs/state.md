@@ -2,6 +2,24 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-07 - Portfolio assets captured; link-preview image a JPEG (#25 merged)
+
+V8 is complete and everything is merged into `deploy-prep` (#23 V8.6, #24 V8.7, #25 the 74 KB JPEG preview image).
+- **Portfolio brief:** a Claude doc, "Aristo AI: portfolio capture and display brief" (shot list, page structure, copy,
+  the lesson-loop diagram, pre-publish checklist). One open question in it: the project's current status line.
+- **Assets:** 56 files in `Freelancing/portfolio/public/projects/aristo/`, every shot in dark (plain name) and light
+  (`-light`): 6 clips (MP4 + WebM + poster) and the stills. Made by `.claude/eval/2026-10-07-portfolio/scripts`
+  (README there): a production build for `/` and `/demo`, the local harnesses for the app pages, 0 API calls,
+  synthetic data only. ffmpeg was installed with winget for the encodes.
+- **Open, found while capturing:**
+  - the lesson's callout chips stack over the board diagram's title at 1080p (visible in shots 01 and 08);
+  - on phones the lesson panel covers the room (no collapse), so the phone "classroom" shot is mostly the panel;
+  - the portfolio does not pick the `-light` variants yet (prompt given to Hmz for the portfolio session).
+- **Still open from V8.7:** Jake's CC BY credit is not inside the preview image; fal output terms and the ElevenLabs
+  free-plan narration need settling before launch (LICENSES.md).
+- **Next:** not planned. Candidates: the callout placement fix (then re-shoot 01 and 08), a phone layout that shows
+  the room, the licence items.
+
 ## 2026-10-06 - V8.7: assets and cleanup, the last V8 step (merged into deploy-prep, #24)
 
 Branch `dev/v8-7-cleanup` off `origin/deploy-prep`. Brief: `.claude/plans/V8-7-assets-and-cleanup.md`. Evidence:
