@@ -135,3 +135,23 @@ Hmz approves by eye is what the model is asked to match.
 - A frozen interactive for `/demo` and the landing (a strong follow-up once a generated one is good).
 - Repairing a broken widget with a second model call; reporting broken widgets back to the cache.
 - Widgets that report the learner's actions to the profiler.
+
+## Status (2026-10-13) and deviations from the plan above
+
+Built on `dev/v10-interactive-visuals`. Steps 1 to 6 are done and verified with no API calls; step 7 (live runs) and
+applying migration 017 wait for Hmz's go-ahead. What changed while building, each with its reason:
+
+- **A DOM layer, not an `<Html>` in the scene.** The board image sits in a bobbing `<Float>` and is partly under the
+  400px lesson panel at 1280px, so a slider could not live there (`InteractiveStage.tsx`, not `InteractiveBoard`). One
+  iframe changes class between board and large, so slider state survives Expand. Below 1180x600 the large view opens
+  directly. There is no separate `InteractiveOverlay.tsx`.
+- **The widget is always dark.** The card floats on the lit room (ink glass in both themes), and a theme-following widget
+  would reload and lose its state.
+- **Fixtures live in `src/lib/interactive/fixtures.ts`**, not `src/data/dev/`, because the generator imports them too.
+- **`maxDuration` is 120, not 60** (a first generation writes thousands of tokens and may retry once).
+- **Added after review of the design**: the route tells the model the concept's name from the database, never the
+  client's `topic`, for anything it caches; identical in-flight requests share one generation; `disabled` kill switch.
+- **The board card's footer is one line**, with all prompts only in the large view: at 1280x720 the first cut hid the
+  sliders below the fold. A scripted check now fails if a fixture needs scrolling on the board at 1280x720.
+- **Verification was scripted, not by eye alone**: `scripts/frame.cjs` (84 checks incl. a hostile probe), `scripts/room.cjs`
+  (the real panel and hook, every API call stubbed or aborted).
