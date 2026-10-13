@@ -9,6 +9,7 @@ import {
   type InteractiveParts,
 } from "./spec";
 import { codeOnly, validateWidget } from "./validate";
+import { INTERACTIVE_FIXTURES } from "./fixtures";
 import {
   WIDGET_CSP,
   WIDGET_MESSAGE_TYPE,
@@ -205,6 +206,20 @@ describe("buildWidgetDoc", () => {
     expect(doc).toContain("<title>&lt;b&gt;&quot;x&quot;&lt;/b&gt;</title>");
     expect(doc).not.toContain("</script><img");
     expect(doc).not.toContain("</style><b>");
+  });
+});
+
+describe("fixtures", () => {
+  it.each(INTERACTIVE_FIXTURES.map((f) => [f.id, f] as const))("%s is a valid spec and a clean widget", (_id, f) => {
+    expect(parseInteractiveSpec(f.spec)).not.toBeNull();
+    expect(parseInteractiveParts(f.parts)).not.toBeNull();
+    expect(validateWidget(f.parts)).toEqual({ ok: true });
+    // every control the spec promises is on screen under that exact label
+    for (const c of f.spec.controls) expect(f.parts.markup + f.parts.js).toContain(c.label);
+    // and each builds into a document in both themes
+    for (const theme of ["light", "dark"] as const) {
+      expect(buildWidgetDoc(f.parts, theme)).toContain(f.parts.title);
+    }
   });
 });
 
