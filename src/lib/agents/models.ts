@@ -8,6 +8,8 @@ export const MODELS = {
   teaching:   "claude-sonnet-5",
   /** AssessmentAgent: lesson + ad-hoc quiz generation. Pedagogical variety. */
   assessment: "claude-sonnet-5",
+  /** InteractiveAgent: writes one sandboxed interactive widget (code) per topic. */
+  interactive: "claude-sonnet-5",
   /** Cheap/fast: explain-more, free-mode chat, review questions, short-answer eval. */
   fast:       "claude-haiku-4-5-20251001",
 } as const;
