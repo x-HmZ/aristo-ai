@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS public.generated_interactives (
     js            TEXT         NOT NULL,
     source_model  TEXT,
     disabled      BOOLEAN      NOT NULL DEFAULT FALSE,
-    created_at    TIMESTAMPTZ  DEFAULT NOW()
+    created_at    TIMESTAMPTZ  DEFAULT NOW(),
+    CONSTRAINT generated_interactives_size CHECK (length(markup) + length(css) + length(js) <= 40000)
 );
 
 CREATE INDEX IF NOT EXISTS idx_generated_interactives_concept ON public.generated_interactives (concept_id);
@@ -32,6 +33,7 @@ CREATE INDEX IF NOT EXISTS idx_generated_interactives_concept ON public.generate
 ALTER TABLE public.generated_interactives ENABLE ROW LEVEL SECURITY;
 
 -- Service role only: /api/learn/interactive is the one reader and writer.
+REVOKE ALL ON public.generated_interactives FROM anon, authenticated;
 DROP POLICY IF EXISTS "generated_interactives service all" ON public.generated_interactives;
 CREATE POLICY "generated_interactives service all"
     ON public.generated_interactives

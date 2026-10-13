@@ -156,15 +156,16 @@ export function parseInteractiveParts(raw: unknown): InteractiveParts | null {
 }
 
 /**
- * Stable, order-independent text for hashing a spec into a cache key. Whitespace
- * and case are folded so a re-worded-by-whitespace spec reuses the same widget.
+ * The text hashed into a cache key: the concept and EVERY field of the parsed spec, exactly as the model will read
+ * it. Nothing is folded and nothing is left out (try_this included), because the spec is prompt text and the result
+ * is shown to every learner who sends the same spec: two specs may share a widget only when they are identical.
  */
 export function normalizeSpecForKey(conceptId: string, spec: InteractiveSpec): string {
-  const fold = (s: string) => s.trim().replace(/\s+/g, " ").toLowerCase();
   return JSON.stringify({
     c: conceptId,
-    g: fold(spec.goal),
-    b: fold(spec.brief),
-    k: spec.controls.map((c) => [fold(c.label), c.kind, fold(c.effect)]),
+    g: spec.goal,
+    b: spec.brief,
+    k: spec.controls.map((c) => [c.label, c.kind, c.effect]),
+    t: spec.try_this,
   });
 }

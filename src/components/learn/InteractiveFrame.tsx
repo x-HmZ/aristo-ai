@@ -30,21 +30,33 @@ interface Props {
   theme:            WidgetTheme;
   onReady?:         () => void;
   onFail?:          (reason: string) => void;
+  /** The learner pressed Escape while focus was inside the widget. */
+  onEscape?:        () => void;
   readyTimeoutMs?:  number;
   className?:       string;
 }
 
-export function InteractiveFrame({ parts, theme, onReady, onFail, readyTimeoutMs = 4000, className }: Props) {
+/** Nothing a widget needs from the browser; every powerful feature off. */
+const FRAME_ALLOW =
+  "autoplay 'none'; camera 'none'; clipboard-read 'none'; clipboard-write 'none'; display-capture 'none'; " +
+  "fullscreen 'none'; geolocation 'none'; microphone 'none'; picture-in-picture 'none'; web-share 'none'";
+
+export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, readyTimeoutMs = 4000, className }: Props) {
   const srcDoc   = useMemo(() => buildWidgetDoc(parts, theme), [parts, theme]);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [status, setStatus] = useState<FrameStatus>("loading");
 
-  const readyRef = useRef(onReady);
-  const failRef  = useRef(onFail);
-  useEffect(() => { readyRef.current = onReady; failRef.current = onFail; });
+  const readyRef  = useRef(onReady);
+  const failRef   = useRef(onFail);
+  const escapeRef = useRef(onEscape);
+  useEffect(() => { readyRef.current = onReady; failRef.current = onFail; escapeRef.current = onEscape; });
+  const loads = useRef(0);
+  const [navigated, setNavigated] = useState(false);
 
   useEffect(() => {
     setStatus("loading");
+    loads.current = 0;
+    setNavigated(false);
     let settled = false;
     const settle = (next: FrameStatus, reason = "") => {
       if (settled) return;
@@ -58,6 +70,7 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, readyTimeoutMs
       if (e.source !== frameRef.current?.contentWindow) return;
       const msg = parseWidgetMessage(e.data);
       if (!msg) return;
+      if (msg.event === "escape") { escapeRef.current?.(); return; }
       if (msg.event === "ready") settle("ready");
       else settle("failed", msg.message || "widget error");
     };
@@ -72,15 +85,22 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, readyTimeoutMs
 
   return (
     <div className={cn("relative size-full bg-surface", className)} data-widget-status={status}>
-      <iframe
-        key={srcDoc}
-        ref={frameRef}
-        title={parts.title}
-        srcDoc={srcDoc}
-        sandbox={WIDGET_SANDBOX}
-        referrerPolicy="no-referrer"
-        className={cn("size-full border-0 bg-surface", status === "failed" && "invisible")}
-      />
+      {/* A second load means the page navigated itself away from the srcdoc: drop the frame. */}
+      {!navigated && (
+        <iframe
+          key={srcDoc}
+          ref={frameRef}
+          title={parts.title}
+          srcDoc={srcDoc}
+          sandbox={WIDGET_SANDBOX}
+          allow={FRAME_ALLOW}
+          referrerPolicy="no-referrer"
+          onLoad={() => {
+            if (++loads.current > 1) { setNavigated(true); setStatus("failed"); failRef.current?.("navigated"); }
+          }}
+          className={cn("size-full border-0 bg-surface", status === "failed" && "invisible")}
+        />
+      )}
       {status === "loading" && (
         <div
           role="status"

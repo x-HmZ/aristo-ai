@@ -24,14 +24,37 @@ function stripAllowedUrls(s: string): string {
 /**
  * Blank out comments and string/template literals so keyword checks read code,
  * not prose: a label that says "the location of the point" must not fail. A
- * crude tokenizer (a regex literal holding a quote can confuse it) is fine for
- * a second layer.
+ * hand-written single pass, linear in the input however it is malformed (the
+ * regex it replaced backtracked on unterminated input, and this runs on
+ * 40 KB an attacker chose). A regex literal holding a quote can confuse it,
+ * which is fine for a second layer.
  */
-const LITERALS =
-  /\/\*[\s\S]*?\*\/|\/\/[^\n]*|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`/g;
-
 export function codeOnly(js: string): string {
-  return js.replace(LITERALS, '""');
+  const n = js.length;
+  let out = "";
+  let i = 0;
+  while (i < n) {
+    const c = js[i];
+    const d = js[i + 1];
+    if (c === "/" && d === "/") {
+      const nl = js.indexOf("\n", i);
+      i = nl === -1 ? n : nl;
+      out += '""';
+    } else if (c === "/" && d === "*") {
+      const end = js.indexOf("*/", i + 2);
+      i = end === -1 ? n : end + 2;
+      out += '""';
+    } else if (c === '"' || c === "'" || c === "`") {
+      let j = i + 1;
+      while (j < n && js[j] !== c && (c === "`" || js[j] !== "\n")) j += js[j] === "\\" ? 2 : 1;
+      i = j < n && js[j] === c ? j + 1 : Math.min(j, n);
+      out += '""';
+    } else {
+      out += c;
+      i += 1;
+    }
+  }
+  return out;
 }
 
 const FORBIDDEN_TAGS =
@@ -63,6 +86,8 @@ export function validateWidget(parts: InteractiveParts): WidgetCheck {
   if (markup.length + css.length + js.length > PARTS_LIMITS.total) {
     return { ok: false, reason: "too large" };
   }
+  // No legitimate page needs a run of hundreds of blanks; it is what a slow-regex attack looks like.
+  if (/\s{300,}/.test(markup + css + js)) return { ok: false, reason: "long whitespace run" };
 
   // ── markup ────────────────────────────────────────────────────────────────
   if (FORBIDDEN_TAGS.test(markup)) return { ok: false, reason: "markup: forbidden element" };
@@ -74,7 +99,7 @@ export function validateWidget(parts: InteractiveParts): WidgetCheck {
   }
   // Every reference must be a fragment or an inline image.
   const markupUrls = stripAllowedUrls(markup);
-  if (/(?:src|href|action|formaction|poster|xlink:href)\s*=\s*["']?\s*(?!#|data:image\/)(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(markupUrls)) {
+  if (/(?:src|href|action|formaction|poster|xlink:href)\s*=\s*(?:["']\s*)?(?!#|data:image\/)(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(markupUrls)) {
     return { ok: false, reason: "markup: external reference" };
   }
 
@@ -82,7 +107,7 @@ export function validateWidget(parts: InteractiveParts): WidgetCheck {
   const cssClean = stripAllowedUrls(css);
   if (/@import\b/i.test(cssClean)) return { ok: false, reason: "css: @import" };
   if (/https?:\/\//i.test(cssClean)) return { ok: false, reason: "css: external url" };
-  if (/url\s*\(\s*(?!["']?\s*(?:data:image\/|#))/i.test(cssClean)) {
+  if (/url\s*\((?!\s*(?:["']\s*)?(?:data:image\/|#))/i.test(cssClean)) {
     return { ok: false, reason: "css: non-data url()" };
   }
 

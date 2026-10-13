@@ -1,6 +1,305 @@
 {
-  "shots": [],
+  "shots": [
+    "1280x720-explore.jpg",
+    "1280x720-large.jpg",
+    "1280x720-hidden.jpg",
+    "1920x1080-explore.jpg",
+    "1280x600-explore.jpg",
+    "1180x720-explore.jpg",
+    "1024x768-explore.jpg",
+    "768x1024-explore.jpg",
+    "360x780-explore.jpg",
+    "fits-slope-line-1280x720.jpg",
+    "fits-fraction-bars-1280x720.jpg",
+    "fits-for-loop-1280x720.jpg",
+    "fail-500-after.jpg"
+  ],
   "checks": [
+    {
+      "name": "happy: the lesson pauses on the explore segment",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: paused on seg_005 with the widget ready",
+      "pass": true,
+      "extra": "{\"seg\":\"seg_005\",\"exploring\":true,\"status\":\"ready\",\"shown\":true,\"expanded\":false,\"complete\":false}"
+    },
+    {
+      "name": "happy: nothing advances while it is paused",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: the card is on the board, left of the panel",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":562,\"w\":384,\"h\":486},\"panel\":{\"l\":860,\"t\":76,\"r\":1260,\"b\":700,\"w\":400,\"h\":624}}"
+    },
+    {
+      "name": "happy: the card clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":562,\"w\":384,\"h\":486},\"band\":{\"l\":20,\"t\":633,\"r\":840,\"b\":704,\"w\":820,\"h\":71}}"
+    },
+    {
+      "name": "happy: Continue is visible",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: the widget responds on the board",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Expand opens a dialog",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: the large view is larger and centred",
+      "pass": true,
+      "extra": "{\"l\":160,\"t\":48,\"r\":1120,\"b\":672,\"w\":960,\"h\":624}"
+    },
+    {
+      "name": "happy: slider state survives Expand",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Escape returns to the board",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: slider state survives Collapse",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Hide shows the Open pill",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Hide leaves Continue reachable while paused",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Open brings it back with state kept",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: Continue resumes the lesson",
+      "pass": true,
+      "extra": "{\"seg\":\"seg_006\",\"exploring\":false,\"status\":\"ready\",\"shown\":false,\"expanded\":false,\"complete\":false}"
+    },
+    {
+      "name": "happy: the card steps aside, the pill stays",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: the lesson finishes",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "happy: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "size 1920x1080: board card",
+      "pass": true,
+      "extra": "group"
+    },
+    {
+      "name": "size 1920x1080: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680}"
+    },
+    {
+      "name": "size 1920x1080: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":1338,\"t\":703,\"r\":1463,\"b\":747,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 1920x1080: left of the panel",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680},\"panel\":{\"l\":1500,\"t\":76,\"r\":1900,\"b\":1060,\"w\":400,\"h\":984}}"
+    },
+    {
+      "name": "size 1920x1080: clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680},\"band\":{\"l\":20,\"t\":993,\"r\":1480,\"b\":1064,\"w\":1460,\"h\":71}}"
+    },
+    {
+      "name": "size 1920x1080: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 1280x600: board card",
+      "pass": true,
+      "extra": "group"
+    },
+    {
+      "name": "size 1280x600: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392}"
+    },
+    {
+      "name": "size 1280x600: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":698,\"t\":415,\"r\":823,\"b\":459,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 1280x600: left of the panel",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392},\"panel\":{\"l\":860,\"t\":76,\"r\":1260,\"b\":580,\"w\":400,\"h\":504}}"
+    },
+    {
+      "name": "size 1280x600: clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392},\"band\":{\"l\":20,\"t\":513,\"r\":840,\"b\":584,\"w\":820,\"h\":71}}"
+    },
+    {
+      "name": "size 1280x600: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 1180x720: board card",
+      "pass": true,
+      "extra": "group"
+    },
+    {
+      "name": "size 1180x720: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486}"
+    },
+    {
+      "name": "size 1180x720: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":598,\"t\":509,\"r\":723,\"b\":553,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 1180x720: left of the panel",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486},\"panel\":{\"l\":760,\"t\":76,\"r\":1160,\"b\":700,\"w\":400,\"h\":624}}"
+    },
+    {
+      "name": "size 1180x720: clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486},\"band\":{\"l\":20,\"t\":633,\"r\":740,\"b\":704,\"w\":720,\"h\":71}}"
+    },
+    {
+      "name": "size 1180x720: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 1024x768: large view",
+      "pass": true,
+      "extra": "dialog"
+    },
+    {
+      "name": "size 1024x768: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":32,\"t\":48,\"r\":992,\"b\":720,\"w\":960,\"h\":672}"
+    },
+    {
+      "name": "size 1024x768: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":850,\"t\":646,\"r\":975,\"b\":690,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 1024x768: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 768x1024: large view",
+      "pass": true,
+      "extra": "dialog"
+    },
+    {
+      "name": "size 768x1024: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":20,\"t\":152,\"r\":748,\"b\":872,\"w\":728,\"h\":720}"
+    },
+    {
+      "name": "size 768x1024: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":606,\"t\":798,\"r\":731,\"b\":842,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 768x1024: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 360x780: large view",
+      "pass": true,
+      "extra": "dialog"
+    },
+    {
+      "name": "size 360x780: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":20,\"t\":48,\"r\":340,\"b\":732,\"w\":320,\"h\":684}"
+    },
+    {
+      "name": "size 360x780: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":198,\"t\":638,\"r\":323,\"b\":682,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 360x780: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "fits: slope-line needs no scrolling on the board at 1280x720",
+      "pass": true,
+      "extra": "{\"scroll\":375,\"view\":375}"
+    },
+    {
+      "name": "fits: fraction-bars needs no scrolling on the board at 1280x720",
+      "pass": true,
+      "extra": "{\"scroll\":375,\"view\":375}"
+    },
+    {
+      "name": "fits: for-loop needs no scrolling on the board at 1280x720",
+      "pass": true,
+      "extra": "{\"scroll\":376,\"view\":375}"
+    },
+    {
+      "name": "reset: clearing the widget under an open pause releases it",
+      "pass": true,
+      "extra": "{\"seg\":\"seg_006\",\"exploring\":false,\"status\":\"idle\",\"shown\":false,\"expanded\":false,\"complete\":false}"
+    },
+    {
+      "name": "tab: nine Tabs from the dialog never leave it",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "tab: Shift+Tab stays inside too",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "fail: the lesson completes without a pause",
+      "pass": true,
+      "extra": "{\"seg\":null,\"exploring\":false,\"status\":\"failed\",\"shown\":false,\"expanded\":false,\"complete\":true}"
+    },
+    {
+      "name": "fail: no card, no pill",
+      "pass": true,
+      "extra": ""
+    },
     {
       "name": "window: a widget arriving during the wait still pauses the lesson",
       "pass": true,
@@ -22,6 +321,21 @@
       "extra": ""
     },
     {
+      "name": "frame: a widget that throws never pauses the lesson",
+      "pass": true,
+      "extra": "{\"seg\":null,\"exploring\":false,\"status\":\"failed\",\"shown\":false,\"expanded\":false,\"complete\":true}"
+    },
+    {
+      "name": "frame: and leaves nothing on screen",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "skip: Next sentence leaves the pause cleanly",
+      "pass": true,
+      "extra": "{\"seg\":\"seg_006\",\"exploring\":false,\"status\":\"ready\",\"shown\":false,\"expanded\":false,\"complete\":false}"
+    },
+    {
       "name": "no /api request left the stubs",
       "pass": true,
       "extra": ""
@@ -29,9 +343,9 @@
   ],
   "problems": [],
   "stubbed": {
-    "/api/learn/interactive": 4,
-    "/api/tts": 12,
-    "/api/learn/complete": 1
+    "/api/learn/interactive": 34,
+    "/api/tts": 102,
+    "/api/learn/complete": 4
   },
   "aborted": []
 }

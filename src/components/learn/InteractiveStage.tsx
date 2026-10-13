@@ -44,6 +44,8 @@ function useBoardLayout(): boolean {
   return board;
 }
 
+const FOCUSABLE = 'button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+
 // The panel column is 400px at right-5; the card sits 20px left of it. The caption band (LessonPlayer)
 // keeps its top edge at or below 80% of the height, so the card ends at 78%.
 const BOARD_CARD =
@@ -71,15 +73,24 @@ export function InteractiveStage() {
   const closeRef = useRef(close);
   useEffect(() => { closeRef.current = close; });
 
-  // The large view is a dialog: focus moves in, Escape closes, focus goes back.
-  // Tab cannot be trapped from here while focus is inside the frame, which is
-  // its own document; the Close button is first in tab order.
+  // The large view is a dialog: focus moves in, Tab wraps inside it, Escape closes, focus goes back.
+  // Keys typed inside the frame never reach this document, so the frame's bridge posts Escape
+  // (onEscape below); Tab out of the frame lands on the footer, and the wrap handles the card's ends.
   useEffect(() => {
     if (!large) return;
+    const card = cardRef.current;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    cardRef.current?.focus({ preventScroll: true });
+    card?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !e.defaultPrevented) { e.stopPropagation(); closeRef.current(); }
+      if (e.key === "Escape" && !e.defaultPrevented) { e.stopPropagation(); closeRef.current(); return; }
+      if (e.key !== "Tab" || !card) return;
+      const items = Array.from(card.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null);
+      if (items.length === 0) { e.preventDefault(); card.focus(); return; }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || active === card || !card.contains(active))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (active === last || !card.contains(active))) { e.preventDefault(); first.focus(); }
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -107,7 +118,7 @@ export function InteractiveStage() {
         ref={cardRef}
         data-testid="interactive-card"
         tabIndex={-1}
-        role={large ? "dialog" : "region"}
+        role={large ? "dialog" : "group"}
         aria-modal={large || undefined}
         aria-label={parts.title}
         className={cn(
@@ -139,7 +150,13 @@ export function InteractiveStage() {
         </header>
 
         <div className="min-h-0 flex-1">
-          <InteractiveFrame parts={parts} theme="dark" onReady={markReady} onFail={markFailed} />
+          <InteractiveFrame
+            parts={parts}
+            theme="dark"
+            onReady={markReady}
+            onFail={markFailed}
+            onEscape={() => { if (large) closeRef.current(); }}
+          />
         </div>
 
         <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-line bg-sunk px-4 py-2">
@@ -160,7 +177,7 @@ export function InteractiveStage() {
       </div>
 
       {!shown && status === "ready" && (
-        <div className="theme-ink absolute left-5 top-[76px] z-20">
+        <div className="theme-ink absolute left-5 top-[76px] z-20 flex items-center gap-2">
           <Button
             variant="secondary"
             className="border border-line bg-bg/[0.86] shadow-e1 backdrop-blur-md"
@@ -169,6 +186,13 @@ export function InteractiveStage() {
             <SlidersHorizontal aria-hidden />
             Open interactive
           </Button>
+          {/* Hiding the card must not strand the pause: Continue stays reachable. */}
+          {exploring && (
+            <Button onClick={requestContinue} className="shadow-e1">
+              Continue
+              <ArrowRight aria-hidden />
+            </Button>
+          )}
         </div>
       )}
     </>

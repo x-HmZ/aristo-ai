@@ -78,6 +78,7 @@ NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_K
 ANTHROPIC_API_KEY     # Teaching / Assessment / Curriculum
 OPENAI_API_KEY        # RAG embeddings + planned Whisper/TTS — gracefully optional
 FAL_KEY               # fal.ai 3D generation (NOT FAL_API_KEY)
+NEXT_PUBLIC_INTERACTIVE_VISUALS  # "true" turns on generated interactive widgets (V10); off by default; also the kill switch
 ```
 
 ## Repo & tooling

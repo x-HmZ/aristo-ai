@@ -17,12 +17,17 @@ export type WidgetTheme = "light" | "dark";
 
 /** The only window.postMessage shape the parent accepts from a widget. */
 export const WIDGET_MESSAGE_TYPE = "aristo-widget";
-export type WidgetEvent = "ready" | "error";
+export type WidgetEvent = "ready" | "error" | "escape";
 
 /** `allow-scripts` alone: an opaque origin with no storage, cookies or parent access. */
 export const WIDGET_SANDBOX = "allow-scripts";
 
-/** Every request type is off except inline script and style and data: images. */
+/**
+ * Every request type is off except inline script and style and data: images. Two things are NOT governed here:
+ * navigation (navigate-to was never shipped; the host page's `frame-src 'none'` in next.config.mjs does it, and
+ * InteractiveFrame unmounts a frame that loads twice) and WebRTC (the `webrtc` directive is not honoured by
+ * Chromium, so the bridge removes the constructors as a best effort; see decisions.md for the residual).
+ */
 export const WIDGET_CSP =
   "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; " +
   "img-src data:; base-uri 'none'; form-action 'none'";
@@ -97,6 +102,10 @@ function bridgeJs(theme: WidgetTheme): string {
   function post(ev,msg){try{parent.postMessage({type:${JSON.stringify(WIDGET_MESSAGE_TYPE)},event:ev,message:msg||''},'*');}catch(e){}}
   window.addEventListener('error',function(e){failed=true;post('error',String(e&&e.message||'error'));});
   window.addEventListener('unhandledrejection',function(e){failed=true;post('error',String(e&&e.reason||'rejected'));});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')post('escape');});
+  ['RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','RTCSessionDescription'].forEach(function(n){
+    try{Object.defineProperty(window,n,{value:undefined,configurable:false,writable:false});}catch(e){}
+  });
   window.__aristoReady=function(){if(!failed)post('ready');};
   window.ARISTO={
     theme:${JSON.stringify(theme)},
@@ -136,6 +145,7 @@ export function buildWidgetDoc(parts: InteractiveParts, theme: WidgetTheme): str
     `<meta http-equiv="Content-Security-Policy" content="${WIDGET_CSP}">`,
     `<meta name="viewport" content="width=device-width,initial-scale=1">`,
     `<meta name="color-scheme" content="${theme}">`,
+    `<meta name="referrer" content="no-referrer">`,
     `<title>${escapeHtml(parts.title)}</title>`,
     `<style>:root{color-scheme:${theme};${tokenCss(theme)}}${KIT_CSS}</style>`,
     `<style>${parts.css.replace(/<\/style/gi, "<\\/style")}</style>`,
@@ -153,6 +163,6 @@ export function parseWidgetMessage(data: unknown): { event: WidgetEvent; message
   if (typeof data !== "object" || data === null) return null;
   const d = data as Record<string, unknown>;
   if (d.type !== WIDGET_MESSAGE_TYPE) return null;
-  if (d.event !== "ready" && d.event !== "error") return null;
+  if (d.event !== "ready" && d.event !== "error" && d.event !== "escape") return null;
   return { event: d.event, message: typeof d.message === "string" ? d.message.slice(0, 300) : "" };
 }

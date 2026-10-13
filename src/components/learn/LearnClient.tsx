@@ -66,6 +66,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const stopAudio              = useAristoStore((s) => s.stopAudio);
   const setActiveModelUrl      = useAristoStore((s) => s.setActiveModelUrl);
   const setActiveLesson        = useAristoStore((s) => s.setActiveLesson);
+  const resetInteractive       = useAristoStore((s) => s.resetInteractive);
   const setCustomTeacherGlbUrl = useAristoStore((s) => s.setCustomTeacherGlbUrl);
 
   const mode              = useAristoStore((s) => s.mode);
@@ -224,7 +225,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     clearQuiz();
     setActiveLesson(null);
     setActiveModelUrl(null);
-    useAristoStore.getState().resetInteractive();
+    resetInteractive();
     setActiveQuiz(null);
     setQuizResult(null);
     setMode("free");
@@ -233,7 +234,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       currentTopicIndex: 0, sessionId: null, structure: null,
     });
     setShowPicker(true);
-  }, [stopAudio, clearMessages, clearQuiz, setActiveLesson, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
+  }, [stopAudio, clearMessages, clearQuiz, setActiveLesson, resetInteractive, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
 
   // ── View map while in a course ─────────────────────────────────────────────
   const handleViewMap = useCallback(() => {

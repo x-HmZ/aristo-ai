@@ -10,19 +10,24 @@
  *
  * Response
  *   200 { title, markup, css, js, cached: boolean }
- *   400 bad body, 401/403 not signed in or approved, 404 switched off,
- *   429 too many generations, 500 generation failed (the lesson carries on over its image)
+ *   400 bad body, 401/403 not signed in or approved, 403 spec not from a lesson,
+ *   404 switched off, 429 too many generations, 500 generation failed (the lesson
+ *   carries on over its image)
  *
  * Constraints
+ *   - Off unless NEXT_PUBLIC_INTERACTIVE_VISUALS is "true" (src/lib/interactive/flag.ts).
  *   - Approved learners only (`requireApproved`).
- *   - Cached in `generated_interactives` by (concept, spec) for KG-resolved concepts
- *     ONLY. A free-form topic is generated each time and never stored.
- *   - For a KG concept the model is told the concept's name from the database, never the
- *     client's `topic`: what is cached is shown to every learner, so a request must not be
- *     able to steer it. The client topic is used only for free-form, uncached requests.
+ *   - What is cached is shown to every learner, so for a KG concept nothing the
+ *     client sends may steer it: the model is told the concept's NAME FROM THE
+ *     DATABASE, and the spec must be one a stored lesson of that concept carries
+ *     (so it was written by the teaching agent, not by the request). The cache key
+ *     hashes every field of the spec, `try_this` included.
+ *   - Cached in `generated_interactives` for KG-resolved concepts ONLY. A free-form
+ *     topic is generated each time and never stored.
  *   - Cached rows are re-validated on the way out; a row with `disabled` is a 404.
- *   - Identical in-flight requests share one generation; each learner gets a small
- *     per-window generation allowance (cache hits do not count).
+ *   - Identical in-flight requests share one generation. Generations are limited per
+ *     learner twice: in memory (cheap, per instance) and from `usage_events` (shared
+ *     by every instance). Cache hits do not count.
  */
 
 import { createHash } from "node:crypto";
@@ -39,16 +44,22 @@ import {
 } from "@/lib/interactive/spec";
 import { validateWidget } from "@/lib/interactive/validate";
 import { createThrottle } from "@/lib/interactive/throttle";
+import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 
 // A first generation writes several thousand tokens; leave room for the retry.
 export const maxDuration = 120;
 
+const WINDOW_MS = 10 * 60 * 1000;
 const GENERATIONS_PER_WINDOW = 8;
-const throttle = createThrottle(GENERATIONS_PER_WINDOW, 10 * 60 * 1000);
+/** The most model calls the window allows: every generation may retry once. */
+const MODEL_CALLS_PER_WINDOW = GENERATIONS_PER_WINDOW * 2;
+const throttle = createThrottle(GENERATIONS_PER_WINDOW, WINDOW_MS);
 const inflight = new Map<string, Promise<InteractiveParts>>();
 
 export async function POST(req: NextRequest) {
   try {
+    if (!INTERACTIVE_VISUALS_ENABLED) return NextResponse.json({ error: "switched off" }, { status: 404 });
+
     const guard = await requireApproved();
     if (guard.error) return guard.error;
     const { user } = guard;
@@ -67,14 +78,31 @@ export async function POST(req: NextRequest) {
     if (!spec) return NextResponse.json({ error: "invalid spec" }, { status: 400 });
 
     const service = createServiceClient();
-    const specHash = createHash("sha256").update(normalizeSpecForKey(conceptId ?? "", spec)).digest("hex");
 
     // A KG-resolved concept: its name comes from the database, and only it is cached.
     const { data: concept } = conceptId
       ? await service.from("concepts").select("id, name").eq("id", conceptId).maybeSingle()
       : { data: null };
 
-    // ── Cache (a free-form topic has no concept and never has a row) ────────
+    // The spec must be one the teaching agent wrote: some stored lesson of this concept carries it. Any
+    // moderation status but rejected counts, because a brand-new concept's lesson is stored as pending
+    // and its first learner is served it anyway.
+    if (concept) {
+      const { count } = await service
+        .from("cached_lessons")
+        .select("id", { count: "exact", head: true })
+        .eq("concept_id", concept.id)
+        .neq("moderation_status", "rejected")
+        .contains("payload", { metadata: { interactive: spec } });
+      if (!count) return NextResponse.json({ error: "spec does not belong to a lesson of this concept" }, { status: 403 });
+    }
+
+    // Free-form requests are never stored, so their topic is part of what makes two requests the same.
+    const specHash = createHash("sha256")
+      .update(normalizeSpecForKey(concept?.id ?? "", spec) + (concept ? "" : `|${topic}`))
+      .digest("hex");
+
+    // ── Cache ───────────────────────────────────────────────────────────────
     if (concept) {
       const { data: row } = await service
         .from("generated_interactives")
@@ -92,7 +120,7 @@ export async function POST(req: NextRequest) {
     // ── Generate (shared with identical requests already running) ───────────
     let pending = inflight.get(specHash);
     if (!pending) {
-      if (!throttle.take(user.id)) {
+      if (!throttle.take(user.id) || (await overBudget(service, user.id))) {
         return NextResponse.json({ error: "Too many interactives requested; try again in a few minutes" }, { status: 429 });
       }
       pending = generateInteractive({ topic: concept?.name ?? topic, spec, userId: user.id })
@@ -123,4 +151,19 @@ export async function POST(req: NextRequest) {
     console.error("[interactive] route error:", error);
     return NextResponse.json({ error: "Could not build the interactive" }, { status: 500 });
   }
+}
+
+/** The shared limit: model calls this learner made in the window, from usage_events. Errors fail open (the in-memory limit still applies). */
+async function overBudget(service: ReturnType<typeof createServiceClient>, userId: string): Promise<boolean> {
+  const { count, error } = await service
+    .from("usage_events")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .in("feature", ["lesson.interactive", "lesson.interactive.retry"])
+    .gte("created_at", new Date(Date.now() - WINDOW_MS).toISOString());
+  if (error) {
+    console.error("[interactive] budget check failed (open)", error);
+    return false;
+  }
+  return (count ?? 0) >= MODEL_CALLS_PER_WINDOW;
 }

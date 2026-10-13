@@ -21,7 +21,31 @@ import { INTERACTIVE_FIXTURES, getFixture } from "@/lib/interactive/fixtures";
 import { validateWidget } from "@/lib/interactive/validate";
 import type { WidgetTheme } from "@/lib/interactive/shell";
 
-type Fail = "none" | "throws" | "forbidden" | "timeout" | "probe";
+type Fail = "none" | "throws" | "forbidden" | "timeout" | "probe" | "nav-location" | "nav-meta" | "nav-anchor" | "nav-open" | "nav-history" | "misc";
+
+/**
+ * Navigation and side-channel probes (security review, V10). Each tries to take the
+ * frame, or something outside it, somewhere else. The target is a closed local port,
+ * so nothing leaves the machine; the script watches whether a request is even made.
+ * Names are built from pieces so validate.ts does not see them.
+ */
+const NAV_TARGET = "'ht' + 'tp://127.0.0.1:9/'";
+const NAV_JS: Record<string, string> = {
+  "nav-location": `window['glob' + 'alThis']['loc' + 'ation'] = ${NAV_TARGET} + 'location';`,
+  "nav-meta": `var m = document.createElement('meta'); m.httpEquiv = 'refresh'; m.content = '0;url=' + ${NAV_TARGET} + 'meta'; document.head.appendChild(m);`,
+  "nav-anchor": `var a = document.createElement('a'); a.href = ${NAV_TARGET} + 'anchor'; document.body.appendChild(a); a.click();`,
+  "nav-open": `window['op' + 'en'](${NAV_TARGET} + 'open');`,
+  "nav-history": `history.back(); history.go(-1);`,
+  "misc": `
+var out = {};
+function t(name, fn) { try { out[name] = String(fn()); } catch (e) { out[name] = 'blocked: ' + e.name; } }
+t('copy', function () { return document.execCommand('copy'); });
+t('rtc', function () { return typeof new window['RTCPeer' + 'Connection']({ iceServers: [{ urls: 'stun:127.0.0.1:9' }] }); });
+t('pip', function () { return 'pictureInPictureEnabled=' + document.pictureInPictureEnabled; });
+t('fullscreen', function () { return 'fullscreenEnabled=' + document.fullscreenEnabled; });
+var a = document.createElement('a'); a.href = 'data:text/plain,x'; a.download = 'x.txt'; document.body.appendChild(a); a.click();
+setTimeout(function () { document.getElementById('out').textContent = JSON.stringify(out); }, 600);`,
+};
 
 /**
  * An adversarial widget: names built from string pieces so validate.ts cannot
@@ -65,7 +89,7 @@ function FrameView() {
     const w = Number(p.get("w"));
     if (w >= 280 && w <= 1400) setWidth(w);
     const x = p.get("fail");
-    if (x === "throws" || x === "timeout" || x === "forbidden" || x === "probe") setFail(x);
+    if (x === "throws" || x === "timeout" || x === "forbidden" || x === "probe" || x === "misc" || (x && x.startsWith("nav-"))) setFail(x as Fail);
   }, []);
 
   // The page follows the theme too, so the frame is judged on its own ground.
@@ -76,6 +100,7 @@ function FrameView() {
   const fixture = getFixture(fixtureId)!;
   const parts =
     fail === "probe"     ? PROBE_PARTS
+    : fail in NAV_JS      ? { title: "Navigation probe", markup: `<pre id="out">pending</pre>`, css: "", js: NAV_JS[fail] }
     : fail === "throws"    ? { ...fixture.parts, js: "throw new Error('boom from the widget');" }
     : fail === "forbidden" ? { ...fixture.parts, js: fixture.parts.js + "\nfetch('/api/learn/lesson/x');" }
     : fixture.parts;
@@ -134,7 +159,7 @@ function FrameView() {
         </DevSection>
         <DevSection title="Failure path">
           <div className="flex flex-wrap gap-1.5">
-            {(["none", "throws", "forbidden", "timeout", "probe"] as const).map((x) => (
+            {(["none", "throws", "forbidden", "timeout", "probe", "misc", "nav-location", "nav-meta", "nav-anchor", "nav-open", "nav-history"] as const).map((x) => (
               <DevButton key={x} selected={x === fail} onClick={() => setFail(x)}>{x}</DevButton>
             ))}
           </div>

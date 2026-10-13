@@ -397,12 +397,20 @@ export function useLessonPlayback(
   // The explore segment ended while the widget was still loading: wait for it,
   // up to EXPLORE_WAIT_MS, then go on without it.
   useEffect(() => {
-    if (!exploreWait) return;
-    if (interactiveStatus === "ready") { setExploreWait(false); setExploreGate(true); return; }
+    if (!exploreWait || isPaused) return;
+    if (interactiveStatus === "ready") { setExploreWait(false); setInteractiveShown(true); setExploreGate(true); return; }
     if (interactiveStatus !== "loading") { setExploreWait(false); setSegmentIdx((i) => i + 1); return; }
     const t = setTimeout(() => { setExploreWait(false); setSegmentIdx((i) => i + 1); }, EXPLORE_WAIT_MS);
     return () => clearTimeout(t);
-  }, [exploreWait, interactiveStatus]);
+  }, [exploreWait, isPaused, interactiveStatus, setInteractiveShown]);
+
+  // The widget went away under an open pause (a refetch, a reset from elsewhere, a failure): nothing is left to
+  // explore and the Continue button is gone with it, so release the pause and go on.
+  useEffect(() => {
+    if (!exploreGate || interactiveStatus === "ready") return;
+    leaveExplore();
+    setSegmentIdx((i) => i + 1);
+  }, [exploreGate, interactiveStatus, leaveExplore]);
 
   // Continue on the widget card (the store tick changed): release the pause and move on.
   const lastTickRef = useRef(exploreContinueTick);
@@ -593,7 +601,7 @@ export function useLessonPlayback(
           if (status === "ready" || status === "loading") {
             setIsSpeaking(false);
             setGesture("idle");
-            if (status === "ready") setExploreGate(true);
+            if (status === "ready") { setInteractiveShown(true); setExploreGate(true); }
             else setExploreWait(true);
             return;
           }

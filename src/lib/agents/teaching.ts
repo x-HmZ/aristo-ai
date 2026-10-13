@@ -16,6 +16,7 @@ import type Anthropic          from "@anthropic-ai/sdk";
 import type { DynamicProfile } from "@/store/useAristoStore";
 import { MODELS }              from "./models";
 import { getAnthropic }        from "@/lib/llm/anthropic";
+import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 import {
   INTERACTIVE_SPEC_SCHEMA,
   parseInteractiveSpec,
@@ -204,6 +205,29 @@ NARRATION TIMING (always provide these on demonstrate, not just when generating 
 
 Return your response by calling the deliver_lesson tool.`;
 
+/** Offered to the lesson agent only when the interactive-visuals flag is on. */
+const INTERACTIVE_PROMPT_BLOCK = `INTERACTIVE VISUALS — a third kind of visual
+A small interactive page the learner plays with (sliders, buttons) while you narrate. It is built separately from the lesson, from the "interactive" spec you write in metadata.
+
+Set metadata.interactive ONLY when understanding comes from CHANGING AN INPUT AND WATCHING THE RESULT:
+  • functions and graphs, slope and intercept, transformations
+  • fractions, ratios, proportions, percentages
+  • angles, area, perimeter, constructions with a movable part
+  • probability and statistics with a parameter (sample size, spread)
+  • rates: speed, distance, time
+  • stepping through an algorithm or a loop one line at a time, watching variables change
+Do NOT set it for facts, definitions, history, vocabulary, or anything the words already carry; and not for physical objects (the 3D model owns those). NEVER set it together with should_generate_model: choose one of the two, or neither. When unsure, leave it out: a lesson with images alone is fine.
+
+When you set it:
+  • goal: the one thing the learner should see for themselves.
+  • brief: what the picture shows and how it responds (axes, ranges, starting values), concrete enough to build from.
+  • controls: 1–5, each with a short visible label (40 characters or fewer), a kind (slider, toggle, stepper, choice) and its effect. The picture and every control must fit a space about 340 px wide and 330 px tall, so prefer 2 or 3.
+  • try_this: 1–3 short prompts ("Make the slope negative.").
+  • Add EXACTLY ONE segment with role "explore", in the demonstrate phase, after the segment that sets up the idea. Its text introduces the board in 1–2 sentences and names the first control by its exact label, for example "Try the Slope (m) slider on the board and watch the line." The lesson pauses on it until the learner presses Continue, so put it where playing helps, never as the last segment of the lesson, and give it no visual.
+  • The segments after it must still make sense whether or not the learner played.
+
+`;
+
 // ─── System prompt (adaptive path) ────────────────────────────────────────────
 
 const SYSTEM_PROMPT_ADAPTIVE = `${SYSTEM_PROMPT}
@@ -251,27 +275,7 @@ PERSISTENCE
     persists_to_next: true on each but the last in that run.
   • Do NOT generate a new image for every sentence.
 
-INTERACTIVE VISUALS — a third kind of visual
-A small interactive page the learner plays with (sliders, buttons) while you narrate. It is built separately from the lesson, from the "interactive" spec you write in metadata.
-
-Set metadata.interactive ONLY when understanding comes from CHANGING AN INPUT AND WATCHING THE RESULT:
-  • functions and graphs, slope and intercept, transformations
-  • fractions, ratios, proportions, percentages
-  • angles, area, perimeter, constructions with a movable part
-  • probability and statistics with a parameter (sample size, spread)
-  • rates: speed, distance, time
-  • stepping through an algorithm or a loop one line at a time, watching variables change
-Do NOT set it for facts, definitions, history, vocabulary, or anything the words already carry; and not for physical objects (the 3D model owns those). NEVER set it together with should_generate_model: choose one of the two, or neither. When unsure, leave it out: a lesson with images alone is fine.
-
-When you set it:
-  • goal: the one thing the learner should see for themselves.
-  • brief: what the picture shows and how it responds (axes, ranges, starting values), concrete enough to build from.
-  • controls: 1–5, each with a short visible label (40 characters or fewer), a kind (slider, toggle, stepper, choice) and its effect. The picture and every control must fit a space about 340 px wide and 330 px tall, so prefer 2 or 3.
-  • try_this: 1–3 short prompts ("Make the slope negative.").
-  • Add EXACTLY ONE segment with role "explore", in the demonstrate phase, after the segment that sets up the idea. Its text introduces the board in 1–2 sentences and names the first control by its exact label, for example "Try the Slope (m) slider on the board and watch the line." The lesson pauses on it until the learner presses Continue, so put it where playing helps, never as the last segment of the lesson, and give it no visual.
-  • The segments after it must still make sense whether or not the learner played.
-
-SEGMENT COUNT GUIDANCE
+${INTERACTIVE_VISUALS_ENABLED ? INTERACTIVE_PROMPT_BLOCK : ""}SEGMENT COUNT GUIDANCE
   • Typical lesson: 8–18 segments total
   • Of those: 3–6 should have visuals (roughly 33%)
   • Don't pad. Fewer denser segments beat many fragments.
@@ -285,8 +289,7 @@ SEGMENT ROLES
   • challenge_setup   — poses the challenge question to the student
   • challenge_reveal  — reads back the answer and explains it
   • transition    — bridge sentence between sub-ideas
-  • explore       — introduces the interactive board (only with metadata.interactive; exactly one)
-
+${INTERACTIVE_VISUALS_ENABLED ? "  • explore       — introduces the interactive board (only with metadata.interactive; exactly one)\n" : ""}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 FEW-SHOT EXAMPLE — Pythagoras' theorem
 (12 segments, 4 with visuals — use this as a format template)
@@ -470,10 +473,9 @@ const _metadataSchema = {
 };
 
 // The adaptive lesson may also carry an interactive-visual spec (V10).
-const _metadataSchemaAdaptive = {
-  ..._metadataSchema,
-  properties: { ..._metadataSchema.properties, interactive: INTERACTIVE_SPEC_SCHEMA },
-};
+const _metadataSchemaAdaptive = INTERACTIVE_VISUALS_ENABLED
+  ? { ..._metadataSchema, properties: { ..._metadataSchema.properties, interactive: INTERACTIVE_SPEC_SCHEMA } }
+  : _metadataSchema;
 
 // Legacy tool — no segments
 const lessonTool: Anthropic.Tool = {

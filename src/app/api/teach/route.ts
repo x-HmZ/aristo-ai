@@ -18,6 +18,7 @@ import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
 import { INTERACTIVE_SPEC_SCHEMA, parseInteractiveSpec } from "@/lib/interactive/spec";
+import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 
 export const maxDuration = 30;
 
@@ -67,7 +68,7 @@ const structuredTool: Anthropic.Tool = {
         items: { type: "string" },
         description: "3-5 key parts to label on a 3D model. Empty if no model.",
       },
-      interactive: INTERACTIVE_SPEC_SCHEMA,
+      ...(INTERACTIVE_VISUALS_ENABLED ? { interactive: INTERACTIVE_SPEC_SCHEMA } : {}),
     },
     required: [
       "definition",
@@ -111,7 +112,7 @@ Rules:
 - Age-appropriate for grades 6-8.
 - Set should_generate_model true ONLY for physical/tangible subjects that genuinely benefit from 3D visualization. NOT for abstract concepts, processes, code, math formulas, emotions, or historical events.
 - annotation_hints: 3-5 key physical parts to label on a 3D model.
-- interactive: set ONLY when the topic is understood by changing an input and watching the result (graphs and slope, fractions and ratios, angles and area, probability with a parameter, speed and time, stepping through a loop or algorithm). Leave it out for facts, definitions and history, and NEVER set it together with should_generate_model: choose one, or neither. When unsure, leave it out. Keep it to 2 or 3 controls: the page is small.`;
+${INTERACTIVE_VISUALS_ENABLED ? "\n- interactive: set ONLY when the topic is understood by changing an input and watching the result (graphs and slope, fractions and ratios, angles and area, probability with a parameter, speed and time, stepping through a loop or algorithm). Leave it out for facts, definitions and history, and NEVER set it together with should_generate_model: choose one, or neither. When unsure, leave it out. Keep it to 2 or 3 controls: the page is small." : ""}`;
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -182,7 +183,7 @@ export async function POST(req: NextRequest) {
 
     // The interactive spec is checked here, and never travels with a 3D model.
     const out = toolUse.input as Record<string, unknown>;
-    const spec = out.should_generate_model === true ? null : parseInteractiveSpec(out.interactive);
+    const spec = !INTERACTIVE_VISUALS_ENABLED || out.should_generate_model === true ? null : parseInteractiveSpec(out.interactive);
     if (spec) out.interactive = spec;
     else delete out.interactive;
 

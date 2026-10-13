@@ -7,7 +7,7 @@ const { execSync } = require("child_process");
 const { chromium } = require(path.join(execSync("npm root -g").toString().trim(), "playwright"));
 
 const base = process.argv[2] || "http://localhost:3000";
-const only = (process.argv[3] || "happy,sizes,fits,fail,window,slow,frame,skip").split(",");
+const only = (process.argv[3] || "happy,sizes,fits,fail,window,slow,frame,skip,reset,tab").split(",");
 const OUT = path.join(__dirname, "..", "room");
 fs.mkdirSync(OUT, { recursive: true });
 const report = { shots: [], checks: [], problems: [], stubbed: {}, aborted: [] };
@@ -24,7 +24,9 @@ function silentWav(seconds = 1, rate = 8000) {
 }
 const WAV = silentWav(1);
 
-async function open(browser, { w, h, interactive = "ok", delayMs = 0, q = "view=room&fixture=slope-line" }) {
+// afterExplore: the stub answers a fixed time AFTER the explore narration has ended (the wait window is 8 s),
+// which does not depend on how fast the scene happened to load.
+async function open(browser, { w, h, interactive = "ok", delayMs = 0, afterExplore = 0, q = "view=room&fixture=slope-line" }) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
   const errors = [];
@@ -36,6 +38,10 @@ async function open(browser, { w, h, interactive = "ok", delayMs = 0, q = "view=
     if (url === "/api/learn/complete") return route.fulfill({ status: 200, contentType: "application/json", body: "{}" });
     if (url === "/api/learn/interactive") {
       if (delayMs) await sleep(delayMs);
+      if (afterExplore) {
+        await page.waitForFunction(() => { const s = window.__aristoStore.getState(); return s.currentSegmentId === "seg_005" && !s.isSpeaking; }, null, { timeout: 90000 });
+        await sleep(afterExplore);
+      }
       if (interactive === "500") return route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "stub" }) });
       const fx = await page.evaluate(() => window.__aristoFixtures.find((f) => f.id === new URLSearchParams(location.search).get("fixture")) || window.__aristoFixtures[0]);
       const parts = interactive === "throws" ? { ...fx.parts, js: "throw new Error('boom');" } : fx.parts;
@@ -87,14 +93,16 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     ok("happy: the large view is larger and centred", big.w > c.w * 1.5 && Math.abs((big.l + big.r) / 2 - 640) < 6, JSON.stringify(big));
     ok("happy: slider state survives Expand", /-3x/.test(await f.locator("#eq").textContent()));
     await shot(page, "1280x720-large");
+    await f.locator("#m").focus(); // keys now go to the widget's own document, not the page
     await page.keyboard.press("Escape");
-    await sleep(400);
-    ok("happy: Escape returns to the board", (await card(page).getAttribute("role")) === "region" && (await S(page)).shown);
+    await sleep(500);
+    ok("happy: Escape returns to the board", (await card(page).getAttribute("role")) === "group" && (await S(page)).shown);
     ok("happy: slider state survives Collapse", /-3x/.test(await f.locator("#eq").textContent()));
 
     await card(page).getByRole("button", { name: "Hide the interactive" }).click();
     await sleep(300);
     ok("happy: Hide shows the Open pill", await page.getByRole("button", { name: "Open interactive" }).isVisible() && !(await card(page).isVisible()));
+    ok("happy: Hide leaves Continue reachable while paused", await page.getByRole("button", { name: "Continue" }).isVisible());
     await shot(page, "1280x720-hidden");
     await page.getByRole("button", { name: "Open interactive" }).click();
     await sleep(400);
@@ -113,18 +121,18 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
 
   // ── B. other sizes ──────────────────────────────────────────────────────────
   if (only.includes("sizes")) {
-    for (const [w, h, expectRole] of [[1920, 1080, "region"], [1280, 600, "region"], [1180, 720, "region"], [1024, 768, "dialog"], [768, 1024, "dialog"], [360, 780, "dialog"]]) {
+    for (const [w, h, expectRole] of [[1920, 1080, "group"], [1280, 600, "group"], [1180, 720, "group"], [1024, 768, "dialog"], [768, 1024, "dialog"], [360, 780, "dialog"]]) {
       const { ctx, page } = await open(browser, { w, h });
       await waitStore(page, "(s) => s.exploring === true");
       await sleep(500);
       const role = await card(page).getAttribute("role");
-      ok(`size ${w}x${h}: ${expectRole === "region" ? "board card" : "large view"}`, role === expectRole, role);
+      ok(`size ${w}x${h}: ${expectRole === "group" ? "board card" : "large view"}`, role === expectRole, role);
       const c = await rect(card(page));
       ok(`size ${w}x${h}: inside the viewport`, c.l >= 0 && c.t >= 0 && c.r <= w && c.b <= h, JSON.stringify(c));
       const cont = card(page).getByRole("button", { name: "Continue" });
       const cb = await rect(cont);
       ok(`size ${w}x${h}: Continue reachable`, (await cont.isVisible()) && cb.b <= h && cb.r <= w && cb.h >= 44, JSON.stringify(cb));
-      if (expectRole === "region") {
+      if (expectRole === "group") {
         const panel = await rect(page.locator('[class*="w-[400px]"]').first());
         ok(`size ${w}x${h}: left of the panel`, c.r <= panel.l, JSON.stringify({ c, panel }));
         const band = await page.locator("[data-caption-band]").count() ? await rect(page.locator("[data-caption-band]").first()) : null;
@@ -151,6 +159,31 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     }
   }
 
+  // ── B3. the pause cannot hang: the widget disappears under it ─────────────────
+  if (only.includes("reset")) {
+    const { ctx, page } = await open(browser, { w: 1280, h: 720 });
+    await waitStore(page, "(s) => s.exploring === true");
+    await page.evaluate(() => window.__aristoStore.getState().resetInteractive()); // what a chat reset does
+    const moved = await waitStore(page, "(s) => s.currentSegmentId === 'seg_006'", null, 15000);
+    const st = await S(page);
+    ok("reset: clearing the widget under an open pause releases it", moved && !st.exploring, JSON.stringify(st));
+    await ctx.close();
+  }
+
+  // ── B4. Tab stays inside the large view ─────────────────────────────────────
+  if (only.includes("tab")) {
+    const { ctx, page } = await open(browser, { w: 1024, h: 768 });
+    await waitStore(page, "(s) => s.exploring === true");
+    await sleep(500);
+    const inside = () => page.evaluate(() => { const c = document.querySelector('[data-testid="interactive-card"]'); return !!c && c.contains(document.activeElement); });
+    let always = true;
+    for (let i = 0; i < 9; i++) { await page.keyboard.press("Tab"); if (!(await inside())) always = false; }
+    ok("tab: nine Tabs from the dialog never leave it", always);
+    await page.keyboard.press("Shift+Tab");
+    ok("tab: Shift+Tab stays inside too", await inside());
+    await ctx.close();
+  }
+
   // ── C. fetch fails: no card, no pause, the lesson carries on ───────────────
   if (only.includes("fail")) {
     const { ctx, page } = await open(browser, { w: 1280, h: 720, interactive: "500" });
@@ -163,9 +196,8 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
   }
 
   // ── D0. a widget that lands inside the 8 s wait after the explore narration still gets its pause ──
-  // Narration runs about 13 s from load with the stubbed audio, so a 15 s answer lands around 17 s, in the window.
   if (only.includes("window")) {
-    const { ctx, page } = await open(browser, { w: 1280, h: 720, delayMs: 15000 });
+    const { ctx, page } = await open(browser, { w: 1280, h: 720, afterExplore: 3000 });
     const gated = await waitStore(page, "(s) => s.exploring === true", null, 60000);
     const st = await S(page);
     ok("window: a widget arriving during the wait still pauses the lesson", gated && st.seg === "seg_005" && st.shown, JSON.stringify(st));
@@ -173,9 +205,8 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
   }
 
   // ── D. slow: past the wait window, the lesson goes on without it ────────────
-  // The answer comes at ~28 s; the explore narration ends near 13 s and the wait is 8 s.
   if (only.includes("slow")) {
-    const { ctx, page } = await open(browser, { w: 1280, h: 720, delayMs: 26000 });
+    const { ctx, page } = await open(browser, { w: 1280, h: 720, afterExplore: 12000 });
     const t0 = Date.now();
     await waitStore(page, "(s) => s.currentSegmentId === 'seg_005'", null, 60000);
     const passed = await waitStore(page, "(s) => s.currentSegmentId === 'seg_006'", null, 60000);

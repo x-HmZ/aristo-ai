@@ -31,6 +31,7 @@ export function InputBox() {
   const setInteractive           = useAristoStore((s) => s.setInteractive);
   const setInteractiveShown      = useAristoStore((s) => s.setInteractiveShown);
   const resetInteractive         = useAristoStore((s) => s.resetInteractive);
+  const mode                     = useAristoStore((s) => s.mode);
 
   const isBusy    = isLoading || isGeneratingModel;
 
@@ -99,8 +100,12 @@ export function InputBox() {
         // ElevenLabs generations per question, competing with each other.
 
         // A new topic starts with a clear board: the last widget must not linger.
-        resetInteractive();
-        const interactiveSpec = data.should_generate_model ? null : parseInteractiveSpec(data.interactive);
+        // In a course the lesson owns the board (and its widget); a chat answer must not reset or replace it.
+        const inCourse = mode === "course";
+        if (!inCourse) resetInteractive();
+        const interactiveSpec = inCourse || data.should_generate_model ? null : parseInteractiveSpec(data.interactive);
+        // The store holds this exact object while it is the current topic's; a reset or a newer topic replaces it.
+        const stillCurrent = () => useAristoStore.getState().interactive.spec === interactiveSpec;
 
         if (interactiveSpec) {
           // V10: the widget is the visual for this topic. No concept id, so the route never caches it.
@@ -113,17 +118,19 @@ export function InputBox() {
           fetch("/api/learn/interactive", {
             method:  "POST",
             headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({ topic: trimmed, spec: interactiveSpec }),
+            body:    JSON.stringify({ topic: trimmed.slice(0, 200), spec: interactiveSpec }),
           })
             .then(async (r) => {
               if (!r.ok) throw new Error(`interactive ${r.status}`);
               const parts = parseInteractiveParts(await r.json());
               if (!parts) throw new Error("interactive: bad payload");
+              if (!stillCurrent()) return;
               setInteractive({ status: "loading", spec: interactiveSpec, parts });
               setInteractiveShown(true);
             })
             .catch((err) => {
               console.error("[free-mode] interactive failed:", err);
+              if (!stillCurrent()) return;
               setInteractive({ status: "failed", spec: interactiveSpec, parts: null });
               addMessage({
                 id:        `msg_${Date.now()}_viz_err`,
@@ -196,6 +203,7 @@ export function InputBox() {
       setInteractive,
       setInteractiveShown,
       resetInteractive,
+      mode,
     ]
   );
 
