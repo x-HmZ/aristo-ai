@@ -194,6 +194,9 @@ def export(root_name, out_path, clips, exclude=(), budget=None):
         use_selection=True,
         export_apply=True,
         export_animation_mode="NLA_TRACKS",
+        # Blender 5.1's default (True) cuts each NLA track's channels to 2 keys, first and last frame: the clip
+        # plays as a slide between two poses. v9_postprocess.mjs does the size work instead (2026-10-14).
+        export_optimize_animation_size=False,
         export_morph=True,
         export_morph_normal=False,
         export_skins=True,
