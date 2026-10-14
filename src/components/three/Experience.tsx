@@ -426,6 +426,34 @@ function FloatingModel({
   );
 }
 
+// ─── Where the display sits on the page ───────────────────────────────────────
+// The interactive widget is DOM (an iframe cannot live in WebGL), so the scene tells the page where the screen's
+// face is, every frame, after the framing (LensShift) has moved it. Only a change of a pixel or more is published.
+function ScreenRectReporter({ display }: { display: RoomDisplay }) {
+  const { camera, gl } = useThree();
+  const setScreenRect = useAristoStore((s) => s.setScreenRect);
+  const corner = useRef(new Vector3());
+  const last = useRef("");
+  useEffect(() => () => setScreenRect(null), [setScreenRect]);
+  useFrame(() => {
+    const r = gl.domElement.getBoundingClientRect();
+    const [cx, cy, cz] = display.center;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const p = corner.current.set(cx + (dx * display.width) / 2, cy + (dy * display.height) / 2, cz).project(camera);
+      const px = r.left + ((p.x + 1) / 2) * r.width;
+      const py = r.top + ((1 - p.y) / 2) * r.height;
+      x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+    }
+    const rect = { x: Math.round(x0), y: Math.round(y0), w: Math.round(x1 - x0), h: Math.round(y1 - y0) };
+    const key = `${rect.x},${rect.y},${rect.w},${rect.h}`;
+    if (key === last.current) return;
+    last.current = key;
+    setScreenRect(rect);
+  });
+  return null;
+}
+
 // ─── "Your turn" speech bubble ────────────────────────────────────────────────
 //
 // Anchored next to the avatar's head while awaitingAnswer is true.  Pure
@@ -534,6 +562,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
         lambda={devOverrides?.lambda}
       />
       <LensShift left={setLeft} right={setRight} />
+      <ScreenRectReporter display={display} />
       <color attach="background" args={[BRAND_HEX.backdrop]} />
       <SceneLights />
       <Environment preset="studio" environmentIntensity={0.5} />

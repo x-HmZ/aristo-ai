@@ -227,7 +227,7 @@ Do NOT set it for facts, definitions, history, vocabulary, or anything the words
 When you set it:
   • goal: the one thing the learner should see for themselves.
   • brief: what the picture shows and how it responds (axes, ranges, starting values), concrete enough to build from.
-  • controls: 1–5, each with a short visible label (40 characters or fewer), a kind (slider, toggle, stepper, choice) and its effect. The picture and every control must fit a space about 380 px wide and 370 px tall, so prefer 2 or 3.
+  • controls: 1–5, each with a short visible label (40 characters or fewer), a kind (slider, toggle, stepper, choice) and its effect. The picture and every control must fit the classroom screen, a landscape space about 650 px wide and 330 px tall (picture left, controls right), so prefer 2 or 3.
   • try_this: 1–3 short prompts ("Make the slope negative.").
   • Add EXACTLY ONE segment with role "explore", in the demonstrate phase, after the segment that sets up the idea. Its text introduces the board in 1–2 sentences and names the first control by its exact label, for example "Try the Slope (m) slider on the board and watch the line." The lesson pauses on it until the learner presses Continue, so put it where playing helps, never as the last segment of the lesson, and give it no visual.
   • The segments after it must still make sense whether or not the learner played.

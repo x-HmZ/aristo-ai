@@ -80,18 +80,21 @@ function tokenCss(theme: WidgetTheme): string {
 
 /**
  * The kit the generator is told about (interactive.ts mirrors this list):
- * .stack .row .stage .controls .control .readout .value .hint .chip, plus
+ * .stack .row .split .stage .controls .control .readout .value .hint .chip, plus
  * styled button, button.primary, [aria-pressed], input[type=range], select.
  */
 const KIT_CSS = `
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--surface);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:10px;-webkit-text-size-adjust:100%}
+body{background:var(--surface);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:10px;-webkit-text-size-adjust:100%;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
 h1,h2,h3{margin:0 0 6px;font-weight:600;line-height:1.25;color:var(--ink)}
 h1{font-size:18px}h2{font-size:16px}h3{font-size:15px}
 p{margin:0 0 8px;color:var(--body)}
 .stack{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.split{display:grid;grid-template-columns:minmax(0,3fr) minmax(190px,2fr);gap:12px;align-items:center}
+.split .controls{grid-template-columns:1fr}
+@media (max-width:560px){.split{grid-template-columns:1fr}}
 .stage{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:hidden}
 .stage canvas,.stage svg{display:block;width:100%;height:auto}
 .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:2px 16px;background:var(--sunk);border-radius:12px;padding:6px 12px 2px}

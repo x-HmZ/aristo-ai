@@ -59,14 +59,19 @@ const S = (page) => page.evaluate(() => { const s = window.__aristoStore.getStat
 const waitStore = (page, fn, arg, ms = 40000) => page.waitForFunction(`(${fn})(window.__aristoStore.getState(), ${JSON.stringify(arg ?? null)})`, null, { timeout: ms }).then(() => true).catch(() => false);
 const card = (page) => page.locator('[data-testid="interactive-card"]');
 const shot = async (page, name) => { await page.screenshot({ path: path.join(OUT, `${name}.jpg`), type: "jpeg", quality: 72 }); report.shots.push(`${name}.jpg`); };
+const screenRect = (page) => page.evaluate(() => window.__aristoStore.getState().screenRect);
+// 2026-10-15: the widget plays ON the room's display (board) where the screen is at least 520 px wide on the page,
+// with Expand / Hide / Continue in a strip under it; smaller screens get the large view (a dialog).
+const MIN_BOARD_W = 520;
+const onScreen = (c, r) => !!r && Math.abs(c.l - r.x) <= 2 && Math.abs(c.t - r.y) <= 2 && Math.abs(c.w - r.w) <= 2 && Math.abs(c.h - r.h) <= 2;
 const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect(); return { l: Math.round(r.left), t: Math.round(r.top), r: Math.round(r.right), b: Math.round(r.bottom), w: Math.round(r.width), h: Math.round(r.height) }; });
 
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ["--autoplay-policy=no-user-gesture-required", "--use-angle=d3d11", "--ignore-gpu-blocklist", "--enable-gpu"] });
 
-  // ── A. the happy path at 1280x720 ───────────────────────────────────────────
+  // ── A. the happy path at 1920x1080 (the widget on the room's display) ──────
   if (only.includes("happy")) {
-    const { ctx, page, errors } = await open(browser, { w: 1280, h: 720 });
+    const { ctx, page, errors } = await open(browser, { w: 1920, h: 1080 });
     const gated = await waitStore(page, "(s) => s.exploring === true");
     ok("happy: the lesson pauses on the explore segment", gated);
     let st = await S(page);
@@ -75,40 +80,44 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     ok("happy: nothing advances while it is paused", (await S(page)).seg === "seg_005");
     await card(page).waitFor({ state: "visible", timeout: 10000 });
     const c = await rect(card(page));
+    const sr = await screenRect(page);
     const panel = await rect(page.locator('[class*="w-[400px]"]').first());
     const band = await page.locator("[data-caption-band]").count() ? await rect(page.locator("[data-caption-band]").first()) : null;
-    ok("happy: the card is on the board, left of the panel", c.r <= panel.l && c.w >= 340, JSON.stringify({ c, panel }));
-    ok("happy: the card clears the caption band", !band || c.b <= band.t + 1, JSON.stringify({ c, band }));
-    ok("happy: Continue is visible", await card(page).getByRole("button", { name: "Continue" }).isVisible());
-    await shot(page, "1280x720-explore");
+    ok("happy: the widget fills the room's display", onScreen(c, sr), JSON.stringify({ c, sr }));
+    ok("happy: the display is left of the panel", c.r <= panel.l, JSON.stringify({ c, panel }));
+    ok("happy: the display clears the caption band", !band || c.b <= band.t + 1, JSON.stringify({ c, band }));
+    const strip = await rect(page.locator('[data-testid="interactive-strip"]'));
+    ok("happy: the strip sits under the screen, clear of the panel and the band", strip.t >= c.b && strip.r <= panel.l && (!band || strip.b <= band.t + 1), JSON.stringify({ strip, band }));
+    ok("happy: Continue is visible", await page.getByRole("button", { name: "Continue" }).isVisible());
+    await shot(page, "1920x1080-explore");
 
     const f = card(page).frameLocator("iframe");
     await f.locator("#m").fill("-3");
     ok("happy: the widget responds on the board", /-3x/.test(await f.locator("#eq").textContent()));
 
-    await card(page).getByRole("button", { name: "Expand the interactive" }).click();
+    await page.getByRole("button", { name: "Expand" }).click();
     await sleep(500);
     ok("happy: Expand opens a dialog", (await card(page).getAttribute("role")) === "dialog");
     const big = await rect(card(page));
-    ok("happy: the large view is larger and centred", big.w > c.w * 1.5 && Math.abs((big.l + big.r) / 2 - 640) < 6, JSON.stringify(big));
+    ok("happy: the large view is larger and centred", big.w > c.w * 1.3 && Math.abs((big.l + big.r) / 2 - 960) < 6, JSON.stringify(big));
     ok("happy: slider state survives Expand", /-3x/.test(await f.locator("#eq").textContent()));
-    await shot(page, "1280x720-large");
+    await shot(page, "1920x1080-large");
     await f.locator("#m").focus(); // keys now go to the widget's own document, not the page
     await page.keyboard.press("Escape");
     await sleep(500);
     ok("happy: Escape returns to the board", (await card(page).getAttribute("role")) === "group" && (await S(page)).shown);
     ok("happy: slider state survives Collapse", /-3x/.test(await f.locator("#eq").textContent()));
 
-    await card(page).getByRole("button", { name: "Hide the interactive" }).click();
+    await page.locator('[data-testid="interactive-strip"]').getByRole("button", { name: "Hide the interactive" }).click();
     await sleep(300);
     ok("happy: Hide shows the Open pill", await page.getByRole("button", { name: "Open interactive" }).isVisible() && !(await card(page).isVisible()));
     ok("happy: Hide leaves Continue reachable while paused", await page.getByRole("button", { name: "Continue" }).isVisible());
-    await shot(page, "1280x720-hidden");
+    await shot(page, "1920x1080-hidden");
     await page.getByRole("button", { name: "Open interactive" }).click();
     await sleep(400);
     ok("happy: Open brings it back with state kept", (await card(page).isVisible()) && /-3x/.test(await f.locator("#eq").textContent()));
 
-    await card(page).getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
     const moved = await waitStore(page, "(s) => s.currentSegmentId === 'seg_006'");
     st = await S(page);
     ok("happy: Continue resumes the lesson", moved && !st.exploring, JSON.stringify(st));
@@ -121,15 +130,18 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
 
   // ── B. other sizes ──────────────────────────────────────────────────────────
   if (only.includes("sizes")) {
-    for (const [w, h, expectRole] of [[1920, 1080, "group"], [1280, 600, "group"], [1180, 720, "group"], [1024, 768, "dialog"], [768, 1024, "dialog"], [360, 780, "dialog"]]) {
+    for (const [w, h] of [[1920, 1080], [1600, 900], [1440, 900], [1280, 720], [1024, 768], [768, 1024], [360, 780]]) {
       const { ctx, page } = await open(browser, { w, h });
       await waitStore(page, "(s) => s.exploring === true");
-      await sleep(500);
+      await sleep(1200); // the framing settles before the screen's size is read
+      const sr = await screenRect(page);
+      const expectRole = sr && sr.w >= MIN_BOARD_W && sr.x >= 0 && sr.y >= 0 && sr.x + sr.w <= w - 420 ? "group" : "dialog";
       const role = await card(page).getAttribute("role");
-      ok(`size ${w}x${h}: ${expectRole === "group" ? "board card" : "large view"}`, role === expectRole, role);
+      ok(`size ${w}x${h}: ${expectRole === "group" ? "on the display" : "large view"} (screen ${sr ? sr.w : "-"} px wide)`, role === expectRole, role);
       const c = await rect(card(page));
       ok(`size ${w}x${h}: inside the viewport`, c.l >= 0 && c.t >= 0 && c.r <= w && c.b <= h, JSON.stringify(c));
-      const cont = card(page).getByRole("button", { name: "Continue" });
+      if (expectRole === "group") ok(`size ${w}x${h}: fills the display`, onScreen(c, sr), JSON.stringify({ c, sr }));
+      const cont = page.getByRole("button", { name: "Continue" });
       const cb = await rect(cont);
       ok(`size ${w}x${h}: Continue reachable`, (await cont.isVisible()) && cb.b <= h && cb.r <= w && cb.h >= 44, JSON.stringify(cb));
       if (expectRole === "group") {
@@ -145,16 +157,16 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     }
   }
 
-  // ── B2. does each fixture fit the board card without scrolling? (1280x720, the common laptop) ──
+  // ── B2. does each fixture fit the display without scrolling? (1920x1080, the board at its most common) ──
   if (only.includes("fits")) {
     for (const id of ["slope-line", "fraction-bars", "for-loop"]) {
-      const { ctx, page } = await open(browser, { w: 1280, h: 720, q: `view=room&fixture=${id}` });
+      const { ctx, page } = await open(browser, { w: 1920, h: 1080, q: `view=room&fixture=${id}` });
       await waitStore(page, "(s) => s.exploring === true");
       await sleep(600);
       const frame = page.frames().find((f) => f.parentFrame());
       const m = await frame.evaluate(() => ({ scroll: document.documentElement.scrollHeight, view: document.documentElement.clientHeight }));
-      ok(`fits: ${id} needs no scrolling on the board at 1280x720`, m.scroll - m.view <= 2, JSON.stringify(m));
-      await shot(page, `fits-${id}-1280x720`);
+      ok(`fits: ${id} needs no scrolling on the display at 1920x1080`, m.scroll - m.view <= 2, JSON.stringify(m));
+      await shot(page, `fits-${id}-1920x1080`);
       await ctx.close();
     }
   }
@@ -228,9 +240,9 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     await ctx.close();
   }
 
-  // ── F. skipping out of the pause with the player controls ───────────────────
+  // ── F. skipping out of the pause with the player controls (board view: below it the dialog is modal) ──
   if (only.includes("skip")) {
-    const { ctx, page } = await open(browser, { w: 1280, h: 720 });
+    const { ctx, page } = await open(browser, { w: 1920, h: 1080 });
     await waitStore(page, "(s) => s.exploring === true");
     await page.getByRole("button", { name: "Next sentence" }).click();
     const moved = await waitStore(page, "(s) => s.currentSegmentId === 'seg_006'");

@@ -14,6 +14,9 @@ export type { LessonPayload, CourseStructure };
  * the fetch and the frame starting; `ready` is set by the frame when the widget
  * ran without error; `failed` is a fetch or widget failure (the image stays).
  */
+/** A rectangle in viewport pixels. */
+export interface ScreenRect { x: number; y: number; w: number; h: number }
+
 export interface InteractiveState {
   status: "idle" | "loading" | "ready" | "failed";
   spec:   InteractiveSpec | null;
@@ -201,6 +204,8 @@ interface AristoState {
   interactive:         InteractiveState;
   interactiveShown:    boolean; // the widget is on screen (board card, or the large view)
   interactiveExpanded: boolean; // the large view was asked for (narrow screens always get it)
+  /** Where the room's display sits on the page (viewport px), kept by the scene; null until it has rendered. */
+  screenRect: ScreenRect | null;
   exploring:           boolean; // the lesson is paused on the explore segment until Continue
   exploreContinueTick: number;  // bumped by the widget card's Continue; the playback hook releases the pause on a change
 
@@ -315,6 +320,7 @@ interface AristoState {
   setInteractive:         (i: InteractiveState) => void;
   setInteractiveShown:    (v: boolean) => void;
   setInteractiveExpanded: (v: boolean) => void;
+  setScreenRect: (r: ScreenRect | null) => void;
   setExploring:           (v: boolean) => void;
   requestExploreContinue: () => void;
   resetInteractive:       () => void;
@@ -403,6 +409,7 @@ export const useAristoStore = create<AristoState>()(
       interactive:           IDLE_INTERACTIVE,
       interactiveShown:      false,
       interactiveExpanded:   false,
+      screenRect:            null,
       exploring:             false,
       exploreContinueTick:   0,
       quiz:               defaultQuiz,
@@ -466,6 +473,7 @@ export const useAristoStore = create<AristoState>()(
       setInteractive:         (i) => set({ interactive: i }),
       setInteractiveShown:    (v) => set({ interactiveShown: v }),
       setInteractiveExpanded: (v) => set({ interactiveExpanded: v }),
+      setScreenRect:          (r) => set({ screenRect: r }),
       setExploring:           (v) => set({ exploring: v }),
       requestExploreContinue: ()  => set((s) => ({ exploreContinueTick: s.exploreContinueTick + 1 })),
       resetInteractive:       ()  => set({ interactive: IDLE_INTERACTIVE, interactiveShown: false, interactiveExpanded: false, exploring: false }),
