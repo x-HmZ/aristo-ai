@@ -59,7 +59,7 @@ THE KIT (already in the page)
 - JavaScript: ARISTO.colors (the same palette as hex strings: bg surface sunk line ink body muted accent accentHover accentInk accentText success warning danger info) and ARISTO.canvas(canvasElement, function (ctx, w, h) { ... }, heightOverWidth) which sizes the canvas for the screen, calls your draw function in CSS pixels now and on every resize, and returns { redraw }. Call redraw() after any input changes. Use ARISTO.colors.accentText for the key line or mark: it is the accent that passes contrast. Use line for grids, muted for axes, ink and body for text.
 
 WHAT TO BUILD
-- Implement every control in the spec, labelled with EXACTLY the spec's label text, with a real <label for> tied to the input id. A "slider" is input[type=range], a "toggle" is a button with aria-pressed, a "stepper" is a button, a "choice" is a group of buttons with aria-pressed or a select.
+- Implement every control in the spec, labelled with EXACTLY the spec's label text. A "slider" is input[type=range] and a select gets a real <label for> tied to its id; a "toggle" or "stepper" is a button whose own text IS the label (no <label> above it); a "choice" is a group of buttons with aria-pressed under one short label for the group.
 - Show a live text readout (class readout or value) that says the current numbers or state in words, in an element with aria-live="polite". Give every canvas role="img" and an aria-label.
 - The first thing the learner sees must already be meaningful: start at the spec's starting state, never empty.
 - One idea only. No paragraphs of instruction: at most one short hint line. The teacher explains.
