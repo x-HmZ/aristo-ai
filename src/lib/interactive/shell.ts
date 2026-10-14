@@ -94,7 +94,7 @@ p{margin:0 0 8px;color:var(--body)}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .stage{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:hidden}
 .stage canvas,.stage svg{display:block;width:100%;height:auto}
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px 16px;background:var(--sunk);border-radius:12px;padding:6px 12px 2px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:2px 16px;background:var(--sunk);border-radius:12px;padding:6px 12px 2px}
 .control{display:flex;flex-direction:column;gap:0;min-width:0}
 .control>label,.control>.label{font-size:13px;font-weight:600;color:var(--body);display:flex;justify-content:space-between;gap:8px}
 .value{font-variant-numeric:tabular-nums;color:var(--accent-text);font-weight:600}

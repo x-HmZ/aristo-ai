@@ -461,6 +461,121 @@
       "extra": ""
     },
     {
+      "name": "python-for-range-demo light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: played state",
+      "pass": true,
+      "extra": "range(15, 15, 4) [] Start 15 Stop 15 Step 4 Play dots stop is a boundary, never a dot"
+    },
+    {
+      "name": "python-for-range-demo light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
       "name": "python-if-elif light 560: ready",
       "pass": true,
       "extra": "status: ready"

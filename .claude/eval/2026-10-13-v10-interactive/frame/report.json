@@ -17,7 +17,7 @@
     {
       "name": "slope-line light 360: ready",
       "pass": true,
-      "extra": "2129ms"
+      "extra": "2198ms"
     },
     {
       "name": "slope-line light 360: text AA",
@@ -42,7 +42,7 @@
     {
       "name": "slope-line light 900: ready",
       "pass": true,
-      "extra": "1810ms"
+      "extra": "1809ms"
     },
     {
       "name": "slope-line light 900: text AA",
@@ -67,7 +67,7 @@
     {
       "name": "slope-line dark 360: ready",
       "pass": true,
-      "extra": "1829ms"
+      "extra": "1788ms"
     },
     {
       "name": "slope-line dark 360: text AA",
@@ -92,7 +92,7 @@
     {
       "name": "slope-line dark 900: ready",
       "pass": true,
-      "extra": "2183ms"
+      "extra": "1778ms"
     },
     {
       "name": "slope-line dark 900: text AA",
@@ -117,7 +117,7 @@
     {
       "name": "fraction-bars light 360: ready",
       "pass": true,
-      "extra": "1951ms"
+      "extra": "1824ms"
     },
     {
       "name": "fraction-bars light 360: text AA",
@@ -142,7 +142,7 @@
     {
       "name": "fraction-bars light 900: ready",
       "pass": true,
-      "extra": "1980ms"
+      "extra": "1854ms"
     },
     {
       "name": "fraction-bars light 900: text AA",
@@ -167,7 +167,7 @@
     {
       "name": "fraction-bars dark 360: ready",
       "pass": true,
-      "extra": "1945ms"
+      "extra": "2235ms"
     },
     {
       "name": "fraction-bars dark 360: text AA",
@@ -192,7 +192,7 @@
     {
       "name": "fraction-bars dark 900: ready",
       "pass": true,
-      "extra": "1851ms"
+      "extra": "1973ms"
     },
     {
       "name": "fraction-bars dark 900: text AA",
@@ -217,7 +217,7 @@
     {
       "name": "for-loop light 360: ready",
       "pass": true,
-      "extra": "1860ms"
+      "extra": "2086ms"
     },
     {
       "name": "for-loop light 360: text AA",
@@ -242,7 +242,7 @@
     {
       "name": "for-loop light 900: ready",
       "pass": true,
-      "extra": "1826ms"
+      "extra": "1956ms"
     },
     {
       "name": "for-loop light 900: text AA",
@@ -267,7 +267,7 @@
     {
       "name": "for-loop dark 360: ready",
       "pass": true,
-      "extra": "1807ms"
+      "extra": "2046ms"
     },
     {
       "name": "for-loop dark 360: text AA",
@@ -292,7 +292,7 @@
     {
       "name": "for-loop dark 900: ready",
       "pass": true,
-      "extra": "1830ms"
+      "extra": "2221ms"
     },
     {
       "name": "for-loop dark 900: text AA",
@@ -332,7 +332,7 @@
     {
       "name": "slope-line: canvas drew",
       "pass": true,
-      "extra": "16442px"
+      "extra": "14764px"
     },
     {
       "name": "fraction-bars: cut into 4",

@@ -73,7 +73,7 @@ var plot = ARISTO.canvas(document.getElementById('plot'), function (ctx, w, h) {
   ctx.fillText('rise ' + fmt(m), X(1) + 7, Y(b + m / 2) + 4);
 
   ctx.fillStyle = C.accentText; ctx.beginPath(); ctx.arc(X(0), Y(b), 6, 0, Math.PI * 2); ctx.fill();
-}, 0.55);
+}, 0.45);
 
 function update() {
   var m = +mIn.value, b = +bIn.value;
@@ -212,7 +212,7 @@ const forLoop: InteractiveFixture = {
     <label for="n">Loop count (n) <span class="value" id="nv"></span></label>
     <input id="n" type="range" min="1" max="6" step="1" value="3"></div></div>
 </div>`,
-    css: `.code{margin:0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
+    css: `.code{margin:0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
 .code .ln{display:block;border-radius:6px;padding:0 6px}
 .code .ln.on{background:var(--accent-text);color:var(--surface)}
 .vars{gap:8px}
