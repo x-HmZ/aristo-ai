@@ -20,6 +20,7 @@ import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 import {
   INTERACTIVE_SPEC_SCHEMA,
   parseInteractiveSpec,
+  type InteractiveParts,
   type InteractiveSpec,
 } from "@/lib/interactive/spec";
 
@@ -164,6 +165,11 @@ export interface LessonPayload {
      * should_generate_model per lesson.
      */
     interactive?: InteractiveSpec;
+    /**
+     * The widget built from `interactive`, frozen with a demo lesson (src/data/demo/ only). In demoMode,
+     * useLessonPlayback shows it as-is instead of calling /api/learn/interactive; never set by the live pipeline.
+     */
+    demo_interactive?: InteractiveParts;
   };
 }
 

@@ -347,12 +347,19 @@ export function useLessonPlayback(
   }, [lesson, demoMode, setIsGeneratingModel, setPending3dImageUrl]);
 
   // ─── Interactive visual: generate in parallel, never block playback ─────────
-  // Frozen demo lessons carry none (no API call on /demo). A malformed spec is
-  // dropped, so the explore segment plays as plain narration.
+  // On /demo there is no API call: a frozen demo lesson carries its widget in
+  // metadata.demo_interactive and the frame runs it as-is. A malformed spec (or a
+  // demo lesson without a frozen widget) is dropped, so the explore segment
+  // plays as plain narration.
   useEffect(() => {
-    if (!lesson || demoMode) return;
+    if (!lesson) return;
     const spec = parseInteractiveSpec(lesson.metadata.interactive);
     if (!spec) return;
+    if (demoMode) {
+      const parts = parseInteractiveParts(lesson.metadata.demo_interactive);
+      if (parts) setInteractive({ status: "loading", spec, parts });
+      return;
+    }
 
     let cancelled = false;
     setInteractive({ status: "loading", spec, parts: null });

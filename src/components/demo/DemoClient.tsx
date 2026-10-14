@@ -18,11 +18,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Brain, CircleCheck, HeartPulse, Mountain, TrendingUp } from "lucide-react";
+import { ArrowRight, BookOpen, Brain, CircleCheck, Code, HeartPulse, Mountain, TrendingUp } from "lucide-react";
 import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
+import { InteractiveStage } from "@/components/learn/InteractiveStage";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
 import { Button } from "@/components/ui/button";
 import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
@@ -55,6 +56,7 @@ const TOPIC_ICON: Record<string, typeof BookOpen> = {
   "volcano-eruption": Mountain,
   heart: HeartPulse,
   brain: Brain,
+  "python-for-range": Code,
 };
 const topicIcon = (slug: string) => TOPIC_ICON[slug] ?? BookOpen;
 
@@ -324,6 +326,9 @@ export function DemoClient() {
           {renderBottom()}
         </div>
       )}
+
+      {/* Interactive visual (V10): a topic's frozen widget on the board; renders nothing without one */}
+      {topic && <InteractiveStage />}
 
       {/* Topic picker */}
       {!topic && <TopicPicker onPick={handlePick} />}
