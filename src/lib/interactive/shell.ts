@@ -17,7 +17,17 @@ export type WidgetTheme = "light" | "dark";
 
 /** The only window.postMessage shape the parent accepts from a widget. */
 export const WIDGET_MESSAGE_TYPE = "aristo-widget";
-export type WidgetEvent = "ready" | "error" | "escape";
+/** `stopped`: the loop guard ended a widget that ran too long; it counts as a failure even after `ready`. */
+export type WidgetEvent = "ready" | "error" | "escape" | "stopped";
+
+/** The bridge's tick that guard.ts puts at the top of every loop and function body. */
+export const LOOP_GUARD = "__aristoTick";
+
+/** How long one synchronous run of widget code may last before the widget is stopped for good. */
+export const WIDGET_RUN_BUDGET_MS = 1000;
+
+/** Elements that open a nested browsing context; the bridge refuses to insert them (WebRTC, decisions.md). */
+export const FRAME_TAGS = ["iframe", "frame", "object", "embed", "fencedframe", "portal"] as const;
 
 /** `allow-scripts` alone: an opaque origin with no storage, cookies or parent access. */
 export const WIDGET_SANDBOX = "allow-scripts";
@@ -26,7 +36,7 @@ export const WIDGET_SANDBOX = "allow-scripts";
  * Every request type is off except inline script and style and data: images. Two things are NOT governed here:
  * navigation (navigate-to was never shipped; the host page's `frame-src 'none'` in next.config.mjs does it, and
  * InteractiveFrame unmounts a frame that loads twice) and WebRTC (the `webrtc` directive is not honoured by
- * Chromium, so the bridge removes the constructors as a best effort; see decisions.md for the residual).
+ * Chromium, so the bridge removes the constructors and refuses every nested frame, which would bring fresh ones).
  */
 export const WIDGET_CSP =
   "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; " +
@@ -103,9 +113,70 @@ function bridgeJs(theme: WidgetTheme): string {
   window.addEventListener('error',function(e){failed=true;post('error',String(e&&e.message||'error'));});
   window.addEventListener('unhandledrejection',function(e){failed=true;post('error',String(e&&e.reason||'rejected'));});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')post('escape');});
-  ['RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','RTCSessionDescription'].forEach(function(n){
+  ['RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','RTCSessionDescription','RTCIceTransport'].forEach(function(n){
     try{Object.defineProperty(window,n,{value:undefined,configurable:false,writable:false});}catch(e){}
   });
+  var apply=Reflect.apply,gopd=Object.getOwnPropertyDescriptor,dp=Object.defineProperty;
+  function lock(o,n,v){dp(o,n,{value:v,writable:false,configurable:false,enumerable:false});}
+
+  /* Loop guard: guard.ts calls this at the top of every loop and function body. One synchronous run
+     (armed until a MessageChannel task, which hidden tabs do not throttle, marks the next turn) may last
+     ${WIDGET_RUN_BUDGET_MS} ms; past that the widget is stopped for good and every later tick throws. */
+  var now=performance.now.bind(performance),armed=false,t0=0,ticks=0,dead=false,turn=new MessageChannel();
+  turn.port1.onmessage=function(){armed=false;};
+  lock(window,${JSON.stringify(LOOP_GUARD)},function(){
+    if(dead)throw new Error('widget stopped');
+    if(!armed){armed=true;t0=now();turn.port2.postMessage(0);return;}
+    if((++ticks&15)===0&&now()-t0>${WIDGET_RUN_BUDGET_MS}){dead=true;failed=true;post('stopped','ran too long');throw new Error('widget stopped');}
+  });
+
+  /* No nested frames: a child about:blank or srcdoc document would bring a fresh RTCPeerConnection.
+     Every way to put an element in the document checks for one first, using built-ins captured
+     here, before the widget runs; the HTML-string ways check the text, converted once. */
+  try{
+    var SEL=${JSON.stringify(FRAME_TAGS.join(","))},TAGS=${JSON.stringify(FRAME_TAGS.map((t) => `<${t}`))};
+    var nodeType=gopd(Node.prototype,'nodeType').get,matches=Element.prototype.matches;
+    var eqs=Element.prototype.querySelector,fqs=DocumentFragment.prototype.querySelector;
+    var lower=String.prototype.toLowerCase,indexOf=String.prototype.indexOf;
+    var refuse=function(){throw new Error('nested frames are not allowed');};
+    var hasFrame=function(n){
+      var t;try{t=apply(nodeType,n,[]);}catch(e){return false;}
+      if(t===1)return apply(matches,n,[SEL])||apply(eqs,n,[SEL])!==null;
+      if(t===11)return apply(fqs,n,[SEL])!==null;
+      return false;
+    };
+    var nodes=function(a){for(var i=0;i<a.length;i++)if(hasFrame(a[i]))refuse();return a;};
+    var html=function(v){
+      var s=v===null?'':''+v,l=apply(lower,s,[]);
+      for(var i=0;i<TAGS.length;i++)if(apply(indexOf,l,[TAGS[i]])!==-1)refuse();
+      return s;
+    };
+    var wrap=function(o,n,pre){
+      var d=o&&gopd(o,n);if(!d||typeof d.value!=='function')return;var f=d.value;
+      lock(o,n,function(){return apply(f,this,pre(arguments));});
+    };
+    var wrapSet=function(o,n,pre){
+      var d=o&&gopd(o,n);if(!d||!d.set)return;var s=d.set;
+      dp(o,n,{get:d.get,set:function(v){apply(s,this,[pre(v)]);},configurable:false,enumerable:d.enumerable});
+    };
+    var block=function(o,n){if(o&&gopd(o,n))lock(o,n,refuse);};
+    var nul=function(o,n){if(o&&gopd(o,n))dp(o,n,{get:function(){return null;},configurable:false});};
+    ['appendChild','insertBefore','replaceChild'].forEach(function(n){wrap(Node.prototype,n,nodes);});
+    [Element.prototype,Document.prototype,CharacterData.prototype,DocumentType.prototype].forEach(function(o){
+      ['append','prepend','replaceChildren','moveBefore','before','after','replaceWith','insertAdjacentElement'].forEach(function(n){wrap(o,n,nodes);});
+    });
+    wrap(Range.prototype,'insertNode',nodes);wrap(Range.prototype,'surroundContents',nodes);
+    wrapSet(Document.prototype,'body',function(v){nodes([v]);return v;});
+    wrapSet(Element.prototype,'innerHTML',html);wrapSet(Element.prototype,'outerHTML',html);
+    wrap(Element.prototype,'insertAdjacentHTML',function(a){return[a[0],html(a[1])];});
+    wrap(Element.prototype,'setHTML',function(a){return[html(a[0]),a[1]];});
+    block(Element.prototype,'setHTMLUnsafe');block(Element.prototype,'attachShadow');block(Document,'parseHTMLUnsafe');
+    block(Document.prototype,'write');block(Document.prototype,'writeln');block(Document.prototype,'execCommand');
+    [window.HTMLIFrameElement,window.HTMLFrameElement,window.HTMLObjectElement,window.HTMLEmbedElement].forEach(function(c){
+      if(!c)return;nul(c.prototype,'contentWindow');nul(c.prototype,'contentDocument');block(c.prototype,'getSVGDocument');
+    });
+  }catch(e){failed=true;post('error','bridge setup');}
+
   window.__aristoReady=function(){if(!failed)post('ready');};
   window.ARISTO={
     theme:${JSON.stringify(theme)},
@@ -163,6 +234,6 @@ export function parseWidgetMessage(data: unknown): { event: WidgetEvent; message
   if (typeof data !== "object" || data === null) return null;
   const d = data as Record<string, unknown>;
   if (d.type !== WIDGET_MESSAGE_TYPE) return null;
-  if (d.event !== "ready" && d.event !== "error" && d.event !== "escape") return null;
+  if (d.event !== "ready" && d.event !== "error" && d.event !== "escape" && d.event !== "stopped") return null;
   return { event: d.event, message: typeof d.message === "string" ? d.message.slice(0, 300) : "" };
 }

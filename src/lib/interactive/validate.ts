@@ -77,6 +77,8 @@ const FORBIDDEN_JS: Array<[RegExp, string]> = [
   [/\b(?:window|self)\s*\.\s*(?:top|parent|opener|frames)\b|(?<![.\w$])(?:top|parent|opener)\s*\./, "frame access"],
   [/\bpostMessage\b/,                               "postMessage (the bridge owns it)"],
   [/\bdocument\s*\.\s*(write|writeln)\b/,           "document.write"],
+  [/\b(contentWindow|contentDocument|srcdoc|attachShadow|setHTMLUnsafe|parseHTMLUnsafe|execCommand)\b/, "nested frame or shadow DOM"],
+  [/__aristo/,                                      "reserved name (the bridge owns it)"],
   [/\bwhile\s*\(\s*(true|1)\s*\)|\bfor\s*\(\s*;\s*;\s*\)/, "unbounded loop"],
 ];
 

@@ -1,0 +1,251 @@
+{
+  "checks": [
+    {
+      "name": "default loop: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 12 ms"
+    },
+    {
+      "name": "default loop: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "default loop: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1045 ms"
+    },
+    {
+      "name": "default loop-recursion: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 19 ms"
+    },
+    {
+      "name": "default loop-recursion: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "default loop-recursion: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1018 ms"
+    },
+    {
+      "name": "default loop-async: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 16 ms"
+    },
+    {
+      "name": "default loop-async: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "default loop-async: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1019 ms"
+    },
+    {
+      "name": "default loop-catch: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 17 ms"
+    },
+    {
+      "name": "default loop-catch: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "default loop-catch: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1016 ms"
+    },
+    {
+      "name": "default loop-later: ready, then failed when it ran away",
+      "pass": true,
+      "extra": "failed: ran too long after 2344 ms"
+    },
+    {
+      "name": "default loop-later: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1006 ms"
+    },
+    {
+      "name": "default good widget: still ready after 40 slider moves",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "default good widget: equation follows the slider",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "in-process loop: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 34 ms"
+    },
+    {
+      "name": "in-process loop: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "in-process loop: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1147 ms"
+    },
+    {
+      "name": "in-process loop-recursion: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 13 ms"
+    },
+    {
+      "name": "in-process loop-recursion: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "in-process loop-recursion: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1053 ms"
+    },
+    {
+      "name": "in-process loop-async: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 14 ms"
+    },
+    {
+      "name": "in-process loop-async: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "in-process loop-async: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1051 ms"
+    },
+    {
+      "name": "in-process loop-catch: frame failed",
+      "pass": true,
+      "extra": "failed: ran too long after 15 ms"
+    },
+    {
+      "name": "in-process loop-catch: stopped by the guard",
+      "pass": true,
+      "extra": "failed: ran too long"
+    },
+    {
+      "name": "in-process loop-catch: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1024 ms"
+    },
+    {
+      "name": "in-process loop-later: ready, then failed when it ran away",
+      "pass": true,
+      "extra": "failed: ran too long after 2468 ms"
+    },
+    {
+      "name": "in-process loop-later: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "1004 ms"
+    },
+    {
+      "name": "in-process good widget: still ready after 40 slider moves",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "in-process good widget: equation follows the slider",
+      "pass": true,
+      "extra": ""
+    }
+  ],
+  "problems": [],
+  "runs": [
+    {
+      "label": "default",
+      "kind": "loop",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 12,
+      "hostMaxGapMs": 1045
+    },
+    {
+      "label": "default",
+      "kind": "loop-recursion",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 19,
+      "hostMaxGapMs": 1018
+    },
+    {
+      "label": "default",
+      "kind": "loop-async",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 16,
+      "hostMaxGapMs": 1019
+    },
+    {
+      "label": "default",
+      "kind": "loop-catch",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 17,
+      "hostMaxGapMs": 1016
+    },
+    {
+      "label": "default",
+      "kind": "loop-later",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 2344,
+      "hostMaxGapMs": 1006
+    },
+    {
+      "label": "in-process",
+      "kind": "loop",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 34,
+      "hostMaxGapMs": 1147
+    },
+    {
+      "label": "in-process",
+      "kind": "loop-recursion",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 13,
+      "hostMaxGapMs": 1053
+    },
+    {
+      "label": "in-process",
+      "kind": "loop-async",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 14,
+      "hostMaxGapMs": 1051
+    },
+    {
+      "label": "in-process",
+      "kind": "loop-catch",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 15,
+      "hostMaxGapMs": 1024
+    },
+    {
+      "label": "in-process",
+      "kind": "loop-later",
+      "status": "status: failed",
+      "reason": "failed: ran too long",
+      "failedAfterMs": 2468,
+      "hostMaxGapMs": 1004
+    }
+  ],
+  "control": {
+    "hostMaxGapMs": 3001,
+    "note": "a 3 s busy loop in an unguarded sandboxed frame"
+  }
+}

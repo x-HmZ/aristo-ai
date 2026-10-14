@@ -6,14 +6,17 @@
  * `sandbox="allow-scripts"` with no `allow-same-origin` gives the page an opaque
  * origin: no cookies, no storage, no Supabase session, no reach into this
  * document. The CSP inside the srcdoc (lib/interactive/shell.ts) blocks every
- * network request. The only thing that crosses is a `ready` or `error`
- * postMessage, accepted only from this frame's own window.
+ * network request. The only thing that crosses is a `ready`, `error`, `stopped`
+ * or `escape` postMessage, accepted only from this frame's own window. Before
+ * the frame is built, guard.ts gives every loop and function a tick that stops
+ * a widget running too long, so a runaway loop cannot freeze the tab.
  *
- * A widget that throws, or never says `ready` within `readyTimeoutMs`, is
- * reported through `onFail` so the lesson can fall back to the image.
+ * A widget that throws, never says `ready` within `readyTimeoutMs`, cannot be
+ * guarded, or is stopped by the guard is reported through `onFail` so the
+ * lesson can fall back to the image.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { InteractiveParts } from "@/lib/interactive/spec";
 import {
@@ -42,9 +45,12 @@ const FRAME_ALLOW =
   "fullscreen 'none'; geolocation 'none'; microphone 'none'; picture-in-picture 'none'; web-share 'none'";
 
 export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, readyTimeoutMs = 4000, className }: Props) {
-  const srcDoc   = useMemo(() => buildWidgetDoc(parts, theme), [parts, theme]);
+  const { title, markup, css, js } = parts;
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [status, setStatus] = useState<FrameStatus>("loading");
+  // The loop guard rewrites the script first (lib/interactive/guard.ts, loaded on demand to keep acorn out
+  // of the first load); null until it has, or for good when the widget cannot be guarded.
+  const [srcDoc, setSrcDoc] = useState<string | null>(null);
 
   const readyRef  = useRef(onReady);
   const failRef   = useRef(onFail);
@@ -54,13 +60,31 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
   const [navigated, setNavigated] = useState(false);
 
   useEffect(() => {
+    let current = true;
+    setSrcDoc(null);
+    setStatus("loading");
+    import("@/lib/interactive/guard")
+      .then(({ guardWidgetParts }) => {
+        const guarded = guardWidgetParts({ title, markup, css, js });
+        if (current) setSrcDoc(buildWidgetDoc(guarded, theme));
+      })
+      .catch((err: unknown) => {
+        if (!current) return;
+        setStatus("failed");
+        failRef.current?.(`unguardable: ${err instanceof Error ? err.message : "error"}`.slice(0, 300));
+      });
+    return () => { current = false; };
+  }, [title, markup, css, js, theme]);
+
+  useEffect(() => {
+    if (srcDoc === null) return;
     setStatus("loading");
     loads.current = 0;
     setNavigated(false);
-    let settled = false;
+    let outcome: FrameStatus = "loading";
     const settle = (next: FrameStatus, reason = "") => {
-      if (settled) return;
-      settled = true;
+      if (outcome !== "loading") return;
+      outcome = next;
       setStatus(next);
       if (next === "ready") readyRef.current?.();
       else failRef.current?.(reason);
@@ -71,6 +95,8 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
       const msg = parseWidgetMessage(e.data);
       if (!msg) return;
       if (msg.event === "escape") { escapeRef.current?.(); return; }
+      // A stopped widget is dead (every later tick throws), so it fails even after it said ready.
+      if (msg.event === "stopped" && outcome === "ready") outcome = "loading";
       if (msg.event === "ready") settle("ready");
       else settle("failed", msg.message || "widget error");
     };
@@ -86,7 +112,7 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
   return (
     <div className={cn("relative size-full bg-surface", className)} data-widget-status={status}>
       {/* A second load means the page navigated itself away from the srcdoc: drop the frame. */}
-      {!navigated && (
+      {!navigated && srcDoc !== null && (
         <iframe
           key={srcDoc}
           ref={frameRef}

@@ -58,6 +58,28 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     await ctx.close();
   }
 
+  // 2026-10-14 (residual 2): a nested frame would bring a fresh RTCPeerConnection. Every way to make one must fail.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1100, height: 760 } });
+    const page = await ctx.newPage();
+    await page.goto(`${base}/dev/interactive?fixture=slope-line&theme=light&fail=rtc-nested`, { waitUntil: "domcontentloaded" });
+    await page.waitForSelector('[data-testid="status"]', { timeout: 60000 });
+    await sleep(2500);
+    const frame = page.frames().find((f) => f.parentFrame());
+    const raw = await frame.evaluate(() => (document.getElementById("out") || {}).textContent || document.title);
+    const out = JSON.parse(raw);
+    report.rtcNested = out;
+    console.log(JSON.stringify(out));
+    ok("rtc-nested: no nested frame ever existed", out.frames === 0, `${out.frames}`);
+    ok("rtc-nested: the frame has no child frames", frame.childFrames().length === 0, `${frame.childFrames().length}`);
+    for (const [route, verdict] of Object.entries(out)) {
+      if (route === "frames" || route === "detachedHandle" || route === "detached handle") continue;
+      ok(`rtc-nested ${route}: refused`, /^blocked/.test(verdict), verdict);
+    }
+    ok("rtc-nested: a detached frame hands out no window", out.detachedHandle === undefined || out.detachedHandle === "null", String(out.detachedHandle));
+    await ctx.close();
+  }
+
   await browser.close();
   fs.writeFileSync(path.join(OUT, "report.json"), JSON.stringify(report, null, 2));
   console.log(report.problems.length ? `\n${report.problems.length} PROBLEMS` : "\nALL PASS");
