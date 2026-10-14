@@ -32,4 +32,9 @@ segment is always in demonstrate, after the setup, never last, with no visual, n
 - **Polish:** the probability buttons repeat their labels above them; the fraction title reads "1/2 of the pizza (same as 1/2)"
   at n = 1.
 
+**Fixed after the run (generator side):** the prompt in `agents/interactive.ts` now gives a real height budget for the
+380 x 370 card (all five widgets were 40-105 px too tall: `scripts/fit.cjs`), says to show only what really happens, and to say
+each thing once; the kit fits three controls in one row. `python-for-range-demo/` is the frozen /demo copy (canvas ratio 0.3,
+346 px tall, fits). The widgets above are kept as generated, before these fixes.
+
 Rerun the screenshots (0 calls, dev server up): `node .claude/eval/2026-10-14-v10-live/scripts/shots.cjs`.

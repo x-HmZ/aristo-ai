@@ -10,8 +10,11 @@ _Update this at the end of every significant session: done / next / blockers, co
   checks, a mutation sweep, `with` refused, class fields ticked, failed frames unmounted. `/api/tts` now requires approval + 200/h.
 - **Live test** (`.claude/eval/2026-10-14-v10-live/`, README): 6 lessons + 5 widgets for 0.41 USD; the decider followed the rule
   every time (5 widgets, plant cell = 3D). Found and fixed: widget code now in its own scope (`var history` broke one widget).
-  Open: the if/elif widget shows a later `elif` as "tested true" (teaches the misconception); the range() widget is taller than
-  the board card at 1280x720 (Step slider below the fold).
+  Follow-up fixes: every live widget was 40-105 px taller than the board card (384 x 375 at 1280x720): the kit now fits 3
+  controls in one row, the generator gets a real height budget (canvas 0.3 to 0.45) and a "show only what really happens" rule
+  (the if/elif widget marked a skipped `elif` "tested true"), plus "say each thing once"; the slope fixture is 0.45, the
+  for-loop fixture tighter; the frozen range() widget uses ratio 0.3 and fits (`scripts/fit.cjs`). The prompt changes are NOT
+  verified by a new generation (paid; ask Hmz).
 - **Jake's voice**: `EL_VOICES.jake` on `eleven_multilingual_v2`, interim voice `bIHbv24MWmeRgasZH58o`. Mike
   (`zfc8CJQpe8Kqyl0vvCzo`, Hmz's pick) returns 402 on the free plan: when Hmz upgrades, swap the id in `src/app/api/tts/route.ts`
   and `scripts/prerender-demo-tts.mjs` (both comment it).
