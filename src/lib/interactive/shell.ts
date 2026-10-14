@@ -249,7 +249,8 @@ function bridgeJs(theme: WidgetTheme): string {
       function redraw(){var s=size();ctx.clearRect(0,0,s[0],s[1]);draw(ctx,s[0],s[1]);}
       if(window.ResizeObserver){new ResizeObserver(function(){
         var w=Math.floor(el.getBoundingClientRect().width);if(w&&w!==cw)redraw();}).observe(el);}
-      redraw();return{redraw:redraw};
+      /* The first draw waits a microtask, so a draw function may use the object this call returns. */
+      queueMicrotask(redraw);return{redraw:redraw};
     }
   };
 })();`.trim();

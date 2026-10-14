@@ -1,0 +1,84 @@
+{
+  "images": {
+    "seg_004": "/demo/steepness-speed/seg_004.png",
+    "seg_008": "/demo/steepness-speed/seg_008.png",
+    "seg_009": "/demo/steepness-speed/seg_009.png",
+    "seg_010": "/demo/steepness-speed/seg_010.png",
+    "seg_014": "/demo/steepness-speed/seg_014.png"
+  },
+  "quiz": [
+    {
+      "question_type": "true_false",
+      "bloom_level": "remember",
+      "question": "On a distance-time graph, a flat (horizontal) section of the line means the object is moving at a constant speed.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "correct_answer": "False",
+      "explanation_correct": "A flat section has zero steepness, meaning distance isn't changing over time - the object is stopped, not moving at constant speed.",
+      "explanation_wrong": {
+        "True": "A flat line has zero slope, which means zero speed (stopped), not a constant non-zero speed. A straight diagonal line represents constant speed."
+      },
+      "difficulty": 0.25,
+      "estimated_seconds": 30,
+      "misconception_targeted": "Confusing 'flat' with 'steady/constant speed' rather than recognizing flat means stopped.",
+      "id": "391cd92c-bafd-413a-9b1c-2ac5d6359ec2",
+      "concept_id": "steepness-speed"
+    },
+    {
+      "question_type": "fill_blank",
+      "bloom_level": "understand",
+      "question": "On a distance-time graph, the ____ of the line at any point tells you the speed of the object at that moment.",
+      "correct_answer": "steepness (slope/gradient)",
+      "explanation_correct": "The steepness, or slope/gradient, of the line represents how quickly distance changes with time, which is exactly the definition of speed.",
+      "explanation_wrong": {},
+      "difficulty": 0.3,
+      "estimated_seconds": 25,
+      "id": "cdd6ff25-b512-4df4-a4a6-73572a63f0a4",
+      "concept_id": "steepness-speed"
+    },
+    {
+      "question_type": "multiple_choice",
+      "bloom_level": "apply",
+      "question": "A distance-time graph shows a curve that gets steeper and steeper as time goes on. What does this indicate about the object's motion?",
+      "options": [
+        "The object is speeding up",
+        "The object is slowing down",
+        "The object is moving at a constant speed",
+        "The object is stopped"
+      ],
+      "correct_answer": "The object is speeding up",
+      "explanation_correct": "An increasingly steep curve means the slope (speed) is getting larger over time, so the object is accelerating/speeding up.",
+      "explanation_wrong": {
+        "The object is slowing down": "Slowing down would show a curve that becomes less steep over time, not more steep.",
+        "The object is moving at a constant speed": "Constant speed would be shown by a straight line, not a curve with changing steepness.",
+        "The object is stopped": "A stopped object would show a flat (horizontal) line with zero steepness, not an increasingly steep curve."
+      },
+      "difficulty": 0.45,
+      "estimated_seconds": 40,
+      "misconception_targeted": "Difficulty connecting changing curvature to changing speed rather than just presence of curve.",
+      "id": "fe6f9743-c495-4ac4-a285-350d23cd8a94",
+      "concept_id": "steepness-speed"
+    },
+    {
+      "question_type": "short_answer",
+      "bloom_level": "analyze",
+      "question": "A distance-time graph starts with a straight line going up steeply, then curves and flattens out until it becomes horizontal, then rises again as a straight line with a gentler slope than the first part. Describe what is happening to the object's speed through each of these three stages, and explain how you can tell using the idea of a tangent line where the graph is curved.",
+      "correct_answer": "Stage 1: The straight steep line means the object moves at a fast, constant speed. Stage 2: The curve flattening out means the object is slowing down (decelerating) until it stops; at any point on this curve, the tangent line's slope is getting less steep, showing speed decreasing to zero at the horizontal part (where the object is stopped). Stage 3: The second straight line, less steep than the first, means the object moves off again at a slower but still constant speed.",
+      "explanation_correct": "This answer correctly identifies constant speed from straight lines (reading overall slope), decreasing speed from the curve by considering how the tangent's slope changes along the curve down to zero at the flat section, and a slower constant speed from the final straight line's reduced steepness.",
+      "explanation_wrong": {},
+      "difficulty": 0.65,
+      "estimated_seconds": 90,
+      "misconception_targeted": "Treating curved sections as a single 'speed' rather than recognizing continuously changing speed shown by changing tangent slope, and failing to compare steepness across straight sections to compare speeds.",
+      "id": "69ccc979-f074-4a09-b25c-0f2b968654c0",
+      "concept_id": "steepness-speed"
+    }
+  ],
+  "usd": 0.53484,
+  "calls": [
+    "teach.lesson",
+    "lesson.interactive",
+    "quiz.lesson"
+  ]
+}
