@@ -201,10 +201,10 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
         </mesh>
 
         {/* Per-segment callout chips — adaptive-visual mode only.
-            Anchored just above the image so they read as "what we're
-            looking at right now" rather than competing with the toolbar. */}
+            Anchored by their BOTTOM edge just above the frame, so a strip that wraps to a second row grows up,
+            away from the diagram (centred, a tall strip hung over the image's own title). */}
         {calloutLabels.length > 0 && (
-          <Html position={[0, IMG_SIZE / 2 + 0.11, 0]} center>
+          <Html position={[0, FRAME_SIZE / 2 + 0.03, 0]} style={{ transform: "translate(-50%, -100%)" }}>
             <Callouts callouts={calloutLabels} />
           </Html>
         )}

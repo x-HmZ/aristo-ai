@@ -52,6 +52,9 @@ export function PillDivider() {
  * 20px gutters. While the quiz is on the desk it collapses to its bottom strip
  * (everything else is `hidden`, not unmounted) so the paper is not under it.
  */
+/** How far the panel's left edge sits from the viewport's right edge (400px + the 20px gutter). */
+export const PANEL_INSET_PX = 420;
+
 export function panelColumn(quizOnDesk: boolean) {
   return cn(
     "absolute bottom-5 right-5 z-10 flex w-[400px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-2xl border border-line shadow-e2",
