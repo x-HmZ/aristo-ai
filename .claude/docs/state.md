@@ -20,8 +20,15 @@ on an explore segment. Subsystem in `architecture.md` (Interactive visuals); rea
   `.env.local` and Vercel are untouched). It is also the feature-wide kill switch.
 - **Merged on the way:** PR #26 (the portfolio capture, docs and scripts only) into deploy-prep, as the session brief asked; this
   branch carries it.
-- **Waiting on Hmz:** (1) apply migration 017 to Supabase; (2) a go-ahead for live runs, about 6 topics well under 1 USD (3 math, 2 Python,
-  1 that should pick 3D or an image) to see what the real decider and generator produce; (3) set the flag in `.env.local` and Vercel.
+- **2026-10-14, Hmz:** migration 017 applied. Approved the live lesson-generation test, on condition that its result also
+  becomes a new /demo entry (a frozen lesson with its widget, so /demo shows the feature). Asked for: (1) the two residuals fixed (a widget
+  loop freezing the tab, WebRTC from inside the frame), see decisions.md "Residuals accepted"; (2) Jake's own voice, warm and enthusiastic
+  (today he borrows the "marcus" key = ElevenLabs Adam on eleven_turbo_v2_5; `src/app/api/tts/route.ts` EL_VOICES, `useTTS.ts`
+  VOICE_BY_AVATAR, `scripts/prerender-demo-tts.mjs`); (3) Jake's shirt from the elbows down reads as a sweater, to fix in its own session
+  BEFORE any footage is captured.
+- **Next, in order:** residual fixes; Jake's voice (Hmz picks by ear from free previews first); the live test (flag on in a script
+  only, about 6 topics, Anthropic only); the /demo entry (its images and narration cost fal and ElevenLabs: render narration only
+  after the voice is final, and ask before both); shirt session in parallel; footage last.
 - **Open:** lessons already in `cached_lessons` carry no interactive until regenerated; `NEXT_PUBLIC_ADAPTIVE_VISUALS` must be true for any
   of it; no frozen widget on `/demo` yet (a good follow-up once a generated one is approved); no failure beacon, `created_by` or
   per-concept switch (decisions.md residuals); a concept's first generation takes tens of seconds, so its first learner may meet the
