@@ -2,6 +2,59 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-14 - Jake's sleeves: sweater to shirt (on dev/v10-interactive-visuals, committed, not pushed)
+
+Hmz: from the elbows down Jake's shirt read as a sweater. Evidence and numbers: `.claude/eval/2026-10-14-jake-sleeves/`
+(README). Cause: V8.3d's even 12-14 mm sleeve ease plus a 3 cm shortening squeezed into the forearm (a wide tube with
+stacked rings), a pinch above a rounded cuff that hung 60% on the hand bone. Not the cloth material (tested).
+- **Hmz picked "tailored"** from two rendered options (relaxed, tailored; rolled sleeves offered, not built).
+- **Built:** `v9_sleeve.tailor` (vertices and weights only: forearm loft to a straight, square cuff 13 mm off the
+  wrist, the cuff off the hand bone). Hmz saw 11 mm; 13 mm is what cleared the right wrist in every frame.
+- **Shipped by splice** (`scripts/splice.mjs`): only the shirt changes inside the shipped `Teacher_Jake.glb`; the
+  Blender 5.1 export of the working scene freezes the clips (2 keys), so the teacher was not re-exported. Other 21
+  primitives (visemes), 3 base clips, textures, nodes, skins identical; clips pack untouched. 2,362,404 B (was
+  2,363,200). Working scene saved with the edit; backup `bakeoff_scene_pre_sleeves1014.blend`.
+- **Checked:** `find_pokes` 0 and the camera-ray test 0, both sides, every frame of all 34 clips; mirror numbers
+  match L/R; `/demo` 1080p before/after headless, 0 paid requests; eslint and tsc clean.
+- **Also:** `/dev/avatar-lab?shot` (room lights, outfit, `window.__lab` pose/cam/shirt, `?file=`), dev only.
+- **Follow-up, same day:** Jake's landing posters recaptured (handover within 2 px at every spot but picture, which
+  differs as it has since V8.3b). The export is fixed: `export_optimize_animation_size=False` (5.1's default cut
+  clips to 2 keys); run it in the GUI Blender (MCP), since headless `normalise` mis-measures Jake. README follow-up.
+- **Open:** the portfolio clips and stills (2026-10-07) show the old sleeves; the footage step will replace them.
+- **Next:** the V10 queue below (residuals, Jake's voice, live test, the /demo entry, footage last).
+
+## 2026-10-13 - V10: interactive visuals, a third kind of teaching visual (branch dev/v10-interactive-visuals, not pushed or merged)
+
+Hmz asked for Gemini-style interactive widgets (sliders, buttons) as a third option beside the image and the 3D model, picked by the
+same decider. Plan: `.claude/plans/V10-interactive-visuals.md` (status and deviations at the bottom). Evidence and scripts:
+`.claude/eval/2026-10-13-v10-interactive/` (README). Hmz chose: generated code in a sandbox, a board card with Expand, the lesson pauses
+on an explore segment. Subsystem in `architecture.md` (Interactive visuals); reasons in `decisions.md` (V10 rows).
+- **Built:** `src/lib/interactive/` (spec, validator, sandbox shell, fixtures, throttle, flag), `agents/interactive.ts`,
+  `POST /api/learn/interactive`, migration 017 (written, NOT applied), `InteractiveFrame` and `InteractiveStage` (a DOM card beside Jake;
+  the large view below 1180x600 or on Expand), the explore pause in `useLessonPlayback`, the decider in `teaching.ts` and `/api/teach`
+  (free mode), `/dev/interactive` (frame view and `?view=room`).
+- **Reviewed:** security (a navigation escape, cache poisoning through `try_this`, quadratic regexes: all fixed and re-measured; residuals
+  in decisions.md) and TypeScript (a pause that could hang for good, stale free-mode replies, Escape and Tab gaps: fixed).
+- **Verified with 0 paid calls:** 110 unit tests in the new areas; frame 84, nav 25, room 65 scripted checks; lint 0 errors; production
+  build ok (/learn 134 kB, /demo 135 kB first load, unchanged).
+- **Off by default:** `NEXT_PUBLIC_INTERACTIVE_VISUALS=true` switches on the agents' option and the route (`.env.example` has it false;
+  `.env.local` and Vercel are untouched). It is also the feature-wide kill switch.
+- **Merged on the way:** PR #26 (the portfolio capture, docs and scripts only) into deploy-prep, as the session brief asked; this
+  branch carries it.
+- **2026-10-14, Hmz:** migration 017 applied. Approved the live lesson-generation test, on condition that its result also
+  becomes a new /demo entry (a frozen lesson with its widget, so /demo shows the feature). Asked for: (1) the two residuals fixed (a widget
+  loop freezing the tab, WebRTC from inside the frame), see decisions.md "Residuals accepted"; (2) Jake's own voice, warm and enthusiastic
+  (today he borrows the "marcus" key = ElevenLabs Adam on eleven_turbo_v2_5; `src/app/api/tts/route.ts` EL_VOICES, `useTTS.ts`
+  VOICE_BY_AVATAR, `scripts/prerender-demo-tts.mjs`); (3) Jake's shirt from the elbows down reads as a sweater, to fix in its own session
+  BEFORE any footage is captured.
+- **Next, in order:** residual fixes; Jake's voice (Hmz picks by ear from free previews first); the live test (flag on in a script
+  only, about 6 topics, Anthropic only); the /demo entry (its images and narration cost fal and ElevenLabs: render narration only
+  after the voice is final, and ask before both); shirt session in parallel; footage last.
+- **Open:** lessons already in `cached_lessons` carry no interactive until regenerated; `NEXT_PUBLIC_ADAPTIVE_VISUALS` must be true for any
+  of it; no frozen widget on `/demo` yet (a good follow-up once a generated one is approved); no failure beacon, `created_by` or
+  per-concept switch (decisions.md residuals); a concept's first generation takes tens of seconds, so its first learner may meet the
+  widget behind the Open pill instead of in the pause.
+
 ## 2026-10-07 - Portfolio assets captured; link-preview image a JPEG (#25 merged)
 
 V8 is complete and everything is merged into `deploy-prep` (#23 V8.6, #24 V8.7, #25 the 74 KB JPEG preview image).

@@ -16,6 +16,12 @@ import type Anthropic          from "@anthropic-ai/sdk";
 import type { DynamicProfile } from "@/store/useAristoStore";
 import { MODELS }              from "./models";
 import { getAnthropic }        from "@/lib/llm/anthropic";
+import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
+import {
+  INTERACTIVE_SPEC_SCHEMA,
+  parseInteractiveSpec,
+  type InteractiveSpec,
+} from "@/lib/interactive/spec";
 
 const client = getAnthropic();
 
@@ -48,7 +54,8 @@ export type SegmentRole =
   | "callout"           // points at a feature of an active visual
   | "challenge_setup"   // poses the challenge question
   | "challenge_reveal"  // reveals + explains the answer
-  | "transition";       // bridge between sub-ideas
+  | "transition"        // bridge between sub-ideas
+  | "explore";          // introduces the interactive visual; the lesson pauses on it
 
 export interface SegmentVisual {
   /**
@@ -150,6 +157,13 @@ export interface LessonPayload {
      * — never populated by the live generation pipeline.
      */
     demo_model_url?: string;
+    /**
+     * Set when the topic is understood by changing an input and watching the
+     * result (V10). The widget itself is generated apart from the lesson, from
+     * this spec, by /api/learn/interactive. At most one of this and
+     * should_generate_model per lesson.
+     */
+    interactive?: InteractiveSpec;
   };
 }
 
@@ -190,6 +204,29 @@ NARRATION TIMING (always provide these on demonstrate, not just when generating 
 - demonstrate.visual_walkthrough: 2–4 sentences the teacher says ONCE the educational image is on screen. Reference visible parts explicitly so the narration feels grounded. ("Look at the diagram on the right — see the labeled chambers? Blood enters the right atrium here…")
 
 Return your response by calling the deliver_lesson tool.`;
+
+/** Offered to the lesson agent only when the interactive-visuals flag is on. */
+const INTERACTIVE_PROMPT_BLOCK = `INTERACTIVE VISUALS — a third kind of visual
+A small interactive page the learner plays with (sliders, buttons) while you narrate. It is built separately from the lesson, from the "interactive" spec you write in metadata.
+
+Set metadata.interactive ONLY when understanding comes from CHANGING AN INPUT AND WATCHING THE RESULT:
+  • functions and graphs, slope and intercept, transformations
+  • fractions, ratios, proportions, percentages
+  • angles, area, perimeter, constructions with a movable part
+  • probability and statistics with a parameter (sample size, spread)
+  • rates: speed, distance, time
+  • stepping through an algorithm or a loop one line at a time, watching variables change
+Do NOT set it for facts, definitions, history, vocabulary, or anything the words already carry; and not for physical objects (the 3D model owns those). NEVER set it together with should_generate_model: choose one of the two, or neither. When unsure, leave it out: a lesson with images alone is fine.
+
+When you set it:
+  • goal: the one thing the learner should see for themselves.
+  • brief: what the picture shows and how it responds (axes, ranges, starting values), concrete enough to build from.
+  • controls: 1–5, each with a short visible label (40 characters or fewer), a kind (slider, toggle, stepper, choice) and its effect. The picture and every control must fit a space about 340 px wide and 330 px tall, so prefer 2 or 3.
+  • try_this: 1–3 short prompts ("Make the slope negative.").
+  • Add EXACTLY ONE segment with role "explore", in the demonstrate phase, after the segment that sets up the idea. Its text introduces the board in 1–2 sentences and names the first control by its exact label, for example "Try the Slope (m) slider on the board and watch the line." The lesson pauses on it until the learner presses Continue, so put it where playing helps, never as the last segment of the lesson, and give it no visual.
+  • The segments after it must still make sense whether or not the learner played.
+
+`;
 
 // ─── System prompt (adaptive path) ────────────────────────────────────────────
 
@@ -238,7 +275,7 @@ PERSISTENCE
     persists_to_next: true on each but the last in that run.
   • Do NOT generate a new image for every sentence.
 
-SEGMENT COUNT GUIDANCE
+${INTERACTIVE_VISUALS_ENABLED ? INTERACTIVE_PROMPT_BLOCK : ""}SEGMENT COUNT GUIDANCE
   • Typical lesson: 8–18 segments total
   • Of those: 3–6 should have visuals (roughly 33%)
   • Don't pad. Fewer denser segments beat many fragments.
@@ -252,7 +289,7 @@ SEGMENT ROLES
   • challenge_setup   — poses the challenge question to the student
   • challenge_reveal  — reads back the answer and explains it
   • transition    — bridge sentence between sub-ideas
-
+${INTERACTIVE_VISUALS_ENABLED ? "  • explore       — introduces the interactive board (only with metadata.interactive; exactly one)\n" : ""}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 FEW-SHOT EXAMPLE — Pythagoras' theorem
 (12 segments, 4 with visuals — use this as a format template)
@@ -435,6 +472,11 @@ const _metadataSchema = {
   ],
 };
 
+// The adaptive lesson may also carry an interactive-visual spec (V10).
+const _metadataSchemaAdaptive = INTERACTIVE_VISUALS_ENABLED
+  ? { ..._metadataSchema, properties: { ..._metadataSchema.properties, interactive: INTERACTIVE_SPEC_SCHEMA } }
+  : _metadataSchema;
+
 // Legacy tool — no segments
 const lessonTool: Anthropic.Tool = {
   name: "deliver_lesson",
@@ -474,7 +516,7 @@ const _segmentSchema = {
   properties: {
     id:          { type: "string" },
     phase:       { type: "string", enum: ["activate", "explain", "demonstrate", "challenge", "connect"] },
-    role:        { type: "string", enum: ["narrate", "hook", "demo_step", "callout", "challenge_setup", "challenge_reveal", "transition"] },
+    role:        { type: "string", enum: ["narrate", "hook", "demo_step", "callout", "challenge_setup", "challenge_reveal", "transition", "explore"] },
     text:        { type: "string" },
     visual:      _segmentVisualSchema,
     gesture:     { type: "string", enum: ["idle", "pointing", "thinking", "explaining"] },
@@ -530,7 +572,7 @@ const lessonToolAdaptive: Anthropic.Tool = {
         properties: _adaptivePhases,
         required: ["activate", "explain", "demonstrate", "challenge", "connect"],
       },
-      metadata: _metadataSchema,
+      metadata: _metadataSchemaAdaptive,
     },
     required: ["segments", "phases", "metadata"],
   },
@@ -635,6 +677,37 @@ function validateLessonInput(parsed: ParsedLessonInput, isAdaptive: boolean): st
   return problems;
 }
 
+// ─── Interactive-visual consistency (V10) ──────────────────────────────────────
+
+/**
+ * Makes the interactive spec and the explore segment agree, in place, by
+ * dropping the interactive rather than failing the lesson: a retry costs a whole
+ * lesson, an image-only lesson costs nothing. The interactive survives only when
+ * its spec parses, the lesson is not also asking for a 3D model, and exactly one
+ * explore segment sits before the end and outside the challenge phase (a second
+ * pause gate). Stray explore segments become plain narration.
+ */
+export function normalizeInteractive(parsed: ParsedLessonInput): void {
+  const metadata = parsed.metadata;
+  const segments = parsed.segments ?? [];
+  let spec = metadata ? parseInteractiveSpec(metadata.interactive) : null;
+  if (spec && (metadata?.should_generate_model || metadata?.should_generate_3d_model)) spec = null;
+
+  const explores = segments.filter((s) => s.role === "explore");
+  const keep = spec ? explores[0] : undefined;
+  if (keep && (keep === segments[segments.length - 1] || keep.phase === "challenge")) spec = null;
+
+  for (const seg of explores) {
+    if (seg !== keep || !spec) seg.role = "narrate";
+  }
+  if (keep && spec) delete keep.visual;
+
+  if (metadata) {
+    if (spec && keep) metadata.interactive = spec;
+    else delete metadata.interactive;
+  }
+}
+
 // ─── Main generator ────────────────────────────────────────────────────────────
 
 export async function generateLesson(
@@ -696,6 +769,7 @@ input schema.
     const problems = validateLessonInput(parsed, isAdaptive);
 
     if (problems.length === 0) {
+      normalizeInteractive(parsed);
       return {
         concept_id:   concept.id,
         concept_name: concept.name,

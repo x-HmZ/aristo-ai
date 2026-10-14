@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { SpeechRecognitionInstance } from "@/lib/speech";
+import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
 import "@/lib/speech";
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -27,6 +28,10 @@ export function InputBox() {
   const setIsGeneratingModel     = useAristoStore((s) => s.setIsGeneratingModel);
   const setPending3dImageUrl     = useAristoStore((s) => s.setPending3dImageUrl);
   const setViewMode3d            = useAristoStore((s) => s.setViewMode3d);
+  const setInteractive           = useAristoStore((s) => s.setInteractive);
+  const setInteractiveShown      = useAristoStore((s) => s.setInteractiveShown);
+  const resetInteractive         = useAristoStore((s) => s.resetInteractive);
+  const mode                     = useAristoStore((s) => s.mode);
 
   const isBusy    = isLoading || isGeneratingModel;
 
@@ -94,7 +99,48 @@ export function InputBox() {
         // narrated twice on one shared <audio> element -- two full-price
         // ElevenLabs generations per question, competing with each other.
 
-        if (data.should_generate_model && data.model_image_prompt) {
+        // A new topic starts with a clear board: the last widget must not linger.
+        // In a course the lesson owns the board (and its widget); a chat answer must not reset or replace it.
+        const inCourse = mode === "course";
+        if (!inCourse) resetInteractive();
+        const interactiveSpec = inCourse || data.should_generate_model ? null : parseInteractiveSpec(data.interactive);
+        // The store holds this exact object while it is the current topic's; a reset or a newer topic replaces it.
+        const stillCurrent = () => useAristoStore.getState().interactive.spec === interactiveSpec;
+
+        if (interactiveSpec) {
+          // V10: the widget is the visual for this topic. No concept id, so the route never caches it.
+          setActiveModelUrl(null);
+          setActivePreviewImageUrl(null);
+          setPending3dImageUrl(null);
+          setViewMode3d(false);
+          addMessage(assistantMsg);
+          setInteractive({ status: "loading", spec: interactiveSpec, parts: null });
+          fetch("/api/learn/interactive", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ topic: trimmed.slice(0, 200), spec: interactiveSpec }),
+          })
+            .then(async (r) => {
+              if (!r.ok) throw new Error(`interactive ${r.status}`);
+              const parts = parseInteractiveParts(await r.json());
+              if (!parts) throw new Error("interactive: bad payload");
+              if (!stillCurrent()) return;
+              setInteractive({ status: "loading", spec: interactiveSpec, parts });
+              setInteractiveShown(true);
+            })
+            .catch((err) => {
+              console.error("[free-mode] interactive failed:", err);
+              if (!stillCurrent()) return;
+              setInteractive({ status: "failed", spec: interactiveSpec, parts: null });
+              addMessage({
+                id:        `msg_${Date.now()}_viz_err`,
+                type:      "chat",
+                role:      "assistant",
+                content:   "_(I couldn't build the interactive for this topic right now. The answer above still stands.)_",
+                timestamp: Date.now(),
+              });
+            });
+        } else if (data.should_generate_model && data.model_image_prompt) {
           // Clear previous visuals so the scene resets for the new topic
           setActiveModelUrl(null);
           setActivePreviewImageUrl(null);
@@ -154,6 +200,10 @@ export function InputBox() {
       setIsGeneratingModel,
       setPending3dImageUrl,
       setViewMode3d,
+      setInteractive,
+      setInteractiveShown,
+      resetInteractive,
+      mode,
     ]
   );
 

@@ -428,8 +428,12 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const setViewMode3d         = useAristoStore((s) => s.setViewMode3d);
   const setActiveModelUrl     = useAristoStore((s) => s.setActiveModelUrl);
 
-  const showModel = !!activeModelUrl && viewMode3d;
-  const showImage = !showModel && !!activePreviewImageUrl;
+  // The interactive widget is a DOM card (learn/InteractiveStage); while it is up, the board image and
+  // the model step aside so nothing floats behind it.
+  const interactiveUp = useAristoStore((s) => s.interactiveShown && !!s.interactive.parts && s.interactive.status !== "failed");
+
+  const showModel = !!activeModelUrl && viewMode3d && !interactiveUp;
+  const showImage = !showModel && !!activePreviewImageUrl && !interactiveUp;
 
   // Where the teacher's head looks (V9.3): the board and a shown model share
   // the scene anchor; the desk is the quiz paper.

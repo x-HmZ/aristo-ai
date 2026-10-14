@@ -1,0 +1,17 @@
+{
+ "step": 10,
+ "clips": {
+  "Talking": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 10
+   }
+  }
+ }
+}

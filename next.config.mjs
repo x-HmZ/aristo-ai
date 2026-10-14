@@ -16,6 +16,11 @@ const securityHeaders = [
   },
 ];
 
+// Pages that host generated widgets (V10). `frame-src 'none'` governs every navigation of a child frame, which the
+// widget sandbox alone does not stop: without it a widget can set its own location (or meta refresh, or click a link)
+// and the remote page then renders inside the card with scripts and network. The srcdoc itself is exempt.
+const widgetHostHeaders = [{ key: "Content-Security-Policy", value: "frame-src 'none'" }];
+
 const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
@@ -33,6 +38,9 @@ const nextConfig = {
         source: "/(.*)",
         headers: securityHeaders,
       },
+      { source: "/learn", headers: widgetHostHeaders },
+      { source: "/demo", headers: widgetHostHeaders },
+      { source: "/dev/interactive", headers: widgetHostHeaders },
     ];
   },
 };

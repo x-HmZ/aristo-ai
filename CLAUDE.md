@@ -6,7 +6,7 @@ Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D ava
 
 ## Vision (do not redirect from this)
 
-- **Immersive 3D experience** — teacher avatar (Jake, the default, or MJ) in a real-time R3F scene; physical topics get a generated 3D model (FLUX → Tripo3D) in the scene.
+- **Immersive 3D experience** — teacher avatar (Jake, the default, or MJ) in a real-time R3F scene; physical topics get a generated 3D model (FLUX → Tripo3D) in the scene; topics learned by changing an input and watching the result (graphs, fractions, loops) get an interactive widget, generated code in a sandboxed iframe (V10, `.claude/docs/architecture.md`).
 - **Real teaching, not summarization** — strict 5-phase protocol: Activate → Explain → Demonstrate → Challenge → Connect.
 - **Adaptive** — no fixed learning-style buckets (FSLSM rejected); `DynamicProfile` (expertise / depth / pace / example preference) inferred from behavioral signals every session.
 - **Mastery-based, not time-based** — BKT per concept, FSRS spaced repetition; the KG decides what to teach next.
@@ -78,6 +78,7 @@ NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_K
 ANTHROPIC_API_KEY     # Teaching / Assessment / Curriculum
 OPENAI_API_KEY        # RAG embeddings + planned Whisper/TTS — gracefully optional
 FAL_KEY               # fal.ai 3D generation (NOT FAL_API_KEY)
+NEXT_PUBLIC_INTERACTIVE_VISUALS  # "true" turns on generated interactive widgets (V10); off by default; also the kill switch
 ```
 
 ## Repo & tooling

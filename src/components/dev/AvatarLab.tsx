@@ -17,7 +17,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
+import { Environment, OrbitControls, useAnimations, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 // Side-effecting: points drei's GLTFLoader at the self-hosted Draco decoder.
@@ -33,6 +33,8 @@ import { FADE, overlayBlend, overlayWeight } from "@/lib/avatar/director";
 import { LID_REST, SMILE_REST } from "@/lib/avatar/face";
 import { maskTrackNames, skeletonMasks, type BoneInfo } from "@/lib/avatar/skeletonMasks";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
+import { applyOutfit } from "@/components/three/outfit";
+import { RendererConfig, SceneLights } from "@/components/three/SceneBits";
 import { BRAND_HEX } from "@/lib/brandColors";
 import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/devKit";
 import { cn } from "@/lib/utils";
@@ -114,6 +116,30 @@ const qsNum = (k: string, d: number) => {
 const REST_SMILE = qsNum("smile", SMILE_REST.neutral);
 const REST_LID = qsNum("lid", LID_REST);
 const NO_BLINK = QS?.get("blink") === "0"; // stills only
+// `?shot`: stills for a scripted capture (the shirt session, 2026-10-14). The room's renderer setting, lights and
+// environment, the teacher's own shirt colour, no panel; `window.__lab` poses a clip at a time and places the camera.
+// `?file=` swaps the teacher's base GLB for another under /models (a candidate rebuild beside the shipped one).
+const SHOT = QS?.has("shot") ?? false;
+const FILE = QS?.get("file");
+const FILE_OK = FILE && /^[\w.-]+\.glb$/.test(FILE) ? FILE : null;
+
+declare global {
+  interface Window {
+    __lab?: {
+      /** Holds `clip` still at `t` seconds; false when the clip is not loaded. */
+      pose: (clip: string, t: number) => boolean;
+      /** Camera at `pos`, looking at `at` (world). */
+      cam: (pos: [number, number, number], at: [number, number, number]) => void;
+      /** World positions of bones by name. */
+      bones: (names: string[]) => Record<string, [number, number, number] | null>;
+      /** Clips available now (base plus pack). */
+      clips: () => string[];
+      /** Overrides on the shirt's material, for telling the cloth's shading from its shape; returns the old values. */
+      shirt: (o: { normal?: boolean; sheen?: number; roughness?: number }) => Record<string, unknown>;
+      frame: number;
+    };
+  }
+}
 
 const SEGMENTS = Array.from({ length: 15 }, (_, i) =>
   `/demo/${DEMO}/seg_${String(i + 1).padStart(3, "0")}.mp3`);
@@ -130,7 +156,7 @@ function Teacher({
   classroom: boolean;
   onGesture: (status: string) => void;
 }) {
-  const url = `/models/${CANDIDATES[candidate].file}`;
+  const url = `/models/${FILE_OK ?? CANDIDATES[candidate].file}`;
   const pack = CANDIDATES[candidate].pack;
   const { scene, animations } = useGLTF(url);
   const root = useRef<THREE.Group>(null);
@@ -218,7 +244,64 @@ function Teacher({
     });
   }, [morphMeshes, animations, onReport]);
 
+  // The shirt colour, as Teacher.tsx sets it at mount (shot mode only: the lab has always shown the GLB's own).
   useEffect(() => {
+    const outfit = candidate === "marcus" ? undefined : AVATAR_ASSETS[candidate].outfit;
+    if (!SHOT || !outfit) return;
+    const clones = applyOutfit(scene, outfit);
+    return () => clones.forEach((m) => m.dispose());
+  }, [scene, candidate]);
+
+  const { camera } = useThree();
+  useEffect(() => {
+    if (!SHOT) return;
+    const w = new THREE.Vector3();
+    const all = () => [...animations, ...packClips];
+    const outfitName = candidate === "marcus" ? null : AVATAR_ASSETS[candidate].outfit?.material;
+    const kept = new Map<THREE.MeshPhysicalMaterial, THREE.Texture | null>();
+    window.__lab = {
+      frame: 0,
+      shirt: (o) => {
+        const out: Record<string, unknown> = {};
+        scene.traverse((m) => {
+          const mat = (m as THREE.Mesh).material as THREE.MeshPhysicalMaterial | undefined;
+          if (!mat || Array.isArray(mat) || mat.name !== outfitName) return;
+          if (!kept.has(mat)) kept.set(mat, mat.normalMap);
+          Object.assign(out, { normal: !!mat.normalMap, sheen: mat.sheen, roughness: mat.roughness });
+          if (o.normal !== undefined) mat.normalMap = o.normal ? kept.get(mat) ?? null : null;
+          if (o.sheen !== undefined) mat.sheen = o.sheen;
+          if (o.roughness !== undefined) mat.roughness = o.roughness;
+          mat.needsUpdate = true;
+        });
+        return out;
+      },
+      clips: () => all().map((c) => c.name),
+      pose: (name, t) => {
+        const c = all().find((x) => x.name === name);
+        if (!c || !root.current) return false;
+        mixer.stopAllAction();
+        const a = mixer.clipAction(c, root.current);
+        a.reset().setEffectiveWeight(1).play();
+        a.time = Math.min(t, c.duration);
+        a.paused = true;
+        mixer.update(0);
+        return true;
+      },
+      cam: (pos, at) => {
+        camera.position.set(...pos);
+        camera.lookAt(...at);
+        camera.updateProjectionMatrix();
+      },
+      bones: (names) => Object.fromEntries(names.map((n) => {
+        const o = scene.getObjectByName(n);
+        return [n, o ? (o.getWorldPosition(w).toArray() as [number, number, number]) : null];
+      })),
+    };
+    return () => { delete window.__lab; };
+  }, [animations, packClips, mixer, camera, scene, candidate]);
+
+  useEffect(() => {
+    if (SHOT) return;
     const packClip = packClips.find((c) => c.name === clip);
     const a = actions[clip] ?? (packClip && root.current ? mixer.clipAction(packClip, root.current) : null);
     if (!a) return;
@@ -260,6 +343,7 @@ function Teacher({
   };
 
   useFrame((_, dt) => {
+    if (window.__lab) window.__lab.frame += 1;
     clock.current += dt;
     const p = play.current;
     if (p) {
@@ -380,9 +464,20 @@ export default function AvatarLab() {
     <div className="flex h-screen bg-bg text-ink">
       <div className="min-w-0 flex-1">
         <Canvas camera={{ position: [0, 0, 0.9], fov: 40, near: 0.01 }} shadows={false}>
-          <ambientLight intensity={0.9} />
-          <directionalLight position={[2, 4, 3]} intensity={1.6} />
-          <directionalLight position={[-3, 2, 1]} intensity={0.5} />
+          {SHOT ? (
+            <>
+              <RendererConfig />
+              <color attach="background" args={[BRAND_HEX.backdrop]} />
+              <SceneLights />
+              <Environment preset="studio" environmentIntensity={0.5} />
+            </>
+          ) : (
+            <>
+              <ambientLight intensity={0.9} />
+              <directionalLight position={[2, 4, 3]} intensity={1.6} />
+              <directionalLight position={[-3, 2, 1]} intensity={0.5} />
+            </>
+          )}
           <Suspense fallback={null}>
             <Teacher
               key={candidate}
@@ -396,12 +491,12 @@ export default function AvatarLab() {
               onGesture={setGestureStatus}
             />
           </Suspense>
-          <Framing view={view} controls={controls} />
-          <OrbitControls ref={controls} target={[0, -0.2, -3]} />
+          {!SHOT && <Framing view={view} controls={controls} />}
+          {!SHOT && <OrbitControls ref={controls} target={[0, -0.2, -3]} />}
         </Canvas>
       </div>
 
-      <aside className={cn(DEV_PANEL, "w-[330px] shrink-0 p-[18px]")}>
+      <aside className={cn(DEV_PANEL, "w-[330px] shrink-0 p-[18px]", SHOT && "hidden")}>
         <h2 className="type-h4 mb-3.5 font-semibold">V9.1 avatar lab</h2>
 
         <DevSection title="Candidate">

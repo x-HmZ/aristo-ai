@@ -68,7 +68,10 @@ export const QUIZ_PASS_RATIO = 0.6;
 
 type Phase = "activate" | "explain" | "demonstrate" | "challenge" | "connect";
 /** Mirrors `SegmentRole` in `src/lib/agents/teaching.ts`, kept local like `Phase`. */
-type Role = "narrate" | "hook" | "demo_step" | "callout" | "challenge_setup" | "challenge_reveal" | "transition";
+type Role =
+  | "narrate" | "hook" | "demo_step" | "callout" | "challenge_setup" | "challenge_reveal" | "transition"
+  // V10: introduces the interactive visual. No teaching move of its own: the segment gesture is "pointing".
+  | "explore";
 export type ReactionKind = "nodding" | "shaking";
 
 export interface DirectorSignals {

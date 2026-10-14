@@ -1,0 +1,14 @@
+00:06.938  blend            | Read blend: "C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\bakeoff_scene.blend"
+BlenderMCP addon registered
+[INFO ] services.locationservice ...............: Not adding link to MakeHuman user data, since neither explicit path nor auto-discovery is set in preferences.
+[INFO ] mpfb.init ..............................: Build info 20260722
+[INFO ] mpfb.init ..............................: Online access preference is not enabled. Not checking if MakeHuman is online.
+[INFO ] mpfb.init ..............................: MPFB initialization has finished.
+DBG Idle2 [('R', 5.31, 12.0, 1, [-0.28, -0.064, 0.98]), ('R', 5.32, 12.0, 1, [-0.279, -0.064, 0.979]), ('R', 5.34, 12.0, 1, [-0.279, -0.063, 0.979]), ('R', 5.35, 12.0, 1, [-0.28, -0.063, 0.978]), ('R', 5.37, 12.0, 1, [-0.281, -0.063, 0.977]), ('R', 5.39, 12.0, 1, [-0.282, -0.064, 0.976]), ('R', 5.4, 12.0, 1, [-0.283, -0.065, 0.976]), ('R', 5.42, 12.0, 1, [-0.284, -0.066, 0.975]), ('R', 5.42, 12.0, 1, [-0.284, -0.067, 0.975]), ('R', 5.42, 12.0, 1, [-0.284, -0.069, 0.975]), ('R', 5.41, 12.0, 1, [-0.283, -0.07, 0.975]), ('R', 5.41, 12.0, 1, [-0.283, -0.071, 0.975])] depth_mm max 5.65 edge_mm min 11.9
+CLIP Idle2 {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 111, "frames": 267}} 79 s
+DBG Pointing [('R', 5.76, 11.7, 1, [-0.286, -0.108, 0.973]), ('R', 5.78, 11.8, 1, [-0.285, -0.113, 0.973]), ('R', 5.82, 11.8, 1, [-0.284, -0.119, 0.974]), ('R', 5.9, 11.8, 1, [-0.282, -0.127, 0.974]), ('R', 5.25, 11.8, 2, [-0.277, -0.138, 0.973]), ('R', 5.24, 11.7, 2, [-0.272, -0.149, 0.97]), ('R', 5.32, 11.7, 2, [-0.265, -0.161, 0.966]), ('R', 5.5, 11.7, 2, [-0.258, -0.175, 0.963]), ('R', 5.68, 11.7, 2, [-0.248, -0.193, 0.961]), ('R', 5.87, 11.7, 2, [-0.235, -0.213, 0.96]), ('R', 5.72, 11.8, 2, [-0.275, -0.189, 0.983]), ('R', 5.53, 11.8, 2, [-0.298, -0.16, 0.982])] depth_mm max 5.9 edge_mm min 11.7
+CLIP Pointing {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 35, "frames": 90}} 105 s
+BlenderMCP addon unregistered
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:37:22)
+
+Blender quit

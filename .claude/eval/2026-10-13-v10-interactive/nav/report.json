@@ -1,0 +1,136 @@
+{
+  "checks": [
+    {
+      "name": "nav-location: no request left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-location: the frame never became a remote page",
+      "pass": true,
+      "extra": "chrome-error://chromewebdata/"
+    },
+    {
+      "name": "nav-location: no popup",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-location: no download",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-meta: no request left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-meta: the frame never became a remote page",
+      "pass": true,
+      "extra": "(frame gone)"
+    },
+    {
+      "name": "nav-meta: no popup",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-meta: no download",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-anchor: no request left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-anchor: the frame never became a remote page",
+      "pass": true,
+      "extra": "chrome-error://chromewebdata/"
+    },
+    {
+      "name": "nav-anchor: no popup",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-anchor: no download",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-open: no request left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-open: the frame never became a remote page",
+      "pass": true,
+      "extra": "about:srcdoc"
+    },
+    {
+      "name": "nav-open: no popup",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-open: no download",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-history: no request left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-history: the frame never became a remote page",
+      "pass": true,
+      "extra": "about:srcdoc"
+    },
+    {
+      "name": "nav-history: no popup",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "nav-history: no download",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "misc: execCommand copy refused",
+      "pass": true,
+      "extra": "false"
+    },
+    {
+      "name": "misc: no download from <a download>",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "misc: picture-in-picture not enabled",
+      "pass": true,
+      "extra": "pictureInPictureEnabled=false"
+    },
+    {
+      "name": "misc: fullscreen not enabled",
+      "pass": true,
+      "extra": "fullscreenEnabled=false"
+    },
+    {
+      "name": "misc: WebRTC blocked",
+      "pass": true,
+      "extra": "blocked: TypeError"
+    }
+  ],
+  "problems": [],
+  "misc": {
+    "copy": "false",
+    "rtc": "blocked: TypeError",
+    "pip": "pictureInPictureEnabled=false",
+    "fullscreen": "fullscreenEnabled=false"
+  }
+}

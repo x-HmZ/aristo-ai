@@ -8,6 +8,7 @@
 | `assessment.ts` | `generateQuestions`, `generateLessonQuiz`, `generateReviewQuestion`, `evaluateShortAnswer`, `evaluateObjective` (local) | Sonnet / Haiku |
 | `curriculum.ts` | `generateCourse`, `flattenCourseConceptIds` | Sonnet |
 | `profiler.ts` | `updateDynamicProfile` (rule-based, no LLM), `computeBloomAccuracy` | — |
+| `interactive.ts` | `generateInteractive()` (V10: one sandboxed widget per topic, from the lesson's spec; quotes the fixtures as examples; one retry on a validator rejection) | Sonnet |
 | `models.ts` | `MODELS` constants | — |
 
 All Anthropic calls use `tool_use` with strict input schemas — no regex JSON parsing.
@@ -28,6 +29,7 @@ All Anthropic calls use `tool_use` with strict input schemas — no regex JSON p
 - `POST /api/learn/complete` — mark lesson viewed
 - `GET  /api/learn/next` — next concept with 70/30 SRS blend (50/50 when ≥10 overdue)
 - `GET  /api/learn/overdue-count` — cheap SRS count for the header chip poller
+- `POST /api/learn/interactive` — the widget for a lesson's `metadata.interactive` spec (V10). Off (404) unless `NEXT_PUBLIC_INTERACTIVE_VISUALS=true`. Approved learners only. For a KG concept the topic comes from the DB and the spec must be carried by a stored lesson of that concept (403 otherwise); cached in `generated_interactives` (migration 017) under a hash of every spec field; identical in-flight requests share one generation; at most 8 generations per learner per 10 minutes (in memory, and from `usage_events` across instances); a `disabled` row is a 404
 
 **Quiz:**
 - `GET  /api/quiz/lesson/[conceptId]` — 4 mixed questions (Sonnet)
@@ -144,12 +146,24 @@ feature (`sections/*`), the footer. Design: brand-system.md "Landing (V8.3b)"; w
 - **Verification:** `?probe` exposes `window.__landing` (bones, bounds, renderer counts); `?still[&start]` holds
   a spot for its stills. Scripts in `.claude/eval/2026-09-30-v8-3b-landing/scripts/` (README lists them).
 
+## Interactive visuals (V10)
+
+The third teaching visual beside the segment image and the 3D model: a small generated page (sliders, buttons, a live picture) that runs in a sandbox. The teaching agent decides per lesson (`metadata.interactive`, never together with a 3D model); free mode (`/api/teach`, Haiku) decides the same per question.
+
+- **Core, pure** (`src/lib/interactive/`): `flag.ts` (the off-by-default switch), `spec.ts` (types, the JSON schemas the agents hand to Anthropic, the parsers), `validate.ts` (static second layer, runs on the generator's output and again on every cached row), `shell.ts` (`buildWidgetDoc`: the srcdoc, the CSP, the house kit and `window.ARISTO`, the ready/error bridge, `WIDGET_TOKENS` kept equal to `globals.css` by a test), `fixtures.ts` (three hand-written widgets: dev harness content and the generator's few-shot examples), `throttle.ts`.
+- **The boundary is the iframe**: `sandbox="allow-scripts"`, no `allow-same-origin` (opaque origin: no cookies, storage or parent access), a CSP `default-src 'none'` inside it (no network, no eval), an `allow` list with every powerful feature off, and, on the pages that host widgets (`/learn`, `/demo`, `/dev/interactive`), a `Content-Security-Policy: frame-src 'none'` header from `next.config.mjs`, which is what stops a widget navigating itself (location, meta refresh, a link) to a remote page; the frame is also dropped if it ever fires `load` twice. Measured with hostile probe widgets in Chromium: `scripts/frame.cjs` (eval, storage, parent, fetch, XHR, images) and `scripts/nav.cjs` (navigation, popups, downloads, PiP, WebRTC). `validate.ts` is not the boundary.
+- **Client**: `learn/InteractiveFrame.tsx` (the iframe and the handshake: `ready`, `error`, or no signal in 4 s = failed), `learn/InteractiveStage.tsx` (a DOM layer over the canvas, mounted in `LearnClient`: the board card left of the lesson panel at 1180x600 and up, the large dialog below that or on Expand, an "Open interactive" pill when hidden; one iframe, never remounted, so slider state survives; always the dark kit because it floats on the lit room). `Experience.tsx` hides the board image and model plane while the widget is up.
+- **Playback** (`useLessonPlayback.ts`): fetches the widget on lesson load in parallel (never blocks playback; not on `/demo`); the segment with role `explore` pauses the lesson (`exploreGate`, like the challenge gate) until Continue on the card (a store tick); if the widget is still loading when the explore narration ends it waits 8 s then goes on; a failed widget never pauses. `leaveExplore()` clears the pause on next, prev, start and jump.
+- **Sanitising**: `normalizeInteractive()` in `teaching.ts` drops the interactive (it never fails the lesson) when the spec is malformed, a 3D model is also requested, or there is not exactly one explore segment before the end and outside the challenge phase.
+- **Store** (not persisted): `interactive {status, spec, parts}`, `interactiveShown`, `interactiveExpanded`, `exploring`, `exploreContinueTick`.
+- **Harness**: `/dev/interactive` (frame view; failure paths `throws`, `forbidden`, `timeout`, `probe`) and `?view=room` (the real panel and hook on a synthetic lesson). Scripted checks in `.claude/eval/2026-10-13-v10-interactive/scripts`: `frame.cjs`, `room.cjs`.
+
 ## Hooks
 - `useSessionFlush.ts` — signals ref pattern; `beforeunload` keepalive flush
 - `useCourseAutoTeach.ts` — auto-fetches next lesson when course advances
 
 ## Store (`src/store/useAristoStore.ts`)
-Key fields: `userId`, `profile` (DynamicProfile), `onboardingDone`, `behavioralSignals`, `mode` (`"course" | "free"`), `course` (CourseState with `structure`), `activeLesson` (LessonPayload), `messages`, `quiz` (legacy MCQ), `activeModelUrl`, `isGeneratingModel`.
+Key fields: `interactive` / `interactiveShown` / `exploring` (V10), `userId`, `profile` (DynamicProfile), `onboardingDone`, `behavioralSignals`, `mode` (`"course" | "free"`), `course` (CourseState with `structure`), `activeLesson` (LessonPayload), `messages`, `quiz` (legacy MCQ), `activeModelUrl`, `isGeneratingModel`.
 
 ## Approval gate (placeholder for the future paywall)
 

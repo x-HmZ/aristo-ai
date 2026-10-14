@@ -5,6 +5,7 @@ import { AristoCanvas }        from "@/components/learn/AristoCanvas";
 import { preloadDefaultAvatar } from "@/components/three/Teacher";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { MessagePanel }     from "@/components/learn/MessagePanel";
+import { InteractiveStage } from "@/components/learn/InteractiveStage";
 import { InputBox }         from "@/components/learn/InputBox";
 import { TeacherControls }  from "@/components/learn/TeacherControls";
 import { ModePicker }       from "@/components/learn/ModePicker";
@@ -65,6 +66,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const stopAudio              = useAristoStore((s) => s.stopAudio);
   const setActiveModelUrl      = useAristoStore((s) => s.setActiveModelUrl);
   const setActiveLesson        = useAristoStore((s) => s.setActiveLesson);
+  const resetInteractive       = useAristoStore((s) => s.resetInteractive);
   const setCustomTeacherGlbUrl = useAristoStore((s) => s.setCustomTeacherGlbUrl);
 
   const mode              = useAristoStore((s) => s.mode);
@@ -223,6 +225,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     clearQuiz();
     setActiveLesson(null);
     setActiveModelUrl(null);
+    resetInteractive();
     setActiveQuiz(null);
     setQuizResult(null);
     setMode("free");
@@ -231,7 +234,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       currentTopicIndex: 0, sessionId: null, structure: null,
     });
     setShowPicker(true);
-  }, [stopAudio, clearMessages, clearQuiz, setActiveLesson, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
+  }, [stopAudio, clearMessages, clearQuiz, setActiveLesson, resetInteractive, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
 
   // ── View map while in a course ─────────────────────────────────────────────
   const handleViewMap = useCallback(() => {
@@ -438,6 +441,9 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
         </div>
         {renderBottom()}
       </div>
+
+      {/* Interactive visual (V10): the board card or the large view; renders nothing without one */}
+      <InteractiveStage />
 
       {/* Onboarding overlay */}
       {!localOnboarded && (

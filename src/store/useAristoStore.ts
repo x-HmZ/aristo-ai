@@ -3,10 +3,23 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { LessonPayload }    from "@/lib/agents/teaching";
 import type { CourseStructure }  from "@/lib/agents/curriculum";
 import type { QuizQuestion }     from "@/lib/agents/assessment";
+import type { InteractiveParts, InteractiveSpec } from "@/lib/interactive/spec";
 
 export type { LessonPayload, CourseStructure };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+/**
+ * The interactive visual of the active lesson or free-mode card. `loading` covers
+ * the fetch and the frame starting; `ready` is set by the frame when the widget
+ * ran without error; `failed` is a fetch or widget failure (the image stays).
+ */
+export interface InteractiveState {
+  status: "idle" | "loading" | "ready" | "failed";
+  spec:   InteractiveSpec | null;
+  parts:  InteractiveParts | null;
+}
+export const IDLE_INTERACTIVE: InteractiveState = { status: "idle", spec: null, parts: null };
 
 export type TeacherMode   = "course" | "free";
 /**
@@ -183,6 +196,13 @@ interface AristoState {
   pending3dImageUrl:     string | null; // FLUX image waiting for user to opt into 3D conversion
   viewMode3d:            boolean;       // true → show 3D model; false → show image (when both available)
 
+  // Interactive visual (V10): a generated widget in a sandboxed frame, the third kind of teaching visual
+  interactive:         InteractiveState;
+  interactiveShown:    boolean; // the widget is on screen (board card, or the large view)
+  interactiveExpanded: boolean; // the large view was asked for (narrow screens always get it)
+  exploring:           boolean; // the lesson is paused on the explore segment until Continue
+  exploreContinueTick: number;  // bumped by the widget card's Continue; the playback hook releases the pause on a change
+
   // Custom teacher (Ready Player Me URL persisted in learner_profiles)
   customTeacherGlbUrl:   string | null;
 
@@ -289,6 +309,14 @@ interface AristoState {
   setViewMode3d:            (v: boolean)         => void;
   setCustomTeacherGlbUrl:   (url: string | null) => void;
 
+  // Interactive visual
+  setInteractive:         (i: InteractiveState) => void;
+  setInteractiveShown:    (v: boolean) => void;
+  setInteractiveExpanded: (v: boolean) => void;
+  setExploring:           (v: boolean) => void;
+  requestExploreContinue: () => void;
+  resetInteractive:       () => void;
+
   // Quiz
   startQuiz:    (questions: MCQQuestion[]) => void;
   answerQuestion:(answer: string)          => void;
@@ -369,6 +397,11 @@ export const useAristoStore = create<AristoState>()(
       pending3dImageUrl:     null,
       viewMode3d:            false,
       customTeacherGlbUrl:   null,
+      interactive:           IDLE_INTERACTIVE,
+      interactiveShown:      false,
+      interactiveExpanded:   false,
+      exploring:             false,
+      exploreContinueTick:   0,
       quiz:               defaultQuiz,
       isSpeaking:         false,
       currentAudio:       null,
@@ -425,6 +458,13 @@ export const useAristoStore = create<AristoState>()(
       setPending3dImageUrl:     (url) => set({ pending3dImageUrl: url }),
       setViewMode3d:            (v)   => set({ viewMode3d: v }),
       setCustomTeacherGlbUrl:   (url) => set({ customTeacherGlbUrl: url }),
+
+      setInteractive:         (i) => set({ interactive: i }),
+      setInteractiveShown:    (v) => set({ interactiveShown: v }),
+      setInteractiveExpanded: (v) => set({ interactiveExpanded: v }),
+      setExploring:           (v) => set({ exploring: v }),
+      requestExploreContinue: ()  => set((s) => ({ exploreContinueTick: s.exploreContinueTick + 1 })),
+      resetInteractive:       ()  => set({ interactive: IDLE_INTERACTIVE, interactiveShown: false, interactiveExpanded: false, exploring: false }),
 
       startQuiz: (questions) =>
         set({ quiz: { questions, currentIndex: 0, answers: [], score: null, isActive: true } }),

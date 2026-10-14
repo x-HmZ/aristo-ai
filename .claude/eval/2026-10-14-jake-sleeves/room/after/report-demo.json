@@ -1,0 +1,133 @@
+{
+ "label": "after",
+ "mode": "demo",
+ "shots": [
+  "demo-picker-1920-light.jpg",
+  "demo-1-activate-narrating-1920-light.jpg",
+  "demo-2-explain-1920-light.jpg",
+  "demo-2-image-pointing-1920-light.jpg",
+  "demo-3-demonstrate-1920-light.jpg",
+  "demo-4-challenge-1920-light.jpg",
+  "demo-5-connect-1920-light.jpg",
+  "demo-quiz-desk-1920-light.jpg"
+ ],
+ "paid": [],
+ "rects": {
+  "demo-picker-1920-light": {
+   "vw": 1920,
+   "vh": 1080
+  },
+  "demo-1-activate-narrating-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "BAND": [
+    20,
+    969,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 177,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-explain-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "BAND": [
+    20,
+    969,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 259,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-2-image-pointing-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "CALLOUTS": [
+    1047,
+    89,
+    1165,
+    211
+   ],
+   "BAND": [
+    20,
+    969,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 263,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-3-demonstrate-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "BAND": [
+    20,
+    993,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 144,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-4-challenge-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "BAND": [
+    20,
+    969,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 253,
+    "size": "text-lg",
+    "clamp": null,
+    "next": true,
+    "cut": false
+   }
+  },
+  "demo-5-connect-1920-light": {
+   "vw": 1920,
+   "vh": 1080,
+   "BAND": [
+    20,
+    968,
+    1480,
+    1064
+   ],
+   "bandText": {
+    "len": 358,
+    "size": "text-lg",
+    "clamp": null,
+    "next": false,
+    "cut": false
+   }
+  },
+  "demo-quiz-desk-1920-light": {
+   "vw": 1920,
+   "vh": 1080
+  }
+ }
+}

@@ -1,0 +1,53 @@
+{
+ "step": 1,
+ "clips": {
+  "Idle2": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 267
+   }
+  },
+  "Pointing": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 90
+   }
+  },
+  "Talking4": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 1,
+    "frames": 250
+   }
+  },
+  "Talking2M": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 81
+   }
+  }
+ }
+}

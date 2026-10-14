@@ -22,6 +22,13 @@
  * Public surface (state + controls) — see {@link LessonPlaybackState} and
  * {@link LessonPlaybackControls}.  Mounted by `LessonPlayer.tsx`.
  *
+ * Interactive visual (V10): when the lesson's metadata carries an `interactive`
+ * spec, the widget is fetched in parallel (never blocking playback) and the
+ * segment with role "explore" pauses the lesson, like a challenge, until the
+ * learner presses Continue on the widget card. A widget that is still loading
+ * when the segment ends is waited for up to EXPLORE_WAIT_MS, then skipped; a
+ * failed one is skipped at once and the lesson carries on over its image.
+ *
  * Compatibility shim: when `lesson.segments` is missing (legacy lesson or
  * adaptive-flag-off), the hook synthesizes a thin segment list from the
  * old phase blocks — one segment per phase, no visuals.  This keeps anyone
@@ -32,6 +39,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS, type SpeakController } from "@/hooks/useTTS";
 import type { LessonPhase, NarrationSegment } from "@/lib/agents/teaching";
+import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
 
@@ -151,6 +159,9 @@ function isChallengeSegment(seg: NarrationSegment | undefined): boolean {
  */
 const _warmedAudioUrls = new Set<string>();
 
+/** How long the explore segment waits for a widget that is still generating. */
+const EXPLORE_WAIT_MS = 8000;
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export interface LessonPlaybackOpts {
@@ -199,6 +210,12 @@ export function useLessonPlayback(
   const setPending3dImageUrl          = useAristoStore((s) => s.setPending3dImageUrl);
   const setViewMode3d                 = useAristoStore((s) => s.setViewMode3d);
   const setIsGeneratingModel          = useAristoStore((s) => s.setIsGeneratingModel);
+  const setInteractive                = useAristoStore((s) => s.setInteractive);
+  const setInteractiveShown           = useAristoStore((s) => s.setInteractiveShown);
+  const setExploring                  = useAristoStore((s) => s.setExploring);
+  const resetInteractive              = useAristoStore((s) => s.resetInteractive);
+  const interactiveStatus             = useAristoStore((s) => s.interactive.status);
+  const exploreContinueTick           = useAristoStore((s) => s.exploreContinueTick);
 
   const [segmentIdx,    setSegmentIdx]    = useState(0);
   const [isPaused,      setIsPaused]      = useState(false);
@@ -206,12 +223,21 @@ export function useLessonPlayback(
   const [isComplete,    setIsComplete]    = useState(false);
   const [awaitingAnswer, setAwaitingLocal] = useState(false);
   const [visualsByID,   setVisualsByID]   = useState<Record<string, VisualResult>>({});
+  // Explore pause: `exploreWait` while the widget finishes loading, `exploreGate`
+  // while the learner plays with it. Mirrored to the store (`exploring`) like
+  // awaitingAnswer so the card can show Continue without prop-drilling.
+  const [exploreWait, setExploreWait] = useState(false);
+  const [exploreGate, setExploreGate] = useState(false);
 
   // Mirror the awaitingAnswer flag to the store so the 3D speech-bubble can
   // read it without prop-drilling through Canvas → Experience.
   useEffect(() => {
     setAwaitingAnswer(awaitingAnswer);
   }, [awaitingAnswer, setAwaitingAnswer]);
+
+  useEffect(() => {
+    setExploring(exploreGate);
+  }, [exploreGate, setExploring]);
 
   // Same for a finished lesson: the teacher reacts to it (V9.3). Every place
   // that restarts or switches a lesson already resets isComplete, so the
@@ -262,10 +288,13 @@ export function useLessonPlayback(
     setActiveModelUrl(null);
     setPending3dImageUrl(null);
     setViewMode3d(false);
+    setExploreWait(false);
+    setExploreGate(false);
+    resetInteractive();
   }, [
     lesson, cleanupPlayback,
     setActivePreviewImageUrl, setCurrentSegmentId, setGesture,
-    setActiveModelUrl, setPending3dImageUrl, setViewMode3d,
+    setActiveModelUrl, setPending3dImageUrl, setViewMode3d, resetInteractive,
   ]);
 
   // ─── Restore topic-level 3D pipeline in adaptive mode ──────────────────────
@@ -316,6 +345,82 @@ export function useLessonPlayback(
 
     return () => { cancelled = true; };
   }, [lesson, demoMode, setIsGeneratingModel, setPending3dImageUrl]);
+
+  // ─── Interactive visual: generate in parallel, never block playback ─────────
+  // Frozen demo lessons carry none (no API call on /demo). A malformed spec is
+  // dropped, so the explore segment plays as plain narration.
+  useEffect(() => {
+    if (!lesson || demoMode) return;
+    const spec = parseInteractiveSpec(lesson.metadata.interactive);
+    if (!spec) return;
+
+    let cancelled = false;
+    setInteractive({ status: "loading", spec, parts: null });
+    fetch("/api/learn/interactive", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ conceptId: lesson.concept_id, topic: lesson.concept_name, spec }),
+    })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`interactive ${r.status}`);
+        return r.json();
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const parts = parseInteractiveParts(data);
+        if (!parts) throw new Error("interactive: bad payload");
+        // Stays "loading" until the frame itself reports the widget ran.
+        setInteractive({ status: "loading", spec, parts });
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error("[useLessonPlayback] interactive failed", err);
+        setInteractive({ status: "failed", spec, parts: null });
+      });
+
+    return () => { cancelled = true; };
+  }, [lesson, demoMode, setInteractive]);
+
+  // Put the widget on screen as soon as the explore segment is current and it is ready.
+  const exploreCurrent = segments[segmentIdx]?.role === "explore";
+  useEffect(() => {
+    if (exploreCurrent && interactiveStatus === "ready") setInteractiveShown(true);
+  }, [exploreCurrent, interactiveStatus, setInteractiveShown]);
+
+  // Leaving the explore pause by any route (Continue, skip, back, jump, restart).
+  const leaveExplore = useCallback(() => {
+    setExploreWait(false);
+    setExploreGate(false);
+    setInteractiveShown(false);
+  }, [setInteractiveShown]);
+
+  // The explore segment ended while the widget was still loading: wait for it,
+  // up to EXPLORE_WAIT_MS, then go on without it.
+  useEffect(() => {
+    if (!exploreWait || isPaused) return;
+    if (interactiveStatus === "ready") { setExploreWait(false); setInteractiveShown(true); setExploreGate(true); return; }
+    if (interactiveStatus !== "loading") { setExploreWait(false); setSegmentIdx((i) => i + 1); return; }
+    const t = setTimeout(() => { setExploreWait(false); setSegmentIdx((i) => i + 1); }, EXPLORE_WAIT_MS);
+    return () => clearTimeout(t);
+  }, [exploreWait, isPaused, interactiveStatus, setInteractiveShown]);
+
+  // The widget went away under an open pause (a refetch, a reset from elsewhere, a failure): nothing is left to
+  // explore and the Continue button is gone with it, so release the pause and go on.
+  useEffect(() => {
+    if (!exploreGate || interactiveStatus === "ready") return;
+    leaveExplore();
+    setSegmentIdx((i) => i + 1);
+  }, [exploreGate, interactiveStatus, leaveExplore]);
+
+  // Continue on the widget card (the store tick changed): release the pause and move on.
+  const lastTickRef = useRef(exploreContinueTick);
+  useEffect(() => {
+    if (exploreContinueTick === lastTickRef.current) return;
+    lastTickRef.current = exploreContinueTick;
+    if (!exploreGate) return;
+    leaveExplore();
+    setSegmentIdx((i) => i + 1);
+  }, [exploreContinueTick, exploreGate, leaveExplore]);
 
   // ─── Batch-fetch visuals on lesson load ─────────────────────────────────────
   useEffect(() => {
@@ -402,6 +507,7 @@ export function useLessonPlayback(
     if (isLoading)                                return; // wait for visuals batch
     if (isPaused)                                 return;
     if (awaitingAnswer)                           return; // waiting for student
+    if (exploreGate || exploreWait)               return; // exploring the widget
     if (segmentIdx < 0)                           return;
 
     // Lesson complete — fire telemetry once, then bail.
@@ -445,7 +551,7 @@ export function useLessonPlayback(
     // but the avatar's thinking pose is reserved for `isLoading`, so we map
     // it back to "idle" here and let the talking-pool resolution take over.
     const rawGesture = segment.gesture
-      ?? (segment.visual && ownVisualUrl ? "pointing" : "idle");
+      ?? ((segment.visual && ownVisualUrl) || segment.role === "explore" ? "pointing" : "idle");
     const resolvedGesture = rawGesture === "thinking" ? "idle" : rawGesture;
     setGesture(resolvedGesture);
 
@@ -475,6 +581,7 @@ export function useLessonPlayback(
     //    we set awaitingAnswer instead of advancing, freezing playback until
     //    the student replies (via submitAnswer).
     const isQuestion = isChallengeSegment(segment);
+    const isExplore  = segment.role === "explore";
     setIsSpeaking(true);
     const segmentSrc = demoAudioUrl(segment.id);
     const controller = speak(segment.text, {
@@ -487,6 +594,18 @@ export function useLessonPlayback(
           setGesture("idle");
           setAwaitingLocal(true);   // ← AnswerInputPanel + 3D bubble appear
           return;
+        }
+        if (isExplore) {
+          // Pause for the learner to play with the widget; see the header.
+          const status = useAristoStore.getState().interactive.status;
+          if (status === "ready" || status === "loading") {
+            setIsSpeaking(false);
+            setGesture("idle");
+            if (status === "ready") { setInteractiveShown(true); setExploreGate(true); }
+            else setExploreWait(true);
+            return;
+          }
+          // idle or failed: nothing to explore, carry on over the image.
         }
         const dwellMs = Math.max(0, (segment.pause_after ?? 0) * 1000);
         advanceTimerRef.current = setTimeout(() => {
@@ -501,7 +620,7 @@ export function useLessonPlayback(
       cleanupPlayback();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, segments, visualsByID, demoMode, demoAudioUrl]);
+  }, [segmentIdx, isPaused, isLoading, awaitingAnswer, exploreGate, exploreWait, segments, visualsByID, demoMode, demoAudioUrl]);
 
   // ─── Unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -512,6 +631,7 @@ export function useLessonPlayback(
       setCurrentSegmentId(null);
       setAwaitingAnswer(false);
       setLessonComplete(false);
+      resetInteractive();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -520,11 +640,12 @@ export function useLessonPlayback(
 
   const start = useCallback(() => {
     cleanupPlayback();
+    leaveExplore();
     setIsComplete(false);
     setIsPaused(false);
     setAwaitingLocal(false);
     setSegmentIdx(0);
-  }, [cleanupPlayback]);
+  }, [cleanupPlayback, leaveExplore]);
 
   const pause = useCallback(() => {
     cleanupPlayback();
@@ -539,16 +660,18 @@ export function useLessonPlayback(
 
   const next = useCallback(() => {
     cleanupPlayback();
+    leaveExplore();
     setAwaitingLocal(false); // skip past a pending challenge
     setSegmentIdx((i) => Math.min(segments.length, i + 1));
-  }, [cleanupPlayback, segments.length]);
+  }, [cleanupPlayback, leaveExplore, segments.length]);
 
   const prev = useCallback(() => {
     cleanupPlayback();
+    leaveExplore();
     setIsComplete(false);
     setAwaitingLocal(false);
     setSegmentIdx((i) => Math.max(0, i - 1));
-  }, [cleanupPlayback]);
+  }, [cleanupPlayback, leaveExplore]);
 
   // Challenge gate — called from AnswerInputPanel when the student submits.
   // We fire-and-forget /api/learn/challenge for misconception telemetry, set
@@ -617,11 +740,12 @@ export function useLessonPlayback(
       }
       if (target < 0) return;
       cleanupPlayback();
+      leaveExplore();
       setIsComplete(false);
       setIsPaused(false);
       setSegmentIdx(target);
     },
-    [lesson, segments, cleanupPlayback],
+    [lesson, segments, cleanupPlayback, leaveExplore],
   );
 
   // Stop TTS too if the host page unmounts / lesson is cleared.
