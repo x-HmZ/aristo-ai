@@ -20,6 +20,7 @@ import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/dev
 import { INTERACTIVE_FIXTURES, getFixture } from "@/lib/interactive/fixtures";
 import { validateWidget } from "@/lib/interactive/validate";
 import type { WidgetTheme } from "@/lib/interactive/shell";
+import type { InteractiveParts } from "@/lib/interactive/spec";
 
 const FAILS = [
   "none", "throws", "forbidden", "timeout", "probe", "misc", "rtc-nested", "nav-location", "nav-meta", "nav-anchor", "nav-open",
@@ -145,9 +146,18 @@ function FrameView() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Eval scripts show a saved generated widget with window.__showWidget(parts) (dev harness only).
+  const [custom, setCustom] = useState<InteractiveParts | null>(null);
+  useEffect(() => {
+    const w = window as typeof window & { __showWidget?: (p: InteractiveParts) => void };
+    w.__showWidget = (p) => { setFail("none"); setCustom(p); };
+    return () => { delete w.__showWidget; };
+  }, []);
+
   const fixture = getFixture(fixtureId)!;
   const parts =
-    fail === "probe"     ? PROBE_PARTS
+    custom               ? custom
+    : fail === "probe"     ? PROBE_PARTS
     : fail in NAV_JS      ? { title: "Navigation probe", markup: `<pre id="out">pending</pre><div id="host"></div>`, css: "", js: NAV_JS[fail] }
     : fail in LOOP_JS     ? { ...fixture.parts, js: LOOP_JS[fail] }
     : fail === "loop-later" ? { ...fixture.parts, js: `${fixture.parts.js}\nsetTimeout(function () { while (1 < 2) {} }, 1500);` }
@@ -157,7 +167,7 @@ function FrameView() {
   const check = validateWidget(parts);
 
   const note = (s: string) => setLog((l) => [...l.slice(-7), s]);
-  useEffect(() => { setLog([]); setStatus("loading"); }, [fixtureId, theme, fail]);
+  useEffect(() => { setLog([]); setStatus("loading"); }, [fixtureId, theme, fail, custom]);
 
   return (
     <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_300px] bg-bg text-ink max-md:grid-cols-1">

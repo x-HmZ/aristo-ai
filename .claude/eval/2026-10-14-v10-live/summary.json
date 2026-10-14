@@ -1,0 +1,170 @@
+{
+  "totalUsd": 0.405725,
+  "calls": 11,
+  "topics": [
+    {
+      "slug": "equivalent-fractions",
+      "expected": "interactive",
+      "lessonMs": 37410,
+      "chose": "interactive",
+      "should_generate_model": false,
+      "segments": 15,
+      "explore": 9,
+      "explorePhase": "demonstrate",
+      "imageSegments": 2,
+      "widget": {
+        "ms": 10075,
+        "bytes": 2587
+      },
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 512,
+          "out": 4143,
+          "usd": 0.062437
+        },
+        {
+          "feature": "lesson.interactive",
+          "in": 612,
+          "out": 1370,
+          "usd": 0.032289
+        }
+      ]
+    },
+    {
+      "slug": "area-vs-perimeter",
+      "expected": "interactive",
+      "lessonMs": 36231,
+      "chose": "interactive",
+      "should_generate_model": false,
+      "segments": 14,
+      "explore": 9,
+      "explorePhase": "demonstrate",
+      "imageSegments": 4,
+      "widget": {
+        "ms": 14147,
+        "bytes": 3538
+      },
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 498,
+          "out": 4025,
+          "usd": 0.042845
+        },
+        {
+          "feature": "lesson.interactive",
+          "in": 594,
+          "out": 1900,
+          "usd": 0.021577
+        }
+      ]
+    },
+    {
+      "slug": "experimental-probability",
+      "expected": "interactive",
+      "lessonMs": 36115,
+      "chose": "interactive",
+      "should_generate_model": false,
+      "segments": 13,
+      "explore": 8,
+      "explorePhase": "demonstrate",
+      "imageSegments": 3,
+      "widget": {
+        "ms": 17282,
+        "bytes": 4604
+      },
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 493,
+          "out": 3920,
+          "usd": 0.041785
+        },
+        {
+          "feature": "lesson.interactive",
+          "in": 611,
+          "out": 2300,
+          "usd": 0.025611
+        }
+      ]
+    },
+    {
+      "slug": "python-for-range",
+      "expected": "interactive",
+      "lessonMs": 32087,
+      "chose": "interactive",
+      "should_generate_model": false,
+      "segments": 14,
+      "explore": 7,
+      "explorePhase": "demonstrate",
+      "imageSegments": 2,
+      "widget": {
+        "ms": 20446,
+        "bytes": 5624
+      },
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 477,
+          "out": 3527,
+          "usd": 0.037823
+        },
+        {
+          "feature": "lesson.interactive",
+          "in": 527,
+          "out": 2686,
+          "usd": 0.029303
+        }
+      ]
+    },
+    {
+      "slug": "python-if-elif",
+      "expected": "interactive",
+      "lessonMs": 37047,
+      "chose": "interactive",
+      "should_generate_model": false,
+      "segments": 12,
+      "explore": 7,
+      "explorePhase": "demonstrate",
+      "imageSegments": 2,
+      "widget": {
+        "ms": 16665,
+        "bytes": 4256
+      },
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 472,
+          "out": 3794,
+          "usd": 0.040483
+        },
+        {
+          "feature": "lesson.interactive",
+          "in": 498,
+          "out": 2120,
+          "usd": 0.023585
+        }
+      ]
+    },
+    {
+      "slug": "plant-cell",
+      "expected": "3D or image",
+      "lessonMs": 42137,
+      "chose": "3D model",
+      "should_generate_model": true,
+      "segments": 16,
+      "explore": -1,
+      "explorePhase": null,
+      "imageSegments": 3,
+      "calls": [
+        {
+          "feature": "teach.lesson",
+          "in": 489,
+          "out": 4541,
+          "usd": 0.047987
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "goal": "See experimental probability (from repeated coin flips) wobble around but gradually settle near the theoretical probability of 0.5 as the number of flips grows.",
+  "brief": "A coin-flip simulator with a running bar chart showing the percentage of heads so far, starting at 0 flips. A dashed horizontal line marks the theoretical value 0.5 (50%). Flipping updates the percentage live.",
+  "controls": [
+    {
+      "label": "Flip once",
+      "kind": "stepper",
+      "effect": "Adds one random flip and updates the running percentage of heads."
+    },
+    {
+      "label": "Flip 50 at once",
+      "kind": "stepper",
+      "effect": "Adds 50 random flips at once, showing how quickly the line stabilizes near 50%."
+    },
+    {
+      "label": "Reset",
+      "kind": "toggle",
+      "effect": "Clears all flips and starts the experiment over from 0."
+    }
+  ],
+  "try_this": [
+    "Flip just 5 times and see how far the percentage can be from 50%.",
+    "Flip 50 at once and watch the percentage move closer to the dashed 50% line.",
+    "Reset and try again — does it look different early on but similar after many flips?"
+  ]
+}

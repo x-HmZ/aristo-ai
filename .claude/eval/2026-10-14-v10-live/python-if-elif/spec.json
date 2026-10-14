@@ -1,0 +1,16 @@
+{
+  "goal": "See that only the FIRST true condition in a chain of if/elif/else runs, even if later conditions are also true.",
+  "brief": "A vertical flow of if/elif/else blocks checking a score variable. A slider sets the score from 0 to 100. As it moves, each condition box lights up green (checked), and exactly one branch lights up gold (the one that actually runs) while the rest stay gray.",
+  "controls": [
+    {
+      "label": "Score",
+      "kind": "slider",
+      "effect": "Changes the value being tested, which changes which condition is true first and therefore which branch highlights gold."
+    }
+  ],
+  "try_this": [
+    "Set Score to 95 and see which branch lights up gold.",
+    "Set Score to 72 and notice it skips the first condition.",
+    "Set Score to 40 and see the else branch finally run."
+  ]
+}

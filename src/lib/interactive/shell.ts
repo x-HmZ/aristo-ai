@@ -223,7 +223,9 @@ export function buildWidgetDoc(parts: InteractiveParts, theme: WidgetTheme): str
     `</head><body>`,
     `<main id="app">${parts.markup}</main>`,
     `<script>${bridgeJs(theme)}</script>`,
-    `<script>${safeScript(parts.js)}</script>`,
+    // Its own function scope: a top-level `var history = []` (the 2026-10-14 live test) would otherwise
+    // hit window.history and silently stay the History object; the same for name, status, length, top...
+    `<script>(function(){\n${safeScript(parts.js)}\n})();</script>`,
     `<script>${READY_JS}</script>`,
     `</body></html>`,
   ].join("\n");

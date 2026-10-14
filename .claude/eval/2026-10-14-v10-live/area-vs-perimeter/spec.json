@@ -1,0 +1,21 @@
+{
+  "goal": "See that rectangles with the same perimeter can have very different areas, and find which shape gives the most area.",
+  "brief": "A rectangle is drawn on a grid. Two sliders control Length and Width. A fixed perimeter target (say 20 units) is shown, and as you move one slider the other auto-adjusts to keep the perimeter at 20, while the area and the filled unit squares update live.",
+  "controls": [
+    {
+      "label": "Length",
+      "kind": "slider",
+      "effect": "Increases the rectangle's length; width automatically shrinks to keep perimeter fixed at 20, and the area recalculates and redraws the grid squares."
+    },
+    {
+      "label": "Width",
+      "kind": "slider",
+      "effect": "Increases the rectangle's width; length automatically shrinks to keep perimeter fixed at 20, and the area recalculates and redraws the grid squares."
+    }
+  ],
+  "try_this": [
+    "Make a very long, thin rectangle and watch the area shrink.",
+    "Try to make Length equal Width - what happens to the area?",
+    "Find the Length/Width pair that gives the biggest area possible."
+  ]
+}

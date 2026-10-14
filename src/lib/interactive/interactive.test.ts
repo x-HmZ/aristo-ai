@@ -238,6 +238,11 @@ describe("buildWidgetDoc", () => {
     expect(ready).toBeGreaterThan(widget);
   });
 
+  it("runs the widget in its own function scope, so `var history` cannot hit window.history", () => {
+    const doc = buildWidgetDoc({ ...goodParts, js: "var history = [];" }, "light");
+    expect(doc).toContain("<script>(function(){\nvar history = [];\n})();</script>");
+  });
+
   it("escapes the title and cannot be broken out of by a stray close tag", () => {
     const doc = buildWidgetDoc(
       { ...goodParts, title: `<b>"x"</b>`, js: `var s='</script><img src=x onerror=1>'`, css: `a{}</style><b>` },

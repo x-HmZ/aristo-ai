@@ -1,0 +1,196 @@
+{
+  "concept_id": "live-python-if-elif",
+  "concept_name": "Python if, elif and else",
+  "phases": {
+    "activate": {
+      "content": "We connect if/elif/else to everyday layered decisions, like choosing an umbrella vs a jacket vs nothing based on checking weather conditions in order. This primes the idea that Python checks conditions sequentially, just like a person would.",
+      "prerequisites_referenced": [],
+      "segment_ids": [
+        "seg_001",
+        "seg_002"
+      ]
+    },
+    "explain": {
+      "analogy": "Checking weather conditions one by one each morning: rain first, then cold, then default to a t-shirt — you stop checking once you find your answer.",
+      "formal_explanation": "An if/elif/else chain evaluates conditions strictly top to bottom. As soon as one condition evaluates to True, its block of code runs, and Python exits the entire chain without checking any remaining elif or else. If no condition is True, the else block (which has no condition) runs as the default.",
+      "key_insight": "Only the FIRST true condition's branch ever runs — Python never evaluates or runs anything further down the chain once a match is found.",
+      "segment_ids": [
+        "seg_003",
+        "seg_004",
+        "seg_005"
+      ]
+    },
+    "demonstrate": {
+      "example_description": "Grading a score with if/elif/else",
+      "step_by_step": [
+        "Define score = 72",
+        "Check if score >= 90 -> False, skip",
+        "Check elif score >= 80 -> False, skip",
+        "Check elif score >= 60 -> True, run this block",
+        "Print 'You passed with a C', then exit the whole chain"
+      ],
+      "narration_pre_visual": "Let's trace through the code step by step with a real value so you can watch Python's decision-making happen.",
+      "visual_walkthrough": "Look at the diagram: the score 72 fails the first two diamonds, hits the third diamond 'score >= 60?' which is True, lights up gold, and the flow stops there — the else box stays gray and unused.",
+      "code": "score = 72\n\nif score >= 90:\n    print(\"Excellent! You got an A\")\nelif score >= 80:\n    print(\"Great job, a B\")\nelif score >= 60:\n    print(\"You passed with a C\")\nelse:\n    print(\"You need to retake the test\")\n",
+      "output": "You passed with a C",
+      "segment_ids": [
+        "seg_006",
+        "seg_007",
+        "seg_008",
+        "seg_009"
+      ]
+    },
+    "challenge": {
+      "question": "If conditions are checked in the order elif score >= 60, then elif score >= 80, then elif score >= 90, and score is 95, which message prints and why does it show order matters?",
+      "hint": "Python stops at the FIRST true condition — think about which condition 95 satisfies first when you go top to bottom.",
+      "answer": "The C message prints, because 95 >= 60 is checked first and is True, so Python runs that branch and never checks the 80 or 90 conditions. This proves conditions must be ordered from most specific/narrow to least specific, usually highest threshold first.",
+      "segment_ids": [
+        "seg_010",
+        "seg_011"
+      ]
+    },
+    "connect": {
+      "content": "This stop-at-first-match behavior is the foundation of decision-making in nearly all programs, from input validation to game logic and beyond.",
+      "next_concept": "Combining conditions with 'and' and 'or' operators",
+      "segment_ids": [
+        "seg_012"
+      ]
+    }
+  },
+  "segments": [
+    {
+      "id": "seg_001",
+      "phase": "activate",
+      "role": "hook",
+      "text": "Think about how you decide what to wear each morning: if it's raining, you grab an umbrella; otherwise if it's cold, you grab a jacket; otherwise you just go in a t-shirt. You already make these layered decisions every day.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_002",
+      "phase": "activate",
+      "role": "narrate",
+      "text": "Python has a way to write exactly that kind of layered decision in code, using the words if, elif, and else. It checks your conditions in order, one after another, just like you checking rain, then cold, then nothing."
+    },
+    {
+      "id": "seg_003",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Here's the key idea: Python reads your conditions from top to bottom like a checklist, and the moment it finds one that's true, it runs that branch and completely ignores everything below it — even if those lower conditions are also true."
+    },
+    {
+      "id": "seg_004",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Formally: an if/elif/else chain is a sequence of conditions checked in order. The first True condition's block executes, and the entire chain stops there. If none are True, the else block runs as the fallback — and else has no condition of its own.",
+      "visual": {
+        "prompt": "Vertical flowchart: diamond 'if condition A?' arrow to box 'run A' if yes, arrow down to diamond 'elif condition B?' if no, arrow to box 'run B' if yes, arrow down to diamond 'elif condition C?', then final box 'else: run D'. Only one path highlighted in gold, others gray. Clean process_flow diagram.",
+        "style": "process_flow",
+        "callouts": [
+          "Checked top to bottom",
+          "Only ONE branch runs",
+          "else = no condition left"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_005",
+      "phase": "explain",
+      "role": "callout",
+      "text": "Look at the flowchart: even though a lower condition like C might also be true, Python never even checks it once it already found B was true. The chain short-circuits and exits immediately.",
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_006",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Let's make this concrete with a grading example. We'll check a student's score and decide which letter grade message to print.",
+      "visual": null
+    },
+    {
+      "id": "seg_007",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Suppose score is 72. Python asks: is score >= 90? No. Is score >= 80? No. Is score >= 60? Yes! It prints 'You passed with a C' and stops — it never bothers checking anything after that.",
+      "narration_pre_visual": "Let's trace through the code step by step with a real value so you can watch Python's decision-making happen.",
+      "visual_walkthrough": "Look at the diagram: the score 72 fails the first two diamonds, hits the third diamond 'score >= 60?' which is True, lights up gold, and the flow stops there — the else box stays gray and unused.",
+      "segment_ids": [],
+      "example_description": "Grading a score with if/elif/else",
+      "step_by_step": [
+        "Define score = 72",
+        "Check if score >= 90 -> False, skip",
+        "Check elif score >= 80 -> False, skip",
+        "Check elif score >= 60 -> True, run this block",
+        "Print 'You passed with a C', then exit the whole chain"
+      ],
+      "code": "score = 72\n\nif score >= 90:\n    print(\"Excellent! You got an A\")\nelif score >= 80:\n    print(\"Great job, a B\")\nelif score >= 60:\n    print(\"You passed with a C\")\nelse:\n    print(\"You need to retake the test\")\n",
+      "output": "You passed with a C",
+      "gesture": "explaining",
+      "visual": {
+        "prompt": "Flowchart tracing score=72 through if/elif/else grade chain: diamond '>=90?' marked False gray, diamond '>=80?' False gray, diamond '>=60?' True gold highlighted leading to box 'print C', else box grayed out unreached.",
+        "style": "process_flow",
+        "callouts": [
+          "score = 72",
+          ">=90? False",
+          ">=80? False",
+          ">=60? True -> runs, stops here"
+        ],
+        "persists_to_next": false
+      }
+    },
+    {
+      "id": "seg_008",
+      "phase": "demonstrate",
+      "role": "explore",
+      "text": "Try the Score slider on the board and watch which branch lights up gold as you move it across different values.",
+      "gesture": "idle"
+    },
+    {
+      "id": "seg_009",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Notice that order matters. If you had written 'elif score >= 60' before 'elif score >= 80', then a score of 95 would incorrectly get caught by the lower bar first, since Python stops at the first true condition it meets."
+    },
+    {
+      "id": "seg_010",
+      "phase": "challenge",
+      "role": "challenge_setup",
+      "text": "Here's a thinking question: suppose a programmer writes conditions in this order — elif score >= 60, then elif score >= 80, then elif score >= 90 — with no plain if at the top (let's ignore that syntax detail for a second). If score is 95, which message prints, and what does this reveal about why order matters?"
+    },
+    {
+      "id": "seg_011",
+      "phase": "challenge",
+      "role": "challenge_reveal",
+      "text": "The score of 95 is >= 60, so that very first condition catches it and prints the C message — the 'excellent, A' branch never even gets checked. This reveals the big misconception to avoid: Python does NOT run every branch whose condition is true, only the first one it encounters. Always put the most specific or narrowest condition first."
+    },
+    {
+      "id": "seg_012",
+      "phase": "connect",
+      "role": "transition",
+      "text": "This top-to-bottom, stop-at-first-match behavior isn't just for grades — it's the backbone of decision-making in almost every program you'll write, from validating user input to controlling game logic. Next, you'll build on this by combining conditions with 'and' and 'or' to make even richer decisions."
+    }
+  ],
+  "metadata": {
+    "estimated_read_time_minutes": 5,
+    "bloom_level_taught": "Apply",
+    "depth_level": "moderate",
+    "should_generate_model": false,
+    "interactive": {
+      "goal": "See that only the FIRST true condition in a chain of if/elif/else runs, even if later conditions are also true.",
+      "brief": "A vertical flow of if/elif/else blocks checking a score variable. A slider sets the score from 0 to 100. As it moves, each condition box lights up green (checked), and exactly one branch lights up gold (the one that actually runs) while the rest stay gray.",
+      "controls": [
+        {
+          "label": "Score",
+          "kind": "slider",
+          "effect": "Changes the value being tested, which changes which condition is true first and therefore which branch highlights gold."
+        }
+      ],
+      "try_this": [
+        "Set Score to 95 and see which branch lights up gold.",
+        "Set Score to 72 and notice it skips the first condition.",
+        "Set Score to 40 and see the else branch finally run."
+      ]
+    }
+  }
+}
