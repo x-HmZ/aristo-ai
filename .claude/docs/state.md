@@ -2,6 +2,26 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-14 - Jake's sleeves: sweater to shirt (on dev/v10-interactive-visuals, uncommitted)
+
+Hmz: from the elbows down Jake's shirt read as a sweater. Evidence and numbers: `.claude/eval/2026-10-14-jake-sleeves/`
+(README). Cause: V8.3d's even 12-14 mm sleeve ease plus a 3 cm shortening squeezed into the forearm (a wide tube with
+stacked rings), a pinch above a rounded cuff that hung 60% on the hand bone. Not the cloth material (tested).
+- **Hmz picked "tailored"** from two rendered options (relaxed, tailored; rolled sleeves offered, not built).
+- **Built:** `v9_sleeve.tailor` (vertices and weights only: forearm loft to a straight, square cuff 13 mm off the
+  wrist, the cuff off the hand bone). Hmz saw 11 mm; 13 mm is what cleared the right wrist in every frame.
+- **Shipped by splice** (`scripts/splice.mjs`): only the shirt changes inside the shipped `Teacher_Jake.glb`; the
+  Blender 5.1 export of the working scene freezes the clips (2 keys), so the teacher was not re-exported. Other 21
+  primitives (visemes), 3 base clips, textures, nodes, skins identical; clips pack untouched. 2,362,404 B (was
+  2,363,200). Working scene saved with the edit; backup `bakeoff_scene_pre_sleeves1014.blend`.
+- **Checked:** `find_pokes` 0 and the camera-ray test 0, both sides, every frame of all 34 clips; mirror numbers
+  match L/R; `/demo` 1080p before/after headless, 0 paid requests; eslint and tsc clean.
+- **Also:** `/dev/avatar-lab?shot` (room lights, outfit, `window.__lab` pose/cam/shirt, `?file=`), dev only.
+- **Open:** the landing posters and stills (V8.3d `stills.cjs`, `room-stills.cjs`, `faces.cjs`) still show the old
+  sleeves, so the poster-to-live handover will jump at the cuffs: recapture before footage. The Blender 5.1 NLA
+  export bug (`v9_export.stack_nla`, 2-key clips) is unfixed: any future clip re-export needs it solved first.
+- **Next:** commit; landing poster recapture; then the V10 queue below (residuals, Jake's voice, live test, footage).
+
 ## 2026-10-13 - V10: interactive visuals, a third kind of teaching visual (branch dev/v10-interactive-visuals, not pushed or merged)
 
 Hmz asked for Gemini-style interactive widgets (sliders, buttons) as a third option beside the image and the 3D model, picked by the
