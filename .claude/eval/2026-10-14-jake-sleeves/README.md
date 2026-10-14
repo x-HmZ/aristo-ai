@@ -60,3 +60,19 @@ option sheets Hmz picked from (three.js, the room's lights, the sage shirt; `/de
 - `scripts/measure.py`, `probe_cuff.py`, `probe_weights.py` (diagnosis), `build_option.py` (tailor + raw export)
 - `scripts/splice.mjs`, `verify_rest.mjs`, `inspect.mjs`, `parts.cjs` (bytes per part of a GLB)
 - The scene before this session: `../2026-09-18-v9-bakeoff/bakeoff_scene_pre_sleeves1014.blend`
+
+## Follow-up (same day): the export, and the landing posters
+
+- **The export works again** (in Hmz's live Blender through the MCP). Blender 5.1's glTF exporter, with its default
+  `export_optimize_animation_size`, cut every NLA track to 2 keys (first and last frame: a slide between two poses).
+  `v9_export.export` now passes False; a full 34-clip export through `v9_ship`'s steps verifies at worst 0.0156 deg /
+  0.118 mm (`v9_verify_anim.mjs`, V9.8's figure), its other 21 primitives identical to the shipped file. Its base comes
+  out 51 KB larger (animation 196 KB against 144 KB, same channels and keys: packing, not motion), so the spliced
+  file stays shipped. Run the export in the GUI Blender: headless (`blender -b`), `normalise` measured Jake at 33.9 m
+  and shrank the shirt 20x, the "uniform scale" `splice.mjs` undoes.
+- **Landing posters recaptured** for Jake (`2026-10-03-v8-3c-landing/scripts`: `stills.cjs` first for hero, idea,
+  moves, remember, close; end and start for picture, model; `room-stills.cjs`; `faces.cjs`), 0 API calls; MJ's face
+  byte-identical. Old ones in `landing/before/`, `sheets/landing-before-after.jpg`.
+- **Handover** (`scripts/handover.cjs`, V8.3c's with `?nointro`; `landing/handover/`): poster against the first live
+  frame within 2 px at every spot but picture, whose live frame carries the board picture the poster does not
+  (mean diff 13.8; 9.5 to 14.9 in every run since V8.3b).
