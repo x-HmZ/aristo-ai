@@ -193,6 +193,7 @@ interface AristoState {
   previewZoomUrl:        string | null; // set when user clicks image to zoom in
   isGeneratingModel:     boolean;
   modelInteracting:      boolean;       // true while user drags/hovers model — disables OrbitControls
+  boardInteracting:      boolean;       // true while the pointer is on the display (zoom, pan) — disables OrbitControls
   pending3dImageUrl:     string | null; // FLUX image waiting for user to opt into 3D conversion
   viewMode3d:            boolean;       // true → show 3D model; false → show image (when both available)
 
@@ -305,6 +306,7 @@ interface AristoState {
   setPreviewZoomUrl:        (url: string | null) => void;
   setIsGeneratingModel:     (gen: boolean)       => void;
   setModelInteracting:      (v: boolean)         => void;
+  setBoardInteracting:      (v: boolean)         => void;
   setPending3dImageUrl:     (url: string | null) => void;
   setViewMode3d:            (v: boolean)         => void;
   setCustomTeacherGlbUrl:   (url: string | null) => void;
@@ -394,6 +396,7 @@ export const useAristoStore = create<AristoState>()(
       previewZoomUrl:        null,
       isGeneratingModel:     false,
       modelInteracting:      false,
+      boardInteracting:      false,
       pending3dImageUrl:     null,
       viewMode3d:            false,
       customTeacherGlbUrl:   null,
@@ -455,6 +458,7 @@ export const useAristoStore = create<AristoState>()(
       setPreviewZoomUrl:        (url) => set({ previewZoomUrl: url }),
       setIsGeneratingModel:     (gen) => set({ isGeneratingModel: gen }),
       setModelInteracting:      (v)   => set({ modelInteracting: v }),
+      setBoardInteracting:      (v)   => set({ boardInteracting: v }),
       setPending3dImageUrl:     (url) => set({ pending3dImageUrl: url }),
       setViewMode3d:            (v)   => set({ viewMode3d: v }),
       setCustomTeacherGlbUrl:   (url) => set({ customTeacherGlbUrl: url }),

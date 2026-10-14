@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "name": "1280x720: scrolling zooms the picture",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "1280x720: double-click resets",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "1920x1080: scrolling zooms the picture",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "1920x1080: double-click resets",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "heart: the narration lights a model label",
+      "pass": true,
+      "extra": "Right atrium, Right ventricle, Left atrium, Left ventricle"
+    }
+  ]
+}

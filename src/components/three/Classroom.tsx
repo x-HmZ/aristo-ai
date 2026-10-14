@@ -225,11 +225,29 @@ type Vec3 = [number, number, number];
 const ROOM_SHELL = {
   classroom: { position: [0.2, -1.7, -2] as Vec3, rotationY: 0, scale: 1 },
   board:     { position: [0.45, 0.382, -6] as Vec3 },
+  // The wall display's screen, measured from the GLB (.claude/eval/2026-10-15-placement/scripts/probe-display.cjs):
+  // x -1.059..1.867, y -0.421..1.132, face at z -5.565, facing the room (+z).
+  display:   { center: [0.404, 0.356, -5.565] as Vec3, width: 2.926, height: 1.553 },
 };
+
+/**
+ * Where a room shows what the teacher presents. The teaching image and the interactive widget are placed on it and
+ * the camera frames it, so a new room only has to say where its screen is. The no-room view keeps the same spot.
+ */
+export interface RoomDisplay {
+  center: Vec3;
+  width:  number;
+  height: number;
+}
+
+export function roomDisplay(variant: ClassroomVariant): RoomDisplay {
+  return variant === "none" ? ROOM_SHELL.display : PLACEMENT[variant].display;
+}
 
 const PLACEMENT: Record<ClassroomProps["variant"], {
   classroom: { position: Vec3; rotationY: number; scale: number };
   board:     { position: Vec3 };
+  display:   RoomDisplay;
   /** Second-row desk for the ambient DeskPaper; null where the room has none. */
   desk:      { position: Vec3 } | null;
 }> = {

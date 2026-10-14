@@ -3,17 +3,17 @@
 import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
 import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
-import { Component, Suspense, useEffect, useRef, useMemo, type ErrorInfo, type ReactNode } from "react";
-import { Group, MeshBasicMaterial, SRGBColorSpace } from "three";
+import { Component, Suspense, useEffect, useRef, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
+import { Mesh, MeshBasicMaterial, Plane, SRGBColorSpace, Vector3 } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { GeneratedModel } from "./GeneratedModel";
 import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
-import { Classroom } from "./Classroom";
-import { Callouts } from "@/components/learn/Callouts";
+import { Classroom, roomDisplay, type RoomDisplay } from "./Classroom";
 import { BRAND_HEX } from "@/lib/brandColors";
-import { Box, Image as ImageIcon, Mic } from "lucide-react";
+import { Box, Image as ImageIcon, Maximize2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CameraController } from "./CameraController";
+import { LensShift } from "./LensShift";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
 import { RendererConfig, SceneLights } from "./SceneBits";
 
@@ -47,6 +47,10 @@ const MODEL_X = SCENE_X;
 const MODEL_Y = SCENE_Y;
 const MODEL_Z = SCENE_Z;
 
+// Where the teacher stands: beside the display, not in front of it. At x -1 the teacher hid the screen's left
+// quarter from the camera; -1.6 keeps the whole screen clear (V10 placement, 2026-10-15).
+const TEACHER_X = -1.6;
+
 // Legacy rigs (Ryan/Sonia/Marcus/Priya/custom Avaturn) never got measured
 // against the classroom furniture — only Jake and MJ, the shipped roster,
 // have a `standScale`. Keep the old flat 1.5 for everything else (V9.2b).
@@ -78,13 +82,11 @@ function Floor() {
 }
 
 
-// Teaching image rendered as a crisp WebGL plane — avoids CSS-transform blurriness.
+// Teaching image rendered as a crisp WebGL plane on the room's display — avoids CSS-transform blurriness.
 // SRGBColorSpace fixes the black-texture bug in Three.js r152+.
-// 1.265 × 1.15 ≈ 1.455 (another +15 %)
-const IMG_SIZE   = 1.455;
-const FRAME_SIZE = 1.525; // border stays ~0.07 wider all around
+const MAX_BOARD_ZOOM = 4;
 
-function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
+function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: RoomDisplay }) {
   const texture              = useTexture(imageUrl);
   texture.colorSpace         = SRGBColorSpace;
   const setPreviewZoomUrl    = useAristoStore((s) => s.setPreviewZoomUrl);
@@ -95,49 +97,104 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
   const setActiveModelUrl    = useAristoStore((s) => s.setActiveModelUrl);
   const setViewMode3d        = useAristoStore((s) => s.setViewMode3d);
   const demoMode             = useAristoStore((s) => s.demoMode);
+  const setBoardInteracting  = useAristoStore((s) => s.setBoardInteracting);
 
-  // Current-segment callouts — adaptive-visual mode only. When LessonPlayer
-  // bumps currentSegmentId, we look up the matching segment's visual.callouts
-  // and surface them as floating chips above the image so the student sees
-  // exactly what the avatar is pointing at.
-  const currentSegmentId = useAristoStore((s) => s.currentSegmentId);
   const activeLesson     = useAristoStore((s) => s.activeLesson);
-  const calloutLabels = useMemo<string[]>(() => {
-    if (!currentSegmentId || !activeLesson?.segments) return [];
-    const seg = activeLesson.segments.find((s) => s.id === currentSegmentId);
-    return seg?.visual?.callouts ?? [];
-  }, [currentSegmentId, activeLesson]);
 
-  const groupRef     = useRef<Group>(null);
-  const imgScale     = useRef(1.0);
   const materialRef  = useRef<MeshBasicMaterial>(null);
+  const imageRef     = useRef<Mesh>(null);
+  const { gl } = useThree();
 
-  // Fade-in animation when the image URL swaps (200ms ramp). Combined with
-  // the Float container's bobbing motion, this reads as a gentle dissolve
-  // rather than a hard cut between segment visuals.
+  // The picture lives inside the screen's bezel. Square diagrams fill its height at rest.
+  const areaW = display.width * 0.97;
+  const areaH = display.height * 0.94;
+  const side  = areaH;
+
+  // Zoom like a smart board: the picture magnifies and pans INSIDE the screen, clipped at the bezel; the screen
+  // itself never grows. Scroll zooms about the cursor, drag moves a zoomed picture, double-click resets.
+  const view = useRef({ z: 1, x: 0, y: 0 });
+  const dragFrom = useRef<{ x: number; y: number } | null>(null);
+  const [zoomed, setZoomed] = useState(false);
+  const clipPlanes = useMemo(() => {
+    const [cx, cy] = display.center;
+    return [
+      new Plane(new Vector3(1, 0, 0), -(cx - areaW / 2)),
+      new Plane(new Vector3(-1, 0, 0), cx + areaW / 2),
+      new Plane(new Vector3(0, 1, 0), -(cy - areaH / 2)),
+      new Plane(new Vector3(0, -1, 0), cy + areaH / 2),
+    ];
+  }, [display, areaW, areaH]);
+  useEffect(() => { gl.localClippingEnabled = true; }, [gl]);
+
+  const settle = () => {
+    const v = view.current;
+    const half = (side * v.z) / 2;
+    const mx = Math.max(0, half - areaW / 2);
+    const my = Math.max(0, half - areaH / 2);
+    v.x = Math.max(-mx, Math.min(mx, v.x));
+    v.y = Math.max(-my, Math.min(my, v.y));
+    setZoomed(v.z > 1.001);
+  };
+  const reset = () => { view.current = { z: 1, x: 0, y: 0 }; setZoomed(false); };
+
+  // Fade-in when the image URL swaps (200ms ramp): a dissolve on the screen rather than a hard cut. A new
+  // picture also starts unzoomed.
   const fadeStart = useRef<number>(performance.now());
   useEffect(() => {
     fadeStart.current = performance.now();
     if (materialRef.current) materialRef.current.opacity = 0;
+    reset();
   }, [imageUrl]);
 
   useFrame(() => {
-    if (groupRef.current) groupRef.current.scale.setScalar(imgScale.current);
     if (materialRef.current) {
       const t = (performance.now() - fadeStart.current) / 200;
       materialRef.current.opacity = Math.min(1, Math.max(0, t));
     }
+    const v = view.current;
+    imageRef.current?.position.set(v.x, v.y, 0);
+    imageRef.current?.scale.setScalar(v.z);
   });
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    setPreviewZoomUrl(imageUrl);
-  };
-
+  // Event points arrive in world space; the screen is unrotated, so local = world minus its centre.
+  const local = (e: ThreeEvent<PointerEvent | WheelEvent | MouseEvent>) => ({
+    x: e.point.x - display.center[0],
+    y: e.point.y - display.center[1],
+  });
   const onWheel = (e: ThreeEvent<WheelEvent>) => {
     e.stopPropagation();
-    imgScale.current = Math.max(0.4, Math.min(2.5, imgScale.current - e.deltaY * 0.001));
+    const v = view.current;
+    const z = Math.max(1, Math.min(MAX_BOARD_ZOOM, v.z * Math.exp(-e.deltaY * 0.0015)));
+    const p = local(e);
+    v.x = p.x - (p.x - v.x) * (z / v.z);
+    v.y = p.y - (p.y - v.y) * (z / v.z);
+    v.z = z;
+    settle();
   };
+  const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (view.current.z <= 1.001) return;
+    e.stopPropagation();
+    (e.target as Element | null)?.setPointerCapture?.(e.pointerId);
+    dragFrom.current = local(e);
+    document.body.style.cursor = "grabbing";
+  };
+  const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
+    if (!dragFrom.current) return;
+    const p = local(e);
+    view.current.x += p.x - dragFrom.current.x;
+    view.current.y += p.y - dragFrom.current.y;
+    dragFrom.current = p;
+    settle();
+  };
+  const hovering = useRef(false);
+  const endDrag = () => {
+    dragFrom.current = null;
+    // A drag that ended off the screen gives the camera back now; one that ended on it keeps the board's.
+    if (!hovering.current) { setBoardInteracting(false); document.body.style.cursor = ""; return; }
+    document.body.style.cursor = zoomed ? "grab" : "zoom-in";
+  };
+  // Leaving the board (or the picture going away) hands the scroll and the drag back to the camera.
+  useEffect(() => () => setBoardInteracting(false), [setBoardInteracting]);
 
   const handleViewIn3d = async () => {
     if (!pending3dImageUrl || isGeneratingModel) return;
@@ -187,38 +244,39 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
   const showViewIn3dButton = !!pending3dImageUrl && !isGeneratingModel;
 
   return (
-    <Float speed={1.0} rotationIntensity={0.04} floatIntensity={0.2} floatingRange={[-0.03, 0.03]}>
-      <group ref={groupRef} position={[SCENE_X, SCENE_Y, SCENE_Z]}>
-        {/* Main image plane — click to open lightbox, scroll to resize */}
-        <mesh
-          onClick={handleClick}
-          onWheel={onWheel}
-          onPointerEnter={() => { document.body.style.cursor = "zoom-in"; }}
-          onPointerLeave={() => { document.body.style.cursor = ""; }}
-        >
-          <planeGeometry args={[IMG_SIZE, IMG_SIZE]} />
-          <meshBasicMaterial ref={materialRef} map={texture} toneMapped={false} transparent />
+    // On the room's display, just in front of its face: the teacher presents on the screen behind them.
+    <group position={[display.center[0], display.center[1], display.center[2] + 0.012]}>
+        {/* The picture, clipped to the screen so a zoomed one never spills past the bezel. */}
+        <mesh ref={imageRef}>
+          <planeGeometry args={[side, side]} />
+          <meshBasicMaterial ref={materialRef} map={texture} toneMapped={false} transparent clippingPlanes={clipPlanes} />
         </mesh>
 
-        {/* Per-segment callout chips — adaptive-visual mode only.
-            Anchored by their BOTTOM edge just above the frame, so a strip that wraps to a second row grows up,
-            away from the diagram (centred, a tall strip hung over the image's own title). */}
-        {calloutLabels.length > 0 && (
-          <Html position={[0, FRAME_SIZE / 2 + 0.03, 0]} style={{ transform: "translate(-50%, -100%)" }}>
-            <Callouts callouts={calloutLabels} />
-          </Html>
-        )}
-
-        {/* Soft orange border frame */}
-        <mesh position={[0, 0, -0.001]}>
-          <planeGeometry args={[FRAME_SIZE, FRAME_SIZE]} />
-          <meshBasicMaterial color={BRAND_HEX.orangeMain} transparent opacity={0.25} />
+        {/* The whole screen takes the scroll and the drag, not just the picture. */}
+        <mesh
+          position={[0, 0, 0.002]}
+          onWheel={onWheel}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onDoubleClick={(e) => { e.stopPropagation(); reset(); }}
+          onPointerEnter={() => { hovering.current = true; setBoardInteracting(true); document.body.style.cursor = zoomed ? "grab" : "zoom-in"; }}
+          onPointerLeave={() => {
+            hovering.current = false;
+            if (dragFrom.current) return; // a drag in progress keeps the board until it ends
+            setBoardInteracting(false);
+            document.body.style.cursor = "";
+          }}
+        >
+          <planeGeometry args={[areaW, areaH]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
 
         {/* Bottom toolbar — state-aware. Ink glass (`.theme-ink`) in both
             themes, like everything placed on the lit room; "View in 3D" is
             the system's secondary control (V8.4a). */}
-        <Html position={[0, -(IMG_SIZE / 2 + 0.13), 0]} center>
+        <Html position={[0, -(display.height / 2 + 0.2), 0]} center>
           <div className="theme-ink flex items-center gap-1.5">
             {isGeneratingModel ? (
               <div role="status" className={SCENE_CHIP}>
@@ -233,15 +291,18 @@ function TeachingImageInner({ imageUrl }: { imageUrl: string }) {
                     {activeModelUrl ? "Show 3D" : "View in 3D"}
                   </Button>
                 )}
+                <Button variant="secondary" onClick={() => setPreviewZoomUrl(imageUrl)} className={SCENE_BUTTON}>
+                  <Maximize2 aria-hidden />
+                  Expand
+                </Button>
                 <div className={SCENE_CHIP}>
-                  scroll to resize · click to zoom
+                  {zoomed ? "drag to move · double-click to reset" : "scroll on the screen to zoom"}
                 </div>
               </>
             )}
           </div>
         </Html>
-      </group>
-    </Float>
+    </group>
   );
 }
 
@@ -259,10 +320,10 @@ function ModelToolbar() {
   );
 }
 
-function TeachingImagePanel({ imageUrl }: { imageUrl: string }) {
+function TeachingImagePanel({ imageUrl, display }: { imageUrl: string; display: RoomDisplay }) {
   return (
     <Suspense fallback={null}>
-      <TeachingImageInner imageUrl={imageUrl} />
+      <TeachingImageInner imageUrl={imageUrl} display={display} />
     </Suspense>
   );
 }
@@ -343,15 +404,18 @@ class ModelErrorBoundary extends Component<ModelBoundaryProps, TeacherBoundarySt
 function FloatingModel({
   modelUrl,
   modelAnnotations,
+  focusLabels,
 }: {
   modelUrl:          string;
   modelAnnotations?: ModelAnnotation[];
+  focusLabels:       string[];
 }) {
   return (
     <Float speed={1.2} rotationIntensity={0} floatIntensity={0.25} floatingRange={[-0.04, 0.04]}>
       <GeneratedModel
         modelUrl={modelUrl}
         modelAnnotations={modelAnnotations}
+        focusLabels={focusLabels}
         position={[MODEL_X, MODEL_Y, MODEL_Z]}
         // Was 1.5 — Hmz called the initial spawn size too big (V9.2b, 2026-09-23):
         // 45% smaller (middle of his 40-50% ask), 1.5 * 0.55 = 0.825. The user's
@@ -370,7 +434,7 @@ function FloatingModel({
 //
 // Re-tuned for standScale 10-15% taller still (V9.2b, Hmz — see SCENE_Y).
 // Jake and MJ differ by ~5 cm at this scale but share one bubble anchor.
-const TEACHER_HEAD_X = -0.25;
+const TEACHER_HEAD_X = TEACHER_X + 0.75;
 const TEACHER_HEAD_Y = 0.65;
 const TEACHER_HEAD_Z = -3;
 
@@ -430,6 +494,16 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
 
   // The interactive widget is a DOM card (learn/InteractiveStage); while it is up, the board image and
   // the model step aside so nothing floats behind it.
+  const display = useMemo(() => roomDisplay(classroom), [classroom]);
+
+  // What the narration is about right now (the segment's visual.callouts). A diagram already labels itself, so
+  // these only light up the matching part labels on the 3D model.
+  const currentSegmentId = useAristoStore((s) => s.currentSegmentId);
+  const focusLabels = useMemo<string[]>(() => {
+    const seg = lesson?.segments?.find((s) => s.id === currentSegmentId);
+    return seg?.visual?.callouts ?? [];
+  }, [lesson, currentSegmentId]);
+
   const interactiveUp = useAristoStore((s) => s.interactiveShown && !!s.interactive.parts && s.interactive.status !== "failed");
 
   const showModel = !!activeModelUrl && viewMode3d && !interactiveUp;
@@ -439,10 +513,17 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   // the scene anchor; the desk is the quiz paper.
   const paperAnchor = devOverrides?.paperAnchor;
   const lookTargets = useMemo<LookTargets>(() => ({
-    board: [SCENE_X, SCENE_Y, SCENE_Z],
+    board: display.center,
     model: [SCENE_X, SCENE_Y, SCENE_Z],
     desk:  paperAnchor ?? PAPER_ANCHOR,
-  }), [paperAnchor]);
+  }), [paperAnchor, display]);
+
+  // The set the camera frames: the teacher's outer edge and the display's far edge (bezel included).
+  const setLeft  = useMemo<[number, number, number]>(() => [TEACHER_X - 0.6, 0, SCENE_Z], []);
+  const setRight = useMemo<[number, number, number]>(
+    () => [display.center[0] + display.width / 2 + 0.06, display.center[1], display.center[2]],
+    [display],
+  );
 
   return (
     <>
@@ -452,6 +533,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
         deskTarget={devOverrides?.deskTarget}
         lambda={devOverrides?.lambda}
       />
+      <LensShift left={setLeft} right={setRight} />
       <color attach="background" args={[BRAND_HEX.backdrop]} />
       <SceneLights />
       <Environment preset="studio" environmentIntensity={0.5} />
@@ -465,7 +547,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
 
       <SafeTeacher
         teacher={teacher}
-        position={[-1, -1.7, SCENE_Z]}
+        position={[TEACHER_X, -1.7, SCENE_Z]}
         scale={standScaleFor(teacher)}
         rotationY={0.3}
         lookTargets={lookTargets}
@@ -490,12 +572,12 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
           }}
         >
           <Suspense fallback={null}>
-            <FloatingModel modelUrl={activeModelUrl!} modelAnnotations={lesson?.metadata.model_annotations} />
+            <FloatingModel modelUrl={activeModelUrl!} modelAnnotations={lesson?.metadata.model_annotations} focusLabels={focusLabels} />
             <ModelToolbar />
           </Suspense>
         </ModelErrorBoundary>
       ) : showImage ? (
-        <TeachingImagePanel imageUrl={activePreviewImageUrl!} />
+        <TeachingImagePanel imageUrl={activePreviewImageUrl!} display={display} />
       ) : null}
     </>
   );
