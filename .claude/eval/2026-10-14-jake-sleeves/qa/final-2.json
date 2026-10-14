@@ -1,0 +1,101 @@
+{
+ "step": 1,
+ "clips": {
+  "BringTogether": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 59
+   }
+  },
+  "HoldIdea": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 61
+   }
+  },
+  "Idle4": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 73
+   }
+  },
+  "OneMoment": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 49
+   }
+  },
+  "PresentModel": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 63
+   }
+  },
+  "Talking2": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 81
+   }
+  },
+  "Talking4": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 250
+   }
+  },
+  "Thinking": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 99
+   }
+  }
+ }
+}

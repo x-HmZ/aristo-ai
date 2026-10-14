@@ -1,0 +1,101 @@
+{
+ "step": 1,
+ "clips": {
+  "Encourage": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 61
+   }
+  },
+  "Idle": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 201
+   }
+  },
+  "Imagine": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 54
+   }
+  },
+  "PatientTilt": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 73
+   }
+  },
+  "ShakeNo": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 74
+   }
+  },
+  "Talking2M": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 81
+   }
+  },
+  "Talking6": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 25
+   }
+  },
+  "ThinkingM": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 99
+   }
+  }
+ }
+}

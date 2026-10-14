@@ -1,0 +1,113 @@
+{
+ "step": 1,
+ "clips": {
+  "Almost": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 49
+   }
+  },
+  "Exactly": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 44
+   }
+  },
+  "Idle2": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 267
+   }
+  },
+  "MoveOn": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 39
+   }
+  },
+  "PointNear": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 145
+   }
+  },
+  "StepBeat": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 35
+   }
+  },
+  "Talking3": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 71
+   }
+  },
+  "Talking6M": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 25
+   }
+  },
+  "WellDone": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 0,
+    "frames": 59
+   }
+  }
+ }
+}

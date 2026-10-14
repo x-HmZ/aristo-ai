@@ -1,0 +1,29 @@
+{
+ "step": 10,
+ "clips": {
+  "Idle": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 210,
+    "R": 525,
+    "frames": 21
+   }
+  },
+  "Talking": {
+   "pokes": {
+    "L": 2,
+    "R": 1,
+    "worst_mm": 0.34
+   },
+   "seen": {
+    "L": 132,
+    "R": 232,
+    "frames": 10
+   }
+  }
+ }
+}

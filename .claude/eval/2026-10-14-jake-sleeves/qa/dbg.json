@@ -1,0 +1,29 @@
+{
+ "step": 1,
+ "clips": {
+  "Idle2": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 111,
+    "frames": 267
+   }
+  },
+  "Pointing": {
+   "pokes": {
+    "L": 0,
+    "R": 0,
+    "worst_mm": 0
+   },
+   "seen": {
+    "L": 0,
+    "R": 35,
+    "frames": 90
+   }
+  }
+ }
+}

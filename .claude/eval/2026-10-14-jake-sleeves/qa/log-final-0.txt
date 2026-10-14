@@ -1,0 +1,19 @@
+00:07.672  blend            | Read blend: "C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\bakeoff_scene.blend"
+BlenderMCP addon registered
+[INFO ] services.locationservice ...............: Not adding link to MakeHuman user data, since neither explicit path nor auto-discovery is set in preferences.
+[INFO ] mpfb.init ..............................: Build info 20260722
+[INFO ] mpfb.init ..............................: Online access preference is not enabled. Not checking if MakeHuman is online.
+[INFO ] mpfb.init ..............................: MPFB initialization has finished.
+CLIP Almost {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 49}} 23 s
+CLIP Exactly {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 44}} 41 s
+CLIP Idle2 {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 267}} 159 s
+CLIP MoveOn {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 39}} 176 s
+CLIP PointNear {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 145}} 240 s
+CLIP StepBeat {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 35}} 256 s
+CLIP Talking3 {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 71}} 287 s
+CLIP Talking6M {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 25}} 298 s
+CLIP WellDone {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 59}} 320 s
+BlenderMCP addon unregistered
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:37:22)
+
+Blender quit

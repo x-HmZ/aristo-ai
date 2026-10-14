@@ -1,0 +1,14 @@
+00:06.875  blend            | Read blend: "C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\bakeoff_scene_pre_sleeves1014.blend"
+BlenderMCP addon registered
+[INFO ] services.locationservice ...............: Not adding link to MakeHuman user data, since neither explicit path nor auto-discovery is set in preferences.
+[INFO ] mpfb.init ..............................: Build info 20260722
+[INFO ] mpfb.init ..............................: Online access preference is not enabled. Not checking if MakeHuman is online.
+[INFO ] mpfb.init ..............................: MPFB initialization has finished.
+CLIP Idle2 {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 267}} 79 s
+CLIP Pointing {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 90}} 105 s
+CLIP Talking4 {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 1, "frames": 250}} 165 s
+CLIP Talking2M {"pokes": {"L": 0, "R": 0, "worst_mm": 0}, "seen": {"L": 0, "R": 0, "frames": 81}} 184 s
+BlenderMCP addon unregistered
+Blender 5.1.1 (hash b70da489d7f4 built 2026-04-14 01:37:22)
+
+Blender quit
