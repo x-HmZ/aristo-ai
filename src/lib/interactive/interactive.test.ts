@@ -11,11 +11,13 @@ import {
 import { codeOnly, validateWidget } from "./validate";
 import { INTERACTIVE_FIXTURES } from "./fixtures";
 import {
-  WIDGET_CSP,
   WIDGET_MESSAGE_TYPE,
   WIDGET_SANDBOX,
   WIDGET_TOKENS,
   buildWidgetDoc,
+  scriptHash,
+  widgetCsp,
+  widgetScript,
   parseWidgetMessage,
 } from "./shell";
 
@@ -214,37 +216,47 @@ describe("validateWidget", () => {
 });
 
 describe("buildWidgetDoc", () => {
-  it("carries the CSP before any script, the sandbox constants and the bridge", () => {
-    const doc = buildWidgetDoc(goodParts, "dark");
-    expect(doc).toContain(`content="${WIDGET_CSP}"`);
+  it("carries the CSP before any script, the sandbox constants and the bridge", async () => {
+    const doc = await buildWidgetDoc(goodParts, "dark");
+    const script = widgetScript(goodParts.js, "dark");
+    expect(doc).toContain(`content="${widgetCsp(await scriptHash(script))}"`);
     expect(doc.indexOf("Content-Security-Policy")).toBeLessThan(doc.indexOf("<script>"));
     expect(doc).toContain(`"${WIDGET_MESSAGE_TYPE}"`);
     expect(doc).toContain("color-scheme:dark");
     expect(doc).toContain("--ink:#ECEDEF");
     expect(WIDGET_SANDBOX).toBe("allow-scripts");
     expect(WIDGET_SANDBOX).not.toContain("allow-same-origin");
-    expect(WIDGET_CSP).toContain("default-src 'none'");
-    expect(WIDGET_CSP).not.toMatch(/webrtc/); // not honoured by Chromium; the bridge removes the constructors instead
-    expect(WIDGET_CSP).not.toMatch(/connect-src|unsafe-eval/);
+    const csp = widgetCsp("sha256-x");
+    expect(csp).toContain("default-src 'none'");
+    expect(csp).toContain("script-src 'sha256-x';");
+    expect(csp).not.toMatch(/webrtc/); // not honoured by Chromium; the bridge removes the constructors instead
+    expect(csp).not.toMatch(/connect-src|unsafe-eval|script-src[^;]*unsafe-inline/);
   });
 
-  it("puts the widget script after the bridge and the ready ping last", () => {
-    const doc = buildWidgetDoc(goodParts, "light");
-    const bridge = doc.indexOf("window.__aristoReady=");
-    const widget = doc.indexOf("ARISTO.canvas(document");
-    const ready = doc.lastIndexOf("__aristoReady&&");
+  it("has exactly one script, whose hash is the one the CSP allows", async () => {
+    const doc = await buildWidgetDoc({ ...goodParts, js: "var a = 1;\r\nvar b = 2;" }, "light");
+    const scripts = [...doc.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+    expect(scripts).toHaveLength(1);
+    expect(scripts[0]).not.toContain("\r");
+    expect(doc).toContain(`'${await scriptHash(scripts[0])}'`);
+  });
+
+  it("puts the widget after the bridge and the ready ping last, in one script", () => {
+    const script = widgetScript(goodParts.js, "light");
+    const bridge = script.indexOf("window.__aristoReady=");
+    const widget = script.indexOf("ARISTO.canvas(document");
+    const ready = script.lastIndexOf("__aristoReady&&");
     expect(bridge).toBeGreaterThan(-1);
     expect(widget).toBeGreaterThan(bridge);
     expect(ready).toBeGreaterThan(widget);
   });
 
   it("runs the widget in its own function scope, so `var history` cannot hit window.history", () => {
-    const doc = buildWidgetDoc({ ...goodParts, js: "var history = [];" }, "light");
-    expect(doc).toContain("<script>(function(){\nvar history = [];\n})();</script>");
+    expect(widgetScript("var history = [];", "light")).toContain("(function(){\nvar history = [];\n})();");
   });
 
-  it("escapes the title and cannot be broken out of by a stray close tag", () => {
-    const doc = buildWidgetDoc(
+  it("escapes the title and cannot be broken out of by a stray close tag", async () => {
+    const doc = await buildWidgetDoc(
       { ...goodParts, title: `<b>"x"</b>`, js: `var s='</script><img src=x onerror=1>'`, css: `a{}</style><b>` },
       "light",
     );
@@ -255,7 +267,7 @@ describe("buildWidgetDoc", () => {
 });
 
 describe("fixtures", () => {
-  it.each(INTERACTIVE_FIXTURES.map((f) => [f.id, f] as const))("%s is a valid spec and a clean widget", (_id, f) => {
+  it.each(INTERACTIVE_FIXTURES.map((f) => [f.id, f] as const))("%s is a valid spec and a clean widget", async (_id, f) => {
     expect(parseInteractiveSpec(f.spec)).not.toBeNull();
     expect(parseInteractiveParts(f.parts)).not.toBeNull();
     expect(validateWidget(f.parts)).toEqual({ ok: true });
@@ -263,7 +275,7 @@ describe("fixtures", () => {
     for (const c of f.spec.controls) expect(f.parts.markup + f.parts.js).toContain(c.label);
     // and each builds into a document in both themes
     for (const theme of ["light", "dark"] as const) {
-      expect(buildWidgetDoc(f.parts, theme)).toContain(f.parts.title);
+      expect(await buildWidgetDoc(f.parts, theme)).toContain(f.parts.title);
     }
   });
 });

@@ -74,6 +74,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     ok("rtc-nested: the frame has no child frames", frame.childFrames().length === 0, `${frame.childFrames().length}`);
     for (const [route, verdict] of Object.entries(out)) {
       if (route === "frames" || route === "detachedHandle" || route === "detached handle") continue;
+      if (route.startsWith("x-")) { ok(`rtc-nested ${route}: code from a string did not run`, verdict === "not run", verdict); continue; }
       ok(`rtc-nested ${route}: refused`, /^blocked/.test(verdict), verdict);
     }
     ok("rtc-nested: a detached frame hands out no window", out.detachedHandle === undefined || out.detachedHandle === "null", String(out.detachedHandle));

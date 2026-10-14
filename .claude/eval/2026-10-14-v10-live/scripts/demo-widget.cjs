@@ -33,7 +33,7 @@ const clickText = (page, re) => page.evaluate(([src, fl]) => {
     // One step at a time, watching closely: the narration mp3s are not rendered yet, so segments end fast.
     const cardUp = () => page.locator('[data-testid="interactive-card"]').isVisible().catch(() => false);
     for (let i = 0; i < 40 && !card; i++) {
-      for (let t = 0; t < 8 && !card; t++) { await sleep(150); card = await cardUp(); }
+      for (let t = 0; t < 25 && !card; t++) { await sleep(150); card = await cardUp(); }
       if (!card) await clickText(page, /^(Next →|Next)$|^(Next ⏭|Skip)$|Next sentence|Skip segment/);
     }
     ok(`${w}x${h}: the frozen widget is on screen at the explore segment`, card);

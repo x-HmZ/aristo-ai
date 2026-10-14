@@ -72,10 +72,10 @@ async function run(browser, label, kind, waitMs) {
       await ctx.close();
     }
 
-    for (const kind of ["loop", "loop-recursion", "loop-async", "loop-catch"]) {
+    for (const kind of ["loop", "loop-recursion", "loop-async", "loop-catch", "loop-duty"]) {
       const r = await run(browser, label, kind, 6000);
       ok(`${label} ${kind}: frame failed`, /failed/.test(r.status), `${r.reason} after ${r.failedAfter} ms`);
-      ok(`${label} ${kind}: stopped by the guard`, /ran too long|widget stopped|Maximum call stack/.test(r.reason), r.reason);
+      ok(`${label} ${kind}: stopped by the guard`, /ran too long|too busy|widget stopped|Maximum call stack/.test(r.reason), r.reason);
       ok(`${label} ${kind}: host never froze past 1.5 s`, r.gap < 1500, `${r.gap} ms`);
     }
     {

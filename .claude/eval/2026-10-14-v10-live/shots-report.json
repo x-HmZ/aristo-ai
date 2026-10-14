@@ -268,7 +268,7 @@
     {
       "name": "experimental-probability light 560: played state",
       "pass": true,
-      "extra": "2 flips — 0 heads — 0% heads Flip once Flip once Flip 50 at once Flip 50 at once Reset Reset Dashed line = theoretical 50%. Watch the solid line wobble, then settle."
+      "extra": "2 flips — 1 heads — 50% heads Flip once Flip once Flip 50 at once Flip 50 at once Reset Reset Dashed line = theoretical 50%. Watch the solid line wobble, then settle."
     },
     {
       "name": "experimental-probability light 560: still ready after playing",

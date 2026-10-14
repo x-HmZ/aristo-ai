@@ -41,8 +41,8 @@ const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // hole is light, not a surface) and replaced by "heart".
 const SLUGS  = ["heart", "volcano-eruption", "brain", "python-for-range"];
 
-// Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "ryan" because that
-// is useAristoStore's default teacher, i.e. the avatar the demo actually renders.
+// Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "jake" because that
+// is the default teacher (DEFAULT_TEACHER), i.e. the avatar the demo actually renders.
 const EL_VOICES = {
   marcus: "pNInz6obpgDQGcFmaJgB", // Adam   - deep, clear male
   ryan:   "ErXwobaYiN019PkySvjV", // Antoni - warm, natural male
@@ -58,7 +58,7 @@ const argv    = process.argv.slice(2);
 const DRY_RUN = argv.includes("--dry-run");
 const ALIGN   = argv.includes("--align");
 const FORCE   = argv.includes("--force");
-const voiceArg = (argv.find((a) => a.startsWith("--voice=")) || "--voice=ryan").split("=")[1];
+const voiceArg = (argv.find((a) => a.startsWith("--voice=")) || "--voice=jake").split("=")[1];
 
 if (!EL_VOICES[voiceArg]) {
   console.error(`Unknown voice "${voiceArg}". Options: ${Object.keys(EL_VOICES).join(", ")}`);

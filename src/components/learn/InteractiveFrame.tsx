@@ -64,10 +64,8 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
     setSrcDoc(null);
     setStatus("loading");
     import("@/lib/interactive/guard")
-      .then(({ guardWidgetParts }) => {
-        const guarded = guardWidgetParts({ title, markup, css, js });
-        if (current) setSrcDoc(buildWidgetDoc(guarded, theme));
-      })
+      .then(({ guardWidgetParts }) => buildWidgetDoc(guardWidgetParts({ title, markup, css, js }), theme))
+      .then((doc) => { if (current) setSrcDoc(doc); })
       .catch((err: unknown) => {
         if (!current) return;
         setStatus("failed");
@@ -112,7 +110,8 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
   return (
     <div className={cn("relative size-full bg-surface", className)} data-widget-status={status}>
       {/* A second load means the page navigated itself away from the srcdoc: drop the frame. */}
-      {!navigated && srcDoc !== null && (
+      {/* A failed or stopped widget is unmounted, so nothing it left running (timers, work) carries on. */}
+      {!navigated && srcDoc !== null && status !== "failed" && (
         <iframe
           key={srcDoc}
           ref={frameRef}
@@ -124,7 +123,7 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
           onLoad={() => {
             if (++loads.current > 1) { setNavigated(true); setStatus("failed"); failRef.current?.("navigated"); }
           }}
-          className={cn("size-full border-0 bg-surface", status === "failed" && "invisible")}
+          className="size-full border-0 bg-surface"
         />
       )}
       {status === "loading" && (

@@ -3,7 +3,7 @@
     {
       "name": "default loop: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 12 ms"
+      "extra": "failed: ran too long after 18 ms"
     },
     {
       "name": "default loop: stopped by the guard",
@@ -13,12 +13,12 @@
     {
       "name": "default loop: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1045 ms"
+      "extra": "1024 ms"
     },
     {
       "name": "default loop-recursion: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 19 ms"
+      "extra": "failed: ran too long after 13 ms"
     },
     {
       "name": "default loop-recursion: stopped by the guard",
@@ -28,12 +28,12 @@
     {
       "name": "default loop-recursion: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1018 ms"
+      "extra": "1050 ms"
     },
     {
       "name": "default loop-async: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 16 ms"
+      "extra": "failed: ran too long after 21 ms"
     },
     {
       "name": "default loop-async: stopped by the guard",
@@ -43,12 +43,12 @@
     {
       "name": "default loop-async: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1019 ms"
+      "extra": "1073 ms"
     },
     {
       "name": "default loop-catch: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 17 ms"
+      "extra": "failed: ran too long after 19 ms"
     },
     {
       "name": "default loop-catch: stopped by the guard",
@@ -58,17 +58,32 @@
     {
       "name": "default loop-catch: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1016 ms"
+      "extra": "1021 ms"
+    },
+    {
+      "name": "default loop-duty: frame failed",
+      "pass": true,
+      "extra": "failed: too busy after 14 ms"
+    },
+    {
+      "name": "default loop-duty: stopped by the guard",
+      "pass": true,
+      "extra": "failed: too busy"
+    },
+    {
+      "name": "default loop-duty: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "937 ms"
     },
     {
       "name": "default loop-later: ready, then failed when it ran away",
       "pass": true,
-      "extra": "failed: ran too long after 2344 ms"
+      "extra": "failed: ran too long after 2300 ms"
     },
     {
       "name": "default loop-later: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1006 ms"
+      "extra": "1001 ms"
     },
     {
       "name": "default good widget: still ready after 40 slider moves",
@@ -83,7 +98,7 @@
     {
       "name": "in-process loop: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 34 ms"
+      "extra": "failed: ran too long after 29 ms"
     },
     {
       "name": "in-process loop: stopped by the guard",
@@ -93,12 +108,12 @@
     {
       "name": "in-process loop: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1147 ms"
+      "extra": "1027 ms"
     },
     {
       "name": "in-process loop-recursion: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 13 ms"
+      "extra": "failed: ran too long after 15 ms"
     },
     {
       "name": "in-process loop-recursion: stopped by the guard",
@@ -108,12 +123,12 @@
     {
       "name": "in-process loop-recursion: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1053 ms"
+      "extra": "1057 ms"
     },
     {
       "name": "in-process loop-async: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 14 ms"
+      "extra": "failed: ran too long after 36 ms"
     },
     {
       "name": "in-process loop-async: stopped by the guard",
@@ -123,12 +138,12 @@
     {
       "name": "in-process loop-async: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1051 ms"
+      "extra": "1037 ms"
     },
     {
       "name": "in-process loop-catch: frame failed",
       "pass": true,
-      "extra": "failed: ran too long after 15 ms"
+      "extra": "failed: ran too long after 12 ms"
     },
     {
       "name": "in-process loop-catch: stopped by the guard",
@@ -138,17 +153,32 @@
     {
       "name": "in-process loop-catch: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1024 ms"
+      "extra": "1053 ms"
+    },
+    {
+      "name": "in-process loop-duty: frame failed",
+      "pass": true,
+      "extra": "failed: too busy after 13 ms"
+    },
+    {
+      "name": "in-process loop-duty: stopped by the guard",
+      "pass": true,
+      "extra": "failed: too busy"
+    },
+    {
+      "name": "in-process loop-duty: host never froze past 1.5 s",
+      "pass": true,
+      "extra": "930 ms"
     },
     {
       "name": "in-process loop-later: ready, then failed when it ran away",
       "pass": true,
-      "extra": "failed: ran too long after 2468 ms"
+      "extra": "failed: ran too long after 2189 ms"
     },
     {
       "name": "in-process loop-later: host never froze past 1.5 s",
       "pass": true,
-      "extra": "1004 ms"
+      "extra": "1003 ms"
     },
     {
       "name": "in-process good widget: still ready after 40 slider moves",
@@ -168,80 +198,96 @@
       "kind": "loop",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 12,
-      "hostMaxGapMs": 1045
+      "failedAfterMs": 18,
+      "hostMaxGapMs": 1024
     },
     {
       "label": "default",
       "kind": "loop-recursion",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 19,
-      "hostMaxGapMs": 1018
+      "failedAfterMs": 13,
+      "hostMaxGapMs": 1050
     },
     {
       "label": "default",
       "kind": "loop-async",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 16,
-      "hostMaxGapMs": 1019
+      "failedAfterMs": 21,
+      "hostMaxGapMs": 1073
     },
     {
       "label": "default",
       "kind": "loop-catch",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 17,
-      "hostMaxGapMs": 1016
+      "failedAfterMs": 19,
+      "hostMaxGapMs": 1021
+    },
+    {
+      "label": "default",
+      "kind": "loop-duty",
+      "status": "status: failed",
+      "reason": "failed: too busy",
+      "failedAfterMs": 14,
+      "hostMaxGapMs": 937
     },
     {
       "label": "default",
       "kind": "loop-later",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 2344,
-      "hostMaxGapMs": 1006
+      "failedAfterMs": 2300,
+      "hostMaxGapMs": 1001
     },
     {
       "label": "in-process",
       "kind": "loop",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 34,
-      "hostMaxGapMs": 1147
+      "failedAfterMs": 29,
+      "hostMaxGapMs": 1027
     },
     {
       "label": "in-process",
       "kind": "loop-recursion",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 13,
-      "hostMaxGapMs": 1053
+      "failedAfterMs": 15,
+      "hostMaxGapMs": 1057
     },
     {
       "label": "in-process",
       "kind": "loop-async",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 14,
-      "hostMaxGapMs": 1051
+      "failedAfterMs": 36,
+      "hostMaxGapMs": 1037
     },
     {
       "label": "in-process",
       "kind": "loop-catch",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 15,
-      "hostMaxGapMs": 1024
+      "failedAfterMs": 12,
+      "hostMaxGapMs": 1053
+    },
+    {
+      "label": "in-process",
+      "kind": "loop-duty",
+      "status": "status: failed",
+      "reason": "failed: too busy",
+      "failedAfterMs": 13,
+      "hostMaxGapMs": 930
     },
     {
       "label": "in-process",
       "kind": "loop-later",
       "status": "status: failed",
       "reason": "failed: ran too long",
-      "failedAfterMs": 2468,
-      "hostMaxGapMs": 1004
+      "failedAfterMs": 2189,
+      "hostMaxGapMs": 1003
     }
   ],
   "control": {

@@ -17,7 +17,8 @@
  */
 
 import { parse } from "acorn";
-import { FRAME_TAGS, LOOP_GUARD } from "./shell";
+import { LOOP_GUARD, hasFrameTag } from "./shell";
+import { INLINE_HANDLER, validateWidget } from "./validate";
 import type { InteractiveParts } from "./spec";
 
 const TICK = `${LOOP_GUARD}();`;
@@ -75,8 +76,16 @@ function walk(node: AstNode, edits: Edit[]) {
       typeof node.name === "string" && node.name.startsWith(RESERVED)) {
     throw new Error(`reserved name ${node.name}`);
   }
+  // `with ({ [name]: f })` would make the inserted tick resolve to the widget's own object.
+  if (node.type === "WithStatement") throw new Error("with statement");
   if (LOOPS.has(node.type)) guardBody(node.body as AstNode, edits, false);
   else if (FUNCTIONS.has(node.type)) guardBody(node.body as AstNode, edits, true);
+  // A class field initializer runs per instance with no function body of its own (recursive construction).
+  else if (node.type === "PropertyDefinition" && isNode(node.value)) {
+    const v = node.value;
+    edits.push({ pos: v.start, text: `(${LOOP_GUARD}(),`, kind: "open", pair: v.end });
+    edits.push({ pos: v.end, text: ")", kind: "close", pair: v.start });
+  }
 
   for (const key in node) {
     if (key === "type" || key === "start" || key === "end") continue;
@@ -104,10 +113,12 @@ function byPosition(a: Edit, b: Edit): number {
  * get past the bridge's insertion checks; validate.ts rejects one, and this refuses it again on the client.
  */
 export function guardWidgetParts(parts: InteractiveParts): InteractiveParts {
-  const markup = parts.markup.toLowerCase();
-  for (const tag of FRAME_TAGS) {
-    if (markup.includes(`<${tag}`)) throw new Error(`markup: <${tag}>`);
-  }
+  // Every source is validated on the server already; the frame checks again so nothing reaches it unchecked.
+  const check = validateWidget(parts);
+  if (!check.ok) throw new Error(check.reason);
+  if (hasFrameTag(parts.markup)) throw new Error("markup: nested frame");
+  // An inline handler runs outside the script this module rewrites, so it would escape the loop guard.
+  if (INLINE_HANDLER.test(parts.markup)) throw new Error("markup: inline event handler");
   return { ...parts, js: guardWidgetJs(parts.js) };
 }
 

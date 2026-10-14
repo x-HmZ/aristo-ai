@@ -357,7 +357,11 @@ export function useLessonPlayback(
     if (!spec) return;
     if (demoMode) {
       const parts = parseInteractiveParts(lesson.metadata.demo_interactive);
-      if (parts) setInteractive({ status: "loading", spec, parts });
+      // The same widget already in the store (a re-run with a new lesson object) keeps its state: its
+      // frame is ready and would never say so again, so resetting it to "loading" would stall the pause.
+      const cur = useAristoStore.getState().interactive.parts;
+      const same = !!cur && !!parts && cur.js === parts.js && cur.markup === parts.markup && cur.css === parts.css;
+      if (parts && !same) setInteractive({ status: "loading", spec, parts });
       return;
     }
 

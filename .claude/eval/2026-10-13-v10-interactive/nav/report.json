@@ -241,9 +241,29 @@
       "extra": "blocked: nested frames are not allowed"
     },
     {
+      "name": "rtc-nested toctou toString: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested table caption: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
       "name": "rtc-nested own matches: refused",
       "pass": true,
       "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested x-script: code from a string did not run",
+      "pass": true,
+      "extra": "not run"
+    },
+    {
+      "name": "rtc-nested x-handler: code from a string did not run",
+      "pass": true,
+      "extra": "not run"
     },
     {
       "name": "rtc-nested: a detached frame hands out no window",
@@ -283,6 +303,10 @@
     "body setter": "blocked: nested frames are not allowed",
     "detachedHandle": "null",
     "detached handle": "no frame",
-    "own matches": "blocked: nested frames are not allowed"
+    "toctou toString": "blocked: nested frames are not allowed",
+    "table caption": "blocked: nested frames are not allowed",
+    "own matches": "blocked: nested frames are not allowed",
+    "x-script": "not run",
+    "x-handler": "not run"
   }
 }

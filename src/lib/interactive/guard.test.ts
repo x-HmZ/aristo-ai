@@ -69,6 +69,14 @@ describe("guardWidgetJs", () => {
     expect(runWithLimit(`function f(){ "use strict"\n return this; } var out = f();`).result).toBeUndefined();
   });
 
+  it("stops recursive construction through class field initializers", () => {
+    expect(runWithLimit("class A { static d = 0; x = (A.d++ < 30) ? [new A(), new A(), A.d--] : A.d--; } new A();").stoppedAfter).not.toBeNull();
+  });
+
+  it("refuses a with statement, which could shadow the tick", () => {
+    expect(() => guardWidgetJs("with ({}) { while (1 < 2) {} }")).toThrow(/with/);
+  });
+
   it("refuses the bridge's reserved names", () => {
     expect(() => guardWidgetJs(`var ${LOOP_GUARD} = function () {};`)).toThrow(/reserved/);
     expect(() => guardWidgetJs("function f(__aristoReady) {}")).toThrow(/reserved/);
@@ -91,6 +99,16 @@ describe("guardWidgetParts", () => {
   const base = { title: "t", css: "", js: "var a = 1;" };
   it.each(["<iframe srcdoc=x>", "<IFRAME>", "<object>", "<embed src=x>", "<frameset>"])("refuses %s in markup", (m) => {
     expect(() => guardWidgetParts({ ...base, markup: `<div>${m}</div>` })).toThrow(/markup/);
+  });
+  it.each(['<svg/onload="for(;;);">', '<b class="x"onclick="f()">', "<i onmouseover=f()>"])("refuses the inline handler in %s", (m) => {
+    expect(() => guardWidgetParts({ ...base, markup: m })).toThrow(/handler/);
+  });
+  it("matches frame tags as whole names only", () => {
+    expect(() => guardWidgetParts({ ...base, markup: "<embedded-x></embedded-x><objective></objective>" })).not.toThrow();
+    expect(() => guardWidgetParts({ ...base, markup: "<embed/>" })).toThrow(/frame|forbidden/);
+  });
+  it("runs the validator too, so nothing reaches the frame unchecked", () => {
+    expect(() => guardWidgetParts({ ...base, markup: "<div>x</div>", js: "fetch('/x')" })).toThrow(/network/);
   });
   it("passes plain markup through", () => {
     expect(guardWidgetParts({ ...base, markup: "<div><canvas></canvas></div>" }).markup).toBe("<div><canvas></canvas></div>");

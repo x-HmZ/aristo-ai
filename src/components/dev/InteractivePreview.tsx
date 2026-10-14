@@ -24,7 +24,7 @@ import type { InteractiveParts } from "@/lib/interactive/spec";
 
 const FAILS = [
   "none", "throws", "forbidden", "timeout", "probe", "misc", "rtc-nested", "nav-location", "nav-meta", "nav-anchor", "nav-open",
-  "nav-history", "loop", "loop-recursion", "loop-async", "loop-catch", "loop-later",
+  "nav-history", "loop", "loop-recursion", "loop-async", "loop-catch", "loop-duty", "loop-later",
 ] as const;
 type Fail = (typeof FAILS)[number];
 
@@ -84,6 +84,13 @@ t('shadow', function () { host['attach' + 'Shadow']({ mode: 'open' }); });
 t('write', function () { D['wr' + 'ite'](TAG); });
 t('body setter', function () { var b = D.createElement('body'); b.appendChild(D.createElement(IF)); D.body = b; });
 t('detached handle', function () { var f = D.createElement(IF); var w = f[CW]; out.detachedHandle = String(w); });
+// Security review 2026-10-14: a toString that slips a frame into a checked fragment, and the table setters.
+t('toctou toString', function () { var fr = D.createElement(IF); var f = D.createDocumentFragment(); host.append(f, { toString: function () { f.append(fr); return ''; } }); });
+t('table caption', function () { var d = new DOMParser().parseFromString('<table><caption>' + TAG + '</caption></table>', 'text/html'); var tb = D.createElement('table'); host.appendChild(tb); tb.caption = D.importNode(d.querySelector('caption'), true); });
+// Code from strings: under the hashed CSP neither may run.
+try { var sc = D.createElement('scr' + 'ipt'); sc.textContent = 'window.injected = 1'; host.appendChild(sc); } catch (e) {}
+try { var bt = D.createElement('button'); bt.setAttribute('on' + 'click', 'window.injected2 = 1'); host.appendChild(bt); bt.click(); } catch (e) {}
+setTimeout(function () { out['x-script'] = W.injected ? 'ran' : 'not run'; out['x-handler'] = W.injected2 ? 'ran' : 'not run'; }, 300);
 t('own matches', function () { var f = D.createElement(IF); f.matches = function () { return false; }; Object.defineProperty(f, 'nodeType', { value: 3 }); host.appendChild(f); });
 setTimeout(function () { var p = D.getElementById('out'); if (p) p.textContent = JSON.stringify(out); else D.title = JSON.stringify(out); }, 600);`,
 };
@@ -94,6 +101,8 @@ const LOOP_JS: Record<string, string> = {
   "loop-recursion": "function f(n) { return n < 2 ? n : f(n - 1) + f(n - 2); } f(60);",
   "loop-async": "(async function () { while (1 < 2) { await 0; } })();",
   "loop-catch": "for (var k = 0; k >= 0; k++) { try { while (1 < 2) {} } catch (e) {} }",
+  // 900 ms busy per task, chained through its own channel: each run is under the budget, the duty cycle is not.
+  "loop-duty": "var ch = new MessageChannel(); ch.port1.onmessage = function () { var t = performance.now(); while (performance.now() - t < 900) {} ch.port2['post' + 'Message'](0); }; ch.port2['post' + 'Message'](0);",
 };
 
 /**

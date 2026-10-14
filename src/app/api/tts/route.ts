@@ -2,7 +2,7 @@
  * POST /api/tts
  *
  * Proxies text to ElevenLabs TTS and returns the resulting MP3.
- * Auth-gated via Supabase session.
+ * Approved learners only (requireApproved), at most 200 calls an hour each.
  *
  * Body:    { text: string, voice?: string }
  *            voice = one of the EL_VOICES keys below (e.g. "marcus")
@@ -33,7 +33,11 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApproved } from "@/lib/auth/approval";
+import { createThrottle } from "@/lib/interactive/throttle";
+
+/** Per learner and instance, best effort: a lesson with prefetch makes about 30 calls. */
+const ttsThrottle = createThrottle(200, 60 * 60 * 1000);
 
 export const maxDuration = 60;
 export const runtime     = "nodejs";
@@ -68,10 +72,11 @@ const WANT_TIMESTAMPS = process.env.TTS_TIMESTAMPS !== "off";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Approved learners only, and a per-learner cap: every call spends the shared ElevenLabs quota.
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    if (!ttsThrottle.take(guard.user.id)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const body = await req.json().catch(() => ({}));
@@ -88,12 +93,12 @@ export async function POST(req: NextRequest) {
       throw new Error("ELEVENLABS_API_KEY is not configured");
     }
 
-    const voiceKey = (body?.voice as string) in EL_VOICES ? (body.voice as string) : DEFAULT_VOICE;
+    const voiceKey = typeof body?.voice === "string" && Object.hasOwn(EL_VOICES, body.voice) ? body.voice : DEFAULT_VOICE;
     const voiceId  = EL_VOICES[voiceKey];
 
     const payload = JSON.stringify({
       text,
-      model_id: MODEL_BY_VOICE[voiceKey] ?? MODEL_ID,
+      model_id: Object.hasOwn(MODEL_BY_VOICE, voiceKey) ? MODEL_BY_VOICE[voiceKey] : MODEL_ID,
       voice_settings: { stability: 0.5, similarity_boost: 0.75 },
     });
     const elHeaders = {
