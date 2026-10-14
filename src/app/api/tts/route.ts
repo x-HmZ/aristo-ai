@@ -29,7 +29,7 @@
  * so this route degrades instead of failing.
  *
  * Free tier: 10 000 chars/month — no billing required.
- * Model: eleven_turbo_v2_5 (fast, high quality, works on free tier).
+ * Model: eleven_turbo_v2_5 (fast, high quality, works on free tier); Jake reads with eleven_multilingual_v2.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -47,10 +47,15 @@ const EL_VOICES: Record<string, string> = {
   priya:  "21m00Tcm4TlvDq8ikWAM", // Rachel — calm, expressive female
   sonia:  "EXAVITQu4vr4xnSDxMaL", // Sarah  — soft, clear female
   custom: "pNInz6obpgDQGcFmaJgB", // fallback to Adam
+  // Jake's own voice. Hmz picked Mike (Voice Library, zfc8CJQpe8Kqyl0vvCzo), which the API refuses on the
+  // free plan (402 paid_plan_required, 2026-10-14); until the account is upgraded he uses this voice.
+  jake:   "bIHbv24MWmeRgasZH58o",
 };
 
 const DEFAULT_VOICE = "marcus";
 const MODEL_ID      = "eleven_turbo_v2_5";
+/** Voices read with the slower, more natural model (twice the per-character price of turbo). */
+const MODEL_BY_VOICE: Record<string, string> = { jake: "eleven_multilingual_v2" };
 
 /**
  * Kill switch. Set TTS_TIMESTAMPS=off in the environment to skip the
@@ -88,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     const payload = JSON.stringify({
       text,
-      model_id: MODEL_ID,
+      model_id: MODEL_BY_VOICE[voiceKey] ?? MODEL_ID,
       voice_settings: { stability: 0.5, similarity_boost: 0.75 },
     });
     const elHeaders = {

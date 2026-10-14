@@ -39,7 +39,7 @@ const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // Keep in sync with DEMO_TOPICS in src/data/demo/index.ts. "black-holes" was
 // retired on 2026-09-10 (its 3D model reconstructed as a flat sliver; a black
 // hole is light, not a surface) and replaced by "heart".
-const SLUGS  = ["heart", "volcano-eruption", "brain"];
+const SLUGS  = ["heart", "volcano-eruption", "brain", "python-for-range"];
 
 // Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "ryan" because that
 // is useAristoStore's default teacher, i.e. the avatar the demo actually renders.
@@ -48,8 +48,9 @@ const EL_VOICES = {
   ryan:   "ErXwobaYiN019PkySvjV", // Antoni - warm, natural male
   priya:  "21m00Tcm4TlvDq8ikWAM", // Rachel - calm, expressive female
   sonia:  "EXAVITQu4vr4xnSDxMaL", // Sarah  - soft, clear female
+  jake:   "bIHbv24MWmeRgasZH58o", // Jake, until Mike (zfc8CJQpe8Kqyl0vvCzo) is usable on a paid plan
 };
-const MODEL_ID       = "eleven_turbo_v2_5";
+const MODEL_BY_VOICE = { jake: "eleven_multilingual_v2" };
 const VOICE_SETTINGS = { stability: 0.5, similarity_boost: 0.75 };
 
 // ─── args ────────────────────────────────────────────────────────────────────
@@ -64,6 +65,7 @@ if (!EL_VOICES[voiceArg]) {
   process.exit(1);
 }
 const VOICE_ID = EL_VOICES[voiceArg];
+const MODEL_ID = MODEL_BY_VOICE[voiceArg] ?? "eleven_turbo_v2_5";
 
 // ─── env ─────────────────────────────────────────────────────────────────────
 function loadEnvLocal() {
