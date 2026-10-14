@@ -2,7 +2,7 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
-## 2026-10-14 - Jake's sleeves: sweater to shirt (on dev/v10-interactive-visuals, uncommitted)
+## 2026-10-14 - Jake's sleeves: sweater to shirt (on dev/v10-interactive-visuals, committed, not pushed)
 
 Hmz: from the elbows down Jake's shirt read as a sweater. Evidence and numbers: `.claude/eval/2026-10-14-jake-sleeves/`
 (README). Cause: V8.3d's even 12-14 mm sleeve ease plus a 3 cm shortening squeezed into the forearm (a wide tube with
@@ -17,10 +17,11 @@ stacked rings), a pinch above a rounded cuff that hung 60% on the hand bone. Not
 - **Checked:** `find_pokes` 0 and the camera-ray test 0, both sides, every frame of all 34 clips; mirror numbers
   match L/R; `/demo` 1080p before/after headless, 0 paid requests; eslint and tsc clean.
 - **Also:** `/dev/avatar-lab?shot` (room lights, outfit, `window.__lab` pose/cam/shirt, `?file=`), dev only.
-- **Open:** the landing posters and stills (V8.3d `stills.cjs`, `room-stills.cjs`, `faces.cjs`) still show the old
-  sleeves, so the poster-to-live handover will jump at the cuffs: recapture before footage. The Blender 5.1 NLA
-  export bug (`v9_export.stack_nla`, 2-key clips) is unfixed: any future clip re-export needs it solved first.
-- **Next:** commit; landing poster recapture; then the V10 queue below (residuals, Jake's voice, live test, footage).
+- **Follow-up, same day:** Jake's landing posters recaptured (handover within 2 px at every spot but picture, which
+  differs as it has since V8.3b). The export is fixed: `export_optimize_animation_size=False` (5.1's default cut
+  clips to 2 keys); run it in the GUI Blender (MCP), since headless `normalise` mis-measures Jake. README follow-up.
+- **Open:** the portfolio clips and stills (2026-10-07) show the old sleeves; the footage step will replace them.
+- **Next:** the V10 queue below (residuals, Jake's voice, live test, the /demo entry, footage last).
 
 ## 2026-10-13 - V10: interactive visuals, a third kind of teaching visual (branch dev/v10-interactive-visuals, not pushed or merged)
 
