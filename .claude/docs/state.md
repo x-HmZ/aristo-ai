@@ -12,12 +12,18 @@ _Update this at the end of every significant session: done / next / blockers, co
   Evidence: `.claude/eval/2026-10-15-placement/` (probe-display.cjs, board-zoom.cjs, zoom/).
 - **Widgets landscape**: kit `.split`, prompts budget 650 x 330, fixtures follow; room.cjs updated (all sections pass);
   ARISTO.canvas first draw is now a microtask (a generated widget crashed on it).
-- **/demo topic: steepness is speed** (`src/data/demo/steepness-speed.ts`, unlisted until narration). Spend: 0.535 USD run
-  (5 images, over the 0.30 estimate) + 0.047 USD widget regeneration from `spec-curated.json`. Open: the lesson's worked
-  example has a straight segment 3 (7-9 s) while the widget's third part is the curve.
+- **/demo topic: steepness is speed** (`src/data/demo/steepness-speed.ts`, unlisted until narration), rebuilt from its
+  eval folder by `curate.cjs` then `freeze.cjs`. The widget's trip now IS the lesson's worked example (0-4 s at 5 m/s,
+  segment 2 the slider, segment 3 straight 7-9 s at 10 m/s) with the curve after it (9-12 s, 10 to 20 m/s). Spend:
+  0.535 USD run (5 images, over the 0.30 estimate) + 0.047 USD widget regeneration.
+- **Live widgets match their lesson**: the brief must reuse the demonstrate example, and the route passes the stored
+  lesson's demonstrate narration to the builder (`lessonExample`); not yet verified by a paid generation.
+- **Demo narration budget** (for next session): heart 3,321, volcano 3,535, brain 3,918, steepness 4,134 characters
+  (about 14,900). The three existing topics were rendered in Ryan (turbo). Free plan: 10,000 credits a month;
+  multilingual v2 is 1 credit per character (over), turbo 0.5 (about 7,500, fits).
 - **Earlier today**: the two if/elif and probability widgets regenerated (prompt fixes; about 0.09 USD, double run by mistake).
-- **Next**: Hmz upgrades ElevenLabs -> Mike's id in tts route + prerender script -> render steepness narration
-  (`node scripts/prerender-demo-tts.mjs --voice=jake --align`, ask first) -> list the topic (index.ts note); then footage.
+- **Next**: render ALL four demo topics in Jake's placeholder voice (Hmz, 2026-10-15) within the free plan's credits,
+  list steepness; Mike later, after the upgrade; then footage.
 
 ## 2026-10-14 - V10 continued: residuals fixed, live test, Jake's voice, /demo widget (branch dev/v10-continuation, PR into deploy-prep)
 
