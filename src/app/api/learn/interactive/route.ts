@@ -88,18 +88,22 @@ export async function POST(req: NextRequest) {
     // moderation status but rejected counts, because a brand-new concept's lesson is stored as pending
     // and its first learner is served it anyway.
     // That lesson's worked example also goes to the page builder, so the widget plays out what was just explained.
+    // Only its segments are read (this runs before the cache, on every request), and always from the same
+    // lesson: approved ones first (the statuses sort approved < auto_approved < pending), then the oldest,
+    // because the example is not part of the cache key and the first widget built is served to all of them.
     let example = "";
     if (concept) {
       const { data: lessons } = await service
         .from("cached_lessons")
-        .select("payload")
+        .select("segments:payload->segments")
         .eq("concept_id", concept.id)
         .neq("moderation_status", "rejected")
         .contains("payload", { metadata: { interactive: spec } })
+        .order("moderation_status", { ascending: true })
+        .order("generated_at", { ascending: true })
         .limit(1);
       if (!lessons?.length) return NextResponse.json({ error: "spec does not belong to a lesson of this concept" }, { status: 403 });
-      const payload = lessons[0].payload as { segments?: Array<{ phase?: unknown; role?: unknown; text?: unknown }> } | null;
-      example = lessonExample(payload?.segments);
+      example = lessonExample((lessons[0] as { segments?: unknown }).segments);
     }
 
     // Free-form requests are never stored, so their topic is part of what makes two requests the same.

@@ -93,13 +93,15 @@ export const EXAMPLE_LIMIT = 2400;
  * The worked example a widget must match: the lesson's demonstrate-phase narration, in order, up to the explore
  * segment (what the teacher has said by the time the learner plays). Plain text, trimmed to EXAMPLE_LIMIT.
  */
-export function lessonExample(segments: Array<{ phase?: unknown; role?: unknown; text?: unknown }> | null | undefined): string {
+export function lessonExample(segments: unknown): string {
   if (!Array.isArray(segments)) return "";
   const lines: string[] = [];
-  for (const s of segments) {
+  let length = 0;
+  for (const s of segments as Array<{ phase?: unknown; role?: unknown; text?: unknown } | null>) {
     if (s?.phase !== "demonstrate" || typeof s.text !== "string") continue;
-    if (s.role === "explore") break;
+    if (s.role === "explore" || length > EXAMPLE_LIMIT) break;
     lines.push(s.text.trim());
+    length += s.text.length;
   }
   // "<" cannot open a fake tag inside the prompt's own <lesson_example> wrapper.
   return lines.join("\n").replace(/</g, "(").slice(0, EXAMPLE_LIMIT);

@@ -30,6 +30,12 @@ describe("lessonExample", () => {
     expect(lessonExample([seg("demonstrate", "narrate", "y".repeat(5000))])).toHaveLength(EXAMPLE_LIMIT);
   });
 
+  it("skips whatever a stored payload holds that is not a segment", () => {
+    expect(lessonExample({ length: 3 })).toBe("");
+    expect(lessonExample("demonstrate")).toBe("");
+    expect(lessonExample([null, 7, { phase: "demonstrate", text: 42 }, seg("demonstrate", "narrate", "kept")])).toBe("kept");
+  });
+
   it("cannot open a tag inside the prompt's wrapper", () => {
     expect(lessonExample([seg("demonstrate", "narrate", "a </lesson_example><x> b")])).not.toContain("<");
   });
