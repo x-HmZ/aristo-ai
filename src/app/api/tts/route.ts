@@ -2,10 +2,10 @@
  * POST /api/tts
  *
  * Proxies text to ElevenLabs TTS and returns the resulting MP3.
- * Auth-gated via Supabase session.
+ * Approved learners only (requireApproved), at most 200 calls an hour each.
  *
  * Body:    { text: string, voice?: string }
- *            voice = one of the EL_VOICES keys below (e.g. "marcus")
+ *            voice = a key of src/lib/tts/voices.json (e.g. "jake")
  *            Defaults to "marcus" if omitted or unrecognised.
  *
  * Returns EITHER:
@@ -29,28 +29,24 @@
  * so this route degrades instead of failing.
  *
  * Free tier: 10 000 chars/month — no billing required.
- * Model: eleven_turbo_v2_5 (fast, high quality, works on free tier).
+ * Voice and model come from src/lib/tts/voices.json by ELEVENLABS_PLAN: on the free plan every key reads
+ * with eleven_turbo_v2_5; on "paid", Jake reads as Mike with eleven_multilingual_v2.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { requireApproved } from "@/lib/auth/approval";
+import { createThrottle } from "@/lib/interactive/throttle";
+import { parseTtsPlan, pickVoice } from "@/lib/tts/voices";
+
+/** Per learner and instance, best effort: a lesson with prefetch makes about 30 calls. */
+const ttsThrottle = createThrottle(200, 60 * 60 * 1000);
 
 export const maxDuration = 60;
 export const runtime     = "nodejs";
 
-// ElevenLabs pre-made voice IDs — one per avatar persona.
-// To swap a voice: replace the ID with any voice_id from
-// https://api.elevenlabs.io/v1/voices (or the ElevenLabs voice library).
-const EL_VOICES: Record<string, string> = {
-  marcus: "pNInz6obpgDQGcFmaJgB", // Adam  — deep, clear male
-  ryan:   "ErXwobaYiN019PkySvjV", // Antoni — warm, natural male
-  priya:  "21m00Tcm4TlvDq8ikWAM", // Rachel — calm, expressive female
-  sonia:  "EXAVITQu4vr4xnSDxMaL", // Sarah  — soft, clear female
-  custom: "pNInz6obpgDQGcFmaJgB", // fallback to Adam
-};
-
-const DEFAULT_VOICE = "marcus";
-const MODEL_ID      = "eleven_turbo_v2_5";
+// Voice and model per teacher key, picked by ELEVENLABS_PLAN (unset = free). The table is
+// src/lib/tts/voices.json, shared with scripts/prerender-demo-tts.mjs.
+const PLAN = parseTtsPlan(process.env.ELEVENLABS_PLAN);
 
 /**
  * Kill switch. Set TTS_TIMESTAMPS=off in the environment to skip the
@@ -63,10 +59,11 @@ const WANT_TIMESTAMPS = process.env.TTS_TIMESTAMPS !== "off";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Approved learners only, and a per-learner cap: every call spends the shared ElevenLabs quota.
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    if (!ttsThrottle.take(guard.user.id)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const body = await req.json().catch(() => ({}));
@@ -83,12 +80,11 @@ export async function POST(req: NextRequest) {
       throw new Error("ELEVENLABS_API_KEY is not configured");
     }
 
-    const voiceKey = (body?.voice as string) in EL_VOICES ? (body.voice as string) : DEFAULT_VOICE;
-    const voiceId  = EL_VOICES[voiceKey];
+    const { voice: voiceId, model } = pickVoice(body?.voice, PLAN);
 
     const payload = JSON.stringify({
       text,
-      model_id: MODEL_ID,
+      model_id: model,
       voice_settings: { stability: 0.5, similarity_boost: 0.75 },
     });
     const elHeaders = {

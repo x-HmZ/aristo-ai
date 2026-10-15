@@ -103,7 +103,7 @@
     {
       "name": "misc: execCommand copy refused",
       "pass": true,
-      "extra": "false"
+      "extra": "blocked: Error"
     },
     {
       "name": "misc: no download from <a download>",
@@ -124,13 +124,189 @@
       "name": "misc: WebRTC blocked",
       "pass": true,
       "extra": "blocked: TypeError"
+    },
+    {
+      "name": "rtc-nested: no nested frame ever existed",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "rtc-nested: the frame has no child frames",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "rtc-nested appendChild: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested append: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested insertBefore: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested replaceChildren: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested after: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested insertAdjacentElement: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested innerHTML: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested innerHTML object: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested outerHTML: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested insertAdjacentHTML: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested fragment: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested range: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested contextual fragment: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested DOMParser: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested xhtml prefix: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested svg foreignObject: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested object: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested embed: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested shadow: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested write: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested body setter: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested toctou toString: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested table caption: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested own matches: refused",
+      "pass": true,
+      "extra": "blocked: nested frames are not allowed"
+    },
+    {
+      "name": "rtc-nested x-script: code from a string did not run",
+      "pass": true,
+      "extra": "not run"
+    },
+    {
+      "name": "rtc-nested x-handler: code from a string did not run",
+      "pass": true,
+      "extra": "not run"
+    },
+    {
+      "name": "rtc-nested: a detached frame hands out no window",
+      "pass": true,
+      "extra": "null"
     }
   ],
   "problems": [],
   "misc": {
-    "copy": "false",
+    "copy": "blocked: Error",
     "rtc": "blocked: TypeError",
     "pip": "pictureInPictureEnabled=false",
     "fullscreen": "fullscreenEnabled=false"
+  },
+  "rtcNested": {
+    "frames": 0,
+    "appendChild": "blocked: nested frames are not allowed",
+    "append": "blocked: nested frames are not allowed",
+    "insertBefore": "blocked: nested frames are not allowed",
+    "replaceChildren": "blocked: nested frames are not allowed",
+    "after": "blocked: nested frames are not allowed",
+    "insertAdjacentElement": "blocked: nested frames are not allowed",
+    "innerHTML": "blocked: nested frames are not allowed",
+    "innerHTML object": "blocked: nested frames are not allowed",
+    "outerHTML": "blocked: nested frames are not allowed",
+    "insertAdjacentHTML": "blocked: nested frames are not allowed",
+    "fragment": "blocked: nested frames are not allowed",
+    "range": "blocked: nested frames are not allowed",
+    "contextual fragment": "blocked: nested frames are not allowed",
+    "DOMParser": "blocked: nested frames are not allowed",
+    "xhtml prefix": "blocked: nested frames are not allowed",
+    "svg foreignObject": "blocked: nested frames are not allowed",
+    "object": "blocked: nested frames are not allowed",
+    "embed": "blocked: nested frames are not allowed",
+    "shadow": "blocked: nested frames are not allowed",
+    "write": "blocked: nested frames are not allowed",
+    "body setter": "blocked: nested frames are not allowed",
+    "detachedHandle": "null",
+    "detached handle": "no frame",
+    "toctou toString": "blocked: nested frames are not allowed",
+    "table caption": "blocked: nested frames are not allowed",
+    "own matches": "blocked: nested frames are not allowed",
+    "x-script": "not run",
+    "x-handler": "not run"
   }
 }

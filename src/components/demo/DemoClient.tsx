@@ -23,9 +23,10 @@ import { useGLTF } from "@react-three/drei";
 import { AristoCanvas } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
+import { InteractiveStage } from "@/components/learn/InteractiveStage";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
 import { Button } from "@/components/ui/button";
-import { useAristoStore, ACTIVE_TEACHERS } from "@/store/useAristoStore";
+import { useAristoStore } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -33,16 +34,15 @@ import {
   TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
 } from "@/components/learn/ClassroomChrome";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
-import { demoTeacherFrom } from "./demoTeacher";
+import { DEMO_TEACHERS, demoTeacherFrom } from "./demoTeacher";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 
 /**
  * The avatar the demo opens on. It must lipsync (the page exists to show a
  * talking 3D teacher), and it pairs with the pre-rendered narration, which is
- * a male voice (ElevenLabs Antoni, public/demo/<slug>/audio.json). The visitor
- * can switch to any ACTIVE_TEACHERS avatar; MJ then speaks with that same male
- * narration until a female one is rendered.
+ * Jake's male voice (src/lib/tts/voices.json by ELEVENLABS_PLAN; what was recorded is in
+ * public/demo/<slug>/audio.json). Only DEMO_TEACHERS are offered: MJ waits for narration in her own voice.
  *
  * Set explicitly rather than read from DEFAULT_TEACHER: the narration files are
  * baked against this voice, so a future change to the global default must not
@@ -55,6 +55,7 @@ const TOPIC_ICON: Record<string, typeof BookOpen> = {
   "volcano-eruption": Mountain,
   heart: HeartPulse,
   brain: Brain,
+  "steepness-speed": TrendingUp,
 };
 const topicIcon = (slug: string) => TOPIC_ICON[slug] ?? BookOpen;
 
@@ -186,8 +187,7 @@ export function DemoClient() {
     // Remember whatever the visitor had chosen so an authed /learn session
     // later in the same tab does not inherit the demo's avatar.
     const previousTeacher = useAristoStore.getState().teacher;
-    // The landing's choice comes in as ?teacher= (V8.3c); MJ then speaks with the demo's male narration, as when
-    // switched here.
+    // The landing's choice comes in as ?teacher= (V8.3c), taken only if the demo offers that teacher (Jake alone for now).
     const opening = demoTeacherFrom(window.location.search, DEMO_TEACHER);
     setTeacher(opening);
 
@@ -296,11 +296,11 @@ export function DemoClient() {
                 Change topic
               </Button>
             </div>
-            {/* Teacher switcher, with the licence credit for the one on screen. */}
-            <div className="flex items-center gap-3">
+            {/* Teacher switcher (only while the demo offers more than one), with the licence credit for the one on screen. */}
+            {DEMO_TEACHERS.length > 1 && <div className="flex items-center gap-3">
               <span id="demo-teacher-label" className="shrink-0 text-xs font-semibold text-muted">Teacher</span>
               <div role="group" aria-labelledby="demo-teacher-label" className={cn(SHAPE.control, "flex items-center gap-1 bg-sunk p-1")}>
-                {ACTIVE_TEACHERS.map((t) => (
+                {DEMO_TEACHERS.map((t) => (
                   <button
                     key={t}
                     onClick={() => setTeacher(t)}
@@ -315,7 +315,7 @@ export function DemoClient() {
                   </button>
                 ))}
               </div>
-            </div>
+            </div>}
             <AvatarCredit avatar={teacher} className="px-1" />
           </div>
           <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>
@@ -324,6 +324,9 @@ export function DemoClient() {
           {renderBottom()}
         </div>
       )}
+
+      {/* Interactive visual (V10): a topic's frozen widget on the board; renders nothing without one */}
+      {topic && <InteractiveStage />}
 
       {/* Topic picker */}
       {!topic && <TopicPicker onPick={handlePick} />}

@@ -10,12 +10,14 @@ import type { QuizQuestion }  from "@/lib/agents/assessment";
 import { lesson as volcanoLesson, quiz as volcanoQuiz } from "./volcano-eruption";
 import { lesson as heartLesson, quiz as heartQuiz } from "./heart";
 import { lesson as brainLesson, quiz as brainQuiz } from "./brain";
+import { lesson as steepnessLesson, quiz as steepnessQuiz } from "./steepness-speed";
 
 export interface DemoTopic {
   slug:   string;
   title:  string;
   blurb:  string;
-  emoji:  string;
+  /** Not rendered (no emoji in the UI; DemoClient's TOPIC_ICON draws the topic). */
+  emoji?: string;
   lesson: LessonPayload;
   quiz:   QuizQuestion[];
 }
@@ -44,6 +46,13 @@ export const DEMO_TOPICS: DemoTopic[] = [
     emoji:  "🧠",
     lesson: brainLesson,
     quiz:   brainQuiz,
+  },
+  {
+    slug:   "steepness-speed",
+    title:  "Steepness Is Speed",
+    blurb:  "Read a trip off a distance-time graph by its tilt, then drive it yourself.",
+    lesson: steepnessLesson,
+    quiz:   steepnessQuiz,
   },
 ];
 

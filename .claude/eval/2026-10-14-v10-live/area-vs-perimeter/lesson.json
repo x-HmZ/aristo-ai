@@ -1,0 +1,227 @@
+{
+  "concept_id": "live-area-vs-perimeter",
+  "concept_name": "Area and perimeter of rectangles",
+  "phases": {
+    "activate": {
+      "content": "We connect the new concept to everyday experience: walking around the edge of something (perimeter) versus counting how much surface it covers (area), using a fencing scenario as the hook.",
+      "segment_ids": [
+        "seg_001",
+        "seg_002"
+      ],
+      "prerequisites_referenced": [
+        "counting",
+        "measuring length with a ruler"
+      ]
+    },
+    "explain": {
+      "analogy": "A rectangular rug on a tiled floor: perimeter is the walk around its edge, area is the number of tiles it covers.",
+      "formal_explanation": "For a rectangle with length l and width w: Perimeter = 2(l + w), the total distance around all four sides. Area = l × w, the number of unit squares that fit inside.",
+      "key_insight": "Perimeter measures only the boundary; area measures the entire interior — so two rectangles can share a perimeter yet enclose very different areas.",
+      "segment_ids": [
+        "seg_003",
+        "seg_004",
+        "seg_005"
+      ]
+    },
+    "demonstrate": {
+      "example_description": "Three rectangles, all with perimeter 20, are compared to show how their areas differ dramatically: a thin 9x1 strip, a 7x3 rectangle, and a 5x5 square.",
+      "step_by_step": [
+        "Rectangle 1: length 9, width 1 → Perimeter 2(9+1)=20, Area 9×1=9.",
+        "Rectangle 2: length 7, width 3 → Perimeter 2(7+3)=20, Area 7×3=21.",
+        "Rectangle 3: length 5, width 5 (square) → Perimeter 2(5+5)=20, Area 5×5=25.",
+        "Compare: same perimeter (20) but areas of 9, 21, and 25 — area is NOT determined by perimeter alone."
+      ],
+      "narration_pre_visual": "Let's test the big idea with three concrete rectangles that all share the same perimeter and see what happens to their areas.",
+      "visual_walkthrough": "Look at the grid diagrams: the thin 9-by-1 strip only covers 9 little squares even though its edge is 20 units long. The 7-by-3 rectangle, with the same 20-unit edge, covers 21 squares. And the 5-by-5 square, also with perimeter 20, covers a full 25 squares — clearly the most.",
+      "segment_ids": [
+        "seg_006",
+        "seg_007",
+        "seg_008",
+        "seg_009",
+        "seg_010",
+        "seg_011"
+      ]
+    },
+    "challenge": {
+      "question": "A farmer has exactly 24 feet of fencing and wants the rectangular pen with the LARGEST possible area. What length and width should they choose, and why?",
+      "hint": "Try a few length-width pairs that each satisfy 2×(length+width)=24, and compare their areas. What shape kept winning in our earlier examples?",
+      "answer": "A 6 by 6 square maximizes the area at 36 square feet (perimeter 2×(6+6)=24). Any non-square rectangle with the same perimeter, like 8 by 4 (area 32) or 10 by 2 (area 20), has less area — among all rectangles with a fixed perimeter, the square always gives the greatest area.",
+      "segment_ids": [
+        "seg_012",
+        "seg_013"
+      ]
+    },
+    "connect": {
+      "content": "The relationship between fixed perimeter and maximum area is used in real life by farmers fencing fields, architects designing floor plans, and engineers designing packaging to minimize material while maximizing space.",
+      "next_concept": "Area and perimeter of other shapes, such as triangles and circles",
+      "segment_ids": [
+        "seg_014"
+      ]
+    }
+  },
+  "segments": [
+    {
+      "id": "seg_001",
+      "phase": "activate",
+      "role": "hook",
+      "text": "Imagine you have exactly 20 feet of fencing to build a rectangular pen for a dog. Does it matter what shape you make it? You're about to find out the surprising answer.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_002",
+      "phase": "activate",
+      "role": "narrate",
+      "text": "You already know how to count things and measure distances with a ruler. We're going to use exactly those two skills to understand rectangles: counting squares, and measuring edges."
+    },
+    {
+      "id": "seg_003",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Picture a rectangular rug on a tiled floor. The 'perimeter' is how far you'd walk if you walked all the way around the edge of the rug. The 'area' is how many floor tiles the rug actually covers.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_004",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Formally: Perimeter = 2 times (length + width) — you're adding up all four sides. Area = length times width — you're counting the unit squares packed inside.",
+      "visual": {
+        "prompt": "Rectangle on a grid, length labeled 6 and width labeled 4 along the sides, arrows tracing the outer edge for perimeter, unit squares shaded inside for area, formulas P=2(l+w) and A=l×w shown below.",
+        "style": "diagram",
+        "callouts": [
+          "Length = 6",
+          "Width = 4",
+          "Perimeter = walk around edge",
+          "Area = squares inside"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_005",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Here's the key insight that surprises most people: two rectangles can have the exact same perimeter but completely different areas. Perimeter only cares about the outer edge; area cares about the whole inside.",
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_006",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Let's test that with real numbers, using rectangles that all have a perimeter of 20 units.",
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_007",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "First shape: length 9, width 1. Perimeter = 2×(9+1) = 20. Area = 9×1 = 9 square units — a long skinny strip.",
+      "visual": {
+        "prompt": "Thin long rectangle on a grid, length 9 width 1, labeled, with 9 small unit squares visibly filling it in a single row, perimeter 20 noted above.",
+        "style": "diagram",
+        "callouts": [
+          "Length 9",
+          "Width 1",
+          "Area = 9"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_008",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Second shape: length 7, width 3. Same perimeter: 2×(7+3) = 20. But now area = 7×3 = 21 square units — already more than double the first one!",
+      "visual": {
+        "prompt": "Rectangle on grid, length 7 width 3, 21 unit squares filling it in a 7 by 3 grid, perimeter 20 noted above, placed next to the thin 9x1 rectangle for comparison.",
+        "style": "comparison",
+        "callouts": [
+          "Length 7",
+          "Width 3",
+          "Area = 21",
+          "Same perimeter 20"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_009",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Third shape: length 5, width 5 — a square. Perimeter = 2×(5+5) = 20, same as before. Area = 5×5 = 25 square units, the biggest yet.",
+      "visual": {
+        "prompt": "Square rectangle on grid, length 5 width 5, 25 unit squares filling it in a 5 by 5 grid, perimeter 20 noted above, shown alongside the 9x1 and 7x3 rectangles for size comparison.",
+        "style": "comparison",
+        "callouts": [
+          "Length 5",
+          "Width 5",
+          "Area = 25",
+          "Same perimeter 20"
+        ]
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_010",
+      "phase": "demonstrate",
+      "role": "explore",
+      "text": "Try the Length slider on the board and watch how the Width adjusts to keep the perimeter at 20, and how the area changes as the rectangle gets longer or more square."
+    },
+    {
+      "id": "seg_011",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "So all three shapes used the same 20 units of fencing, but the areas were 9, 21, and 25 — the square won by a wide margin over the skinny strip."
+    },
+    {
+      "id": "seg_012",
+      "phase": "challenge",
+      "role": "challenge_setup",
+      "text": "Here's your challenge: a farmer has exactly 24 feet of fencing and wants the rectangular pen with the LARGEST possible area. What length and width should they choose, and why?",
+      "hint": "Try a few length-width pairs that each add up so that 2×(length+width)=24, and compare their areas. What shape kept showing up as the winner in our examples?"
+    },
+    {
+      "id": "seg_013",
+      "phase": "challenge",
+      "role": "challenge_reveal",
+      "text": "A 6 by 6 square gives the maximum area: perimeter = 2×(6+6) = 24, and area = 6×6 = 36 square feet. Any other pair, like 8 by 4 (perimeter 24, area 32) or 10 by 2 (perimeter 24, area 20), gives less area — for a fixed perimeter, the square always maximizes area.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_014",
+      "phase": "connect",
+      "role": "transition",
+      "text": "This isn't just a math puzzle — architects, farmers, and packaging designers use this exact idea to get the most space from a fixed amount of material. Next, we'll explore how these same ideas extend to other shapes, like triangles and circles, where area and perimeter follow different but related rules."
+    }
+  ],
+  "metadata": {
+    "estimated_read_time_minutes": 6,
+    "bloom_level_taught": "Apply/Analyze",
+    "depth_level": "moderate",
+    "should_generate_model": false,
+    "interactive": {
+      "goal": "See that rectangles with the same perimeter can have very different areas, and find which shape gives the most area.",
+      "brief": "A rectangle is drawn on a grid. Two sliders control Length and Width. A fixed perimeter target (say 20 units) is shown, and as you move one slider the other auto-adjusts to keep the perimeter at 20, while the area and the filled unit squares update live.",
+      "controls": [
+        {
+          "label": "Length",
+          "kind": "slider",
+          "effect": "Increases the rectangle's length; width automatically shrinks to keep perimeter fixed at 20, and the area recalculates and redraws the grid squares."
+        },
+        {
+          "label": "Width",
+          "kind": "slider",
+          "effect": "Increases the rectangle's width; length automatically shrinks to keep perimeter fixed at 20, and the area recalculates and redraws the grid squares."
+        }
+      ],
+      "try_this": [
+        "Make a very long, thin rectangle and watch the area shrink.",
+        "Try to make Length equal Width - what happens to the area?",
+        "Find the Length/Width pair that gives the biggest area possible."
+      ]
+    }
+  }
+}

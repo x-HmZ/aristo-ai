@@ -1,0 +1,220 @@
+{
+  "concept_id": "live-equivalent-fractions",
+  "concept_name": "Equivalent fractions",
+  "phases": {
+    "activate": {
+      "content": "We connect equivalent fractions to the everyday experience of sharing food equally — splitting a candy bar in half, or a pizza into different numbers of slices — where the learner already intuitively knows that different-looking splits can give the same amount.",
+      "prerequisites_referenced": [
+        "basic idea of a fraction as equal sharing"
+      ],
+      "segment_ids": [
+        "seg_001",
+        "seg_002"
+      ]
+    },
+    "explain": {
+      "analogy": "A pizza cut into 2 slices (eat 1) versus the same pizza cut into 4 slices (eat 2) — different-looking slices, same amount of pizza in your stomach.",
+      "formal_explanation": "Two fractions are equivalent when they represent the same value. Multiplying or dividing both the numerator and denominator by the same nonzero number produces an equivalent fraction, because this is equivalent to multiplying the whole fraction by a form of 1 (like 2/2 or 3/3), which never changes its value.",
+      "key_insight": "Multiplying top and bottom by the same number is really multiplying the fraction by 1 in disguise — so the value can never change, only how finely it's divided.",
+      "segment_ids": [
+        "seg_003",
+        "seg_004",
+        "seg_005",
+        "seg_006"
+      ]
+    },
+    "demonstrate": {
+      "example_description": "Scaling 1/2 up to 2/4 and then to 4/8 by multiplying numerator and denominator by 2 each time, shown as a chain with matching pizza visuals.",
+      "step_by_step": [
+        "Start with 1/2.",
+        "Multiply both numerator and denominator by 2: get 2/4.",
+        "Multiply both numerator and denominator of 2/4 by 2 again: get 4/8.",
+        "Confirm all three fractions (1/2, 2/4, 4/8) represent the same shaded pizza area.",
+        "Note the reverse process (dividing) is called simplifying and also preserves value.",
+        "Contrast with the misconception: adding the same number to top and bottom changes the value."
+      ],
+      "narration_pre_visual": "Let's prove 1/2, 2/4, and 4/8 are all the same value by scaling step by step, the same way you'd keep re-cutting that pizza into more and more pieces.",
+      "visual_walkthrough": "Look at the chain diagram: 1/2 has an arrow labeled '×2' leading to 2/4, and another '×2' arrow leading to 4/8. Each fraction is drawn as its own little pizza, and notice the shaded area looks identical in all three — only the number of slices changes.",
+      "segment_ids": [
+        "seg_007",
+        "seg_008",
+        "seg_009",
+        "seg_010",
+        "seg_011",
+        "seg_012"
+      ]
+    },
+    "challenge": {
+      "question": "Is 3/6 equivalent to 1/2? Is 1/2 equivalent to 2/3? Think about what operation connects each pair.",
+      "hint": "Ask yourself: is there ONE number you could multiply (or divide) both the top and bottom by to turn one fraction into the other?",
+      "answer": "3/6 is equivalent to 1/2, since multiplying both 1 and 2 by 3 gives exactly 3 and 6. But 1/2 is NOT equivalent to 2/3, because no single multiplier turns both 1 into 2 AND 2 into 3 at the same time — there's no consistent scaling, so they're genuinely different amounts.",
+      "segment_ids": [
+        "seg_013",
+        "seg_014"
+      ]
+    },
+    "connect": {
+      "content": "Equivalent fractions are the toolkit behind adding/subtracting fractions with different denominators, comparing fraction sizes, and simplifying fractions to their lowest terms — nearly every future fraction skill leans on this idea.",
+      "next_concept": "Simplifying fractions to lowest terms",
+      "segment_ids": [
+        "seg_015"
+      ]
+    }
+  },
+  "segments": [
+    {
+      "id": "seg_001",
+      "phase": "activate",
+      "role": "hook",
+      "text": "Have you ever split a candy bar in half with a friend, and then later split a different one into four pieces and given your friend two? You both ended up with the same amount either way.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_002",
+      "phase": "activate",
+      "role": "narrate",
+      "text": "You already know what a fraction like 1/2 means: one piece out of two equal pieces. That idea of 'sharing something equally' is all we need to understand today's concept.",
+      "gesture": "idle"
+    },
+    {
+      "id": "seg_003",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Picture a pizza cut into 2 equal slices, and you eat 1 slice — that's 1/2 the pizza. Now picture an identical pizza cut into 4 equal slices instead, and you eat 2 of those slices.",
+      "visual": {
+        "prompt": "Two identical round pizzas side by side. Left pizza cut into 2 equal slices, 1 slice shaded red. Right pizza cut into 4 equal slices, 2 slices shaded red. Same total shaded area on both. Clean flat illustration style.",
+        "style": "comparison",
+        "callouts": [
+          "1/2 shaded",
+          "2/4 shaded",
+          "Same amount of pizza"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_004",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Even though the slices look different — one big half versus two smaller quarters — the actual amount of pizza you're eating is exactly the same. That's what it means for two fractions to be equivalent: they name the same real amount, even though they look different on paper.",
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_005",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Here's the formal rule: if you multiply (or divide) BOTH the top number and the bottom number of a fraction by the same number, the value never changes. For 1/2, multiply top and bottom by 2 to get 2/4 — same value, just cut into smaller pieces.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_006",
+      "phase": "explain",
+      "role": "callout",
+      "text": "Why does this work? Because multiplying top and bottom by 2 is really just multiplying the whole fraction by 2/2, which equals 1 — and multiplying anything by 1 doesn't change its value.",
+      "gesture": "thinking"
+    },
+    {
+      "id": "seg_007",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Let's prove 1/2, 2/4, and 4/8 are all the same value by scaling step by step, the same way you'd keep re-cutting that pizza into more and more pieces.",
+      "gesture": "idle"
+    },
+    {
+      "id": "seg_008",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Start with 1/2. Multiply top and bottom by 2: 1×2 is 2, and 2×2 is 4. That gives us 2/4.",
+      "visual": {
+        "prompt": "Fraction chain diagram: 1/2 with arrow labeled '×2' pointing to 2/4, then arrow labeled '×2' pointing to 4/8. Each fraction shown as a small pizza with slices shaded matching the fraction. White background, clean diagram.",
+        "style": "process_flow",
+        "callouts": [
+          "1/2",
+          "×2",
+          "2/4",
+          "×2",
+          "4/8"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_009",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Now take 2/4 and multiply top and bottom by 2 again: 2×2 is 4, and 4×2 is 8. That gives us 4/8 — same chain, same visual.",
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_010",
+      "phase": "demonstrate",
+      "role": "explore",
+      "text": "Try the Scale factor (n) slider on the board and watch the pizza get cut into more slices while the shaded amount stays exactly the same.",
+      "gesture": "idle"
+    },
+    {
+      "id": "seg_011",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "So 1/2 = 2/4 = 4/8 — three different-looking fractions, one real amount. This also works backwards: dividing top and bottom by the same number, like turning 4/8 back into 1/2, is called simplifying, and it still keeps the same value.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_012",
+      "phase": "demonstrate",
+      "role": "callout",
+      "text": "Here's a trap to watch for: ADDING the same number to top and bottom does NOT keep the value. 1/2 is not equal to (1+2)/(2+2), which would be 3/4 — those are genuinely different amounts of pizza.",
+      "gesture": "thinking"
+    },
+    {
+      "id": "seg_013",
+      "phase": "challenge",
+      "role": "challenge_setup",
+      "text": "Here's your challenge: Is 3/6 equivalent to 1/2? And here's the twist — is 1/2 equivalent to 2/3? Think about what operation connects each pair before answering.",
+      "gesture": "thinking"
+    },
+    {
+      "id": "seg_014",
+      "phase": "challenge",
+      "role": "challenge_reveal",
+      "text": "3/6 IS equivalent to 1/2, because multiplying 1 and 2 each by 3 gives exactly 3 and 6. But 1/2 is NOT equivalent to 2/3 — there's no single number you can multiply both 1 and 2 by to land on 2 and 3 at the same time, so they name different amounts.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_015",
+      "phase": "connect",
+      "role": "narrate",
+      "text": "Equivalent fractions are the foundation for almost everything else you'll do with fractions: adding and subtracting fractions with different denominators, comparing which fraction is bigger, and simplifying messy fractions down to their simplest form. Next time you see fractions, you'll recognize when they're secretly the same amount wearing a different outfit.",
+      "gesture": "idle"
+    }
+  ],
+  "metadata": {
+    "estimated_read_time_minutes": 6,
+    "bloom_level_taught": "Understand/Apply",
+    "depth_level": "moderate",
+    "should_generate_model": false,
+    "interactive": {
+      "goal": "See that cutting a pizza into more slices but taking proportionally more of them never changes how much pizza you actually get.",
+      "brief": "A circle (pizza) starts cut into 2 equal slices with 1 shaded (showing 1/2). A slider changes the 'scale factor' from 1 to 6, redrawing the pizza with more, thinner slices while keeping the same shaded amount, showing fractions like 1/2, 2/4, 3/6, up to 6/12.",
+      "controls": [
+        {
+          "label": "Scale factor (n)",
+          "kind": "slider",
+          "effect": "Multiplies both the number of slices and the number of shaded slices by n, redrawing the pizza and updating the fraction label."
+        },
+        {
+          "label": "Show fraction label",
+          "kind": "toggle",
+          "effect": "Shows or hides the numeric fraction (like 2/4) written under the pizza."
+        }
+      ],
+      "try_this": [
+        "Move the slider to n=2 and check the shaded area looks identical to n=1.",
+        "Push the slider all the way to n=6 and see the fraction 6/12.",
+        "Toggle the label off and see if you can still tell it's the same amount shaded."
+      ]
+    }
+  }
+}

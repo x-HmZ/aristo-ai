@@ -1,0 +1,15 @@
+{
+  "$comment": "ElevenLabs voice per teacher key, read by src/app/api/tts/route.ts (via voices.ts) and scripts/prerender-demo-tts.mjs. Each key has a 'free' entry and may have a 'paid' one; ELEVENLABS_PLAN=paid picks 'paid' where it exists. After changing an entry, re-run the prerender: /demo's mp3s are recorded in advance.",
+  "default": "marcus",
+  "voices": {
+    "marcus": { "free": { "voice": "pNInz6obpgDQGcFmaJgB", "model": "eleven_turbo_v2_5", "name": "Adam" } },
+    "ryan":   { "free": { "voice": "ErXwobaYiN019PkySvjV", "model": "eleven_turbo_v2_5", "name": "Antoni" } },
+    "priya":  { "free": { "voice": "21m00Tcm4TlvDq8ikWAM", "model": "eleven_turbo_v2_5", "name": "Rachel" } },
+    "sonia":  { "free": { "voice": "EXAVITQu4vr4xnSDxMaL", "model": "eleven_turbo_v2_5", "name": "Sarah" } },
+    "custom": { "free": { "voice": "pNInz6obpgDQGcFmaJgB", "model": "eleven_turbo_v2_5", "name": "Adam" } },
+    "jake": {
+      "free": { "voice": "bIHbv24MWmeRgasZH58o", "model": "eleven_turbo_v2_5", "name": "placeholder" },
+      "paid": { "voice": "zfc8CJQpe8Kqyl0vvCzo", "model": "eleven_multilingual_v2", "name": "Mike" }
+    }
+  }
+}

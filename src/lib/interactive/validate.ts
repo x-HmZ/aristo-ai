@@ -77,8 +77,14 @@ const FORBIDDEN_JS: Array<[RegExp, string]> = [
   [/\b(?:window|self)\s*\.\s*(?:top|parent|opener|frames)\b|(?<![.\w$])(?:top|parent|opener)\s*\./, "frame access"],
   [/\bpostMessage\b/,                               "postMessage (the bridge owns it)"],
   [/\bdocument\s*\.\s*(write|writeln)\b/,           "document.write"],
+  [/\b(contentWindow|contentDocument|srcdoc|attachShadow|setHTMLUnsafe|parseHTMLUnsafe|execCommand)\b/, "nested frame or shadow DOM"],
+  [/__aristo/,                                      "reserved name (the bridge owns it)"],
+  [/\bwith\s*\(/,                                   "with statement"],
   [/\bwhile\s*\(\s*(true|1)\s*\)|\bfor\s*\(\s*;\s*;\s*\)/, "unbounded loop"],
 ];
+
+/** An inline event handler: HTML needs no space before it (`<svg/onload=...>`, `class="x"onclick=...`). */
+export const INLINE_HANDLER = /[\s"'\/]on[a-z]+\s*=/i;
 
 export function validateWidget(parts: InteractiveParts): WidgetCheck {
   const { markup, css, js } = parts;
@@ -91,7 +97,7 @@ export function validateWidget(parts: InteractiveParts): WidgetCheck {
 
   // ── markup ────────────────────────────────────────────────────────────────
   if (FORBIDDEN_TAGS.test(markup)) return { ok: false, reason: "markup: forbidden element" };
-  if (/\son[a-z]+\s*=/i.test(markup)) return { ok: false, reason: "markup: inline event handler" };
+  if (INLINE_HANDLER.test(markup)) return { ok: false, reason: "markup: inline event handler" };
   if (/<!--/.test(markup)) return { ok: false, reason: "markup: html comment" };
   if (/\bsrcdoc\s*=/i.test(markup)) return { ok: false, reason: "markup: srcdoc" };
   if (/javascript\s*:/i.test(markup) || /javascript\s*:/i.test(css)) {

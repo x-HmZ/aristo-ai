@@ -34,14 +34,16 @@ const slopeLine: InteractiveFixture = {
   },
   parts: {
     title: "Slope and intercept",
-    markup: `<div class="stack">
-  <div class="readout" id="eq" aria-live="polite">y = 1x + 0</div>
+    markup: `<div class="split">
   <div class="stage"><canvas id="plot" role="img" aria-label="Graph of the line y = mx + b"></canvas></div>
-  <div class="controls">
-    <div class="control"><label for="m">Slope (m) <span class="value" id="mv">1</span></label>
-      <input id="m" type="range" min="-5" max="5" step="0.5" value="1"></div>
-    <div class="control"><label for="b">Intercept (b) <span class="value" id="bv">0</span></label>
-      <input id="b" type="range" min="-3" max="3" step="1" value="0"></div>
+  <div class="stack">
+    <div class="readout" id="eq" aria-live="polite">y = 1x + 0</div>
+    <div class="controls">
+      <div class="control"><label for="m">Slope (m) <span class="value" id="mv">1</span></label>
+        <input id="m" type="range" min="-5" max="5" step="0.5" value="1"></div>
+      <div class="control"><label for="b">Intercept (b) <span class="value" id="bv">0</span></label>
+        <input id="b" type="range" min="-3" max="3" step="1" value="0"></div>
+    </div>
   </div>
 </div>`,
     css: `#eq{text-align:center}`,
@@ -73,7 +75,7 @@ var plot = ARISTO.canvas(document.getElementById('plot'), function (ctx, w, h) {
   ctx.fillText('rise ' + fmt(m), X(1) + 7, Y(b + m / 2) + 4);
 
   ctx.fillStyle = C.accentText; ctx.beginPath(); ctx.arc(X(0), Y(b), 6, 0, Math.PI * 2); ctx.fill();
-}, 0.55);
+}, 0.7);
 
 function update() {
   var m = +mIn.value, b = +bIn.value;
@@ -107,21 +109,23 @@ const fractionBars: InteractiveFixture = {
   },
   parts: {
     title: "Equivalent fractions",
-    markup: `<div class="stack">
-  <div class="readout" id="eq" aria-live="polite"></div>
+    markup: `<div class="split">
   <div class="stage">
     <div class="bar" id="top" role="img" aria-label="Top bar"></div>
     <div class="bar" id="bot" role="img" aria-label="Bottom bar, every piece cut smaller"></div>
   </div>
-  <div class="controls">
-    <div class="control"><label for="num">Numerator <span class="value" id="numv"></span></label>
-      <input id="num" type="range" min="0" max="12" step="1" value="3"></div>
-    <div class="control"><label for="den">Denominator <span class="value" id="denv"></span></label>
-      <input id="den" type="range" min="1" max="12" step="1" value="4"></div>
-  </div>
-  <div class="row" role="group" aria-labelledby="cutLabel">
-    <span class="hint" id="cutLabel">Cut each piece into</span>
-    <span class="row" id="cuts"></span>
+  <div class="stack">
+    <div class="readout" id="eq" aria-live="polite"></div>
+    <div class="controls">
+      <div class="control"><label for="num">Numerator <span class="value" id="numv"></span></label>
+        <input id="num" type="range" min="0" max="12" step="1" value="3"></div>
+      <div class="control"><label for="den">Denominator <span class="value" id="denv"></span></label>
+        <input id="den" type="range" min="1" max="12" step="1" value="4"></div>
+    </div>
+    <div class="row" role="group" aria-labelledby="cutLabel">
+      <span class="hint" id="cutLabel">Cut each piece into</span>
+      <span class="row" id="cuts"></span>
+    </div>
   </div>
 </div>`,
     css: `#eq{text-align:center}
@@ -195,8 +199,9 @@ const forLoop: InteractiveFixture = {
   },
   parts: {
     title: "Stepping a for loop",
-    markup: `<div class="stack">
+    markup: `<div class="split">
   <pre class="code" id="code" aria-label="Python code"></pre>
+  <div class="stack">
   <div class="row vars">
     <div class="var"><span class="hint">i</span><b id="vi">-</b></div>
     <div class="var"><span class="hint">total</span><b id="vt">-</b></div>
@@ -211,8 +216,9 @@ const forLoop: InteractiveFixture = {
   <div class="controls"><div class="control">
     <label for="n">Loop count (n) <span class="value" id="nv"></span></label>
     <input id="n" type="range" min="1" max="6" step="1" value="3"></div></div>
+  </div>
 </div>`,
-    css: `.code{margin:0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
+    css: `.code{margin:0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;font:14px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--body);overflow-x:auto}
 .code .ln{display:block;border-radius:6px;padding:0 6px}
 .code .ln.on{background:var(--accent-text);color:var(--surface)}
 .vars{gap:8px}

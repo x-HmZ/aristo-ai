@@ -34,7 +34,7 @@ import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { requireApproved } from "@/lib/auth/approval";
-import { generateInteractive } from "@/lib/agents/interactive";
+import { generateInteractive, lessonExample } from "@/lib/agents/interactive";
 import { MODELS } from "@/lib/agents/models";
 import {
   normalizeSpecForKey,
@@ -87,14 +87,23 @@ export async function POST(req: NextRequest) {
     // The spec must be one the teaching agent wrote: some stored lesson of this concept carries it. Any
     // moderation status but rejected counts, because a brand-new concept's lesson is stored as pending
     // and its first learner is served it anyway.
+    // That lesson's worked example also goes to the page builder, so the widget plays out what was just explained.
+    // Only its segments are read (this runs before the cache, on every request), and always from the same
+    // lesson: approved ones first (the statuses sort approved < auto_approved < pending), then the oldest,
+    // because the example is not part of the cache key and the first widget built is served to all of them.
+    let example = "";
     if (concept) {
-      const { count } = await service
+      const { data: lessons } = await service
         .from("cached_lessons")
-        .select("id", { count: "exact", head: true })
+        .select("segments:payload->segments")
         .eq("concept_id", concept.id)
         .neq("moderation_status", "rejected")
-        .contains("payload", { metadata: { interactive: spec } });
-      if (!count) return NextResponse.json({ error: "spec does not belong to a lesson of this concept" }, { status: 403 });
+        .contains("payload", { metadata: { interactive: spec } })
+        .order("moderation_status", { ascending: true })
+        .order("generated_at", { ascending: true })
+        .limit(1);
+      if (!lessons?.length) return NextResponse.json({ error: "spec does not belong to a lesson of this concept" }, { status: 403 });
+      example = lessonExample((lessons[0] as { segments?: unknown }).segments);
     }
 
     // Free-form requests are never stored, so their topic is part of what makes two requests the same.
@@ -123,7 +132,7 @@ export async function POST(req: NextRequest) {
       if (!throttle.take(user.id) || (await overBudget(service, user.id))) {
         return NextResponse.json({ error: "Too many interactives requested; try again in a few minutes" }, { status: 429 });
       }
-      pending = generateInteractive({ topic: concept?.name ?? topic, spec, userId: user.id })
+      pending = generateInteractive({ topic: concept?.name ?? topic, spec, example, userId: user.id })
         .finally(() => inflight.delete(specHash));
       inflight.set(specHash, pending);
     }

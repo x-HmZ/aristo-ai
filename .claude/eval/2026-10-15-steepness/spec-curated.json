@@ -1,0 +1,14 @@
+{
+  "goal": "See that the steepness of the line at a moment, not its height, is the speed right then, even on a curve.",
+  "brief": "A distance-time graph: Time 0 to 12 s across, Distance 0 to 120 m up. The trip follows the lesson's worked example: 0 to 4 s straight from 0 m to 20 m (5 m/s); segment 2 from 4 to 7 s, straight, its steepness set by the slider from 0 to 10 m/s (it starts at 0: flat at 20 m, the runner stopped); segment 3 from 7 to 9 s, straight at 10 m/s (20 m up). Then, from 9 to 12 s, a CURVED part where the runner speeds up smoothly from 10 m/s to 20 m/s. A marker dot sits on the path at the chosen time; the readout says the time, the distance and the speed there. With Show tangent line on, the line just touching the path at the marker is drawn, and its slope is the speed in the readout: on the curve it tilts more as the marker moves right.",
+  "controls": [
+    { "label": "Steepness of segment 2", "kind": "slider", "effect": "Tilts segment 2 (4 to 7 s) from flat to steep; the rest of the trip shifts up or down with it and the speed readout follows." },
+    { "label": "Time position", "kind": "slider", "effect": "Moves the marker along the trip from 0 to 12 s; the readout shows the distance and the speed at that moment." },
+    { "label": "Show tangent line", "kind": "toggle", "effect": "Draws the line touching the path at the marker; its steepness is the speed right then." }
+  ],
+  "try_this": [
+    "Leave segment 2 flat and put the marker on it: high up, but 0 m/s.",
+    "Turn on the tangent line and slide the marker through the curved part.",
+    "Compare the tangent's tilt at 9.5 s and at 11.5 s."
+  ]
+}

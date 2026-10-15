@@ -1,0 +1,45 @@
+{
+  "checks": [
+    {
+      "name": "1280x720: the frozen widget is on screen at the explore segment",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "1280x720: the widget ran (ready)",
+      "pass": true,
+      "extra": "ready"
+    },
+    {
+      "name": "1280x720: the lesson waits with a Continue",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "1280x720: no /api request",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "390x844: the frozen widget is on screen at the explore segment",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "390x844: the widget ran (ready)",
+      "pass": true,
+      "extra": "ready"
+    },
+    {
+      "name": "390x844: the lesson waits with a Continue",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "390x844: no /api request",
+      "pass": true,
+      "extra": ""
+    }
+  ],
+  "problems": []
+}

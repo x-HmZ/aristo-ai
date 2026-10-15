@@ -1,17 +1,18 @@
 {
   "shots": [
-    "1280x720-explore.jpg",
-    "1280x720-large.jpg",
-    "1280x720-hidden.jpg",
     "1920x1080-explore.jpg",
-    "1280x600-explore.jpg",
-    "1180x720-explore.jpg",
+    "1920x1080-large.jpg",
+    "1920x1080-hidden.jpg",
+    "1920x1080-explore.jpg",
+    "1600x900-explore.jpg",
+    "1440x900-explore.jpg",
+    "1280x720-explore.jpg",
     "1024x768-explore.jpg",
     "768x1024-explore.jpg",
     "360x780-explore.jpg",
-    "fits-slope-line-1280x720.jpg",
-    "fits-fraction-bars-1280x720.jpg",
-    "fits-for-loop-1280x720.jpg",
+    "fits-slope-line-1920x1080.jpg",
+    "fits-fraction-bars-1920x1080.jpg",
+    "fits-for-loop-1920x1080.jpg",
     "fail-500-after.jpg"
   ],
   "checks": [
@@ -31,14 +32,24 @@
       "extra": ""
     },
     {
-      "name": "happy: the card is on the board, left of the panel",
+      "name": "happy: the widget fills the room's display",
       "pass": true,
-      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":562,\"w\":384,\"h\":486},\"panel\":{\"l\":860,\"t\":76,\"r\":1260,\"b\":700,\"w\":400,\"h\":624}}"
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"sr\":{\"x\":573,\"y\":175,\"w\":869,\"h\":461}}"
     },
     {
-      "name": "happy: the card clears the caption band",
+      "name": "happy: the display is left of the panel",
       "pass": true,
-      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":562,\"w\":384,\"h\":486},\"band\":{\"l\":20,\"t\":633,\"r\":840,\"b\":704,\"w\":820,\"h\":71}}"
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"panel\":{\"l\":1500,\"t\":76,\"r\":1900,\"b\":1060,\"w\":400,\"h\":984}}"
+    },
+    {
+      "name": "happy: the display clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"band\":{\"l\":20,\"t\":993,\"r\":1480,\"b\":1064,\"w\":1460,\"h\":71}}"
+    },
+    {
+      "name": "happy: the strip sits under the screen, clear of the panel and the band",
+      "pass": true,
+      "extra": "{\"strip\":{\"l\":573,\"t\":650,\"r\":1442,\"b\":694,\"w\":869,\"h\":44},\"band\":{\"l\":20,\"t\":993,\"r\":1480,\"b\":1064,\"w\":1460,\"h\":71}}"
     },
     {
       "name": "happy: Continue is visible",
@@ -58,7 +69,7 @@
     {
       "name": "happy: the large view is larger and centred",
       "pass": true,
-      "extra": "{\"l\":160,\"t\":48,\"r\":1120,\"b\":672,\"w\":960,\"h\":624}"
+      "extra": "{\"l\":480,\"t\":180,\"r\":1440,\"b\":900,\"w\":960,\"h\":720}"
     },
     {
       "name": "happy: slider state survives Expand",
@@ -111,29 +122,34 @@
       "extra": ""
     },
     {
-      "name": "size 1920x1080: board card",
+      "name": "size 1920x1080: on the display (screen 869 px wide)",
       "pass": true,
       "extra": "group"
     },
     {
       "name": "size 1920x1080: inside the viewport",
       "pass": true,
-      "extra": "{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680}"
+      "extra": "{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461}"
+    },
+    {
+      "name": "size 1920x1080: fills the display",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"sr\":{\"x\":573,\"y\":175,\"w\":869,\"h\":461}}"
     },
     {
       "name": "size 1920x1080: Continue reachable",
       "pass": true,
-      "extra": "{\"l\":1338,\"t\":703,\"r\":1463,\"b\":747,\"w\":125,\"h\":44}"
+      "extra": "{\"l\":1142,\"t\":650,\"r\":1266,\"b\":694,\"w\":125,\"h\":44}"
     },
     {
       "name": "size 1920x1080: left of the panel",
       "pass": true,
-      "extra": "{\"c\":{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680},\"panel\":{\"l\":1500,\"t\":76,\"r\":1900,\"b\":1060,\"w\":400,\"h\":984}}"
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"panel\":{\"l\":1500,\"t\":76,\"r\":1900,\"b\":1060,\"w\":400,\"h\":984}}"
     },
     {
       "name": "size 1920x1080: clears the caption band",
       "pass": true,
-      "extra": "{\"c\":{\"l\":1020,\"t\":76,\"r\":1480,\"b\":756,\"w\":460,\"h\":680},\"band\":{\"l\":20,\"t\":993,\"r\":1480,\"b\":1064,\"w\":1460,\"h\":71}}"
+      "extra": "{\"c\":{\"l\":573,\"t\":175,\"r\":1442,\"b\":636,\"w\":869,\"h\":461},\"band\":{\"l\":20,\"t\":993,\"r\":1480,\"b\":1064,\"w\":1460,\"h\":71}}"
     },
     {
       "name": "size 1920x1080: no horizontal overflow",
@@ -141,67 +157,97 @@
       "extra": "0"
     },
     {
-      "name": "size 1280x600: board card",
+      "name": "size 1600x900: on the display (screen 684 px wide)",
       "pass": true,
       "extra": "group"
     },
     {
-      "name": "size 1280x600: inside the viewport",
+      "name": "size 1600x900: inside the viewport",
       "pass": true,
-      "extra": "{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392}"
+      "extra": "{\"l\":451,\"t\":163,\"r\":1135,\"b\":526,\"w\":684,\"h\":363}"
     },
     {
-      "name": "size 1280x600: Continue reachable",
+      "name": "size 1600x900: fills the display",
       "pass": true,
-      "extra": "{\"l\":698,\"t\":415,\"r\":823,\"b\":459,\"w\":125,\"h\":44}"
+      "extra": "{\"c\":{\"l\":451,\"t\":163,\"r\":1135,\"b\":526,\"w\":684,\"h\":363},\"sr\":{\"x\":451,\"y\":163,\"w\":684,\"h\":363}}"
     },
     {
-      "name": "size 1280x600: left of the panel",
+      "name": "size 1600x900: Continue reachable",
       "pass": true,
-      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392},\"panel\":{\"l\":860,\"t\":76,\"r\":1260,\"b\":580,\"w\":400,\"h\":504}}"
+      "extra": "{\"l\":927,\"t\":540,\"r\":1052,\"b\":584,\"w\":125,\"h\":44}"
     },
     {
-      "name": "size 1280x600: clears the caption band",
+      "name": "size 1600x900: left of the panel",
       "pass": true,
-      "extra": "{\"c\":{\"l\":456,\"t\":76,\"r\":840,\"b\":468,\"w\":384,\"h\":392},\"band\":{\"l\":20,\"t\":513,\"r\":840,\"b\":584,\"w\":820,\"h\":71}}"
+      "extra": "{\"c\":{\"l\":451,\"t\":163,\"r\":1135,\"b\":526,\"w\":684,\"h\":363},\"panel\":{\"l\":1180,\"t\":76,\"r\":1580,\"b\":880,\"w\":400,\"h\":804}}"
     },
     {
-      "name": "size 1280x600: no horizontal overflow",
+      "name": "size 1600x900: clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":451,\"t\":163,\"r\":1135,\"b\":526,\"w\":684,\"h\":363},\"band\":{\"l\":20,\"t\":813,\"r\":1160,\"b\":884,\"w\":1140,\"h\":71}}"
+    },
+    {
+      "name": "size 1600x900: no horizontal overflow",
       "pass": true,
       "extra": "0"
     },
     {
-      "name": "size 1180x720: board card",
+      "name": "size 1440x900: on the display (screen 591 px wide)",
       "pass": true,
       "extra": "group"
     },
     {
-      "name": "size 1180x720: inside the viewport",
+      "name": "size 1440x900: inside the viewport",
       "pass": true,
-      "extra": "{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486}"
+      "extra": "{\"l\":389,\"t\":202,\"r\":980,\"b\":516,\"w\":591,\"h\":314}"
     },
     {
-      "name": "size 1180x720: Continue reachable",
+      "name": "size 1440x900: fills the display",
       "pass": true,
-      "extra": "{\"l\":598,\"t\":509,\"r\":723,\"b\":553,\"w\":125,\"h\":44}"
+      "extra": "{\"c\":{\"l\":389,\"t\":202,\"r\":980,\"b\":516,\"w\":591,\"h\":314},\"sr\":{\"x\":389,\"y\":202,\"w\":591,\"h\":314}}"
     },
     {
-      "name": "size 1180x720: left of the panel",
+      "name": "size 1440x900: Continue reachable",
       "pass": true,
-      "extra": "{\"c\":{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486},\"panel\":{\"l\":760,\"t\":76,\"r\":1160,\"b\":700,\"w\":400,\"h\":624}}"
+      "extra": "{\"l\":819,\"t\":530,\"r\":943,\"b\":574,\"w\":125,\"h\":44}"
     },
     {
-      "name": "size 1180x720: clears the caption band",
+      "name": "size 1440x900: left of the panel",
       "pass": true,
-      "extra": "{\"c\":{\"l\":386,\"t\":76,\"r\":740,\"b\":562,\"w\":354,\"h\":486},\"band\":{\"l\":20,\"t\":633,\"r\":740,\"b\":704,\"w\":720,\"h\":71}}"
+      "extra": "{\"c\":{\"l\":389,\"t\":202,\"r\":980,\"b\":516,\"w\":591,\"h\":314},\"panel\":{\"l\":1020,\"t\":76,\"r\":1420,\"b\":880,\"w\":400,\"h\":804}}"
     },
     {
-      "name": "size 1180x720: no horizontal overflow",
+      "name": "size 1440x900: clears the caption band",
+      "pass": true,
+      "extra": "{\"c\":{\"l\":389,\"t\":202,\"r\":980,\"b\":516,\"w\":591,\"h\":314},\"band\":{\"l\":20,\"t\":813,\"r\":1000,\"b\":884,\"w\":980,\"h\":71}}"
+    },
+    {
+      "name": "size 1440x900: no horizontal overflow",
       "pass": true,
       "extra": "0"
     },
     {
-      "name": "size 1024x768: large view",
+      "name": "size 1280x720: large view (screen 498 px wide)",
+      "pass": true,
+      "extra": "dialog"
+    },
+    {
+      "name": "size 1280x720: inside the viewport",
+      "pass": true,
+      "extra": "{\"l\":160,\"t\":48,\"r\":1120,\"b\":672,\"w\":960,\"h\":624}"
+    },
+    {
+      "name": "size 1280x720: Continue reachable",
+      "pass": true,
+      "extra": "{\"l\":978,\"t\":598,\"r\":1103,\"b\":642,\"w\":125,\"h\":44}"
+    },
+    {
+      "name": "size 1280x720: no horizontal overflow",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "size 1024x768: large view (screen 350 px wide)",
       "pass": true,
       "extra": "dialog"
     },
@@ -221,7 +267,7 @@
       "extra": "0"
     },
     {
-      "name": "size 768x1024: large view",
+      "name": "size 768x1024: large view (screen 837 px wide)",
       "pass": true,
       "extra": "dialog"
     },
@@ -241,7 +287,7 @@
       "extra": "0"
     },
     {
-      "name": "size 360x780: large view",
+      "name": "size 360x780: large view (screen 637 px wide)",
       "pass": true,
       "extra": "dialog"
     },
@@ -261,19 +307,19 @@
       "extra": "0"
     },
     {
-      "name": "fits: slope-line needs no scrolling on the board at 1280x720",
+      "name": "fits: slope-line needs no scrolling on the display at 1920x1080",
       "pass": true,
-      "extra": "{\"scroll\":375,\"view\":375}"
+      "extra": "{\"scroll\":461,\"view\":461}"
     },
     {
-      "name": "fits: fraction-bars needs no scrolling on the board at 1280x720",
+      "name": "fits: fraction-bars needs no scrolling on the display at 1920x1080",
       "pass": true,
-      "extra": "{\"scroll\":375,\"view\":375}"
+      "extra": "{\"scroll\":461,\"view\":461}"
     },
     {
-      "name": "fits: for-loop needs no scrolling on the board at 1280x720",
+      "name": "fits: for-loop needs no scrolling on the display at 1920x1080",
       "pass": true,
-      "extra": "{\"scroll\":376,\"view\":375}"
+      "extra": "{\"scroll\":461,\"view\":461}"
     },
     {
       "name": "reset: clearing the widget under an open pause releases it",
@@ -343,8 +389,8 @@
   ],
   "problems": [],
   "stubbed": {
-    "/api/learn/interactive": 34,
-    "/api/tts": 102,
+    "/api/learn/interactive": 36,
+    "/api/tts": 108,
     "/api/learn/complete": 4
   },
   "aborted": []

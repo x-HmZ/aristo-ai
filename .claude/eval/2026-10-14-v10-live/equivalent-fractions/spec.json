@@ -1,0 +1,21 @@
+{
+  "goal": "See that cutting a pizza into more slices but taking proportionally more of them never changes how much pizza you actually get.",
+  "brief": "A circle (pizza) starts cut into 2 equal slices with 1 shaded (showing 1/2). A slider changes the 'scale factor' from 1 to 6, redrawing the pizza with more, thinner slices while keeping the same shaded amount, showing fractions like 1/2, 2/4, 3/6, up to 6/12.",
+  "controls": [
+    {
+      "label": "Scale factor (n)",
+      "kind": "slider",
+      "effect": "Multiplies both the number of slices and the number of shaded slices by n, redrawing the pizza and updating the fraction label."
+    },
+    {
+      "label": "Show fraction label",
+      "kind": "toggle",
+      "effect": "Shows or hides the numeric fraction (like 2/4) written under the pizza."
+    }
+  ],
+  "try_this": [
+    "Move the slider to n=2 and check the shaded area looks identical to n=1.",
+    "Push the slider all the way to n=6 and see the fraction 6/12.",
+    "Toggle the label off and see if you can still tell it's the same amount shaded."
+  ]
+}

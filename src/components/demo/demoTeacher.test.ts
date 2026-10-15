@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { demoTeacherFrom } from "./demoTeacher";
+import { DEMO_TEACHERS, demoTeacherFrom } from "./demoTeacher";
 
 describe("demoTeacherFrom", () => {
+  it("offers only Jake until MJ has her own narration (a woman in a man's voice reads as a bug)", () => {
+    expect(DEMO_TEACHERS).toEqual(["jake"]);
+    expect(demoTeacherFrom("?teacher=mj", "jake")).toBe("jake");
+  });
+
   it("takes an offered teacher from the query", () => {
-    expect(demoTeacherFrom("?teacher=mj", "jake")).toBe("mj");
+    expect(demoTeacherFrom("?teacher=mj", "jake", ["jake", "mj"])).toBe("mj");
     expect(demoTeacherFrom("?teacher=jake", "jake")).toBe("jake");
   });
 

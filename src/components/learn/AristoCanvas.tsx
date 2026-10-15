@@ -36,13 +36,15 @@ export function AristoCanvas({
   children,
 }: { devOverrides?: DevOverrides; children?: ReactNode } = {}) {
   const modelInteracting = useAristoStore((s) => s.modelInteracting);
+  // Scroll and drag on the display zoom and pan the picture there, not the camera.
+  const boardInteracting = useAristoStore((s) => s.boardInteracting);
   // OrbitControls is disabled while the camera is locked on the desk for a
   // quiz — otherwise a stray drag would knock the framing off the paper
   // mid-question.  Re-enabled the moment activeQuiz clears (CameraController
   // also lerps the camera back to its lesson framing in parallel).
   const activeQuiz = useAristoStore((s) => s.activeQuiz);
 
-  const controlsDisabled = modelInteracting || !!activeQuiz;
+  const controlsDisabled = modelInteracting || boardInteracting || !!activeQuiz;
 
   return (
     <Canvas

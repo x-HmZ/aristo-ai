@@ -1,0 +1,9 @@
+﻿
+ RUN  v4.1.10 C:/Users/Pc/Desktop/Empire/Artisto/Aristo 2.0/Aristo-AI
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  00:09:51
+   Duration  149.70s (transform 364ms, setup 0ms, import 171ms, tests 149.03s, environment 0ms)
+

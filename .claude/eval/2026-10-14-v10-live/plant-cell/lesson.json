@@ -1,0 +1,237 @@
+{
+  "concept_id": "live-plant-cell",
+  "concept_name": "Parts of a plant cell",
+  "phases": {
+    "activate": {
+      "content": "We connect the unfamiliar idea of a plant cell to something concrete and familiar: a house or a walled city, where different rooms/structures handle protection, control, and resource management. This primes the learner to expect that each cell part has a distinct 'job', just like rooms in a house.",
+      "prerequisites_referenced": [
+        "general idea that living things are made of cells"
+      ],
+      "segment_ids": [
+        "seg_001",
+        "seg_002"
+      ]
+    },
+    "explain": {
+      "analogy": "A plant cell is like a walled city: the cell wall is the outer fence, the cell membrane is the guarded gate just inside it, the cytoplasm is the open city ground, the nucleus is city hall, the chloroplasts are solar-powered kitchens, and the central vacuole is a giant water tank.",
+      "formal_explanation": "A plant cell has six main parts: (1) the cell wall, a rigid outer layer providing shape and protection; (2) the cell membrane, a thin flexible layer just inside the wall that controls what enters and exits the cell; (3) the cytoplasm, the jelly-like fluid filling the cell where other parts sit; (4) the nucleus, which holds the cell's DNA and directs its activities; (5) chloroplasts, structures that use sunlight to make food (photosynthesis); and (6) the central vacuole, a large fluid-filled sac that stores water/nutrients and keeps the cell firm.",
+      "key_insight": "Every plant cell has BOTH a cell wall AND a cell membrane — the wall is extra outer armor, not a replacement for the membrane, which still controls what moves in and out.",
+      "segment_ids": [
+        "seg_003",
+        "seg_004",
+        "seg_005",
+        "seg_006"
+      ]
+    },
+    "demonstrate": {
+      "example_description": "A labeled walkthrough of a single plant cell diagram, moving from the outside in: cell wall, cell membrane, cytoplasm, nucleus, chloroplasts, and central vacuole, tying each visible structure to its function.",
+      "step_by_step": [
+        "Identify the outer thick boundary as the cell wall — protection and shape.",
+        "Find the thin line just inside the wall — the cell membrane — controlling what passes through.",
+        "Note the fluid filling the cell — cytoplasm — where parts float and reactions happen.",
+        "Locate the round structure near the top — the nucleus — directing cell activity via DNA.",
+        "Spot the small green ovals — chloroplasts — making food via sunlight.",
+        "Observe the large central space — the central vacuole — storing water and keeping the cell firm."
+      ],
+      "narration_pre_visual": "Let's walk through an actual plant cell step by step, part by part, so you can see exactly where everything sits and connect each part to its job.",
+      "visual_walkthrough": "Look at the diagram: the thick outer box is the cell wall, the thin line just inside it is the cell membrane, the round shape near the top is the nucleus, the small green ovals are the chloroplasts, and the big empty-looking space in the middle is the central vacuole.",
+      "segment_ids": [
+        "seg_007",
+        "seg_008",
+        "seg_009",
+        "seg_010",
+        "seg_011",
+        "seg_012",
+        "seg_013"
+      ]
+    },
+    "challenge": {
+      "question": "If a plant isn't watered for a week and starts to wilt and droop, which part of the cell do you think is most directly responsible for that droopy look, and why?",
+      "hint": "Think about which part fills with water and presses against the cell wall to keep the cell stiff.",
+      "answer": "It's the central vacuole. Without enough water, the vacuole shrinks and no longer presses firmly against the cell wall. That loss of outward pressure makes cells go limp, causing the whole plant to wilt.",
+      "segment_ids": [
+        "seg_014",
+        "seg_015"
+      ]
+    },
+    "connect": {
+      "content": "You now know the six main parts of a plant cell and what each one does: the wall protects, the membrane controls traffic, the cytoplasm is the workspace, the nucleus directs operations, chloroplasts make food, and the vacuole stores water and gives support. This foundation makes it much easier to understand how plant cells differ from animal cells, and why those differences matter for how plants live and grow.",
+      "next_concept": "Comparing plant cells and animal cells",
+      "segment_ids": [
+        "seg_016"
+      ]
+    }
+  },
+  "segments": [
+    {
+      "id": "seg_001",
+      "phase": "activate",
+      "role": "hook",
+      "text": "Think about a house: it has walls to protect it, a kitchen to make food, and a control room to manage everything. A plant cell is a lot like a tiny house with all those jobs built in.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_002",
+      "phase": "activate",
+      "role": "narrate",
+      "text": "You already know every living thing is made of cells, even if you've never looked closely at one. Today we'll open up a plant cell and meet the six main parts that keep it alive and working."
+    },
+    {
+      "id": "seg_003",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Picture a plant cell as a tiny walled city. The cell wall is the sturdy outer fence that gives the city its shape, the cell membrane is the guarded gate inside that fence controlling who comes and goes, and the cytoplasm is the open ground where all the city's business happens.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_004",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Formally: the cell wall is a rigid outer layer that supports and protects the cell. Just inside it, every cell also has a cell membrane, a thin flexible layer that controls what substances move in and out. That membrane is still there even though the wall exists — the wall doesn't replace it, it just adds extra protection on top.",
+      "visual": {
+        "prompt": "Close-up cross-section showing the outer thick cell wall layer and, just inside it, a thin separate cell membrane line, arrows showing small molecules passing through the membrane, labeled diagram style",
+        "style": "diagram",
+        "callouts": [
+          "Cell wall (outer, rigid)",
+          "Cell membrane (inner, flexible)"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_005",
+      "phase": "explain",
+      "role": "callout",
+      "text": "This is a common mix-up: people think plant cells skip the membrane since they have a wall. In fact every plant cell has both — the wall is armor, the membrane is the real gatekeeper underneath it."
+    },
+    {
+      "id": "seg_006",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Inside the city, the nucleus is like city hall — it holds the instructions (DNA) and directs what the cell does. The chloroplasts are like tiny solar-powered kitchens that use sunlight to cook up food for the cell. And the central vacuole is a giant water tank that stores water, nutrients, and waste, and also pushes outward on the cell wall to keep the plant firm and upright.",
+      "visual": {
+        "prompt": "Plant cell diagram with city metaphor labels beside biology labels: nucleus labeled 'City Hall', chloroplasts labeled 'Solar Kitchens', central vacuole labeled 'Water Tank', clean side-by-side comparison style",
+        "style": "comparison",
+        "callouts": [
+          "Nucleus = control center",
+          "Chloroplasts = food-makers",
+          "Vacuole = storage tank"
+        ]
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_007",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Let's walk through an actual plant cell step by step, part by part, so you can see exactly where everything sits and connect each part to its job.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_008",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Look at the full diagram now. Starting from the outside: the thick green-tinted box is the cell wall, giving this cell its boxy shape and protecting everything inside.",
+      "visual": {
+        "prompt": "Full labeled plant cell diagram, camera zoomed on the thick outer rectangular cell wall highlighted in bright green, rest of cell slightly faded, textbook poster style",
+        "style": "infographic",
+        "callouts": [
+          "Cell wall"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_009",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Just inside that wall is a thin line — that's the cell membrane, deciding what nutrients come in and what waste goes out. Filling the space inside is the cytoplasm, the jelly-like fluid where the other parts float."
+    },
+    {
+      "id": "seg_010",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Near the top you'll spot a round structure with a darker outline — that's the nucleus, holding the cell's DNA instructions, like the manager reading the master blueprint."
+    },
+    {
+      "id": "seg_011",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Scattered through the cytoplasm are small green ovals — chloroplasts. These capture sunlight and turn it, along with water and carbon dioxide, into sugar the cell can use as food. This is why plants look green."
+    },
+    {
+      "id": "seg_012",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Finally, taking up most of the middle is one giant space — the central vacuole. It's filled with watery fluid, and when it's full, it presses outward against the cell wall, keeping the plant's stems and leaves stiff instead of droopy."
+    },
+    {
+      "id": "seg_013",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Here's a 3D plant cell you can rotate and inspect. Try finding the Central vacuole annotation first and see how much space it takes up compared to everything else."
+    },
+    {
+      "id": "seg_014",
+      "phase": "challenge",
+      "role": "challenge_setup",
+      "text": "Here's something to think about: if a plant isn't watered for a week and starts to wilt and droop, which part of the cell do you think is most directly responsible for that droopy look, and why?"
+    },
+    {
+      "id": "seg_015",
+      "phase": "challenge",
+      "role": "challenge_reveal",
+      "text": "It's the central vacuole. Without enough water, the vacuole shrinks and stops pressing firmly against the cell wall. Without that outward push, the cell loses its rigid, plump shape, and the whole plant droops — this is called wilting."
+    },
+    {
+      "id": "seg_016",
+      "phase": "connect",
+      "role": "transition",
+      "text": "Now you know the plant cell's six key parts and their jobs: wall for protection, membrane for control, cytoplasm as the workspace, nucleus as the director, chloroplasts as the food factories, and the vacuole as the water tank. Next, we can compare this to an animal cell and see exactly which parts plants have that animals don't, and why that difference matters."
+    }
+  ],
+  "metadata": {
+    "estimated_read_time_minutes": 6,
+    "bloom_level_taught": "Understand",
+    "depth_level": "moderate",
+    "should_generate_model": true,
+    "model_image_prompt": "Labeled diagram of a plant cell interior, large rectangular cell with thick outer cell wall, thin cell membrane just inside it, nucleus as round structure with dots, several green oval chloroplasts scattered in cytoplasm, one giant central vacuole taking up most of the middle, all parts clearly labeled with lines, clean educational textbook style, bright colors, white background",
+    "model_3d_prompt": "A single rectangular plant cell, translucent green-tinted cell wall box, visible round nucleus, small green oval chloroplasts floating inside, one large central fluid-filled vacuole, smooth stylized biology model, isolated, centered, white background",
+    "model_needs_multiview": true,
+    "model_annotations": [
+      {
+        "label": "Cell wall",
+        "bias": "front"
+      },
+      {
+        "label": "Cell membrane",
+        "bias": "left"
+      },
+      {
+        "label": "Nucleus",
+        "bias": "top"
+      },
+      {
+        "label": "Chloroplast",
+        "bias": "right"
+      },
+      {
+        "label": "Central vacuole",
+        "bias": "front"
+      },
+      {
+        "label": "Cytoplasm",
+        "bias": "back"
+      }
+    ],
+    "model_callouts": [
+      "Here's the tough outer cell wall, giving the cell its boxy shape.",
+      "Just inside it, the cell membrane controls what enters and exits.",
+      "The nucleus up top acts as the control center.",
+      "Green chloroplasts on the side are where food gets made from sunlight.",
+      "And that huge central vacuole in the middle stores water and keeps the cell firm."
+    ]
+  }
+}

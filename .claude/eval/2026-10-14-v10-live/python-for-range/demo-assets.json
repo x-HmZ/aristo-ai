@@ -1,0 +1,71 @@
+{
+  "images": {
+    "seg_004": "/demo/python-for-range/seg_004.png",
+    "seg_007": "/demo/python-for-range/seg_007.png"
+  },
+  "quiz": [
+    {
+      "question_type": "true_false",
+      "bloom_level": "remember",
+      "question": "In Python, the call range(1, 5) produces the sequence 1, 2, 3, 4, 5.",
+      "correct_answer": "False",
+      "explanation_correct": "range(start, stop) generates numbers from start up to but NOT including stop, so range(1, 5) produces 1, 2, 3, 4 only.",
+      "explanation_wrong": {
+        "True": "This is incorrect because range() stops BEFORE the stop value — 5 is excluded, so the sequence is only 1, 2, 3, 4."
+      },
+      "difficulty": 0.25,
+      "estimated_seconds": 30,
+      "misconception_targeted": "Believing range(start, stop) includes the stop value.",
+      "id": "390d10c7-e5a5-4e2a-9e04-bb69112c2bc0",
+      "concept_id": "python-for-range"
+    },
+    {
+      "question_type": "multiple_choice",
+      "bloom_level": "understand",
+      "question": "What will be printed by the following code?\n\nfor i in range(2, 10, 3):\n    print(i)",
+      "options": [
+        "2 5 8",
+        "2 5 8 11",
+        "2 3 4 5 6 7 8 9",
+        "3 6 9"
+      ],
+      "correct_answer": "2 5 8",
+      "explanation_correct": "range(2, 10, 3) starts at 2, adds 3 each step, and stops before reaching or passing 10. So it produces 2, 5, 8 (the next value, 11, would exceed 10, so it stops).",
+      "explanation_wrong": {
+        "2 5 8 11": "11 is not included because it is greater than or equal to the stop value, 10. range() always stops before reaching the stop value.",
+        "2 3 4 5 6 7 8 9": "This would be the result if the step were 1, but the step here is 3, so numbers are skipped between values.",
+        "3 6 9": "This ignores the start value of 2; the sequence must begin at the specified start, not at a multiple of the step."
+      },
+      "difficulty": 0.4,
+      "estimated_seconds": 45,
+      "misconception_targeted": "Confusing step behavior with start value, or thinking stop is inclusive.",
+      "id": "26401474-7a65-4814-8b44-04ede1364978",
+      "concept_id": "python-for-range"
+    },
+    {
+      "question_type": "code_completion",
+      "bloom_level": "apply",
+      "question": "Complete the code so that it prints the numbers 10, 8, 6, 4, 2 (in that exact order), one per line.\n\nfor i in range(____):\n    print(i)",
+      "correct_answer": "10, 0, -2",
+      "explanation_correct": "range(10, 0, -2) starts at 10, decreases by 2 each time, and stops before reaching or passing 0, producing 10, 8, 6, 4, 2 in that order.",
+      "difficulty": 0.55,
+      "estimated_seconds": 60,
+      "id": "e3503417-a2e1-434d-8311-98d978248f9f",
+      "concept_id": "python-for-range"
+    },
+    {
+      "question_type": "code_debugging",
+      "bloom_level": "analyze",
+      "question": "The following code is meant to print the numbers 1 through 5 (inclusive), each on its own line, but it has a bug. Identify and fix the bug.\n\nfor i in range(1, 5):\n    print(i)",
+      "correct_answer": "for i in range(1, 6):\n    print(i)",
+      "explanation_correct": "range(1, 5) only produces 1, 2, 3, 4 because the stop value is exclusive. To include 5, the stop argument must be 6, i.e., range(1, 6).",
+      "difficulty": 0.5,
+      "estimated_seconds": 60,
+      "misconception_targeted": "Assuming the stop value in range() is included in the output.",
+      "id": "dfeb5541-9bfe-4995-bb89-253111ea8d9a",
+      "concept_id": "python-for-range"
+    }
+  ],
+  "falUsd": 0.16,
+  "anthropicUsd": 0.015696
+}

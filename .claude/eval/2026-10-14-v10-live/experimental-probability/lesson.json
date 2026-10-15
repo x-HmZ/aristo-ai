@@ -1,0 +1,205 @@
+{
+  "concept_id": "live-experimental-probability",
+  "concept_name": "Experimental vs theoretical probability",
+  "phases": {
+    "activate": {
+      "content": "We connect to the learner's intuitive sense of coin-flip fairness (everyone already believes heads/tails should be 50/50) and use that as the entry point into formally distinguishing what 'should' happen (theoretical) from what 'does' happen in practice (experimental).",
+      "prerequisites_referenced": [
+        "everyday intuition about fair coins"
+      ],
+      "segment_ids": [
+        "seg_001",
+        "seg_002"
+      ]
+    },
+    "explain": {
+      "analogy": "Theoretical probability is like a recipe telling you exactly what should happen under perfect conditions; experimental probability is what you actually get when you bake the cake yourself, with real-world variation.",
+      "formal_explanation": "Theoretical probability = (number of favorable equally-likely outcomes) / (total equally-likely outcomes), e.g., 1/2 for heads on a fair coin. Experimental probability = (number of times an outcome occurred) / (total number of trials actually performed), calculated from real data.",
+      "key_insight": "Experimental probability can differ from theoretical probability, especially with few trials, but converges toward the theoretical value as the number of trials increases.",
+      "segment_ids": [
+        "seg_003",
+        "seg_004",
+        "seg_005"
+      ]
+    },
+    "demonstrate": {
+      "example_description": "Tracing coin flip results from a small sample (4 flips) to a large sample (100 flips) to show experimental probability converging toward the theoretical 0.5.",
+      "step_by_step": [
+        "Flip a coin 4 times, get 3 heads and 1 tail.",
+        "Calculate experimental probability: 3/4 = 0.75, compare to theoretical 0.5 — big gap.",
+        "Continue flipping up to 100 total flips, ending with 52 heads.",
+        "Calculate new experimental probability: 52/100 = 0.52 — much closer to 0.5.",
+        "Conclude: more trials bring the experimental value closer to the theoretical value."
+      ],
+      "narration_pre_visual": "Let's actually trace through flipping a coin and watch the experimental probability evolve as we add more flips.",
+      "visual_walkthrough": "Look at the first bar chart: after just 4 flips we got 3 heads, giving 75% — far from the dashed 50% line. Now look at the second chart: after 100 flips, we land at 52%, hugging that dashed line much more closely. This shows the gap shrinking as trials increase.",
+      "segment_ids": [
+        "seg_006",
+        "seg_007",
+        "seg_008",
+        "seg_009",
+        "seg_010"
+      ]
+    },
+    "challenge": {
+      "question": "You've flipped a fair coin three times and gotten heads all three times. Your friend says 'Tails is due next — it has to even out!' Is your friend right? Why or why not?",
+      "hint": "Does the coin remember what happened on previous flips? Think about what 'independent' events means.",
+      "answer": "No, your friend is wrong — this is the gambler's fallacy. Each coin flip is independent, so the probability of tails on the next flip is still exactly 0.5, regardless of the previous three heads. Probabilities only 'even out' over very many trials because the early streak becomes a smaller fraction of the total, not because the coin adjusts itself.",
+      "segment_ids": [
+        "seg_011",
+        "seg_012"
+      ]
+    },
+    "connect": {
+      "content": "Understanding how experimental probability converges to theoretical probability is the backbone of statistics and experimental science — it's why larger sample sizes give more trustworthy results, and why short-term luck doesn't predict long-term outcomes.",
+      "next_concept": "Probability distributions and the Law of Large Numbers in more depth",
+      "segment_ids": [
+        "seg_013"
+      ]
+    }
+  },
+  "segments": [
+    {
+      "id": "seg_001",
+      "phase": "activate",
+      "role": "hook",
+      "text": "Think about flipping a coin. You already know, just from common sense, that it should land heads about half the time and tails about half the time.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_002",
+      "phase": "activate",
+      "role": "narrate",
+      "text": "That gut feeling — 'half and half' — is actually a mathematical idea called theoretical probability. But what actually happens when you flip a real coin over and over? That's a different idea, called experimental probability, and today we'll see how they relate."
+    },
+    {
+      "id": "seg_003",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Here's an analogy: theoretical probability is like a recipe that tells you exactly what SHOULD happen if everything is perfectly fair — 'use 1 cup flour, half cup sugar.' Experimental probability is what you actually get when you bake the cake yourself — sometimes a little different due to real-world messiness."
+    },
+    {
+      "id": "seg_004",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "Formally: theoretical probability is calculated by counting equally likely outcomes. A coin has 2 equally likely outcomes, so heads = 1 out of 2 = 0.5. Experimental probability is calculated from what actually happens in trials: number of times heads occurred, divided by total flips.",
+      "visual": {
+        "prompt": "Side-by-side comparison diagram: left side labeled 'Theoretical Probability' showing a coin split into heads/tails with formula 1/2 = 0.5; right side labeled 'Experimental Probability' showing a tally of 10 coin flips (6 heads, 4 tails) with formula 6/10 = 0.6. Clean educational comparison style.",
+        "style": "comparison",
+        "callouts": [
+          "Theoretical: 1/2 = 0.5",
+          "Experimental: 6/10 = 0.6"
+        ],
+        "persists_to_next": false
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_005",
+      "phase": "explain",
+      "role": "narrate",
+      "text": "The key insight is this: experimental probability doesn't have to match theoretical probability exactly, especially with few trials. But as you do more and more trials, the experimental result tends to get closer and closer to the theoretical one."
+    },
+    {
+      "id": "seg_006",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "Let's actually trace through flipping a coin and watch the experimental probability evolve as we add more flips.",
+      "gesture": "explaining"
+    },
+    {
+      "id": "seg_007",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Suppose in your first 4 flips you get: Heads, Heads, Heads, Tails. That's 3 heads out of 4 flips, so experimental probability of heads is 3/4 = 0.75 — way higher than the theoretical 0.5.",
+      "visual": {
+        "prompt": "Bar chart titled 'After 4 flips': bar showing 75% heads, dashed horizontal line at 50% marking theoretical probability. Small coin icons above bar showing H H H T sequence. Clean diagram style.",
+        "style": "diagram",
+        "callouts": [
+          "75% heads",
+          "Theoretical line: 50%"
+        ],
+        "persists_to_next": true
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_008",
+      "phase": "demonstrate",
+      "role": "demo_step",
+      "text": "Now imagine you keep flipping, up to 100 flips total, and you end up with 52 heads. Experimental probability is now 52/100 = 0.52 — much closer to 0.5 than that early 0.75 was.",
+      "visual": {
+        "prompt": "Same bar chart style but titled 'After 100 flips': bar at 52% heads, dashed line still at 50%, bars much closer together than the 4-flip version shown earlier. Clean diagram style.",
+        "style": "diagram",
+        "callouts": [
+          "52% heads",
+          "Much closer to 50% line"
+        ],
+        "persists_to_next": false
+      },
+      "gesture": "pointing"
+    },
+    {
+      "id": "seg_009",
+      "phase": "demonstrate",
+      "role": "explore",
+      "text": "Let's make this hands-on. Try the 'Flip once' stepper on the board a few times and watch the running percentage of heads jump around — then try 'Flip 50 at once' and see it settle down near the dashed 50% line."
+    },
+    {
+      "id": "seg_010",
+      "phase": "demonstrate",
+      "role": "narrate",
+      "text": "This settling-down pattern is sometimes called the Law of Large Numbers: the more trials you run, the more the experimental probability converges toward the theoretical probability."
+    },
+    {
+      "id": "seg_011",
+      "phase": "challenge",
+      "role": "challenge_setup",
+      "text": "Here's a tricky one. You've flipped a fair coin three times and gotten heads all three times. Your friend says, 'Tails is due next — it has to even out!' Is your friend right? Why or why not?"
+    },
+    {
+      "id": "seg_012",
+      "phase": "challenge",
+      "role": "challenge_reveal",
+      "text": "Your friend is wrong — this is a very common mistake called the gambler's fallacy. The coin has no memory: each flip is independent, so the probability of tails on the 4th flip is still exactly 0.5, no matter what happened before. 'Evening out' only happens over MANY trials because the early streak gets diluted by future flips, not because the coin 'owes' you a tails."
+    },
+    {
+      "id": "seg_013",
+      "phase": "connect",
+      "role": "narrate",
+      "text": "This idea — theoretical vs. experimental probability, and how more trials bring them closer together — is the foundation of statistics. It's why scientists run experiments with large sample sizes, why casinos always win in the long run despite short lucky streaks, and it sets you up perfectly for learning about probability distributions next."
+    }
+  ],
+  "metadata": {
+    "estimated_read_time_minutes": 6,
+    "bloom_level_taught": "Understand/Apply",
+    "depth_level": "moderate",
+    "should_generate_model": false,
+    "interactive": {
+      "goal": "See experimental probability (from repeated coin flips) wobble around but gradually settle near the theoretical probability of 0.5 as the number of flips grows.",
+      "brief": "A coin-flip simulator with a running bar chart showing the percentage of heads so far, starting at 0 flips. A dashed horizontal line marks the theoretical value 0.5 (50%). Flipping updates the percentage live.",
+      "controls": [
+        {
+          "label": "Flip once",
+          "kind": "stepper",
+          "effect": "Adds one random flip and updates the running percentage of heads."
+        },
+        {
+          "label": "Flip 50 at once",
+          "kind": "stepper",
+          "effect": "Adds 50 random flips at once, showing how quickly the line stabilizes near 50%."
+        },
+        {
+          "label": "Reset",
+          "kind": "toggle",
+          "effect": "Clears all flips and starts the experiment over from 0."
+        }
+      ],
+      "try_this": [
+        "Flip just 5 times and see how far the percentage can be from 50%.",
+        "Flip 50 at once and watch the percentage move closer to the dashed 50% line.",
+        "Reset and try again — does it look different early on but similar after many flips?"
+      ]
+    }
+  }
+}

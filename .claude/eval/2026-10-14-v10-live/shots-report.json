@@ -1,0 +1,695 @@
+{
+  "checks": [
+    {
+      "name": "area-vs-perimeter light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "area-vs-perimeter light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "area-vs-perimeter light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 560: played state",
+      "pass": true,
+      "extra": "Length 3, Width 7, Area 21 (perimeter 20) Length 3 Width 7 Perimeter stays fixed at 20. Best area so far: 25"
+    },
+    {
+      "name": "area-vs-perimeter light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "area-vs-perimeter dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "area-vs-perimeter dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "area-vs-perimeter dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "area-vs-perimeter light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "area-vs-perimeter light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "area-vs-perimeter light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "area-vs-perimeter light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "equivalent-fractions light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "equivalent-fractions light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 560: played state",
+      "pass": true,
+      "extra": "5/10 of the pizza (same as 1/2) Scale factor (n) 5 Show fraction label On The base fraction is 1/2. Scaling cuts every slice smaller but shades the same amount."
+    },
+    {
+      "name": "equivalent-fractions light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "equivalent-fractions dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "equivalent-fractions dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "equivalent-fractions dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "equivalent-fractions light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "equivalent-fractions light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "equivalent-fractions light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "equivalent-fractions light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "experimental-probability light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "experimental-probability light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 560: played state",
+      "pass": true,
+      "extra": "2 flips — 1 heads — 50% heads Flip once Flip once Flip 50 at once Flip 50 at once Reset Reset Dashed line = theoretical 50%. Watch the solid line wobble, then settle."
+    },
+    {
+      "name": "experimental-probability light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "experimental-probability dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "experimental-probability dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "experimental-probability dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "experimental-probability light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "experimental-probability light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "experimental-probability light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "experimental-probability light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 560: played state",
+      "pass": true,
+      "extra": "range(15, 15, 4) [] Start 15 Stop 15 Step 4 Play dots stop is a boundary, never a dot"
+    },
+    {
+      "name": "python-for-range light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 560: played state",
+      "pass": true,
+      "extra": "range(15, 15, 4) [] Start 15 Stop 15 Step 4 Play dots stop is a boundary, never a dot"
+    },
+    {
+      "name": "python-for-range-demo light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-for-range-demo light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-for-range-demo light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-for-range-demo light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-for-range-demo light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-if-elif light 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-if-elif light 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif light 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif light 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 560: played state",
+      "pass": true,
+      "extra": "Score = 75 → grade is B Score 75 Gold = the one branch that runs. Green check = condition tested true but came after a branch already ran."
+    },
+    {
+      "name": "python-if-elif light 560: still ready after playing",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-if-elif dark 560: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-if-elif dark 560: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif dark 560: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-if-elif dark 560: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif dark 560: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif dark 560: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif dark 560: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 360: ready",
+      "pass": true,
+      "extra": "status: ready"
+    },
+    {
+      "name": "python-if-elif light 360: text AA",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 360: targets >= 44px",
+      "pass": true,
+      "extra": "[]"
+    },
+    {
+      "name": "python-if-elif light 360: no horizontal scroll",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif light 360: vertical overflow px",
+      "pass": true,
+      "extra": "0"
+    },
+    {
+      "name": "python-if-elif light 360: no page errors",
+      "pass": true,
+      "extra": ""
+    },
+    {
+      "name": "python-if-elif light 360: nothing left the frame",
+      "pass": true,
+      "extra": ""
+    }
+  ],
+  "problems": []
+}

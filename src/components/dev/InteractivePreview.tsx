@@ -20,8 +20,13 @@ import { DEV_MONO, DEV_PANEL, DevButton, DevSection } from "@/components/dev/dev
 import { INTERACTIVE_FIXTURES, getFixture } from "@/lib/interactive/fixtures";
 import { validateWidget } from "@/lib/interactive/validate";
 import type { WidgetTheme } from "@/lib/interactive/shell";
+import type { InteractiveParts } from "@/lib/interactive/spec";
 
-type Fail = "none" | "throws" | "forbidden" | "timeout" | "probe" | "nav-location" | "nav-meta" | "nav-anchor" | "nav-open" | "nav-history" | "misc";
+const FAILS = [
+  "none", "throws", "forbidden", "timeout", "probe", "misc", "rtc-nested", "nav-location", "nav-meta", "nav-anchor", "nav-open",
+  "nav-history", "loop", "loop-recursion", "loop-async", "loop-catch", "loop-duty", "loop-later",
+] as const;
+type Fail = (typeof FAILS)[number];
 
 /**
  * Navigation and side-channel probes (security review, V10). Each tries to take the
@@ -39,12 +44,65 @@ const NAV_JS: Record<string, string> = {
   "misc": `
 var out = {};
 function t(name, fn) { try { out[name] = String(fn()); } catch (e) { out[name] = 'blocked: ' + e.name; } }
-t('copy', function () { return document.execCommand('copy'); });
+t('copy', function () { return document['exec' + 'Command']('copy'); });
 t('rtc', function () { return typeof new window['RTCPeer' + 'Connection']({ iceServers: [{ urls: 'stun:127.0.0.1:9' }] }); });
 t('pip', function () { return 'pictureInPictureEnabled=' + document.pictureInPictureEnabled; });
 t('fullscreen', function () { return 'fullscreenEnabled=' + document.fullscreenEnabled; });
 var a = document.createElement('a'); a.href = 'data:text/plain,x'; a.download = 'x.txt'; document.body.appendChild(a); a.click();
 setTimeout(function () { document.getElementById('out').textContent = JSON.stringify(out); }, 600);`,
+  // Every route to a nested frame, each followed by an attempt to borrow its fresh RTCPeerConnection.
+  "rtc-nested": `
+var out = { frames: 0 };
+var W = window, D = document, CW = 'content' + 'Window', SD = 'src' + 'doc', RTC = 'RTCPeer' + 'Connection';
+var IF = 'if' + 'rame', TAG = '<' + IF + '>';
+function rtc(w) { return typeof new w[RTC]({ iceServers: [{ urls: 'stun:127.0.0.1:9' }] }); }
+function t(name, fn) {
+  try { fn(); out[name] = W.length > 0 ? 'frame made: ' + (function () { try { return rtc(W[0]); } catch (e) { return 'rtc ' + e.name; } })() : 'no frame'; }
+  catch (e) { out[name] = 'blocked: ' + e.message; }
+  out.frames = Math.max(out.frames, W.length);
+}
+var host = D.getElementById('host');
+t('appendChild', function () { host.appendChild(D.createElement(IF)); });
+t('append', function () { host.append(D.createElement(IF)); });
+t('insertBefore', function () { host.insertBefore(D.createElement(IF), null); });
+t('replaceChildren', function () { host.replaceChildren(D.createElement(IF)); });
+t('after', function () { host.firstChild ? host.firstChild.after(D.createElement(IF)) : host.append(D.createTextNode('x')); host.firstChild.after(D.createElement(IF)); });
+t('insertAdjacentElement', function () { host.insertAdjacentElement('beforeend', D.createElement(IF)); });
+t('innerHTML', function () { host.innerHTML = TAG; });
+t('innerHTML object', function () { host.innerHTML = { toString: function () { return TAG; } }; });
+t('outerHTML', function () { var s = D.createElement('span'); host.appendChild(s); s.outerHTML = TAG; });
+t('insertAdjacentHTML', function () { host.insertAdjacentHTML('beforeend', '<IFRAME ' + SD + '="<b>x</b>">'); });
+t('fragment', function () { var f = D.createDocumentFragment(); f.appendChild(D.createElement('div')).appendChild(D.createElement(IF)); host.appendChild(f); });
+t('range', function () { var r = D.createRange(); r.selectNodeContents(host); r.insertNode(D.createElement(IF)); });
+t('contextual fragment', function () { var r = D.createRange(); r.selectNodeContents(host); host.appendChild(r.createContextualFragment(TAG)); });
+t('DOMParser', function () { var d = new DOMParser().parseFromString('<body>' + TAG, 'text/html'); host.appendChild(D.importNode(d.body.firstChild, true)); });
+t('xhtml prefix', function () { var d = new DOMParser().parseFromString('<h:' + IF + ' xmlns:h="ht' + 'tp://www.w3.org/1999/xhtml"/>', 'application/xml'); host.appendChild(D.importNode(d.documentElement, true)); });
+t('svg foreignObject', function () { var s = D.createElementNS('http://www.w3.org/2000/svg', 'foreignObject'); s.appendChild(D.createElement(IF)); host.appendChild(s); });
+t('object', function () { host.appendChild(D.createElement('ob' + 'ject')); });
+t('embed', function () { host.appendChild(D.createElement('em' + 'bed')); });
+t('shadow', function () { host['attach' + 'Shadow']({ mode: 'open' }); });
+t('write', function () { D['wr' + 'ite'](TAG); });
+t('body setter', function () { var b = D.createElement('body'); b.appendChild(D.createElement(IF)); D.body = b; });
+t('detached handle', function () { var f = D.createElement(IF); var w = f[CW]; out.detachedHandle = String(w); });
+// Security review 2026-10-14: a toString that slips a frame into a checked fragment, and the table setters.
+t('toctou toString', function () { var fr = D.createElement(IF); var f = D.createDocumentFragment(); host.append(f, { toString: function () { f.append(fr); return ''; } }); });
+t('table caption', function () { var d = new DOMParser().parseFromString('<table><caption>' + TAG + '</caption></table>', 'text/html'); var tb = D.createElement('table'); host.appendChild(tb); tb.caption = D.importNode(d.querySelector('caption'), true); });
+// Code from strings: under the hashed CSP neither may run.
+try { var sc = D.createElement('scr' + 'ipt'); sc.textContent = 'window.injected = 1'; host.appendChild(sc); } catch (e) {}
+try { var bt = D.createElement('button'); bt.setAttribute('on' + 'click', 'window.injected2 = 1'); host.appendChild(bt); bt.click(); } catch (e) {}
+setTimeout(function () { out['x-script'] = W.injected ? 'ran' : 'not run'; out['x-handler'] = W.injected2 ? 'ran' : 'not run'; }, 300);
+t('own matches', function () { var f = D.createElement(IF); f.matches = function () { return false; }; Object.defineProperty(f, 'nodeType', { value: 3 }); host.appendChild(f); });
+setTimeout(function () { var p = D.getElementById('out'); if (p) p.textContent = JSON.stringify(out); else D.title = JSON.stringify(out); }, 600);`,
+};
+
+/** Runaway code: each should be stopped by the loop guard (guard.ts) without freezing the page. */
+const LOOP_JS: Record<string, string> = {
+  "loop": "while (1 < 2) {}",
+  "loop-recursion": "function f(n) { return n < 2 ? n : f(n - 1) + f(n - 2); } f(60);",
+  "loop-async": "(async function () { while (1 < 2) { await 0; } })();",
+  "loop-catch": "for (var k = 0; k >= 0; k++) { try { while (1 < 2) {} } catch (e) {} }",
+  // 900 ms busy per task, chained through its own channel: each run is under the budget, the duty cycle is not.
+  "loop-duty": "var ch = new MessageChannel(); ch.port1.onmessage = function () { var t = performance.now(); while (performance.now() - t < 900) {} ch.port2['post' + 'Message'](0); }; ch.port2['post' + 'Message'](0);",
 };
 
 /**
@@ -89,7 +147,7 @@ function FrameView() {
     const w = Number(p.get("w"));
     if (w >= 280 && w <= 1400) setWidth(w);
     const x = p.get("fail");
-    if (x === "throws" || x === "timeout" || x === "forbidden" || x === "probe" || x === "misc" || (x && x.startsWith("nav-"))) setFail(x as Fail);
+    if (x && (FAILS as readonly string[]).includes(x)) setFail(x as Fail);
   }, []);
 
   // The page follows the theme too, so the frame is judged on its own ground.
@@ -97,17 +155,28 @@ function FrameView() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Eval scripts show a saved generated widget with window.__showWidget(parts) (dev harness only).
+  const [custom, setCustom] = useState<InteractiveParts | null>(null);
+  useEffect(() => {
+    const w = window as typeof window & { __showWidget?: (p: InteractiveParts) => void };
+    w.__showWidget = (p) => { setFail("none"); setCustom(p); };
+    return () => { delete w.__showWidget; };
+  }, []);
+
   const fixture = getFixture(fixtureId)!;
   const parts =
-    fail === "probe"     ? PROBE_PARTS
-    : fail in NAV_JS      ? { title: "Navigation probe", markup: `<pre id="out">pending</pre>`, css: "", js: NAV_JS[fail] }
+    custom               ? custom
+    : fail === "probe"     ? PROBE_PARTS
+    : fail in NAV_JS      ? { title: "Navigation probe", markup: `<pre id="out">pending</pre><div id="host"></div>`, css: "", js: NAV_JS[fail] }
+    : fail in LOOP_JS     ? { ...fixture.parts, js: LOOP_JS[fail] }
+    : fail === "loop-later" ? { ...fixture.parts, js: `${fixture.parts.js}\nsetTimeout(function () { while (1 < 2) {} }, 1500);` }
     : fail === "throws"    ? { ...fixture.parts, js: "throw new Error('boom from the widget');" }
     : fail === "forbidden" ? { ...fixture.parts, js: fixture.parts.js + "\nfetch('/api/learn/lesson/x');" }
     : fixture.parts;
   const check = validateWidget(parts);
 
   const note = (s: string) => setLog((l) => [...l.slice(-7), s]);
-  useEffect(() => { setLog([]); setStatus("loading"); }, [fixtureId, theme, fail]);
+  useEffect(() => { setLog([]); setStatus("loading"); }, [fixtureId, theme, fail, custom]);
 
   return (
     <div className="grid min-h-screen grid-cols-[minmax(0,1fr)_300px] bg-bg text-ink max-md:grid-cols-1">
@@ -159,7 +228,7 @@ function FrameView() {
         </DevSection>
         <DevSection title="Failure path">
           <div className="flex flex-wrap gap-1.5">
-            {(["none", "throws", "forbidden", "timeout", "probe", "misc", "nav-location", "nav-meta", "nav-anchor", "nav-open", "nav-history"] as const).map((x) => (
+            {FAILS.map((x) => (
               <DevButton key={x} selected={x === fail} onClick={() => setFail(x)}>{x}</DevButton>
             ))}
           </div>

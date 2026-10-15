@@ -1,0 +1,26 @@
+{
+  "goal": "See exactly which numbers range(start, stop, step) produces, and notice that stop is never included.",
+  "brief": "A number line from 0 to 20 with dots appearing at each value range() produces, highlighted one at a time in order, plus a text output showing the list of values.",
+  "controls": [
+    {
+      "label": "Start",
+      "kind": "slider",
+      "effect": "Moves the first dot that appears on the number line."
+    },
+    {
+      "label": "Stop",
+      "kind": "slider",
+      "effect": "Moves the boundary line; the dot sequence always stops BEFORE this value."
+    },
+    {
+      "label": "Step",
+      "kind": "slider",
+      "effect": "Changes the spacing between dots on the number line."
+    }
+  ],
+  "try_this": [
+    "Set Start=1, Stop=5, Step=1 and count the dots.",
+    "Set Stop to a value and check it never gets its own dot.",
+    "Make Step=2 and watch every other number get skipped."
+  ]
+}

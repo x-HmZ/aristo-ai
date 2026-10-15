@@ -1,7 +1,7 @@
 "use client";
 
 import "./dracoDecoder";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useAristoStore } from "@/store/useAristoStore";
@@ -225,11 +225,33 @@ type Vec3 = [number, number, number];
 const ROOM_SHELL = {
   classroom: { position: [0.2, -1.7, -2] as Vec3, rotationY: 0, scale: 1 },
   board:     { position: [0.45, 0.382, -6] as Vec3 },
+  // The wall display. The baked one (probe-display.cjs: screen x -1.059..1.867, y -0.421..1.132, bezel front at
+  // z -5.52) read small behind the teacher, so the app draws its own 30% larger (Hmz, 2026-10-15): same bottom edge
+  // on the panelling, grown up and out, 0.2 m further from the teacher, just in front of the baked one it covers.
+  display:   { center: [0.604, 0.589, -5.494] as Vec3, width: 3.804, height: 2.019, bezel: "#1C1E22" },
 };
+
+/**
+ * Where a room shows what the teacher presents. The teaching image and the interactive widget are placed on it and
+ * the camera frames it, so a new room only has to say where its screen is. The no-room view keeps the same spot.
+ */
+export interface RoomDisplay {
+  /** The centre of the screen's face. */
+  center: Vec3;
+  width:  number;
+  height: number;
+  /** The frame's colour; set when the app draws the display (WallDisplay) rather than the room's own mesh. */
+  bezel?: string;
+}
+
+export function roomDisplay(variant: ClassroomVariant): RoomDisplay {
+  return variant === "none" ? ROOM_SHELL.display : PLACEMENT[variant].display;
+}
 
 const PLACEMENT: Record<ClassroomProps["variant"], {
   classroom: { position: Vec3; rotationY: number; scale: number };
   board:     { position: Vec3 };
+  display:   RoomDisplay;
   /** Second-row desk for the ambient DeskPaper; null where the room has none. */
   desk:      { position: Vec3 } | null;
 }> = {
@@ -248,9 +270,53 @@ const PLACEMENT: Record<ClassroomProps["variant"], {
   // not, so there is no DeskPaper here.
   alternative: {
     ...ROOM_SHELL,
+    // The evening bake's bezel (build_studio_room.py PALETTES.evening).
+    display:   { ...ROOM_SHELL.display, bezel: "#0F1114" },
     desk:      null,
   },
 };
+
+const BEZEL = 0.07;  // frame width around the screen, as on the baked one
+const SCREEN = "#15181E"; // the room build's standby screen (build_studio_room.py V85_screen)
+
+/**
+ * The display the teacher presents on, drawn by the app at the size the room config asks for: a dark frame and a
+ * screen in standby with the faint warm glow low in the middle that the baked one had. What is shown on it (the
+ * image, the widget) sits a hair in front of the face.
+ */
+export function WallDisplay({ display }: { display: RoomDisplay }) {
+  const glow = useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = 256; c.height = 128;
+    const g = c.getContext("2d");
+    if (!g) return null;
+    g.fillStyle = SCREEN;
+    g.fillRect(0, 0, 256, 128);
+    const r = g.createRadialGradient(128, 128, 4, 128, 128, 150);
+    r.addColorStop(0, "rgba(120, 72, 44, 0.32)");
+    r.addColorStop(1, "rgba(120, 72, 44, 0)");
+    g.fillStyle = r;
+    g.fillRect(0, 0, 256, 128);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }, []);
+  useEffect(() => () => glow?.dispose(), [glow]);
+  const [cx, cy, cz] = display.center;
+  return (
+    <group position={[cx, cy, cz]}>
+      <mesh position={[0, 0, -0.022]}>
+        <boxGeometry args={[display.width + 2 * BEZEL, display.height + 2 * BEZEL, 0.04]} />
+        {/* Matte, with little of the studio reflection: the baked bezel around it reads near-black. */}
+        <meshStandardMaterial color={display.bezel} roughness={0.7} metalness={0} envMapIntensity={0.15} />
+      </mesh>
+      <mesh position={[0, 0, -0.001]}>
+        <planeGeometry args={[display.width, display.height]} />
+        <meshBasicMaterial color={glow ? undefined : SCREEN} map={glow} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
 
 export function Classroom({ variant }: ClassroomProps) {
   const glbPath = `/models/classroom_${variant}.glb`;
@@ -273,6 +339,7 @@ export function Classroom({ variant }: ClassroomProps) {
       />
 
       <Blackboard position={cfg.board.position} />
+
 
       {!activeQuiz && cfg.desk && (
         <DeskPaper

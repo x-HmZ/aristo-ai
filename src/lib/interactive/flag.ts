@@ -5,6 +5,7 @@
  * offered the option, and /api/learn/interactive only answers, when it is on. It is
  * also the feature-wide kill switch (flip it and redeploy): a lesson already holding a
  * spec simply gets no widget and carries on over its image. The client never reads it;
- * with no spec in a lesson there is nothing to fetch.
+ * with no spec in a lesson there is nothing to fetch. /demo is exempt: its frozen widgets
+ * (metadata.demo_interactive) cost nothing and were reviewed before they shipped.
  */
 export const INTERACTIVE_VISUALS_ENABLED = process.env.NEXT_PUBLIC_INTERACTIVE_VISUALS === "true";
