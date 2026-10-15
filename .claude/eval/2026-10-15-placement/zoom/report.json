@@ -23,7 +23,7 @@
     {
       "name": "heart: the narration lights a model label",
       "pass": true,
-      "extra": "Right atrium, Right ventricle, Left atrium, Left ventricle"
+      "extra": "Right atrium, Right ventricle"
     }
   ]
 }

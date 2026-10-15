@@ -306,10 +306,11 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
   );
 }
 
-function ModelToolbar() {
+// Under the screen, where the image's toolbar sits, so switching between the two never moves the control.
+function ModelToolbar({ display }: { display: RoomDisplay }) {
   const setViewMode3d = useAristoStore((s) => s.setViewMode3d);
   return (
-    <Html position={[MODEL_X, MODEL_Y - 0.86, MODEL_Z]} center>
+    <Html position={[display.center[0], display.center[1] - (display.height / 2 + 0.2), display.center[2] + 0.012]} center>
       <div className="theme-ink">
         <Button variant="secondary" onClick={() => setViewMode3d(false)} className={SCENE_BUTTON}>
           <ImageIcon aria-hidden />
@@ -602,7 +603,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
         >
           <Suspense fallback={null}>
             <FloatingModel modelUrl={activeModelUrl!} modelAnnotations={lesson?.metadata.model_annotations} focusLabels={focusLabels} />
-            <ModelToolbar />
+            <ModelToolbar display={display} />
           </Suspense>
         </ModelErrorBoundary>
       ) : showImage ? (
