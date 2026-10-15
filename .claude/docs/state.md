@@ -2,6 +2,16 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-15 (later) - Demo narrated in Jake's placeholder voice, plan-driven TTS (dev/v10-continuation, PR #28)
+
+- **Security review of the interactive route** (`lessonExample`): no critical or high. Fixed: the route reads only the stored lesson's segments (`payload->segments`) and always the same lesson (approved first, then oldest), because the example is not in the cache key; `lessonExample` takes any input and stops at the limit; test for malformed payloads. Left: the spec check is JSON containment, not equality (older).
+- **Plan-driven voice** (decisions.md): `src/lib/tts/voices.json` + `voices.ts` (`parseTtsPlan`, `pickVoice`, tested); route and `scripts/prerender-demo-tts.mjs` both use it; `ELEVENLABS_PLAN` in `.env.example`, set nowhere (free). After the upgrade: set `ELEVENLABS_PLAN=paid` in `.env.local` and Vercel, then `node scripts/prerender-demo-tts.mjs --force`.
+- **Rendered** (once, log in `.claude/eval/2026-10-15-narration/render.log`): all four topics, 61 mp3s with `.align.json`, `audio.json` = jake / eleven_turbo_v2_5, 14,908 characters = 7,490 credits; **2,510 credits left, resetting 2026-11-08**. Rendering uses `/with-timestamps`; forced alignment would have cost about 330 credits a minute.
+- **Listed**: "Steepness Is Speed" in `DEMO_TOPICS`. **/demo offers Jake only** (`DEMO_TEACHERS`): MJ would speak in a man's voice.
+- **Verified, 0 paid calls**, headless GPU (`.claude/eval/2026-10-15-narration/scripts/narration.cjs`, `probe-explore.cjs`): all four topics play their recorded mp3s one after another with their timings fetched, 0 /api requests, no teacher switcher even with `?teacher=mj`; steepness explore pause: widget on the board with Expand/Continue at 1920, large view at 1280 (`explore-*.png`). Not verified: the mouth by eye (timings load and parse; judge in motion). Unit 641; lint 0 errors; build ok (/demo 135 kB).
+- **TODO, remind Hmz: MJ needs her own /demo narration** (a woman in a man's voice reads as a bug, so she is hidden). Needs: her voice id (the landing used Jessica; confirm in `scripts/landing-voice.mjs`), a per-teacher output folder in the prerender script and in `useLessonPlayback`'s `demoAudioUrl`, about 7,454 credits on turbo (after 2026-11-08, or on the paid plan), then add her to `DEMO_TEACHERS`.
+- **Next**: footage capture; Hmz upgrades ElevenLabs -> `ELEVENLABS_PLAN=paid` -> re-render in Mike; MJ's narration (above).
+
 ## 2026-10-15 - Visuals on the room's display; steepness is the /demo widget topic (dev/v10-continuation, PR #28)
 
 - **Callout chips** stacked over the brain diagram's title: fixed, then (Hmz) removed from diagrams; they now light the matching

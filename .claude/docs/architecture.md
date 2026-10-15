@@ -30,6 +30,7 @@ All Anthropic calls use `tool_use` with strict input schemas — no regex JSON p
 - `GET  /api/learn/next` — next concept with 70/30 SRS blend (50/50 when ≥10 overdue)
 - `GET  /api/learn/overdue-count` — cheap SRS count for the header chip poller
 - `POST /api/learn/interactive` — the widget for a lesson's `metadata.interactive` spec (V10). Off (404) unless `NEXT_PUBLIC_INTERACTIVE_VISUALS=true`. Approved learners only. For a KG concept the topic comes from the DB and the spec must be carried by a stored lesson of that concept (403 otherwise); cached in `generated_interactives` (migration 017) under a hash of every spec field; identical in-flight requests share one generation; at most 8 generations per learner per 10 minutes (in memory, and from `usage_events` across instances); a `disabled` row is a 404
+- `POST /api/tts` — text to ElevenLabs speech (mp3, or JSON with character timings from `/with-timestamps`). Approved learners only, 200 calls an hour each. Voice and model per teacher key come from `src/lib/tts/voices.json` through `pickVoice` (`voices.ts`): each key has a `free` entry and may have a `paid` one, chosen by `ELEVENLABS_PLAN` (`paid`, else free). `scripts/prerender-demo-tts.mjs` reads the same JSON and records `public/demo/<slug>/seg_NNN.mp3` + `.align.json` + `audio.json` (voice, model, segments, aligned); `/demo` offers only `DEMO_TEACHERS` (`components/demo/demoTeacher.ts`, Jake)
 
 **Quiz:**
 - `GET  /api/quiz/lesson/[conceptId]` — 4 mixed questions (Sonnet)

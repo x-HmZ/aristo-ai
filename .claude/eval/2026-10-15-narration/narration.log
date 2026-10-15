@@ -1,0 +1,26 @@
+PASS heart: no teacher switcher, Jake opens even with ?teacher=mj 
+PASS heart: recorded mp3s play 5 played: 10.2s 10.2s 10.2s 12.1s 10.6s
+PASS heart: segments last their audio, not racing (first mp3 >= 3 s) 
+PASS heart: every mp3 request 200 seg_002.mp3:200 seg_001.mp3:206 seg_001.mp3:206 seg_003.mp3:200 seg_002.mp3:206 seg_004.mp3:200 seg_003.mp3:206
+PASS heart: timings (.align.json) fetched 200 for what played 5
+PASS heart: 0 /api requests 
+PASS volcano-eruption: no teacher switcher, Jake opens even with ?teacher=mj 
+PASS volcano-eruption: recorded mp3s play 5 played: 9.2s 9.2s 9.2s 12.5s 16.1s
+PASS volcano-eruption: segments last their audio, not racing (first mp3 >= 3 s) 
+PASS volcano-eruption: every mp3 request 200 seg_002.mp3:200 seg_001.mp3:206 seg_003.mp3:200 seg_002.mp3:206 seg_004.mp3:200 seg_003.mp3:206
+PASS volcano-eruption: timings (.align.json) fetched 200 for what played 5
+PASS volcano-eruption: 0 /api requests 
+PASS brain: no teacher switcher, Jake opens even with ?teacher=mj 
+PASS brain: recorded mp3s play 5 played: 10.7s 10.7s 10.7s 12.8s 11.6s
+PASS brain: segments last their audio, not racing (first mp3 >= 3 s) 
+PASS brain: every mp3 request 200 seg_002.mp3:200 seg_001.mp3:206 seg_001.mp3:206 seg_003.mp3:200 seg_002.mp3:206 seg_004.mp3:200 seg_003.mp3:206
+PASS brain: timings (.align.json) fetched 200 for what played 5
+PASS brain: 0 /api requests 
+PASS steepness-speed: no teacher switcher, Jake opens even with ?teacher=mj 
+PASS steepness-speed: recorded mp3s play 5 played: 12.8s 12.8s 12.8s 12.5s 19.3s
+PASS steepness-speed: segments last their audio, not racing (first mp3 >= 3 s) 
+PASS steepness-speed: every mp3 request 200 seg_002.mp3:200 seg_001.mp3:206 seg_001.mp3:206 seg_003.mp3:200 seg_002.mp3:206 seg_004.mp3:200 seg_003.mp3:206
+PASS steepness-speed: timings (.align.json) fetched 200 for what played 5
+PASS steepness-speed: 0 /api requests 
+
+all pass

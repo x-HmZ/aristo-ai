@@ -1,0 +1,74 @@
+Voice: jake (placeholder, bIHbv24MWmeRgasZH58o) on eleven_turbo_v2_5, plan free
+voice          : jake (bIHbv24MWmeRgasZH58o)
+model          : eleven_turbo_v2_5
+  heart              15 segments, 15 to render
+  volcano-eruption   15 segments, 15 to render
+  brain              16 segments, 16 to render
+  steepness-speed    15 segments, 15 to render
+total narration: 14908 chars across 61 segments
+to render now  : 14908 chars across 61 segments
+NOTE: ElevenLabs bills per character sent: ~7454 credits on eleven_turbo_v2_5. Timings come in the same call.
+  heart/seg_001 (174 chars) ... 161 KB, 177 timings
+  heart/seg_002 (207 chars) ... 190 KB, 210 timings
+  heart/seg_003 (170 chars) ... 167 KB, 172 timings
+  heart/seg_004 (238 chars) ... 216 KB, 241 timings
+  heart/seg_005 (219 chars) ... 196 KB, 223 timings
+  heart/seg_006 (237 chars) ... 220 KB, 241 timings
+  heart/seg_007 (224 chars) ... 211 KB, 227 timings
+  heart/seg_008 (127 chars) ... 114 KB, 129 timings
+  heart/seg_009 (205 chars) ... 177 KB, 208 timings
+  heart/seg_010 (222 chars) ... 216 KB, 225 timings
+  heart/seg_011 (231 chars) ... 200 KB, 235 timings
+  heart/seg_012 (229 chars) ... 196 KB, 232 timings
+  heart/seg_013 (197 chars) ... 179 KB, 199 timings
+  heart/seg_014 (314 chars) ... 256 KB, 317 timings
+  heart/seg_015 (327 chars) ... 298 KB, 331 timings
+  volcano-eruption/seg_001 (177 chars) ... 145 KB, 180 timings
+  volcano-eruption/seg_002 (217 chars) ... 196 KB, 219 timings
+  volcano-eruption/seg_003 (259 chars) ... 252 KB, 261 timings
+  volcano-eruption/seg_004 (263 chars) ... 238 KB, 266 timings
+  volcano-eruption/seg_005 (201 chars) ... 195 KB, 205 timings
+  volcano-eruption/seg_006 (214 chars) ... 192 KB, 218 timings
+  volcano-eruption/seg_007 (144 chars) ... 125 KB, 146 timings
+  volcano-eruption/seg_008 (206 chars) ... 194 KB, 208 timings
+  volcano-eruption/seg_009 (194 chars) ... 171 KB, 196 timings
+  volcano-eruption/seg_010 (240 chars) ... 250 KB, 243 timings
+  volcano-eruption/seg_011 (311 chars) ... 330 KB, 314 timings
+  volcano-eruption/seg_012 (143 chars) ... 138 KB, 146 timings
+  volcano-eruption/seg_013 (253 chars) ... 254 KB, 255 timings
+  volcano-eruption/seg_014 (355 chars) ... 338 KB, 358 timings
+  volcano-eruption/seg_015 (358 chars) ... 320 KB, 361 timings
+  brain/seg_001 (196 chars) ... 168 KB, 199 timings
+  brain/seg_002 (227 chars) ... 201 KB, 230 timings
+  brain/seg_003 (215 chars) ... 182 KB, 217 timings
+  brain/seg_004 (197 chars) ... 189 KB, 201 timings
+  brain/seg_005 (244 chars) ... 246 KB, 248 timings
+  brain/seg_006 (218 chars) ... 232 KB, 222 timings
+  brain/seg_007 (259 chars) ... 225 KB, 263 timings
+  brain/seg_008 (192 chars) ... 186 KB, 195 timings
+  brain/seg_009 (122 chars) ... 112 KB, 124 timings
+  brain/seg_010 (164 chars) ... 142 KB, 166 timings
+  brain/seg_011 (158 chars) ... 142 KB, 160 timings
+  brain/seg_012 (303 chars) ... 254 KB, 305 timings
+  brain/seg_013 (298 chars) ... 286 KB, 301 timings
+  brain/seg_014 (271 chars) ... 230 KB, 273 timings
+  brain/seg_015 (494 chars) ... 445 KB, 498 timings
+  brain/seg_016 (360 chars) ... 373 KB, 363 timings
+  steepness-speed/seg_001 (239 chars) ... 200 KB, 242 timings
+  steepness-speed/seg_002 (216 chars) ... 197 KB, 219 timings
+  steepness-speed/seg_003 (323 chars) ... 302 KB, 326 timings
+  steepness-speed/seg_004 (425 chars) ... 437 KB, 430 timings
+  steepness-speed/seg_005 (307 chars) ... 275 KB, 310 timings
+  steepness-speed/seg_006 (308 chars) ... 273 KB, 311 timings
+  steepness-speed/seg_007 (135 chars) ... 124 KB, 138 timings
+  steepness-speed/seg_008 (242 chars) ... 262 KB, 245 timings
+  steepness-speed/seg_009 (157 chars) ... 192 KB, 160 timings
+  steepness-speed/seg_010 (268 chars) ... 260 KB, 271 timings
+  steepness-speed/seg_011 (160 chars) ... 148 KB, 162 timings
+  steepness-speed/seg_012 (154 chars) ... 148 KB, 157 timings
+  steepness-speed/seg_013 (379 chars) ... 341 KB, 381 timings
+  steepness-speed/seg_014 (476 chars) ... 405 KB, 480 timings
+  steepness-speed/seg_015 (345 chars) ... 336 KB, 349 timings
+
+Done. 61 mp3s, 13.5 MB, 14908 chars billed.
+Commit public/demo/*/ *.mp3 and audio.json, then redeploy.

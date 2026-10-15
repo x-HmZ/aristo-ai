@@ -20,15 +20,15 @@
  * Safe to re-run: existing mp3s are skipped unless --force is passed, so an
  * interrupted run resumes without paying for the segments it already rendered.
  *
- * --align is a separate, cheaper pass over audio that ALREADY EXISTS. It sends
- * each mp3 plus its text to ElevenLabs' Forced Alignment endpoint and writes
- * <seg_id>.align.json beside the mp3, giving the client real character timings
- * to drive the avatar's visemes from instead of wawa-lipsync's FFT guess.
+ * Rendering goes through /with-timestamps, so every mp3 gets its <seg_id>.align.json
+ * (character timings that drive the avatar's visemes) in the same call, at the
+ * same character price (2026-10-15).
  *
- * Crucially it does NOT re-synthesize: Forced Alignment is billed at
- * speech-to-text rates (audio minutes), not TTS characters, so aligning the
- * whole demo costs nothing against the 10,000 chars/month TTS tier. Re-rendering
- * through /with-timestamps would have cost the full character count again.
+ * --align is a separate pass over audio that ALREADY EXISTS but has no current
+ * timings: each mp3 plus its text goes to ElevenLabs' Forced Alignment endpoint.
+ * It is NOT free: it bills at the speech-to-text rate, about 330 credits per
+ * minute of audio on a credit plan (elevenlabs.io/pricing, 2026-10-15), which
+ * for the whole demo is more than rendering it again on turbo.
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from "fs";
@@ -41,16 +41,9 @@ const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // hole is light, not a surface) and replaced by "heart".
 const SLUGS  = ["heart", "volcano-eruption", "brain", "steepness-speed"];
 
-// Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "jake" because that
+// The same table /api/tts reads (src/lib/tts/voices.json). Default is "jake" because that
 // is the default teacher (DEFAULT_TEACHER), i.e. the avatar the demo actually renders.
-const EL_VOICES = {
-  marcus: "pNInz6obpgDQGcFmaJgB", // Adam   - deep, clear male
-  ryan:   "ErXwobaYiN019PkySvjV", // Antoni - warm, natural male
-  priya:  "21m00Tcm4TlvDq8ikWAM", // Rachel - calm, expressive female
-  sonia:  "EXAVITQu4vr4xnSDxMaL", // Sarah  - soft, clear female
-  jake:   "bIHbv24MWmeRgasZH58o", // Jake, until Mike (zfc8CJQpe8Kqyl0vvCzo) is usable on a paid plan
-};
-const MODEL_BY_VOICE = { jake: "eleven_multilingual_v2" };
+const VOICES = JSON.parse(readFileSync(path.join(ROOT, "src", "lib", "tts", "voices.json"), "utf8")).voices;
 const VOICE_SETTINGS = { stability: 0.5, similarity_boost: 0.75 };
 
 // ─── args ────────────────────────────────────────────────────────────────────
@@ -60,12 +53,10 @@ const ALIGN   = argv.includes("--align");
 const FORCE   = argv.includes("--force");
 const voiceArg = (argv.find((a) => a.startsWith("--voice=")) || "--voice=jake").split("=")[1];
 
-if (!EL_VOICES[voiceArg]) {
-  console.error(`Unknown voice "${voiceArg}". Options: ${Object.keys(EL_VOICES).join(", ")}`);
+if (!Object.hasOwn(VOICES, voiceArg)) {
+  console.error(`Unknown voice "${voiceArg}". Options: ${Object.keys(VOICES).join(", ")}`);
   process.exit(1);
 }
-const VOICE_ID = EL_VOICES[voiceArg];
-const MODEL_ID = MODEL_BY_VOICE[voiceArg] ?? "eleven_turbo_v2_5";
 
 // ─── env ─────────────────────────────────────────────────────────────────────
 function loadEnvLocal() {
@@ -85,6 +76,14 @@ function loadEnvLocal() {
   }
 }
 loadEnvLocal();
+
+// Same pick as parseTtsPlan + pickVoice in src/lib/tts/voices.ts: "paid" only when ELEVENLABS_PLAN says
+// so, and a key without a paid entry keeps its free one.
+const PLAN  = String(process.env.ELEVENLABS_PLAN ?? "").trim().toLowerCase() === "paid" ? "paid" : "free";
+const ENTRY = (PLAN === "paid" && VOICES[voiceArg].paid) || VOICES[voiceArg].free;
+const VOICE_ID = ENTRY.voice;
+const MODEL_ID = ENTRY.model;
+console.log(`Voice: ${voiceArg} (${ENTRY.name}, ${VOICE_ID}) on ${MODEL_ID}, plan ${PLAN}`);
 
 // ─── extract narration ───────────────────────────────────────────────────────
 /**
@@ -119,20 +118,29 @@ function readSegments(slug) {
 }
 
 // ─── ElevenLabs ──────────────────────────────────────────────────────────────
+/** Audio plus its character timings in one call, at the same character price (as scripts/landing-voice.mjs). */
 async function synthesize(text) {
-  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/with-timestamps`, {
     method: "POST",
     headers: {
       "xi-api-key":   process.env.ELEVENLABS_API_KEY,
       "Content-Type": "application/json",
-      Accept:         "audio/mpeg",
+      Accept:         "application/json",
     },
     body: JSON.stringify({ text, model_id: MODEL_ID, voice_settings: VOICE_SETTINGS }),
   });
   if (!res.ok) {
     throw new Error(`ElevenLabs ${res.status}: ${(await res.text().catch(() => "")).slice(0, 300)}`);
   }
-  return Buffer.from(await res.arrayBuffer());
+  const json  = await res.json();
+  const audio = Buffer.from(json.audio_base64 ?? "", "base64");
+  if (!audio.length) throw new Error("no audio in the response");
+  // As /api/tts: the normalized timings describe the text as spoken (numbers expanded).
+  const a = json.normalized_alignment ?? json.alignment;
+  const characters = Array.isArray(a?.characters)
+    ? a.characters.map((c, i) => ({ text: c, start: a.character_start_times_seconds[i], end: a.character_end_times_seconds[i] }))
+    : [];
+  return { audio, align: characters.length ? { generator: "elevenlabs-with-timestamps", audioBytes: audio.length, characters } : null };
 }
 
 /**
@@ -221,8 +229,8 @@ if (ALIGN) {
     console.log(`  ${p.slug.padEnd(18)} ${have} with audio, ${pending} to align`);
   }
   console.log(`to align now   : ${toAlign.length} segments, ~${(seconds / 60).toFixed(1)} min of audio`);
-  console.log("NOTE: Forced Alignment bills at speech-to-text rates (audio minutes).");
-  console.log("      It does NOT touch the TTS character quota and does not re-synthesize.");
+  console.log(`NOTE: Forced Alignment bills at the speech-to-text rate, about 330 credits a minute: ~${Math.ceil(seconds / 60 * 330)} credits.`);
+  console.log("      A render (--force) gets timings in the same call for 0.5 credit a character on turbo.");
 
   const missingAudio = plan.flatMap((p) => p.segments.filter((s) => !s.exists));
   if (missingAudio.length) {
@@ -289,7 +297,7 @@ for (const p of plan) {
 }
 console.log(`total narration: ${allChars} chars across ${plan.flatMap((p) => p.segments).length} segments`);
 console.log(`to render now  : ${todoChars} chars across ${todo.length} segments`);
-console.log("NOTE: ElevenLabs bills per character sent. Free tier is 10,000 chars/month.");
+console.log(`NOTE: ElevenLabs bills per character sent: ~${Math.ceil(todoChars * (MODEL_ID.includes("turbo") || MODEL_ID.includes("flash") ? 0.5 : 1))} credits on ${MODEL_ID}. Timings come in the same call.`);
 
 if (DRY_RUN) {
   console.log("\n--dry-run: nothing sent, nothing written.");
@@ -312,10 +320,12 @@ for (const p of plan) {
     if (!seg.willRender) continue;
     process.stdout.write(`  ${p.slug}/${seg.id} (${seg.text.length} chars) ... `);
     try {
-      const buf = await synthesize(seg.text);
+      const { audio: buf, align } = await synthesize(seg.text);
       writeFileSync(seg.file, buf);
+      // Timings that no longer match the mp3 are dropped from the manifest below (alignmentIsCurrent).
+      if (align) writeFileSync(seg.alignFile, JSON.stringify(align) + "\n");
       rendered++; bytes += buf.length;
-      console.log(`${(buf.length / 1024).toFixed(0)} KB`);
+      console.log(`${(buf.length / 1024).toFixed(0)} KB${align ? `, ${align.characters.length} timings` : ", NO timings"}`);
     } catch (err) {
       console.log("FAILED");
       console.error(`\n${err.message}`);
@@ -329,9 +339,10 @@ for (const p of plan) {
   const have = p.segments
     .filter((s) => existsSync(s.file) && statSync(s.file).size > 0)
     .map((s) => s.id);
+  const aligned = p.segments.filter((s) => alignmentIsCurrent(s.alignFile, s.file)).map((s) => s.id);
   writeFileSync(
     path.join(p.outDir, "audio.json"),
-    JSON.stringify({ voice: voiceArg, model: MODEL_ID, segments: have }, null, 2) + "\n",
+    JSON.stringify({ voice: voiceArg, model: MODEL_ID, segments: have, aligned }, null, 2) + "\n",
   );
 }
 

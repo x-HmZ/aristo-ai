@@ -10,12 +10,14 @@ import type { QuizQuestion }  from "@/lib/agents/assessment";
 import { lesson as volcanoLesson, quiz as volcanoQuiz } from "./volcano-eruption";
 import { lesson as heartLesson, quiz as heartQuiz } from "./heart";
 import { lesson as brainLesson, quiz as brainQuiz } from "./brain";
+import { lesson as steepnessLesson, quiz as steepnessQuiz } from "./steepness-speed";
 
 export interface DemoTopic {
   slug:   string;
   title:  string;
   blurb:  string;
-  emoji:  string;
+  /** Not rendered (no emoji in the UI; DemoClient's TOPIC_ICON draws the topic). */
+  emoji?: string;
   lesson: LessonPayload;
   quiz:   QuizQuestion[];
 }
@@ -45,6 +47,13 @@ export const DEMO_TOPICS: DemoTopic[] = [
     lesson: brainLesson,
     quiz:   brainQuiz,
   },
+  {
+    slug:   "steepness-speed",
+    title:  "Steepness Is Speed",
+    blurb:  "Read a trip off a distance-time graph by its tilt, then drive it yourself.",
+    lesson: steepnessLesson,
+    quiz:   steepnessQuiz,
+  },
 ];
 
 /**
@@ -69,11 +78,6 @@ for (const t of DEMO_TOPICS) {
   }
 }
 
-/**
- * Ready but not listed: "steepness-speed" (src/data/demo/steepness-speed.ts, the V10 widget topic) has its lesson,
- * frozen widget, images and quiz; it joins DEMO_TOPICS once its narration is rendered in Jake's final voice
- * (without the mp3s every segment ends at once). Title "Steepness Is Speed", icon TrendingUp in DemoClient.
- */
 export function getDemoTopic(slug: string): DemoTopic | undefined {
   return DEMO_TOPICS.find((t) => t.slug === slug);
 }
