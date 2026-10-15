@@ -12,6 +12,7 @@ import { Classroom, WallDisplay, roomDisplay, type RoomDisplay } from "./Classro
 import { BRAND_HEX } from "@/lib/brandColors";
 import { Box, Image as ImageIcon, Maximize2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ReopenInteractiveControls } from "@/components/learn/InteractiveStage";
 import { CameraController } from "./CameraController";
 import { LensShift } from "./LensShift";
 import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
@@ -318,6 +319,7 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
                 </div>
               </>
             )}
+            <ReopenInteractiveControls buttonClassName={SCENE_BUTTON} />
           </div>
         </Html>
     </group>
@@ -329,11 +331,12 @@ function ModelToolbar({ display }: { display: RoomDisplay }) {
   const setViewMode3d = useAristoStore((s) => s.setViewMode3d);
   return (
     <Html position={[display.center[0], display.center[1] - (display.height / 2 + 0.2), display.center[2] + 0.012]} center>
-      <div className="theme-ink">
+      <div className="theme-ink flex items-center gap-1.5">
         <Button variant="secondary" onClick={() => setViewMode3d(false)} className={SCENE_BUTTON}>
           <ImageIcon aria-hidden />
           Show image
         </Button>
+        <ReopenInteractiveControls buttonClassName={SCENE_BUTTON} />
       </div>
     </Html>
   );

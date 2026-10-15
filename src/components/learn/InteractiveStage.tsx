@@ -51,6 +51,45 @@ const STRIP_BUTTON = "whitespace-nowrap border border-line shadow-e1";
 const STRIP_CHIP =
   "min-w-0 max-w-[min(420px,40vw)] truncate rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
 
+/** The widget is ready but hidden (and no quiz is up): "Open interactive" brings it back. */
+function useReopenable(): boolean {
+  return useAristoStore((s) =>
+    !!s.interactive.parts && s.interactive.status === "ready" && !s.interactiveShown && !s.activeQuiz);
+}
+
+/** A picture or model toolbar is under the screen (Experience.tsx), so the reopen controls join its row. */
+function useSceneToolbar(): boolean {
+  return useAristoStore((s) => !!s.activePreviewImageUrl || (!!s.activeModelUrl && s.viewMode3d));
+}
+
+/**
+ * "Open interactive", and Continue while the lesson waits, in the scene toolbar's row under the screen. Two controls
+ * centred under the same screen on separate layers drew over each other (Hmz, 2026-10-15). Renders nothing unless
+ * the screen could hold the widget; otherwise InteractiveStage puts the controls in the corner.
+ */
+export function ReopenInteractiveControls({ buttonClassName }: { buttonClassName: string }) {
+  const reopenable = useReopenable();
+  const exploring = useAristoStore((s) => s.exploring);
+  const rect = useAristoStore((s) => s.screenRect);
+  const setInteractiveShown = useAristoStore((s) => s.setInteractiveShown);
+  const requestContinue = useAristoStore((s) => s.requestExploreContinue);
+  if (!reopenable || !rect || !boardFits(rect)) return null;
+  return (
+    <>
+      <Button variant="secondary" className={buttonClassName} onClick={() => setInteractiveShown(true)}>
+        <SlidersHorizontal aria-hidden />
+        Open interactive
+      </Button>
+      {exploring && (
+        <Button onClick={requestContinue} className="whitespace-nowrap shadow-e1">
+          Continue
+          <ArrowRight aria-hidden />
+        </Button>
+      )}
+    </>
+  );
+}
+
 export function InteractiveStage() {
   const interactive = useAristoStore((s) => s.interactive);
   // Off while the quiz is on the desk: the camera looks down there and the display is out of view.
@@ -62,6 +101,8 @@ export function InteractiveStage() {
   const setInteractiveShown    = useAristoStore((s) => s.setInteractiveShown);
   const setInteractiveExpanded = useAristoStore((s) => s.setInteractiveExpanded);
   const requestContinue        = useAristoStore((s) => s.requestExploreContinue);
+  const reopenable             = useReopenable();
+  const sceneToolbar           = useSceneToolbar();
 
   // Board or large view is decided each time the widget is shown, once the screen has held still on the page, and
   // again after a window resize; it then holds while the widget is up. Never from a passing frame (an orbit drag, the
@@ -236,8 +277,9 @@ export function InteractiveStage() {
       )}
 
       {/* Hidden: bring it back from under the screen (or the corner when there is no board), and never strand
-          the pause, so Continue stays reachable. */}
-      {!shown && status === "ready" && !useAristoStore.getState().activeQuiz && (
+          the pause, so Continue stays reachable. Under a picture or model, ReopenInteractiveControls sits in that
+          toolbar's row instead. */}
+      {reopenable && !(pillOnBoard && sceneToolbar) && (
         <div
           className={cn("theme-ink z-20 flex items-center gap-2", pillOnBoard ? "fixed justify-center" : "absolute left-5 top-[76px]")}
           style={pillOnBoard ? stripStyle : undefined}
