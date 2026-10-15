@@ -2,6 +2,23 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-10-15 - Visuals on the room's display; steepness is the /demo widget topic (dev/v10-continuation, PR #28)
+
+- **Callout chips** stacked over the brain diagram's title: fixed, then (Hmz) removed from diagrams; they now light the matching
+  labels on the 3D model. Evidence: `.claude/eval/2026-10-15-callouts/` (before/after at 1280 and 1920, both themes).
+- **Placement** (decisions.md 2026-10-15 rows): the room's display is the anchor (`roomDisplay`), drawn 30% larger by the app;
+  image on it with in-screen zoom (scroll, drag, double-click, Expand); teacher beside it; `LensShift` frames both left of the
+  panel; widget plays on it with a strip under it (large view below 520 px of screen); model toolbar under it; no lean-in.
+  Evidence: `.claude/eval/2026-10-15-placement/` (probe-display.cjs, board-zoom.cjs, zoom/).
+- **Widgets landscape**: kit `.split`, prompts budget 650 x 330, fixtures follow; room.cjs updated (all sections pass);
+  ARISTO.canvas first draw is now a microtask (a generated widget crashed on it).
+- **/demo topic: steepness is speed** (`src/data/demo/steepness-speed.ts`, unlisted until narration). Spend: 0.535 USD run
+  (5 images, over the 0.30 estimate) + 0.047 USD widget regeneration from `spec-curated.json`. Open: the lesson's worked
+  example has a straight segment 3 (7-9 s) while the widget's third part is the curve.
+- **Earlier today**: the two if/elif and probability widgets regenerated (prompt fixes; about 0.09 USD, double run by mistake).
+- **Next**: Hmz upgrades ElevenLabs -> Mike's id in tts route + prerender script -> render steepness narration
+  (`node scripts/prerender-demo-tts.mjs --voice=jake --align`, ask first) -> list the topic (index.ts note); then footage.
+
 ## 2026-10-14 - V10 continued: residuals fixed, live test, Jake's voice, /demo widget (branch dev/v10-continuation, PR into deploy-prep)
 
 - **Residuals fixed** (decisions.md): a loop guard (`src/lib/interactive/guard.ts`, acorn, lazy) plus a busy cap in the bridge, so a

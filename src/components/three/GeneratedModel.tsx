@@ -25,13 +25,17 @@ interface GeneratedModelProps {
   scale?: number;
 }
 
-const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-/** "Left ventricle" is in focus for a callout "left ventricle" or "the left ventricle wall", and the other way round. */
+const words = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+/**
+ * Whole words, either way round: "Left ventricle" is in focus for "left ventricle" or "the left ventricle wall", and
+ * "Aorta" for "aorta"; "ear" never lights for "heart", nor "Left atrium" for "right atrium".
+ */
 function inFocus(label: string, focus: string[]): boolean {
-  const l = norm(label);
+  const l = words(label);
   return focus.some((f) => {
-    const n = norm(f);
-    return !!n && (n.includes(l) || l.includes(n));
+    const n = words(f);
+    if (!n.length || !l.length) return false;
+    return l.every((w) => n.includes(w)) || n.every((w) => l.includes(w));
   });
 }
 
@@ -60,19 +64,26 @@ function boundsPositions(annotations: ModelAnnotation[], box: Box3, s: number): 
   const c = box.getCenter(new Vector3()).multiplyScalar(s);
   const half = box.getSize(new Vector3()).multiplyScalar(s / 2);
   const side = Math.max(half.x, half.z) + 0.06; // the model spins, so clear its widest turn
-  const pad = 0.06, step = 0.16;
-  const cols = { left: 0, right: 0, top: 0, bottom: 0 };
-  return annotations.slice(0, 6).map((a) => {
-    let col: keyof typeof cols =
+  const pad = 0.06, step = 0.16, spread = 0.45;
+  type Col = "left" | "right" | "top" | "bottom";
+  // First choose each label's place (top and bottom take two each; the rest spill to the shorter side), then lay
+  // each place out knowing how many it holds, so a pair above or below sits evenly either side of the centre.
+  const count: Record<Col, number> = { left: 0, right: 0, top: 0, bottom: 0 };
+  const placed = annotations.slice(0, 6).map((a) => {
+    let col: Col =
       a.bias === "left" || a.bias === "back" ? "left" : a.bias === "right" ? "right" : a.bias === "top" ? "top" : a.bias === "bottom" ? "bottom" : "right";
-    // Top and bottom take two labels each; the rest spill to the shorter side column.
-    if ((col === "top" || col === "bottom") && cols[col] >= 2) col = cols.left <= cols.right ? "left" : "right";
-    if (a.bias === "front") col = cols.left < cols.right ? "left" : "right";
-    const i = cols[col]++;
-    if (col === "top")    return { label: a.label, align: "center", position: [c.x + (i ? 0.35 : -0.35) * (cols.top > 1 ? 1 : 0), c.y + half.y + pad, c.z] };
-    if (col === "bottom") return { label: a.label, align: "center", position: [c.x + (i ? 0.35 : -0.35) * (cols.bottom > 1 ? 1 : 0), c.y - half.y - pad, c.z] };
+    if ((col === "top" || col === "bottom") && count[col] >= 2) col = count.left <= count.right ? "left" : "right";
+    if (a.bias === "front") col = count.left < count.right ? "left" : "right";
+    return { label: a.label, col, i: count[col]++ };
+  });
+  return placed.map(({ label, col, i }) => {
+    if (col === "top" || col === "bottom") {
+      const x = c.x + (i - (count[col] - 1) / 2) * spread;
+      const y = col === "top" ? c.y + half.y + pad : c.y - half.y - pad;
+      return { label, align: "center" as const, position: [x, y, c.z] as [number, number, number] };
+    }
     const x = col === "left" ? c.x - side : c.x + side;
-    return { label: a.label, align: col, position: [x, c.y + half.y * 0.5 - i * step, c.z] };
+    return { label, align: col, position: [x, c.y + half.y * 0.5 - i * step, c.z] as [number, number, number] };
   });
 }
 
@@ -100,6 +111,7 @@ export function GeneratedModel({
   scale = 1.5,
 }: GeneratedModelProps) {
   const group = useRef<Group>(null);
+  const labels = useRef<Group>(null);
   const { scene } = useGLTF(modelUrl);
   const [hoveredAnnotation, setHoveredAnnotation] = useState<string | null>(null);
   const [appeared, setAppeared] = useState(false);
@@ -149,6 +161,8 @@ export function GeneratedModel({
     group.current.rotation.y = rotY.current;
     group.current.rotation.x = rotX.current;
     group.current.scale.setScalar(appeared ? userScale.current : 0);
+    // The labels were laid out at the starting scale; they follow the learner's wheel resize from there.
+    labels.current?.scale.setScalar(appeared ? userScale.current / scale : 0);
   });
 
   const onPointerEnter = () => {
@@ -213,7 +227,8 @@ export function GeneratedModel({
       </mesh>
     </group>
 
-      {/* Labels stay put while the model turns. */}
+      {/* Labels stay put while the model turns, and follow its size. */}
+      <group ref={labels}>
       {annotations.map(({ label, position: aPos, align = "center" }) => (
         <Html
           key={label}
@@ -239,6 +254,7 @@ export function GeneratedModel({
           </div>
         </Html>
       ))}
+      </group>
     </group>
   );
 }

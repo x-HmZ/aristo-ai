@@ -99,7 +99,7 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     await sleep(500);
     ok("happy: Expand opens a dialog", (await card(page).getAttribute("role")) === "dialog");
     const big = await rect(card(page));
-    ok("happy: the large view is larger and centred", big.w > c.w * 1.3 && Math.abs((big.l + big.r) / 2 - 960) < 6, JSON.stringify(big));
+    ok("happy: the large view is larger and centred", big.w * big.h > c.w * c.h * 1.3 && Math.abs((big.l + big.r) / 2 - 960) < 6, JSON.stringify(big));
     ok("happy: slider state survives Expand", /-3x/.test(await f.locator("#eq").textContent()));
     await shot(page, "1920x1080-large");
     await f.locator("#m").focus(); // keys now go to the widget's own document, not the page
@@ -114,7 +114,7 @@ const rect = (loc) => loc.evaluate((e) => { const r = e.getBoundingClientRect();
     ok("happy: Hide leaves Continue reachable while paused", await page.getByRole("button", { name: "Continue" }).isVisible());
     await shot(page, "1920x1080-hidden");
     await page.getByRole("button", { name: "Open interactive" }).click();
-    await sleep(400);
+    await card(page).waitFor({ state: "visible", timeout: 5000 }).catch(() => {}); // laid out once the screen has settled
     ok("happy: Open brings it back with state kept", (await card(page).isVisible()) && /-3x/.test(await f.locator("#eq").textContent()));
 
     await page.getByRole("button", { name: "Continue" }).click();

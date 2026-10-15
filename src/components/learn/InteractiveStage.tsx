@@ -19,16 +19,28 @@
  * the strip (board) or the footer (large).
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Maximize2, Minimize2, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InteractiveFrame } from "@/components/learn/InteractiveFrame";
-import { useAristoStore } from "@/store/useAristoStore";
+import { useAristoStore, type ScreenRect } from "@/store/useAristoStore";
 import { cn } from "@/lib/utils";
 import { PANEL_INSET_PX } from "@/components/learn/ClassroomChrome";
 
 /** Narrower than this on the page, the screen is too small to play on: the large view opens instead. */
 export const MIN_BOARD_W = 520;
+/** How long the screen must hold still on the page before the layout is decided; and the wait for no screen at all. */
+const SETTLE_MS = 450;
+const NO_SCREEN_MS = 1500;
+
+/** The whole screen in view, clear of the lesson panel, big enough to play on, and the strip (with Continue) under it. */
+function boardFits(rect: ScreenRect): boolean {
+  return rect.w >= MIN_BOARD_W && rect.x >= 0 && rect.y >= 0 &&
+    rect.x + rect.w <= window.innerWidth - PANEL_INSET_PX &&
+    rect.y + rect.h + STRIP_ROOM <= window.innerHeight;
+}
+/** The strip under the screen: its gap and its 44px controls. */
+const STRIP_ROOM = 64;
 
 const FOCUSABLE = 'button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
 
@@ -41,7 +53,8 @@ const STRIP_CHIP =
 
 export function InteractiveStage() {
   const interactive = useAristoStore((s) => s.interactive);
-  const shown       = useAristoStore((s) => s.interactiveShown);
+  // Off while the quiz is on the desk: the camera looks down there and the display is out of view.
+  const shown       = useAristoStore((s) => s.interactiveShown && !s.activeQuiz);
   const expanded    = useAristoStore((s) => s.interactiveExpanded);
   const exploring   = useAristoStore((s) => s.exploring);
   const rect        = useAristoStore((s) => s.screenRect);
@@ -50,13 +63,31 @@ export function InteractiveStage() {
   const setInteractiveExpanded = useAristoStore((s) => s.setInteractiveExpanded);
   const requestContinue        = useAristoStore((s) => s.requestExploreContinue);
 
-  // Board only where the whole screen is in view and clear of the lesson panel, and big enough to play on.
-  const board =
-    !!rect && rect.w >= MIN_BOARD_W && rect.x >= 0 && rect.y >= 0 &&
-    typeof window !== "undefined" && rect.x + rect.w <= window.innerWidth - PANEL_INSET_PX;
+  // Board or large view is decided each time the widget is shown, once the screen has held still on the page, and
+  // again after a window resize; it then holds while the widget is up. Never from a passing frame (an orbit drag, the
+  // framing's glide): that flipped the widget into a dialog mid-gesture. Until decided the card stays hidden (its frame
+  // mounted); with no screen at all, the large view.
+  const [board, setBoard] = useState<boolean | null>(null);
+  const resized = useRef(false);
+  useEffect(() => {
+    const onResize = () => { resized.current = true; };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  useEffect(() => {
+    if (!shown) { setBoard(null); return; }
+    const id = window.setTimeout(() => {
+      setBoard((prev) => {
+        if (prev !== null && !resized.current) return prev;
+        resized.current = false;
+        return !!rect && boardFits(rect);
+      });
+    }, rect ? SETTLE_MS : NO_SCREEN_MS);
+    return () => window.clearTimeout(id);
+  }, [rect, shown]);
   const { parts, spec, status } = interactive;
   const live = !!parts && status !== "failed" && status !== "idle";
-  const large = shown && (expanded || !board);
+  const large = shown && board !== null && (expanded || !board);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const close = () => (board ? setInteractiveExpanded(false) : setInteractiveShown(false));
@@ -100,11 +131,11 @@ export function InteractiveStage() {
     if (cur.parts === parts) setInteractive({ ...cur, status: "failed" });
   };
 
-  // Under the screen, centred on it, like the image's toolbar.
-  const stripStyle = rect
-    ? { left: rect.x + rect.w / 2, top: rect.y + rect.h + 14, transform: "translateX(-50%)" }
-    : undefined;
+  // Under the screen and no wider than it, like the image's toolbar: the "Try this" chip shrinks first.
+  const stripStyle = rect ? { left: rect.x, top: rect.y + rect.h + 14, width: rect.w } : undefined;
   const onBoard = board && shown && !large;
+  // The "Open interactive" control sits under the screen whenever the screen could hold the widget.
+  const pillOnBoard = !!rect && boardFits(rect);
 
   return (
     <>
@@ -114,6 +145,7 @@ export function InteractiveStage() {
         ref={cardRef}
         data-testid="interactive-card"
         data-layout={large ? "large" : "board"}
+        data-board={String(board)}
         tabIndex={-1}
         role={large ? "dialog" : "group"}
         aria-modal={large || undefined}
@@ -122,7 +154,7 @@ export function InteractiveStage() {
         className={cn(
           "theme-ink flex flex-col overflow-hidden bg-surface text-ink outline-none",
           large ? cn(LARGE_CARD, "rounded-2xl border border-line shadow-e2") : "fixed z-20 rounded-[3px]",
-          !shown && "hidden",
+          (!shown || board === null) && "hidden",
         )}
       >
         {large && (
@@ -179,7 +211,7 @@ export function InteractiveStage() {
 
       {/* The strip under the screen: what to try, Expand, Hide, and Continue while the lesson waits. */}
       {onBoard && (
-        <div data-testid="interactive-strip" className="theme-ink fixed z-20 flex items-center gap-1.5" style={stripStyle}>
+        <div data-testid="interactive-strip" className="theme-ink fixed z-20 flex items-center justify-center gap-1.5" style={stripStyle}>
           <span className={STRIP_CHIP} title={spec.try_this[0]}>
             <span className="font-semibold text-muted">Try this: </span>{spec.try_this[0]}
           </span>
@@ -205,10 +237,10 @@ export function InteractiveStage() {
 
       {/* Hidden: bring it back from under the screen (or the corner when there is no board), and never strand
           the pause, so Continue stays reachable. */}
-      {!shown && status === "ready" && (
+      {!shown && status === "ready" && !useAristoStore.getState().activeQuiz && (
         <div
-          className={cn("theme-ink z-20 flex items-center gap-2", board ? "fixed" : "absolute left-5 top-[76px]")}
-          style={board ? stripStyle : undefined}
+          className={cn("theme-ink z-20 flex items-center gap-2", pillOnBoard ? "fixed justify-center" : "absolute left-5 top-[76px]")}
+          style={pillOnBoard ? stripStyle : undefined}
         >
           <Button
             variant="secondary"

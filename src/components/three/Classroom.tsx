@@ -284,11 +284,12 @@ const SCREEN = "#15181E"; // the room build's standby screen (build_studio_room.
  * screen in standby with the faint warm glow low in the middle that the baked one had. What is shown on it (the
  * image, the widget) sits a hair in front of the face.
  */
-function WallDisplay({ display }: { display: RoomDisplay }) {
+export function WallDisplay({ display }: { display: RoomDisplay }) {
   const glow = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = 256; c.height = 128;
-    const g = c.getContext("2d")!;
+    const g = c.getContext("2d");
+    if (!g) return null;
     g.fillStyle = SCREEN;
     g.fillRect(0, 0, 256, 128);
     const r = g.createRadialGradient(128, 128, 4, 128, 128, 150);
@@ -300,7 +301,7 @@ function WallDisplay({ display }: { display: RoomDisplay }) {
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
   }, []);
-  useEffect(() => () => glow.dispose(), [glow]);
+  useEffect(() => () => glow?.dispose(), [glow]);
   const [cx, cy, cz] = display.center;
   return (
     <group position={[cx, cy, cz]}>
@@ -311,7 +312,7 @@ function WallDisplay({ display }: { display: RoomDisplay }) {
       </mesh>
       <mesh position={[0, 0, -0.001]}>
         <planeGeometry args={[display.width, display.height]} />
-        <meshBasicMaterial map={glow} toneMapped={false} />
+        <meshBasicMaterial color={glow ? undefined : SCREEN} map={glow} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -339,7 +340,6 @@ export function Classroom({ variant }: ClassroomProps) {
 
       <Blackboard position={cfg.board.position} />
 
-      {cfg.display.bezel && <WallDisplay display={cfg.display} />}
 
       {!activeQuiz && cfg.desk && (
         <DeskPaper

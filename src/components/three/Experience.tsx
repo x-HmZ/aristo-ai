@@ -3,12 +3,12 @@
 import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
 import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
-import { Component, Suspense, useEffect, useRef, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
+import { Component, Suspense, useCallback, useEffect, useRef, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { Mesh, MeshBasicMaterial, Plane, SRGBColorSpace, Vector3 } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { GeneratedModel } from "./GeneratedModel";
 import { Teacher, AVATAR_ASSETS, type LookTargets } from "./Teacher";
-import { Classroom, roomDisplay, type RoomDisplay } from "./Classroom";
+import { Classroom, WallDisplay, roomDisplay, type RoomDisplay } from "./Classroom";
 import { BRAND_HEX } from "@/lib/brandColors";
 import { Box, Image as ImageIcon, Maximize2, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -135,7 +135,7 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
     v.y = Math.max(-my, Math.min(my, v.y));
     setZoomed(v.z > 1.001);
   };
-  const reset = () => { view.current = { z: 1, x: 0, y: 0 }; setZoomed(false); };
+  const reset = useCallback(() => { view.current = { z: 1, x: 0, y: 0 }; setZoomed(false); }, []);
 
   // Fade-in when the image URL swaps (200ms ramp): a dissolve on the screen rather than a hard cut. A new
   // picture also starts unzoomed.
@@ -144,7 +144,8 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
     fadeStart.current = performance.now();
     if (materialRef.current) materialRef.current.opacity = 0;
     reset();
-  }, [imageUrl]);
+    dragFrom.current = null;
+  }, [imageUrl, reset]);
 
   useFrame(() => {
     if (materialRef.current) {
@@ -164,7 +165,9 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
   const onWheel = (e: ThreeEvent<WheelEvent>) => {
     e.stopPropagation();
     const v = view.current;
-    const z = Math.max(1, Math.min(MAX_BOARD_ZOOM, v.z * Math.exp(-e.deltaY * 0.0015)));
+    // Lines (Firefox's mouse wheel) and pages count as pixels' worth, so a wheel notch zooms the same everywhere.
+    const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1);
+    const z = Math.max(1, Math.min(MAX_BOARD_ZOOM, v.z * Math.exp(-dy * 0.0015)));
     const p = local(e);
     v.x = p.x - (p.x - v.x) * (z / v.z);
     v.y = p.y - (p.y - v.y) * (z / v.z);
@@ -174,7 +177,8 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
   const onPointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (view.current.z <= 1.001) return;
     e.stopPropagation();
-    (e.target as Element | null)?.setPointerCapture?.(e.pointerId);
+    // R3F's event target is its capture shim, which has setPointerCapture.
+    (e.target as unknown as { setPointerCapture?: (id: number) => void }).setPointerCapture?.(e.pointerId);
     dragFrom.current = local(e);
     document.body.style.cursor = "grabbing";
   };
@@ -193,8 +197,22 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
     if (!hovering.current) { setBoardInteracting(false); document.body.style.cursor = ""; return; }
     document.body.style.cursor = zoomed ? "grab" : "zoom-in";
   };
-  // Leaving the board (or the picture going away) hands the scroll and the drag back to the camera.
-  useEffect(() => () => setBoardInteracting(false), [setBoardInteracting]);
+  // A drag whose pointer-up never reached the board (released outside the window, or the window lost focus)
+  // still ends, so the camera is never left locked.
+  const endDragRef = useRef(endDrag);
+  useEffect(() => { endDragRef.current = endDrag; });
+  useEffect(() => {
+    const end = () => { if (dragFrom.current) endDragRef.current(); };
+    window.addEventListener("pointerup", end);
+    window.addEventListener("blur", end);
+    return () => { window.removeEventListener("pointerup", end); window.removeEventListener("blur", end); };
+  }, []);
+  // Leaving the board (or the picture going away mid-drag) hands the scroll and the drag back to the camera.
+  useEffect(() => () => {
+    dragFrom.current = null;
+    setBoardInteracting(false);
+    document.body.style.cursor = "";
+  }, [setBoardInteracting]);
 
   const handleViewIn3d = async () => {
     if (!pending3dImageUrl || isGeneratingModel) return;
@@ -261,7 +279,7 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
           onDoubleClick={(e) => { e.stopPropagation(); reset(); }}
-          onPointerEnter={() => { hovering.current = true; setBoardInteracting(true); document.body.style.cursor = zoomed ? "grab" : "zoom-in"; }}
+          onPointerEnter={() => { hovering.current = true; setBoardInteracting(true); document.body.style.cursor = view.current.z > 1.001 ? "grab" : "zoom-in"; }}
           onPointerLeave={() => {
             hovering.current = false;
             if (dragFrom.current) return; // a drag in progress keeps the board until it ends
@@ -435,8 +453,10 @@ function ScreenRectReporter({ display }: { display: RoomDisplay }) {
   const setScreenRect = useAristoStore((s) => s.setScreenRect);
   const corner = useRef(new Vector3());
   const last = useRef("");
-  useEffect(() => () => setScreenRect(null), [setScreenRect]);
+  // Cleared on unmount, and the "unchanged" memory with it, so a remount (StrictMode) publishes again.
+  useEffect(() => () => { last.current = ""; setScreenRect(null); }, [setScreenRect]);
   useFrame(() => {
+    camera.updateMatrixWorld(); // this frame's pose, so the DOM layer does not trail the screen by a frame
     const r = gl.domElement.getBoundingClientRect();
     const [cx, cy, cz] = display.center;
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
@@ -568,6 +588,8 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
       <SceneLights />
       <Environment preset="studio" environmentIntensity={0.5} />
       {classroom === "none" && <Floor />}
+      {/* The display is part of the room's config but drawn here, so the no-room view has one to present on too. */}
+      {display.bezel && <WallDisplay display={display} />}
 
       {classroom !== "none" && (
         <Suspense fallback={null}>

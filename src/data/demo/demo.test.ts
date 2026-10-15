@@ -11,6 +11,9 @@ describe("demo interactive widgets", () => {
   // steepness-speed is checked before it is listed (it waits for its narration).
   const all = [...DEMO_TOPICS, { slug: "steepness-speed", lesson: steepness.lesson }];
   const withSpec = all.filter((t) => t.lesson.metadata.interactive);
+  it("every topic, listed or not, has slug === concept_id (its mp3s live under /demo/<concept_id>/)", () => {
+    for (const t of all) expect(t.lesson.concept_id, t.slug).toBe(t.slug);
+  });
   it("steepness-speed carries its widget", () => expect(withSpec.map((t) => t.slug)).toContain("steepness-speed"));
 
   it.each(withSpec.map((t) => [t.slug, t] as const))("%s carries a frozen widget that passes the checks", (_, t) => {
