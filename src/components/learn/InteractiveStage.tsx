@@ -46,10 +46,11 @@ const FOCUSABLE = 'button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"
 
 const LARGE_CARD =
   "absolute left-1/2 top-1/2 z-[60] h-[min(720px,calc(100%-6rem))] w-[min(960px,calc(100%-2.5rem))] -translate-x-1/2 -translate-y-1/2";
-// The strip's controls match the image toolbar under the screen (Experience.tsx SCENE_BUTTON / SCENE_CHIP).
-const STRIP_BUTTON = "whitespace-nowrap border border-line shadow-e1";
+// The strip's controls match the image toolbar under the screen (Experience.tsx SCENE_BUTTON / SCENE_CHIP): 44px pills.
+const STRIP_BUTTON = "whitespace-nowrap rounded-full border border-line shadow-e1";
+const STRIP_CONTINUE = "whitespace-nowrap rounded-full shadow-e1";
 const STRIP_CHIP =
-  "min-w-0 max-w-[min(420px,40vw)] truncate rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
+  "block h-11 min-w-0 max-w-[min(420px,40vw)] truncate rounded-full border border-line bg-bg/[0.86] px-4 text-xs font-medium leading-[42px] text-body backdrop-blur-md";
 
 /** The widget is ready but hidden (and no quiz is up): "Open interactive" brings it back. */
 function useReopenable(): boolean {
@@ -81,7 +82,7 @@ export function ReopenInteractiveControls({ buttonClassName }: { buttonClassName
         Open interactive
       </Button>
       {exploring && (
-        <Button onClick={requestContinue} className="whitespace-nowrap shadow-e1">
+        <Button onClick={requestContinue} className={STRIP_CONTINUE}>
           Continue
           <ArrowRight aria-hidden />
         </Button>
@@ -261,14 +262,14 @@ export function InteractiveStage() {
             Expand
           </Button>
           <Button
-            variant="secondary" size="icon" className={cn(STRIP_BUTTON, "rounded-full")}
+            variant="secondary" size="icon" className={STRIP_BUTTON}
             onClick={() => setInteractiveShown(false)}
             aria-label="Hide the interactive"
           >
             <X aria-hidden />
           </Button>
           {exploring && (
-            <Button onClick={requestContinue} className="shadow-e1">
+            <Button onClick={requestContinue} className={STRIP_CONTINUE}>
               Continue
               <ArrowRight aria-hidden />
             </Button>
@@ -286,14 +287,14 @@ export function InteractiveStage() {
         >
           <Button
             variant="secondary"
-            className="border border-line bg-bg/[0.86] shadow-e1 backdrop-blur-md"
+            className="rounded-full border border-line bg-bg/[0.86] shadow-e1 backdrop-blur-md"
             onClick={() => setInteractiveShown(true)}
           >
             <SlidersHorizontal aria-hidden />
             Open interactive
           </Button>
           {exploring && (
-            <Button onClick={requestContinue} className="shadow-e1">
+            <Button onClick={requestContinue} className={STRIP_CONTINUE}>
               Continue
               <ArrowRight aria-hidden />
             </Button>

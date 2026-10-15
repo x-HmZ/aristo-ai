@@ -237,6 +237,8 @@ is a stack.
   has a 3px `border-accent` on `bg-tint` in ink; the others are `body`.
 - **In-scene controls:** "View in 3D" / "Show image" are `Button variant="secondary"` inside `.theme-ink`;
   status and hint chips and the callouts are `bg-bg/[0.86]` pills with `text-body` / `text-ink`.
+  The row under the room's display (picture and model toolbars, the widget's strip, Open interactive, Continue) is one
+  shape (Hmz, 2026-10-15): 44px `pill`s, buttons and hint chips alike, in one row; a control never sits on another.
 - **Status in lesson cards:** key insight `warning` on `warning/10` with a Lightbulb icon; output and "in the room"
   chips `success` on `success/10`; code `ink` on `sunk`; hint and analogy on `tint`.
 

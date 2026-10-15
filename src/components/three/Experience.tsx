@@ -25,9 +25,11 @@ export { RendererConfig, SceneLights };
 // In-scene controls (the image and model toolbars): the system's secondary
 // button and a status chip, inside `.theme-ink`. Classes only; the <Html>
 // positions and every scene constant are unchanged.
-const SCENE_BUTTON = "whitespace-nowrap border border-line shadow-e1";
+// One shape for the whole row under the screen (Hmz, 2026-10-15): 44px pills, buttons and hint chips alike, like
+// every other control placed on the room.
+const SCENE_BUTTON = "whitespace-nowrap rounded-full border border-line shadow-e1";
 const SCENE_CHIP =
-  "pointer-events-none flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-3 py-1.5 text-xs font-medium text-body backdrop-blur-md";
+  "pointer-events-none flex h-11 items-center gap-2 whitespace-nowrap rounded-full border border-line bg-bg/[0.86] px-4 text-xs font-medium text-body backdrop-blur-md";
 
 
 // Shared anchor for the image panel and the 3D model.
