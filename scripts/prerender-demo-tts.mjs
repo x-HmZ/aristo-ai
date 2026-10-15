@@ -39,7 +39,7 @@ const ROOT   = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // Keep in sync with DEMO_TOPICS in src/data/demo/index.ts. "black-holes" was
 // retired on 2026-09-10 (its 3D model reconstructed as a flat sliver; a black
 // hole is light, not a surface) and replaced by "heart".
-const SLUGS  = ["heart", "volcano-eruption", "brain", "python-for-range"];
+const SLUGS  = ["heart", "volcano-eruption", "brain", "steepness-speed"];
 
 // Mirrors EL_VOICES in src/app/api/tts/route.ts. Default is "jake" because that
 // is the default teacher (DEFAULT_TEACHER), i.e. the avatar the demo actually renders.

@@ -70,9 +70,9 @@ for (const t of DEMO_TOPICS) {
 }
 
 /**
- * Ready but not listed: "python-for-range" (src/data/demo/python-for-range.ts, the V10 widget topic) has its
- * lesson, frozen widget, images and quiz; it joins DEMO_TOPICS once its narration is rendered in Jake's final voice
- * (without the mp3s every segment ends at once). Title "Python Loops with range()", icon Code in DemoClient.
+ * Ready but not listed: "steepness-speed" (src/data/demo/steepness-speed.ts, the V10 widget topic) has its lesson,
+ * frozen widget, images and quiz; it joins DEMO_TOPICS once its narration is rendered in Jake's final voice
+ * (without the mp3s every segment ends at once). Title "Steepness Is Speed", icon TrendingUp in DemoClient.
  */
 export function getDemoTopic(slug: string): DemoTopic | undefined {
   return DEMO_TOPICS.find((t) => t.slug === slug);

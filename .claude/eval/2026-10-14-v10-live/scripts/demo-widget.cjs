@@ -1,12 +1,13 @@
-// /demo's frozen-widget path: pick "Python Loops with range()", skip to the explore segment, and check the frozen
+// /demo's frozen-widget path: pick a topic (default "Python Loops with range()"), skip to the explore segment, and check the frozen
 // widget shows on the board and pauses the lesson, with no /api request at all. 0 paid calls.
-// Usage: node demo-widget.cjs [baseUrl=http://localhost:3000]
+// Usage: node demo-widget.cjs [baseUrl=http://localhost:3000] [topic title] [output dir]
 const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
 const { chromium } = require(path.join(execSync("npm root -g").toString().trim(), "playwright"));
 const base = process.argv[2] || "http://localhost:3000";
-const OUT = path.join(__dirname, "..", "python-for-range");
+const TITLE = process.argv[3] || "Python Loops with range()";
+const OUT = process.argv[4] || path.join(__dirname, "..", "python-for-range");
 const report = { checks: [], problems: [] };
 const ok = (name, pass, extra = "") => { report.checks.push({ name, pass, extra }); if (!pass) report.problems.push(`${name} ${extra}`); console.log(pass ? "PASS" : "FAIL", name, extra); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -19,7 +20,7 @@ const clickText = (page, re) => page.evaluate(([src, fl]) => {
 
 (async () => {
   const browser = await chromium.launch({ headless: true, args: ["--autoplay-policy=no-user-gesture-required", "--use-angle=d3d11", "--ignore-gpu-blocklist", "--enable-gpu"] });
-  for (const [w, h] of [[1280, 720], [390, 844]]) {
+  for (const [w, h] of [[1920, 1080], [1280, 720], [390, 844]]) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h } });
     const page = await ctx.newPage();
     const api = [];
@@ -27,7 +28,7 @@ const clickText = (page, re) => page.evaluate(([src, fl]) => {
     await page.goto(`${base}/demo`, { waitUntil: "domcontentloaded" });
     await page.waitForFunction(() => !document.querySelector('[class*="z-[100]"]') && !!document.querySelector("canvas"), null, { timeout: 120000 });
     await sleep(800);
-    await page.getByText("Python Loops with range()").first().click();
+    await page.getByText(TITLE).first().click();
     await page.waitForFunction(() => /activate/i.test(document.body.innerText), null, { timeout: 30000 });
     let card = false;
     // One step at a time, watching closely: the narration mp3s are not rendered yet, so segments end fast.
