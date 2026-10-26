@@ -286,6 +286,7 @@ describe("parseWidgetMessage", () => {
     expect(parseWidgetMessage({ type: WIDGET_MESSAGE_TYPE, event: "error", message: "boom" })?.message).toBe("boom");
     expect(parseWidgetMessage({ type: "other", event: "ready" })).toBeNull();
     expect(parseWidgetMessage({ type: WIDGET_MESSAGE_TYPE, event: "escape" })).toEqual({ event: "escape", message: "" });
+    expect(parseWidgetMessage({ type: WIDGET_MESSAGE_TYPE, event: "touch" })).toEqual({ event: "touch", message: "" });
     expect(parseWidgetMessage({ type: WIDGET_MESSAGE_TYPE, event: "navigate" })).toBeNull();
     expect(parseWidgetMessage("ready")).toBeNull();
     expect(parseWidgetMessage(null)).toBeNull();

@@ -17,8 +17,11 @@ export type WidgetTheme = "light" | "dark";
 
 /** The only window.postMessage shape the parent accepts from a widget. */
 export const WIDGET_MESSAGE_TYPE = "aristo-widget";
-/** `stopped`: the loop guard ended a widget that ran too long; it counts as a failure even after `ready`. */
-export type WidgetEvent = "ready" | "error" | "escape" | "stopped";
+/**
+ * What the frame's bridge tells the page. `stopped`: the loop guard ended a widget that ran too long, a failure even
+ * after `ready`. `escape`: Esc was pressed inside. `touch`: the learner's first pointer press inside.
+ */
+export type WidgetEvent = "ready" | "error" | "escape" | "stopped" | "touch";
 
 /** The bridge's tick that guard.ts puts at the top of every loop and function body. */
 export const LOOP_GUARD = "__aristoTick";
@@ -131,6 +134,8 @@ function bridgeJs(theme: WidgetTheme): string {
   window.addEventListener('error',function(e){failed=true;post('error',String(e&&e.message||'error'));});
   window.addEventListener('unhandledrejection',function(e){failed=true;post('error',String(e&&e.reason||'rejected'));});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')post('escape');});
+  /* The learner's first touch: the teacher lowers an arm that was pointing at the screen. Captured on the document, so most widgets cannot stop it; a widget that does only keeps the arm up. */
+  document.addEventListener('pointerdown',function(){post('touch');},{capture:true,once:true});
   ['RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','RTCSessionDescription','RTCIceTransport'].forEach(function(n){
     try{Object.defineProperty(window,n,{value:undefined,configurable:false,writable:false});}catch(e){}
   });
@@ -309,6 +314,6 @@ export function parseWidgetMessage(data: unknown): { event: WidgetEvent; message
   if (typeof data !== "object" || data === null) return null;
   const d = data as Record<string, unknown>;
   if (d.type !== WIDGET_MESSAGE_TYPE) return null;
-  if (d.event !== "ready" && d.event !== "error" && d.event !== "escape" && d.event !== "stopped") return null;
+  if (d.event !== "ready" && d.event !== "error" && d.event !== "escape" && d.event !== "stopped" && d.event !== "touch") return null;
   return { event: d.event, message: typeof d.message === "string" ? d.message.slice(0, 300) : "" };
 }

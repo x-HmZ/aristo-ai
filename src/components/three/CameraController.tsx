@@ -23,7 +23,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import { Vector3, type PerspectiveCamera } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
-import { deskFraming } from "./deskFraming";
+import { sheetFraming } from "./sheetFraming";
 
 // ─── Named framings ──────────────────────────────────────────────────────────
 
@@ -34,7 +34,7 @@ const LESSON_POS    = new Vector3(0,    0,    0.9);
 const LESSON_TARGET = new Vector3(0,    0,    0.4);
 
 // Desk view — the student looking down at their own paper.  The pose (DESK_POS / DESK_TARGET, tuned in the
-// /dev/desk-quiz harness) lives in deskFraming.ts with the per-aspect framing: on a landscape canvas it is used as
+// /dev/desk-quiz harness) lives in sheetFraming.ts with the per-canvas framing: on a landscape canvas it is used as
 // it is; on a portrait one the camera slides back along the same view ray so the paper fits the width.
 
 // Damping strength.  Higher = snappier.  λ=3.2 → ~95 % of distance covered
@@ -61,9 +61,9 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
   const { camera, controls, size } = useThree();
   const activeQuiz = useAristoStore((s) => s.activeQuiz);
 
-  // The desk framing follows the canvas aspect ratio (the paper is 520 CSS px wide, so a phone would crop it).
+  // The desk framing follows the canvas aspect ratio (the sheet is fixed on the desk and the camera fills the free area with it).
   const fov = (camera as PerspectiveCamera).fov;
-  const framing = useMemo(() => deskFraming(size.width, size.height, fov), [size.width, size.height, fov]);
+  const framing = useMemo(() => sheetFraming(size.width, size.height, fov), [size.width, size.height, fov]);
 
   // prefers-reduced-motion: cut to the goal instead of gliding, both into and out of the desk.
   const reduceMotion = useRef(false);

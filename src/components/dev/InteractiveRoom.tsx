@@ -12,7 +12,7 @@
  */
 
 import { useEffect } from "react";
-import { AristoCanvas } from "@/components/learn/AristoCanvas";
+import { ClassroomStage } from "@/components/learn/AristoCanvas";
 import { MessagePanel } from "@/components/learn/MessagePanel";
 import { InteractiveStage } from "@/components/learn/InteractiveStage";
 import { PANEL_SLOT, panelColumn } from "@/components/learn/ClassroomChrome";
@@ -62,7 +62,7 @@ export default function InteractiveRoom({ fixtureId }: { fixtureId: string }) {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
-      <div className="absolute inset-0 z-0"><AristoCanvas /></div>
+      <ClassroomStage />
       <div className={panelColumn(false)}>
         <div className={PANEL_SLOT}><MessagePanel /></div>
       </div>
