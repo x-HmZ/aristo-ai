@@ -24,6 +24,7 @@ import { ArrowRight, Maximize2, Minimize2, SlidersHorizontal, X } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { InteractiveFrame } from "@/components/learn/InteractiveFrame";
 import { useAristoStore, type ScreenRect } from "@/store/useAristoStore";
+import { useClassroomLayout } from "@/store/useClassroomLayout";
 import { cn } from "@/lib/utils";
 import { PANEL_INSET_PX } from "@/components/learn/ClassroomChrome";
 
@@ -33,10 +34,16 @@ export const MIN_BOARD_W = 520;
 const SETTLE_MS = 450;
 const NO_SCREEN_MS = 1500;
 
+/** How much of the page's right side the lesson panel covers: the desk column, or what the phone layout reports. */
+function panelInset(): number {
+  const { mode, panelRight } = useClassroomLayout.getState();
+  return mode === "desk" ? PANEL_INSET_PX : panelRight;
+}
+
 /** The whole screen in view, clear of the lesson panel, big enough to play on, and the strip (with Continue) under it. */
 function boardFits(rect: ScreenRect): boolean {
   return rect.w >= MIN_BOARD_W && rect.x >= 0 && rect.y >= 0 &&
-    rect.x + rect.w <= window.innerWidth - PANEL_INSET_PX &&
+    rect.x + rect.w <= window.innerWidth - panelInset() &&
     rect.y + rect.h + STRIP_ROOM <= window.innerHeight;
 }
 /** The strip under the screen: its gap and its 44px controls. */
@@ -46,6 +53,8 @@ const FOCUSABLE = 'button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"
 
 const LARGE_CARD =
   "absolute left-1/2 top-1/2 z-[60] h-[min(720px,calc(100%-6rem))] w-[min(960px,calc(100%-2.5rem))] -translate-x-1/2 -translate-y-1/2";
+// On a phone the large view is the whole screen but for a thin margin: the widget needs every pixel of height.
+const LARGE_CARD_PHONE = "absolute inset-2 z-[60]";
 // The strip's controls match the image toolbar under the screen (Experience.tsx SCENE_BUTTON / SCENE_CHIP): 44px pills.
 const STRIP_BUTTON = "whitespace-nowrap rounded-full border border-line shadow-e1";
 const STRIP_CONTINUE = "whitespace-nowrap rounded-full shadow-e1";
@@ -104,6 +113,13 @@ export function InteractiveStage() {
   const requestContinue        = useAristoStore((s) => s.requestExploreContinue);
   const reopenable             = useReopenable();
   const sceneToolbar           = useSceneToolbar();
+  const setWidgetOnBoard       = useAristoStore((s) => s.setWidgetOnBoard);
+  const setWidgetTouched       = useAristoStore((s) => s.setWidgetTouched);
+  const mode                   = useClassroomLayout((s) => s.mode);
+  const phone                  = mode !== "desk";
+  const sideFooter             = mode === "landscape";
+  // Portrait: "Try this" is its first line until asked for; the widget keeps the height.
+  const [triesOpen, setTriesOpen] = useState(false);
 
   // Board or large view is decided each time the widget is shown, once the screen has held still on the page, and
   // again after a window resize; it then holds while the widget is up. Never from a passing frame (an orbit drag, the
@@ -128,8 +144,18 @@ export function InteractiveStage() {
     return () => window.clearTimeout(id);
   }, [rect, shown]);
   const { parts, spec, status } = interactive;
+  // A new widget starts untouched.
+  useEffect(() => { setWidgetTouched(false); setTriesOpen(false); }, [parts, setWidgetTouched]);
   const live = !!parts && status !== "failed" && status !== "idle";
   const large = shown && board !== null && (expanded || !board);
+  // On the board the widget sits under the canvas and shows through the display's screen (Classroom.tsx WallDisplay),
+  // so the teacher's hand draws over it where they overlap. Not for the large view, a dialog over the scene, and
+  // only while the card exists: a failed widget must close the hole.
+  const onBoard = live && !!rect && shown && board === true && !large;
+  useEffect(() => {
+    setWidgetOnBoard(onBoard);
+    return () => setWidgetOnBoard(false);
+  }, [onBoard, setWidgetOnBoard]);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const close = () => (board ? setInteractiveExpanded(false) : setInteractiveShown(false));
@@ -175,7 +201,6 @@ export function InteractiveStage() {
 
   // Under the screen and no wider than it, like the image's toolbar: the "Try this" chip shrinks first.
   const stripStyle = rect ? { left: rect.x, top: rect.y + rect.h + 14, width: rect.w } : undefined;
-  const onBoard = board && shown && !large;
   // The "Open interactive" control sits under the screen whenever the screen could hold the widget.
   const pillOnBoard = !!rect && boardFits(rect);
 
@@ -195,12 +220,12 @@ export function InteractiveStage() {
         style={onBoard && rect ? { left: rect.x, top: rect.y, width: rect.w, height: rect.h } : undefined}
         className={cn(
           "theme-ink flex flex-col overflow-hidden bg-surface text-ink outline-none",
-          large ? cn(LARGE_CARD, "rounded-2xl border border-line shadow-e2") : "fixed z-20 rounded-[3px]",
+          large ? cn(phone ? LARGE_CARD_PHONE : LARGE_CARD, "rounded-2xl border border-line shadow-e2") : "fixed z-[1] rounded-[3px]",
           (!shown || board === null) && "hidden",
         )}
       >
         {large && (
-          <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-line pl-4 pr-1.5">
+          <header className={cn("flex shrink-0 items-center justify-between gap-2 border-b border-line pl-4 pr-1.5", sideFooter ? "h-11" : "h-12")}>
             <h2 className="truncate text-sm font-semibold text-ink">{parts.title}</h2>
             <div className="flex shrink-0 items-center">
               {board && (
@@ -223,32 +248,53 @@ export function InteractiveStage() {
           </header>
         )}
 
-        <div className="min-h-0 flex-1">
-          <InteractiveFrame
-            parts={parts}
-            theme="dark"
-            onReady={markReady}
-            onFail={markFailed}
-            onEscape={() => { if (large) closeRef.current(); }}
-          />
-        </div>
+        <div className={cn("flex min-h-0 flex-1", large && sideFooter ? "flex-row" : "flex-col")}>
+          <div className="min-h-0 min-w-0 flex-1">
+            <InteractiveFrame
+              parts={parts}
+              theme="dark"
+              onReady={markReady}
+              onFail={markFailed}
+              onEscape={() => { if (large) closeRef.current(); }}
+              onTouch={() => { if (!useAristoStore.getState().widgetTouched) setWidgetTouched(true); }}
+            />
+          </div>
 
-        {large && (
-          <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-line bg-sunk px-4 py-2">
-            <div className="min-w-0 text-sm text-body">
-              <span className="text-xs font-semibold text-muted">Try this</span>
-              <ul className="mt-0.5 space-y-0.5">
-                {spec.try_this.map((line) => <li key={line}>{line}</li>)}
-              </ul>
-            </div>
-            {exploring && (
-              <Button onClick={requestContinue} className="shrink-0">
-                Continue
-                <ArrowRight aria-hidden />
-              </Button>
-            )}
-          </footer>
-        )}
+          {large && (
+            <footer
+              className={cn(
+                "flex shrink-0 gap-3 bg-sunk px-4 py-2",
+                sideFooter
+                  ? "aristo-scroll w-[216px] flex-col justify-between overflow-y-auto border-l border-line"
+                  : "items-center justify-between border-t border-line",
+              )}
+            >
+              <div className="min-w-0 text-sm text-body">
+                <span className="text-xs font-semibold text-muted">Try this</span>
+                {phone && !sideFooter && !triesOpen ? (
+                  <p className="mt-0.5 flex items-baseline gap-2">
+                    <span className="line-clamp-1 min-w-0">{spec.try_this[0]}</span>
+                    {(spec.try_this.length > 1 || spec.try_this[0].length > 44) && (
+                      <button type="button" onClick={() => setTriesOpen(true)} className="inline-flex h-11 shrink-0 items-center px-2 text-xs font-semibold text-accent-text">
+                        More
+                      </button>
+                    )}
+                  </p>
+                ) : (
+                  <ul className="mt-0.5 space-y-0.5">
+                    {spec.try_this.map((line) => <li key={line}>{line}</li>)}
+                  </ul>
+                )}
+              </div>
+              {exploring && (
+                <Button onClick={requestContinue} className="shrink-0">
+                  Continue
+                  <ArrowRight aria-hidden />
+                </Button>
+              )}
+            </footer>
+          )}
+        </div>
       </div>
 
       {/* The strip under the screen: what to try, Expand, Hide, and Continue while the lesson waits. */}

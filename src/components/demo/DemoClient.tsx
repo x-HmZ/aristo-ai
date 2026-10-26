@@ -20,10 +20,11 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Brain, CircleCheck, HeartPulse, Mountain, TrendingUp } from "lucide-react";
 import { useGLTF } from "@react-three/drei";
-import { AristoCanvas } from "@/components/learn/AristoCanvas";
+import { ClassroomStage } from "@/components/learn/AristoCanvas";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { LessonPlayer } from "@/components/learn/LessonPlayer";
 import { InteractiveStage } from "@/components/learn/InteractiveStage";
+import { ImageLightbox } from "@/components/learn/ImageLightbox";
 import { CourseTakeQuizBar } from "@/components/learn/CourseFlow";
 import { Button } from "@/components/ui/button";
 import { useAristoStore } from "@/store/useAristoStore";
@@ -33,7 +34,7 @@ import { LessonNotices } from "@/components/learn/LessonNotices";
 import { AiTeacherLabel, AiFirstLessonNotice } from "@/components/learn/AiDisclosure";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
-  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
+  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, ClassroomPanel, PANEL_SLOT,
 } from "@/components/learn/ClassroomChrome";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
 import { DEMO_TEACHERS, demoTeacherFrom } from "./demoTeacher";
@@ -211,6 +212,7 @@ export function DemoClient() {
       setActivePreviewImageUrl(null);
       setPending3dImageUrl(null);
       setViewMode3d(false);
+      useAristoStore.getState().setPreviewZoomUrl(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -258,11 +260,9 @@ export function DemoClient() {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative h-screen h-[100dvh] w-screen overflow-hidden">
       {/* 3D scene */}
-      <div className="absolute inset-0 z-0">
-        <AristoCanvas />
-      </div>
+      <ClassroomStage />
 
       <SceneLoadingOverlay />
 
@@ -289,7 +289,7 @@ export function DemoClient() {
 
       {/* Right panel */}
       {topic && (
-        <div className={panelColumn(quizOnDesk)}>
+        <ClassroomPanel quizOnDesk={quizOnDesk}>
           <div className={cn("flex flex-col gap-2 rounded-t-2xl border-b border-line bg-surface/95 px-4 py-3 backdrop-blur-xl", quizOnDesk && "hidden")}>
             <div className="flex items-center gap-2">
               <TopicIcon aria-hidden className="size-4 shrink-0 text-accent-text" />
@@ -327,11 +327,12 @@ export function DemoClient() {
           </div>
           <LessonNotices />
           {renderBottom()}
-        </div>
+        </ClassroomPanel>
       )}
 
       {/* Interactive visual (V10): a topic's frozen widget on the board; renders nothing without one */}
       {topic && <InteractiveStage />}
+      <ImageLightbox />
 
       {/* Topic picker */}
       {!topic && <TopicPicker onPick={handlePick} />}

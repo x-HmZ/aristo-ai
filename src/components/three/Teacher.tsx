@@ -2,7 +2,8 @@
 
 import "./dracoDecoder";
 import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
-import { Html, useAnimations, useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
+import { SceneHtml as Html } from "@/components/three/SceneHtml";
 import { SkeletonUtils } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -339,7 +340,8 @@ function signalsOf(
   reaction: DirectorSignals["reaction"],
 ): DirectorSignals {
   return {
-    gesture:          s.gesture,
+    // Pointing at the screen while the learner works the widget would put a hand over its controls.
+    gesture:          s.gesture === "pointing" && s.widgetTouched && s.interactiveShown ? "idle" : s.gesture,
     isLoading:        s.isLoading,
     isSpeaking:       s.isSpeaking,
     phase:            phaseOf(s.activeLesson, s.currentSegmentId),

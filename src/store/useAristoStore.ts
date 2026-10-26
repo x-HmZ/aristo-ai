@@ -175,6 +175,10 @@ interface AristoState {
   interactive:         InteractiveState;
   interactiveShown:    boolean; // the widget is on screen (board card, or the large view)
   interactiveExpanded: boolean; // the large view was asked for (narrow screens always get it)
+  /** The widget plays on the room's display (board layout), under the canvas: the screen is a hole it shows through. */
+  widgetOnBoard:       boolean;
+  /** The learner has pressed inside the widget: the teacher lowers an arm that was pointing at the screen. */
+  widgetTouched:       boolean;
   /** Where the room's display sits on the page (viewport px), kept by the scene; null until it has rendered. */
   screenRect: ScreenRect | null;
   exploring:           boolean; // the lesson is paused on the explore segment until Continue
@@ -282,6 +286,8 @@ interface AristoState {
   // Interactive visual
   setInteractive:         (i: InteractiveState) => void;
   setInteractiveShown:    (v: boolean) => void;
+  setWidgetOnBoard:       (v: boolean) => void;
+  setWidgetTouched:       (v: boolean) => void;
   setInteractiveExpanded: (v: boolean) => void;
   setScreenRect: (r: ScreenRect | null) => void;
   setExploring:           (v: boolean) => void;
@@ -357,6 +363,8 @@ export const useAristoStore = create<AristoState>()(
       customTeacherGlbUrl:   null,
       interactive:           IDLE_INTERACTIVE,
       interactiveShown:      false,
+      widgetOnBoard:         false,
+      widgetTouched:         false,
       interactiveExpanded:   false,
       screenRect:            null,
       exploring:             false,
@@ -409,6 +417,8 @@ export const useAristoStore = create<AristoState>()(
 
       setInteractive:         (i) => set({ interactive: i }),
       setInteractiveShown:    (v) => set({ interactiveShown: v }),
+      setWidgetOnBoard:       (v) => set({ widgetOnBoard: v }),
+      setWidgetTouched:       (v) => set({ widgetTouched: v }),
       setInteractiveExpanded: (v) => set({ interactiveExpanded: v }),
       setScreenRect:          (r) => set({ screenRect: r }),
       setExploring:           (v) => set({ exploring: v }),
