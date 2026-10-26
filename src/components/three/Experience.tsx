@@ -2,7 +2,8 @@
 
 import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
-import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
+import { Environment, Float, Grid, useTexture } from "@react-three/drei";
+import { SceneHtml as Html } from "@/components/three/SceneHtml";
 import { Component, Suspense, useCallback, useEffect, useRef, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { Mesh, MeshBasicMaterial, Plane, SRGBColorSpace, Vector3 } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
@@ -15,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ReopenInteractiveControls } from "@/components/learn/InteractiveStage";
 import { CameraController } from "./CameraController";
 import { LensShift } from "./LensShift";
-import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
+import { DeskQuiz, SHEET_ANCHOR } from "./DeskQuiz";
 import { RendererConfig, SceneLights } from "./SceneBits";
 
 // Re-exported for existing importers; they live in SceneBits so the landing can use them without this module (and
@@ -569,7 +570,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const lookTargets = useMemo<LookTargets>(() => ({
     board: display.center,
     model: [SCENE_X, SCENE_Y, SCENE_Z],
-    desk:  paperAnchor ?? PAPER_ANCHOR,
+    desk:  paperAnchor ?? SHEET_ANCHOR,
   }), [paperAnchor, display]);
 
   // The set the camera frames: the teacher's outer edge and the display's far edge (bezel included).

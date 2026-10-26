@@ -35,6 +35,8 @@ interface Props {
   onFail?:          (reason: string) => void;
   /** The learner pressed Escape while focus was inside the widget. */
   onEscape?:        () => void;
+  /** The learner's first pointer press inside the widget. */
+  onTouch?:         () => void;
   readyTimeoutMs?:  number;
   className?:       string;
 }
@@ -44,7 +46,7 @@ const FRAME_ALLOW =
   "autoplay 'none'; camera 'none'; clipboard-read 'none'; clipboard-write 'none'; display-capture 'none'; " +
   "fullscreen 'none'; geolocation 'none'; microphone 'none'; picture-in-picture 'none'; web-share 'none'";
 
-export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, readyTimeoutMs = 4000, className }: Props) {
+export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, onTouch, readyTimeoutMs = 4000, className }: Props) {
   const { title, markup, css, js } = parts;
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [status, setStatus] = useState<FrameStatus>("loading");
@@ -55,7 +57,8 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
   const readyRef  = useRef(onReady);
   const failRef   = useRef(onFail);
   const escapeRef = useRef(onEscape);
-  useEffect(() => { readyRef.current = onReady; failRef.current = onFail; escapeRef.current = onEscape; });
+  const touchRef  = useRef(onTouch);
+  useEffect(() => { readyRef.current = onReady; failRef.current = onFail; escapeRef.current = onEscape; touchRef.current = onTouch; });
   const loads = useRef(0);
   const [navigated, setNavigated] = useState(false);
 
@@ -93,6 +96,7 @@ export function InteractiveFrame({ parts, theme, onReady, onFail, onEscape, read
       const msg = parseWidgetMessage(e.data);
       if (!msg) return;
       if (msg.event === "escape") { escapeRef.current?.(); return; }
+      if (msg.event === "touch") { touchRef.current?.(); return; }
       // A stopped widget is dead (every later tick throws), so it fails even after it said ready.
       if (msg.event === "stopped" && outcome === "ready") outcome = "loading";
       if (msg.event === "ready") settle("ready");

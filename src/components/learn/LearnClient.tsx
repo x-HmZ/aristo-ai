@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AristoCanvas }        from "@/components/learn/AristoCanvas";
+import { ClassroomStage }      from "@/components/learn/AristoCanvas";
 import { preloadDefaultAvatar } from "@/components/three/Teacher";
 import { SceneLoadingOverlay } from "@/components/learn/SceneLoadingOverlay";
 import { MessagePanel }     from "@/components/learn/MessagePanel";
@@ -23,13 +23,13 @@ import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
-import { LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Map as MapIcon, RotateCcw } from "lucide-react";
+import { ImageLightbox } from "@/components/learn/ImageLightbox";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
-  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
+  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, ClassroomPanel, PANEL_SLOT,
 } from "@/components/learn/ClassroomChrome";
-import { SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 
 function flattenCourseConceptIds(structure: CourseStructure): string[] {
@@ -73,8 +73,6 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const course            = useAristoStore((s) => s.course);
   const activeLesson      = useAristoStore((s) => s.activeLesson);
   const isLoading         = useAristoStore((s) => s.isLoading);
-  const previewZoomUrl    = useAristoStore((s) => s.previewZoomUrl);
-  const setPreviewZoomUrl = useAristoStore((s) => s.setPreviewZoomUrl);
   // Quiz state moved into the store so the in-scene DeskQuiz (rendered
   // inside the R3F Canvas) can mount QuizView and surface its result back
   // here for the CourseAdvanceBar.
@@ -356,11 +354,9 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative h-screen h-[100dvh] w-screen overflow-hidden">
       {/* 3D scene */}
-      <div className="absolute inset-0 z-0">
-        <AristoCanvas />
-      </div>
+      <ClassroomStage />
 
       {/* Cold-start loading overlay — fades out once assets are downloaded
           AND the scene has painted a frame. Sits above the top nav / right
@@ -432,7 +428,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       </div>
 
       {/* Right panel */}
-      <div className={panelColumn(quizOnDesk)}>
+      <ClassroomPanel quizOnDesk={quizOnDesk}>
         <div className={quizOnDesk ? "hidden" : "contents"}>
           <TeacherControls onClear={handleClear} />
         </div>
@@ -440,7 +436,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
           <MessagePanel />
         </div>
         {renderBottom()}
-      </div>
+      </ClassroomPanel>
 
       {/* Interactive visual (V10): the board card or the large view; renders nothing without one */}
       <InteractiveStage />
@@ -489,32 +485,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
         />
       )}
 
-      {/* Image zoom lightbox */}
-      {previewZoomUrl && (
-        <div
-          className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          onClick={() => setPreviewZoomUrl(null)}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={previewZoomUrl}
-            alt="Teaching diagram"
-            onClick={(e) => e.stopPropagation()}
-            className={cn(SHAPE.surface, "max-h-[80vh] max-w-[min(90vw,700px)] object-contain shadow-e2")}
-          />
-          <div className="theme-ink absolute right-5 top-5">
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={() => setPreviewZoomUrl(null)}
-              aria-label="Close image"
-              className="rounded-full"
-            >
-              <X aria-hidden />
-            </Button>
-          </div>
-        </div>
-      )}
+      <ImageLightbox />
     </div>
   );
 }

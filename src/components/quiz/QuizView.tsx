@@ -50,6 +50,12 @@ interface QuizViewProps {
    * always exact, not a degraded fallback.
    */
   localOnly?: boolean;
+  /**
+   * One fixed page (the desk sheet): fills its parent's height, the question and answers scroll in the middle if
+   * they must, and the result and Next sit in a band at the bottom that is there from the start, so nothing moves
+   * or grows when an answer is marked.
+   */
+  sheet?: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -528,7 +534,7 @@ function FeedbackBanner({ result }: { result: AnswerResult }) {
 
 // ─── Main QuizView ────────────────────────────────────────────────────────────
 
-export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson", localOnly = false }: QuizViewProps) {
+export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson", localOnly = false, sheet = false }: QuizViewProps) {
   const incrementSignal = useAristoStore((s) => s.incrementSignal);
 
   const [currentIdx,    setCurrentIdx]    = useState(0);
@@ -660,17 +666,43 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
 
   const progressPct = ((answered) / totalQs) * 100;
 
+  // Feedback, then Next. The live region is always mounted, so a screen reader announces the banner when it appears.
+  const feedbackPart = (
+    <>
+      <div role="status" className="empty:!mt-0">
+        {currentR && <FeedbackBanner result={currentR} />}
+      </div>
+      {sheet && !currentR && <p aria-hidden className="type-caption text-muted">Your result shows here.</p>}
+    </>
+  );
+  const nextPart = currentR && (
+    <div className="space-y-2">
+      {isEvaluating && (
+        <div className="flex items-center gap-1.5 text-xs text-muted">
+          <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce" />
+          Marking…
+        </div>
+      )}
+      <div className="flex justify-end">
+        <Button onClick={handleNext}>
+          {currentIdx < totalQs - 1 ? "Next question" : "See results"}
+          <ArrowRight aria-hidden />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-surface">
+    <div className={cn("overflow-hidden rounded-2xl bg-surface", sheet && "flex min-h-0 flex-1 flex-col")}>
       {/* Progress bar: the number is also in the header, so the fill is not the only cue */}
-      <div className="h-1 bg-sunk">
+      <div className="h-1 shrink-0 bg-sunk">
         <div
           className="h-full bg-accent transition-all duration-slow"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="space-y-3 px-4 py-3">
+      <div className={cn("space-y-3 px-4 py-3", sheet && "aristo-scroll min-h-0 flex-1 overflow-y-auto")}>
 
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
@@ -729,28 +761,17 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           <MatchingRenderer question={currentQ} result={currentR} onAnswer={handleAnswer} />
         )}
 
-        {/* Feedback + Next. The live region is always mounted, so a screen reader
-            announces the banner when it appears. */}
-        <div role="status" className="empty:!mt-0">
-          {currentR && <FeedbackBanner result={currentR} />}
-        </div>
-        {currentR && (
-          <div className="space-y-2">
-            {isEvaluating && (
-              <div className="flex items-center gap-1.5 text-xs text-muted">
-                <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce" />
-                Marking…
-              </div>
-            )}
-            <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                {currentIdx < totalQs - 1 ? "Next question" : "See results"}
-                <ArrowRight aria-hidden />
-              </Button>
-            </div>
-          </div>
-        )}
+        {!sheet && <>{feedbackPart}{nextPart}</>}
       </div>
+
+      {/* The sheet's result band: a fixed share of the page, there before the answer. The feedback scrolls inside it
+          rather than growing it; Next stays pinned below, so it is always in reach. */}
+      {sheet && (
+        <div className="flex h-[30%] shrink-0 flex-col gap-2 border-t border-line bg-sunk px-4 py-3">
+          <div className="aristo-scroll min-h-0 flex-1 space-y-2 overflow-y-auto">{feedbackPart}</div>
+          {nextPart}
+        </div>
+      )}
     </div>
   );
 }
