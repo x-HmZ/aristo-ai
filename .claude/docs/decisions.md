@@ -9,7 +9,7 @@ _Append new rows as decisions are made. Never re-litigate a decision without rea
 | Teaching model | Sonnet 4.6 | Quality on structured 5-phase output |
 | Fast paths | Haiku 4.5 | explain-more, review questions, short-answer eval, free-mode |
 | LLM JSON | tool_use everywhere | Guaranteed valid JSON; no regex parsing |
-| TTS / STT | Web Speech (now), Whisper / TTS routes kept (planned upgrade) | Free for prototype; routes already wired for the swap |
+| TTS / STT | ElevenLabs via `/api/tts` for speech, Web Speech for voice input. The Whisper and OpenAI-TTS routes were deleted 2026-11-16 (Hmz) | They had no caller and no sign-in check, so anyone could spend OpenAI credit through them. Each was 40 lines of boilerplate that a real feature would rewrite anyway (auth, quota, Zod). The ideas stay open: (1) server-side speech-to-text for voice input, because Web Speech sends audio to Google in Chrome and is missing in Firefox; build it into the raise-hand feature (V1) when that ships; (2) OpenAI speech as a cheaper voice tier, added as a row in `src/lib/tts/voices.json` behind `/api/tts`, not as a second route (it has no character timings, so lipsync falls back to the FFT path) |
 | 3D gen | fal.ai FLUX → TripoSR (`fal-ai/triposr`, $0.07/gen) | One SDK, one key; TripoSR quality is the known weak link — see plans T06/T07 |
 | Quiz UI | dedicated `QuizView`, 8 types | Replaces legacy `quiz` slice in store |
 | Approval gate | `requireApproved()` placeholder | Future paywall swaps in by replacing one function body |
