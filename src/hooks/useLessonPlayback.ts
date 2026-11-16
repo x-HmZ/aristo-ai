@@ -584,7 +584,7 @@ export function useLessonPlayback(
           void fetch(upcomingSrc, { cache: "force-cache" }).catch(() => {});
         }
       } else {
-        prefetch(upcoming.text, { forceBrowser: demoMode });
+        prefetch(upcoming.text, { forceBrowser: demoMode, scope: "lesson" });
       }
     }
 
@@ -596,6 +596,7 @@ export function useLessonPlayback(
     setIsSpeaking(true);
     const segmentSrc = demoAudioUrl(segment.id);
     const controller = speak(segment.text, {
+      scope:        "lesson",
       srcUrl:       segmentSrc,
       forceBrowser: demoMode && !segmentSrc,
       onEnd: () => {

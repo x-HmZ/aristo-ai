@@ -354,6 +354,7 @@ function DemonstrateCard({
       setIsSpeaking(true);
       setGesture("pointing");
       ttsControllerRef.current = speak(phase.visual_walkthrough, {
+        scope: "lesson",
         onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
       });
       lastSpokenStage.current = "walkthrough";
@@ -361,6 +362,7 @@ function DemonstrateCard({
     }
     setIsSpeaking(true);
     ttsControllerRef.current = speak(phase.narration_pre_visual ?? phase.example_description, {
+      scope: "lesson",
       onEnd: () => setIsSpeaking(false),
     });
     lastSpokenStage.current = "pre";
@@ -379,6 +381,7 @@ function DemonstrateCard({
     setIsSpeaking(true);
     setGesture("pointing");
     ttsControllerRef.current = speak(phase.visual_walkthrough, {
+        scope: "lesson",
       onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
     });
     lastSpokenStage.current = "walkthrough";
@@ -703,6 +706,7 @@ export function LessonView({
     setIsSpeaking(true);
     setGesture("pointing");
     speak(callouts.join(" "), {
+      scope: "lesson",
       onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -734,6 +738,7 @@ export function LessonView({
     if (phase === "demonstrate") return; // DemonstrateCard owns its narration in legacy mode
     setIsSpeaking(true);
     const ctrl = speak(phaseSpeakText(lesson, phase), {
+      scope: "lesson",
       onEnd: () => setIsSpeaking(false),
     });
     return () => ctrl.stop();
