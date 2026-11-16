@@ -14,7 +14,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.88.0",
+    "@anthropic-ai/sdk": "^0.137.0",
     "@avaturn/sdk": "1.1.4",
     "@fal-ai/client": "^1.9.5",
     "@google/generative-ai": "^0.24.1",
@@ -44,8 +44,8 @@
     "framer-motion": "^11.2.4",
     "leva": "^0.9.35",
     "lucide-react": "^1.14.0",
-    "next": "^15.1.0",
-    "openai": "^4.28.0",
+    "next": "~15.5.29",
+    "openai": "^4.104.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
@@ -70,7 +70,7 @@
     "autoprefixer": "^10.0.1",
     "dotenv": "^17.4.2",
     "eslint": "^8",
-    "eslint-config-next": "^15.1.0",
+    "eslint-config-next": "~15.5.29",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5",
