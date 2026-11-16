@@ -14,7 +14,7 @@ import type {
   SpeechRecognitionErrorEvent,
   SpeechRecognitionInstance,
 } from "@/lib/speech";
-import { MAX_RECORD_SECONDS } from "./audio";
+import { MAX_RECORD_SECONDS, RECORD_BITS_PER_SECOND } from "./audio";
 
 export type RecognitionState = "idle" | "recording" | "transcribing";
 
@@ -67,7 +67,10 @@ export class ServerRecognition extends EventTarget implements SpeechRecognitionI
         this.stream = stream;
         this.chunks = [];
         const mime = pickMime();
-        const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+        const rec = new MediaRecorder(stream, {
+          audioBitsPerSecond: RECORD_BITS_PER_SECOND,
+          ...(mime ? { mimeType: mime } : {}),
+        });
         this.recorder = rec;
         rec.ondataavailable = (e) => { if (e.data.size > 0) this.chunks.push(e.data); };
         rec.onstop = () => { void this.finish(session, rec.mimeType || mime || "audio/webm"); };

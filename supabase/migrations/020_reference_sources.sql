@@ -55,6 +55,23 @@ CREATE INDEX IF NOT EXISTS idx_reference_sources_status
 
 ALTER TABLE public.reference_sources ENABLE ROW LEVEL SECURITY;
 
+-- Policies below need "is the caller a platform admin". Asking that with a subquery on profiles inside a
+-- policy runs profiles' own policies, one of which ("profiles: admin read all", migration 005) reads profiles
+-- again: Postgres can reject that as infinite recursion, which would break every learner's read of concepts.
+-- A SECURITY DEFINER function reads profiles without going through its policies.
+CREATE OR REPLACE FUNCTION public.is_admin_user()
+RETURNS BOOLEAN
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    SELECT COALESCE((SELECT p.is_admin FROM public.profiles p WHERE p.id = auth.uid()), false);
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.is_admin_user() FROM PUBLIC;
+GRANT  EXECUTE ON FUNCTION public.is_admin_user() TO anon, authenticated, service_role;
+
 DROP POLICY IF EXISTS "sources: read ready" ON public.reference_sources;
 CREATE POLICY "sources: read ready"
     ON public.reference_sources
@@ -67,8 +84,8 @@ CREATE POLICY "sources: admin all"
     ON public.reference_sources
     FOR ALL
     TO authenticated
-    USING (auth.uid() IN (SELECT id FROM public.profiles WHERE is_admin = true))
-    WITH CHECK (auth.uid() IN (SELECT id FROM public.profiles WHERE is_admin = true));
+    USING (public.is_admin_user())
+    WITH CHECK (public.is_admin_user());
 
 DROP POLICY IF EXISTS "sources: service all" ON public.reference_sources;
 CREATE POLICY "sources: service all"
@@ -129,7 +146,10 @@ BEGIN
         rc.page_end,
         1.0 - (rc.embedding <=> query_embedding) AS similarity
     FROM public.reference_chunks rc
+    LEFT JOIN public.reference_sources s ON s.id = rc.source_id
     WHERE rc.embedding IS NOT NULL
+      -- Only finished sources ground a lesson. Chunks from before the registry existed have no source row.
+      AND (rc.source_id IS NULL OR s.status = 'ready')
       AND (domain_filter IS NULL OR rc.domain = domain_filter)
       AND (source_filter IS NULL OR rc.source_id = source_filter)
       AND (
@@ -144,11 +164,14 @@ BEGIN
             )
       )
     ORDER BY rc.embedding <=> query_embedding
-    LIMIT match_count;
+    LIMIT LEAST(GREATEST(match_count, 1), 20);
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.match_reference_chunks(vector, INT, VARCHAR, UUID, JSONB)
+-- A new function is executable by PUBLIC (and so by the anonymous key) unless revoked. This one is
+-- SECURITY DEFINER and returns book text, so it is closed to everyone but the roles named here.
+REVOKE EXECUTE ON FUNCTION public.match_reference_chunks(vector, INT, VARCHAR, UUID, JSONB) FROM PUBLIC, anon;
+GRANT  EXECUTE ON FUNCTION public.match_reference_chunks(vector, INT, VARCHAR, UUID, JSONB)
     TO authenticated, service_role;
 
 -- ── 4. concepts: provenance, grade level, draft flag ─────────────────────────
@@ -165,7 +188,7 @@ CREATE POLICY "concepts: read published or admin"
     FOR SELECT
     USING (
         is_draft = false
-        OR auth.uid() IN (SELECT id FROM public.profiles WHERE is_admin = true)
+        OR public.is_admin_user()
     );
 
 -- Publishing a course (from any admin screen) makes the concepts it lists

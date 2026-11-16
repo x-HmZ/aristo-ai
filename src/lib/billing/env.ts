@@ -104,6 +104,11 @@ export function parseBillingEnv(source: Record<string, string | undefined>): Bil
   if (environment === "live" && !f.BILLING_ALLOW_LIVE) {
     throw new BillingConfigError("PADDLE_ENVIRONMENT=live also needs BILLING_ALLOW_LIVE=true");
   }
+  // The sandbox accepts test cards, so on the production deployment anyone could "buy" a paid plan for nothing.
+  // Sandbox billing belongs on preview deployments and local runs only.
+  if (environment === "sandbox" && source.VERCEL_ENV === "production") {
+    throw new BillingConfigError("PADDLE_ENVIRONMENT=sandbox is refused on the production deployment");
+  }
 
   const prefix = KEY_PREFIX[environment];
   if (!p.data.PADDLE_API_KEY.startsWith(prefix.apiKey)) {

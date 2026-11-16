@@ -34,6 +34,6 @@ describe("audio helpers", () => {
   });
   it("estimates at least one second", () => {
     expect(estimateSeconds(10)).toBe(1);
-    expect(estimateSeconds(160_000)).toBe(10);
+    expect(estimateSeconds(160_000)).toBe(40);
   });
 });

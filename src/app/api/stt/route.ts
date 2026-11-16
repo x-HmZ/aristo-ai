@@ -28,7 +28,7 @@ export const maxDuration = 30;
 export const runtime     = "nodejs";
 
 // In-memory and per instance; a database-backed allowance replaces this later.
-const sttThrottle = createThrottle(120, 60 * 60 * 1000);
+const sttThrottle = createThrottle(60, 60 * 60 * 1000);
 
 const LanguageSchema = z.string().regex(/^[a-zA-Z]{2}$/).optional();
 

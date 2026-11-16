@@ -48,8 +48,8 @@ describe("/api/stt", () => {
     expect(create).not.toHaveBeenCalled();
   });
 
-  it("413 over 2 MB", async () => {
-    const res = await POST(req({ audio: webm(2 * 1024 * 1024 + 1) }));
+  it("413 over the size cap", async () => {
+    const res = await POST(req({ audio: webm(512 * 1024 + 1) }));
     expect(res.status).toBe(413);
     expect(create).not.toHaveBeenCalled();
   });

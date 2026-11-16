@@ -264,7 +264,7 @@ export async function POST(req: NextRequest) {
     await releaseConsumed(consumed);
     console.error("[/api/tts] error", err);
     return NextResponse.json(
-      { error: "TTS failed", details: err?.message ?? "unknown" },
+      { error: "TTS failed" },
       { status: 500 }
     );
   }

@@ -40,6 +40,11 @@ describe("parseBillingEnv", () => {
     expect(env.paddle?.environment).toBe("sandbox");
   });
 
+  it("refuses sandbox billing on the production deployment", () => {
+    expect(() => parseBillingEnv({ ...SANDBOX, VERCEL_ENV: "production" })).toThrow(/production/);
+    expect(parseBillingEnv({ ...SANDBOX, VERCEL_ENV: "preview" }).paddle?.environment).toBe("sandbox");
+  });
+
   it("requires an explicit environment when billing is on", () => {
     const { PADDLE_ENVIRONMENT: _omit, ...rest } = SANDBOX;
     void _omit;
