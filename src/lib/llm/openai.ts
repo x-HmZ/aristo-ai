@@ -65,4 +65,3 @@ export async function embedTextLogged(
   return embedding;
 }
 
-export { MODEL as EMBEDDING_MODEL, DIMS as EMBEDDING_DIMS };

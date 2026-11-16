@@ -77,7 +77,3 @@ for (const t of DEMO_TOPICS) {
     );
   }
 }
-
-export function getDemoTopic(slug: string): DemoTopic | undefined {
-  return DEMO_TOPICS.find((t) => t.slug === slug);
-}

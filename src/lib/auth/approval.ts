@@ -17,30 +17,6 @@ export interface ApprovedUser extends User {
 }
 
 /**
- * Returns the authenticated user iff their profile is approved (or admin).
- * Returns null for anon, unauthenticated, pending, or rejected.
- */
-export async function verifyApproved(): Promise<ApprovedUser | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const service = createServiceClient();
-  const { data: profile } = await service
-    .from("profiles")
-    .select("approval_status, is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile) return null;
-  if (profile.is_admin) return user as ApprovedUser;
-  if (profile.approval_status !== "approved") return null;
-  return user as ApprovedUser;
-}
-
-/**
  * Convenience guard for API routes:
  *   const guard = await requireApproved();
  *   if (guard.error) return guard.error;

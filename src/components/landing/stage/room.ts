@@ -26,7 +26,6 @@ import type { V3 } from "./spots";
 
 /** The four shots, in tour order: a tab per shot jumps the clock to its start. */
 export const SHOTS = ["teacher", "board", "model", "desk"] as const;
-export type Shot = (typeof SHOTS)[number];
 
 /**
  * The tour, in seconds of its clock. `shots`: where each shot starts (a tab seeks there). `lines`: his lines, each a
