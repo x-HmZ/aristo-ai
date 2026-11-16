@@ -1,44 +1,46 @@
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 import OpenAI from "openai";
+import { requireApproved } from "@/lib/auth/approval";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Planned upgrade path for speech (the app speaks through /api/tts today). Nothing calls this route yet.
+// It spends OpenAI credit, so it is closed to anyone who is not a signed-in, approved user.
+
+const MAX_TEXT_CHARS = 1000;
+const VOICES = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
+
+const json = (body, status) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
 export async function GET(req) {
+  const guard = await requireApproved();
+  if (guard.error) return guard.error;
+
   try {
     const text = req.nextUrl.searchParams.get("text");
-    const voice = req.nextUrl.searchParams.get("voice") || "nova"; 
+    const requestedVoice = req.nextUrl.searchParams.get("voice") || "nova";
+    const voice = VOICES.includes(requestedVoice) ? requestedVoice : "nova";
 
     if (!text) {
-      return new Response(JSON.stringify({ error: "No text provided" }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return json({ error: "No text provided" }, 400);
+    }
+    if (text.length > MAX_TEXT_CHARS) {
+      return json({ error: "Text too long" }, 413);
     }
 
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1",
-      voice: voice,
-      input: text,
-    });
-
-    // Convert the response to a buffer
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const mp3 = await openai.audio.speech.create({ model: "tts-1", voice, input: text });
     const buffer = Buffer.from(await mp3.arrayBuffer());
 
-    // Return the audio file
     return new Response(buffer, {
       headers: {
-        'Content-Type': 'audio/mpeg',
-        'Content-Disposition': 'inline; filename=tts.mp3',
+        "Content-Type": "audio/mpeg",
+        "Content-Disposition": "inline; filename=tts.mp3",
+        "Cache-Control": "no-store",
       },
     });
   } catch (error) {
     console.error("Error in OpenAI TTS:", error);
-    return new Response(JSON.stringify({ error: "TTS failed", details: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return json({ error: "TTS failed" }, 500);
   }
-} 
+}
