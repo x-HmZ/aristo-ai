@@ -28,6 +28,8 @@ file that brief names. Do not re-audit: the audits are done and recorded under `
 | `findings/compliance.md` | Data inventory, processors, GDPR / COPPA / AI Act, age and parent model, legal-page outlines |
 | `findings/payments-research.md` | Stripe vs merchant of record for an individual in Austria, tax and permit questions, hosting terms |
 | `findings/product-cost.md` | User journey gaps, unfinished features, cost per lesson, free-allowance designs |
+| `findings/pricing.md` | Competitor prices with sources, customer segments, the plan table with margins, what changes when selling to schools |
+| `findings/content-plan.md` | How RAG and the knowledge graph ingest content today, what blocks PDF upload, open textbooks by licence, costed tracks, briefs E1-E6 |
 
 ## Order of work and status
 
@@ -35,17 +37,17 @@ Three gates. Do not start a gate's "open" step until everything above it is done
 
 | # | Brief | Gate | Model | Size | Status |
 |---|---|---|---|---|---|
-| L01 | Close the live holes | now (production is exposed today) | done by Fable | S | code done on `fix/launch-critical`; migration 018 NOT applied to production yet |
-| L02 | Dependency patch (Next 15.5.x, openai, anthropic sdk) | now | sonnet | S | open |
-| L03 | Dead-code removal in batches | now | sonnet | M | open |
+| L01 | Close the live holes | now | done by Fable | S | done on `fix/launch-critical` (not pushed); migration 018 applied to production by the owner 2026-11-16, check query not yet run by anyone but him |
+| L02 | Dependency patch (Next 15.5.x, openai, anthropic sdk) | now | sonnet | S | DONE on `chore/launch-cleanup` (not pushed): next 15.5.29, openai 4.104, Anthropic SDK 0.137, form-data pinned; 0 critical advisories left (was 4); `ignoreBuildErrors` is off again; `/demo` smoke test passed |
+| L03 | Dead-code removal in batches | now | sonnet | M | safe batches DONE on `chore/launch-cleanup` (8 packages, 12 shadcn wrappers and their radix packages, dead utilities, store members, 3 unused routes, `/dev/*` is a real 404 in production unless `NEXT_PUBLIC_DEV_PAGES=true` at build time). Left: owner items D6-D9, doc rewrites, archiving old plans, trimming `state.md`, the personal email in `DEPLOY.md`, `SiteFooter.tsx` and two old plan files |
 | L04 | Spend guard, attribution, input caps | before sign-ups open | opus plans, sonnet wires | M-L | open |
 | L05 | Database write lockdown and Zod on the remaining routes | before sign-ups open | sonnet + security-reviewer | M | open |
 | L06 | Accounts: age rule, parent-owned learners, consent, deletion, password reset | before sign-ups open | opus | L | open, needs owner decisions D2, D3 |
-| L07 | Entitlements: free allowance replaces the approval gate | before sign-ups open | opus | M-L | open, after L04 |
+| L07 | Entitlements: plans, free allowance and organisations replace the approval gate | before sign-ups open | opus | L | open, after L04; plan table in `findings/pricing.md` |
 | L08 | Cost cuts: audio cache, quiz cache, shared lesson signature, catalogue | before sign-ups open | sonnet | M-L | open; catalogue generation needs the owner's go-ahead per run |
 | L09 | Legal pages, AI label, voice claim, documents (DPIA, records, retention, breach) | before sign-ups open | opus drafts, owner reviews | M | open |
 | L10 | Dead screens, error pages, landing copy, SEO, feedback channel, monitoring | before sign-ups open | sonnet | M | open |
-| L11 | Content: what the catalogue offers on day one | before sign-ups open | owner decision D4, then sonnet | L | open |
+| L11 | Content: more subjects on day one, added through PDF upload and RAG | before sign-ups open | opus plans, sonnet builds | L | open; plan in `findings/content-plan.md`; every paid run needs the owner's go-ahead |
 | L12 | Ops: provider spend limits, regions, DPAs, email sender, branches, PR 29 | owner, mostly dashboards | owner + sonnet | S each | open |
 | L13 | Payments in a sandbox behind an off switch | before the first payment | opus | L | blocked on the owner's written clearance to go live; buildable any time after L07 |
 | L14 | Before marketing: checklist | after sign-ups open | owner + any | S | open |
@@ -57,10 +59,10 @@ Findings: `security.md` C1, C2, H5, M2. Done in code:
   `increment_misconception()` now refuses another user's id and sets `search_path`.
 - `src/app/api/quiz/route.ts` deleted (no sign-in check, no caller, called Haiku).
 - `src/app/api/whisper/route.js`, `src/app/api/openai-tts/route.js`: now require an approved user, cap input size,
-  return generic errors. Kept because `CLAUDE.md` says to leave them; deleting them is owner decision D1.
+  return generic errors. Then deleted on the owner's decision (D1); the future options are recorded in `decisions.md`.
 - `src/app/auth/callback/route.ts`: `next` goes through `src/lib/auth/safeNextPath.ts` (tested).
-Left to do: apply migration 018 in the Supabase SQL editor (project ref in `CLAUDE.md`), run the check at the bottom of
-the file with a non-admin account, merge the branch. **Until 018 is applied, any signed-in user can make themselves admin.**
+The owner applied migration 018 on 2026-11-16. Still to do: run the check at the bottom of the migration file with a
+non-admin account (an update of your own `is_admin` must fail with 42501), push the branch, merge.
 
 ### L02 Dependency patch
 Findings: `security.md` H3. `yarn upgrade next@^15.5` to the newest 15.5.x (stay on 15), `openai` to a 4.x with
@@ -116,6 +118,42 @@ fresh generations and chat turns per month; 3D generation is not in the free all
 `entitlements` (plan, status, period), usage read from `usage_events`. Keep a provider-agnostic `src/lib/billing/`
 interface so L13 plugs in. Keep an admin override (the approve UI becomes "grant allowance / suspend").
 
+Three kinds of "admin", never one flag (owner decision 2026-11-16: organisations can buy a plan that includes admin rights):
+- **Platform admin** (`profiles.is_admin`, today's `/admin/*`): the owner only. Sees every user, costs, moderation, RAG.
+  Never sold, never granted by a plan.
+- **Account owner**: the adult who holds a family account. Manages their own learners, consent and (later) billing.
+- **Organisation admin**: a role inside one organisation. Invites and removes seats, assigns courses, sees progress
+  of that organisation's learners only, exports their data, later uploads the organisation's own PDFs. No access to
+  other organisations, platform costs or `/admin/*`.
+
+Schema direction (design in plan mode with L06, since both add the layer between `auth.users` and learner data):
+`accounts` (kind `family` | `organisation`, plan, status, seat limit), `account_members` (account, user, role
+`owner` | `org_admin` | `teacher` | `learner`), `learners` (belongs to an account; an under-16 has no login of their own
+in a family account), every learner-data table keyed by `learner_id` with RLS through membership. Entitlement is
+resolved per account, not per user: `requireEntitlement()` loads the caller's account, its plan and the period's usage.
+Organisation routes live under `/org/*` with their own guard (`requireOrgRole`), separate from `verifyAdmin`.
+Build order: family accounts and the free plan first; the organisation tables can exist from day one, but the
+organisation plan is not sold until the points in `findings/pricing.md` part D are met (the operator becomes a data
+processor for a school, the EU AI Act reading changes for institutional use, and invoiced sales need a registered
+business).
+
+Plans (owner asked for consumer plans plus an organisation plan; numbers from `findings/pricing.md`, not yet confirmed by
+the owner, and nothing is published until ten parents have seen three price points: 7.99, 10.99, 14.99 a month):
+
+| Plan | Month / year | Limits | Sold when |
+|---|---|---|---|
+| Free | 0 | 1 learner, catalogue replays, 2 fresh lessons and 15 chat turns a month, no 3D | at launch |
+| Plus | 10.99 / 99 | 3 learners, parent dashboard, 4 fresh lessons, 100 replays, 150 chat turns a month | first paid plan, once payments may go live |
+| Pro | 19.99 / 199 | 5 learners, 8 fresh lessons, 3 generated 3D models | later, "contact us" until then |
+| Organisation, education | 60 / 48 / 36 per seat per year by volume, minimum 10 seats | pooled per-seat caps, organisation admin | not at launch; pilots first |
+| Organisation, business or university | 144 / 120 / 100 per seat per year, minimum 5 seats | same | not at launch |
+
+Hard prerequisites the research found: the server-side audio cache (L08) or Plus loses money at typical use; the annual
+Plus price is at or below break-even at the caps, so set annual caps lower or the price higher; Paddle needs prices
+above 10 USD; a school offer must report activity and completion only (no mastery scores) to stay clear of the EU AI
+Act's Annex III education category, and that reading needs a lawyer. Store plan limits as data (`plans` rows), never as
+constants in route code, so prices and caps can change without a deploy.
+
 ### L08 Cost cuts
 Findings: `product-cost.md` Part 2 and "first two weeks". Server-side audio cache keyed by text, voice and model in the
 existing `generated-assets` layering (today every playback pays ElevenLabs again); quiz cache per concept; one shared
@@ -141,7 +179,24 @@ monitoring: Sentry's free tier or Vercel's built-in logs (owner picks; no paid p
 
 ### L11 Content
 Findings: `product-cost.md` A7, A10. Onboarding offers Python and "science", but only Python is seeded (38 concepts) and
-no science domain exists. Decision D4 first, then seed and pre-generate.
+no science domain exists. Decided (D4): several subjects on day one, each added by uploading an openly licensed
+textbook PDF through the admin RAG page, so the RAG path is exercised for real. `findings/content-plan.md` says whether
+that works today, what is missing (large-file upload, a concept graph derived from the book, attribution shown to the
+learner and in `LICENSES.md`), which books have a licence that allows a paid product, and what each track costs to
+embed and pre-generate. Non-commercial licences (CK-12 and similar) are out. Remove any subject from onboarding that
+has no content behind it.
+
+What `findings/content-plan.md` established: uploading a PDF does NOT work today (the route accepts only .txt and .md,
+Vercel caps a request at 4.5 MB, nothing builds a concept graph from a document, RAG feeds lesson generation only and
+only on a cache miss, no licence or attribution is stored). Its briefs E1-E6, in order: PDF text extraction in the
+admin's browser (`pdfjs-dist`); a batched ingest endpoint with a source registry (licence, attribution, content hash,
+delete by source); a free "preview grounding" tool that shows the reference block with no LLM call; table of contents
+to concept graph through `tool_use`; onboarding reads its subject list from published courses; attribution in the
+lesson UI, a `/credits` page and `LICENSES.md`. Recommended tracks: maths 6-8 from Illustrative Mathematics (CC BY 4.0),
+science 6-8 from OpenSciEd (CC BY 4.0, get written confirmation first), Python from the official tutorial (PSF).
+OpenStax, CK-12, Khan Academy, Eureka/EngageNY, Code.org, Think Python and Automate the Boring Stuff are ruled out
+(non-commercial or no AI use). Cost for all three tracks: about 1 USD for graph plus embeddings; about 43 USD (33 to 62)
+for a pre-generated catalogue of 16 lessons per track with pictures and audio. Owner decides D10 and approves each run.
 
 ### L12 Ops (owner actions, each a few minutes)
 1. Set a hard monthly spend limit in the Anthropic, OpenAI, fal.ai and ElevenLabs dashboards. This is the cheapest
@@ -170,15 +225,17 @@ deployment once L04-L06 are in (both cost model tokens: ask first).
 
 | # | Question | Recommendation |
 |---|---|---|
-| D1 | Delete the unused Whisper and OpenAI-TTS routes? `CLAUDE.md` says keep; both audits say delete. | Delete; they are 40 lines each and stay in git history. |
-| D2 | Age below which a parent must own the account | 16: covers every EU state (Austria is 14, the GDPR maximum is 16) and the US rule (13). |
+| D1 | DECIDED 2026-11-16: delete the unused Whisper and OpenAI-TTS routes | Done. |
+| D2 | DECIDED 2026-11-16: below 16 a parent owns the account | Build in L06. |
 | D3 | Is a learner's first name or nickname enough (drop "Full name")? | Yes. |
-| D4 | Day-one catalogue: Python only, or build a science track first? | Python only; remove "science" from onboarding until it exists. |
-| D5 | Free allowance numbers | Catalogue replays free; 2 fresh lessons and 15 chat turns a month; no 3D. About 1 USD worst case per user per month. |
+| D4 | DECIDED 2026-11-16: more than Python on day one, added by uploading open textbooks as PDFs through the RAG system so that path is tested too | Tracks and licences in `findings/content-plan.md`; owner picks the tracks and approves each paid run. |
+| D5 | DECIDED 2026-11-16: free allowance as recommended (catalogue replays free; 2 fresh lessons and 15 chat turns a month; no 3D), plus paid plans including an organisation plan with its own admin role | Prices in `findings/pricing.md`; owner confirms the numbers before any price is published. |
 | D6 | Move the four archived teachers' GLBs (26 MB) out of `public/`? `CLAUDE.md` keeps them on purpose. | Move to `assets-src/`, keep the config entries; copying back re-enables them. |
 | D7 | `/create-teacher` (selfie avatar via Avaturn): ship, hide or cut? Without its env var it shows developer text to the public. | Cut for launch: it is the riskiest feature for children's data and nobody can reach it properly today. |
 | D8 | Retire the `NEXT_PUBLIC_ADAPTIVE_VISUALS` flag and the legacy lesson path it guards? | Yes, after confirming production has it set to `true`. |
 | D9 | Delete the 31 remote and 33 local branches already merged into `deploy-prep`, the two old worktrees and the `friend` remote? | Yes; keep `dev/v4-teacher-memory` (5 unmerged commits of finished work). |
+| D10 | Which day-one tracks, and minimum (about 1 USD) or pre-generated catalogue (about 43 USD)? | Maths 6-8 and Python first; add science after OpenSciEd confirms the licence in writing; start with the minimum and pre-generate once the audio cache exists. |
+| D11 | Confirm the plan table and run the three-price test with ten parents | Test after the maths track exists, so the promise parents see matches the product. |
 
 ## Tools and agents used (nothing new needs installing)
 
