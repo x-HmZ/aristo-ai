@@ -13,8 +13,14 @@ vi.mock("next/server", async (orig) => {
   const mod = await orig<typeof import("next/server")>();
   return { ...mod, after: (fn: () => unknown) => { void fn(); } };
 });
-vi.mock("@/lib/auth/approval", () => ({
-  requireApproved: async () => ({ user: { id: "u1" }, error: null }),
+const billing = vi.hoisted(() => ({
+  spendAllowance: vi.fn(),
+  releaseConsumed: vi.fn(),
+}));
+vi.mock("@/lib/billing/entitlements", () => ({
+  requireEntitlement: async () => ({ user: { id: "u1" }, error: null, entitlement: null, consumed: null }),
+  spendAllowance: billing.spendAllowance,
+  releaseConsumed: billing.releaseConsumed,
 }));
 vi.mock("@/lib/llm/usage", () => ({ logUsage }));
 vi.mock("@/lib/supabase/server", () => ({
@@ -72,6 +78,9 @@ beforeEach(() => {
   state.row = null; state.uploads = []; state.upserts = []; state.uploadError = null; state.lookupThrows = false;
   elevenCalls = 0;
   logUsage.mockClear();
+  billing.spendAllowance.mockReset();
+  billing.spendAllowance.mockResolvedValue({ error: null, consumed: { accountId: "a", periodKey: "p", metric: "voice_chars", amount: 1 } });
+  billing.releaseConsumed.mockReset();
   process.env.ELEVENLABS_API_KEY = "k";
   delete process.env.TTS_TIMESTAMPS;
   mockFetch();
@@ -149,5 +158,43 @@ describe("/api/tts cache", () => {
     await tick();
     expect(state.uploads).toHaveLength(1);
     expect(state.upserts).toHaveLength(1);
+  });
+});
+
+describe("/api/tts metering", () => {
+  it("live scope consumes voice_chars by text length once", async () => {
+    const res = await POST(req({ text: "Hello there", scope: "live" }));
+    expect(res.status).toBe(200);
+    expect(billing.spendAllowance).toHaveBeenCalledTimes(1);
+    expect(billing.spendAllowance.mock.calls[0].slice(1)).toEqual(["voice_chars", 11]);
+    expect(billing.releaseConsumed).not.toHaveBeenCalled();
+  });
+
+  it("lesson scope consumes nothing", async () => {
+    await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    expect(billing.spendAllowance).not.toHaveBeenCalled();
+  });
+
+  it("validation failures consume nothing", async () => {
+    expect((await POST(req({ text: "   ", scope: "live" }))).status).toBe(400);
+    expect((await POST(req({ text: "x".repeat(4001), scope: "live" }))).status).toBe(413);
+    expect(billing.spendAllowance).not.toHaveBeenCalled();
+  });
+
+  it("returns the 402 unchanged and makes no ElevenLabs call", async () => {
+    const { NextResponse } = await import("next/server");
+    const err = NextResponse.json({ error: "allowance_exhausted" }, { status: 402 });
+    billing.spendAllowance.mockResolvedValue({ error: err, consumed: null });
+    const res = await POST(req({ text: "Hello", scope: "live" }));
+    expect(res).toBe(err);
+    expect(elevenCalls).toBe(0);
+  });
+
+  it("releases once when ElevenLabs fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 500 })));
+    const res = await POST(req({ text: "Hello", scope: "live" }));
+    expect(res.status).toBe(500);
+    expect(billing.releaseConsumed).toHaveBeenCalledTimes(1);
+    expect(billing.releaseConsumed.mock.calls[0][0]).toMatchObject({ metric: "voice_chars" });
   });
 });

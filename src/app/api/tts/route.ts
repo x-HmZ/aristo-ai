@@ -50,7 +50,7 @@
 
 import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireApproved } from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { createThrottle } from "@/lib/interactive/throttle";
 import { elevenlabsCostMicros } from "@/lib/llm/pricing";
 import { logUsage } from "@/lib/llm/usage";
@@ -106,9 +106,10 @@ function runAfter(fn: () => Promise<void>): void {
 }
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
     // Approved learners only, hit or miss: every call can spend the shared ElevenLabs quota.
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
 
     const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
@@ -152,6 +153,15 @@ export async function POST(req: NextRequest) {
     // Only generations (misses and live calls) spend the quota, so only they are throttled.
     if (!ttsThrottle.take(guard.user.id)) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
+    // Chat voice (scope "live") spends voice_chars. Lesson narration consumes nothing here: its cost belongs
+    // to the lesson. An unmetered lesson-scope miss is bounded only by the throttle above until the spend
+    // guard (plan item L04) meters it. Released in the catch if ElevenLabs fails.
+    if (body.scope === "live") {
+      const spent = await spendAllowance(guard.entitlement, "voice_chars", text.length);
+      if (spent.error) return spent.error;
+      consumed = spent.consumed;
     }
 
     const apiKey = process.env.ELEVENLABS_API_KEY;
@@ -251,6 +261,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err: any) {
+    await releaseConsumed(consumed);
     console.error("[/api/tts] error", err);
     return NextResponse.json(
       { error: "TTS failed", details: err?.message ?? "unknown" },
