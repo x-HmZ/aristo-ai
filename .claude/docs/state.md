@@ -2,6 +2,28 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-16 - Launch readiness: audits, plan, first security fixes (branch fix/launch-critical)
+
+**Resume from `.claude/plans/launch/README.md`** (decisions taken, 14 ordered briefs L01-L14, open owner decisions D1-D9).
+Evidence is in `.claude/plans/launch/findings/` (security, compliance, product-cost, dead-code, vercel-storage;
+payments-research is local and untracked on purpose). Do not re-audit.
+
+- **Decided with Hmz**: early access with open sign-up and a capped free allowance (the approval gate goes); any learner,
+  parent-owned account below the age threshold; no money taken until he has written confirmation that he may sell, so
+  payments are sandbox-only behind an off switch; no new recurring costs without his yes.
+- **Done (L01, reviewed by security-reviewer: safe to merge)**: migration `018_lock_privileged_columns.sql` (end users
+  can no longer change `is_admin` / approval columns on their own profile; `increment_misconception` only for the
+  caller's own id); `/api/quiz` deleted (no auth, no caller); `/api/whisper` and `/api/openai-tts` now require an approved
+  user, cap input, and openai-tts is a POST; `/auth/callback` keeps `next` on this origin (`src/lib/auth/safeNextPath.ts`,
+  tested).
+- **NOT done**: migration 018 is not applied to production (Supabase MCP was down). Until it is, any signed-in user can
+  make themselves admin. Apply it in the SQL editor and run the check at the bottom of the file.
+- **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. Hmz
+  runs that fix in the portfolio repo himself.
+- **Next**: L02 dependency patch (Next 15.5.15 has middleware-bypass advisories), L03 dead-code batches, then L04 spend
+  guard. Owner: set hard spend limits in the Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D1-D9.
+- **Not verified**: anything against the live database or a signed-in session; no paid call was made.
+
 ## 2026-10-15 (later) - Demo narrated in Jake's placeholder voice, plan-driven TTS (dev/v10-continuation, PR #28)
 
 - **Security review of the interactive route** (`lessonExample`): no critical or high. Fixed: the route reads only the stored lesson's segments (`payload->segments`) and always the same lesson (approved first, then oldest), because the example is not in the cache key; `lessonExample` takes any input and stops at the limit; test for malformed payloads. Left: the spec check is JSON containment, not equality (older).

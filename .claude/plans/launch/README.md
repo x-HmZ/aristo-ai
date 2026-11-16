@@ -70,9 +70,18 @@ Check whether `typescript.ignoreBuildErrors` in `next.config.mjs` is still neede
 `yarn audit --level high --groups dependencies` to `.github/workflows/ci.yml` as a non-blocking step first.
 
 ### L03 Dead-code removal
-Findings: `dead-code.md` (use its batches in order; one commit per batch; `yarn type-check && yarn test && yarn build`
-after each). Never delete a branch or a file marked "needs owner" without asking. Also remove `@google/generative-ai`
-if unused (`compliance.md` item 16) and the personal email in `.claude/plans/T10-RUNBOOK.md`.
+Findings: `dead-code.md` (use its 10 batches in order; one commit per batch; `yarn type-check && yarn test && yarn build`
+after each). Never delete a branch or a file marked "needs owner" without asking. Safe without a decision: 8 unreferenced
+packages (`@google/generative-ai`, `leva`, `react-responsive-carousel`, `react-scroll`, `react-intersection-observer`,
+`react-hot-toast`, `@tanstack/react-table`, `@tabler/icons-react`), 12 unreachable shadcn wrappers and the radix
+packages only they use, `src/utils/cn.js`, `src/utils/modelLoader.js`, `src/app/admin/GoogleCharts.jsx`, `jsconfig.json`,
+dead store members and exports, three unused routes, declaring `uuid` and `three-stdlib` (imported, not in
+`package.json`), stale `.vercelignore` lines, the personal email in `.claude/plans/T10-RUNBOOK.md`. Docs: `README.md` is a
+placeholder, `DEPLOY.md` and `TECHNICAL_SUMMARY.md` are stale, `spec_index.md` named in `CLAUDE.md` does not exist in the
+repo; archive the roughly 35 finished files in `.claude/plans/` and cut `state.md` (1880 lines) to the last few entries.
+Needs the owner (D6-D8): archived avatar GLBs (26 MB in `public/`), `/create-teacher` with `@avaturn/sdk`, retiring the
+`NEXT_PUBLIC_ADAPTIVE_VISUALS` flag and the legacy lesson path. Disk only, not in git: `.claude/eval` is 11 GB and
+`.claude/worktrees` 6.9 GB; list what is in them and ask before deleting.
 
 ### L04 Spend guard, attribution, input caps
 Findings: `security.md` C3, H1, H2, M1, M6, M7; `product-cost.md` A2, A4. Build one guard, `requireBudget(user, feature)`,
@@ -166,6 +175,10 @@ deployment once L04-L06 are in (both cost model tokens: ask first).
 | D3 | Is a learner's first name or nickname enough (drop "Full name")? | Yes. |
 | D4 | Day-one catalogue: Python only, or build a science track first? | Python only; remove "science" from onboarding until it exists. |
 | D5 | Free allowance numbers | Catalogue replays free; 2 fresh lessons and 15 chat turns a month; no 3D. About 1 USD worst case per user per month. |
+| D6 | Move the four archived teachers' GLBs (26 MB) out of `public/`? `CLAUDE.md` keeps them on purpose. | Move to `assets-src/`, keep the config entries; copying back re-enables them. |
+| D7 | `/create-teacher` (selfie avatar via Avaturn): ship, hide or cut? Without its env var it shows developer text to the public. | Cut for launch: it is the riskiest feature for children's data and nobody can reach it properly today. |
+| D8 | Retire the `NEXT_PUBLIC_ADAPTIVE_VISUALS` flag and the legacy lesson path it guards? | Yes, after confirming production has it set to `true`. |
+| D9 | Delete the 31 remote and 33 local branches already merged into `deploy-prep`, the two old worktrees and the `friend` remote? | Yes; keep `dev/v4-teacher-memory` (5 unmerged commits of finished work). |
 
 ## Tools and agents used (nothing new needs installing)
 
