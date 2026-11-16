@@ -22,7 +22,7 @@ should only be in Production — noted where it matters).
 | `ELEVENLABS_API_KEY` | Prod + Preview | elevenlabs.io → Settings → API |
 | `FAL_KEY` | Prod + Preview | fal.ai → Dashboard → Keys (note: `FAL_KEY`, NOT `FAL_API_KEY`) |
 | `RESEND_API_KEY` | Prod + Preview | resend.com → API keys |
-| `ADMIN_NOTIFY_EMAIL` | Prod + Preview | aitchemmzi@gmail.com (or whichever inbox should get "new signup" alerts) |
+| `ADMIN_NOTIFY_EMAIL` | Prod + Preview | The inbox that should get "new signup" alerts (use the same address as `NEXT_PUBLIC_CONTACT_EMAIL`, or another you read) |
 | `RESEND_FROM` | optional | `Aristo AI <noreply@your-verified-domain.com>`. Skip on first deploy — defaults to Resend's sandbox `onboarding@resend.dev`. |
 | `APP_URL` | Prod only | The canonical URL, e.g. `https://aristo.vercel.app`. Used to build admin links in emails. Vercel auto-supplies `VERCEL_URL` for previews if this is unset. |
 | `NEXT_PUBLIC_AVATURN_SUBDOMAIN` | Prod + Preview | Avaturn iframe subdomain. Public — safe in the client bundle. |
@@ -52,7 +52,7 @@ UPDATE profiles
 SET is_admin = true,
     approval_status = 'approved',
     approved_at = NOW()
-WHERE id = (SELECT id FROM auth.users WHERE email = 'aitchemmzi@gmail.com');
+WHERE id = (SELECT id FROM auth.users WHERE email = '<your-admin-email>');
 ```
 
 From this point on, every other signup will land in `pending` and you
@@ -74,7 +74,7 @@ Without this, the email confirmation link sends users to localhost.
 
 1. Create an account at resend.com.
 2. Generate an API key → paste as `RESEND_API_KEY` in Vercel.
-3. Set `ADMIN_NOTIFY_EMAIL=aitchemmzi@gmail.com`.
+3. Set `ADMIN_NOTIFY_EMAIL=<your inbox>`.
 4. **Optional**: verify a sending domain to remove the Resend sandbox
    notice on outbound emails. Until then, Resend's sandbox domain is fine
    for the volume of admin notifications we expect.
@@ -116,7 +116,7 @@ workaround when the upstream fix lands.
 Before promoting to production:
 
 - [ ] Sign up with a fresh email → land on `/pending`. Confirm the page renders.
-- [ ] Confirm `aitchemmzi@gmail.com` receives the "new signup" Resend email.
+- [ ] Confirm the `ADMIN_NOTIFY_EMAIL` inbox receives the "new signup" Resend email.
 - [ ] Try to hit `/learn` directly — should bounce to `/pending`.
 - [ ] Try `GET /api/learn/next` with the pending user's cookie — 403.
 - [ ] Sign in as the bootstrap admin → `/admin/users` shows the new user
