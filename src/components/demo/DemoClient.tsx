@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { useAristoStore } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
+import { AiTeacherLabel, AiFirstLessonNotice } from "@/components/learn/AiDisclosure";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
   TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, panelColumn, PANEL_SLOT,
@@ -316,6 +317,8 @@ export function DemoClient() {
                 ))}
               </div>
             </div>}
+            <AiTeacherLabel teacher={teacher} />
+            <AiFirstLessonNotice teacher={teacher} />
             <AvatarCredit avatar={teacher} className="px-1" />
           </div>
           <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>

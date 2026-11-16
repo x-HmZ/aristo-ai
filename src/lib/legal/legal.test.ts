@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { aiFirstLessonNotice, aiTeacherStatement, disclosureName } from "./aiDisclosure";
 import { LEGAL_LINKS, LEGAL_VERSIONS, PRIVACY_VERSION, TERMS_VERSION, formatVersionDate } from "./documents";
 import { reportProblemHref, resolveOperator } from "./operator";
 
@@ -73,5 +74,14 @@ describe("legal document versions", () => {
 
   it("links the four legal pages and the credits from the footer", () => {
     expect(LEGAL_LINKS.map((l) => l.href)).toEqual(["/privacy", "/terms", "/imprint", "/parents", "/credits"]);
+  });
+});
+
+describe("AI disclosure wording", () => {
+  it("names the active teacher and falls back to a neutral word", () => {
+    expect(aiTeacherStatement("Jake")).toBe("Jake is an AI teacher and can make mistakes.");
+    expect(disclosureName("MJ")).toBe("MJ");
+    expect(disclosureName(undefined)).toBe("Your teacher");
+    expect(aiFirstLessonNotice("Jake")).toContain("Jake is an AI teacher and can make mistakes.");
   });
 });
