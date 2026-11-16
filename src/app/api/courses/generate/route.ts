@@ -11,12 +11,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
 import { createServiceClient }       from "@/lib/supabase/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateCourse }            from "@/lib/agents/curriculum";
 
 export const maxDuration = 120;
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
     const { domain, goal }: { domain: string; goal?: string } = await req.json();
 
@@ -24,8 +25,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "domain is required" }, { status: 400 });
     }
 
-    const guard = await requireApproved();
+    // Validated above, so a 400 never costs an allowance; released in the catch if generation fails.
+    const guard = await requireEntitlement({ metric: "fresh_lessons" });
     if (guard.error) return guard.error;
+    consumed = guard.consumed;
     const { user } = guard;
     const supabase = await createClient();
 
@@ -77,6 +80,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ course: saved });
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("POST /api/courses/generate error:", err);
     return NextResponse.json({ error: "Course generation failed" }, { status: 500 });
   }
