@@ -138,9 +138,10 @@ CREATE TRIGGER consents_no_update
 -- ── Check after running (SQL editor) ────────────────────────────────────────────────────────────────────────
 -- 1. Existing users kept today's behaviour (expect 0 rows):
 --      SELECT id FROM public.profiles
---      WHERE account_holder <> 'self' OR learner_age_band <> '16_plus'
---         OR NOT (allow_voice_input AND allow_free_chat AND allow_custom_teacher)
---         AND created_at < NOW() - INTERVAL '1 minute';
+--      WHERE created_at < (SELECT MIN(created_at) FROM public.consents)   -- or any date before sign-ups opened
+--        AND (account_holder <> 'self' OR learner_age_band <> '16_plus'
+--             OR NOT (allow_voice_input AND allow_free_chat AND allow_custom_teacher));
+--    (if consents is still empty, replace the subquery by the date you applied this migration)
 -- 2. The trigger lists the new columns: SELECT prosrc FROM pg_proc WHERE proname = 'guard_profile_privileged_columns';
 -- 3. Signed in as a NON-admin test account in the browser console of the app:
 --      an update of your own profile's account_holder or learner_age_band must fail with code 42501;
