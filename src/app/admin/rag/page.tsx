@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { UploadDialog }              from "./_components/UploadDialog";
 import { SimilarityTester }          from "./_components/SimilarityTester";
+import { SourcesPanel }              from "./_components/SourcesPanel";
+import { GroundingPreview }          from "./_components/GroundingPreview";
 
 interface Chunk {
   id:           string;
@@ -36,6 +38,7 @@ export default function RagPage() {
   const [loading, setLoading]   = useState(false);
   const [busyId, setBusyId]     = useState<string | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [sourcesKey, setSourcesKey] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -110,6 +113,29 @@ export default function RagPage() {
           </div>
         }
       />
+
+      {/* Sources */}
+      <BrandCard padding="none" className="mb-5">
+        <div className="p-4 pb-0">
+          <SectionTitle
+            title="Sources"
+            description="Each uploaded book or document, with its licence. Delete a source to remove all its chunks; draft a course from a ready source's outline."
+          />
+        </div>
+        <SourcesPanel
+          refreshKey={sourcesKey}
+          onChanged={() => { setSourcesKey((k) => k + 1); load(); }}
+        />
+      </BrandCard>
+
+      {/* Grounding preview */}
+      <BrandCard variant="cream" className="mb-5">
+        <SectionTitle
+          title={<span className="flex items-center gap-1.5">Grounding preview</span>}
+          description="See what the lesson prompt would receive for a concept or topic, without generating a lesson."
+        />
+        <GroundingPreview domains={domains} />
+      </BrandCard>
 
       {/* Similarity tester */}
       <BrandCard variant="cream" className="mb-5">
@@ -195,7 +221,7 @@ export default function RagPage() {
       <UploadDialog
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}
-        onUploaded={() => { setUploadOpen(false); load(); }}
+        onUploaded={() => { setUploadOpen(false); setSourcesKey((k) => k + 1); load(); }}
         defaultDomain={domain !== "all" ? domain : ""}
       />
     </>

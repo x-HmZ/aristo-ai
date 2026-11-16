@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const embedding = await getEmbedding(query);
+  const embedding = await getEmbedding(query, "rag.embed.test", admin.id);
   if (!embedding) {
     return NextResponse.json(
       { error: "Failed to embed query (OpenAI returned no embedding)" },
@@ -55,6 +55,8 @@ export async function POST(req: NextRequest) {
     content:      string;
     domain:       string;
     source_title: string | null;
+    page_start?:  number | null;
+    page_end?:    number | null;
     similarity:   number;
   }>;
 
@@ -65,6 +67,8 @@ export async function POST(req: NextRequest) {
       score:        m.similarity,
       source_title: m.source_title,
       domain:       m.domain,
+      page_start:   m.page_start ?? null,
+      page_end:     m.page_end ?? null,
     })),
   });
 }

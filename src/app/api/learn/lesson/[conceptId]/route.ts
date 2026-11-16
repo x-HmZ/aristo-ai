@@ -22,7 +22,9 @@ import { requireApproved }           from "@/lib/auth/approval";
 import { generateLesson }            from "@/lib/agents/teaching";
 import type { ConceptInput, LessonPayload } from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
-import { retrieveContext }           from "@/lib/rag/retrieve";
+import { loadConceptScope, retrieveChunks, type RetrievedChunk } from "@/lib/rag/retrieve";
+import { formatChunk }               from "@/lib/rag/reference";
+import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
 
@@ -93,6 +95,7 @@ export async function GET(
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
     let concept: ConceptInput;
     let ragContext: string[] = [];
+    let ragChunks: RetrievedChunk[] = [];
 
     if (dbConcept) {
       const [prereqRes, rag] = await Promise.all([
@@ -100,18 +103,23 @@ export async function GET(
           .from("concept_prerequisites")
           .select("prerequisite:concepts!prerequisite_id(name)")
           .eq("concept_id", conceptId),
-        retrieveContext(
-          {
-            id:                  dbConcept.id,
-            name:                dbConcept.name,
-            description:         dbConcept.description,
-            domain:              dbConcept.domain,
-            learning_objectives: dbConcept.learning_objectives ?? [],
-          },
-          supabase
-        ).catch(() => [] as string[]),
+        (async () => {
+          const scope = await loadConceptScope(supabase, dbConcept.id);
+          return retrieveChunks(
+            {
+              id:                  dbConcept.id,
+              name:                dbConcept.name,
+              description:         dbConcept.description,
+              domain:              dbConcept.domain,
+              learning_objectives: dbConcept.learning_objectives ?? [],
+            },
+            supabase,
+            { sourceId: scope.sourceId, pageRanges: scope.pageRanges, userId: user.id }
+          );
+        })().catch(() => ({ chunks: [] as RetrievedChunk[] })),
       ]);
-      ragContext = rag;
+      ragChunks  = rag.chunks;
+      ragContext = ragChunks.map(formatChunk);
 
       const prereqNames: string[] =
         (prereqRes.data ?? [])
@@ -143,6 +151,11 @@ export async function GET(
 
     const lesson = await generateLesson(concept, profile, ragContext);
 
+    // Credit the sources that grounded this lesson. Stored in the cached
+    // payload (so cache hits carry it) and in cached_lessons.rag_chunks_used.
+    const sources = await loadLessonSources(service, ragChunks);
+    if (sources.length > 0) lesson.sources = sources;
+
     // ── Write to cache (only for KG-resolved concepts) ────────────────────────
     if (dbConcept) {
       const decision = await decideModeration(dbConcept.id, service);
@@ -154,6 +167,9 @@ export async function GET(
           profile_signature:  signature,
           payload:            lesson,
           generated_by_model: MODELS.teaching,
+          rag_chunks_used:    ragChunks.length > 0
+            ? { chunk_ids: ragChunks.map((c) => c.id), source_ids: sources.map((s) => s.id) }
+            : null,
           moderation_status:  decision.status,
           flagged_reason:     decision.flagged_reason ?? null,
           generated_at:       new Date().toISOString(),

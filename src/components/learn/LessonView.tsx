@@ -39,6 +39,7 @@ import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS } from "@/hooks/useTTS";
 import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
+import { SourceCredit } from "@/components/learn/SourceCredit";
 import { cn } from "@/lib/utils";
 
 // ─── The five phases (brand-system.md: no colours) ───────────────────────────
@@ -825,6 +826,7 @@ export function LessonView({
         <header className="flex shrink-0 flex-col gap-2.5">
           <h2 className="truncate text-sm font-bold text-ink">{lesson.concept_name}</h2>
           <PhaseRail current={phaseIdx} />
+          <SourceCredit sources={lesson.sources} />
         </header>
 
         {/* In-panel caption below lg, where the band over the scene is hidden.
