@@ -15,10 +15,45 @@
  * by a subscription event.
  */
 
-import type { PaddleEnvironment } from "./env";
+import type { BillingEnv, PaddleEnvironment } from "./env";
+import { createPaddleProvider } from "./paddle";
 import type { PlanId } from "./plans";
 import type { NormalizedEvent } from "./provider";
 import * as store from "./store";
+
+/** Paddle payloads are a few kilobytes; anything far larger is not from Paddle. */
+export const MAX_WEBHOOK_BYTES = 256 * 1024;
+
+/**
+ * The whole POST /api/billing/webhook decision, minus the HTTP plumbing.
+ *   404 billing off; 413 oversized; 401 bad or missing signature (checked BEFORE the body is parsed);
+ *   400 verified but not the documented shape; 500 database error (Paddle retries); 200 otherwise, including a
+ *   replay and an ignored event.
+ */
+export async function handleWebhookRequest(
+  rawBody: string,
+  signatureHeader: string | null,
+  env: BillingEnv,
+  nowMs: number = Date.now(),
+): Promise<{ status: number; body: Record<string, unknown> }> {
+  if (!env.billingEnabled || !env.paddle) return { status: 404, body: { error: "Not found" } };
+  if (Buffer.byteLength(rawBody, "utf8") > MAX_WEBHOOK_BYTES) return { status: 413, body: { error: "Too large" } };
+
+  const verified = createPaddleProvider(env.paddle).verifyWebhook(rawBody, signatureHeader, nowMs);
+  if (!verified.ok) {
+    if (verified.reason === "signature") return { status: 401, body: { error: "Invalid signature" } };
+    console.warn("[billing webhook] verified body did not match the expected shape");
+    return { status: 400, body: { error: "Unexpected payload" } };
+  }
+
+  try {
+    const outcome = await applyWebhookEvent(verified.event, env.paddle.environment);
+    return { status: 200, body: { received: true, outcome } };
+  } catch {
+    console.error(`[billing webhook] ${verified.event.type} ${verified.event.eventId}: processing failed`);
+    return { status: 500, body: { error: "Processing failed" } };
+  }
+}
 
 export type WebhookOutcome = "replay" | "applied" | "stale" | "ignored";
 
