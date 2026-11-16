@@ -15,7 +15,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generate3dModel }           from "@/lib/imagegen/banana";
 
 // Tripo3D conversion alone runs 30-40s; with queue time a 60s cap produced
@@ -24,8 +24,9 @@ import { generate3dModel }           from "@/lib/imagegen/banana";
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
 
@@ -46,12 +47,22 @@ export async function POST(req: NextRequest) {
     }
     const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
+    // The cache check lives inside generate3dModel, so count first and give the unit back on a cached result.
+    const spent = await spendAllowance(guard.entitlement, "models_3d");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
+
     const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId, {
       multiview: needsMultiview === true,
     });
+    if (cached) {
+      await releaseConsumed(consumed);
+      consumed = null;
+    }
 
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {
+    await releaseConsumed(consumed);
     console.error("[generate-model/3d] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "3D generation failed" },
