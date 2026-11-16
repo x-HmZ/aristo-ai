@@ -17,6 +17,7 @@ const billing = vi.hoisted(() => ({
   spendAllowance: vi.fn(),
   releaseConsumed: vi.fn(),
 }));
+vi.mock("@/lib/guard", () => ({ guardSpend: async () => null }));
 vi.mock("@/lib/billing/entitlements", () => ({
   requireEntitlement: async () => ({ user: { id: "u1" }, error: null, entitlement: null, consumed: null }),
   spendAllowance: billing.spendAllowance,

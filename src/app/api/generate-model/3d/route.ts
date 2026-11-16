@@ -17,6 +17,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generate3dModel }           from "@/lib/imagegen/banana";
+import { blockedResponse, spendHook } from "@/lib/guard";
 
 // Tripo3D conversion alone runs 30-40s; with queue time a 60s cap produced
 // intermittent 504s that the client used to swallow silently.  Vercel's
@@ -54,6 +55,8 @@ export async function POST(req: NextRequest) {
 
     const { modelUrl, cached } = await generate3dModel(imageUrl, user.id, false, resolvedConceptId, {
       multiview: needsMultiview === true,
+      // Counted on a miss only: a cached model costs nothing and is never limited.
+      beforeGenerate: spendHook(user.id, "generate_3d"),
     });
     if (cached) {
       await releaseConsumed(consumed);
@@ -63,6 +66,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ modelUrl, cached });
   } catch (error) {
     await releaseConsumed(consumed);
+    const refused = blockedResponse(error);
+    if (refused) return refused;
     console.error("[generate-model/3d] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "3D generation failed" },

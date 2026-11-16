@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { explainMore }               from "@/lib/agents/teaching";
+import { guardSpend }                from "@/lib/guard";
 import type { LessonPayload }        from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
 
@@ -32,6 +33,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const blocked = await guardSpend(guard.user.id, "explain_more");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "chat_turns");
     if (spent.error) return spent.error;
     consumed = spent.consumed;

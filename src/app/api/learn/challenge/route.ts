@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type Anthropic                from "@anthropic-ai/sdk";
 import { MODELS }                    from "@/lib/agents/models";
 import { getAnthropic }              from "@/lib/llm/anthropic";
+import { guardSpend }                from "@/lib/guard";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 
 const client = getAnthropic();
@@ -38,6 +39,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
+    const blocked = await guardSpend(guard.user.id, "challenge");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "chat_turns");
     if (spent.error) return spent.error;
     consumed = spent.consumed;

@@ -17,6 +17,7 @@ import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } fr
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
+import { guardSpend }               from "@/lib/guard";
 import { INTERACTIVE_SPEC_SCHEMA, parseInteractiveSpec } from "@/lib/interactive/spec";
 import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 
@@ -136,6 +137,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
 
+    const blocked = await guardSpend(user.id, "teach");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "chat_turns");
     if (spent.error) return spent.error;
     consumed = spent.consumed;

@@ -24,6 +24,7 @@ import {
 }                                    from "@/lib/agents/assessment";
 import type { QuizQuestion }         from "@/lib/agents/assessment";
 import { updateMastery }             from "@/lib/mastery/update";
+import { guardSpend }                from "@/lib/guard";
 import { computeNextSRSState, initialSRSUpdate } from "@/lib/srs/scheduler";
 import type { SRSState }             from "@/lib/srs/scheduler";
 
@@ -66,6 +67,12 @@ export async function POST(req: NextRequest) {
     const isSubjective =
       body.questionType === "short_answer" ||
       body.questionType === "code_debugging";
+
+    // Only the Haiku evaluator costs money; objective answers are graded locally and are never limited.
+    if (isSubjective) {
+      const blocked = await guardSpend(user.id, "quiz_submit");
+      if (blocked) return blocked;
+    }
 
     const result = isSubjective
       ? await evaluateShortAnswer(q, body.userAnswer, user.id)

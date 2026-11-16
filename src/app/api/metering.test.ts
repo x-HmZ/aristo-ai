@@ -26,6 +26,12 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/billing/entitlements", () => ent);
+vi.mock("@/lib/guard", () => ({
+  guardSpend: async () => null,
+  spendHook: () => async () => undefined,
+  blockedResponse: () => null,
+  GuardBlocked: class extends Error {},
+}));
 
 function table(name: string, service: boolean) {
   const result = () => {

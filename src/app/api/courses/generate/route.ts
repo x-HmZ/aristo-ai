@@ -13,6 +13,7 @@ import { createClient }              from "@/lib/supabase/server";
 import { createServiceClient }       from "@/lib/supabase/server";
 import { requireEntitlement, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateCourse }            from "@/lib/agents/curriculum";
+import { guardSpend }                from "@/lib/guard";
 
 export const maxDuration = 120;
 
@@ -30,6 +31,11 @@ export async function POST(req: NextRequest) {
     if (guard.error) return guard.error;
     consumed = guard.consumed;
     const { user } = guard;
+    const blocked = await guardSpend(user.id, "courses_generate");
+    if (blocked) {
+      await releaseConsumed(consumed);
+      return blocked;
+    }
     const supabase = await createClient();
 
     // Get user's goal from profile if not provided

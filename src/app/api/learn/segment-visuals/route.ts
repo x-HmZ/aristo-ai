@@ -38,6 +38,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireApproved } from "@/lib/auth/approval";
+import { GuardBlocked, spendHook } from "@/lib/guard";
 import { generateInfographic, type ImageStyle } from "@/lib/imagegen/banana";
 import type { SegmentVisual } from "@/lib/agents/teaching";
 
@@ -144,9 +145,12 @@ export async function POST(req: NextRequest) {
             userId:    user.id,
             feature:   "lesson.segment_visual",
             conceptId,
+            // One count per image that is actually generated; cached images are free and never limited.
+            beforeGenerate: spendHook(user.id, "segment_visuals"),
           });
           return { id: seg.id, imageUrl, cached };
         } catch (err) {
+          if (err instanceof GuardBlocked) return { id: seg.id, error: "rate_limited" };
           const message = err instanceof Error ? err.message : "Image generation failed";
           console.error(`[segment-visuals] seg ${seg.id} failed:`, message);
           return { id: seg.id, error: message };

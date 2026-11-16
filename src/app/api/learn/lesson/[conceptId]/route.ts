@@ -27,6 +27,7 @@ import { formatChunk }               from "@/lib/rag/reference";
 import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
+import { guardSpend }                from "@/lib/guard";
 
 export const maxDuration = 60;
 
@@ -98,6 +99,8 @@ export async function GET(
     }
 
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
+    const blocked = await guardSpend(user.id, "lesson_generate");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "fresh_lessons");
     if (spent.error) return spent.error;
     consumed = spent.consumed;

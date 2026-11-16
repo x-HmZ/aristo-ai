@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateInfographic, generate3dSourceImageDetailed } from "@/lib/imagegen/banana";
+import { blockedResponse, spendHook } from "@/lib/guard";
 
 // NB Pro + FLUX run in parallel but NB Pro alone can take 30-60s under
 // load.  Vercel's platform limit is 300s on all plans — headroom is free.
@@ -63,6 +64,8 @@ export async function POST(req: NextRequest) {
         userId:     user.id,
         feature:    "lesson.teaching_image",
         conceptId:  resolvedConceptId,
+        // Counted on a miss only (the teaching image is the $0.15 call); cache hits are free.
+        beforeGenerate: spendHook(user.id, "generate_model"),
       }),
       model3dPrompt
         ? generate3dSourceImageDetailed(model3dPrompt, user.id, false, resolvedConceptId)
@@ -82,6 +85,8 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     await releaseConsumed(consumed);
+    const refused = blockedResponse(error);
+    if (refused) return refused;
     console.error("[generate-model] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Image generation failed" },

@@ -18,7 +18,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
 import { requireApproved } from "@/lib/auth/approval";
-import { createThrottle } from "@/lib/interactive/throttle";
+import { guardSpend } from "@/lib/guard";
 import { openaiTranscribeCostMicros } from "@/lib/llm/pricing";
 import { logUsage } from "@/lib/llm/usage";
 import { STT_MODEL } from "@/lib/stt/models";
@@ -26,9 +26,6 @@ import { audioExtension, estimateSeconds, MAX_AUDIO_BYTES } from "@/lib/stt/audi
 
 export const maxDuration = 30;
 export const runtime     = "nodejs";
-
-// In-memory and per instance; a database-backed allowance replaces this later.
-const sttThrottle = createThrottle(60, 60 * 60 * 1000);
 
 const LanguageSchema = z.string().regex(/^[a-zA-Z]{2}$/).optional();
 
@@ -43,10 +40,6 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "stt_unavailable" }, { status: 503 });
-    }
-
-    if (!sttThrottle.take(guard.user.id)) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const declared = Number(req.headers.get("content-length"));
@@ -78,6 +71,10 @@ export async function POST(req: NextRequest) {
     if (!language.success) {
       return NextResponse.json({ error: "Invalid language" }, { status: 400 });
     }
+
+    // Counted in the database (src/lib/guard/limits.ts), after the input is known to be valid.
+    const blocked = await guardSpend(guard.user.id, "stt");
+    if (blocked) return blocked;
 
     // Name the file by its real container: the API infers the format from the extension.
     const file = new File([await audio.arrayBuffer()], `audio.${ext}`, { type: audio.type });
