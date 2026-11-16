@@ -7,6 +7,7 @@
  */
 
 import { useState } from "react";
+import Link from "next/link";
 import { Loader2, X } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
@@ -149,7 +150,7 @@ export function DraftCoursePanel({ source, onClose, onSaved }: Props) {
 
           {savedId && (
             <p className="text-success font-semibold">
-              Draft saved. Review it in Courses, then publish: <a className="underline" href="/admin/courses">/admin/courses</a>.
+              Draft saved. Review it in Courses, then publish: <Link className="underline" href="/admin/courses">/admin/courses</Link>.
             </p>
           )}
           {error && <p className="text-danger font-semibold">{error}</p>}
