@@ -27,11 +27,21 @@ payments-research is local and untracked on purpose). Do not re-audit.
   free allowance as proposed; paid plans include an organisation plan with its own admin role (three kinds of admin,
   see README L07). Research: `findings/pricing.md` (plan table, margins) and `findings/content-plan.md` (PDF upload does
   not work today; briefs E1-E6; usable open textbooks).
-- **Neither branch is pushed.** Production still serves the unauthenticated speech and quiz routes until
+- **Built later the same day (branch `feat/launch-features`, stacked on chore/launch-cleanup; all off or inert by
+  default, none run against the database or a provider)**: narration cache for lesson audio (migration 019) and
+  ElevenLabs usage rows; `/api/stt` with a recorder engine behind `NEXT_PUBLIC_STT_ENGINE=server`; textbook
+  ingestion (PDF read in the admin's browser, batched ingest with a source registry and licence list, grounding
+  preview, draft course from a book outline, onboarding from published courses, `SourceCredit`, `/credits`;
+  migration 020); accounts, plans, usage counters, `requireEntitlement` wired into the paid routes, Paddle sandbox
+  webhook, portal and checkout, `/pricing`, `/account` (migration 021; `BILLING_ENABLED` and `ENFORCE_ALLOWANCE`
+  default off; sandbox refused on production). Checks: type-check, 857 tests, production build, local production
+  server (new pages 200, closed routes 401/403/404, `/demo` probe clean). security-reviewer pass done, highs fixed.
+  Owner steps, checks and known gaps: `.claude/plans/launch/OWNER-STEPS.md`.
+- **None of the three branches is pushed.** Production still serves the unauthenticated speech and quiz routes until
   fix/launch-critical is merged and deployed.
 - **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. Hmz
   runs that fix in the portfolio repo himself.
-- **Next**: push and merge the two branches; L04 spend guard (plan mode); L06 + L07 together (accounts, learners,
+- **Next**: push and merge the three branches in order; apply migrations 019-021 with their checks; L04 spend guard
   plans, organisations: plan mode); L08 audio cache; content briefs E1-E6. Owner: set hard spend limits in the
   Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D3 and D6-D11 in the README.
 - **Not verified**: anything against the live database or a signed-in session; no paid call was made.

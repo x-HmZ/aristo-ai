@@ -43,14 +43,21 @@ Three gates. Do not start a gate's "open" step until everything above it is done
 | L04 | Spend guard, attribution, input caps | before sign-ups open | opus plans, sonnet wires | M-L | open |
 | L05 | Database write lockdown and Zod on the remaining routes | before sign-ups open | sonnet + security-reviewer | M | open |
 | L06 | Accounts: age rule, parent-owned learners, consent, deletion, password reset | before sign-ups open | opus | L | open, needs owner decisions D2, D3 |
-| L07 | Entitlements: plans, free allowance and organisations replace the approval gate | before sign-ups open | opus | L | open, after L04; plan table in `findings/pricing.md` |
-| L08 | Cost cuts: audio cache, quiz cache, shared lesson signature, catalogue | before sign-ups open | sonnet | M-L | open; catalogue generation needs the owner's go-ahead per run |
+| L07 | Entitlements: plans, free allowance and organisations replace the approval gate | before sign-ups open | opus | L | BUILT on `feat/launch-features`, off by default: accounts, members, plans as rows, usage counters, `requireEntitlement` wired into the paid routes (`src/lib/billing/METRICS.md`), `/pricing`, `/account`. Migration 021 not applied. Left: turn `ENFORCE_ALLOWANCE` on after checking 021; the approval gate is still the front door; no organisation UI; learners table is L06 |
+| L08 | Cost cuts: audio cache, quiz cache, shared lesson signature, catalogue | before sign-ups open | sonnet | M-L | narration cache BUILT on `feat/launch-features` (migration 019 not applied; never exercised against ElevenLabs or storage). Left: quiz cache, shared signature for free users, catalogue pre-generation |
 | L09 | Legal pages, AI label, voice claim, documents (DPIA, records, retention, breach) | before sign-ups open | opus drafts, owner reviews | M | open |
 | L10 | Dead screens, error pages, landing copy, SEO, feedback channel, monitoring | before sign-ups open | sonnet | M | open |
-| L11 | Content: more subjects on day one, added through PDF upload and RAG | before sign-ups open | opus plans, sonnet builds | L | open; plan in `findings/content-plan.md`; every paid run needs the owner's go-ahead |
+| L11 | Content: more subjects on day one, added through PDF upload and RAG | before sign-ups open | opus plans, sonnet builds | L | pipeline BUILT on `feat/launch-features` (briefs E1-E6: PDF read in the browser, batched ingest with a source registry and licence list, grounding preview, draft course from a book outline, onboarding from published courses, credits). Migration 020 not applied; never run on a real PDF. Left: the owner picks books and runs it (`OWNER-STEPS.md`); cache invalidation after a new ingest |
 | L12 | Ops: provider spend limits, regions, DPAs, email sender, branches, PR 29 | owner, mostly dashboards | owner + sonnet | S each | open |
-| L13 | Payments in a sandbox behind an off switch | before the first payment | opus | L | blocked on the owner's written clearance to go live; buildable any time after L07 |
+| L13 | Payments in a sandbox behind an off switch | before the first payment | opus | L | BUILT on `feat/launch-features`: Paddle webhook (signature, idempotency, plan from price id only), portal, overlay checkout from `/account`; sandbox is refused on the production deployment and live needs a second switch. Never run against Paddle. Go-live still blocked on the owner's written clearance |
+| L15 | Speech-to-text for voice input (owner asked for it) | optional | sonnet | S | BUILT on `feat/launch-features`: `/api/stt` and a recorder engine behind `NEXT_PUBLIC_STT_ENGINE=server`; default stays the browser engine. Never tried in a real browser |
 | L14 | Before marketing: checklist | after sign-ups open | owner + any | S | open |
+
+**What the owner has to do for the features built on 2026-11-16 is in `OWNER-STEPS.md`** (push order, migrations 019-021
+with checks, settings, adding a book, a sandbox purchase, known gaps). Security review of that work: one pass by
+`security-reviewer` on the merged tree; its high findings (retrieval function open to the anonymous key, admin check
+that could recurse in a policy) and the cheap medium ones are fixed in commit 51890ea; the rest are listed under
+"Known gaps" there and belong to L04.
 
 ### L01 Close the live holes (branch `fix/launch-critical`)
 Findings: `security.md` C1, C2, H5, M2. Done in code:
