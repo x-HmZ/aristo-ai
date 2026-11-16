@@ -65,7 +65,7 @@ Evaluate and return JSON only (no other text):
           },
         ],
       },
-      { feature: "learn.challenge", metadata: { conceptName } }
+      { feature: "learn.challenge", userId: guard.user.id, metadata: { conceptName } }
     );
 
     const text = response.content

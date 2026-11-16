@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (spent.error) return spent.error;
     consumed = spent.consumed;
 
-    const explanation = await explainMore(phase, phaseContent, conceptName, profile ?? null);
+    const explanation = await explainMore(phase, phaseContent, conceptName, profile ?? null, guard.user.id);
 
     return NextResponse.json({ explanation });
   } catch (err) {

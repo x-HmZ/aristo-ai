@@ -61,7 +61,7 @@ export async function GET(
     const mastery = masteryRow?.mastery_score ?? 0.1;
 
     // ── 3. Generate questions ─────────────────────────────────────────────────
-    const questions = await generateLessonQuiz(meta, mastery, 4);
+    const questions = await generateLessonQuiz(meta, mastery, 4, user.id);
 
     return NextResponse.json({ questions });
   } catch (err) {

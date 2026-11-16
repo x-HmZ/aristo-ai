@@ -722,7 +722,9 @@ export function normalizeInteractive(parsed: ParsedLessonInput): void {
 export async function generateLesson(
   concept:    ConceptInput,
   profile:    DynamicProfile | null,
-  ragContext: string[] = []
+  ragContext: string[] = [],
+  /** The learner this generation is for; recorded on the usage row so spend can be capped per user. */
+  userId:     string | null = null
 ): Promise<LessonPayload> {
   const isAdaptive = process.env.NEXT_PUBLIC_ADAPTIVE_VISUALS === "true";
   const baseUserMessage = buildUserMessage(concept, profile, ragContext);
@@ -763,6 +765,7 @@ input schema.
       },
       {
         feature:  isRetry ? "teach.lesson.retry" : "teach.lesson",
+        userId,
         metadata: { concept_id: concept.id, adaptive: isAdaptive },
       }
     );
@@ -810,7 +813,8 @@ export async function explainMore(
   phase:       keyof LessonPayload["phases"],
   phaseContent: string,
   conceptName: string,
-  profile:     DynamicProfile | null
+  profile:     DynamicProfile | null,
+  userId:      string | null = null
 ): Promise<string> {
   const depth = profile?.explanation_depth ?? "moderate";
 
@@ -832,7 +836,7 @@ Give a deeper, expanded explanation of this specific phase in 2-4 sentences. Be 
         },
       ],
     },
-    { feature: "teach.explain_more", metadata: { phase, conceptName } }
+    { feature: "teach.explain_more", userId, metadata: { phase, conceptName } }
   );
 
   return response.content

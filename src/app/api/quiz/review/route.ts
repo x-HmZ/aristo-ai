@@ -62,7 +62,7 @@ export async function GET() {
               description: `Review: ${item.concept_id}`,
             };
 
-        return generateReviewQuestion(meta, item.mastery_score);
+        return generateReviewQuestion(meta, item.mastery_score, user.id);
       })
     );
 

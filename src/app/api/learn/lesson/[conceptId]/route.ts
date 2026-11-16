@@ -158,7 +158,7 @@ export async function GET(
       };
     }
 
-    const lesson = await generateLesson(concept, profile, ragContext);
+    const lesson = await generateLesson(concept, profile, ragContext, user.id);
 
     // Credit the sources that grounded this lesson. Stored in the cached
     // payload (so cache hits carry it) and in cached_lessons.rag_chunks_used.

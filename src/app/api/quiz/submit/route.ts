@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       body.questionType === "code_debugging";
 
     const result = isSubjective
-      ? await evaluateShortAnswer(q, body.userAnswer)
+      ? await evaluateShortAnswer(q, body.userAnswer, user.id)
       : evaluateObjective(q, body.userAnswer);
 
     // ── Load existing mastery row ─────────────────────────────────────────────
