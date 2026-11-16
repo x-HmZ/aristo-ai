@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/auth/safeNextPath";
 import { notifyAdminOfNewSignup } from "@/lib/email/resend";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/learn";
+  const next = safeNextPath(searchParams.get("next"), origin);
 
   if (!code) {
     return NextResponse.redirect(`${origin}/sign-in?error=auth_callback_failed`);
