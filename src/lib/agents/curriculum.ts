@@ -17,6 +17,16 @@ import { topologicalSort }          from "@/lib/kg/graph";
 import type { Concept }             from "@/lib/kg/types";
 import { MODELS }                   from "./models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
+import {
+  MAX_OUTPUT_TOKENS,
+  OUTLINE_GRAPH_SYSTEM,
+  OUTLINE_GRAPH_TOOL,
+  ProposalError,
+  buildOutlinePrompt,
+  validateProposal,
+  type PromptContext,
+  type ValidatedProposal,
+} from "@/lib/kg/fromOutline";
 
 const client = getAnthropic();
 
@@ -195,6 +205,63 @@ Return JSON only (no other text):
     structure,
     estimated_hours: parsed.estimated_hours ?? Math.ceil(toTeach.length * 15 / 60),
   };
+}
+
+// ─── Outline to concept graph (textbook ingestion) ────────────────────────────
+
+export type OutlineCreateFn = (
+  params: Anthropic.Messages.MessageCreateParamsNonStreaming,
+  tag:    { feature: string; userId?: string | null; metadata?: Record<string, unknown> },
+) => Promise<Anthropic.Messages.Message>;
+
+export interface OutlineGraphInput extends PromptContext {
+  userId?: string | null;
+}
+
+/**
+ * Turns one group of a book's outline into concepts with prerequisites, grade
+ * level, difficulty and the outline entries each concept covers. Sends the
+ * outline only, never the book text. Uses tool_use with a strict schema; the
+ * answer is validated and repaired by validateProposal.
+ *
+ * `create` is injectable so tests never reach the network.
+ */
+export async function generateConceptsFromOutline(
+  input:  OutlineGraphInput,
+  create: OutlineCreateFn = (p, tag) => client.messages.create(p, tag),
+): Promise<ValidatedProposal> {
+  const response = await create(
+    {
+      model:       MODELS.teaching,
+      max_tokens:  MAX_OUTPUT_TOKENS,
+      system:      OUTLINE_GRAPH_SYSTEM,
+      tools:       [OUTLINE_GRAPH_TOOL as unknown as Anthropic.Messages.Tool],
+      tool_choice: { type: "tool", name: OUTLINE_GRAPH_TOOL.name },
+      messages:    [{ role: "user", content: buildOutlinePrompt(input) }],
+    },
+    {
+      feature:  "kg.from_outline",
+      userId:   input.userId ?? null,
+      metadata: { domain: input.domain, group: input.group.index, groups: input.groupCount },
+    },
+  );
+
+  if (response.stop_reason === "max_tokens") {
+    throw new ProposalError("The model ran out of output space; the answer was cut off. Try again.");
+  }
+  const toolUse = response.content.find((b) => b.type === "tool_use");
+  if (!toolUse || toolUse.type !== "tool_use") {
+    throw new ProposalError("The model did not return a concept graph.");
+  }
+
+  return validateProposal(toolUse.input, {
+    domain:      input.domain,
+    outline:     input.outline,
+    gradeMin:    input.gradeMin,
+    gradeMax:    input.gradeMax,
+    existing:    input.previous,
+    allowedRefs: input.group.entryIndices,
+  });
 }
 
 // ─── Select next concept in a course ─────────────────────────────────────────
