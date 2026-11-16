@@ -10,7 +10,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 export interface UsageEvent {
   user_id?:               string | null;
-  provider:               "anthropic" | "openai" | "fal";
+  provider:               "anthropic" | "openai" | "fal" | "elevenlabs";
   model:                  string;
   feature:                string;
   input_tokens?:          number | null;

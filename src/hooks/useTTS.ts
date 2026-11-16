@@ -178,11 +178,11 @@ function base64ToBlob(b64: string): Blob {
  * alignment is not: audio without timings is a perfectly good outcome, it just
  * leaves lipsync on the FFT.
  */
-async function fetchTts(text: string, voice: string): Promise<TtsAudio> {
+async function fetchTts(text: string, voice: string, scope: TtsScope = "live"): Promise<TtsAudio> {
   const res = await fetch("/api/tts", {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ text, voice }),
+    body:    JSON.stringify({ text, voice, scope }),
   });
   if (!res.ok) throw new Error(`TTS ${res.status}`);
 
@@ -191,6 +191,19 @@ async function fetchTts(text: string, voice: string): Promise<TtsAudio> {
   }
 
   const data = await res.json();
+
+  // Server-side narration cache hit: the mp3 lives at a public storage URL. Fetch it into the same
+  // Blob path as a fresh generation so playback and lipsync are identical. If the object has gone
+  // missing, ask again as live: that generates normally and never depends on the cache.
+  if (typeof data?.audioUrl === "string") {
+    const audioRes = await fetch(data.audioUrl).catch(() => null);
+    if (!audioRes?.ok) return fetchTts(text, voice, "live");
+    return {
+      blob:     new Blob([await audioRes.arrayBuffer()], { type: "audio/mpeg" }),
+      timeline: data.alignment ? parseAlignment(data.alignment) : null,
+    };
+  }
+
   if (typeof data?.audio !== "string") throw new Error("TTS response had no audio");
 
   return {
@@ -203,12 +216,12 @@ async function fetchTts(text: string, voice: string): Promise<TtsAudio> {
  * fetchTts, but concurrent callers asking for the same (voice, text) share one
  * request instead of each paying for their own. See _inflight.
  */
-function fetchTtsShared(text: string, voice: string): Promise<TtsAudio> {
+function fetchTtsShared(text: string, voice: string, scope: TtsScope = "live"): Promise<TtsAudio> {
   const k    = prefetchKey(voice, text);
   const live = _inflight.get(k);
   if (live) return live;
 
-  const p = fetchTts(text, voice);
+  const p = fetchTts(text, voice, scope);
   _inflight.set(k, p);
   // Clear the slot once settled, without swallowing the result for the caller.
   p.then(
@@ -306,7 +319,16 @@ const VOICE_BY_AVATAR: Record<TeacherAvatar, string> = {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+/**
+ * "lesson" = text that comes from the lesson payload (identical for every learner), which the
+ * server may cache in a public bucket. "live" (the default) = anything that can hold a learner's
+ * name or words; never cached. When unsure, leave it unset.
+ */
+export type TtsScope = "lesson" | "live";
+
 export interface SpeakOptions {
+  /** See TtsScope. Ignored when srcUrl or the browser engine is used. */
+  scope?:  TtsScope;
   voice?:  string;
   onEnd?:  () => void;
   /**
@@ -466,7 +488,7 @@ export function useTTS() {
             // If a prefetch for this text+voice already landed (or is in
             // flight), consume it instead of firing a second /api/tts request.
             const prefetched = consumePrefetched(voice, cleaned);
-            const audioData  = await (prefetched ?? fetchTtsShared(cleaned, voice));
+            const audioData  = await (prefetched ?? fetchTtsShared(cleaned, voice, opts.scope));
             if (cancelled) return;
 
             // Another caller claimed the element while this was in flight. Do
@@ -572,7 +594,7 @@ export function useTTS() {
   // the ~0.5–1.5s ElevenLabs latency between segments.  No-op in browser
   // TTS mode (no network fetch to warm).
   const prefetch = useCallback(
-    (text: string, opts: { voice?: string; forceBrowser?: boolean } = {}): void => {
+    (text: string, opts: { voice?: string; forceBrowser?: boolean; scope?: TtsScope } = {}): void => {
       const cleaned = text.trim();
       if (!cleaned) return;
 
@@ -589,7 +611,7 @@ export function useTTS() {
         voice,
         cleaned,
         // Swallow prefetch errors — speak() will re-attempt on its own path.
-        fetchTtsShared(cleaned, voice).catch(() => ({ blob: new Blob(), timeline: null })),
+        fetchTtsShared(cleaned, voice, opts.scope).catch(() => ({ blob: new Blob(), timeline: null })),
       );
     },
     [teacher]
