@@ -10,6 +10,7 @@ const CONTACT_EMAIL = "aitchemmzi@gmail.com";
 
 const PRODUCT_LINKS = [
   { href: "/demo", label: "Try a lesson" },
+  { href: "/pricing", label: "Plans" },
   { href: "/sign-in", label: "Sign in" },
   { href: "/sign-up", label: "Create an account" },
 ];
