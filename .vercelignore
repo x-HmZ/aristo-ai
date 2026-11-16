@@ -5,10 +5,7 @@
 scripts/
 .claude/
 
-# Local design / handoff docs (not needed at runtime)
-ADAPTIVE_VISUAL_AID_PLAN.md
-HANDOFF_DESK_QUIZ.md
-design-prompt.md
+# Local spec (not needed at runtime)
 AI_TEACHER_APP_SPEC.md
 
 # Local env files (defence-in-depth — .env.local should never be uploaded)
