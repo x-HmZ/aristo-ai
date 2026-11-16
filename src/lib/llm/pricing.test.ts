@@ -128,3 +128,29 @@ describe("microsToUsd", () => {
     expect(microsToUsd(500_000)).toBe(0.5);
   });
 });
+
+import {
+  elevenlabsCostMicros,
+  elevenlabsUsdPer1kChars,
+  openaiTranscribeCostMicros,
+} from "@/lib/llm/pricing";
+
+describe("elevenlabsCostMicros", () => {
+  it("uses the default rate per 1,000 characters", () => {
+    expect(elevenlabsCostMicros({ characters: 1000, usdPer1k: 0.11 })).toBe(110_000);
+  });
+  it("reads the rate from a valid env string, else the default", () => {
+    expect(elevenlabsUsdPer1kChars("0.3")).toBe(0.3);
+    expect(elevenlabsUsdPer1kChars("abc")).toBe(0.11);
+    expect(elevenlabsUsdPer1kChars("")).toBe(0.11);
+  });
+});
+
+describe("openaiTranscribeCostMicros", () => {
+  it("prices gpt-4o-mini-transcribe at $0.003 per minute", () => {
+    expect(openaiTranscribeCostMicros({ model: "gpt-4o-mini-transcribe", seconds: 60 })).toBe(3000);
+  });
+  it("is zero for an unknown model", () => {
+    expect(openaiTranscribeCostMicros({ model: "x", seconds: 60 })).toBe(0);
+  });
+});
