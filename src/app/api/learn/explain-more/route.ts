@@ -8,14 +8,15 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { explainMore }               from "@/lib/agents/teaching";
 import type { LessonPayload }        from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
 
     const body: {
@@ -31,10 +32,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const spent = await spendAllowance(guard.entitlement, "chat_turns");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
+
     const explanation = await explainMore(phase, phaseContent, conceptName, profile ?? null);
 
     return NextResponse.json({ explanation });
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("POST /api/learn/explain-more error:", err);
     return NextResponse.json({ error: "Failed to generate explanation" }, { status: 500 });
   }

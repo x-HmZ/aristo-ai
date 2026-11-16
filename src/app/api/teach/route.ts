@@ -13,7 +13,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }             from "@/lib/supabase/server";
-import { requireApproved }          from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
@@ -118,8 +118,9 @@ ${INTERACTIVE_VISUALS_ENABLED ? "\n- interactive: set ONLY when the topic is und
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
     const supabase = await createClient();
@@ -134,6 +135,10 @@ export async function POST(req: NextRequest) {
     if (!topic) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 });
     }
+
+    const spent = await spendAllowance(guard.entitlement, "chat_turns");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
 
     // Load learner profile (best-effort)
     const { data: lpRow } = await supabase
@@ -189,6 +194,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(out);
   } catch (error) {
+    await releaseConsumed(consumed);
     console.error("Teaching API error:", error);
     return NextResponse.json(
       { error: "Failed to generate teaching response" },

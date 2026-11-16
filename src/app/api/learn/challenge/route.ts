@@ -12,13 +12,14 @@ import { NextRequest, NextResponse } from "next/server";
 import type Anthropic                from "@anthropic-ai/sdk";
 import { MODELS }                    from "@/lib/agents/models";
 import { getAnthropic }              from "@/lib/llm/anthropic";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 
 const client = getAnthropic();
 
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
 
     const {
@@ -36,6 +37,10 @@ export async function POST(req: NextRequest) {
     if (!question || !correctAnswer || !userAnswer) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
+
+    const spent = await spendAllowance(guard.entitlement, "chat_turns");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
 
     const response = await client.messages.create(
       {
@@ -76,6 +81,7 @@ Evaluate and return JSON only (no other text):
     const result = JSON.parse(jsonMatch[1]);
     return NextResponse.json(result);
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("POST /api/learn/challenge error:", err);
     return NextResponse.json({ error: "Evaluation failed" }, { status: 500 });
   }
