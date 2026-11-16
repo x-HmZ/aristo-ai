@@ -31,7 +31,7 @@ describe("safeNextPath", () => {
   });
 
   it("never returns something that resolves to another origin", () => {
-    for (const candidate of ["/learn", "/a/../b", "/%2F%2Fevil.example", "/learn?next=//evil.example"]) {
+    for (const candidate of ["/learn", "/a/../b", "/%2F%2Fevil.example", "/learn?next=//evil.example", "/.//evil.example"]) {
       const out = safeNextPath(candidate, ORIGIN);
       expect(new URL(out, ORIGIN).origin).toBe(ORIGIN);
       expect(out.startsWith("/")).toBe(true);

@@ -14,7 +14,10 @@ export function safeNextPath(next: string | null | undefined, origin: string): s
   try {
     const url = new URL(next, origin);
     if (url.origin !== origin) return DEFAULT_NEXT_PATH;
-    return `${url.pathname}${url.search}${url.hash}`;
+    // "/.//host" normalises to a pathname of "//host"; one leading slash keeps the result a plain path
+    // even for a caller that redirects to it without the origin in front.
+    const pathname = url.pathname.replace(/^\/{2,}/, "/");
+    return `${pathname}${url.search}${url.hash}`;
   } catch {
     return DEFAULT_NEXT_PATH;
   }

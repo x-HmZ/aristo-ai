@@ -17,9 +17,10 @@ LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-    -- PostgREST runs browser requests as "authenticated" or "anon". The service role, the SQL editor and
-    -- SECURITY DEFINER functions run as other roles and are not restricted here.
-    IF current_user IN ('authenticated', 'anon') AND (
+    -- PostgREST runs browser requests as "authenticated" or "anon". Only the service role, the SQL editor
+    -- (postgres) and SECURITY DEFINER functions owned by those roles may change these columns; any other role,
+    -- including one added later, is refused.
+    IF current_user NOT IN ('service_role', 'postgres', 'supabase_admin') AND (
            NEW.id                IS DISTINCT FROM OLD.id
         OR NEW.is_admin          IS DISTINCT FROM OLD.is_admin
         OR NEW.approval_status   IS DISTINCT FROM OLD.approval_status
@@ -67,7 +68,7 @@ BEGIN
     INSERT INTO public.user_misconceptions
         (user_id, concept_id, misconception, occurrence_count, last_detected)
     VALUES
-        (p_user_id, p_concept_id, LEFT(p_text, 500), 1, NOW())
+        (p_user_id, p_concept_id, LEFT(p_text, 2000), 1, NOW())
     ON CONFLICT (user_id, concept_id, misconception)
     DO UPDATE SET
         occurrence_count = user_misconceptions.occurrence_count + 1,
