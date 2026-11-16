@@ -18,7 +18,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateLesson }            from "@/lib/agents/teaching";
 import type { ConceptInput, LessonPayload } from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
@@ -34,12 +34,14 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ conceptId: string }> }
 ) {
+  // Set once a fresh lesson is counted; released in the catch if generation then fails.
+  let consumed: Consumed | null = null;
   try {
     const { conceptId: rawId } = await params;
     const conceptId = decodeURIComponent(rawId);
 
     // ── Auth + approval gate ──────────────────────────────────────────────────
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
     const supabase = await createClient();
@@ -88,11 +90,18 @@ export async function GET(
         // Bump usage_count atomically; fire-and-forget so it doesn't
         // delay the response.
         void service.rpc("increment_cached_lesson_usage", { p_id: hit.id });
+        // Count the replay but never block it: a cached lesson is served even over the cap, and a failing
+        // counter (503) must not stop it either, so the result is deliberately ignored.
+        await spendAllowance(guard.entitlement, "replays").catch(() => undefined);
         return NextResponse.json(hit.payload as LessonPayload);
       }
     }
 
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
+    const spent = await spendAllowance(guard.entitlement, "fresh_lessons");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
+
     let concept: ConceptInput;
     let ragContext: string[] = [];
     let ragChunks: RetrievedChunk[] = [];
@@ -190,6 +199,7 @@ export async function GET(
 
     return NextResponse.json(lesson);
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("GET /api/learn/lesson error:", err);
     return NextResponse.json(
       { error: "Failed to generate lesson" },
