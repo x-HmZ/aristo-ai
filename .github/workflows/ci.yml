@@ -49,6 +49,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # Non-blocking for now. Make it blocking (drop `|| true`) once the count is zero.
+      - name: Dependency audit
+        run: yarn audit --level high --groups dependencies || true
+
       - name: Type check
         run: yarn type-check
 
