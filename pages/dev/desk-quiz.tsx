@@ -1,3 +1,4 @@
+import { getDevPageStaticProps } from "@/lib/devPages";
 import dynamic from "next/dynamic";
 
 // Pages Router is REQUIRED for any R3F surface in this app — see
@@ -10,10 +11,8 @@ const DeskQuizPreview = dynamic(
 );
 
 export default function DevDeskQuizPage() {
-  // Hide from production deploys — there's no auth or rate limit on this
-  // page and the only purpose is local visual iteration.
-  if (process.env.NODE_ENV === "production") {
-    return <div style={{ padding: 40, fontFamily: "system-ui" }}>404</div>;
-  }
   return <DeskQuizPreview />;
 }
+
+// Real 404 in production builds, unless NEXT_PUBLIC_DEV_PAGES=true (see src/lib/devPages.ts).
+export const getStaticProps = getDevPageStaticProps;
