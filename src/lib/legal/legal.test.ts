@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { accessPromise, parseAccessMode } from "./access";
 import { aiFirstLessonNotice, aiTeacherStatement, disclosureName } from "./aiDisclosure";
 import { LEGAL_LINKS, LEGAL_VERSIONS, PRIVACY_VERSION, TERMS_VERSION, formatVersionDate } from "./documents";
 import { reportProblemHref, resolveOperator } from "./operator";
@@ -74,6 +75,20 @@ describe("legal document versions", () => {
 
   it("links the four legal pages and the credits from the footer", () => {
     expect(LEGAL_LINKS.map((l) => l.href)).toEqual(["/privacy", "/terms", "/imprint", "/parents", "/credits"]);
+  });
+});
+
+describe("access mode copy", () => {
+  it("defaults to approval and only open when asked", () => {
+    expect(parseAccessMode(undefined)).toBe("approval");
+    expect(parseAccessMode("nonsense")).toBe("approval");
+    expect(parseAccessMode(" OPEN ")).toBe("open");
+  });
+
+  it("keeps the hand-approval sentence only in approval mode", () => {
+    expect(accessPromise("approval").title).toContain("Approved by Hand");
+    expect(accessPromise("open").title).not.toContain("Approved by Hand");
+    expect(accessPromise("open").body).toContain("allowance");
   });
 });
 

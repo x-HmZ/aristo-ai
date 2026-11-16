@@ -45,7 +45,7 @@ function EmptyState() {
       <div>
         <h2 className="mb-1 text-base font-bold text-ink">What Do You Want to Learn?</h2>
         <p className="text-sm leading-relaxed text-body">
-          Type a topic below, or tap the mic and say it. Your teacher explains it out loud and shows it on the board.
+          Type a topic below, or say it if voice input is switched on. Your teacher explains it out loud and shows it on the board.
         </p>
       </div>
     </div>
