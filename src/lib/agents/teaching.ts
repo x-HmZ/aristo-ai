@@ -24,6 +24,9 @@ import {
   type InteractiveSpec,
 } from "@/lib/interactive/spec";
 
+import { REFERENCE_SYSTEM_RULE, buildReferenceSection } from "@/lib/rag/reference";
+import type { LessonSource } from "@/lib/rag/credits";
+
 const client = getAnthropic();
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -91,6 +94,9 @@ export interface NarrationSegment {
 export interface LessonPayload {
   concept_id:   string;
   concept_name: string;
+
+  /** Reference sources that grounded this lesson (credited in the lesson panel). */
+  sources?: LessonSource[];
 
   // ── Ordered segment list (present when NEXT_PUBLIC_ADAPTIVE_VISUALS=true) ──
   segments?: NarrationSegment[];
@@ -175,7 +181,7 @@ export interface LessonPayload {
 
 // ─── System prompt (legacy path) ──────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are an expert tutor. Your job is to TEACH — not to summarize, not to lecture, not to dump information.
+export const SYSTEM_PROMPT = `You are an expert tutor. Your job is to TEACH — not to summarize, not to lecture, not to dump information.
 
 You follow the 5-Phase Teaching Protocol for every lesson:
 
@@ -196,6 +202,7 @@ RULES:
 - Use encouraging but not patronizing language.
 - If the learner's profile says "concise", keep each phase brief. If "detailed", go deeper with edge cases, caveats, and multiple examples.
 - Ground your explanations in the reference material provided. Do not fabricate facts.
+- ${REFERENCE_SYSTEM_RULE}
 - For should_generate_model: set true ONLY for objects with a SOLID SURFACE that a camera could photograph from four sides (organs, machines, animals, geometric solids, rocks, tools, planets). Set false for abstract concepts, code, processes, and anything non-physical.
 - Also set it FALSE for physical phenomena that have no surface to reconstruct: light, fire, plasma, gas clouds, smoke, liquids without a container, fields, forces, waves, explosions, and anything whose appearance IS its glow (a black hole, an aurora, a magnetic field, a laser). The 3D step reconstructs a surface from images; given a glow it returns torn shards. For these, the 2D teaching image alone is the better visual.
 - When should_generate_model is true, you MUST provide BOTH image prompt fields, AND the demonstrate.visual_walkthrough must reference what is in the image:
@@ -236,7 +243,7 @@ When you set it:
 
 // ─── System prompt (adaptive path) ────────────────────────────────────────────
 
-const SYSTEM_PROMPT_ADAPTIVE = `${SYSTEM_PROMPT}
+export const SYSTEM_PROMPT_ADAPTIVE = `${SYSTEM_PROMPT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ADAPTIVE VISUAL AIDS — REQUIRED IN THIS MODE
@@ -586,7 +593,7 @@ const lessonToolAdaptive: Anthropic.Tool = {
 
 // ─── User message template ─────────────────────────────────────────────────────
 
-function buildUserMessage(
+export function buildUserMessage(
   concept:    ConceptInput,
   profile:    DynamicProfile | null,
   ragContext: string[] = []
@@ -630,11 +637,7 @@ Common misconceptions: ${misconceptions}
 Prerequisites (already mastered): ${prereqs}
 </concept_to_teach>
 
-<reference_material>
-${ragContext.length > 0
-  ? ragContext.join("\n\n---\n\n")
-  : "No additional reference material available. Use your general knowledge."}
-</reference_material>
+${buildReferenceSection(ragContext)}
 
 Teach this concept following the 5-Phase Protocol. Tailor the depth and style to the learner profile above.`;
 }
