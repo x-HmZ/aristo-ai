@@ -512,12 +512,13 @@ export async function generateInfographic(
  * if FLUX returned a fresh URL every time, the Tripo3D cache key (which
  * hashes the imageUrl) would always miss.
  */
-export async function generate3dSourceImage(
+/** Same as `generate3dSourceImage`, but also reports whether the image came from a cache (no fal.ai call). */
+export async function generate3dSourceImageDetailed(
   prompt:        string,
   userId?:       string | null,
   bypassCache:   boolean = false,
   conceptId?:    string | null,
-): Promise<string> {
+): Promise<{ url: string; cached: boolean }> {
   if (!prompt || !prompt.trim()) {
     throw new Error("generate3dSourceImage: prompt is required");
   }
@@ -525,12 +526,12 @@ export async function generate3dSourceImage(
   const key     = hashKey(`flux|${trimmed}`);
   if (!bypassCache) {
     const hit = cacheGet(_cacheFlux, key);
-    if (hit) return hit;
+    if (hit) return { url: hit, cached: true };
 
     const persistedHit = await lookupPersistedAsset("flux_source", key);
     if (persistedHit) {
       cacheSet(_cacheFlux, key, persistedHit);
-      return persistedHit;
+      return { url: persistedHit, cached: true };
     }
   }
 
@@ -565,7 +566,16 @@ export async function generate3dSourceImage(
   const canonicalUrl = persistedUrl ?? url;
 
   cacheSet(_cacheFlux, key, canonicalUrl);
-  return canonicalUrl;
+  return { url: canonicalUrl, cached: false };
+}
+
+export async function generate3dSourceImage(
+  prompt:        string,
+  userId?:       string | null,
+  bypassCache:   boolean = false,
+  conceptId?:    string | null,
+): Promise<string> {
+  return (await generate3dSourceImageDetailed(prompt, userId, bypassCache, conceptId)).url;
 }
 
 /**
