@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { createSpeechRecognition, type SpeechRecognitionInstance } from "@/lib/speech";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function InputBox() {
+  const { voiceInput } = useCapabilities();
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -268,7 +270,7 @@ export function InputBox() {
       <div className="flex items-center gap-2">
         {/* Mic button. Listening is the accent fill and the stop icon; the pulse is
             motion-safe, so a reduced-motion reader still sees the ring. */}
-        <Button
+        {voiceInput && <Button
           variant={isListening ? "default" : "secondary"}
           size="icon"
           onClick={toggleListening}
@@ -281,7 +283,7 @@ export function InputBox() {
           {isTranscribing
             ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
             : isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
-        </Button>
+        </Button>}
         <span className="sr-only" role="status" aria-live="polite">
           {isTranscribing ? "Transcribing" : isListening ? "Recording" : voiceNote}
         </span>

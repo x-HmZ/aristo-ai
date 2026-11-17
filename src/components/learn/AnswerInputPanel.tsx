@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { NarrationSegment } from "@/lib/agents/teaching";
 import { createSpeechRecognition, type SpeechRecognitionInstance } from "@/lib/speech";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -42,6 +43,7 @@ export interface AnswerInputPanelProps {
 const SILENCE_SUBMIT_MS = 1500;
 
 export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanelProps) {
+  const { voiceInput } = useCapabilities();
   const [answer,      setAnswer]      = useState("");
   const [isListening, setIsListening] = useState(false);
   const [submitting,  setSubmitting]  = useState(false);
@@ -75,7 +77,8 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
   // doesn't support Web Speech (Firefox, some Safari).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const rec = createSpeechRecognition();
+    // Voice off (a guardian has not turned it on): no recognition object is ever created, the answer is typed.
+    const rec = voiceInput ? createSpeechRecognition() : null;
     if (!rec) {
       setMicError("mic-unsupported");
       // Focus the textarea instead so the student can still type.
@@ -183,7 +186,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
             ? recognitionRef.current?.engine === "server"
               ? "Recording… press stop when you're done"
               : "Listening… pause when you're done"
-            : micError === "mic-unsupported"
+            : micError === "mic-unsupported" || !voiceInput
             ? "Type your answer below"
             : micError === "stt-failed" || micError === "no-speech"
             ? "Could not hear that. Try again or type your answer"
@@ -206,7 +209,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
       <div className="flex items-end gap-2">
         {/* Mic toggle. Listening is the accent fill, the stop icon and the status text; the
             pulse is motion-safe so a reduced-motion reader still sees a ring. */}
-        <Button
+        {voiceInput && <Button
           variant={isListening ? "default" : "secondary"}
           size="icon"
           onClick={toggleListening}
@@ -219,7 +222,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           {isTranscribing
             ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
             : isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
-        </Button>
+        </Button>}
 
         {/* Text input (textarea so multi-line answers don't get cut off) */}
         <textarea
