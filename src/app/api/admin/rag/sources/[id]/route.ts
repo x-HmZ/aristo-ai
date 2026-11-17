@@ -8,6 +8,7 @@
  *            comes from the per-batch estimates the client summed.
  */
 
+import { revalidatePath }           from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z }                         from "zod";
 import { createServiceClient }       from "@/lib/supabase/server";
@@ -89,6 +90,7 @@ export async function PATCH(
     request:    req,
   });
 
+  revalidatePath("/credits");   // /credits is cached for an hour; a new ready source must show at once
   return NextResponse.json({ ok: true, status: "ready", chunks });
 }
 
@@ -124,5 +126,6 @@ export async function DELETE(
     request:    req,
   });
 
+  revalidatePath("/credits");
   return NextResponse.json({ ok: true });
 }

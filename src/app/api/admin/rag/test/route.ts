@@ -33,7 +33,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const embedding = await getEmbedding(query, "rag.embed.test", admin.id);
+  let embedding: number[] | null;
+  try {
+    embedding = await getEmbedding(query, "rag.embed.test", admin.id);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "unknown error";
+    return NextResponse.json({ error: `Embedding the query failed: ${msg}` }, { status: 502 });
+  }
   if (!embedding) {
     return NextResponse.json(
       { error: "Failed to embed query (OpenAI returned no embedding)" },

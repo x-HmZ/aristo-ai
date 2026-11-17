@@ -170,7 +170,8 @@ export function UploadDialog({ open, onClose, onUploaded, defaultDomain }: Props
       setProgress(`Embedding batch ${i + 1} of ${batches.length}`);
       const r = await sendBatch(sourceId, batches[i]);
       if (!r.ok) {
-        setError(`${r.error} Batches before ${i + 1} are stored; you can retry from here.`);
+        const stored = i === 0 ? "Nothing is stored yet" : `Batches 1 to ${i} are stored`;
+        setError(`${r.error.replace(/\.?\s*$/, ".")} ${stored}; you can retry from here.`);
         setResume({ sourceId, from: i, tokens });
         setPhase("estimated"); setProgress("");
         return;

@@ -49,7 +49,6 @@ export const OUTLINE_GRAPH_TOOL = {
       course_description: str,
       concepts: {
         type: "array",
-        maxItems: MAX_CONCEPTS_PER_CALL,
         items: {
           type: "object",
           additionalProperties: false,
@@ -63,16 +62,16 @@ export const OUTLINE_GRAPH_TOOL = {
             name:          str,
             description:   { type: "string", description: "1-2 sentences" },
             prerequisites: { type: "array", items: str, description: "ids of EARLIER concepts only" },
-            grade_level:   { type: "integer", minimum: 1, maximum: 12 },
-            difficulty:    { type: "integer", minimum: 1, maximum: 5 },
+            grade_level:   { type: "integer", description: "1 to 12" },
+            difficulty:    { type: "integer", description: "1 (easiest) to 5" },
             bloom_level:   { type: "string", enum: [...BLOOM_LEVELS] },
-            estimated_minutes:     { type: "integer", minimum: 5, maximum: 45 },
+            estimated_minutes:     { type: "integer", description: "5 to 45" },
             key_terms:             strList,
             learning_objectives:   strList,
             common_misconceptions: strList,
             outline_refs: {
               type: "array",
-              items: { type: "integer", minimum: 0 },
+              items: { type: "integer" },
               description: "numbers of the outline entries this concept covers, as printed in [n]",
             },
           },
