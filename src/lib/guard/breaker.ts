@@ -30,7 +30,6 @@ const FALLBACK_MAX_PAGES = 50;
 /** The slice of the Supabase client used here, so tests can pass a fake. */
 export interface BreakerClient {
   rpc(fn: string, args: Record<string, unknown>): PromiseLike<{ data: unknown; error: { code?: string; message?: string } | null }>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   from(table: string): any;
 }
 

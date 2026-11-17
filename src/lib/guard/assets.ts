@@ -48,7 +48,6 @@ export function classifyAssetUrl(raw: string, supabaseUrl: string | undefined): 
 
 /** The slice of the Supabase client used here, so tests can pass a fake. */
 export interface AssetClient {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   from(table: string): any;
 }
 

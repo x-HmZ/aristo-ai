@@ -28,6 +28,7 @@ import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
 import { guardSpend }                from "@/lib/guard";
+import { attachNarrationTokens }     from "@/lib/guard/narration";
 import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 
 export const maxDuration = 60;
@@ -101,7 +102,7 @@ export async function GET(
         // Count the replay but never block it: a cached lesson is served even over the cap, and a failing
         // counter (503) must not stop it either, so the result is deliberately ignored.
         await spendAllowance(guard.entitlement, "replays").catch(() => undefined);
-        return NextResponse.json(hit.payload as LessonPayload);
+        return NextResponse.json(attachNarrationTokens(hit.payload as LessonPayload));
       }
     }
 
@@ -207,7 +208,8 @@ export async function GET(
       // regenerate until an admin approves.
     }
 
-    return NextResponse.json(lesson);
+    // Tokens are minted for this response only; the cached row above never holds them.
+    return NextResponse.json(attachNarrationTokens(lesson));
   } catch (err) {
     await releaseConsumed(consumed);
     console.error("GET /api/learn/lesson error:", err);
