@@ -135,6 +135,8 @@ export interface QuizQuestion {
   misconception_targeted?: string;
   difficulty:             number;   // 0.0–1.0
   estimated_seconds?:     number;
+  /** HMAC over id, concept, type, question, correct_answer and difficulty, added by the server when it issues the quiz. */
+  answer_sig?:            string;
 }
 
 export interface ConceptMeta {

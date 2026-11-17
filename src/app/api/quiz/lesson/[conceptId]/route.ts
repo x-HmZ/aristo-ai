@@ -11,6 +11,7 @@ import { createClient }              from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import { generateLessonQuiz }        from "@/lib/agents/assessment";
 import { guardSpend }              from "@/lib/guard";
+import { signQuestions }             from "@/lib/quiz/sign";
 import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
 
@@ -72,7 +73,7 @@ export async function GET(
     if (blocked) return blocked;
     const questions = await generateLessonQuiz(meta, mastery, 4, user.id);
 
-    return NextResponse.json({ questions });
+    return NextResponse.json({ questions: signQuestions(questions) });
   } catch (err) {
     console.error("GET /api/quiz/lesson error:", err);
     return NextResponse.json({ error: "Failed to generate quiz" }, { status: 500 });

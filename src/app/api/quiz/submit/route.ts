@@ -25,6 +25,7 @@ import {
 import type { QuizQuestion }         from "@/lib/agents/assessment";
 import { updateMastery }             from "@/lib/mastery/update";
 import { guardSpend }                from "@/lib/guard";
+import { verifyQuestion }            from "@/lib/quiz/sign";
 import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
 import { z }                       from "zod";
 import { computeNextSRSState, initialSRSUpdate } from "@/lib/srs/scheduler";
@@ -46,6 +47,7 @@ const BodySchema = z.object({
   difficulty:             z.number().min(0).max(1),
   userAnswer:             z.string().max(2000),
   context:                z.enum(["lesson", "review"]).optional(),
+  answerSig:              z.string().length(64),
 }).strict();
 
 export async function POST(req: NextRequest) {
@@ -74,6 +76,13 @@ export async function POST(req: NextRequest) {
       misconception_targeted: body.misconceptionTargeted,
       difficulty:            body.difficulty,
     };
+
+    // ── The answer key must be the one this server issued ────────────────────
+    // The signature covers id, concept, type, question text, correct answer and difficulty, so none of them can
+    // be rewritten by the browser to forge a result.
+    if (!verifyQuestion(q, body.answerSig)) {
+      return NextResponse.json({ error: "invalid_question" }, { status: 400 });
+    }
 
     // ── Evaluate ─────────────────────────────────────────────────────────────
     const isSubjective =

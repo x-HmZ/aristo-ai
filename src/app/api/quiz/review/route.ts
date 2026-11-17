@@ -13,6 +13,7 @@ import { createClient }              from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import { getDailyReviewQueue }       from "@/lib/srs/queue";
 import { guardSpend }                from "@/lib/guard";
+import { signQuestions }             from "@/lib/quiz/sign";
 import { generateReviewQuestion }    from "@/lib/agents/assessment";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
 
@@ -70,7 +71,7 @@ export async function GET() {
       })
     );
 
-    const questions = questionSets.flat();
+    const questions = signQuestions(questionSets.flat());
 
     return NextResponse.json({ questions, conceptCount: queue.length });
   } catch (err) {
