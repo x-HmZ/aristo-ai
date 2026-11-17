@@ -2,7 +2,7 @@
  * POST /api/tts
  *
  * Proxies text to ElevenLabs TTS and returns the resulting MP3.
- * Approved learners only (requireApproved), at most 200 generations an hour each.
+ * Approved learners only (requireEntitlement); generations are rate limited in the database (src/lib/guard/limits.ts).
  *
  * Body:    { text: string, voice?: string, scope?: "lesson" | "live" }
  *            voice = a key of src/lib/tts/voices.json (e.g. "jake")
@@ -41,7 +41,7 @@
  * keeps the invocation alive until it finishes (maxDuration covers it). Any storage failure
  * falls through to a normal generation. Results without alignment are not stored (a plain-audio
  * fallback caused by an upstream blip must not become permanent) unless TTS_TIMESTAMPS=off.
- * A hit is not counted against the throttle and logs no usage; every generation logs one row.
+ * A hit is not counted against the rate limit and logs no usage; every generation logs one row.
  *
  * Free tier: 10 000 chars/month — no billing required.
  * Voice and model come from src/lib/tts/voices.json by ELEVENLABS_PLAN: on the free plan every key reads
@@ -51,7 +51,8 @@
 import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
-import { createThrottle } from "@/lib/interactive/throttle";
+import { guardSpend } from "@/lib/guard";
+import { verifyNarrationToken } from "@/lib/guard/narration";
 import { elevenlabsCostMicros } from "@/lib/llm/pricing";
 import { logUsage } from "@/lib/llm/usage";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -65,17 +66,16 @@ import {
 } from "@/lib/tts/cache";
 import { parseTtsPlan, pickVoice } from "@/lib/tts/voices";
 
-/** Per learner and instance, best effort: a lesson with prefetch makes about 30 calls. Counts misses only. */
-const ttsThrottle = createThrottle(200, 60 * 60 * 1000);
-
 export const maxDuration = 60;
 export const runtime     = "nodejs";
 
 const BodySchema = z.object({
-  text:  z.string().default(""),
+  text:  z.string().max(20000).default(""),
   voice: z.string().optional().catch(undefined),
   // An unknown scope is treated as live rather than rejected: when unsure, never cache.
   scope: z.enum(["lesson", "live"]).default("live").catch("live"),
+  // Proof that `text` came from a lesson this server returned (src/lib/guard/narration.ts).
+  token: z.string().max(100).optional().catch(undefined),
 });
 
 // Voice and model per teacher key, picked by ELEVENLABS_PLAN (unset = free). The table is
@@ -113,8 +113,12 @@ export async function POST(req: NextRequest) {
     if (guard.error) return guard.error;
 
     const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
-    const body   = parsed.success ? parsed.data : { text: "", voice: undefined, scope: "live" as const };
-    const text   = body.text.trim();
+    const raw    = parsed.success ? parsed.data : { text: "", voice: undefined, scope: "live" as const, token: undefined };
+    const text   = raw.text.trim();
+    // "lesson" only counts with a token the server minted for exactly this text; otherwise the request is live:
+    // never cached in the public bucket, and metered against voice_chars.
+    const scope: "lesson" | "live" = raw.scope === "lesson" && verifyNarrationToken(text, raw.token) ? "lesson" : "live";
+    const body = { ...raw, scope };
     if (!text) {
       return NextResponse.json({ error: "text is required" }, { status: 400 });
     }
@@ -150,10 +154,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Only generations (misses and live calls) spend the quota, so only they are throttled.
-    if (!ttsThrottle.take(guard.user.id)) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-    }
+    // Only generations (misses and live calls) spend the quota, so only they are counted: the limits live in
+    // src/lib/guard/limits.ts and are shared by every server instance (database counter).
+    const blocked = await guardSpend(guard.user.id, "tts");
+    if (blocked) return blocked;
 
     // Chat voice (scope "live") spends voice_chars. Lesson narration consumes nothing here: its cost belongs
     // to the lesson. An unmetered lesson-scope miss is bounded only by the throttle above until the spend

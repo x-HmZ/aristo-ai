@@ -587,6 +587,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           questionType:          currentQ.question_type,
           question:              currentQ.question,
           correctAnswer:         currentQ.correct_answer,
+          answerSig:             currentQ.answer_sig,
           misconceptionTargeted: currentQ.misconception_targeted,
           difficulty:            currentQ.difficulty,
           userAnswer,

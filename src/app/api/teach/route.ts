@@ -17,10 +17,26 @@ import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } fr
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
 import { getAnthropic }             from "@/lib/llm/anthropic";
+import { guardSpend }               from "@/lib/guard";
+import { parseJsonBody, text }     from "@/lib/guard/input";
+import { z }                       from "zod";
 import { INTERACTIVE_SPEC_SCHEMA, parseInteractiveSpec } from "@/lib/interactive/spec";
 import { INTERACTIVE_VISUALS_ENABLED } from "@/lib/interactive/flag";
 
 export const maxDuration = 30;
+
+// Caps from the 2026-11 audit (H2): a topic is a short phrase, history is the titles already covered.
+// The client sends history as chat messages ({ role, content }); plain strings are accepted too. Only the text
+// is used, capped. teachingFlow and learningStyle are legacy fields the client still sends; they are ignored.
+const BodySchema = z.object({
+  topic:         text(200),
+  history:       z.array(z.union([
+    z.string().max(8000),
+    z.object({ role: z.string().max(20), content: z.string().max(8000) }).strict(),
+  ])).max(100).default([]),
+  teachingFlow:  z.string().max(40).optional(),
+  learningStyle: z.string().max(40).optional(),
+}).strict();
 
 const client = getAnthropic();
 
@@ -125,17 +141,17 @@ export async function POST(req: NextRequest) {
     const { user } = guard;
     const supabase = await createClient();
 
-    const body = await req.json() as {
-      topic?: string;
-      history?: string[];
-    };
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { topic } = parsed.data;
+    // The client sends the whole chat; the model gets only the last 10 entries, 100 characters each.
+    const history = parsed.data.history
+      .slice(-10)
+      .map((h) => (typeof h === "string" ? h : h.content).trim().slice(0, 100))
+      .filter(Boolean);
 
-    const { topic, history = [] } = body;
-
-    if (!topic) {
-      return NextResponse.json({ error: "Topic is required" }, { status: 400 });
-    }
-
+    const blocked = await guardSpend(user.id, "teach");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "chat_turns");
     if (spent.error) return spent.error;
     consumed = spent.consumed;

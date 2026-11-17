@@ -27,6 +27,9 @@ import { formatChunk }               from "@/lib/rag/reference";
 import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
+import { guardSpend }                from "@/lib/guard";
+import { attachNarrationTokens }     from "@/lib/guard/narration";
+import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 
 export const maxDuration = 60;
 
@@ -38,7 +41,13 @@ export async function GET(
   let consumed: Consumed | null = null;
   try {
     const { conceptId: rawId } = await params;
-    const conceptId = decodeURIComponent(rawId);
+    let decoded: string;
+    try { decoded = decodeURIComponent(rawId); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+    // A KG concept id or, from course mode, a topic title used as the id (free-form fallback below): bounded and
+    // restricted to plain text either way.
+    const idCheck = parseValue(conceptIdSchema, decoded);
+    if (!idCheck.ok) return idCheck.response;
+    const conceptId = idCheck.data;
 
     // ── Auth + approval gate ──────────────────────────────────────────────────
     const guard = await requireEntitlement();
@@ -93,11 +102,13 @@ export async function GET(
         // Count the replay but never block it: a cached lesson is served even over the cap, and a failing
         // counter (503) must not stop it either, so the result is deliberately ignored.
         await spendAllowance(guard.entitlement, "replays").catch(() => undefined);
-        return NextResponse.json(hit.payload as LessonPayload);
+        return NextResponse.json(attachNarrationTokens(hit.payload as LessonPayload));
       }
     }
 
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
+    const blocked = await guardSpend(user.id, "lesson_generate");
+    if (blocked) return blocked;
     const spent = await spendAllowance(guard.entitlement, "fresh_lessons");
     if (spent.error) return spent.error;
     consumed = spent.consumed;
@@ -158,7 +169,7 @@ export async function GET(
       };
     }
 
-    const lesson = await generateLesson(concept, profile, ragContext);
+    const lesson = await generateLesson(concept, profile, ragContext, user.id);
 
     // Credit the sources that grounded this lesson. Stored in the cached
     // payload (so cache hits carry it) and in cached_lessons.rag_chunks_used.
@@ -197,7 +208,8 @@ export async function GET(
       // regenerate until an admin approves.
     }
 
-    return NextResponse.json(lesson);
+    // Tokens are minted for this response only; the cached row above never holds them.
+    return NextResponse.json(attachNarrationTokens(lesson));
   } catch (err) {
     await releaseConsumed(consumed);
     console.error("GET /api/learn/lesson error:", err);

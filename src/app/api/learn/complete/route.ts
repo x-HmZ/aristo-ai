@@ -10,16 +10,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
+import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
+import { z }                       from "zod";
+
+const BodySchema = z.object({ conceptId: conceptIdSchema }).strict();
 
 export async function POST(req: NextRequest) {
   try {
-    const { conceptId }: { conceptId: string } = await req.json();
-    if (!conceptId) {
-      return NextResponse.json({ error: "conceptId required" }, { status: 400 });
-    }
-
     const guard = await requireApproved();
     if (guard.error) return guard.error;
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { conceptId } = parsed.data;
     const { user } = guard;
     const supabase = await createClient();
 

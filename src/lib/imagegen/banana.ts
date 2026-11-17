@@ -99,6 +99,11 @@ export interface GenerateInfographicOpts {
    * never used for cache keying (prompt_hash already disambiguates).
    */
   conceptId?: string | null;
+  /**
+   * Called on a cache MISS only, right before the paid fal.ai call. The spend guard hooks in here so that cache
+   * hits are never rate limited; it throws to refuse (the error propagates to the caller).
+   */
+  beforeGenerate?: () => Promise<void>;
 }
 
 export interface GenerateInfographicResult {
@@ -432,7 +437,7 @@ export async function generateInfographic(
 ): Promise<GenerateInfographicResult> {
   const {
     prompt, style, tier = "pro", resolution = "1K", bypassCache = false,
-    userId = null, feature = "lesson.teaching_image", conceptId = null,
+    userId = null, feature = "lesson.teaching_image", conceptId = null, beforeGenerate,
   } = opts;
   if (!prompt || !prompt.trim()) {
     throw new Error("generateInfographic: prompt is required");
@@ -459,6 +464,7 @@ export async function generateInfographic(
     }
   }
 
+  await beforeGenerate?.();
   ensureFalConfigured();
 
   const result = (await fal.subscribe(model, {
@@ -605,10 +611,10 @@ export async function generate3dModel(
   userId?:  string | null,
   bypassCache: boolean = false,
   conceptId?: string | null,
-  opts: { multiview?: boolean } = {},
+  opts: { multiview?: boolean; beforeGenerate?: () => Promise<void> } = {},
 ): Promise<{ modelUrl: string; cached: boolean }> {
   if (opts.multiview) {
-    return generate3dModelMultiview(imageUrl, userId, bypassCache, conceptId);
+    return generate3dModelMultiview(imageUrl, userId, bypassCache, conceptId, opts.beforeGenerate);
   }
   if (!imageUrl || !imageUrl.trim()) {
     throw new Error("generate3dModel: imageUrl is required");
@@ -626,6 +632,7 @@ export async function generate3dModel(
     }
   }
 
+  await opts.beforeGenerate?.();
   ensureFalConfigured();
   // The eval saw one Tripo3D call hang indefinitely. `fal.subscribe` has no
   // timeout of its own, so without this the route would sit until Vercel's
@@ -682,6 +689,7 @@ export async function generate3dModelMultiview(
   userId?:  string | null,
   bypassCache: boolean = false,
   conceptId?: string | null,
+  beforeGenerate?: () => Promise<void>,
 ): Promise<{ modelUrl: string; cached: boolean }> {
   const trimmed = frontImageUrl.trim();
   if (!trimmed) throw new Error("generate3dModelMultiview: frontImageUrl is required");
@@ -699,6 +707,7 @@ export async function generate3dModelMultiview(
     }
   }
 
+  await beforeGenerate?.();
   ensureFalConfigured();
 
   const views: Record<string, string> = {};

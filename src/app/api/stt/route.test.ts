@@ -10,6 +10,7 @@ vi.mock("@/lib/auth/approval", () => ({
   requireApproved: async () => ({ user: { id: "u1" }, error: null }),
 }));
 vi.mock("@/lib/llm/usage", () => ({ logUsage }));
+vi.mock("@/lib/guard", () => ({ guardSpend: async () => null }));
 
 import { POST } from "@/app/api/stt/route";
 

@@ -37,6 +37,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { Lipsync, VISEMES } from "wawa-lipsync";
 import { useAristoStore, type TeacherAvatar } from "@/store/useAristoStore";
 import { alignmentUrlFor, parseAlignment, visemeAt, type VisemeSpan } from "@/lib/lipsync/visemes";
+import { tokenFromLesson } from "@/lib/tts/narration-key";
 
 // ─── Singletons (browser-only — guarded) ──────────────────────────────────────
 
@@ -179,10 +180,13 @@ function base64ToBlob(b64: string): Blob {
  * leaves lipsync on the FFT.
  */
 async function fetchTts(text: string, voice: string, scope: TtsScope = "live"): Promise<TtsAudio> {
+  // "lesson" only means something with the server-minted token that rode in on the lesson payload; without one
+  // the request is sent as live (the server would treat it so anyway).
+  const token = scope === "lesson" ? tokenFromLesson(useAristoStore.getState().activeLesson, text) : undefined;
   const res = await fetch("/api/tts", {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ text, voice, scope }),
+    body:    JSON.stringify(token ? { text, voice, scope, token } : { text, voice, scope: "live" }),
   });
   if (!res.ok) throw new Error(`TTS ${res.status}`);
 

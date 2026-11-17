@@ -17,6 +17,7 @@ const billing = vi.hoisted(() => ({
   spendAllowance: vi.fn(),
   releaseConsumed: vi.fn(),
 }));
+vi.mock("@/lib/guard", () => ({ guardSpend: async () => null }));
 vi.mock("@/lib/billing/entitlements", () => ({
   requireEntitlement: async () => ({ user: { id: "u1" }, error: null, entitlement: null, consumed: null }),
   spendAllowance: billing.spendAllowance,
@@ -45,6 +46,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 import { POST } from "@/app/api/tts/route";
+import { narrationToken } from "@/lib/guard/narration";
 
 const ALIGN = { characters: ["h"], character_start_times_seconds: [0], character_end_times_seconds: [0.1] };
 
@@ -82,6 +84,7 @@ beforeEach(() => {
   billing.spendAllowance.mockResolvedValue({ error: null, consumed: { accountId: "a", periodKey: "p", metric: "voice_chars", amount: 1 } });
   billing.releaseConsumed.mockReset();
   process.env.ELEVENLABS_API_KEY = "k";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
   delete process.env.TTS_TIMESTAMPS;
   mockFetch();
 });
@@ -104,7 +107,7 @@ describe("/api/tts cache", () => {
   });
 
   it("miss: calls upstream once, stores mp3 and alignment, logs usage without text", async () => {
-    const res = await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    const res = await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     const body = await res.json();
     expect(body.audio).toBeTypeOf("string");
     expect(elevenCalls).toBe(1);
@@ -120,7 +123,7 @@ describe("/api/tts cache", () => {
 
   it("hit: no upstream call, no usage, returns the public url", async () => {
     state.row = { storage_path: "tts/abc.mp3" };
-    const res = await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    const res = await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     const body = await res.json();
     expect(body.cached).toBe(true);
     expect(body.audioUrl).toBe("https://cdn.test/tts/abc.mp3");
@@ -131,14 +134,14 @@ describe("/api/tts cache", () => {
 
   it("lookup failure falls through to generation", async () => {
     state.lookupThrows = true;
-    const res = await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    const res = await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     expect(res.status).toBe(200);
     expect(elevenCalls).toBe(1);
   });
 
   it("store failure does not break the response", async () => {
     state.uploadError = new Error("bucket full");
-    const res = await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    const res = await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     expect(res.status).toBe(200);
     await tick();
     expect(state.upserts).toEqual([]);
@@ -146,14 +149,14 @@ describe("/api/tts cache", () => {
 
   it("does not cache a result that came without alignment", async () => {
     mockFetch({ align: false });
-    await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     await tick();
     expect(state.uploads).toEqual([]);
   });
 
   it("with TTS_TIMESTAMPS=off, plain audio is cached", async () => {
     process.env.TTS_TIMESTAMPS = "off";
-    const res = await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    const res = await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     expect(res.headers.get("content-type")).toBe("audio/mpeg");
     await tick();
     expect(state.uploads).toHaveLength(1);
@@ -171,7 +174,7 @@ describe("/api/tts metering", () => {
   });
 
   it("lesson scope consumes nothing", async () => {
-    await POST(req({ text: "Photosynthesis", scope: "lesson" }));
+    await POST(req({ text: "Photosynthesis", scope: "lesson", token: narrationToken("Photosynthesis") }));
     expect(billing.spendAllowance).not.toHaveBeenCalled();
   });
 
@@ -188,6 +191,33 @@ describe("/api/tts metering", () => {
     const res = await POST(req({ text: "Hello", scope: "live" }));
     expect(res).toBe(err);
     expect(elevenCalls).toBe(0);
+  });
+
+  it("narration tokens: valid caches without metering; missing, wrong or other-text token is live", async () => {
+    await POST(req({ text: "Mitosis", scope: "lesson", token: narrationToken("Mitosis") }));
+    await tick();
+    expect(state.uploads.some((p) => p.endsWith(".mp3"))).toBe(true);
+    expect(billing.spendAllowance).not.toHaveBeenCalled();
+
+    for (const body of [
+      { text: "Mitosis", scope: "lesson" },
+      { text: "Mitosis", scope: "lesson", token: "0".repeat(64) },
+      { text: "Meiosis", scope: "lesson", token: narrationToken("Mitosis") },
+    ]) {
+      state.uploads = [];
+      billing.spendAllowance.mockClear();
+      await POST(req(body));
+      await tick();
+      expect(state.uploads).toEqual([]);
+      expect(billing.spendAllowance).toHaveBeenCalledTimes(1);
+      expect(billing.spendAllowance.mock.calls[0][1]).toBe("voice_chars");
+    }
+  });
+
+  it("whitespace differences do not break a valid token", async () => {
+    await POST(req({ text: "  Mitosis   splits\n cells ", scope: "lesson", token: narrationToken("Mitosis splits cells") }));
+    await tick();
+    expect(state.uploads.some((p) => p.endsWith(".mp3"))).toBe(true);
   });
 
   it("releases once when ElevenLabs fails", async () => {

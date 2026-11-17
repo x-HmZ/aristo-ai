@@ -135,6 +135,8 @@ export interface QuizQuestion {
   misconception_targeted?: string;
   difficulty:             number;   // 0.0–1.0
   estimated_seconds?:     number;
+  /** HMAC over id, concept, type, question, correct_answer and difficulty, added by the server when it issues the quiz. */
+  answer_sig?:            string;
 }
 
 export interface ConceptMeta {
@@ -166,7 +168,8 @@ export async function generateQuestions(
   bloomLevel:   BloomLevel,
   questionType: QuestionType,
   difficulty:   number,
-  count:        number
+  count:        number,
+  userId:       string | null = null
 ): Promise<QuizQuestion[]> {
 
   const prompt = `You are an assessment expert. Generate ${count} quiz question(s) for the following concept.
@@ -210,7 +213,7 @@ Return your response by calling the deliver_questions tool.`;
       tool_choice: { type: "tool", name: "deliver_questions" },
       messages:    [{ role: "user", content: prompt }],
     },
-    { feature: "quiz.questions" }
+    { feature: "quiz.questions", userId }
   );
 
   const raw = extractQuestions(response, "AssessmentAgent.generateQuestions");
@@ -226,7 +229,8 @@ Return your response by calling the deliver_questions tool.`;
 export async function generateLessonQuiz(
   concept:    ConceptMeta,
   mastery:    number,          // current mastery score 0.0–1.0
-  count:      number = 4
+  count:      number = 4,
+  userId:     string | null = null
 ): Promise<QuizQuestion[]> {
 
   const difficulty = Math.min(1.0, mastery + 0.15);
@@ -276,7 +280,7 @@ Return your response by calling the deliver_questions tool with exactly ${count}
       tool_choice: { type: "tool", name: "deliver_questions" },
       messages:    [{ role: "user", content: prompt }],
     },
-    { feature: "quiz.lesson" }
+    { feature: "quiz.lesson", userId }
   );
 
   const raw = extractQuestions(response, "AssessmentAgent.generateLessonQuiz");
@@ -292,7 +296,8 @@ Return your response by calling the deliver_questions tool with exactly ${count}
  */
 export async function generateReviewQuestion(
   concept: ConceptMeta,
-  mastery: number
+  mastery: number,
+  userId:  string | null = null
 ): Promise<QuizQuestion[]> {
   const count      = mastery < 0.5 ? 2 : 1;
   const difficulty = Math.min(0.85, mastery + 0.1);
@@ -323,7 +328,7 @@ Return your response by calling the deliver_questions tool with ${count} questio
       tool_choice: { type: "tool", name: "deliver_questions" },
       messages:    [{ role: "user", content: prompt }],
     },
-    { feature: "quiz.review" }
+    { feature: "quiz.review", userId }
   );
 
   const raw = extractQuestions(response, "generateReviewQuestion");
@@ -334,7 +339,8 @@ Return your response by calling the deliver_questions tool with ${count} questio
 
 export async function evaluateShortAnswer(
   question:   QuizQuestion,
-  userAnswer: string
+  userAnswer: string,
+  userId:     string | null = null
 ): Promise<EvaluationResult> {
 
   const prompt = `You are evaluating a student's answer. Be encouraging but accurate.
@@ -362,7 +368,7 @@ Return your response by calling the deliver_evaluation tool.`;
         tool_choice: { type: "tool", name: "deliver_evaluation" },
         messages:    [{ role: "user", content: prompt }],
       },
-      { feature: "quiz.eval_short" }
+      { feature: "quiz.eval_short", userId }
     );
 
     const toolUse = response.content.find((b) => b.type === "tool_use");

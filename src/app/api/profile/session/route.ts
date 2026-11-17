@@ -20,29 +20,45 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient }              from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import {
   updateDynamicProfile,
   computeBloomAccuracy,
 }                                    from "@/lib/agents/profiler";
 import type { BehavioralSignals }    from "@/store/useAristoStore";
 import type { DynamicProfile }       from "@/store/useAristoStore";
+import { parseJsonBody }            from "@/lib/guard/input";
+import { z }                       from "zod";
+
+// Seconds and counts the browser accumulates in one session; the caps are far above any real session.
+const count = z.number().int().min(0).max(100_000);
+const BodySchema = z.object({
+  signals: z.object({
+    time_on_explanations_seconds: count,
+    time_on_examples_seconds:     count,
+    time_on_quizzes_seconds:      count,
+    clicked_explain_more:         count,
+    clicked_show_example:         count,
+    clicked_skip_to_quiz:         count,
+    questions_attempted:          count,
+    questions_correct:            count,
+  }).strict(),
+  sessionStart:   z.string().max(40).refine((s) => !Number.isNaN(Date.parse(s))),
+  conceptsViewed: z.array(z.string().max(100)).max(100),
+}).strict();
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as {
-      signals:        BehavioralSignals;
-      sessionStart:   string;
-      conceptsViewed: string[];
-    };
-
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { signals, sessionStart, conceptsViewed } = body;
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { signals, sessionStart, conceptsViewed } = parsed.data as {
+      signals: BehavioralSignals; sessionStart: string; conceptsViewed: string[];
+    };
 
     // ── 1. Write session_logs row ─────────────────────────────────────────────
     const sessionEnd    = new Date().toISOString();
@@ -50,7 +66,7 @@ export async function POST(req: NextRequest) {
       ? signals.questions_correct / signals.questions_attempted
       : null;
 
-    await supabase
+    await createServiceClient()
       .from("session_logs")
       .insert({
         user_id:                      user.id,

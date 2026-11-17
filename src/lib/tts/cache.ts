@@ -11,6 +11,7 @@
  * generation, never to broken narration.
  */
 import { createHash } from "crypto";
+import { normaliseTtsText } from "./narration-key";
 
 export const TTS_BUCKET         = "generated-assets";
 export const TTS_ASSET_KIND     = "tts_audio";
@@ -31,10 +32,8 @@ export interface TtsKeyInput {
   text:          string;
 }
 
-/** Trim and collapse every run of whitespace to one space. */
-export function normaliseTtsText(text: string): string {
-  return text.replace(/\s+/g, " ").trim();
-}
+// Defined in a client-safe module (narration tokens use the same normalisation); re-exported for existing callers.
+export { normaliseTtsText };
 
 /** SHA-256 hex over a versioned JSON of everything that changes the audio. */
 export function ttsCacheKey(input: TtsKeyInput): string {

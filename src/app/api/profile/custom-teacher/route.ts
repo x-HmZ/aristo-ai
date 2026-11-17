@@ -3,6 +3,12 @@
 
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { parseJsonBody } from "@/lib/guard/input";
+import { z } from "zod";
+
+const BodySchema = z.object({
+  avatarUrl: z.string().max(2048).url().refine((u) => u.startsWith("https://")),
+}).strict();
 
 export async function POST(request: Request) {
   try {
@@ -12,12 +18,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { avatarUrl } = body as { avatarUrl?: string };
-
-    if (!avatarUrl || !avatarUrl.startsWith("https://")) {
-      return NextResponse.json({ error: "Invalid avatarUrl" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(request, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { avatarUrl } = parsed.data;
 
     const { error } = await supabase
       .from("learner_profiles")
