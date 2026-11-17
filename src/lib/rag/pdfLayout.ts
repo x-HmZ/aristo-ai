@@ -160,14 +160,22 @@ export function detectHeadings(pages: Array<{ page: number; lines: Line[] }>): F
     });
   }
 
-  const sizes = [...new Set(found.map((f) => Math.round(f.size * 2) / 2))].sort((a, b) => b - a);
+  // A size used by only one or two lines (a cover title, a single banner) is not a
+  // heading level: if it counted, the real headings would all sink to depth 2 and
+  // a flat booklet would look like it has no chapters.
+  const counts = new Map<number, number>();
+  for (const f of found) {
+    const k = Math.round(f.size * 2) / 2;
+    counts.set(k, (counts.get(k) ?? 0) + 1);
+  }
+  let levels = [...counts].filter(([, n]) => n >= 3).map(([s]) => s).sort((a, b) => b - a);
+  if (levels.length === 0) levels = [...counts.keys()].sort((a, b) => b - a);
   return found
     .filter((f) => !/^\d+$/.test(f.title))
-    .map((f) => ({
-      title: f.title,
-      page:  f.page,
-      depth: Math.min(sizes.indexOf(Math.round(f.size * 2) / 2), 2),
-    }));
+    .map((f) => {
+      const k = Math.round(f.size * 2) / 2;
+      return { title: f.title, page: f.page, depth: Math.min(levels.filter((s) => s > k).length, 2) };
+    });
 }
 
 export interface PageTextStats {
