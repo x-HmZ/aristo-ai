@@ -6,6 +6,7 @@ import { useAristoStore, type CourseStructure } from "@/store/useAristoStore";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
 import { useModalDialog } from "@/hooks/useModalDialog";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -44,6 +45,7 @@ function OptionIcon({ children }: { children: React.ReactNode }) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
+  const { freeChat } = useCapabilities();
   const [courses,      setCourses]      = useState<PublishedCourse[] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError,     setGenError]     = useState<string | null>(null);
@@ -110,7 +112,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
         <div className="aristo-scroll flex-1 space-y-3 overflow-y-auto px-5 py-4">
 
           {/* Free explore */}
-          <button onClick={onExplore} className={OPTION}>
+          {freeChat && <button onClick={onExplore} className={OPTION}>
             <div className="flex items-start gap-3">
               <OptionIcon><Compass aria-hidden /></OptionIcon>
               <div>
@@ -120,7 +122,7 @@ export function ModePicker({ onExplore, onStartCourse }: ModePickerProps) {
                 </div>
               </div>
             </div>
-          </button>
+          </button>}
 
           {/* Generate a course */}
           <button onClick={handleGenerate} disabled={isGenerating} className={OPTION}>

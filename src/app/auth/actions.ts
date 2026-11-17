@@ -1,7 +1,33 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { appOrigin } from "@/lib/account/appUrl";
+import { consentRowsFor } from "@/lib/account/documents";
+import { writeNewAccount, type AccountWriteClient } from "@/lib/account/createAccount";
+import { allowCall, clientKey } from "@/lib/account/rateLimit";
+import {
+  ageStepSchema,
+  decideAgeStep,
+  firstIssue,
+  formToObject,
+  guardianSignUpSchema,
+  selfSignUpSchema,
+  SIGNUP_BLOCK_COOKIE,
+  type AgeBand,
+  type Grade,
+} from "@/lib/account/signup";
+import { verifyTurnstile } from "@/lib/account/turnstile";
+
+const TURNSTILE_FIELD = "cf-turnstile-response";
+const SIGNUP_WINDOW_MS = 60 * 60 * 1000;
+const SIGNUP_LIMIT = 10;
+
+function fail(path: string, message: string): never {
+  redirect(`${path}${path.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`);
+}
 
 export async function signIn(formData: FormData) {
   const supabase = await createClient();
@@ -18,28 +44,207 @@ export async function signIn(formData: FormData) {
   redirect("/learn");
 }
 
-export async function signUp(formData: FormData) {
-  const supabase = await createClient();
+// ── Sign-up ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-  const { error } = await supabase.auth.signUp({
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
+/** Step 1, the neutral age step. Under 16 choosing "Me" sets the session flag and shows the kind screen. */
+export async function startSignUp(formData: FormData) {
+  const parsed = ageStepSchema.safeParse(formToObject(formData));
+  if (!parsed.success) fail("/sign-up", "Please answer both questions.");
+
+  const outcome = decideAgeStep(parsed.data.who, parsed.data.band);
+  if (outcome.kind === "needs_guardian") {
+    // A session cookie (no maxAge): it ends when the browser closes. Nothing about the learner is stored.
+    (await cookies()).set(SIGNUP_BLOCK_COOKIE, "1", { httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production" });
+    redirect("/sign-up");
+  }
+  if (outcome.kind === "guardian_form") redirect(`/sign-up?step=guardian&band=${outcome.band}`);
+  redirect("/sign-up?step=self");
+}
+
+/** Shared by both paths. Returns normally only by redirecting. */
+async function createAccount(args: {
+  email: string;
+  password: string;
+  nickname: string;
+  holder: "self" | "guardian";
+  band: AgeBand;
+  grade: Grade | null;
+  turnstileToken: string | undefined;
+  formPath: string;
+}): Promise<never> {
+  const h = await headers();
+  if ((await cookies()).get(SIGNUP_BLOCK_COOKIE)) redirect("/sign-up");
+  if (!allowCall("signup", clientKey(h), SIGNUP_LIMIT, SIGNUP_WINDOW_MS)) {
+    fail(args.formPath, "Too many attempts. Please try again later.");
+  }
+  if (!(await verifyTurnstile(args.turnstileToken))) {
+    fail(args.formPath, "We could not check that you are a person. Please try again.");
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp({
+    email: args.email,
+    password: args.password,
     options: {
-      data: {
-        full_name: formData.get("name") as string,
-      },
+      data: { full_name: args.nickname },
+      emailRedirectTo: `${appOrigin(h)}/auth/callback`,
     },
   });
 
   if (error) {
-    redirect(`/sign-up?error=${encodeURIComponent(error.message)}`);
+    // Say what the user can fix (the password) and nothing that reveals whether an address is registered.
+    if (error.code === "weak_password") fail(args.formPath, "That password is too weak. Try a longer one.");
+    fail(args.formPath, "We could not create the account. Please check your details and try again.");
+  }
+
+  // With "Confirm email" on, an address that is already registered comes back as a user with no identities and a
+  // made-up id. Write nothing for it, and give the same answer as for a new sign-up.
+  const user = data.user;
+  if (!user || (user.identities && user.identities.length === 0)) {
+    redirect("/sign-in?message=Check your email to confirm your account");
+  }
+
+  const service = createServiceClient();
+  const failure = await writeNewAccount(service as unknown as AccountWriteClient, {
+    userId: user.id,
+    holder: args.holder,
+    band: args.band,
+    nickname: args.nickname,
+    grade: args.grade,
+  });
+  if (failure) {
+    // Do not leave a half-created account behind (it would sit at the restrictive defaults with no consents).
+    await service.auth.admin.deleteUser(user.id);
+    console.error("[sign-up] profile or consent write failed:", failure);
+    fail(args.formPath, "We could not finish creating the account. Please try again.");
   }
 
   redirect("/sign-in?message=Check your email to confirm your account");
+}
+
+/** "Me, 16 or older": the person signing in is the learner. */
+export async function signUpSelf(formData: FormData) {
+  const form = formToObject(formData);
+  const parsed = selfSignUpSchema.safeParse({ ...form, turnstileToken: form[TURNSTILE_FIELD] });
+  if (!parsed.success) fail("/sign-up?step=self", firstIssue(parsed.error));
+  const d = parsed.data;
+  return createAccount({
+    email: d.email,
+    password: d.password,
+    nickname: d.nickname,
+    holder: "self",
+    band: "16_plus",
+    grade: null,
+    turnstileToken: d.turnstileToken,
+    formPath: "/sign-up?step=self",
+  });
+}
+
+/** "My child": a parent or guardian creates and owns the account; the learner has no login. */
+export async function signUpGuardian(formData: FormData) {
+  const form = formToObject(formData);
+  const parsed = guardianSignUpSchema.safeParse({ ...form, turnstileToken: form[TURNSTILE_FIELD] });
+  const path = `/sign-up?step=guardian&band=${bandOrDefault(form.band)}`;
+  if (!parsed.success) fail(path, firstIssue(parsed.error));
+  const d = parsed.data;
+  return createAccount({
+    email: d.email,
+    password: d.password,
+    nickname: d.nickname,
+    holder: "guardian",
+    band: d.band,
+    grade: d.grade,
+    turnstileToken: d.turnstileToken,
+    formPath: path,
+  });
+}
+
+function bandOrDefault(band: string | undefined): AgeBand {
+  return band === "13_15" || band === "16_plus" ? band : "under_13";
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+const acceptSchema = z.object({
+  accept: z.literal("on"),
+  guardianDeclaration: z.literal("on").optional(),
+});
+
+/** An existing user records the terms and privacy consents (ACCESS_MODE=open needs them on file). */
+export async function acceptDocuments(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/sign-in");
+
+  const parsed = acceptSchema.safeParse(formToObject(formData));
+  if (!parsed.success) redirect("/pending");
+
+  const service = createServiceClient();
+  const { data: profile } = await service.from("profiles").select("account_holder").eq("id", user.id).maybeSingle();
+  const holder = profile?.account_holder === "guardian" ? "guardian" : "self";
+  if (holder === "guardian" && parsed.data.guardianDeclaration !== "on") redirect("/pending");
+
+  const rows = consentRowsFor(holder).map((r) => ({ user_id: user.id, kind: r.kind, document_version: r.document_version }));
+  const { error } = await service
+    .from("consents")
+    .upsert(rows, { onConflict: "user_id,kind,document_version", ignoreDuplicates: true });
+  if (error) console.error("[accept] consent write failed:", error.code);
+  redirect("/learn");
+}
+
+// ── Password reset ──────────────────────────────────────────────────────────────────────────────────────────
+
+const GENERIC_RESET_MESSAGE =
+  "If an account exists for that address, we have sent an email with a link to set a new password.";
+
+const resetRequestSchema = z.object({ email: z.string().trim().toLowerCase().max(254).pipe(z.email("Enter a valid email address.")) });
+
+/** Always answers the same way, whether or not the address has an account. */
+export async function requestPasswordReset(formData: FormData) {
+  const parsed = resetRequestSchema.safeParse(formToObject(formData));
+  if (!parsed.success) fail("/auth/forgot", firstIssue(parsed.error));
+
+  const h = await headers();
+  if (!allowCall("password-reset", clientKey(h), 5, 60 * 60 * 1000)) {
+    fail("/auth/forgot", "Too many attempts. Please try again later.");
+  }
+
+  const supabase = await createClient();
+  // The result is ignored on purpose: an error here must not tell the visitor whether the address exists.
+  await supabase.auth
+    .resetPasswordForEmail(parsed.data.email, { redirectTo: `${appOrigin(h)}/auth/callback?next=/auth/reset` })
+    .catch(() => undefined);
+
+  redirect(`/auth/forgot?message=${encodeURIComponent(GENERIC_RESET_MESSAGE)}`);
+}
+
+const newPasswordSchema = z
+  .object({
+    password: z.string().min(8, "The password needs at least 8 characters.").max(72, "The password can have at most 72 characters."),
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, { message: "The two passwords do not match.", path: ["confirm"] });
+
+/** The landing page of the email link: the callback has signed the user in, now they choose a new password. */
+export async function setNewPassword(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) fail("/auth/forgot", "That link has expired. Please ask for a new one.");
+
+  const parsed = newPasswordSchema.safeParse(formToObject(formData));
+  if (!parsed.success) fail("/auth/reset", firstIssue(parsed.error));
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) fail("/auth/reset", "We could not set the new password. Please ask for a new link.");
+
+  await supabase.auth.signOut();
+  redirect("/sign-in?message=Your password has been changed. Please sign in.");
 }

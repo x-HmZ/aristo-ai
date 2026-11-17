@@ -7,6 +7,7 @@ import { AvatarCredit } from "@/components/learn/AvatarCredit";
 import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 
 // T02 — 3D asset diet: only the default avatar + classroom preload at module
 // scope (see Teacher.tsx / Classroom.tsx). Everything else lazy-loads via
@@ -74,8 +75,9 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
   const progress   = topicTotal > 0 ? (topicNum / topicTotal) * 100 : 0;
 
   // Merge custom avatar into the list if the user has created one
+  const { customTeacher } = useCapabilities();
   const visibleAvatars = [
-    ...(customTeacherGlbUrl
+    ...(customTeacher && customTeacherGlbUrl
       ? [{ value: "custom" as TeacherAvatar, label: "My teacher" }]
       : []),
     ...AVATARS,
@@ -104,7 +106,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
             </button>
           ))}
           {/* Create your own teacher */}
-          <a
+          {customTeacher && <a
             href="/create-teacher"
             className={cn(
               FOCUS,
@@ -113,7 +115,7 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
             title="Create your own 3D teacher avatar"
           >
             Create yours
-          </a>
+          </a>}
         </div>
 
         <div className="flex shrink-0 items-center gap-2">

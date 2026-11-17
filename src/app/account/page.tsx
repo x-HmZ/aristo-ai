@@ -8,6 +8,11 @@ import { fetchPlanRows } from "@/lib/billing/store";
 import { buildAccountSummary, type AccountSummary } from "@/lib/billing/summary";
 import { METRIC_LABELS, meterText } from "@/components/billing/format";
 import { BillingActions } from "@/components/billing/BillingActions";
+import { createClient } from "@/lib/supabase/server";
+import { capabilitiesFor } from "@/lib/account/capabilities";
+import { ParentControls } from "@/components/account/ParentControls";
+import { ChangePasswordForm } from "@/components/account/ChangePasswordForm";
+import { LeavingSection } from "@/components/account/LeavingSection";
 
 export const dynamic = "force-dynamic";
 
@@ -50,9 +55,18 @@ function Meter({ id, label, used, limit }: { id: string; label: string; used: nu
   );
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; message?: string }>;
+}) {
   const user = await getSignedInUser();
   if (!user) redirect("/sign-in");
+  const params = await searchParams;
+
+  // The learner fields and switches (migration 025). "*" so the page still renders before 025 is applied.
+  const { data: profile } = await (await createClient()).from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const capabilities = capabilitiesFor(profile);
 
   let summary: AccountSummary | null = null;
   let planNames: Record<string, string> = {};
@@ -73,6 +87,19 @@ export default async function AccountPage() {
             Back to learning
           </Link>
         </header>
+
+        <div id="account-status" tabIndex={-1}>
+          {params.error && (
+            <p role="alert" className="rounded-[10px] border border-danger/25 bg-danger/10 p-3 text-sm text-danger">
+              {params.error}
+            </p>
+          )}
+          {params.message && (
+            <p role="status" className="rounded-[10px] border border-tint-line bg-tint p-3 text-sm text-ink">
+              {params.message}
+            </p>
+          )}
+        </div>
 
         {!summary ? (
           <p className="rounded-2xl border border-line bg-surface p-6 text-body" role="alert">
@@ -123,6 +150,10 @@ export default async function AccountPage() {
             </section>
           </>
         )}
+
+        {profile?.account_holder === "guardian" && <ParentControls capabilities={capabilities} />}
+        <ChangePasswordForm />
+        <LeavingSection />
       </div>
     </main>
   );
