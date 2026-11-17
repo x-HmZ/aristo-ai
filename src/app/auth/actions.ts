@@ -2,8 +2,10 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { appOrigin } from "@/lib/account/appUrl";
+import { consentRowsFor } from "@/lib/account/documents";
 import { writeNewAccount, type AccountWriteClient } from "@/lib/account/createAccount";
 import { allowCall, clientKey } from "@/lib/account/rateLimit";
 import {
@@ -165,4 +167,84 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+const acceptSchema = z.object({
+  accept: z.literal("on"),
+  guardianDeclaration: z.literal("on").optional(),
+});
+
+/** An existing user records the terms and privacy consents (ACCESS_MODE=open needs them on file). */
+export async function acceptDocuments(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/sign-in");
+
+  const parsed = acceptSchema.safeParse(formToObject(formData));
+  if (!parsed.success) redirect("/pending");
+
+  const service = createServiceClient();
+  const { data: profile } = await service.from("profiles").select("account_holder").eq("id", user.id).maybeSingle();
+  const holder = profile?.account_holder === "guardian" ? "guardian" : "self";
+  if (holder === "guardian" && parsed.data.guardianDeclaration !== "on") redirect("/pending");
+
+  const rows = consentRowsFor(holder).map((r) => ({ user_id: user.id, kind: r.kind, document_version: r.document_version }));
+  const { error } = await service
+    .from("consents")
+    .upsert(rows, { onConflict: "user_id,kind,document_version", ignoreDuplicates: true });
+  if (error) console.error("[accept] consent write failed:", error.code);
+  redirect("/learn");
+}
+
+// ── Password reset ──────────────────────────────────────────────────────────────────────────────────────────
+
+const GENERIC_RESET_MESSAGE =
+  "If an account exists for that address, we have sent an email with a link to set a new password.";
+
+const resetRequestSchema = z.object({ email: z.string().trim().toLowerCase().max(254).pipe(z.email("Enter a valid email address.")) });
+
+/** Always answers the same way, whether or not the address has an account. */
+export async function requestPasswordReset(formData: FormData) {
+  const parsed = resetRequestSchema.safeParse(formToObject(formData));
+  if (!parsed.success) fail("/auth/forgot", firstIssue(parsed.error));
+
+  const h = await headers();
+  if (!allowCall("password-reset", clientKey(h), 5, 60 * 60 * 1000)) {
+    fail("/auth/forgot", "Too many attempts. Please try again later.");
+  }
+
+  const supabase = await createClient();
+  // The result is ignored on purpose: an error here must not tell the visitor whether the address exists.
+  await supabase.auth
+    .resetPasswordForEmail(parsed.data.email, { redirectTo: `${appOrigin(h)}/auth/callback?next=/auth/reset` })
+    .catch(() => undefined);
+
+  redirect(`/auth/forgot?message=${encodeURIComponent(GENERIC_RESET_MESSAGE)}`);
+}
+
+const newPasswordSchema = z
+  .object({
+    password: z.string().min(8, "The password needs at least 8 characters.").max(72, "The password can have at most 72 characters."),
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, { message: "The two passwords do not match.", path: ["confirm"] });
+
+/** The landing page of the email link: the callback has signed the user in, now they choose a new password. */
+export async function setNewPassword(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) fail("/auth/forgot", "That link has expired. Please ask for a new one.");
+
+  const parsed = newPasswordSchema.safeParse(formToObject(formData));
+  if (!parsed.success) fail("/auth/reset", firstIssue(parsed.error));
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) fail("/auth/reset", "We could not set the new password. Please ask for a new link.");
+
+  await supabase.auth.signOut();
+  redirect("/sign-in?message=Your password has been changed. Please sign in.");
 }
