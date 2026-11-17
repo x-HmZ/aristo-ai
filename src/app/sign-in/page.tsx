@@ -50,7 +50,7 @@ export default async function SignInPage({ searchParams }: PageProps) {
           {/* Error / Message */}
           {params.error && (
             <div role="alert" className="mb-4 p-3 rounded-[10px] bg-danger/10 border border-danger/25 text-danger text-sm">
-              {decodeURIComponent(params.error)}
+              {params.error}
             </div>
           )}
           {params.message && (

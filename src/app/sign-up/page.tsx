@@ -73,7 +73,8 @@ export default async function SignUpPage({ searchParams }: PageProps) {
     );
   }
 
-  const error = params.error ? decodeURIComponent(params.error) : undefined;
+  // Next has already decoded the query value; decoding again throws on a stray "%" (a 500). Rendered as plain text.
+  const error = params.error || undefined;
   const signInLink = (
     <p className="text-center text-sm text-muted mt-6">
       Already have an account?{" "}
