@@ -47,3 +47,40 @@ GRANT  EXECUTE ON FUNCTION public.increment_misconception(UUID, VARCHAR, TEXT) T
 -- Then, signed in as a test learner in the app: answer one quiz question; /admin shows the attempt and the
 -- mastery row appears. In the browser console, a direct supabase.from('quiz_attempts').insert(...) must fail
 -- with 42501.
+
+-- ── 3. learner_profiles.custom_teacher_glb_url: set only by the server ───────────────────────────────────────
+-- learner_profiles stays writable by the user's own client (RLS), so a child account could set this column
+-- directly and bypass the guardian's custom-teacher switch, and point the lesson at any 3D model URL. Only
+-- /api/profile/custom-teacher sets it now (service role, after the capability check and the host allow-list).
+-- Same pattern as 018: end-user roles may not set or change the column; the service role, the SQL editor
+-- (postgres) and supabase_admin may. Safe to run more than once.
+
+CREATE OR REPLACE FUNCTION public.guard_learner_custom_teacher()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+    IF current_user NOT IN ('service_role', 'postgres', 'supabase_admin') THEN
+        IF TG_OP = 'INSERT' THEN
+            IF NEW.custom_teacher_glb_url IS NOT NULL THEN
+                RAISE EXCEPTION 'learner_profiles: custom_teacher_glb_url cannot be set by the account owner'
+                    USING ERRCODE = '42501';
+            END IF;
+        ELSIF NEW.custom_teacher_glb_url IS DISTINCT FROM OLD.custom_teacher_glb_url THEN
+            RAISE EXCEPTION 'learner_profiles: custom_teacher_glb_url cannot be changed by the account owner'
+                USING ERRCODE = '42501';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS learner_profiles_guard_custom_teacher ON public.learner_profiles;
+CREATE TRIGGER learner_profiles_guard_custom_teacher
+    BEFORE INSERT OR UPDATE ON public.learner_profiles
+    FOR EACH ROW EXECUTE FUNCTION public.guard_learner_custom_teacher();
+
+-- Check: signed in as a test learner in the browser console, an update of your own learner_profiles row setting
+-- custom_teacher_glb_url must fail with 42501, and an update of pace must still succeed (and so must the
+-- end-of-session flush, which upserts the row without touching this column).
