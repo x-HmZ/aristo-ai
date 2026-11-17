@@ -16,12 +16,16 @@
  */
 
 import type { NextResponse } from "next/server";
+import { breakerResponse, checkBreaker } from "./breaker";
 import { enforceRate, rateLimitedResponse } from "./rate";
 import type { GuardFeature } from "./limits";
 
 export { RATE_LIMITS, type GuardFeature } from "./limits";
 
 export async function guardSpend(userId: string, feature: GuardFeature): Promise<NextResponse | null> {
+  // Spend ceilings first (cheap, cached), so a paused day does not even count against the rate windows.
+  const spend = await checkBreaker(userId);
+  if (!spend.ok) return breakerResponse(spend);
   const decision = await enforceRate(userId, feature);
   return decision.allowed ? null : rateLimitedResponse(decision);
 }
