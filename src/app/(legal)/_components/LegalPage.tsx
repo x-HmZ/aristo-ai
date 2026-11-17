@@ -32,9 +32,8 @@ export function LegalPage({
           <div role="note" className="rounded-xl border border-line bg-surface p-4 text-sm text-body">
             <p className="font-semibold text-ink">Draft, not yet in force</p>
             <p className="mt-1">
-              This page is a draft. It becomes valid only once the operator has filled in the details it needs
-              ({missing.length > 0 ? missing.join(", ") : "none missing"}) and has reviewed the text.
-              Do not rely on it yet.
+              This page is a draft. It becomes valid only once the operator has published their details and
+              reviewed the text. Do not rely on it yet.
             </p>
           </div>
         )}
