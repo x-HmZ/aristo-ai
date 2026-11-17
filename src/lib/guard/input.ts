@@ -39,8 +39,17 @@ export const profileSchema = z
 
 export type ParsedBody<T> = { ok: true; data: T } | { ok: false; response: NextResponse };
 
-/** Read and validate a JSON body. 413 when over MAX_BODY_BYTES, 400 for bad JSON or a schema failure. */
+/**
+ * Read and validate a JSON body. 415 unless the Content-Type is application/json (a cross-site HTML form or a
+ * "simple" cross-origin request cannot send that type without a CORS preflight, so this is defence in depth for
+ * the cookie-authenticated routes that change state), 413 when over MAX_BODY_BYTES, 400 for bad JSON or a
+ * schema failure.
+ */
 export async function parseJsonBody<S extends z.ZodTypeAny>(req: Request, schema: S, maxBytes = MAX_BODY_BYTES): Promise<ParsedBody<z.infer<S>>> {
+  const mediaType = (req.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+  if (mediaType !== "application/json") {
+    return { ok: false, response: NextResponse.json({ error: "Content-Type must be application/json" }, { status: 415 }) };
+  }
   const declared = Number(req.headers.get("content-length"));
   if (Number.isFinite(declared) && declared > maxBytes) {
     return { ok: false, response: NextResponse.json({ error: "Request too large" }, { status: 413 }) };

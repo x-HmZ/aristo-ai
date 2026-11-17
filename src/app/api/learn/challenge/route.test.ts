@@ -11,7 +11,7 @@ vi.mock("@/lib/billing/entitlements", () => ({
 
 import { POST } from "@/app/api/learn/challenge/route";
 
-const req = (b: unknown) => new Request("http://x/api/learn/challenge", { method: "POST", body: JSON.stringify(b) }) as never;
+const req = (b: unknown) => new Request("http://x/api/learn/challenge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) }) as never;
 const ok = { question: "q", correctAnswer: "a", userAnswer: "b", conceptName: "c" };
 const tool = (input: unknown) => ({ content: [{ type: "tool_use", name: "deliver_evaluation", input }] });
 

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { classifyAssetUrl, verifyAssetUrl } from "@/lib/guard/assets";
 import { conceptIdSchema, parseJsonBody, parseValue, profileSchema } from "@/lib/guard/input";
 
-const post = (body: string, headers: Record<string, string> = {}) =>
+const post = (body: string, headers: Record<string, string> = { "Content-Type": "application/json" }) =>
   new Request("http://x/api", { method: "POST", body, headers });
 
 describe("conceptIdSchema", () => {
@@ -22,6 +22,16 @@ describe("conceptIdSchema", () => {
 describe("parseJsonBody", () => {
   const schema = z.object({ a: z.string().max(5) }).strict();
 
+  it("415 unless the Content-Type is application/json", async () => {
+    const bad: Record<string, string>[] = [{}, { "Content-Type": "text/plain" }, { "Content-Type": "application/x-www-form-urlencoded" }];
+    for (const headers of bad) {
+      const r = await parseJsonBody(post('{"a":"hi"}', headers), schema);
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.response.status).toBe(415);
+    }
+    expect((await parseJsonBody(post('{"a":"hi"}', { "Content-Type": "Application/JSON; charset=utf-8" }), schema)).ok).toBe(true);
+  });
+
   it("returns the data for a valid body", async () => {
     const r = await parseJsonBody(post('{"a":"hi"}'), schema);
     expect(r).toEqual({ ok: true, data: { a: "hi" } });
@@ -35,7 +45,7 @@ describe("parseJsonBody", () => {
   });
   it("413 over the byte cap, by header or by size", async () => {
     const big = JSON.stringify({ a: "x".repeat(200) });
-    const byHeader = await parseJsonBody(post("{}", { "content-length": "999999" }), schema);
+    const byHeader = await parseJsonBody(post("{}", { "Content-Type": "application/json", "content-length": "999999" }), schema);
     const bySize = await parseJsonBody(post(big), schema, 100);
     for (const r of [byHeader, bySize]) {
       expect(r.ok).toBe(false);

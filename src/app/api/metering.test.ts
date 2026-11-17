@@ -80,7 +80,7 @@ import { POST as coursePOST } from "@/app/api/courses/generate/route";
 
 const CONSUMED = (metric: string, amount = 1) => ({ accountId: "a", periodKey: "p", metric, amount });
 const json = (body: unknown) =>
-  new Request("http://x/api", { method: "POST", body: JSON.stringify(body) }) as never;
+  new Request("http://x/api", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }) as never;
 const lessonParams = { params: Promise.resolve({ conceptId: "c1" }) };
 
 beforeEach(() => {

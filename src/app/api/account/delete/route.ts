@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { deleteAccount, deleteRequestSchema, supabaseDeletionStore } from "@/lib/account/leaving";
 import { allowCall } from "@/lib/account/rateLimit";
+import { parseJsonBody } from "@/lib/guard/input";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +20,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
-  const parsed = deleteRequestSchema.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: 'Type DELETE to confirm.' }, { status: 400 });
+  // 415 unless the body is declared application/json; 400 unless it carries the DELETE confirmation.
+  const parsed = await parseJsonBody(req, deleteRequestSchema);
+  if (!parsed.ok) return parsed.response;
 
   const result = await deleteAccount(supabaseDeletionStore(createServiceClient()), user.id);
   if (!result.ok) {

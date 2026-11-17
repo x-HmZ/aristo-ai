@@ -53,7 +53,7 @@ function body(over: Record<string, unknown> = {}) {
     correctAnswer: Q.correct_answer, difficulty: Q.difficulty, userAnswer: "1", answerSig: signQuestion(Q, "lesson"), ...over,
   };
 }
-const req = (b: unknown) => new Request("http://x/api/quiz/submit", { method: "POST", body: JSON.stringify(b) }) as never;
+const req = (b: unknown) => new Request("http://x/api/quiz/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) }) as never;
 
 beforeEach(() => {
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
