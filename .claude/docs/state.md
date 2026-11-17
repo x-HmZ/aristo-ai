@@ -2,6 +2,30 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-17 - Launch readiness: everything without the owner is built (branch feat/launch-features, PR open)
+
+**Resume from `.claude/plans/launch/OWNER-STEPS.md`** (what only Hmz can do, in order) and `.claude/plans/launch/README.md`
+(brief status table). Do not re-audit.
+
+- **Live on production (deploy-prep)**: PR 30 (security fixes; the three open routes answer 404) and PR 31 (next
+  15.5.29, dead code). Migrations 018-021 applied by Hmz; 39 behavioural checks passed with a temporary user
+  (script kept only in the session scratchpad; it creates and deletes its own user).
+- **On feat/launch-features, not deployed**: narration cache, `/api/stt`, textbook ingestion, accounts/plans/allowances,
+  Paddle sandbox (2026-11-16); spend guard (rate limits in the database, daily cut-off, Zod limits, narration tokens,
+  signed quiz keys, server-only learner writes), account lifecycle (age step, guardian-held accounts, consents,
+  parent controls, reset, export, delete, `ACCESS_MODE`), legal drafts, AI label, error states, sitemap/robots,
+  `docs/compliance/*` (2026-11-17). Checks: type-check, 1000 tests, production build, local production server
+  (new pages 200, protected routes 401/404, `/demo` probe clean). Two security-reviewer passes, findings fixed.
+- **Migrations not applied: 023, 025 (before the deploy), 024 (only AFTER the deploy; earlier loses quiz saves).**
+  The feature PR must not be merged before 023 and 025 are applied: sign-up writes the new columns.
+- **PDF pipeline live test** (25-page NASA booklet, 0.11 USD, all test rows and the test admin removed): UI flow
+  works; `Draft a course` was broken by schema bounds and is fixed; embeddings never ran because the OpenAI account
+  has no credit.
+- **For Hmz to confirm**: a second admin account exists (created 2026-04-19). Local-only: `pages/dev/learn-shell.tsx`
+  (untracked) got the new `capabilities` prop so the local build passes.
+- **Next (code)**: narration-failure notice; several learners per account; organisation UI; quiz cache and catalogue
+  pre-generation; server-side checkout creation; `src/lib/env.ts`; CSP; pruning `rate_counters`.
+
 ## 2026-11-16 - Launch readiness: audits, plan, first security fixes (branch fix/launch-critical)
 
 **Resume from `.claude/plans/launch/README.md`** (decisions taken, 14 ordered briefs L01-L14, open owner decisions D1-D9).
