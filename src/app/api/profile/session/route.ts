@@ -20,7 +20,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient }              from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import {
   updateDynamicProfile,
   computeBloomAccuracy,
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       ? signals.questions_correct / signals.questions_attempted
       : null;
 
-    await supabase
+    await createServiceClient()
       .from("session_logs")
       .insert({
         user_id:                      user.id,

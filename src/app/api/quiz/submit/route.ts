@@ -16,7 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient }              from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import {
   evaluateShortAnswer,
@@ -58,6 +58,9 @@ export async function POST(req: NextRequest) {
     const context = body.context ?? "lesson";
     const { user } = guard;
     const supabase = await createClient();
+    // Learner tables are written only by the server (migration 024 removes the browser's write access): the user
+    // is authenticated above, and every write below carries user.id.
+    const service = createServiceClient();
 
     // ── Build a minimal QuizQuestion for the evaluators ──────────────────────
     const q: QuizQuestion = {
@@ -119,7 +122,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Upsert mastery row ────────────────────────────────────────────────────
-    await supabase
+    await service
       .from("user_concept_mastery")
       .upsert(
         {
@@ -134,7 +137,7 @@ export async function POST(req: NextRequest) {
       );
 
     // ── Write per-question quiz_attempts row ──────────────────────────────────
-    await supabase
+    await service
       .from("quiz_attempts")
       .insert({
         user_id:               user.id,
@@ -154,14 +157,14 @@ export async function POST(req: NextRequest) {
 
     // ── Log misconception if detected ────────────────────────────────────────
     if (result.misconception_detected) {
-      const { error: rpcErr } = await supabase.rpc("increment_misconception", {
+      const { error: rpcErr } = await service.rpc("increment_misconception", {
         p_user_id:    user.id,
         p_concept_id: body.conceptId,
         p_text:       result.misconception_detected,
       });
 
       if (rpcErr) {
-        await supabase
+        await service
           .from("user_misconceptions")
           .insert({
             user_id:          user.id,
