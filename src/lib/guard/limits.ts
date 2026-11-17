@@ -35,6 +35,10 @@ export const RATE_LIMITS = {
   // Sonnet, a widget of several thousand tokens, up to two attempts: about $0.10 to $0.20 a miss. Counted only
   // on a cache miss. 20 a day x $0.2 = $4/day at worst, which the per-user USD ceiling cuts off at $1.
   interactive_generate: [{ seconds: HOUR, limit: 8 }, { seconds: DAY, limit: 20 }],
+  // Not a paid call: a session_logs insert at the end of a learning session. Bounds row growth from a script.
+  profile_session: [{ seconds: HOUR, limit: 60 }, { seconds: DAY, limit: 200 }],
+  // Not a paid call: one small update at the end of a quiz. Bounds write volume from a script.
+  quiz_complete:   [{ seconds: HOUR, limit: 60 }, { seconds: DAY, limit: 300 }],
   // Haiku, 512 tokens, under a cent. A child taps "explain more" a few times per lesson.
   explain_more:    [{ seconds: HOUR, limit: 30 }, { seconds: DAY, limit: 120 }],
   // Haiku, 256 tokens, under a cent. One per challenge question.

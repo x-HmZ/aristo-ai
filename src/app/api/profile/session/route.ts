@@ -28,6 +28,8 @@ import {
 import type { BehavioralSignals }    from "@/store/useAristoStore";
 import type { DynamicProfile }       from "@/store/useAristoStore";
 import { parseJsonBody }            from "@/lib/guard/input";
+import { requireApproved }          from "@/lib/auth/approval";
+import { enforceRate, rateLimitedResponse } from "@/lib/guard/rate";
 import { z }                       from "zod";
 
 // Seconds and counts the browser accumulates in one session; the caps are far above any real session.
@@ -49,13 +51,14 @@ const BodySchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApproved();
+    if (guard.error) return guard.error;
+    const { user } = guard;
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
     const parsed = await parseJsonBody(req, BodySchema);
     if (!parsed.ok) return parsed.response;
+    const decision = await enforceRate(user.id, "profile_session");
+    if (!decision.allowed) return rateLimitedResponse(decision);
     const { signals, sessionStart, conceptsViewed } = parsed.data as {
       signals: BehavioralSignals; sessionStart: string; conceptsViewed: string[];
     };
