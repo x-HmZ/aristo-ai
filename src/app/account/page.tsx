@@ -16,7 +16,7 @@ import { LeavingSection } from "@/components/account/LeavingSection";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Account | Aristo" };
+export const metadata: Metadata = { title: "Account | Aristo", robots: { index: false, follow: false } };
 
 const STATUS_TEXT: Record<string, string> = {
   active: "Active",

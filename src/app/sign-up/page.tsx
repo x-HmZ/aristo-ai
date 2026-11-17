@@ -27,7 +27,7 @@ import { readTurnstileEnv, turnstileEnabled } from "@/lib/account/turnstile";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Create an account | Aristo" };
+export const metadata: Metadata = { title: "Create an account | Aristo", robots: { index: false, follow: false } };
 
 interface PageProps {
   searchParams: Promise<{ error?: string; step?: string; band?: string }>;

@@ -26,6 +26,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/billing/entitlements", () => ent);
+vi.mock("@/lib/account/capabilityGuard", () => ({ refuseUnlessAllowed: async () => null }));
 vi.mock("@/lib/guard", () => ({
   guardSpend: async () => null,
   spendHook: () => async () => undefined,

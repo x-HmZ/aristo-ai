@@ -3,6 +3,7 @@
 
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { refuseUnlessAllowed } from "@/lib/account/capabilityGuard";
 import { parseJsonBody } from "@/lib/guard/input";
 import { z } from "zod";
 
@@ -17,6 +18,10 @@ export async function POST(request: Request) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // The custom (selfie) teacher is off for a guardian-held (child) account until the guardian turns it on.
+    const off = await refuseUnlessAllowed(user.id, "customTeacher");
+    if (off) return off;
 
     const parsed = await parseJsonBody(request, BodySchema);
     if (!parsed.ok) return parsed.response;

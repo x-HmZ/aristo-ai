@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+export const metadata = { title: "Sign in | Aristo", robots: { index: false, follow: false } };
+
 interface PageProps {
   searchParams: Promise<{ error?: string; message?: string }>;
 }

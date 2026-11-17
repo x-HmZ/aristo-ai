@@ -13,6 +13,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }             from "@/lib/supabase/server";
+import { refuseUnlessAllowed } from "@/lib/account/capabilityGuard";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import type { DynamicProfile }      from "@/store/useAristoStore";
 import { MODELS }                   from "@/lib/agents/models";
@@ -139,6 +140,10 @@ export async function POST(req: NextRequest) {
     const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
+
+    // Free chat is off for a guardian-held (child) account until the guardian turns it on.
+    const chatOff = await refuseUnlessAllowed(user.id, "freeChat");
+    if (chatOff) return chatOff;
     const supabase = await createClient();
 
     const parsed = await parseJsonBody(req, BodySchema);

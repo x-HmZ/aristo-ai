@@ -17,6 +17,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { z } from "zod";
+import { refuseUnlessAllowed } from "@/lib/account/capabilityGuard";
 import { requireApproved } from "@/lib/auth/approval";
 import { guardSpend } from "@/lib/guard";
 import { openaiTranscribeCostMicros } from "@/lib/llm/pricing";
@@ -36,6 +37,10 @@ export async function POST(req: NextRequest) {
   try {
     const guard = await requireApproved();
     if (guard.error) return guard.error;
+
+    // Voice input is off for a guardian-held (child) account until the guardian turns it on.
+    const off = await refuseUnlessAllowed(guard.user.id, "voiceInput");
+    if (off) return off;
 
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {

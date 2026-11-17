@@ -6,11 +6,15 @@
  * The pages themselves (/terms and /privacy) are built elsewhere; this module only names them.
  */
 
+// The versions live with the pages (src/lib/legal/documents.ts) so the text a user saw and the version recorded
+// for it can never drift apart.
+import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legal/documents";
+
+export { PRIVACY_VERSION, TERMS_VERSION };
+
 export const TERMS_PATH = "/terms";
 export const PRIVACY_PATH = "/privacy";
 
-export const TERMS_VERSION = "2026-11-16";
-export const PRIVACY_VERSION = "2026-11-16";
 /** The wording of the guardian declaration shown at sign-up (see GUARDIAN_DECLARATION_TEXT). */
 export const GUARDIAN_DECLARATION_VERSION = "2026-11-16";
 

@@ -11,6 +11,8 @@ vi.mock("@/lib/auth/approval", () => ({
 }));
 vi.mock("@/lib/llm/usage", () => ({ logUsage }));
 vi.mock("@/lib/guard", () => ({ guardSpend: async () => null }));
+const refuseUnlessAllowed = vi.hoisted(() => vi.fn(async (): Promise<Response | null> => null));
+vi.mock("@/lib/account/capabilityGuard", () => ({ refuseUnlessAllowed }));
 
 import { POST } from "@/app/api/stt/route";
 
@@ -46,6 +48,13 @@ describe("/api/stt", () => {
   it("415 for a wrong type", async () => {
     const res = await POST(req({ audio: new Blob(["x"], { type: "text/plain" }) }));
     expect(res.status).toBe(415);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it("403 when the guardian has voice input turned off, before any provider call", async () => {
+    refuseUnlessAllowed.mockResolvedValueOnce(Response.json({ code: "capability_off" }, { status: 403 }));
+    const res = await POST(req({ audio: webm(1000) }));
+    expect(res.status).toBe(403);
     expect(create).not.toHaveBeenCalled();
   });
 
