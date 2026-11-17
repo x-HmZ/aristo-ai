@@ -626,7 +626,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
     } finally {
       setIsEvaluating(false);
     }
-  }, [currentQ, currentR, currentIdx, isEvaluating, localOnly, incrementSignal]);
+  }, [currentQ, currentR, currentIdx, isEvaluating, localOnly, incrementSignal, context]);
 
   // ── Advance to next question ──────────────────────────────────────────────
   const handleNext = useCallback(async () => {
