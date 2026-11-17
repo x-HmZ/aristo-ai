@@ -25,6 +25,7 @@ import {
 import type { QuizQuestion }         from "@/lib/agents/assessment";
 import { updateMastery }             from "@/lib/mastery/update";
 import { guardSpend }                from "@/lib/guard";
+import { enforceRate, rateLimitedResponse } from "@/lib/guard/rate";
 import { verifyQuestion }            from "@/lib/quiz/sign";
 import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
 import { z }                       from "zod";
@@ -89,10 +90,15 @@ export async function POST(req: NextRequest) {
       body.questionType === "short_answer" ||
       body.questionType === "code_debugging";
 
-    // Only the Haiku evaluator costs money; objective answers are graded locally and are never limited.
+    // Every submit writes rows, so every submit is limited, after validation and the signature check. The Haiku
+    // evaluator costs money and has the tighter window (and the spend ceilings); objective answers are graded
+    // locally and get a generous window that only a script meets.
     if (isSubjective) {
       const blocked = await guardSpend(user.id, "quiz_submit");
       if (blocked) return blocked;
+    } else {
+      const decision = await enforceRate(user.id, "quiz_submit_objective");
+      if (!decision.allowed) return rateLimitedResponse(decision);
     }
 
     const result = isSubjective

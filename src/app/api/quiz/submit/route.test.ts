@@ -27,6 +27,14 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 vi.mock("@/lib/auth/approval", () => ({ requireApproved: async () => ({ user: { id: "u1" }, error: null }) }));
 vi.mock("@/lib/guard", () => ({ guardSpend: async () => null }));
+const rate = vi.hoisted(() => ({ allowed: true, calls: [] as string[] }));
+vi.mock("@/lib/guard/rate", () => ({
+  enforceRate: async (_u: string, feature: string) => {
+    rate.calls.push(feature);
+    return rate.allowed ? { allowed: true } : { allowed: false, reason: "limit", retryAfterSeconds: 5 };
+  },
+  rateLimitedResponse: () => new Response(JSON.stringify({ error: "rate_limited" }), { status: 429 }),
+}));
 vi.mock("@/lib/agents/assessment", async () => {
   const local = await import("@/lib/quiz/localEval");
   return { evaluateObjective: local.evaluateObjective, evaluateShortAnswer: assess.evaluateShortAnswer };
@@ -50,6 +58,8 @@ const req = (b: unknown) => new Request("http://x/api/quiz/submit", { method: "P
 beforeEach(() => {
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
   db.writes = [];
+  rate.allowed = true;
+  rate.calls = [];
   assess.evaluateShortAnswer.mockReset();
 });
 
@@ -81,6 +91,21 @@ describe("/api/quiz/submit signed keys", () => {
   it("rejects unknown keys and an oversized answer", async () => {
     expect((await POST(req(body({ extra: 1 })))).status).toBe(400);
     expect((await POST(req(body({ userAnswer: "x".repeat(2001) })))).status).toBe(400);
+  });
+});
+
+describe("/api/quiz/submit rate limit", () => {
+  it("limits objective answers after validation and writes nothing when refused", async () => {
+    rate.allowed = false;
+    const res = await POST(req(body()));
+    expect(res.status).toBe(429);
+    expect(rate.calls).toEqual(["quiz_submit_objective"]);
+    expect(db.writes).toEqual([]);
+  });
+
+  it("does not count a forged answer against the limit", async () => {
+    await POST(req(body({ correctAnswer: "banana" })));
+    expect(rate.calls).toEqual([]);
   });
 });
 

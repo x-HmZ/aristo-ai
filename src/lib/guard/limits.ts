@@ -39,6 +39,9 @@ export const RATE_LIMITS = {
   profile_session: [{ seconds: HOUR, limit: 60 }, { seconds: DAY, limit: 200 }],
   // Not a paid call: one small update at the end of a quiz. Bounds write volume from a script.
   quiz_complete:   [{ seconds: HOUR, limit: 60 }, { seconds: DAY, limit: 300 }],
+  // Objective answers: graded locally, free, but each writes a quiz_attempts row and updates mastery. Generous:
+  // a quiz is about 5 to 10 answers, so this is dozens of quizzes an hour.
+  quiz_submit_objective: [{ seconds: HOUR, limit: 600 }, { seconds: DAY, limit: 3000 }],
   // Haiku, 512 tokens, under a cent. A child taps "explain more" a few times per lesson.
   explain_more:    [{ seconds: HOUR, limit: 30 }, { seconds: DAY, limit: 120 }],
   // Haiku, 256 tokens, under a cent. One per challenge question.
