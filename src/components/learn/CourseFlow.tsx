@@ -14,8 +14,9 @@
  * above them (light under the Pages Router lock until V8.4c removes it).
  */
 
-import { ArrowRight, CircleCheck, TrendingUp } from "lucide-react";
+import { ArrowRight, CircleCheck, RotateCcw, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { LessonFailure } from "@/lib/learn/lessonError";
 import { cn } from "@/lib/utils";
 
 const BAR = "rounded-b-2xl border-t border-line bg-surface/95 px-4 py-3 backdrop-blur-md";
@@ -35,6 +36,44 @@ export function CourseLoadingBar() {
         ))}
       </div>
       <span className="text-sm text-muted">Loading your lesson…</span>
+    </div>
+  );
+}
+
+// ─── Failure bar (the lesson could not be loaded) ────────────────────────────
+
+/**
+ * Replaces the loading bar when the lesson request failed: Retry when trying again can help, the failure's own next step
+ * (plans, sign in) when it has one, and always a way back. What went wrong is written out in the panel above
+ * (LessonFailurePanel); this bar carries the choices.
+ */
+export function CourseFailureBar({
+  failure,
+  onRetry,
+  onBack,
+}: {
+  failure:  LessonFailure;
+  onRetry:  () => void;
+  onBack:   () => void;
+}) {
+  return (
+    <div className={BAR}>
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button variant="ghost" onClick={onBack} className="px-3 text-body">
+          Back to start
+        </Button>
+        {failure.action && (
+          <Button asChild variant={failure.retryable ? "ghost" : "default"} className="px-3">
+            <a href={failure.action.href}>{failure.action.label}</a>
+          </Button>
+        )}
+        {failure.retryable && (
+          <Button onClick={onRetry} className="shrink-0">
+            <RotateCcw aria-hidden />
+            Try again
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

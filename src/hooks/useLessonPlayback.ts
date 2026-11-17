@@ -38,6 +38,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS, type SpeakController } from "@/hooks/useTTS";
+import { pushLessonNotice } from "@/hooks/useLessonStatus";
 import type { LessonPhase, NarrationSegment } from "@/lib/agents/teaching";
 import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
 
@@ -492,6 +493,7 @@ export function useLessonPlayback(
         if (cancelled) return;
         console.error("[useLessonPlayback] visuals fetch failed", err);
         setVisualsByID({}); // graceful degradation — no visuals, playback still proceeds
+        pushLessonNotice("picture");
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);

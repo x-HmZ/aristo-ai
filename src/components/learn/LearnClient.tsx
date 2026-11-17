@@ -14,8 +14,13 @@ import { CourseMapView }    from "@/components/learn/CourseMapView";
 import {
   CourseTakeQuizBar,
   CourseLoadingBar,
+  CourseFailureBar,
   CourseAdvanceBar,
 } from "@/components/learn/CourseFlow";
+import { LessonNotices }       from "@/components/learn/LessonNotices";
+import { reportProblemHref } from "@/lib/legal/operator";
+import { useLessonStatus }     from "@/hooks/useLessonStatus";
+import { quizNotice } from "@/lib/learn/lessonError";
 import { useCourseAutoTeach }  from "@/hooks/useCourseAutoTeach";
 import { useSessionFlush }     from "@/hooks/useSessionFlush";
 import OnboardingView from "@/components/onboarding/OnboardingView";
@@ -23,7 +28,7 @@ import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
-import { LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
+import { Flag, LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
@@ -69,6 +74,7 @@ export function LearnClient(props: LearnClientProps) {
 
 function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnClientProps) {
   const { freeChat } = useCapabilities();
+  const reportHref = reportProblemHref();
   // ── Store ─────────────────────────────────────────────────────────────────
   const setUserId              = useAristoStore((s) => s.setUserId);
   const setOnboardingDone      = useAristoStore((s) => s.setOnboardingDone);
@@ -86,6 +92,8 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
   const course            = useAristoStore((s) => s.course);
   const activeLesson      = useAristoStore((s) => s.activeLesson);
   const isLoading         = useAristoStore((s) => s.isLoading);
+  const lessonFailure     = useLessonStatus((s) => s.failure);
+  const retryLesson       = useLessonStatus((s) => s.retry);
   const previewZoomUrl    = useAristoStore((s) => s.previewZoomUrl);
   const setPreviewZoomUrl = useAristoStore((s) => s.setPreviewZoomUrl);
   // Quiz state moved into the store so the in-scene DeskQuiz (rendered
@@ -233,6 +241,8 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
 
   // ── Clear / return to picker ──────────────────────────────────────────────
   const handleClear = useCallback(() => {
+    useLessonStatus.getState().setFailure(null);
+    useLessonStatus.getState().clearNotices();
     stopAudio();
     clearMessages();
     setActiveLesson(null);
@@ -275,11 +285,16 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
     try {
       const conceptId = course.topics[course.currentTopicIndex] ?? "the current topic";
       const res = await fetch(`/api/quiz/lesson/${encodeURIComponent(conceptId)}`);
-      if (!res.ok) throw new Error("Quiz API failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        useLessonStatus.getState().pushNotice("quiz", quizNotice({ status: res.status, body }));
+        return;
+      }
       const data = await res.json();
       setActiveQuiz({ conceptId, questions: data.questions ?? [] });
     } catch (err) {
       console.error("Failed to load quiz:", err);
+      useLessonStatus.getState().pushNotice("quiz", quizNotice({ status: 0 }));
     } finally {
       setIsQuizLoading(false);
     }
@@ -360,6 +375,10 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
       return <CourseTakeQuizBar onTakeQuiz={handleTakeQuiz} isLoading={isQuizLoading} />;
     }
 
+    if (lessonFailure && !isLoading) {
+      return <CourseFailureBar failure={lessonFailure} onRetry={retryLesson} onBack={handleClear} />;
+    }
+
     if (isLoading || !lessonLoaded) return <CourseLoadingBar />;
 
     return <InputBox />;
@@ -430,6 +449,14 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
             </span>
             <span className="max-w-[10rem] truncate text-sm font-medium text-ink">{userName}</span>
           </span>
+          {reportHref && (
+            <Button asChild variant="ghost" className="rounded-full px-3 text-body hover:text-ink max-md:w-11 max-md:px-0">
+              <a href={reportHref} title="Report a problem">
+                <Flag aria-hidden />
+                <span className="max-md:sr-only">Report a problem</span>
+              </a>
+            </Button>
+          )}
           <ThemeToggle className="rounded-full border-transparent text-body hover:border-transparent hover:bg-sunk hover:text-ink" />
           <Button
             variant="ghost"
@@ -450,6 +477,7 @@ function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnCli
         <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>
           <MessagePanel />
         </div>
+        <LessonNotices />
         {renderBottom()}
       </div>
 

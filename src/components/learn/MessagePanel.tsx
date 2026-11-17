@@ -5,7 +5,8 @@ import { LessonView }                       from "@/components/learn/LessonView"
 import { LessonPlayer, ADAPTIVE_VISUALS_ENABLED } from "@/components/learn/LessonPlayer";
 import { FreeTopicCard, FreeUserBubble }    from "@/components/learn/FreeTopicCard";
 import { useEffect, useRef }                from "react";
-import { BookOpen }                         from "lucide-react";
+import { BookOpen, TriangleAlert }          from "lucide-react";
+import { useLessonStatus }                  from "@/hooks/useLessonStatus";
 import { AristoMark } from "@/components/brand/AristoMark";
 
 // ─── Thinking indicator ───────────────────────────────────────────────────────
@@ -45,7 +46,7 @@ function EmptyState() {
       <div>
         <h2 className="mb-1 text-base font-bold text-ink">What Do You Want to Learn?</h2>
         <p className="text-sm leading-relaxed text-body">
-          Type a topic below, or tap the mic and say it. Your teacher explains it out loud and shows it on the board.
+          Type a topic below, or say it if voice input is switched on. Your teacher explains it out loud and shows it on the board.
         </p>
       </div>
     </div>
@@ -59,7 +60,8 @@ export function MessagePanel() {
   const messages     = useAristoStore((s) => s.messages);
   const isLoading    = useAristoStore((s) => s.isLoading);
   const mode         = useAristoStore((s) => s.mode);
-  const bottomRef    = useRef<HTMLDivElement>(null);
+  const failure      = useLessonStatus((s) => s.failure);
+  const bottomRef   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -83,6 +85,19 @@ export function MessagePanel() {
           <BookOpen aria-hidden className="size-6 text-accent-text" />
         </div>
         <p className="text-sm text-muted">Preparing your lesson…</p>
+      </div>
+    );
+  }
+
+  // Course mode, the lesson request failed: say what happened (Retry and Back are in the bottom bar).
+  if (mode === "course" && failure) {
+    return (
+      <div role="alert" className="flex h-full flex-col items-center justify-center gap-3 bg-bg/95 px-8 text-center">
+        <div className="flex size-14 items-center justify-center rounded-full border border-tint-line bg-tint">
+          <TriangleAlert aria-hidden className="size-6 text-accent-text" />
+        </div>
+        <h2 className="text-base font-bold text-ink">{failure.title}</h2>
+        <p className="text-sm leading-relaxed text-body">{failure.message}</p>
       </div>
     );
   }

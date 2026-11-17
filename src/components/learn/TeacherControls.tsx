@@ -4,6 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import { useAristoStore, ACTIVE_TEACHERS, type TeacherAvatar, type Classroom } from "@/store/useAristoStore";
 import { AVATAR_ASSETS } from "@/components/three/Teacher";
 import { AvatarCredit } from "@/components/learn/AvatarCredit";
+import { AiTeacherLabel, AiFirstLessonNotice } from "@/components/learn/AiDisclosure";
 import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
@@ -135,6 +136,8 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
           because this panel is on screen whenever the avatar is. `!text-muted`
           because AvatarCredit joins its classes without cn(), and its own
           brown-muted is 4.1:1 on this bar over a dark scene; muted is 5.3. */}
+      <AiTeacherLabel teacher={teacher} />
+      <AiFirstLessonNotice teacher={teacher} />
       <AvatarCredit avatar={teacher} className="-mt-1 px-1 !text-muted" />
 
       {/* Row 2: Environment switcher */}

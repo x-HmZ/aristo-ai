@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
 import { SourceCredit } from "@/components/learn/SourceCredit";
 import { cn } from "@/lib/utils";
+import { pushLessonNotice } from "@/hooks/useLessonStatus";
 
 // ─── The five phases (brand-system.md: no colours) ───────────────────────────
 //
@@ -688,11 +689,11 @@ export function LessonView({
     })
       .then((r) => r.json())
       .then(({ imageUrl, model3dImageUrl }) => {
-        if (!imageUrl) return;
+        if (!imageUrl) { pushLessonNotice("model"); return; }
         setActivePreviewImageUrl(imageUrl);
         setPending3dImageUrl(model3dImageUrl ?? imageUrl);
       })
-      .catch(() => {/* non-critical — narration falls back to pre_visual */})
+      .catch(() => { pushLessonNotice("model"); /* non-critical — narration falls back to pre_visual */ })
       .finally(() => setIsGeneratingModel(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson?.concept_id, playbackMode]);
