@@ -50,12 +50,18 @@ export async function POST(req: NextRequest) {
     concept = { id: "preview", name: parsed.data.topic, description: "", domain: parsed.data.domain };
   }
 
-  const result = await retrieveChunks(concept, service, {
-    sourceId:   scope.sourceId,
-    pageRanges: scope.pageRanges,
-    feature:    "rag.embed.preview",
-    userId:     admin.id,
-  });
+  let result: Awaited<ReturnType<typeof retrieveChunks>>;
+  try {
+    result = await retrieveChunks(concept, service, {
+      sourceId:   scope.sourceId,
+      pageRanges: scope.pageRanges,
+      feature:    "rag.embed.preview",
+      userId:     admin.id,
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "unknown error";
+    return NextResponse.json({ error: `Embedding the query failed: ${msg}` }, { status: 502 });
+  }
 
   return NextResponse.json({
     query:          result.query,
