@@ -34,6 +34,7 @@ import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { requireApproved } from "@/lib/auth/approval";
+import { guardSpend } from "@/lib/guard";
 import { generateInteractive, lessonExample } from "@/lib/agents/interactive";
 import { MODELS } from "@/lib/agents/models";
 import {
@@ -132,6 +133,9 @@ export async function POST(req: NextRequest) {
       if (!throttle.take(user.id) || (await overBudget(service, user.id))) {
         return NextResponse.json({ error: "Too many interactives requested; try again in a few minutes" }, { status: 429 });
       }
+      // Cache hits returned above, so only a real generation reaches the shared, database-backed guard.
+      const blocked = await guardSpend(user.id, "interactive_generate");
+      if (blocked) return blocked;
       pending = generateInteractive({ topic: concept?.name ?? topic, spec, example, userId: user.id })
         .finally(() => inflight.delete(specHash));
       inflight.set(specHash, pending);

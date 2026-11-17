@@ -32,6 +32,9 @@ export const RATE_LIMITS = {
   // Counted only when the answer needs the Haiku evaluator (short answer, code debugging); objective questions
   // are graded locally and are free. Cents at most per call.
   quiz_submit:     [{ seconds: HOUR, limit: 120 }, { seconds: DAY, limit: 500 }],
+  // Sonnet, a widget of several thousand tokens, up to two attempts: about $0.10 to $0.20 a miss. Counted only
+  // on a cache miss. 20 a day x $0.2 = $4/day at worst, which the per-user USD ceiling cuts off at $1.
+  interactive_generate: [{ seconds: HOUR, limit: 8 }, { seconds: DAY, limit: 20 }],
   // Haiku, 512 tokens, under a cent. A child taps "explain more" a few times per lesson.
   explain_more:    [{ seconds: HOUR, limit: 30 }, { seconds: DAY, limit: 120 }],
   // Haiku, 256 tokens, under a cent. One per challenge question.
