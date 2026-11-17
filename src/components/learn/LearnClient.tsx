@@ -14,8 +14,12 @@ import { CourseMapView }    from "@/components/learn/CourseMapView";
 import {
   CourseTakeQuizBar,
   CourseLoadingBar,
+  CourseFailureBar,
   CourseAdvanceBar,
 } from "@/components/learn/CourseFlow";
+import { LessonNotices }       from "@/components/learn/LessonNotices";
+import { useLessonStatus }     from "@/hooks/useLessonStatus";
+import { quizNotice } from "@/lib/learn/lessonError";
 import { useCourseAutoTeach }  from "@/hooks/useCourseAutoTeach";
 import { useSessionFlush }     from "@/hooks/useSessionFlush";
 import OnboardingView from "@/components/onboarding/OnboardingView";
@@ -72,6 +76,8 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const course            = useAristoStore((s) => s.course);
   const activeLesson      = useAristoStore((s) => s.activeLesson);
   const isLoading         = useAristoStore((s) => s.isLoading);
+  const lessonFailure     = useLessonStatus((s) => s.failure);
+  const retryLesson       = useLessonStatus((s) => s.retry);
   const previewZoomUrl    = useAristoStore((s) => s.previewZoomUrl);
   const setPreviewZoomUrl = useAristoStore((s) => s.setPreviewZoomUrl);
   // Quiz state moved into the store so the in-scene DeskQuiz (rendered
@@ -219,6 +225,8 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
   // ── Clear / return to picker ──────────────────────────────────────────────
   const handleClear = useCallback(() => {
+    useLessonStatus.getState().setFailure(null);
+    useLessonStatus.getState().clearNotices();
     stopAudio();
     clearMessages();
     setActiveLesson(null);
@@ -261,11 +269,16 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
     try {
       const conceptId = course.topics[course.currentTopicIndex] ?? "the current topic";
       const res = await fetch(`/api/quiz/lesson/${encodeURIComponent(conceptId)}`);
-      if (!res.ok) throw new Error("Quiz API failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        useLessonStatus.getState().pushNotice("quiz", quizNotice({ status: res.status, body }));
+        return;
+      }
       const data = await res.json();
       setActiveQuiz({ conceptId, questions: data.questions ?? [] });
     } catch (err) {
       console.error("Failed to load quiz:", err);
+      useLessonStatus.getState().pushNotice("quiz", quizNotice({ status: 0 }));
     } finally {
       setIsQuizLoading(false);
     }
@@ -343,6 +356,10 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
     if (lessonComplete) {
       return <CourseTakeQuizBar onTakeQuiz={handleTakeQuiz} isLoading={isQuizLoading} />;
+    }
+
+    if (lessonFailure && !isLoading) {
+      return <CourseFailureBar failure={lessonFailure} onRetry={retryLesson} onBack={handleClear} />;
     }
 
     if (isLoading || !lessonLoaded) return <CourseLoadingBar />;
@@ -435,6 +452,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
         <div className={cn(PANEL_SLOT, quizOnDesk && "hidden")}>
           <MessagePanel />
         </div>
+        <LessonNotices />
         {renderBottom()}
       </div>
 
