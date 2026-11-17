@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { fontVariables } from "@/lib/fonts";
 import { THEME_INIT_SCRIPT } from "@/components/theme/theme";
+import { getSiteUrl } from "@/lib/legal/siteUrl";
 
 // The real deployment (Vercel), so link previews and canonical URLs resolve.
 // Copy comes from .claude/docs/brand/messaging.md; the OG image is
 // opengraph-image.tsx and the icons are icon.svg, favicon.ico and apple-icon.tsx.
-const SITE_URL = "https://aristo-ai-ten.vercel.app";
+const SITE_URL = getSiteUrl();
 const TITLE = "Aristo | One teacher. One student. Every kid.";
 
 export const metadata: Metadata = {

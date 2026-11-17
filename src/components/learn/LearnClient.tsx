@@ -18,6 +18,7 @@ import {
   CourseAdvanceBar,
 } from "@/components/learn/CourseFlow";
 import { LessonNotices }       from "@/components/learn/LessonNotices";
+import { reportProblemHref } from "@/lib/legal/operator";
 import { useLessonStatus }     from "@/hooks/useLessonStatus";
 import { quizNotice } from "@/lib/learn/lessonError";
 import { useCourseAutoTeach }  from "@/hooks/useCourseAutoTeach";
@@ -27,7 +28,7 @@ import { ReviewView }          from "@/components/learn/ReviewView";
 import { DashboardView }       from "@/components/learn/DashboardView";
 import { useAristoStore }      from "@/store/useAristoStore";
 import type { CourseStructure }    from "@/store/useAristoStore";
-import { LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
+import { Flag, LayoutDashboard, LogOut, Map as MapIcon, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
@@ -59,6 +60,7 @@ interface LearnClientProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function LearnClient({ userName, userId, onboardingDone, domain }: LearnClientProps) {
+  const reportHref = reportProblemHref();
   // ── Store ─────────────────────────────────────────────────────────────────
   const setUserId              = useAristoStore((s) => s.setUserId);
   const setOnboardingDone      = useAristoStore((s) => s.setOnboardingDone);
@@ -432,6 +434,14 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
             </span>
             <span className="max-w-[10rem] truncate text-sm font-medium text-ink">{userName}</span>
           </span>
+          {reportHref && (
+            <Button asChild variant="ghost" className="rounded-full px-3 text-body hover:text-ink max-md:w-11 max-md:px-0">
+              <a href={reportHref} title="Report a problem">
+                <Flag aria-hidden />
+                <span className="max-md:sr-only">Report a problem</span>
+              </a>
+            </Button>
+          )}
           <ThemeToggle className="rounded-full border-transparent text-body hover:border-transparent hover:bg-sunk hover:text-ink" />
           <Button
             variant="ghost"
