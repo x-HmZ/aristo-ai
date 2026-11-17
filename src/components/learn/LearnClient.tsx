@@ -31,6 +31,8 @@ import {
 } from "@/components/learn/ClassroomChrome";
 import { SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { CapabilitiesProvider, useCapabilities } from "@/lib/account/CapabilitiesContext";
+import type { Capabilities } from "@/lib/account/capabilities";
 
 function flattenCourseConceptIds(structure: CourseStructure): string[] {
   return structure.modules.flatMap((m) =>
@@ -45,6 +47,8 @@ interface LearnClientProps {
   userId:         string;
   onboardingDone: boolean;
   domain:         string | null;
+  /** What the guardian has switched on: microphone, free chat, custom teacher (src/lib/account). */
+  capabilities:   Capabilities;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -54,7 +58,17 @@ interface LearnClientProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function LearnClient({ userName, userId, onboardingDone, domain }: LearnClientProps) {
+/** Provides the child-safety switches to every control under the room, then renders it. */
+export function LearnClient(props: LearnClientProps) {
+  return (
+    <CapabilitiesProvider value={props.capabilities}>
+      <LearnClientInner {...props} />
+    </CapabilitiesProvider>
+  );
+}
+
+function LearnClientInner({ userName, userId, onboardingDone, domain }: LearnClientProps) {
+  const { freeChat } = useCapabilities();
   // ── Store ─────────────────────────────────────────────────────────────────
   const setUserId              = useAristoStore((s) => s.setUserId);
   const setOnboardingDone      = useAristoStore((s) => s.setOnboardingDone);
@@ -314,7 +328,8 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
 
   // ── Bottom bar ────────────────────────────────────────────────────────────
   const renderBottom = () => {
-    if (mode !== "course") return <InputBox />;
+    // Free chat: the learner's own typed topics. Off until a guardian turns it on (the picker hides "Explore freely").
+    if (mode !== "course") return freeChat ? <InputBox /> : null;
 
     // Active in-scene quiz — bottom bar collapses to a tiny status strip so
     // the student's attention is fully on the desk paper.  Nothing to type

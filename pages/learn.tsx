@@ -2,6 +2,8 @@ import type { GetServerSideProps } from "next";
 import { createServerClient } from "@supabase/ssr";
 import dynamic from "next/dynamic";
 import { LoadingScreenVisual } from "@/components/learn/LoadingScreenVisual";
+import { capabilitiesFor, type Capabilities } from "@/lib/account/capabilities";
+import { getAccessForUser } from "@/lib/auth/access";
 
 // Load the full client (including R3F) only in the browser.
 // Pages Router uses (pages-browser) webpack layer which does NOT alias
@@ -32,15 +34,17 @@ interface Props {
   userId:        string;
   onboardingDone: boolean;
   domain:        string | null;
+  capabilities:  Capabilities;
 }
 
-export default function LearnPage({ userName, userId, onboardingDone, domain }: Props) {
+export default function LearnPage({ userName, userId, onboardingDone, domain, capabilities }: Props) {
   return (
     <LearnClient
       userName={userName}
       userId={userId}
       onboardingDone={onboardingDone}
       domain={domain}
+      capabilities={capabilities}
     />
   );
 }
@@ -79,14 +83,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   // (in Node-runtime getServerSideProps) instead of in middleware because
   // the Edge Runtime has cookie-parsing compatibility issues with
   // @supabase/ssr that silently swallow the redirect.
+  // "*" rather than a column list so the page keeps working on a database where migration 025 (learner fields,
+  // safety switches) is not applied yet; capabilitiesFor() and the access decision handle absent columns.
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, goal, is_admin, approval_status")
+    .select("*")
     .eq("id", user.id)
     .single();
 
-  // Approval gate. Admins are exempt (admin implies approved).
-  if (!profile?.is_admin && profile?.approval_status !== "approved") {
+  // Access gate (src/lib/auth/access.ts). ACCESS_MODE=approval (default): approved by an admin, as before.
+  // ACCESS_MODE=open: confirmed email and recorded consents. Admins are exempt in both modes.
+  const access = await getAccessForUser(supabase, user, profile);
+  if (!access.allowed) {
     return { redirect: { destination: "/pending", permanent: false } };
   }
 
@@ -100,10 +108,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   return {
     props: {
-      userName:       profile?.full_name?.split(" ")[0] ?? "learner",
+      // The learner's nickname first; accounts made before nicknames keep showing their stored name.
+      userName:       (profile?.learner_nickname ?? profile?.full_name?.split(" ")[0]) ?? "learner",
       userId:         user.id,
       onboardingDone: !!profile?.goal,          // goal set = onboarding complete
       domain:         progress?.domain ?? null,
+      capabilities:   capabilitiesFor(profile),
     },
   };
 };
