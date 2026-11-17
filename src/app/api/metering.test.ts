@@ -208,7 +208,7 @@ describe("3D routes", () => {
     expect((await model3dPOST(json({}))).status).toBe(400);
     expect(ent.spendAllowance).not.toHaveBeenCalled();
 
-    expect((await model3dPOST(json({ imageUrl: "u" }))).status).toBe(200);
+    expect((await model3dPOST(json({ imageUrl: "https://v3.fal.media/files/a.png" }))).status).toBe(200);
     expect(ent.spendAllowance).toHaveBeenCalledTimes(1);
     expect(ent.spendAllowance.mock.calls[0][1]).toBe("models_3d");
     expect(ent.releaseConsumed).not.toHaveBeenCalled();
@@ -216,19 +216,19 @@ describe("3D routes", () => {
 
   it("3d: a cached result releases once; a failure releases once", async () => {
     mocks.generate3dModel.mockResolvedValue({ modelUrl: "m", cached: true });
-    expect((await model3dPOST(json({ imageUrl: "u" }))).status).toBe(200);
+    expect((await model3dPOST(json({ imageUrl: "https://v3.fal.media/files/a.png" }))).status).toBe(200);
     expect(ent.releaseConsumed).toHaveBeenCalledTimes(1);
 
     ent.releaseConsumed.mockClear();
     mocks.generate3dModel.mockRejectedValue(new Error("tripo"));
-    expect((await model3dPOST(json({ imageUrl: "u" }))).status).toBe(500);
+    expect((await model3dPOST(json({ imageUrl: "https://v3.fal.media/files/a.png" }))).status).toBe(500);
     expect(ent.releaseConsumed).toHaveBeenCalledTimes(1);
   });
 
   it("3d: 402 skips generation", async () => {
     const err = exhausted();
     ent.spendAllowance.mockResolvedValue({ error: err, consumed: null });
-    expect(await model3dPOST(json({ imageUrl: "u" }))).toBe(err);
+    expect(await model3dPOST(json({ imageUrl: "https://v3.fal.media/files/a.png" }))).toBe(err);
     expect(mocks.generate3dModel).not.toHaveBeenCalled();
   });
 

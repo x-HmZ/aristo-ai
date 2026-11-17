@@ -39,6 +39,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireApproved } from "@/lib/auth/approval";
 import { GuardBlocked, spendHook } from "@/lib/guard";
+import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
+import { z } from "zod";
 import { generateInfographic, type ImageStyle } from "@/lib/imagegen/banana";
 import type { SegmentVisual } from "@/lib/agents/teaching";
 
@@ -66,6 +68,16 @@ const ALLOWED_STYLES: ImageStyle[] = [
   "annotated_photo",
 ];
 
+const BodySchema = z.object({
+  conceptId: conceptIdSchema.nullish(),
+  segments:  z.array(z.object({
+    id:     z.string().min(1).max(64),
+    // Prompts come from the lesson payload; 1000 characters is generous for an image prompt.
+    prompt: z.string().trim().min(1).max(1000),
+    style:  z.string().max(40).optional(),
+  }).strict()).min(1).max(MAX_SEGMENTS_PER_REQUEST),
+}).strict();
+
 function isValidStyle(style: unknown): style is ImageStyle {
   return typeof style === "string" && (ALLOWED_STYLES as string[]).includes(style);
 }
@@ -86,49 +98,14 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── Body validation ───────────────────────────────────────────────────
-    const body = await req.json().catch(() => ({}));
-    const conceptIdRaw: unknown = body?.conceptId;
-    if (conceptIdRaw !== undefined && conceptIdRaw !== null && typeof conceptIdRaw !== "string") {
-      return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
-    }
-    const conceptId: string | null =
-      typeof conceptIdRaw === "string" && conceptIdRaw.trim() ? conceptIdRaw : null;
-
-    const segments: unknown = body?.segments;
-    if (!Array.isArray(segments) || segments.length === 0) {
-      return NextResponse.json(
-        { error: "segments must be a non-empty array" },
-        { status: 400 }
-      );
-    }
-    if (segments.length > MAX_SEGMENTS_PER_REQUEST) {
-      return NextResponse.json(
-        { error: `Too many segments (max ${MAX_SEGMENTS_PER_REQUEST} per request)` },
-        { status: 400 }
-      );
-    }
-
-    const normalized: SegmentRequest[] = [];
-    for (const raw of segments) {
-      if (
-        !raw ||
-        typeof raw !== "object" ||
-        typeof (raw as SegmentRequest).id !== "string" ||
-        typeof (raw as SegmentRequest).prompt !== "string" ||
-        !(raw as SegmentRequest).prompt.trim()
-      ) {
-        return NextResponse.json(
-          { error: "Each segment requires id (string) and non-empty prompt (string)" },
-          { status: 400 }
-        );
-      }
-      const style = (raw as SegmentRequest).style;
-      normalized.push({
-        id:     (raw as SegmentRequest).id,
-        prompt: (raw as SegmentRequest).prompt,
-        style:  isValidStyle(style) ? style : "infographic",
-      });
-    }
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const conceptId: string | null = parsed.data.conceptId ?? null;
+    const normalized: SegmentRequest[] = parsed.data.segments.map((s) => ({
+      id:     s.id,
+      prompt: s.prompt,
+      style:  isValidStyle(s.style) ? s.style : "infographic",
+    }));
 
     // ─── Parallel generation ───────────────────────────────────────────────
     const results: SegmentResult[] = await Promise.all(

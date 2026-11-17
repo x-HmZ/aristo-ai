@@ -11,6 +11,7 @@ import { createClient }              from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import { generateLessonQuiz }        from "@/lib/agents/assessment";
 import { guardSpend }              from "@/lib/guard";
+import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
 
 export const maxDuration = 60;
@@ -20,7 +21,12 @@ export async function GET(
   { params }: { params: Promise<{ conceptId: string }> }
 ) {
   try {
-    const { conceptId } = await params;
+    const { conceptId: rawId } = await params;
+    let decoded: string;
+    try { decoded = decodeURIComponent(rawId); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+    const idCheck = parseValue(conceptIdSchema, decoded);
+    if (!idCheck.ok) return idCheck.response;
+    const conceptId = idCheck.data;
 
     const guard = await requireApproved();
     if (guard.error) return guard.error;

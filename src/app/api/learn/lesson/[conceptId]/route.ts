@@ -28,6 +28,7 @@ import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
 import { guardSpend }                from "@/lib/guard";
+import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 
 export const maxDuration = 60;
 
@@ -39,7 +40,13 @@ export async function GET(
   let consumed: Consumed | null = null;
   try {
     const { conceptId: rawId } = await params;
-    const conceptId = decodeURIComponent(rawId);
+    let decoded: string;
+    try { decoded = decodeURIComponent(rawId); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+    // A KG concept id or, from course mode, a topic title used as the id (free-form fallback below): bounded and
+    // restricted to plain text either way.
+    const idCheck = parseValue(conceptIdSchema, decoded);
+    if (!idCheck.ok) return idCheck.response;
+    const conceptId = idCheck.data;
 
     // ── Auth + approval gate ──────────────────────────────────────────────────
     const guard = await requireEntitlement();

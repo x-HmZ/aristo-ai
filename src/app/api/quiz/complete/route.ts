@@ -9,21 +9,26 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
+import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
+import { z }                       from "zod";
+
+const BodySchema = z.object({
+  conceptId: conceptIdSchema,
+  score:     z.number().min(0).max(1000),
+  total:     z.number().min(0).max(1000),
+  context:   z.enum(["lesson", "module_checkpoint", "review"]).optional(),
+}).strict();
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as {
-      conceptId: string;
-      score:     number;
-      total:     number;
-      context?:  "lesson" | "module_checkpoint" | "review";
-    };
-
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.data;
 
     const passed = body.total > 0 && body.score / body.total >= 0.6;
 

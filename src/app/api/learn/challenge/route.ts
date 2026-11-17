@@ -13,9 +13,18 @@ import type Anthropic                from "@anthropic-ai/sdk";
 import { MODELS }                    from "@/lib/agents/models";
 import { getAnthropic }              from "@/lib/llm/anthropic";
 import { guardSpend }                from "@/lib/guard";
+import { parseJsonBody, text }      from "@/lib/guard/input";
+import { z }                       from "zod";
 import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 
 const client = getAnthropic();
+
+const BodySchema = z.object({
+  question:      text(1000),
+  correctAnswer: text(1000),
+  userAnswer:    text(2000),
+  conceptName:   z.string().trim().max(200).default(""),
+}).strict();
 
 export async function POST(req: NextRequest) {
   let consumed: Consumed | null = null;
@@ -23,21 +32,9 @@ export async function POST(req: NextRequest) {
     const guard = await requireEntitlement();
     if (guard.error) return guard.error;
 
-    const {
-      question,
-      correctAnswer,
-      userAnswer,
-      conceptName,
-    }: {
-      question:      string;
-      correctAnswer: string;
-      userAnswer:    string;
-      conceptName:   string;
-    } = await req.json();
-
-    if (!question || !correctAnswer || !userAnswer) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { question, correctAnswer, userAnswer, conceptName } = parsed.data;
 
     const blocked = await guardSpend(guard.user.id, "challenge");
     if (blocked) return blocked;

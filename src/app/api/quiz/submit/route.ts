@@ -25,28 +25,37 @@ import {
 import type { QuizQuestion }         from "@/lib/agents/assessment";
 import { updateMastery }             from "@/lib/mastery/update";
 import { guardSpend }                from "@/lib/guard";
+import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
+import { z }                       from "zod";
 import { computeNextSRSState, initialSRSUpdate } from "@/lib/srs/scheduler";
 import type { SRSState }             from "@/lib/srs/scheduler";
 
+const QUESTION_TYPES = [
+  "multiple_choice", "true_false", "fill_blank", "short_answer",
+  "code_completion", "code_debugging", "ordering", "matching",
+] as const;
+
+const BodySchema = z.object({
+  questionId:             z.string().min(1).max(100),
+  conceptId:              conceptIdSchema,
+  questionType:           z.enum(QUESTION_TYPES),
+  bloomLevel:             z.enum(["remember", "understand", "apply", "analyze", "evaluate", "create"]).optional(),
+  question:               z.string().min(1).max(4000),
+  correctAnswer:          z.string().max(2000),
+  misconceptionTargeted:  z.string().max(500).optional(),
+  difficulty:             z.number().min(0).max(1),
+  userAnswer:             z.string().max(2000),
+  context:                z.enum(["lesson", "review"]).optional(),
+}).strict();
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json() as {
-      questionId:              string;
-      conceptId:               string;
-      questionType:            string;
-      bloomLevel?:             string;
-      question:                string;
-      correctAnswer:           string;
-      misconceptionTargeted?:  string;
-      difficulty:              number;
-      userAnswer:              string;
-      context?:                "lesson" | "review";
-    };
-
-    const context = body.context ?? "lesson";
-
     const guard = await requireApproved();
     if (guard.error) return guard.error;
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.data;
+    const context = body.context ?? "lesson";
     const { user } = guard;
     const supabase = await createClient();
 

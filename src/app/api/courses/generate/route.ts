@@ -14,17 +14,22 @@ import { createServiceClient }       from "@/lib/supabase/server";
 import { requireEntitlement, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateCourse }            from "@/lib/agents/curriculum";
 import { guardSpend }                from "@/lib/guard";
+import { parseJsonBody }             from "@/lib/guard/input";
+import { z }                         from "zod";
 
 export const maxDuration = 120;
+
+const BodySchema = z.object({
+  domain: z.string().trim().min(1).max(100),
+  goal:   z.string().trim().max(300).optional(),
+}).strict();
 
 export async function POST(req: NextRequest) {
   let consumed: Consumed | null = null;
   try {
-    const { domain, goal }: { domain: string; goal?: string } = await req.json();
-
-    if (!domain) {
-      return NextResponse.json({ error: "domain is required" }, { status: 400 });
-    }
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { domain, goal } = parsed.data;
 
     // Validated above, so a 400 never costs an allowance; released in the catch if generation fails.
     const guard = await requireEntitlement({ metric: "fresh_lessons" });
