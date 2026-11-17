@@ -18,7 +18,7 @@ should only be in Production — noted where it matters).
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Prod + Preview | Supabase dashboard → Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Prod + Preview | Supabase dashboard → Settings → API (server-only — bypasses RLS) |
 | `ANTHROPIC_API_KEY` | Prod + Preview | console.anthropic.com → API keys |
-| `OPENAI_API_KEY` | Prod + Preview | platform.openai.com → API keys (used by RAG embeddings + Whisper STT) |
+| `OPENAI_API_KEY` | Prod + Preview | platform.openai.com → API keys (used by RAG embeddings) |
 | `GOOGLE_AI_KEY` | Prod + Preview | aistudio.google.com → API keys |
 | `ELEVENLABS_API_KEY` | Prod + Preview | elevenlabs.io → Settings → API |
 | `FAL_KEY` | Prod + Preview | fal.ai → Dashboard → Keys (note: `FAL_KEY`, NOT `FAL_API_KEY`) |

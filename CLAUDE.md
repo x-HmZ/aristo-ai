@@ -23,7 +23,7 @@ Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D ava
 | UI | shadcn/ui + Tailwind CSS |
 | LLMs | Anthropic — Sonnet (lessons, quiz gen) + Haiku (explain-more, review, short-answer eval, free chat) |
 | RAG | OpenAI `text-embedding-3-small` (1536 dim, gracefully optional) |
-| TTS/STT | Browser Web Speech API (Whisper/TTS routes exist as planned upgrade — leave in place) |
+| TTS/STT | ElevenLabs through `/api/tts` (speech); browser Web Speech API (voice input). The unused Whisper and OpenAI-TTS routes were removed 2026-11-16 (`decisions.md`) |
 | 3D gen | fal.ai: FLUX Schnell → Tripo3D v2.5 (GLB) |
 | Deploy | Vercel |
 
@@ -76,7 +76,7 @@ The same applies to `/` (`pages/index.tsx`, static; its 3D stage loads after fir
 ```
 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
 ANTHROPIC_API_KEY     # Teaching / Assessment / Curriculum
-OPENAI_API_KEY        # RAG embeddings + planned Whisper/TTS — gracefully optional
+OPENAI_API_KEY        # RAG embeddings — gracefully optional
 FAL_KEY               # fal.ai 3D generation (NOT FAL_API_KEY)
 NEXT_PUBLIC_INTERACTIVE_VISUALS  # "true" turns on generated interactive widgets (V10); off by default; also the kill switch
 ```
