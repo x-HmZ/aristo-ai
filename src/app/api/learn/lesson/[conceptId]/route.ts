@@ -208,8 +208,10 @@ export async function GET(
       // regenerate until an admin approves.
     }
 
-    // Tokens are minted for this response only; the cached row above never holds them.
-    return NextResponse.json(attachNarrationTokens(lesson));
+    // Tokens are minted for this response only; the cached row above never holds them. Only a lesson for a
+    // concept in the knowledge graph gets them: a free-form topic is chosen by the requester, and narration
+    // that carried a token would be stored in the public narration cache, so it is narrated live instead.
+    return NextResponse.json(dbConcept ? attachNarrationTokens(lesson) : lesson);
   } catch (err) {
     await releaseConsumed(consumed);
     console.error("GET /api/learn/lesson error:", err);
