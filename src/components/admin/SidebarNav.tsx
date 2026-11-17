@@ -139,6 +139,4 @@ export function SidebarNav() {
   );
 }
 
-/** Exposed so other admin code (breadcrumbs, page titles) can read it. */
-export const ADMIN_NAV_SECTIONS = SECTIONS;
 export type { NavItem, NavSection };

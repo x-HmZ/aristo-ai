@@ -16,7 +16,7 @@ for the agent session. Nothing in this file has been executed against Vercel or 
 | Name | Value | Source |
 |------|-------|--------|
 | `RESEND_API_KEY` | your Resend API key | resend.com → API Keys |
-| `ADMIN_NOTIFY_EMAIL` | `aitchemmzi@gmail.com` | the inbox that should get "new signup" alerts |
+| `ADMIN_NOTIFY_EMAIL` | `<admin email>` | the inbox that should get "new signup" alerts |
 | `APP_URL` | `https://<your-production-domain>` | pins absolute links in emails instead of relying on Vercel's auto `VERCEL_URL` |
 
 Optional: `RESEND_FROM="Aristo AI <noreply@your-verified-domain.com>"` once a sending domain is
@@ -39,7 +39,7 @@ into chat.
 **Verify end-to-end** (after redeploying so the new env vars take effect):
 
 1. Sign up with a throwaway email on the production URL.
-2. Confirm `aitchemmzi@gmail.com` receives the "new signup" email.
+2. Confirm `<admin email>` receives the "new signup" email.
 3. In Supabase → Table Editor → `profiles`, confirm the new row has `admin_notified_at` set
    (non-null) — that's the code's own confirmation the send succeeded, not just that Resend
    accepted it.
@@ -48,7 +48,7 @@ into chat.
 
 ## 2. Bootstrap the first admin account
 
-Confirmed via a read-only check against the live DB during this session: `aitchemmzi@gmail.com`
+Confirmed via a read-only check against the live DB during this session: `<admin email>`
 exists in `auth.users` but its `profiles` row is still `is_admin: false`,
 `approval_status: 'pending'`. This is the exact SQL from `DEPLOY.md` §2.2 — run it in the
 Supabase SQL editor for project `thivgkbxgfchhystlyvh`:
@@ -58,7 +58,7 @@ UPDATE profiles
 SET is_admin = true,
     approval_status = 'approved',
     approved_at = NOW()
-WHERE id = (SELECT id FROM auth.users WHERE email = 'aitchemmzi@gmail.com');
+WHERE id = (SELECT id FROM auth.users WHERE email = '<admin email>');
 ```
 
 **Verify**: sign in as that account → `/admin/users` should load and show the admin's own

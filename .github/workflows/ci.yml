@@ -23,7 +23,6 @@ env:
   SUPABASE_SERVICE_ROLE_KEY: "ci-placeholder-service-role-key"
   ANTHROPIC_API_KEY: "ci-placeholder-anthropic-key"
   OPENAI_API_KEY: "ci-placeholder-openai-key"
-  GOOGLE_AI_KEY: "ci-placeholder-google-key"
   ELEVENLABS_API_KEY: "ci-placeholder-elevenlabs-key"
   FAL_KEY: "ci-placeholder-fal-key"
   RESEND_API_KEY: "ci-placeholder-resend-key"
@@ -48,6 +47,10 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      # Non-blocking for now. Make it blocking (drop `|| true`) once the count is zero.
+      - name: Dependency audit
+        run: yarn audit --level high --groups dependencies || true
 
       - name: Type check
         run: yarn type-check

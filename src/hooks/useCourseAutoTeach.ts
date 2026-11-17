@@ -21,7 +21,6 @@ export function useCourseAutoTeach() {
   const setActiveLesson     = useAristoStore((s) => s.setActiveLesson);
   const setActiveModelUrl   = useAristoStore((s) => s.setActiveModelUrl);
   const stopAudio           = useAristoStore((s) => s.stopAudio);
-  const clearQuiz           = useAristoStore((s) => s.clearQuiz);
 
   // Tracks the last topic key that was fired: "courseId:topicIndex"
   const firedRef = useRef<string | null>(null);
@@ -41,7 +40,6 @@ export function useCourseAutoTeach() {
 
     stopAudio();
     clearMessages();
-    clearQuiz();
     setActiveLesson(null);
     setActiveModelUrl(null);
     setIsLoading(true);
@@ -70,7 +68,6 @@ export function useCourseAutoTeach() {
     course.currentTopicIndex,
     course.topics,
     clearMessages,
-    clearQuiz,
     setIsLoading,
     setActiveLesson,
     setActiveModelUrl,

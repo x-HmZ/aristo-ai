@@ -15,13 +15,25 @@ payments-research is local and untracked on purpose). Do not re-audit.
   can no longer change `is_admin` / approval columns on their own profile; `increment_misconception` only for the
   caller's own id); `/api/quiz` deleted (no auth, no caller); `/api/whisper` and `/api/openai-tts` now require an approved
   user, cap input, and openai-tts is a POST; `/auth/callback` keeps `next` on this origin (`src/lib/auth/safeNextPath.ts`,
-  tested).
-- **NOT done**: migration 018 is not applied to production (Supabase MCP was down). Until it is, any signed-in user can
-  make themselves admin. Apply it in the SQL editor and run the check at the bottom of the file.
+  tested). The two speech routes were then deleted on Hmz's decision (future options in decisions.md).
+- **Migration 018**: Hmz ran it on production 2026-11-16. Nobody has run the check query yet (Supabase MCP was down).
+- **Done (L02 + safe L03, branch `chore/launch-cleanup`, stacked on fix/launch-critical)**: next 15.5.29, openai 4.104,
+  Anthropic SDK 0.137, form-data pinned by a resolution (critical advisories 4 -> 0); `ignoreBuildErrors` is off again;
+  8 unreferenced packages, 12 shadcn wrappers with their radix packages and cmdk, dead utilities, dead store members,
+  3 unused routes removed; `uuid` and `three-stdlib` declared; `/dev/*` is a real 404 in a production build unless
+  `NEXT_PUBLIC_DEV_PAGES=true` at build time (capture scripts against a production build need it); CI runs a
+  non-blocking audit. Checks: type-check, 645 tests, build, `/demo` probe (narration advancing, 0 page errors).
+- **Decided later the same day**: under 16 = parent-owned; more subjects on day one, added through PDF upload and RAG;
+  free allowance as proposed; paid plans include an organisation plan with its own admin role (three kinds of admin,
+  see README L07). Research: `findings/pricing.md` (plan table, margins) and `findings/content-plan.md` (PDF upload does
+  not work today; briefs E1-E6; usable open textbooks).
+- **Neither branch is pushed.** Production still serves the unauthenticated speech and quiz routes until
+  fix/launch-critical is merged and deployed.
 - **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. Hmz
   runs that fix in the portfolio repo himself.
-- **Next**: L02 dependency patch (Next 15.5.15 has middleware-bypass advisories), L03 dead-code batches, then L04 spend
-  guard. Owner: set hard spend limits in the Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D1-D9.
+- **Next**: push and merge the two branches; L04 spend guard (plan mode); L06 + L07 together (accounts, learners,
+  plans, organisations: plan mode); L08 audio cache; content briefs E1-E6. Owner: set hard spend limits in the
+  Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D3 and D6-D11 in the README.
 - **Not verified**: anything against the live database or a signed-in session; no paid call was made.
 
 ## 2026-10-15 (later) - Demo narrated in Jake's placeholder voice, plan-driven TTS (dev/v10-continuation, PR #28)

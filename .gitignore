@@ -41,3 +41,6 @@ next-env.d.ts
 
 # scratch scripts used for one-off asset tooling, not part of the app
 /.tmp_scripts/
+
+# Per-machine Claude Code settings
+.claude/settings.local.json

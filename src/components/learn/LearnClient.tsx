@@ -62,7 +62,6 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const setCourse              = useAristoStore((s) => s.setCourse);
   const advanceTopic           = useAristoStore((s) => s.advanceTopic);
   const clearMessages          = useAristoStore((s) => s.clearMessages);
-  const clearQuiz              = useAristoStore((s) => s.clearQuiz);
   const stopAudio              = useAristoStore((s) => s.stopAudio);
   const setActiveModelUrl      = useAristoStore((s) => s.setActiveModelUrl);
   const setActiveLesson        = useAristoStore((s) => s.setActiveLesson);
@@ -222,7 +221,6 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   const handleClear = useCallback(() => {
     stopAudio();
     clearMessages();
-    clearQuiz();
     setActiveLesson(null);
     setActiveModelUrl(null);
     resetInteractive();
@@ -234,7 +232,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       currentTopicIndex: 0, sessionId: null, structure: null,
     });
     setShowPicker(true);
-  }, [stopAudio, clearMessages, clearQuiz, setActiveLesson, resetInteractive, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
+  }, [stopAudio, clearMessages, setActiveLesson, resetInteractive, setActiveModelUrl, setActiveQuiz, setQuizResult, setMode, setCourse]);
 
   // ── View map while in a course ─────────────────────────────────────────────
   const handleViewMap = useCallback(() => {
@@ -283,15 +281,13 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
   }, [quizResult, flushSession]);
 
   const handleAdvanceTopic = useCallback(() => {
-    clearQuiz();
     setActiveLesson(null);
     setActiveQuiz(null);
     setQuizResult(null);
     advanceTopic();
-  }, [clearQuiz, setActiveLesson, setActiveQuiz, setQuizResult, advanceTopic]);
+  }, [setActiveLesson, setActiveQuiz, setQuizResult, advanceTopic]);
 
   const handleFinishCourse = useCallback(() => {
-    clearQuiz();
     clearMessages();
     setActiveLesson(null);
     setActiveQuiz(null);
@@ -302,7 +298,7 @@ export function LearnClient({ userName, userId, onboardingDone, domain }: LearnC
       currentTopicIndex: 0, sessionId: null, structure: null,
     });
     setShowPicker(true);
-  }, [clearQuiz, clearMessages, setActiveLesson, setActiveQuiz, setQuizResult, setMode, setCourse]);
+  }, [clearMessages, setActiveLesson, setActiveQuiz, setQuizResult, setMode, setCourse]);
 
   // ── Lesson-complete detection ─────────────────────────────────────────────
   const lessonLoaded   = mode === "course" && activeLesson !== null;

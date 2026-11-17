@@ -30,7 +30,6 @@ export const BRAND_HEX = {
   amber: "#F59E0B",
 } as const;
 
-export type BrandColor = keyof typeof BRAND_HEX;
 
 /** `rgba()` for a `#RRGGBB` colour, for canvas 2D styles. */
 export function withAlpha(hex: string, alpha: number): string {

@@ -1,3 +1,4 @@
+import { getDevPageStaticProps } from "@/lib/devPages";
 import dynamic from "next/dynamic";
 
 // Pages Router is REQUIRED for any R3F surface in this app — see
@@ -9,9 +10,8 @@ const FreeModelPreview = dynamic(
 );
 
 export default function DevFreeModelPage() {
-  // Hide from production deploys — no auth, dev-only visual harness.
-  if (process.env.NODE_ENV === "production") {
-    return <div style={{ padding: 40, fontFamily: "system-ui" }}>404</div>;
-  }
   return <FreeModelPreview />;
 }
+
+// Real 404 in production builds, unless NEXT_PUBLIC_DEV_PAGES=true (see src/lib/devPages.ts).
+export const getStaticProps = getDevPageStaticProps;

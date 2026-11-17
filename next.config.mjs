@@ -25,12 +25,11 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   typescript: {
-    // Workaround for vercel/next.js#82877 — the 15.5 page-export validator
-    // generates import paths that drop `src/`, so the generated
-    // .next/types/validator.ts fails type-check during `next build`.
-    // We still run `tsc --noEmit` via `yarn type-check` in CI / the deploy
-    // smoke test, so type safety is preserved.
-    ignoreBuildErrors: true,
+    // Was true on Next 15.5.15 because of vercel/next.js#82877 (the generated
+    // validator dropped `src/` from its import paths). Re-checked on 15.5.29:
+    // `next build` type-checks cleanly, so build errors are enforced again.
+    // If a later bump brings the validator problem back, set this to true.
+    ignoreBuildErrors: false,
   },
   async headers() {
     return [

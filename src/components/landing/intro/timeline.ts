@@ -15,7 +15,6 @@ export const BEATS = [
   { shape: "brain", from: 3.15, to: 3.7, spread: 0.3, swirl: 60 },
   { shape: "teacher", from: 4.0, to: 4.7, spread: 0.45, swirl: 34 },
 ] as const;
-export type Shape = (typeof BEATS)[number]["shape"];
 
 /** The ideas' links come in and go, the cover lifts (the page's lights), the headline rises, the points fade. */
 export const LINKS = { in: [2.55, 2.85], out: [3.05, 3.3] } as const;

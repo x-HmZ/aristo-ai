@@ -1,3 +1,4 @@
+import { getDevPageStaticProps } from "@/lib/devPages";
 import dynamic from "next/dynamic";
 
 // Pages Router, like the other /dev harnesses: the room view added in V10 uses
@@ -8,9 +9,8 @@ const InteractivePreview = dynamic(
 );
 
 export default function DevInteractivePage() {
-  // Hide from production deploys: no auth, dev-only visual harness.
-  if (process.env.NODE_ENV === "production") {
-    return <div style={{ padding: 40, fontFamily: "system-ui" }}>404</div>;
-  }
   return <InteractivePreview />;
 }
+
+// Real 404 in production builds, unless NEXT_PUBLIC_DEV_PAGES=true (see src/lib/devPages.ts).
+export const getStaticProps = getDevPageStaticProps;

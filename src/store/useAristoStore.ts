@@ -94,16 +94,6 @@ export interface DynamicProfile {
   strongest_bloom_level?: string;
 }
 
-// ─── Per-concept mastery ──────────────────────────────────────────────────────
-
-export interface MasteryEntry {
-  mastery_score:          number;   // 0.0–1.0
-  assessment_count:       number;
-  srs_next_review?:       string;   // ISO date string
-  srs_interval_days?:     number;
-  srs_consecutive_correct?: number;
-}
-
 // ─── Behavioral signals (buffered per session, flushed on close) ─────────────
 
 export interface BehavioralSignals {
@@ -132,22 +122,6 @@ export interface ChatMessage {
 
 export type Message = ChatMessage;
 
-// ─── Quiz (legacy MCQ — kept for course-flow compatibility, replaced in Phase 4) ──
-
-export interface MCQQuestion {
-  question: string;
-  options:  string[];
-  correct:  string;
-}
-
-export interface QuizState {
-  questions:    MCQQuestion[];
-  currentIndex: number;
-  answers:      string[];
-  score:        number | null;
-  isActive:     boolean;
-}
-
 // ─── Course ──────────────────────────────────────────────────────────────────
 
 export interface CourseState {
@@ -166,10 +140,7 @@ interface AristoState {
   // User
   userId: string | null;
 
-  // Learner profile (from DB, synced on load)
-  profile:            DynamicProfile | null;
-  masteryByConcept:   Record<string, MasteryEntry>;
-  currentConceptId:   string | null;
+  // Onboarding
   onboardingDone:     boolean;  // whether /api/auth/onboarding has been completed
 
   // Behavioral signals (accumulated this session)
@@ -212,12 +183,8 @@ interface AristoState {
   // Custom teacher (Ready Player Me URL persisted in learner_profiles)
   customTeacherGlbUrl:   string | null;
 
-  // Quiz (Phase 4 will replace this with the full QuizView)
-  quiz: QuizState;
-
   // Audio
   isSpeaking:   boolean;
-  currentAudio: HTMLAudioElement | null;
 
   // Avatar gesture (overrides isLoading/isSpeaking-derived animation when not "idle")
   gesture: AvatarGesture;
@@ -277,11 +244,7 @@ interface AristoState {
 
   setUserId: (id: string | null) => void;
 
-  // Profile & mastery
-  setProfile:          (p: DynamicProfile | null) => void;
-  setMasteryByConcept: (m: Record<string, MasteryEntry>) => void;
-  updateConceptMastery:(conceptId: string, entry: Partial<MasteryEntry>) => void;
-  setCurrentConceptId: (id: string | null) => void;
+  // Onboarding
   setOnboardingDone:   (done: boolean) => void;
 
   // Behavioral signals
@@ -325,15 +288,8 @@ interface AristoState {
   requestExploreContinue: () => void;
   resetInteractive:       () => void;
 
-  // Quiz
-  startQuiz:    (questions: MCQQuestion[]) => void;
-  answerQuestion:(answer: string)          => void;
-  finishQuiz:   ()                         => void;
-  clearQuiz:    ()                         => void;
-
   // Audio
   setIsSpeaking:  (s: boolean)               => void;
-  setCurrentAudio:(a: HTMLAudioElement | null)=> void;
   stopAudio:      ()                          => void;
 
   // Gesture
@@ -375,19 +331,12 @@ const defaultCourse: CourseState = {
   sessionId: null, structure: null,
 };
 
-const defaultQuiz: QuizState = {
-  questions: [], currentIndex: 0, answers: [], score: null, isActive: false,
-};
-
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useAristoStore = create<AristoState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       userId:             null,
-      profile:            null,
-      masteryByConcept:   {},
-      currentConceptId:   null,
       onboardingDone:     false,
       behavioralSignals:  defaultSignals,
       teacher:            DEFAULT_TEACHER,
@@ -412,9 +361,7 @@ export const useAristoStore = create<AristoState>()(
       screenRect:            null,
       exploring:             false,
       exploreContinueTick:   0,
-      quiz:               defaultQuiz,
       isSpeaking:         false,
-      currentAudio:       null,
       gesture:            "idle" as AvatarGesture,
       currentSegmentId:  null,
       awaitingAnswer:     false,
@@ -426,16 +373,6 @@ export const useAristoStore = create<AristoState>()(
 
       setUserId:    (id) => set({ userId: id }),
 
-      setProfile:          (p)  => set({ profile: p }),
-      setMasteryByConcept: (m)  => set({ masteryByConcept: m }),
-      updateConceptMastery:(id, entry) =>
-        set((s) => ({
-          masteryByConcept: {
-            ...s.masteryByConcept,
-            [id]: { ...(s.masteryByConcept[id] ?? { mastery_score: 0, assessment_count: 0 }), ...entry },
-          },
-        })),
-      setCurrentConceptId: (id) => set({ currentConceptId: id }),
       setOnboardingDone:   (done) => set({ onboardingDone: done }),
 
       incrementSignal: (key, by = 1) =>
@@ -478,28 +415,8 @@ export const useAristoStore = create<AristoState>()(
       requestExploreContinue: ()  => set((s) => ({ exploreContinueTick: s.exploreContinueTick + 1 })),
       resetInteractive:       ()  => set({ interactive: IDLE_INTERACTIVE, interactiveShown: false, interactiveExpanded: false, exploring: false }),
 
-      startQuiz: (questions) =>
-        set({ quiz: { questions, currentIndex: 0, answers: [], score: null, isActive: true } }),
-      answerQuestion: (answer) =>
-        set((s) => ({
-          quiz: { ...s.quiz, answers: [...s.quiz.answers, answer], currentIndex: s.quiz.currentIndex + 1 },
-        })),
-      finishQuiz: () =>
-        set((s) => {
-          const score = s.quiz.answers.reduce(
-            (acc, a, i) => acc + (a === s.quiz.questions[i]?.correct ? 1 : 0), 0
-          );
-          return { quiz: { ...s.quiz, score, isActive: false } };
-        }),
-      clearQuiz: () => set({ quiz: defaultQuiz }),
-
       setIsSpeaking:   (speaking) => set({ isSpeaking: speaking }),
-      setCurrentAudio: (audio)    => set({ currentAudio: audio }),
-      stopAudio: () => {
-        const { currentAudio } = get();
-        if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-        set({ currentAudio: null, isSpeaking: false });
-      },
+      stopAudio: () => set({ isSpeaking: false }),
 
       setGesture: (gesture) => set({ gesture }),
 
@@ -525,7 +442,6 @@ export const useAristoStore = create<AristoState>()(
         classroom:           s.classroom,
         mode:                s.mode,
         course:              s.course,
-        currentConceptId:    s.currentConceptId,
         customTeacherGlbUrl: s.customTeacherGlbUrl,
       }),
       // A session saved before the 2026-09-22 archive can hold marcus & co.;
