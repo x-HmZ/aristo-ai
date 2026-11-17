@@ -9,7 +9,7 @@
 
 import { createHmac, hkdfSync, timingSafeEqual } from "crypto";
 
-export type SignLabel = "aristo/narration-token/v1" | "aristo/quiz-answer/v1";
+export type SignLabel = "aristo/narration-token/v1" | "aristo/quiz-answer/v1" | "aristo/quiz-answer/v2";
 
 const keys = new Map<string, Buffer>();
 

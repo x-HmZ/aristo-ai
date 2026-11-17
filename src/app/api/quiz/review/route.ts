@@ -71,7 +71,7 @@ export async function GET() {
       })
     );
 
-    const questions = signQuestions(questionSets.flat());
+    const questions = signQuestions(questionSets.flat(), "review");
 
     return NextResponse.json({ questions, conceptCount: queue.length });
   } catch (err) {

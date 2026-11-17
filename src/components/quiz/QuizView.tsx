@@ -585,6 +585,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           questionId:            currentQ.id,
           conceptId:             currentQ.concept_id,
           questionType:          currentQ.question_type,
+          bloomLevel:            currentQ.bloom_level,
           question:              currentQ.question,
           correctAnswer:         currentQ.correct_answer,
           answerSig:             currentQ.answer_sig,

@@ -73,7 +73,7 @@ export async function GET(
     if (blocked) return blocked;
     const questions = await generateLessonQuiz(meta, mastery, 4, user.id);
 
-    return NextResponse.json({ questions: signQuestions(questions) });
+    return NextResponse.json({ questions: signQuestions(questions, "lesson") });
   } catch (err) {
     console.error("GET /api/quiz/lesson error:", err);
     return NextResponse.json({ error: "Failed to generate quiz" }, { status: 500 });

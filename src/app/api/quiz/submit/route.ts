@@ -79,9 +79,10 @@ export async function POST(req: NextRequest) {
     };
 
     // ── The answer key must be the one this server issued ────────────────────
-    // The signature covers id, concept, type, question text, correct answer and difficulty, so none of them can
-    // be rewritten by the browser to forge a result.
-    if (!verifyQuestion(q, body.answerSig)) {
+    // The signature covers id, concept, type, Bloom level, question text, correct answer, targeted misconception,
+    // difficulty and the context the question was issued for, so none can be rewritten to forge a result or to
+    // submit a lesson question as a review (which would advance its spaced-repetition schedule).
+    if (!verifyQuestion(q, context, body.answerSig)) {
       return NextResponse.json({ error: "invalid_question" }, { status: 400 });
     }
 

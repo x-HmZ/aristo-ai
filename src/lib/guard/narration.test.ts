@@ -33,8 +33,8 @@ describe("tokens", () => {
 
   it("depend on the server secret and are purpose-bound", () => {
     const t = narrationToken("Hi")!;
-    expect(verifyHmacHex("aristo/quiz-answer/v1", "Hi", t)).toBe(false);
-    expect(hmacHex("aristo/narration-token/v1", "Hi")).not.toBe(hmacHex("aristo/quiz-answer/v1", "Hi"));
+    expect(verifyHmacHex("aristo/quiz-answer/v2", "Hi", t)).toBe(false);
+    expect(hmacHex("aristo/narration-token/v1", "Hi")).not.toBe(hmacHex("aristo/quiz-answer/v2", "Hi"));
     process.env.SUPABASE_SERVICE_ROLE_KEY = "another";
     expect(verifyNarrationToken("Hi", t)).toBe(false);
   });
