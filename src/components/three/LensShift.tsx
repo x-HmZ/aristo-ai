@@ -10,9 +10,12 @@
  * where the panel covers most of a narrow canvas. Where the set is wider than the free area (1280px), the view widens
  * (`zoom` below 1) just enough to fit it.
  *
- * It measures with its own unshifted copy of the camera, so the real camera's projection is only touched when the
- * framing actually changes. The desk view snaps it off at once (drei's transformed Html, the quiz paper, does not
- * follow a view offset), and reduced motion snaps every change.
+ * It measures with its own unshifted copy of the camera held at the LESSON pose (CameraController), never the live
+ * pose. A shift lens keeps its shift when the photographer turns: a learner dragging to look around must see the room
+ * turn, not the picture slide back towards the set and widen until it warps (it did, 2026-11-19, because the set
+ * leaves the frame when you look away and the fit-to-width zoom chased it). The real camera's projection is only
+ * touched when the framing actually changes. The desk view snaps it off at once (drei's transformed Html, the quiz
+ * paper, does not follow a view offset), and reduced motion snaps every change.
  */
 
 import { useFrame, useThree } from "@react-three/fiber";
@@ -20,6 +23,7 @@ import { useEffect, useRef } from "react";
 import { PerspectiveCamera, Vector3 } from "three";
 import { useAristoStore } from "@/store/useAristoStore";
 import { PANEL_INSET_PX } from "@/components/learn/ClassroomChrome";
+import { LESSON_POS, LESSON_TARGET } from "./CameraController";
 
 type Vec3 = [number, number, number];
 
@@ -36,7 +40,14 @@ export function LensShift({ left, right }: { left: Vec3; right: Vec3 }) {
   const zoom = useRef(1);
   const a = useRef(new Vector3());
   const b = useRef(new Vector3());
-  const measure = useRef(new PerspectiveCamera());
+  const measure = useRef<PerspectiveCamera | null>(null);
+  if (!measure.current) {
+    const m = new PerspectiveCamera();
+    m.position.copy(LESSON_POS);
+    m.lookAt(LESSON_TARGET);
+    m.updateMatrixWorld();
+    measure.current = m;
+  }
 
   const reduceMotion = useRef(false);
   useEffect(() => {
@@ -52,15 +63,12 @@ export function LensShift({ left, right }: { left: Vec3; right: Vec3 }) {
     let goal = 0;
     let goalZoom = 1;
     if (!activeQuiz && size.width >= MIN_WIDTH) {
-      // The camera's pose this frame (CameraController and OrbitControls may have moved it), unshifted, at zoom 1.
-      cam.updateMatrixWorld();
-      const m = measure.current;
+      // The lesson pose with the real camera's lens, unshifted, at zoom 1. Only the lens follows the real camera.
+      const m = measure.current!;
       if (m.fov !== cam.fov || m.aspect !== cam.aspect || m.near !== cam.near || m.far !== cam.far) {
         m.fov = cam.fov; m.aspect = cam.aspect; m.near = cam.near; m.far = cam.far;
         m.updateProjectionMatrix();
       }
-      m.matrixWorld.copy(cam.matrixWorld);
-      m.matrixWorldInverse.copy(cam.matrixWorldInverse);
       const pa = a.current.set(...left).project(m);
       const pb = b.current.set(...right).project(m);
       const free = size.width - PANEL_INSET_PX;
