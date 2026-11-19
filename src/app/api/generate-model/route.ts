@@ -9,16 +9,28 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireApproved } from "@/lib/auth/approval";
-import { generateInfographic, generate3dSourceImage } from "@/lib/imagegen/banana";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
+import { generateInfographic, generate3dSourceImageDetailed } from "@/lib/imagegen/banana";
+import { blockedResponse, spendHook } from "@/lib/guard";
+import { conceptIdSchema, parseJsonBody } from "@/lib/guard/input";
+import { z } from "zod";
 
 // NB Pro + FLUX run in parallel but NB Pro alone can take 30-60s under
 // load.  Vercel's platform limit is 300s on all plans — headroom is free.
 export const maxDuration = 300;
 
+// Prompts come from the lesson (or the free-chat card): an infographic prompt is a paragraph, a 3D prompt a phrase.
+const BodySchema = z.object({
+  imagePrompt:   z.string().trim().min(1).max(1500),
+  model3dPrompt: z.string().trim().max(600).nullish(),
+  topic:         z.string().trim().min(1).max(200),
+  conceptId:     conceptIdSchema.nullish(),
+}).strict();
+
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
 
@@ -26,23 +38,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "FAL_KEY not configured" }, { status: 500 });
     }
 
-    const body = await req.json().catch(() => ({}));
-    const { imagePrompt, model3dPrompt, topic, conceptId } = body ?? {};
-    if (typeof imagePrompt !== "string" || !imagePrompt.trim() || typeof topic !== "string" || !topic.trim()) {
-      return NextResponse.json({ error: "imagePrompt and topic are required" }, { status: 400 });
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { imagePrompt, model3dPrompt, topic, conceptId } = parsed.data;
+    const resolvedConceptId: string | null = conceptId ?? null;
+
+    // A 3D source image is what makes a 3D model, so it is the unit counted (models_3d). A request without
+    // model3dPrompt makes only the teaching image and costs no allowance.
+    if (model3dPrompt) {
+      const spent = await spendAllowance(guard.entitlement, "models_3d");
+      if (spent.error) return spent.error;
+      consumed = spent.consumed;
     }
-    if (model3dPrompt !== undefined && model3dPrompt !== null && typeof model3dPrompt !== "string") {
-      return NextResponse.json({ error: "model3dPrompt must be a string" }, { status: 400 });
-    }
-    if (conceptId !== undefined && conceptId !== null && typeof conceptId !== "string") {
-      return NextResponse.json({ error: "conceptId must be a string" }, { status: 400 });
-    }
-    const resolvedConceptId: string | null = typeof conceptId === "string" && conceptId.trim() ? conceptId : null;
 
     // Both run in parallel — NB Pro for the rich educational image, FLUX for Tripo3D input.
     // user.id is threaded through so usage_events rows are attributable on the cost page;
     // conceptId (when known) is threaded onto the generated_assets row for admin tooling.
-    const [teachingImage, model3dImageUrl] = await Promise.all([
+    const [teachingImage, source] = await Promise.all([
       generateInfographic({
         prompt:     imagePrompt,
         style:      "annotated_photo",
@@ -54,11 +66,19 @@ export async function POST(req: NextRequest) {
         userId:     user.id,
         feature:    "lesson.teaching_image",
         conceptId:  resolvedConceptId,
+        // Counted on a miss only (the teaching image is the $0.15 call); cache hits are free.
+        beforeGenerate: spendHook(user.id, "generate_model"),
       }),
       model3dPrompt
-        ? generate3dSourceImage(model3dPrompt, user.id, false, resolvedConceptId)
+        ? generate3dSourceImageDetailed(model3dPrompt, user.id, false, resolvedConceptId)
         : Promise.resolve(null),
     ]);
+    // A cached source image cost nothing: give the allowance back.
+    if (source?.cached) {
+      await releaseConsumed(consumed);
+      consumed = null;
+    }
+    const model3dImageUrl = source?.url ?? null;
 
     void topic; // referenced only for response context; safe to drop log line above
     return NextResponse.json({
@@ -66,6 +86,9 @@ export async function POST(req: NextRequest) {
       model3dImageUrl: model3dImageUrl ?? teachingImage.imageUrl,
     });
   } catch (error) {
+    await releaseConsumed(consumed);
+    const refused = blockedResponse(error);
+    if (refused) return refused;
     console.error("[generate-model] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Image generation failed" },

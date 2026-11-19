@@ -39,7 +39,9 @@ import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS } from "@/hooks/useTTS";
 import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
+import { SourceCredit } from "@/components/learn/SourceCredit";
 import { cn } from "@/lib/utils";
+import { pushLessonNotice } from "@/hooks/useLessonStatus";
 
 // ─── The five phases (brand-system.md: no colours) ───────────────────────────
 //
@@ -354,6 +356,7 @@ function DemonstrateCard({
       setIsSpeaking(true);
       setGesture("pointing");
       ttsControllerRef.current = speak(phase.visual_walkthrough, {
+        scope: "lesson",
         onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
       });
       lastSpokenStage.current = "walkthrough";
@@ -361,6 +364,7 @@ function DemonstrateCard({
     }
     setIsSpeaking(true);
     ttsControllerRef.current = speak(phase.narration_pre_visual ?? phase.example_description, {
+      scope: "lesson",
       onEnd: () => setIsSpeaking(false),
     });
     lastSpokenStage.current = "pre";
@@ -379,6 +383,7 @@ function DemonstrateCard({
     setIsSpeaking(true);
     setGesture("pointing");
     ttsControllerRef.current = speak(phase.visual_walkthrough, {
+        scope: "lesson",
       onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
     });
     lastSpokenStage.current = "walkthrough";
@@ -684,11 +689,11 @@ export function LessonView({
     })
       .then((r) => r.json())
       .then(({ imageUrl, model3dImageUrl }) => {
-        if (!imageUrl) return;
+        if (!imageUrl) { pushLessonNotice("model"); return; }
         setActivePreviewImageUrl(imageUrl);
         setPending3dImageUrl(model3dImageUrl ?? imageUrl);
       })
-      .catch(() => {/* non-critical — narration falls back to pre_visual */})
+      .catch(() => { pushLessonNotice("model"); /* non-critical — narration falls back to pre_visual */ })
       .finally(() => setIsGeneratingModel(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson?.concept_id, playbackMode]);
@@ -703,6 +708,7 @@ export function LessonView({
     setIsSpeaking(true);
     setGesture("pointing");
     speak(callouts.join(" "), {
+      scope: "lesson",
       onEnd: () => { setIsSpeaking(false); setGesture("idle"); },
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -734,6 +740,7 @@ export function LessonView({
     if (phase === "demonstrate") return; // DemonstrateCard owns its narration in legacy mode
     setIsSpeaking(true);
     const ctrl = speak(phaseSpeakText(lesson, phase), {
+      scope: "lesson",
       onEnd: () => setIsSpeaking(false),
     });
     return () => ctrl.stop();
@@ -820,6 +827,7 @@ export function LessonView({
         <header className="flex shrink-0 flex-col gap-2.5">
           <h2 className="truncate text-sm font-bold text-ink">{lesson.concept_name}</h2>
           <PhaseRail current={phaseIdx} />
+          <SourceCredit sources={lesson.sources} />
         </header>
 
         {/* In-panel caption below lg, where the band over the scene is hidden.

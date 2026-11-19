@@ -1,14 +1,16 @@
 /**
- * Approved-users-only gate.
+ * Who-may-learn gate for API routes.
  *
- * Mirrors the verifyAdmin() pattern in src/lib/admin/auth.ts. Used by
- * learner API routes as defence-in-depth alongside the middleware
- * redirect to /pending. Admins are always treated as approved.
+ * Mirrors the verifyAdmin() pattern in src/lib/admin/auth.ts. Used by learner API routes as defence-in-depth
+ * alongside the SSR gate in pages/learn.tsx. The decision itself lives in src/lib/auth/access.ts and depends on
+ * ACCESS_MODE: the manual approval gate (default) or open sign-up with a confirmed email and recorded consents.
+ * Admins are always allowed.
  */
 
 import { NextResponse } from "next/server";
 import type { User } from "@supabase/supabase-js";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { DENY_MESSAGES, getAccessForUser } from "./access";
 
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -37,29 +39,19 @@ export async function requireApproved(): Promise<
     };
   }
 
-  const service = createServiceClient();
-  const { data: profile } = await service
-    .from("profiles")
-    .select("approval_status, is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.is_admin || profile?.approval_status === "approved") {
-    return { user: user as ApprovedUser, error: null };
-  }
+  const access = await getAccessForUser(createServiceClient(), user);
+  if (access.allowed) return { user: user as ApprovedUser, error: null };
 
   return {
     user: null,
-    error: NextResponse.json(
-      { error: "Account pending approval" },
-      { status: 403 }
-    ),
+    error: NextResponse.json({ error: DENY_MESSAGES[access.reason], code: access.reason }, { status: 403 }),
   };
 }
 
 /**
  * Read-only helper — returns the raw status string. Use this when the
  * caller needs to branch on pending vs rejected (e.g. the /pending page).
+ * It reports the stored status only; for "may this user learn right now" use getAccessForUser().
  */
 export async function getUserApprovalStatus(
   userId: string

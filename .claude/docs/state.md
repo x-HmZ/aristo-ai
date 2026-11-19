@@ -2,6 +2,30 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-17 - Launch readiness: everything without the owner is built (branch feat/launch-features, PR open)
+
+**Resume from `.claude/plans/launch/OWNER-STEPS.md`** (what only Hmz can do, in order) and `.claude/plans/launch/README.md`
+(brief status table). Do not re-audit.
+
+- **Live on production (deploy-prep)**: PR 30 (security fixes; the three open routes answer 404) and PR 31 (next
+  15.5.29, dead code). Migrations 018-021 applied by Hmz; 39 behavioural checks passed with a temporary user
+  (script kept only in the session scratchpad; it creates and deletes its own user).
+- **On feat/launch-features, not deployed**: narration cache, `/api/stt`, textbook ingestion, accounts/plans/allowances,
+  Paddle sandbox (2026-11-16); spend guard (rate limits in the database, daily cut-off, Zod limits, narration tokens,
+  signed quiz keys, server-only learner writes), account lifecycle (age step, guardian-held accounts, consents,
+  parent controls, reset, export, delete, `ACCESS_MODE`), legal drafts, AI label, error states, sitemap/robots,
+  `docs/compliance/*` (2026-11-17). Checks: type-check, 1000 tests, production build, local production server
+  (new pages 200, protected routes 401/404, `/demo` probe clean). Two security-reviewer passes, findings fixed.
+- **Migrations not applied: 023, 025 (before the deploy), 024 (only AFTER the deploy; earlier loses quiz saves).**
+  The feature PR must not be merged before 023 and 025 are applied: sign-up writes the new columns.
+- **PDF pipeline live test** (25-page NASA booklet, 0.11 USD, all test rows and the test admin removed): UI flow
+  works; `Draft a course` was broken by schema bounds and is fixed; embeddings never ran because the OpenAI account
+  has no credit.
+- **For Hmz to confirm**: a second admin account exists (created 2026-04-19). Local-only: `pages/dev/learn-shell.tsx`
+  (untracked) got the new `capabilities` prop so the local build passes.
+- **Next (code)**: narration-failure notice; several learners per account; organisation UI; quiz cache and catalogue
+  pre-generation; server-side checkout creation; `src/lib/env.ts`; CSP; pruning `rate_counters`.
+
 ## 2026-11-16 - Launch readiness: audits, plan, first security fixes (branch fix/launch-critical)
 
 **Resume from `.claude/plans/launch/README.md`** (decisions taken, 14 ordered briefs L01-L14, open owner decisions D1-D9).
@@ -27,11 +51,21 @@ payments-research is local and untracked on purpose). Do not re-audit.
   free allowance as proposed; paid plans include an organisation plan with its own admin role (three kinds of admin,
   see README L07). Research: `findings/pricing.md` (plan table, margins) and `findings/content-plan.md` (PDF upload does
   not work today; briefs E1-E6; usable open textbooks).
-- **Neither branch is pushed.** Production still serves the unauthenticated speech and quiz routes until
+- **Built later the same day (branch `feat/launch-features`, stacked on chore/launch-cleanup; all off or inert by
+  default, none run against the database or a provider)**: narration cache for lesson audio (migration 019) and
+  ElevenLabs usage rows; `/api/stt` with a recorder engine behind `NEXT_PUBLIC_STT_ENGINE=server`; textbook
+  ingestion (PDF read in the admin's browser, batched ingest with a source registry and licence list, grounding
+  preview, draft course from a book outline, onboarding from published courses, `SourceCredit`, `/credits`;
+  migration 020); accounts, plans, usage counters, `requireEntitlement` wired into the paid routes, Paddle sandbox
+  webhook, portal and checkout, `/pricing`, `/account` (migration 021; `BILLING_ENABLED` and `ENFORCE_ALLOWANCE`
+  default off; sandbox refused on production). Checks: type-check, 857 tests, production build, local production
+  server (new pages 200, closed routes 401/403/404, `/demo` probe clean). security-reviewer pass done, highs fixed.
+  Owner steps, checks and known gaps: `.claude/plans/launch/OWNER-STEPS.md`.
+- **None of the three branches is pushed.** Production still serves the unauthenticated speech and quiz routes until
   fix/launch-critical is merged and deployed.
 - **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. Hmz
   runs that fix in the portfolio repo himself.
-- **Next**: push and merge the two branches; L04 spend guard (plan mode); L06 + L07 together (accounts, learners,
+- **Next**: push and merge the three branches in order; apply migrations 019-021 with their checks; L04 spend guard
   plans, organisations: plan mode); L08 audio cache; content briefs E1-E6. Owner: set hard spend limits in the
   Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D3 and D6-D11 in the README.
 - **Not verified**: anything against the live database or a signed-in session; no paid call was made.

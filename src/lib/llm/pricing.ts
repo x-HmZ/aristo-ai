@@ -132,3 +132,41 @@ export function falCostMicros(opts: {
 export function microsToUsd(micros: number): number {
   return micros / USD_TO_MICROS;
 }
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* ElevenLabs (text to speech)                                                */
+/* ────────────────────────────────────────────────────────────────────────── */
+
+/** ASSUMPTION, not the owner's real rate: replace via ELEVENLABS_USD_PER_1K_CHARS. */
+export const ELEVENLABS_DEFAULT_USD_PER_1K_CHARS = 0.11;
+
+/** USD per 1,000 characters; the env value when it is a positive number, else the default. */
+export function elevenlabsUsdPer1kChars(raw: string | undefined = process.env.ELEVENLABS_USD_PER_1K_CHARS): number {
+  const n = raw === undefined || raw.trim() === "" ? NaN : Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : ELEVENLABS_DEFAULT_USD_PER_1K_CHARS;
+}
+
+export function elevenlabsCostMicros(opts: { characters: number; usdPer1k?: number }): number {
+  const rate = opts.usdPer1k ?? elevenlabsUsdPer1kChars();
+  return Math.round((opts.characters / 1000) * rate * USD_TO_MICROS);
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* OpenAI transcription                                                       */
+/* ────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * USD per audio minute. Source: https://developers.openai.com/api/docs/pricing
+ * (read 2026-11-16): gpt-4o-mini-transcribe $0.003, gpt-4o-transcribe $0.006, whisper-1 $0.006.
+ */
+export const OPENAI_TRANSCRIBE_PER_MINUTE: Record<string, number> = {
+  "gpt-4o-mini-transcribe": 0.003,
+  "gpt-4o-transcribe":      0.006,
+  "whisper-1":              0.006,
+};
+
+export function openaiTranscribeCostMicros(opts: { model: string; seconds: number }): number {
+  const rate = OPENAI_TRANSCRIBE_PER_MINUTE[opts.model];
+  if (!rate) return 0;
+  return Math.round((opts.seconds / 60) * rate * USD_TO_MICROS);
+}

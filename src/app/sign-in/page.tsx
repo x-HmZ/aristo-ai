@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+export const metadata = { title: "Sign in | Aristo", robots: { index: false, follow: false } };
+
 interface PageProps {
   searchParams: Promise<{ error?: string; message?: string }>;
 }
@@ -47,8 +49,8 @@ export default async function SignInPage({ searchParams }: PageProps) {
 
           {/* Error / Message */}
           {params.error && (
-            <div className="mb-4 p-3 rounded-[10px] bg-danger/10 border border-danger/25 text-danger text-sm">
-              {decodeURIComponent(params.error)}
+            <div role="alert" className="mb-4 p-3 rounded-[10px] bg-danger/10 border border-danger/25 text-danger text-sm">
+              {params.error}
             </div>
           )}
           {params.message && (
@@ -87,6 +89,15 @@ export default async function SignInPage({ searchParams }: PageProps) {
               Sign in
             </Button>
           </form>
+
+          <p className="text-center text-sm text-muted mt-4">
+            <Link
+              href="/auth/forgot"
+              className="inline-flex min-h-11 items-center text-accent-text font-semibold underline-offset-4 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </p>
 
           <p className="text-center text-sm text-muted mt-6">
             Don&apos;t have an account?{" "}

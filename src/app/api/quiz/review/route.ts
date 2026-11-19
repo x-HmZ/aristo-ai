@@ -12,6 +12,8 @@ import { NextResponse }              from "next/server";
 import { createClient }              from "@/lib/supabase/server";
 import { requireApproved }           from "@/lib/auth/approval";
 import { getDailyReviewQueue }       from "@/lib/srs/queue";
+import { guardSpend }                from "@/lib/guard";
+import { signQuestions }             from "@/lib/quiz/sign";
 import { generateReviewQuestion }    from "@/lib/agents/assessment";
 import type { ConceptMeta }          from "@/lib/agents/assessment";
 
@@ -28,6 +30,9 @@ export async function GET() {
     if (queue.length === 0) {
       return NextResponse.json({ questions: [], conceptCount: 0 });
     }
+
+    const blocked = await guardSpend(user.id, "quiz_review");
+    if (blocked) return blocked;
 
     // ── 2. Load concept metadata for all due concepts ─────────────────────────
     const conceptIds = queue.map((r) => r.concept_id);
@@ -62,11 +67,11 @@ export async function GET() {
               description: `Review: ${item.concept_id}`,
             };
 
-        return generateReviewQuestion(meta, item.mastery_score);
+        return generateReviewQuestion(meta, item.mastery_score, user.id);
       })
     );
 
-    const questions = questionSets.flat();
+    const questions = signQuestions(questionSets.flat(), "review");
 
     return NextResponse.json({ questions, conceptCount: queue.length });
   } catch (err) {

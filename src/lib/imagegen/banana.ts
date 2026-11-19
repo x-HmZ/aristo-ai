@@ -99,6 +99,11 @@ export interface GenerateInfographicOpts {
    * never used for cache keying (prompt_hash already disambiguates).
    */
   conceptId?: string | null;
+  /**
+   * Called on a cache MISS only, right before the paid fal.ai call. The spend guard hooks in here so that cache
+   * hits are never rate limited; it throws to refuse (the error propagates to the caller).
+   */
+  beforeGenerate?: () => Promise<void>;
 }
 
 export interface GenerateInfographicResult {
@@ -432,7 +437,7 @@ export async function generateInfographic(
 ): Promise<GenerateInfographicResult> {
   const {
     prompt, style, tier = "pro", resolution = "1K", bypassCache = false,
-    userId = null, feature = "lesson.teaching_image", conceptId = null,
+    userId = null, feature = "lesson.teaching_image", conceptId = null, beforeGenerate,
   } = opts;
   if (!prompt || !prompt.trim()) {
     throw new Error("generateInfographic: prompt is required");
@@ -459,6 +464,7 @@ export async function generateInfographic(
     }
   }
 
+  await beforeGenerate?.();
   ensureFalConfigured();
 
   const result = (await fal.subscribe(model, {
@@ -512,12 +518,13 @@ export async function generateInfographic(
  * if FLUX returned a fresh URL every time, the Tripo3D cache key (which
  * hashes the imageUrl) would always miss.
  */
-export async function generate3dSourceImage(
+/** Same as `generate3dSourceImage`, but also reports whether the image came from a cache (no fal.ai call). */
+export async function generate3dSourceImageDetailed(
   prompt:        string,
   userId?:       string | null,
   bypassCache:   boolean = false,
   conceptId?:    string | null,
-): Promise<string> {
+): Promise<{ url: string; cached: boolean }> {
   if (!prompt || !prompt.trim()) {
     throw new Error("generate3dSourceImage: prompt is required");
   }
@@ -525,12 +532,12 @@ export async function generate3dSourceImage(
   const key     = hashKey(`flux|${trimmed}`);
   if (!bypassCache) {
     const hit = cacheGet(_cacheFlux, key);
-    if (hit) return hit;
+    if (hit) return { url: hit, cached: true };
 
     const persistedHit = await lookupPersistedAsset("flux_source", key);
     if (persistedHit) {
       cacheSet(_cacheFlux, key, persistedHit);
-      return persistedHit;
+      return { url: persistedHit, cached: true };
     }
   }
 
@@ -565,7 +572,16 @@ export async function generate3dSourceImage(
   const canonicalUrl = persistedUrl ?? url;
 
   cacheSet(_cacheFlux, key, canonicalUrl);
-  return canonicalUrl;
+  return { url: canonicalUrl, cached: false };
+}
+
+export async function generate3dSourceImage(
+  prompt:        string,
+  userId?:       string | null,
+  bypassCache:   boolean = false,
+  conceptId?:    string | null,
+): Promise<string> {
+  return (await generate3dSourceImageDetailed(prompt, userId, bypassCache, conceptId)).url;
 }
 
 /**
@@ -595,10 +611,10 @@ export async function generate3dModel(
   userId?:  string | null,
   bypassCache: boolean = false,
   conceptId?: string | null,
-  opts: { multiview?: boolean } = {},
+  opts: { multiview?: boolean; beforeGenerate?: () => Promise<void> } = {},
 ): Promise<{ modelUrl: string; cached: boolean }> {
   if (opts.multiview) {
-    return generate3dModelMultiview(imageUrl, userId, bypassCache, conceptId);
+    return generate3dModelMultiview(imageUrl, userId, bypassCache, conceptId, opts.beforeGenerate);
   }
   if (!imageUrl || !imageUrl.trim()) {
     throw new Error("generate3dModel: imageUrl is required");
@@ -616,6 +632,7 @@ export async function generate3dModel(
     }
   }
 
+  await opts.beforeGenerate?.();
   ensureFalConfigured();
   // The eval saw one Tripo3D call hang indefinitely. `fal.subscribe` has no
   // timeout of its own, so without this the route would sit until Vercel's
@@ -672,6 +689,7 @@ export async function generate3dModelMultiview(
   userId?:  string | null,
   bypassCache: boolean = false,
   conceptId?: string | null,
+  beforeGenerate?: () => Promise<void>,
 ): Promise<{ modelUrl: string; cached: boolean }> {
   const trimmed = frontImageUrl.trim();
   if (!trimmed) throw new Error("generate3dModelMultiview: frontImageUrl is required");
@@ -689,6 +707,7 @@ export async function generate3dModelMultiview(
     }
   }
 
+  await beforeGenerate?.();
   ensureFalConfigured();
 
   const views: Record<string, string> = {};

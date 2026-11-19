@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { CreateTeacherClient } from "./CreateTeacherClient";
 
 export const metadata = {
@@ -7,6 +7,9 @@ export const metadata = {
 };
 
 export default async function CreateTeacherPage() {
+  // Without the Avaturn subdomain the page can only show developer setup text: to the public it does not exist.
+  if (!process.env.NEXT_PUBLIC_AVATURN_SUBDOMAIN?.trim()) notFound();
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/sign-in");

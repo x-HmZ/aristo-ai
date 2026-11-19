@@ -38,6 +38,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
 import { useTTS, type SpeakController } from "@/hooks/useTTS";
+import { pushLessonNotice } from "@/hooks/useLessonStatus";
 import type { LessonPhase, NarrationSegment } from "@/lib/agents/teaching";
 import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
 
@@ -492,6 +493,7 @@ export function useLessonPlayback(
         if (cancelled) return;
         console.error("[useLessonPlayback] visuals fetch failed", err);
         setVisualsByID({}); // graceful degradation — no visuals, playback still proceeds
+        pushLessonNotice("picture");
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -584,7 +586,7 @@ export function useLessonPlayback(
           void fetch(upcomingSrc, { cache: "force-cache" }).catch(() => {});
         }
       } else {
-        prefetch(upcoming.text, { forceBrowser: demoMode });
+        prefetch(upcoming.text, { forceBrowser: demoMode, scope: "lesson" });
       }
     }
 
@@ -596,6 +598,7 @@ export function useLessonPlayback(
     setIsSpeaking(true);
     const segmentSrc = demoAudioUrl(segment.id);
     const controller = speak(segment.text, {
+      scope:        "lesson",
       srcUrl:       segmentSrc,
       forceBrowser: demoMode && !segmentSrc,
       onEnd: () => {

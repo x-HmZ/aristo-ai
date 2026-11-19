@@ -24,8 +24,8 @@ import { LoaderCircle, Mic, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { NarrationSegment } from "@/lib/agents/teaching";
-import type { SpeechRecognitionInstance } from "@/lib/speech";
-import "@/lib/speech";
+import { createSpeechRecognition, type SpeechRecognitionInstance } from "@/lib/speech";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -43,10 +43,12 @@ export interface AnswerInputPanelProps {
 const SILENCE_SUBMIT_MS = 1500;
 
 export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanelProps) {
+  const { voiceInput } = useCapabilities();
   const [answer,      setAnswer]      = useState("");
   const [isListening, setIsListening] = useState(false);
   const [submitting,  setSubmitting]  = useState(false);
   const [micError,    setMicError]    = useState<string | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const silenceTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,18 +77,23 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
   // doesn't support Web Speech (Firefox, some Safari).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!Ctor) {
+    // Voice off (a guardian has not turned it on): no recognition object is ever created, the answer is typed.
+    const rec = voiceInput ? createSpeechRecognition() : null;
+    if (!rec) {
       setMicError("mic-unsupported");
       // Focus the textarea instead so the student can still type.
       inputRef.current?.focus();
       return;
     }
 
-    const rec = new Ctor();
     rec.lang           = "en-US";
     rec.continuous     = true;
     rec.interimResults = true;
+    // Server engine: recording and transcribing are reported here, not inferred.
+    rec.onstatechange = (s) => {
+      setIsListening(s === "recording");
+      setIsTranscribing(s === "transcribing");
+    };
 
     rec.onresult = (e) => {
       // Concatenate all results into a single transcript — Web Speech delivers
@@ -99,6 +106,9 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
       const cleaned = transcript.trim();
       if (cleaned) {
         setAnswer(cleaned);
+        // The server engine delivers one final transcript after the student pressed stop: let
+        // them read it and send it themselves rather than submitting on a timer.
+        if (rec.engine === "server") return;
         // Reset the silence-submit countdown each time we hear new audio.
         if (silenceTimer.current) clearTimeout(silenceTimer.current);
         silenceTimer.current = setTimeout(() => {
@@ -121,12 +131,18 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
     };
 
     recognitionRef.current = rec;
-    try {
-      rec.start();
-      setIsListening(true);
-    } catch {
-      // Some browsers throw if start() is called twice; treat as benign.
-      setIsListening(false);
+    // The server engine records only after an explicit press: nothing is captured and sent
+    // to a server unprompted. The browser engine keeps its auto-open.
+    if (rec.engine === "server") {
+      inputRef.current?.focus();
+    } else {
+      try {
+        rec.start();
+        setIsListening(true);
+      } catch {
+        // Some browsers throw if start() is called twice; treat as benign.
+        setIsListening(false);
+      }
     }
 
     return () => {
@@ -139,7 +155,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
   // Toggle the mic on/off when the student taps the button.
   const toggleListening = useCallback(() => {
     const rec = recognitionRef.current;
-    if (!rec) return;
+    if (!rec || isTranscribing) return;
     if (isListening) {
       try { rec.stop(); } catch { /* ignore */ }
       setIsListening(false);
@@ -152,7 +168,7 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
     } catch {
       setIsListening(false);
     }
-  }, [isListening]);
+  }, [isListening, isTranscribing]);
 
   const handleSubmit = () => { doSubmit(answer); };
 
@@ -164,10 +180,18 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
           Your turn
         </span>
         <span className="text-xs text-muted" aria-live="polite">
-          {isListening
-            ? "Listening… pause when you're done"
-            : micError === "mic-unsupported"
+          {isTranscribing
+            ? "Transcribing…"
+            : isListening
+            ? recognitionRef.current?.engine === "server"
+              ? "Recording… press stop when you're done"
+              : "Listening… pause when you're done"
+            : micError === "mic-unsupported" || !voiceInput
             ? "Type your answer below"
+            : micError === "stt-failed" || micError === "no-speech"
+            ? "Could not hear that. Try again or type your answer"
+            : micError === "not-allowed"
+            ? "Microphone is blocked. Type your answer below"
             : "Speak or type your answer"}
         </span>
         {onSkip && (
@@ -185,18 +209,20 @@ export function AnswerInputPanel({ segment, onSubmit, onSkip }: AnswerInputPanel
       <div className="flex items-end gap-2">
         {/* Mic toggle. Listening is the accent fill, the stop icon and the status text; the
             pulse is motion-safe so a reduced-motion reader still sees a ring. */}
-        <Button
+        {voiceInput && <Button
           variant={isListening ? "default" : "secondary"}
           size="icon"
           onClick={toggleListening}
-          disabled={submitting || micError === "mic-unsupported"}
+          disabled={submitting || isTranscribing || micError === "mic-unsupported"}
           title={isListening ? "Stop listening" : "Speak"}
           aria-label="Speak"
           aria-pressed={isListening}
           className={cn("shrink-0", isListening && "ring-2 ring-accent-text ring-offset-2 ring-offset-surface motion-safe:animate-pulse")}
         >
-          {isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
-        </Button>
+          {isTranscribing
+            ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
+            : isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
+        </Button>}
 
         {/* Text input (textarea so multi-line answers don't get cut off) */}
         <textarea

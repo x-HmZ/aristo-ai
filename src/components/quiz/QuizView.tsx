@@ -585,8 +585,10 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           questionId:            currentQ.id,
           conceptId:             currentQ.concept_id,
           questionType:          currentQ.question_type,
+          bloomLevel:            currentQ.bloom_level,
           question:              currentQ.question,
           correctAnswer:         currentQ.correct_answer,
+          answerSig:             currentQ.answer_sig,
           misconceptionTargeted: currentQ.misconception_targeted,
           difficulty:            currentQ.difficulty,
           userAnswer,
@@ -624,7 +626,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
     } finally {
       setIsEvaluating(false);
     }
-  }, [currentQ, currentR, currentIdx, isEvaluating, localOnly, incrementSignal]);
+  }, [currentQ, currentR, currentIdx, isEvaluating, localOnly, incrementSignal, context]);
 
   // ── Advance to next question ──────────────────────────────────────────────
   const handleNext = useCallback(async () => {

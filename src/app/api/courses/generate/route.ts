@@ -11,22 +11,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient }              from "@/lib/supabase/server";
 import { createServiceClient }       from "@/lib/supabase/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateCourse }            from "@/lib/agents/curriculum";
+import { guardSpend }                from "@/lib/guard";
+import { parseJsonBody }             from "@/lib/guard/input";
+import { z }                         from "zod";
 
 export const maxDuration = 120;
 
+const BodySchema = z.object({
+  domain: z.string().trim().min(1).max(100),
+  goal:   z.string().trim().max(300).optional(),
+}).strict();
+
 export async function POST(req: NextRequest) {
+  let consumed: Consumed | null = null;
   try {
-    const { domain, goal }: { domain: string; goal?: string } = await req.json();
+    const parsed = await parseJsonBody(req, BodySchema);
+    if (!parsed.ok) return parsed.response;
+    const { domain, goal } = parsed.data;
 
-    if (!domain) {
-      return NextResponse.json({ error: "domain is required" }, { status: 400 });
-    }
-
-    const guard = await requireApproved();
+    // Validated above, so a 400 never costs an allowance; released in the catch if generation fails.
+    const guard = await requireEntitlement({ metric: "fresh_lessons" });
     if (guard.error) return guard.error;
+    consumed = guard.consumed;
     const { user } = guard;
+    const blocked = await guardSpend(user.id, "courses_generate");
+    if (blocked) {
+      await releaseConsumed(consumed);
+      return blocked;
+    }
     const supabase = await createClient();
 
     // Get user's goal from profile if not provided
@@ -77,6 +91,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ course: saved });
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("POST /api/courses/generate error:", err);
     return NextResponse.json({ error: "Course generation failed" }, { status: 500 });
   }

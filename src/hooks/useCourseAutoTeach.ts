@@ -11,6 +11,8 @@
 
 import { useEffect, useRef } from "react";
 import { useAristoStore }    from "@/store/useAristoStore";
+import { useLessonStatus }   from "@/hooks/useLessonStatus";
+import { classifyLessonFailure } from "@/lib/learn/lessonError";
 
 export function useCourseAutoTeach() {
   const mode   = useAristoStore((s) => s.mode);
@@ -21,6 +23,8 @@ export function useCourseAutoTeach() {
   const setActiveLesson     = useAristoStore((s) => s.setActiveLesson);
   const setActiveModelUrl   = useAristoStore((s) => s.setActiveModelUrl);
   const stopAudio           = useAristoStore((s) => s.stopAudio);
+  const retryNonce          = useLessonStatus((s) => s.retryNonce);
+  const setFailure          = useLessonStatus((s) => s.setFailure);
 
   // Tracks the last topic key that was fired: "courseId:topicIndex"
   const firedRef = useRef<string | null>(null);
@@ -32,7 +36,8 @@ export function useCourseAutoTeach() {
     if (!courseId || topics.length === 0) return;
     if (currentTopicIndex >= topics.length)  return;
 
-    const key = `${courseId}:${currentTopicIndex}`;
+    // Retry bumps retryNonce, which makes this a new key and so a new fetch.
+    const key = `${courseId}:${currentTopicIndex}:${retryNonce}`;
     if (firedRef.current === key) return;
     firedRef.current = key;
 
@@ -42,6 +47,7 @@ export function useCourseAutoTeach() {
     clearMessages();
     setActiveLesson(null);
     setActiveModelUrl(null);
+    setFailure(null);
     setIsLoading(true);
 
     (async () => {
@@ -52,17 +58,30 @@ export function useCourseAutoTeach() {
         const conceptId = encodeURIComponent(topic);
         const res = await fetch(`/api/learn/lesson/${conceptId}`);
 
-        if (!res.ok) throw new Error(`Lesson API error ${res.status}`);
+        if (!res.ok) {
+          // The body says why (allowance used, paused for today); a body that is not JSON is fine.
+          const body = await res.json().catch(() => null);
+          if (firedRef.current !== key) return; // the learner moved on meanwhile
+          console.error(`Course auto-teach failed: lesson API ${res.status}`);
+          setIsLoading(false);
+          setFailure(classifyLessonFailure({ status: res.status, body }));
+          return;
+        }
 
         const lesson = await res.json();
+        if (firedRef.current !== key) return;
         setIsLoading(false);
         setActiveLesson(lesson);
       } catch (err) {
         console.error("Course auto-teach failed:", err);
+        if (firedRef.current !== key) return;
         setIsLoading(false);
+        setFailure(classifyLessonFailure({ status: 0 }));
       }
     })();
   }, [
+    retryNonce,
+    setFailure,
     mode,
     course.courseId,
     course.currentTopicIndex,

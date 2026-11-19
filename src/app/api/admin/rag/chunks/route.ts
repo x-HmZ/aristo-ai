@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
   let query = service
     .from("reference_chunks")
-    .select("id, domain, source_title, content, metadata, created_at", { count: "exact" })
+    .select("id, domain, source_title, source_id, page_start, page_end, content, metadata, created_at", { count: "exact" })
     .order("created_at", { ascending: false });
 
   if (domain) query = query.eq("domain", domain);

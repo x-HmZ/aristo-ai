@@ -8,10 +8,10 @@
  * border on the warm tint with a check, so colour is never the only cue.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft, ArrowRight, Circle, CircleAlert, CircleCheck, Code, FlaskConical, type LucideIcon,
+  ArrowLeft, ArrowRight, BookOpen, Circle, CircleAlert, CircleCheck, Code, FlaskConical, type LucideIcon,
 } from "lucide-react";
 import { AristoMark } from "@/components/brand/AristoMark";
 import { Button } from "@/components/ui/button";
@@ -44,10 +44,15 @@ const TIMES: { value: DailyTime; label: string }[] = [
   { value: 60,  label: "1+ hours / day"  },
 ];
 
-const DOMAINS: { value: string; label: string; Icon: LucideIcon }[] = [
-  { value: "python_programming",    label: "Python Programming",    Icon: Code },
-  { value: "middle_school_science", label: "Middle School Science", Icon: FlaskConical },
-];
+
+// Subjects come from published courses (GET /api/auth/onboarding).
+interface SubjectOption { domain: string; title: string; conceptCount: number }
+
+function subjectIcon(domain: string): LucideIcon {
+  if (/python|program|coding|computer/.test(domain)) return Code;
+  if (/science|physics|chem|bio/.test(domain)) return FlaskConical;
+  return BookOpen;
+}
 
 // ── Pieces ────────────────────────────────────────────────────
 
@@ -106,6 +111,17 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
   const [domain, setDomain]     = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError]       = useState<string | null>(null);
+  const [subjects, setSubjects] = useState<SubjectOption[] | null>(null);
+  const [subjectsFailed, setSubjectsFailed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/auth/onboarding", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("status"))))
+      .then((d: { subjects?: SubjectOption[] }) => { if (alive) setSubjects(d.subjects ?? []); })
+      .catch(() => { if (alive) { setSubjects([]); setSubjectsFailed(true); } });
+    return () => { alive = false; };
+  }, []);
 
   const canAdvance = step === 1 ? !!goal : step === 2 ? !!time : !!domain;
 
@@ -199,16 +215,29 @@ export default function OnboardingView({ userName, onComplete }: OnboardingViewP
             <div>
               <h2 className="type-h3 mb-1 font-bold text-ink">What do you want to learn?</h2>
               <p className="mb-6 text-sm text-body">We&apos;ll load a curated knowledge graph for your subject.</p>
-              <div className="space-y-3">
-                {DOMAINS.map((d) => (
-                  <Choice key={d.value} selected={domain === d.value} onSelect={() => setDomain(d.value)}>
-                    <span className="flex items-center gap-4">
-                      <OptionIcon><d.Icon aria-hidden /></OptionIcon>
-                      <span className="text-sm font-semibold text-ink">{d.label}</span>
-                    </span>
-                  </Choice>
-                ))}
-              </div>
+              {subjects === null ? (
+                <p className="text-sm text-body">Loading subjects…</p>
+              ) : subjects.length === 0 ? (
+                <p role="status" className="text-sm text-body">
+                  {subjectsFailed
+                    ? "We couldn't load the subjects. Please refresh the page."
+                    : "No subjects are open yet. New courses are on their way, so please check back soon."}
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {subjects.map((s) => {
+                    const Icon = subjectIcon(s.domain);
+                    return (
+                      <Choice key={s.domain} selected={domain === s.domain} onSelect={() => setDomain(s.domain)}>
+                        <span className="flex items-center gap-4">
+                          <OptionIcon><Icon aria-hidden /></OptionIcon>
+                          <span className="text-sm font-semibold text-ink">{s.title}</span>
+                        </span>
+                      </Choice>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

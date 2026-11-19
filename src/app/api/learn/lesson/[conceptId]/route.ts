@@ -18,13 +18,18 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { requireApproved }           from "@/lib/auth/approval";
+import { requireEntitlement, spendAllowance, releaseConsumed, type Consumed } from "@/lib/billing/entitlements";
 import { generateLesson }            from "@/lib/agents/teaching";
 import type { ConceptInput, LessonPayload } from "@/lib/agents/teaching";
 import type { DynamicProfile }       from "@/store/useAristoStore";
-import { retrieveContext }           from "@/lib/rag/retrieve";
+import { loadConceptScope, retrieveChunks, type RetrievedChunk } from "@/lib/rag/retrieve";
+import { formatChunk }               from "@/lib/rag/reference";
+import { loadLessonSources }         from "@/lib/rag/credits";
 import { decideModeration, profileSignature } from "@/lib/admin/moderation-rules";
 import { MODELS }                    from "@/lib/agents/models";
+import { guardSpend }                from "@/lib/guard";
+import { attachNarrationTokens }     from "@/lib/guard/narration";
+import { conceptIdSchema, parseValue } from "@/lib/guard/input";
 
 export const maxDuration = 60;
 
@@ -32,12 +37,20 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ conceptId: string }> }
 ) {
+  // Set once a fresh lesson is counted; released in the catch if generation then fails.
+  let consumed: Consumed | null = null;
   try {
     const { conceptId: rawId } = await params;
-    const conceptId = decodeURIComponent(rawId);
+    let decoded: string;
+    try { decoded = decodeURIComponent(rawId); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+    // A KG concept id or, from course mode, a topic title used as the id (free-form fallback below): bounded and
+    // restricted to plain text either way.
+    const idCheck = parseValue(conceptIdSchema, decoded);
+    if (!idCheck.ok) return idCheck.response;
+    const conceptId = idCheck.data;
 
     // ── Auth + approval gate ──────────────────────────────────────────────────
-    const guard = await requireApproved();
+    const guard = await requireEntitlement();
     if (guard.error) return guard.error;
     const { user } = guard;
     const supabase = await createClient();
@@ -86,13 +99,23 @@ export async function GET(
         // Bump usage_count atomically; fire-and-forget so it doesn't
         // delay the response.
         void service.rpc("increment_cached_lesson_usage", { p_id: hit.id });
-        return NextResponse.json(hit.payload as LessonPayload);
+        // Count the replay but never block it: a cached lesson is served even over the cap, and a failing
+        // counter (503) must not stop it either, so the result is deliberately ignored.
+        await spendAllowance(guard.entitlement, "replays").catch(() => undefined);
+        return NextResponse.json(attachNarrationTokens(hit.payload as LessonPayload));
       }
     }
 
     // ── Cache miss → resolve prereqs + RAG and generate ───────────────────────
+    const blocked = await guardSpend(user.id, "lesson_generate");
+    if (blocked) return blocked;
+    const spent = await spendAllowance(guard.entitlement, "fresh_lessons");
+    if (spent.error) return spent.error;
+    consumed = spent.consumed;
+
     let concept: ConceptInput;
     let ragContext: string[] = [];
+    let ragChunks: RetrievedChunk[] = [];
 
     if (dbConcept) {
       const [prereqRes, rag] = await Promise.all([
@@ -100,18 +123,23 @@ export async function GET(
           .from("concept_prerequisites")
           .select("prerequisite:concepts!prerequisite_id(name)")
           .eq("concept_id", conceptId),
-        retrieveContext(
-          {
-            id:                  dbConcept.id,
-            name:                dbConcept.name,
-            description:         dbConcept.description,
-            domain:              dbConcept.domain,
-            learning_objectives: dbConcept.learning_objectives ?? [],
-          },
-          supabase
-        ).catch(() => [] as string[]),
+        (async () => {
+          const scope = await loadConceptScope(supabase, dbConcept.id);
+          return retrieveChunks(
+            {
+              id:                  dbConcept.id,
+              name:                dbConcept.name,
+              description:         dbConcept.description,
+              domain:              dbConcept.domain,
+              learning_objectives: dbConcept.learning_objectives ?? [],
+            },
+            supabase,
+            { sourceId: scope.sourceId, pageRanges: scope.pageRanges, userId: user.id }
+          );
+        })().catch(() => ({ chunks: [] as RetrievedChunk[] })),
       ]);
-      ragContext = rag;
+      ragChunks  = rag.chunks;
+      ragContext = ragChunks.map(formatChunk);
 
       const prereqNames: string[] =
         (prereqRes.data ?? [])
@@ -141,7 +169,12 @@ export async function GET(
       };
     }
 
-    const lesson = await generateLesson(concept, profile, ragContext);
+    const lesson = await generateLesson(concept, profile, ragContext, user.id);
+
+    // Credit the sources that grounded this lesson. Stored in the cached
+    // payload (so cache hits carry it) and in cached_lessons.rag_chunks_used.
+    const sources = await loadLessonSources(service, ragChunks);
+    if (sources.length > 0) lesson.sources = sources;
 
     // ── Write to cache (only for KG-resolved concepts) ────────────────────────
     if (dbConcept) {
@@ -154,6 +187,9 @@ export async function GET(
           profile_signature:  signature,
           payload:            lesson,
           generated_by_model: MODELS.teaching,
+          rag_chunks_used:    ragChunks.length > 0
+            ? { chunk_ids: ragChunks.map((c) => c.id), source_ids: sources.map((s) => s.id) }
+            : null,
           moderation_status:  decision.status,
           flagged_reason:     decision.flagged_reason ?? null,
           generated_at:       new Date().toISOString(),
@@ -172,8 +208,12 @@ export async function GET(
       // regenerate until an admin approves.
     }
 
-    return NextResponse.json(lesson);
+    // Tokens are minted for this response only; the cached row above never holds them. Only a lesson for a
+    // concept in the knowledge graph gets them: a free-form topic is chosen by the requester, and narration
+    // that carried a token would be stored in the public narration cache, so it is narrated live instead.
+    return NextResponse.json(dbConcept ? attachNarrationTokens(lesson) : lesson);
   } catch (err) {
+    await releaseConsumed(consumed);
     console.error("GET /api/learn/lesson error:", err);
     return NextResponse.json(
       { error: "Failed to generate lesson" },

@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { getUserApprovalStatus } from "@/lib/auth/approval";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { getAccessForUser } from "@/lib/auth/access";
 import { notifyAdminOfNewSignup } from "@/lib/email/resend";
-import { signOut } from "@/app/auth/actions";
+import { acceptDocuments, signOut } from "@/app/auth/actions";
 import { PendingView } from "./PendingView";
 
 export const dynamic = "force-dynamic";
@@ -15,21 +15,24 @@ export default async function PendingPage() {
 
   if (!user) redirect("/sign-in");
 
-  // Belt-and-braces: covers the no-email-confirm Supabase flow where the
-  // /auth/callback route never runs. notifyAdminOfNewSignup is idempotent.
+  const service = createServiceClient();
+  const { data: profile } = await service.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const access = await getAccessForUser(service, user, profile ?? null);
+
+  // Already allowed (approved, or open mode with everything in place): straight to the lessons.
+  if (access.allowed) redirect("/learn");
+
+  // Belt-and-braces: covers the no-email-confirm Supabase flow where the /auth/callback route never runs.
+  // notifyAdminOfNewSignup is idempotent and only acts on pending profiles.
   await notifyAdminOfNewSignup(user.id, user.email ?? "(unknown)");
-
-  const status = await getUserApprovalStatus(user.id);
-
-  // Defensive: if the user is already approved (admin auto-approves on
-  // approval too), shortcut to /learn — middleware should already have
-  // caught this on the previous request.
-  if (status === "approved") redirect("/learn");
 
   return (
     <PendingView
       email={user.email ?? null}
-      rejected={status === "rejected"}
+      rejected={access.reason === "rejected" || access.reason === "deleted"}
+      reason={access.reason}
+      acceptAction={acceptDocuments}
+      guardianHeld={profile?.account_holder === "guardian"}
       signOut={signOut}
     />
   );

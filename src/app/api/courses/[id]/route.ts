@@ -16,6 +16,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    if (id.length < 1 || id.length > 100) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     const guard = await requireApproved();
     if (guard.error) return guard.error;
     const { user } = guard;

@@ -1,16 +1,21 @@
 import Head from "next/head";
+import { getSiteUrl } from "@/lib/legal/siteUrl";
 import { LandingRoot } from "@/components/landing/LandingRoot";
 
 // `/` is a Pages Router page since V8.3, for the same reason as /learn and /demo: its 3D stage needs R3F,
 // which cannot run under the App Router's React 19 alias (CLAUDE.md). It has no getServerSideProps, so it is
 // prerendered as static HTML. The App Router's metadata never reaches Pages Router pages, so the tags are
 // written out here, absolute, as pages/demo.tsx does; /opengraph-image is still the App Router's image route.
-const SITE_URL = "https://aristo-ai-ten.vercel.app";
+
 const TITLE = "Aristo | One teacher. One student. Every kid.";
 const DESCRIPTION =
   "Your own AI teacher for grades 6 to 8. It explains out loud in a 3D classroom, shows it on the board, then checks that it stuck.";
 
-export default function HomePage() {
+export function getStaticProps() {
+  return { props: { siteUrl: getSiteUrl() } };
+}
+
+export default function HomePage({ siteUrl: SITE_URL }: { siteUrl: string }) {
   return (
     <>
       <Head>

@@ -19,9 +19,10 @@ import { embedTextLogged } from "@/lib/llm/openai";
  */
 export async function getEmbedding(
   text: string,
-  feature: string = "rag.embed.unspecified"
+  feature: string = "rag.embed.unspecified",
+  userId?: string | null
 ): Promise<number[] | null> {
-  return embedTextLogged(text, { feature });
+  return embedTextLogged(text, { feature, userId });
 }
 
 /**

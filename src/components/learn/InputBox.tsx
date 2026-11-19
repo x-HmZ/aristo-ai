@@ -6,15 +6,18 @@ import { ArrowRight, LoaderCircle, Mic, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { SpeechRecognitionInstance } from "@/lib/speech";
+import { createSpeechRecognition, type SpeechRecognitionInstance } from "@/lib/speech";
+import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 import { parseInteractiveParts, parseInteractiveSpec } from "@/lib/interactive/spec";
-import "@/lib/speech";
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function InputBox() {
+  const { voiceInput } = useCapabilities();
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [voiceNote, setVoiceNote] = useState("");
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
 
   const messages          = useAristoStore((s) => s.messages);
@@ -211,18 +214,18 @@ export function InputBox() {
 
   const toggleListening = useCallback(() => {
     if (typeof window === "undefined") return;
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser.");
-      return;
-    }
+    if (isTranscribing) return;
     if (isListening) {
       recognitionRef.current?.stop();
-      setIsListening(false);
+      // The server engine keeps going (upload, then a result); it reports its own state.
+      if (recognitionRef.current?.engine !== "server") setIsListening(false);
       return;
     }
-    const recognition = new SpeechRecognition();
+    const recognition = createSpeechRecognition();
+    if (!recognition) {
+      alert("Voice input is not available in this browser.");
+      return;
+    }
     recognition.lang = "en-US";
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -230,16 +233,27 @@ export function InputBox() {
       const transcript = e.results[0]?.[0]?.transcript ?? "";
       if (transcript) handleSubmit(transcript);
     };
-    recognition.onerror = () => setIsListening(false);
+    recognition.onerror = (ev) => {
+      setIsListening(false);
+      setIsTranscribing(false);
+      const code = (ev as Event & { error?: string }).error;
+      if (code === "stt-failed" || code === "no-speech") setVoiceNote("Could not hear that. Try again or type your question.");
+      else if (code === "not-allowed") setVoiceNote("Microphone is blocked. Type your question instead.");
+    };
     recognition.onend   = () => setIsListening(false);
+    recognition.onstatechange = (s) => {
+      setIsListening(s === "recording");
+      setIsTranscribing(s === "transcribing");
+    };
     recognitionRef.current = recognition;
+    setVoiceNote("");
     recognition.start();
     setIsListening(true);
-  }, [isListening, handleSubmit]);
+  }, [isListening, isTranscribing, handleSubmit]);
 
   useEffect(() => {
     return () => {
-      recognitionRef.current?.stop();
+      recognitionRef.current?.abort();
     };
   }, []);
 
@@ -256,18 +270,23 @@ export function InputBox() {
       <div className="flex items-center gap-2">
         {/* Mic button. Listening is the accent fill and the stop icon; the pulse is
             motion-safe, so a reduced-motion reader still sees the ring. */}
-        <Button
+        {voiceInput && <Button
           variant={isListening ? "default" : "secondary"}
           size="icon"
           onClick={toggleListening}
-          disabled={isBusy}
+          disabled={isBusy || isTranscribing}
           title={isListening ? "Stop listening" : "Speak"}
           aria-label="Speak"
           aria-pressed={isListening}
           className={cn("shrink-0", isListening && "ring-2 ring-accent-text ring-offset-2 ring-offset-surface motion-safe:animate-pulse")}
         >
-          {isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
-        </Button>
+          {isTranscribing
+            ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" />
+            : isListening ? <Square aria-hidden fill="currentColor" /> : <Mic aria-hidden />}
+        </Button>}
+        <span className="sr-only" role="status" aria-live="polite">
+          {isTranscribing ? "Transcribing" : isListening ? "Recording" : voiceNote}
+        </span>
 
         {/* Text input */}
         <Input

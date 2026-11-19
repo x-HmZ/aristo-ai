@@ -10,7 +10,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+import { isOfferedDomain, onboardingBodySchema, subjectsFromCourses, type Subject } from "@/lib/onboarding/subjects";
+
 const VALID_GOALS = ["learn_from_scratch", "fill_gaps", "exam_prep", "refresher"] as const;
+
+async function loadSubjects(supabase: Awaited<ReturnType<typeof createClient>>): Promise<Subject[]> {
+  const { data } = await supabase
+    .from("courses")
+    .select("domain, title, structure")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+  return subjectsFromCourses(data ?? []);
+}
+
+// GET /api/auth/onboarding: the subjects a learner can pick (published courses).
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  return NextResponse.json({ subjects: await loadSubjects(supabase) });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,20 +39,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { goal, daily_time_minutes, domain } = body;
-
-    if (!goal || !VALID_GOALS.includes(goal)) {
+    const parsedBody = onboardingBodySchema.safeParse(await req.json().catch(() => null));
+    if (!parsedBody.success) {
       return NextResponse.json(
-        { error: `goal must be one of: ${VALID_GOALS.join(", ")}` },
+        { error: `goal must be one of: ${VALID_GOALS.join(", ")}; domain is required` },
         { status: 400 }
       );
     }
-    if (!domain) {
-      return NextResponse.json({ error: "domain is required" }, { status: 400 });
-    }
+    const { goal, domain, daily_time_minutes: timeMinutes } = parsedBody.data;
 
-    const timeMinutes = parseInt(daily_time_minutes) || 20;
+    // Only subjects with published content can be chosen.
+    const subjects = await loadSubjects(supabase);
+    if (!isOfferedDomain(domain, subjects)) {
+      return NextResponse.json({ error: "That subject is not available." }, { status: 400 });
+    }
 
     // Update static profile
     const { error: profileError } = await supabase
