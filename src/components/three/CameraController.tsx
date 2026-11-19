@@ -27,11 +27,12 @@ import { deskFraming } from "./deskFraming";
 
 // ─── Named framings ──────────────────────────────────────────────────────────
 
-const LESSON_POS    = new Vector3(0,    0,    0.9);
+// Exported for LensShift, which frames the set from this pose whatever way the learner is looking.
+export const LESSON_POS    = new Vector3(0,    0,    0.9);
 // Must match OrbitControls' target in AristoCanvas.tsx — a near pivot
 // (0.5 m in front of the camera) so user drag reads as head-turn, not an
 // orbit around the teacher that swings the camera out of the classroom.
-const LESSON_TARGET = new Vector3(0,    0,    0.4);
+export const LESSON_TARGET = new Vector3(0,    0,    0.4);
 
 // Desk view — the student looking down at their own paper.  The pose (DESK_POS / DESK_TARGET, tuned in the
 // /dev/desk-quiz harness) lives in deskFraming.ts with the per-aspect framing: on a landscape canvas it is used as
@@ -45,6 +46,12 @@ const LAMBDA = 3.2;
 // Threshold under which we consider the camera "landed" and hand control
 // back to OrbitControls (only relevant for the lesson framing).
 const SNAP_EPSILON = 0.0008;
+
+// Squared distance (0.5 mm) under which the desk glide lands exactly on its goal and stops writing the camera. The
+// exponential glide never arrives by itself: without this the camera crept by fractions of a millimetre for seconds,
+// and drei's transformed Html re-rasterised the quiz paper on every one of those frames, which shimmers on a real
+// screen. Half a millimetre at the paper's distance is under a pixel.
+const LAND_EPSILON = 2.5e-7;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -77,6 +84,8 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
 
   // True while this controller has been moving the camera (from the first driven frame until it lands on the lesson).
   const driving = useRef(false);
+  // True once the desk glide has landed on its goal and the camera was set there; cleared when the goal moves.
+  const landed = useRef(false);
 
   // Live camera position and look-at point — mutated each frame.
   const livePos    = useRef(new Vector3().copy(LESSON_POS));
@@ -110,12 +119,33 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
     }
     const L = lambda ?? LAMBDA;
 
+    // Start a glide from where the learner is actually looking. While OrbitControls has the camera, livePos and
+    // liveTarget still hold the lesson pose, so a learner who had turned their head saw the view jump back before
+    // the tilt to the desk began.
+    const ctrls = controls as unknown as { target?: Vector3; update?: () => void } | null;
+    if (!driving.current && activeQuiz) {
+      livePos.current.copy(camera.position);
+      if (ctrls?.target) liveTarget.current.copy(ctrls.target);
+    }
+
     // Critically-damped exponential ease.  `1 - exp(-λ·dt)` is the
     // frame-rate-independent equivalent of "lerp by ~λ percent per second"
     // — looks identical at 30 fps and 144 fps.
     const t = reduceMotion.current ? 1 : 1 - Math.exp(-L * Math.min(delta, 0.1));
     livePos.current   .lerp(goalPos,    t);
     liveTarget.current.lerp(goalTarget, t);
+
+    // Land the desk glide: snap the last fraction of a millimetre, apply it once, then leave the camera still.
+    if (activeQuiz &&
+        livePos.current.distanceToSquared(goalPos) < LAND_EPSILON &&
+        liveTarget.current.distanceToSquared(goalTarget) < LAND_EPSILON) {
+      livePos.current.copy(goalPos);
+      liveTarget.current.copy(goalTarget);
+      if (landed.current) return;
+      landed.current = true;
+    } else {
+      landed.current = false;
+    }
 
     // When we're at rest at the lesson framing AND OrbitControls is enabled
     // (no quiz active), step aside and let the user orbit freely — without
@@ -139,7 +169,6 @@ export function CameraController({ deskPos, deskTarget, lambda }: CameraControll
 
     // Keep OrbitControls' internal target in sync so it doesn't snap us
     // back to its remembered target on the first post-quiz drag.
-    const ctrls = controls as unknown as { target?: Vector3; update?: () => void } | null;
     if (ctrls?.target) {
       ctrls.target.copy(liveTarget.current);
       ctrls.update?.();
