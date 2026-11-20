@@ -39,7 +39,7 @@ export interface Insets { top: number; bottom: number; side: number }
 
 /** Bars over the room: pills under the top edge, and the "quiz is on the desk" strip at the bottom. */
 export function insetsFor(width: number, height: number): Insets {
-  return height < 500 ? { top: 60, bottom: 56, side: 12 } : { top: 72, bottom: 80, side: 16 };
+  return height < 500 ? { top: 72, bottom: 56, side: 12 } : { top: 72, bottom: 80, side: 16 };
 }
 
 export interface SheetFraming {
