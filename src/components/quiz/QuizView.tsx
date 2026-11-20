@@ -15,6 +15,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useScrollFade } from "@/lib/ui/useScrollFade";
 import { ArrowRight, BookOpen, Check, ChevronDown, ChevronUp, Hammer, Lightbulb, Scale, ScanSearch, Wrench, X } from "lucide-react";
 import type { LucideIcon }                              from "lucide-react";
 import type { QuizQuestion }                         from "@/lib/agents/assessment";
@@ -556,6 +557,11 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
   const totalQs   = questions.length;
   const answered  = results.filter(Boolean).length;
 
+  // The sheet's question and its result text scroll when they do not fit (a phone's small paper, or once the result
+  // bar takes the foot): the edge where more content continues fades, so a row is never cut by a hard line.
+  const questionFade = useScrollFade(sheet, currentIdx, currentR);
+  const feedbackFade = useScrollFade(sheet, currentIdx, currentR);
+
   // ── Submit a single answer ────────────────────────────────────────────────
   const handleAnswer = useCallback(async (userAnswer: string) => {
     if (!currentQ || currentR || isEvaluating) return;
@@ -703,7 +709,12 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
         />
       </div>
 
-      <div className={cn("space-y-3 px-4 py-3", sheet && "aristo-scroll min-h-0 flex-1 overflow-y-auto")}>
+      <div
+        ref={questionFade.ref}
+        onScroll={questionFade.onScroll}
+        className={cn("space-y-3 px-4 py-3", sheet && "aristo-scroll min-h-0 flex-1 overflow-y-auto")}
+        style={questionFade.style}
+      >
 
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
@@ -768,7 +779,7 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       {/* The sheet's result band: a fixed share of the page, there before the answer. The feedback scrolls inside it
           rather than growing it; Next stays pinned below, so it is always in reach. */}
       {sheet && (
-        <div role="status" className="flex max-h-[42%] shrink-0 flex-col empty:hidden">
+        <div role="status" className="flex max-h-[60%] shrink-0 flex-col empty:hidden">
           {currentR && (
             <div
               className={cn(
@@ -776,7 +787,12 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
                 currentR.is_correct ? "border-success bg-success/15" : "border-danger bg-danger/15",
               )}
             >
-              <div className="aristo-scroll flex min-h-0 gap-2 overflow-y-auto type-caption text-ink">
+              <div
+                ref={feedbackFade.ref}
+                onScroll={feedbackFade.onScroll}
+                className="aristo-scroll flex min-h-0 gap-2 overflow-y-auto type-caption text-ink"
+                style={feedbackFade.style}
+              >
                 {currentR.is_correct
                   ? <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
                   : <X aria-hidden className="mt-0.5 size-4 shrink-0 text-danger" />}
