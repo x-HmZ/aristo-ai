@@ -16,7 +16,8 @@ export type LayoutMode = "desk" | "portrait" | "landscape";
 export type SheetSnap = "peek" | "half" | "full";
 
 export function layoutModeOf(width: number, height: number): LayoutMode {
-  if (width < 640 && height >= width) return "portrait";
+  // Tablets held upright too: a 400px column leaves an 820px-wide room no space for the teacher.
+  if (width < 1024 && height >= width) return "portrait";
   if (height < 500 && width > height) return "landscape";
   return "desk";
 }
