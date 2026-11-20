@@ -34,12 +34,13 @@ import { LessonNotices } from "@/components/learn/LessonNotices";
 import { AiTeacherLabel, AiFirstLessonNotice } from "@/components/learn/AiDisclosure";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import {
-  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, ClassroomPanel, PANEL_SLOT,
+  TOP_BAR, GlassPill, ClassroomWordmark, PillDivider, ClassroomPanel, PANEL_SLOT, PANEL_HEADER,
 } from "@/components/learn/ClassroomChrome";
 import { DEMO_TOPICS, type DemoTopic } from "@/data/demo";
 import { DEMO_TEACHERS, demoTeacherFrom } from "./demoTeacher";
 import { FOCUS, PRESS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { useScrollFade } from "@/lib/ui/useScrollFade";
 
 /**
  * The avatar the demo opens on. It must lipsync (the page exists to show a
@@ -76,10 +77,12 @@ function segmentClass(selected: boolean) {
 // The system scrim over the room and a surface card that follows the theme.
 function TopicPicker({ onPick }: { onPick: (topic: DemoTopic) => void }) {
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/50 px-4 py-20 backdrop-blur-sm">
+    // Centred with my-auto, not items-center: a card taller than the screen (a phone) would be centred past the top of
+    // the scroller, under the top bar and out of reach. py-20 keeps it clear of the bar's pills.
+    <div className="absolute inset-0 z-40 flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-20 backdrop-blur-sm">
       <section
         aria-labelledby="demo-picker-title"
-        className={cn(SHAPE.surface, "w-full max-w-2xl border border-line bg-surface p-6 shadow-e2 sm:p-8")}
+        className={cn(SHAPE.surface, "my-auto w-full max-w-2xl border border-line bg-surface p-6 shadow-e2 sm:p-8")}
       >
         <div className="mb-6 text-center">
           <span className="mb-3 inline-flex items-center rounded-full border border-tint-line bg-tint px-3 py-1 text-xs font-medium text-ink">
@@ -178,6 +181,7 @@ export function DemoClient() {
   // The quiz is on the desk: the panel collapses to its strip (CSS only).
   const quizOnDesk = !!activeQuiz;
   const TopicIcon = topicIcon(topic?.slug ?? "");
+  const headerFade = useScrollFade(true, topic, teacher, quizOnDesk);
 
   // Boot: mark demo mode + a stable non-null userId (DeskQuiz's guard checks
   // truthiness only — no learner row is ever read/written for it). Reset
@@ -290,7 +294,12 @@ export function DemoClient() {
       {/* Right panel */}
       {topic && (
         <ClassroomPanel quizOnDesk={quizOnDesk}>
-          <div className={cn("flex flex-col gap-2 rounded-t-2xl border-b border-line bg-surface/95 px-4 py-3 backdrop-blur-xl", quizOnDesk && "hidden")}>
+          <div
+            ref={headerFade.ref}
+            onScroll={headerFade.onScroll}
+            style={headerFade.style}
+            className={cn(PANEL_HEADER, "gap-2", quizOnDesk && "hidden")}
+          >
             <div className="flex items-center gap-2">
               <TopicIcon aria-hidden className="size-4 shrink-0 text-accent-text" />
               <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">{topic.title}</span>

@@ -66,7 +66,17 @@ export function panelColumn(quizOnDesk: boolean) {
 }
 
 /** The panel's scrolling middle: the page colour at 95% over the scene. */
-export const PANEL_SLOT = "flex-1 overflow-hidden bg-bg/95 backdrop-blur-xl";
+// At least the floating playback row (76px), the sticky Back / Next row (61px) and a few lines of the lesson (fewer on
+// a screen under 700px tall): smaller, the sticky row overran the playback controls. The header gives up space first.
+export const PANEL_SLOT =
+  "min-h-[13rem] flex-1 overflow-hidden bg-bg/95 backdrop-blur-xl [@media(max-height:700px)]:min-h-[9.5rem]";
+/**
+ * The panel's header (topic, teacher, AI notice, credit). Capped and scrolling inside itself, so on a short panel (a
+ * phone, a 650px laptop) the lesson below keeps the rest instead of being squeezed to nothing: 45% of the panel, 30%
+ * on a screen under 700px tall, 25% under 500px (a phone on its side).
+ */
+export const PANEL_HEADER =
+  "aristo-scroll flex max-h-[45%] min-h-[4.25rem] shrink flex-col overflow-y-auto rounded-t-2xl border-b border-line bg-surface/95 px-4 py-3 backdrop-blur-xl [@media(max-height:700px)]:max-h-[30%] [@media(max-height:500px)]:max-h-[25%]";
 
 // ─── The lesson panel on a phone ──────────────────────────────────────────────
 
@@ -161,7 +171,7 @@ export function ClassroomPanel({ quizOnDesk, children }: { quizOnDesk: boolean; 
         {portrait && !quizOnDesk && (
           <button
             type="button"
-            aria-label="Resize the lesson panel"
+            aria-label={`Resize the lesson panel, now ${snap === "peek" ? "small" : snap === "half" ? "half height" : "full height"}`}
             aria-expanded={snap !== "peek"}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
@@ -170,7 +180,6 @@ export function ClassroomPanel({ quizOnDesk, children }: { quizOnDesk: boolean; 
             onKeyDown={onKeyDown}
             // Enter, Space and a screen reader's activate arrive as a click without pointer events (detail 0).
             onClick={(e) => { if (e.detail === 0) step(snap === "full" ? -1 : 1); }}
-            aria-valuetext={snap}
             className="flex h-11 w-full shrink-0 touch-none items-center justify-center rounded-t-2xl bg-surface/95 outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <span aria-hidden className="h-1.5 w-10 rounded-full bg-muted/60" />
