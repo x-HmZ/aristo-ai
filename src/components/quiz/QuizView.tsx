@@ -674,7 +674,6 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       <div role="status" className="empty:!mt-0">
         {currentR && <FeedbackBanner result={currentR} />}
       </div>
-      {sheet && !currentR && <p aria-hidden className="type-caption text-muted">Your result shows here.</p>}
     </>
   );
   const nextPart = currentR && (
@@ -769,9 +768,28 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
       {/* The sheet's result band: a fixed share of the page, there before the answer. The feedback scrolls inside it
           rather than growing it; Next stays pinned below, so it is always in reach. */}
       {sheet && (
-        <div className="flex h-[30%] shrink-0 flex-col gap-2 border-t border-line bg-sunk px-4 py-3">
-          <div className="aristo-scroll min-h-0 flex-1 space-y-2 overflow-y-auto">{feedbackPart}</div>
-          {nextPart}
+        <div role="status" className="flex max-h-[42%] shrink-0 flex-col empty:hidden">
+          {currentR && (
+            <div
+              className={cn(
+                "flex min-h-0 flex-1 flex-col gap-2 border-t-2 px-4 py-3",
+                currentR.is_correct ? "border-success bg-success/15" : "border-danger bg-danger/15",
+              )}
+            >
+              <div className="aristo-scroll flex min-h-0 gap-2 overflow-y-auto type-caption text-ink">
+                {currentR.is_correct
+                  ? <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
+                  : <X aria-hidden className="mt-0.5 size-4 shrink-0 text-danger" />}
+                <p>
+                  <span className={cn("mr-1 font-semibold", currentR.is_correct ? "text-success" : "text-danger")}>
+                    {currentR.is_correct ? "Correct." : "Not quite."}
+                  </span>
+                  {currentR.feedback}
+                </p>
+              </div>
+              {nextPart}
+            </div>
+          )}
         </div>
       )}
     </div>
