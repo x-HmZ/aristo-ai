@@ -2,6 +2,32 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-21 - fal.ai to Higgsfield: researched, DECIDED TO STAY ON fal (no code changed)
+
+- Owner decision: keep fal.ai (Nano Banana Pro/2, FLUX Schnell, Tripo3D). Quality is not to be compromised for cost.
+  Item 1 of "Next sessions" below is cancelled; collaborator onboarding (item 2) no longer waits on it.
+- Why (research 2026-11-21, nothing paid, nothing tested live):
+  - Higgsfield's API has image (17 entries) and video (67) models only: no image-to-3D, so nothing replaces Tripo3D.
+  - Nano Banana Pro, Nano Banana 2 and FLUX are not in its documented API catalog (the console is authoritative);
+    the 2026-09-09 eval evidence would not carry over.
+  - Terms (higgsfield.ai/terms, updated 2026-10-23): 2.1 requires users 18+, 2.4 makes the account holder restrict
+    under-18 use, section 11 calls app users "End Users"; no schools/COPPA clause. Inputs and outputs may be used for
+    training (4.4) unless an Enterprise Agreement applies. Learners here are 11-14: written confirmation needed first.
+  - Facts if revisited: REST https://api.higgsfield.ai, `Authorization: Key <id>:<secret>`, async submit then
+    `/requests/{id}/status`, outputs kept 7 days, price via `POST /estimate/<model-path>` returning `{"usd": "..."}`;
+    MCP at https://mcp.higgsfield.ai/mcp (OAuth, no secret in .mcp.json, third-party sources say it bills plan credits).
+- Follow-up deep research (all providers, open source): `.claude/research/reports/Media generation provider options.md`
+  (notes in `.claude/research/research_notes/`). Verdict: stay on fal; nothing is both cheaper and no worse.
+  Actions: (1) move image-to-3D from `tripo3d/tripo/v2.5` to `tripo3d/h3.1/image-to-3d` on fal (same $0.30, tops the
+  blind-vote boards; Scenario says v2.5 stops 2026-12-01 on its platform, fal's date unverified) after a 4-object
+  A/B; (2) optional A/B of Nano Banana 2.1 (~$0.04) vs NB Pro/NB2 on labelled images, no swap without it;
+  (3) fal's terms (2026-09-08) also require End Users 18+: owner emails fal for written confirmation (cached-asset
+  education use, training on inputs, DPA link 404s, zero retention). Gemini direct only saves ~11%; self-hosting
+  TRELLIS.2 fails the quality bar; Hunyuan3D open weights exclude the EU. Paid A/B ~$6-8, needs owner go-ahead.
+- Not done, optional: check fal's own terms for under-18 end users (LICENSES.md only records its output terms);
+  same-quality cost levers are Tripo's own API and Google's Gemini API for Nano Banana (prices unverified), the
+  catalogue pre-generation already on the code list, and Tripo `face_limit`.
+
 ## 2026-11-21 - Classroom layout per screen merged (PR 34, replaces PR 29)
 
 - PR 29 (October, conflicting) rebased onto deploy-prep as `fix/classroom-ux-rebased`, PR 34, merged and live;
@@ -30,22 +56,22 @@ _Update this at the end of every significant session: done / next / blockers, co
 
 - PR 33 (camera: LensShift measures from the lesson pose, so a drag no longer slides and warps the room; the desk
   glide starts from the live pose and lands, so the quiz paper stops re-rasterising) and PR 32 merged and deployed.
-- Hmz applied 023 and 025 (before the merge) and 024 (after the deploy). 61 behavioural checks pass with a temporary
+- The owner applied 023 and 025 (before the merge) and 024 (after the deploy). 61 behavioural checks pass with a temporary
   user (grants, take_rate limits and concurrency, the nine protected profile columns, consents, learner-table writes
   refused and reads allowed, increment_misconception locked, custom-teacher URL guard). Script: session scratchpad only.
 - Repro scripts for the camera bug: `.claude/eval/2026-11-19-demo-glitch/` (free route, /api aborted).
-- Open: PR 29 (fix/classroom-ux, October) conflicts with deploy-prep. Desk flicker never seen headless; ask Hmz.
+- Open: PR 29 (fix/classroom-ux, October) conflicts with deploy-prep. Desk flicker never seen headless; ask the owner.
 - Next (code): narration-failure notice; grounded ingest test once OpenAI has credit (ask before each paid run);
   several learners per account; server-side checkout; quiz cache and catalogue pre-generation. Remaining owner steps:
   `OWNER-STEPS.md` B onwards.
 
 ## 2026-11-17 - Launch readiness: everything without the owner is built (branch feat/launch-features, PR open)
 
-**Resume from `.claude/plans/launch/OWNER-STEPS.md`** (what only Hmz can do, in order) and `.claude/plans/launch/README.md`
+**Resume from `.claude/plans/launch/OWNER-STEPS.md`** (what only the owner can do, in order) and `.claude/plans/launch/README.md`
 (brief status table). Do not re-audit.
 
 - **Live on production (deploy-prep)**: PR 30 (security fixes; the three open routes answer 404) and PR 31 (next
-  15.5.29, dead code). Migrations 018-021 applied by Hmz; 39 behavioural checks passed with a temporary user
+  15.5.29, dead code). Migrations 018-021 applied by the owner; 39 behavioural checks passed with a temporary user
   (script kept only in the session scratchpad; it creates and deletes its own user).
 - **On feat/launch-features, not deployed**: narration cache, `/api/stt`, textbook ingestion, accounts/plans/allowances,
   Paddle sandbox (2026-11-16); spend guard (rate limits in the database, daily cut-off, Zod limits, narration tokens,
@@ -58,7 +84,7 @@ _Update this at the end of every significant session: done / next / blockers, co
 - **PDF pipeline live test** (25-page NASA booklet, 0.11 USD, all test rows and the test admin removed): UI flow
   works; `Draft a course` was broken by schema bounds and is fixed; embeddings never ran because the OpenAI account
   has no credit.
-- **For Hmz to confirm**: a second admin account exists (created 2026-04-19). Local-only: `pages/dev/learn-shell.tsx`
+- **For the owner to confirm**: a second admin account exists (created 2026-04-19). Local-only: `pages/dev/learn-shell.tsx`
   (untracked) got the new `capabilities` prop so the local build passes.
 - **Next (code)**: narration-failure notice; several learners per account; organisation UI; quiz cache and catalogue
   pre-generation; server-side checkout creation; `src/lib/env.ts`; CSP; pruning `rate_counters`.
@@ -69,15 +95,15 @@ _Update this at the end of every significant session: done / next / blockers, co
 Evidence is in `.claude/plans/launch/findings/` (security, compliance, product-cost, dead-code, vercel-storage;
 payments-research is local and untracked on purpose). Do not re-audit.
 
-- **Decided with Hmz**: early access with open sign-up and a capped free allowance (the approval gate goes); any learner,
-  parent-owned account below the age threshold; no money taken until he has written confirmation that he may sell, so
-  payments are sandbox-only behind an off switch; no new recurring costs without his yes.
+- **Decided with the owner**: early access with open sign-up and a capped free allowance (the approval gate goes); any learner,
+  parent-owned account below the age threshold; payments are sandbox-only behind an off switch
+  (`BILLING_ENABLED`); no new recurring costs without the owner's yes.
 - **Done (L01, reviewed by security-reviewer: safe to merge)**: migration `018_lock_privileged_columns.sql` (end users
   can no longer change `is_admin` / approval columns on their own profile; `increment_misconception` only for the
   caller's own id); `/api/quiz` deleted (no auth, no caller); `/api/whisper` and `/api/openai-tts` now require an approved
   user, cap input, and openai-tts is a POST; `/auth/callback` keeps `next` on this origin (`src/lib/auth/safeNextPath.ts`,
-  tested). The two speech routes were then deleted on Hmz's decision (future options in decisions.md).
-- **Migration 018**: Hmz ran it on production 2026-11-16. Nobody has run the check query yet (Supabase MCP was down).
+  tested). The two speech routes were then deleted on the owner's decision (future options in decisions.md).
+- **Migration 018**: the owner ran it on production 2026-11-16. Nobody has run the check query yet (Supabase MCP was down).
 - **Done (L02 + safe L03, branch `chore/launch-cleanup`, stacked on fix/launch-critical)**: next 15.5.29, openai 4.104,
   Anthropic SDK 0.137, form-data pinned by a resolution (critical advisories 4 -> 0); `ignoreBuildErrors` is off again;
   8 unreferenced packages, 12 shadcn wrappers with their radix packages and cmdk, dead utilities, dead store members,
@@ -100,8 +126,8 @@ payments-research is local and untracked on purpose). Do not re-audit.
   Owner steps, checks and known gaps: `.claude/plans/launch/OWNER-STEPS.md`.
 - **None of the three branches is pushed.** Production still serves the unauthenticated speech and quiz routes until
   fix/launch-critical is merged and deployed.
-- **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. Hmz
-  runs that fix in the portfolio repo himself.
+- **Vercel "Function Storage 75%"**: caused by the portfolio project (a 179 MB function per deployment), not Aristo. The owner
+  runs that fix in the portfolio repo.
 - **Next**: push and merge the three branches in order; apply migrations 019-021 with their checks; L04 spend guard
   plans, organisations: plan mode); L08 audio cache; content briefs E1-E6. Owner: set hard spend limits in the
   Anthropic, OpenAI, fal and ElevenLabs dashboards; answer D3 and D6-D11 in the README.
@@ -112,15 +138,15 @@ payments-research is local and untracked on purpose). Do not re-audit.
 - **Security review of the interactive route** (`lessonExample`): no critical or high. Fixed: the route reads only the stored lesson's segments (`payload->segments`) and always the same lesson (approved first, then oldest), because the example is not in the cache key; `lessonExample` takes any input and stops at the limit; test for malformed payloads. Left: the spec check is JSON containment, not equality (older).
 - **Plan-driven voice** (decisions.md): `src/lib/tts/voices.json` + `voices.ts` (`parseTtsPlan`, `pickVoice`, tested); route and `scripts/prerender-demo-tts.mjs` both use it; `ELEVENLABS_PLAN` in `.env.example`, set nowhere (free). After the upgrade: set `ELEVENLABS_PLAN=paid` in `.env.local` and Vercel, then `node scripts/prerender-demo-tts.mjs --force`.
 - **Rendered** (once, log in `.claude/eval/2026-10-15-narration/render.log`): all four topics, 61 mp3s with `.align.json`, `audio.json` = jake / eleven_turbo_v2_5, 14,908 characters = 7,490 credits; **2,510 credits left, resetting 2026-11-08**. Rendering uses `/with-timestamps`; forced alignment would have cost about 330 credits a minute.
-- **Overlap fixed** (Hmz): "Open interactive" (and Continue at the pause) was drawn over the picture's toolbar under the screen; it now joins the picture or model toolbar's row (`ReopenInteractiveControls`), the standalone pill only for a bare screen or the corner. Evidence: `toolbar-*.png`, `scripts/toolbar-overlap.cjs` (1920, 1600: no overlap).
+- **Overlap fixed** (the owner): "Open interactive" (and Continue at the pause) was drawn over the picture's toolbar under the screen; it now joins the picture or model toolbar's row (`ReopenInteractiveControls`), the standalone pill only for a bare screen or the corner. Evidence: `toolbar-*.png`, `scripts/toolbar-overlap.cjs` (1920, 1600: no overlap).
 - **Listed**: "Steepness Is Speed" in `DEMO_TOPICS`. **/demo offers Jake only** (`DEMO_TEACHERS`): MJ would speak in a man's voice.
 - **Verified, 0 paid calls**, headless GPU (`.claude/eval/2026-10-15-narration/scripts/narration.cjs`, `probe-explore.cjs`): all four topics play their recorded mp3s one after another with their timings fetched, 0 /api requests, no teacher switcher even with `?teacher=mj`; steepness explore pause: widget on the board with Expand/Continue at 1920, large view at 1280 (`explore-*.png`). Not verified: the mouth by eye (timings load and parse; judge in motion). Unit 641; lint 0 errors; build ok (/demo 135 kB).
-- **TODO, remind Hmz: MJ needs her own /demo narration** (a woman in a man's voice reads as a bug, so she is hidden). Needs: her voice id (the landing used Jessica; confirm in `scripts/landing-voice.mjs`), a per-teacher output folder in the prerender script and in `useLessonPlayback`'s `demoAudioUrl`, about 7,454 credits on turbo (after 2026-11-08, or on the paid plan), then add her to `DEMO_TEACHERS`.
-- **Next**: footage capture; Hmz upgrades ElevenLabs -> `ELEVENLABS_PLAN=paid` -> re-render in Mike; MJ's narration (above).
+- **TODO: MJ needs her own /demo narration** (a woman in a man's voice reads as a bug, so she is hidden). Needs: her voice id (the landing used Jessica; confirm in `scripts/landing-voice.mjs`), a per-teacher output folder in the prerender script and in `useLessonPlayback`'s `demoAudioUrl`, about 7,454 credits on turbo (after 2026-11-08, or on the paid plan), then add her to `DEMO_TEACHERS`.
+- **Next**: footage capture; the owner upgrades ElevenLabs -> `ELEVENLABS_PLAN=paid` -> re-render in Mike; MJ's narration (above).
 
 ## 2026-10-15 - Visuals on the room's display; steepness is the /demo widget topic (dev/v10-continuation, PR #28)
 
-- **Callout chips** stacked over the brain diagram's title: fixed, then (Hmz) removed from diagrams; they now light the matching
+- **Callout chips** stacked over the brain diagram's title: fixed, then (the owner) removed from diagrams; they now light the matching
   labels on the 3D model. Evidence: `.claude/eval/2026-10-15-callouts/` (before/after at 1280 and 1920, both themes).
 - **Placement** (decisions.md 2026-10-15 rows): the room's display is the anchor (`roomDisplay`), drawn 30% larger by the app;
   image on it with in-screen zoom (scroll, drag, double-click, Expand); teacher beside it; `LensShift` frames both left of the
@@ -138,7 +164,7 @@ payments-research is local and untracked on purpose). Do not re-audit.
   (about 14,900). The three existing topics were rendered in Ryan (turbo). Free plan: 10,000 credits a month;
   multilingual v2 is 1 credit per character (over), turbo 0.5 (about 7,500, fits).
 - **Earlier today**: the two if/elif and probability widgets regenerated (prompt fixes; about 0.09 USD, double run by mistake).
-- **Next**: render ALL four demo topics in Jake's placeholder voice (Hmz, 2026-10-15) within the free plan's credits,
+- **Next**: render ALL four demo topics in Jake's placeholder voice (the owner, 2026-10-15) within the free plan's credits,
   list steepness; Mike later, after the upgrade; then footage.
 
 ## 2026-10-14 - V10 continued: residuals fixed, live test, Jake's voice, /demo widget (branch dev/v10-continuation, PR into deploy-prep)
@@ -153,27 +179,27 @@ payments-research is local and untracked on purpose). Do not re-audit.
   controls in one row, the generator gets a real height budget (canvas 0.3 to 0.45) and a "show only what really happens" rule
   (the if/elif widget marked a skipped `elif` "tested true"), plus "say each thing once"; the slope fixture is 0.45, the
   for-loop fixture tighter; the frozen range() widget uses ratio 0.3 and fits (`scripts/fit.cjs`). The prompt changes are NOT
-  verified by a new generation (paid; ask Hmz).
+  verified by a new generation (paid; ask the owner).
 - **Jake's voice**: `EL_VOICES.jake` on `eleven_multilingual_v2`, interim voice `bIHbv24MWmeRgasZH58o`. Mike
-  (`zfc8CJQpe8Kqyl0vvCzo`, Hmz's pick) returns 402 on the free plan: when Hmz upgrades, swap the id in `src/app/api/tts/route.ts`
+  (`zfc8CJQpe8Kqyl0vvCzo`, the owner's pick) returns 402 on the free plan: when the owner upgrades, swap the id in `src/app/api/tts/route.ts`
   and `scripts/prerender-demo-tts.mjs` (both comment it).
 - **/demo widget**: `metadata.demo_interactive`, no API call (verified, 0 /api requests). `src/data/demo/python-for-range.ts` is
   frozen (lesson, widget, 2 images 0.16 USD, 2-question quiz 0.02 USD) but NOT in `DEMO_TOPICS`: without narration every segment
   ends at once. To list it: render narration in the final voice (`node scripts/prerender-demo-tts.mjs --voice=jake --align`,
-  about 2,400 chars; ask Hmz first), then add the entry (the comment in `src/data/demo/index.ts` has title and icon).
+  about 2,400 chars; ask the owner first), then add the entry (the comment in `src/data/demo/index.ts` has title and icon).
 - **Verified, 0 paid calls**: unit 635; frame 84, nav 50+ (rtc-nested incl. review routes), room 65, loop 38, live shots 115,
   /demo widget 8; lint 0 errors; build ok (/learn 135 kB, was 134; /demo 135 kB).
-- **Next**: Hmz upgrades ElevenLabs -> swap to Mike -> render the range() narration -> list the topic; then footage capture.
+- **Next**: the owner upgrades ElevenLabs -> swap to Mike -> render the range() narration -> list the topic; then footage capture.
   Session spend: Anthropic 0.42 USD, fal 0.16 USD, ElevenLabs 0 (the Mike test was refused, uncharged).
 
 ## 2026-10-14 - Jake's sleeves: sweater to shirt (on dev/v10-interactive-visuals, committed, not pushed)
 
-Hmz: from the elbows down Jake's shirt read as a sweater. Evidence and numbers: `.claude/eval/2026-10-14-jake-sleeves/`
+The owner: from the elbows down Jake's shirt read as a sweater. Evidence and numbers: `.claude/eval/2026-10-14-jake-sleeves/`
 (README). Cause: V8.3d's even 12-14 mm sleeve ease plus a 3 cm shortening squeezed into the forearm (a wide tube with
 stacked rings), a pinch above a rounded cuff that hung 60% on the hand bone. Not the cloth material (tested).
-- **Hmz picked "tailored"** from two rendered options (relaxed, tailored; rolled sleeves offered, not built).
+- **The owner picked "tailored"** from two rendered options (relaxed, tailored; rolled sleeves offered, not built).
 - **Built:** `v9_sleeve.tailor` (vertices and weights only: forearm loft to a straight, square cuff 13 mm off the
-  wrist, the cuff off the hand bone). Hmz saw 11 mm; 13 mm is what cleared the right wrist in every frame.
+  wrist, the cuff off the hand bone). The owner saw 11 mm; 13 mm is what cleared the right wrist in every frame.
 - **Shipped by splice** (`scripts/splice.mjs`): only the shirt changes inside the shipped `Teacher_Jake.glb`; the
   Blender 5.1 export of the working scene freezes the clips (2 keys), so the teacher was not re-exported. Other 21
   primitives (visemes), 3 base clips, textures, nodes, skins identical; clips pack untouched. 2,362,404 B (was
@@ -189,9 +215,9 @@ stacked rings), a pinch above a rounded cuff that hung 60% on the hand bone. Not
 
 ## 2026-10-13 - V10: interactive visuals, a third kind of teaching visual (branch dev/v10-interactive-visuals, not pushed or merged)
 
-Hmz asked for Gemini-style interactive widgets (sliders, buttons) as a third option beside the image and the 3D model, picked by the
+The owner asked for Gemini-style interactive widgets (sliders, buttons) as a third option beside the image and the 3D model, picked by the
 same decider. Plan: `.claude/plans/V10-interactive-visuals.md` (status and deviations at the bottom). Evidence and scripts:
-`.claude/eval/2026-10-13-v10-interactive/` (README). Hmz chose: generated code in a sandbox, a board card with Expand, the lesson pauses
+`.claude/eval/2026-10-13-v10-interactive/` (README). The owner chose: generated code in a sandbox, a board card with Expand, the lesson pauses
 on an explore segment. Subsystem in `architecture.md` (Interactive visuals); reasons in `decisions.md` (V10 rows).
 - **Built:** `src/lib/interactive/` (spec, validator, sandbox shell, fixtures, throttle, flag), `agents/interactive.ts`,
   `POST /api/learn/interactive`, migration 017 (written, NOT applied), `InteractiveFrame` and `InteractiveStage` (a DOM card beside Jake;
@@ -205,13 +231,13 @@ on an explore segment. Subsystem in `architecture.md` (Interactive visuals); rea
   `.env.local` and Vercel are untouched). It is also the feature-wide kill switch.
 - **Merged on the way:** PR #26 (the portfolio capture, docs and scripts only) into deploy-prep, as the session brief asked; this
   branch carries it.
-- **2026-10-14, Hmz:** migration 017 applied. Approved the live lesson-generation test, on condition that its result also
+- **2026-10-14, the owner:** migration 017 applied. Approved the live lesson-generation test, on condition that its result also
   becomes a new /demo entry (a frozen lesson with its widget, so /demo shows the feature). Asked for: (1) the two residuals fixed (a widget
   loop freezing the tab, WebRTC from inside the frame), see decisions.md "Residuals accepted"; (2) Jake's own voice, warm and enthusiastic
   (today he borrows the "marcus" key = ElevenLabs Adam on eleven_turbo_v2_5; `src/app/api/tts/route.ts` EL_VOICES, `useTTS.ts`
   VOICE_BY_AVATAR, `scripts/prerender-demo-tts.mjs`); (3) Jake's shirt from the elbows down reads as a sweater, to fix in its own session
   BEFORE any footage is captured.
-- **Next, in order:** residual fixes; Jake's voice (Hmz picks by ear from free previews first); the live test (flag on in a script
+- **Next, in order:** residual fixes; Jake's voice (the owner picks by ear from free previews first); the live test (flag on in a script
   only, about 6 topics, Anthropic only); the /demo entry (its images and narration cost fal and ElevenLabs: render narration only
   after the voice is final, and ask before both); shirt session in parallel; footage last.
 - **Open:** lessons already in `cached_lessons` carry no interactive until regenerated; `NEXT_PUBLIC_ADAPTIVE_VISUALS` must be true for any
@@ -224,14 +250,14 @@ on an explore segment. Subsystem in `architecture.md` (Interactive visuals); rea
 V8 is complete and everything is merged into `deploy-prep` (#23 V8.6, #24 V8.7, #25 the 74 KB JPEG preview image).
 - **Portfolio brief:** a Claude doc, "Aristo AI: portfolio capture and display brief" (shot list, page structure, copy,
   the lesson-loop diagram, pre-publish checklist). One open question in it: the project's current status line.
-- **Assets:** 56 files in `Freelancing/portfolio/public/projects/aristo/`, every shot in dark (plain name) and light
+- **Assets:** 56 files in the portfolio repo's `public/projects/aristo/`, every shot in dark (plain name) and light
   (`-light`): 6 clips (MP4 + WebM + poster) and the stills. Made by `.claude/eval/2026-10-07-portfolio/scripts`
   (README there): a production build for `/` and `/demo`, the local harnesses for the app pages, 0 API calls,
   synthetic data only. ffmpeg was installed with winget for the encodes.
 - **Open, found while capturing:**
   - the lesson's callout chips stack over the board diagram's title at 1080p (visible in shots 01 and 08);
   - on phones the lesson panel covers the room (no collapse), so the phone "classroom" shot is mostly the panel;
-  - the portfolio does not pick the `-light` variants yet (prompt given to Hmz for the portfolio session).
+  - the portfolio does not pick the `-light` variants yet (prompt given to the owner for the portfolio session).
 - **Still open from V8.7:** Jake's CC BY credit is not inside the preview image; fal output terms and the ElevenLabs
   free-plan narration need settling before launch (LICENSES.md).
 - **Next:** not planned. Candidates: the callout placement fix (then re-shoot 01 and 08), a phone layout that shows
@@ -240,13 +266,13 @@ V8 is complete and everything is merged into `deploy-prep` (#23 V8.6, #24 V8.7, 
 ## 2026-10-06 - V8.7: assets and cleanup, the last V8 step (merged into deploy-prep, #24)
 
 Branch `dev/v8-7-cleanup` off `origin/deploy-prep`. Brief: `.claude/plans/V8-7-assets-and-cleanup.md`. Evidence:
-`.claude/eval/2026-10-06-v8-7/` (README). Planned on Opus, built on Sonnet; Hmz picked the OG layout and confirmed the
+`.claude/eval/2026-10-06-v8-7/` (README). Planned on Opus, built on Sonnet; the owner picked the OG layout and confirmed the
 dead-code list (two stops).
 - **In-room overlays:** "Your turn" (an emoji, 3.99:1), the teacher's "Thinking" chip and a generated model's annotation
   labels are ink-glass pills now (10.9:1).
 - **/dev pages** on the tokens through `dev/devKit.tsx` (min contrast 1.17 to 5.48; 36px desktop controls).
 - **Link-preview image:** wordmark, outlined headline and a wide still of the lit classroom (Jake and the brain) that fades
-  into the ink; Hmz picked this "blend" (B) from three. `brand/OgCard.tsx`, `public/images/og/room.jpg`
+  into the ink; the owner picked this "blend" (B) from three. `brand/OgCard.tsx`, `public/images/og/room.jpg`
   (`scripts/brand/og-still.mjs`). Follow-up (`fix/og-jpeg`): served as a 74 KB JPEG (4:4:4) instead of a 510 KB PNG.
 - **Dead code removed:** 22 of 26 `--aristo-*` tokens, the aristo gradients and shadows, `.text-gradient`, 9 `BRAND_HEX`
   keys. The compiled CSS differs only in the `:root` block (22 declarations gone, none new). Kept: orange-main, backdrop,
@@ -261,7 +287,7 @@ dead-code list (two stops).
 ## 2026-10-06 - V8.6: the app pages onto the brand system (merged into deploy-prep, #23)
 
 Branch `dev/v8-6-app-pages` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-05-v8-6-app-pages/` (README, sheets).
-Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, mastery icon + word, review by screenshots.
+The owner approved the plan, reviewed stop 1, and picked: admin drawer below md, mastery icon + word, review by screenshots.
 - **Learner (/learn):** onboarding, course map and dashboard on the tokens, `.theme-paper` pins removed, emoji gone.
   Mastery tiers are an icon and a word (`learn/mastery.tsx`, Mastered a solid star); stats are ink with icons;
   44px targets; mode picker, course map and dashboard are modal dialogs (`useModalDialog`).
@@ -276,9 +302,9 @@ Hmz approved the plan, reviewed stop 1, and picked: admin drawer below md, maste
   (drawer close on same-page links and past md, dialog semantics) fixed.
 - **Open:** the in-place dialogs focus the panel, not a fallback, when their opener unmounts (mode picker to course
   map); harness-only: `/hx/admin` fails its server render in dev (Next's internal pathname context) and renders client-side.
-- **Not done:** the sign-up to learn flow walk with a test account (Hmz chose screenshots); React Flow canvas
+- **Not done:** the sign-up to learn flow walk with a test account (the owner chose screenshots); React Flow canvas
   graphics are not checked as text.
-- **Next:** merged as #23 after Hmz saw the sheets; V8.7 (`dev/v8-7-cleanup`), brief in `.claude/plans/V8-7-assets-and-cleanup.md` (Sonnet).
+- **Next:** merged as #23 after the owner saw the sheets; V8.7 (`dev/v8-7-cleanup`), brief in `.claude/plans/V8-7-assets-and-cleanup.md` (Sonnet).
 
 ## 2026-10-05 - The opening's Skip never cream on the lit page (merged into deploy-prep, #22)
 
@@ -294,7 +320,7 @@ Branch `fix/intro-skip-contrast` off `origin/deploy-prep`. Evidence: `.claude/ev
 ## 2026-10-05 - V8.3d: softer, looser teacher shirts (merged into deploy-prep, #21)
 
 Branch `dev/v8-3d-shirts` off `origin/deploy-prep`. Evidence: `.claude/eval/2026-10-04-v8-3d-shirts/` (README: sheet A2,
-three fit rounds, QA, files). Hmz picked at each stop; no paid generation.
+three fit rounds, QA, files). The owner picked at each stop; no paid generation.
 
 - **Colours:** Jake sage (swatch #A9C6A4, code #7CA772), MJ lavender (#C3B1E1, code #AA89E5), each solved on the
   shipped cloth so the lit shirt renders as its swatch (`shirts.cjs`, ONLY= / SHEET=). Butter merged with the page.
@@ -310,13 +336,13 @@ three fit rounds, QA, files). Hmz picked at each stop; no paid generation.
 - **Measured (production):** AA 0 failures (min 4.74, `?nointro`), 0 small targets, 0 overflow, both teachers; bounds
   0 px out at every spot; section p95 16.7 to 16.8 ms, CLS 0, LCP the hero poster (V8.3b's hero start-up frames as
   before); switch longest frame 17 ms; room pointing 8.3 / 6.6 deg; tests 556; lint 0 errors; 0 API calls.
-- **Not done:** /learn not checked signed-in (Hmz skipped it; /demo uses the same Teacher and was checked).
-- **Next:** merged as #21 after Hmz's review; V8.6 is next (see the entry above).
+- **Not done:** /learn not checked signed-in (the owner skipped it; /demo uses the same Teacher and was checked).
+- **Next:** merged as #21 after the owner's review; V8.6 is next (see the entry above).
 
 ## 2026-10-03 - V8.3c: a model worth turning, coloured shirts, Jake or MJ, the opening (merged into deploy-prep, #20)
 
 Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.claude/eval/2026-10-03-v8-3c-landing/`
-(README; `video/dark.webm`). Plan approved by Hmz; he picked at each stop (shirts, topic, model, voice, opening).
+(README; `video/dark.webm`). Plan approved by the owner, who picked at each stop (shirts, topic, model, voice, opening).
 
 - **Shirts:** Jake forest, MJ plum, app-wide, at mount (`three/outfit.ts`, `AVATAR_ASSETS.*.outfit`).
 - **The room teaches the brain:** a new real demo lesson (`src/data/demo/brain.ts`, `scripts/generate-demo-brain.ts`;
@@ -333,21 +359,21 @@ Branch `dev/v8-3c-landing` off `origin/deploy-prep`. Evidence and numbers: `.cla
   p95 16.7 to 16.8 ms everywhere; switch longest frame 17 ms; opening p95 16.8 ms with 1 to 3 GPU-side spikes;
   LCP unchanged; tests 554; lint 0 errors. fal $1.37 of $2.
 - **Reviews:** security nothing above medium (the eval ledger); code review's high and mediums fixed (README).
-- **Follow-up (2026-10-04, Hmz: "fix the not done"):** the room's diagram now lifts off the board as points onto the
+- **Follow-up (2026-10-04, the owner: "fix the not done"):** the room's diagram now lifts off the board as points onto the
   brain before it solidifies (`RoomScene.tsx buildPoints`, `room.ts MODEL_BUILD`); the brain lesson is narrated
   (Antoni, 3,918 characters, the free plan's last for the month, until 9 Oct) and is /demo's third topic; /demo's
-  volcano lesson no longer offers a 3D model (Hmz; its GLB deleted); the chooser's pressed look comes from
+  volcano lesson no longer offers a 3D model (the owner; its GLB deleted); the chooser's pressed look comes from
   `html[data-teacher]` in CSS, so an MJ-first load is right from the first paint, and a change is announced.
 - **Open:** ElevenLabs renders are on the free plan (not for commercial use: re-render on a paid plan before launch);
   in /demo MJ still speaks with the male narration; the hero start-up frame (V8.3b's).
-- **Next:** merged as #20 after Hmz's review.
+- **Next:** merged as #20 after the owner's review.
 
 ## 2026-10-03 - V8.3b merged into deploy-prep (#19; #18 closed)
 
 PR #19 merged into `deploy-prep` (production deploys from it). Evidence for the last round:
 `.claude/eval/2026-09-30-v8-3b-landing/session3/fixes/`.
 
-- **Hmz's review fixes (2026-10-02), all in #19:**
+- **The owner's review fixes (2026-10-02), all in #19:**
   - Five Moves: the board is a list in normal flow, its links drawn from the orbs' measured centres (they started
     and stopped at the wrong orbs); each group under its move's name; what you know feeds the idea (no chain); the
     mountain icon replaces the sparkle.
@@ -361,8 +387,8 @@ PR #19 merged into `deploy-prep` (production deploys from it). Evidence for the 
   0 px out of every box; AA 0 failures both themes (min 4.74 light, the parents' eyebrow on the tint); 0 small
   targets; 0 overflow at 360 to 1440; `/` 130 kB; tests 86; lint 0 errors.
 - **Open (not urgent):** hero frames up to about 150 ms just after he is live (clip-pack binding); a resized room
-  texture for the landing (decide with Hmz); the per-frame `getBoundingClientRect` reads in the stage driver.
-- **Next:** Hmz's small fixes in a new session (not landing-build work); then V8.4 / V8.6 (classroom, admin and
+  texture for the landing (decide with the owner); the per-frame `getBoundingClientRect` reads in the stage driver.
+- **Next:** the owner's small fixes in a new session (not landing-build work); then V8.4 / V8.6 (classroom, admin and
   create-teacher onto the brand system).
 
 ## 2026-10-01 - V8.3b build, session 3 done: Immersive, For Parents, the close, review, verification; PR open
@@ -374,8 +400,8 @@ Branch `dev/v8-3b-landing`, pushed, PR into `deploy-prep` (supersedes #18). Evid
   explains; the board, he points at the volcano cross-section; the model it becomes, presented from his fingertip;
   a glance at the quiz on your desk. Tabs, drag to look around, Pause, Hear it; loads only near the section). For
   Parents on the system (promises on the product's paper). The close waves each time it comes into view.
-- **Shown to Hmz, no reply yet:** Immersive (tour, peaks, controls), For Parents, the close's wave peaks. It
-  Remembers still has no comment from him; ask before changing it.
+- **Shown to the owner, no reply yet:** Immersive (tour, peaks, controls), For Parents, the close's wave peaks. It
+  Remembers still has no comment from the owner; ask before changing it.
 - **Perf:** the hero start-up frame (500 to 850 ms of shader first-draws) is fixed by `warm.ts drawEach`; the room
   never warms into a render target. Left: frames up to about 180 ms at the hero after he is live and during a very
   fast scroll near the room (its one-off load). p95 16.7 to 16.8 ms everywhere; `/` 129 kB.
@@ -384,8 +410,8 @@ Branch `dev/v8-3b-landing`, pushed, PR into `deploy-prep` (supersedes #18). Evid
   are fine), the module-level TARGET arrays.
 - **Measured:** 0 AA failures (min 5.11 light, 5.48 dark), 0 targets under 44 px, 0 overflow at 360 to 1440, bounds
   0 px out, tests 86, lint 0 errors and 10 warnings, 0 API and 0 paid calls.
-- **Next:** Hmz's review of the PR and of Immersive / For Parents / the close; then merge into `deploy-prep`; close
-  #18 (not done: ask). Optional: a resized copy of the room's 4096 px texture for the landing (decide with Hmz).
+- **Next:** the owner's review of the PR and of Immersive / For Parents / the close; then merge into `deploy-prep`; close
+  #18 (not done: ask). Optional: a resized copy of the room's 4096 px texture for the landing (decide with the owner).
 
 ## 2026-10-01 - V8.3b build, session 2 done: Five Moves and It Remembers built and reviewed; Ideas removed
 
@@ -394,16 +420,16 @@ Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last code commit 61391
 
 - **Page order now:** hero, A Teacher of Your Own (#idea), It Draws a Diagram, It Builds a Model, One Lesson, Five
   Moves (#how, nav "How it works"), It Remembers What You Know (#map), For Parents (old, not restyled), Close (old),
-  footer. **It Finds the Ideas Inside was removed** (Hmz: Five Moves covers it and looks better).
-- **Five Moves (story, Hmz approved):** Jake beside the classroom's dark display. Each move's gesture (director
+  footer. **It Finds the Ideas Inside was removed** (the owner: Five Moves covers it and looks better).
+- **Five Moves (story, the owner approved):** Jake beside the classroom's dark display. Each move's gesture (director
   signals: hook/Imagine, explain/HoldIdea, demo_step/StepBeat x3, challenge_setup/YourTurn, connect/BringTogether, plus
   the "that's right" reaction) makes a piece at his hands (placed per frame from bones via `shared.hands.onReport`,
   same frame as the render), which then flies to its place on the board: the volcano lesson's outline (summaries, not
-  lines). "Next" hangs from the answer (Hmz). Files: `sections/Moves.tsx`, `MovesBoard.tsx`, `MovesHands.tsx`.
-- **It Remembers (built, shown to Hmz, not yet commented on):** a paper card with one real concept (Variables and
+  lines). "Next" hangs from the answer (the owner). Files: `sections/Moves.tsx`, `MovesBoard.tsx`, `MovesHands.tsx`.
+- **It Remembers (built, shown to the owner, not yet commented on):** a paper card with one real concept (Variables and
   Assignment) over three weeks; Jake points (PointNear, aimed) at each review point as the line reaches it, all inside
   the clip's ~3.7 s hold; then the real course map on the dark display. `sections/Remember.tsx`.
-- **Fixes Hmz asked for:**
+- **Fixes the owner asked for:**
   - posters = first live frame everywhere: stills placed by the live framing in CSS (`spots.ts stillCss`,
     unit-tested), recaptured at the first live frame; `idea.webp` had been clipped by the capture viewport.
   - Jake never out of bounds: `scripts/bounds.cjs` (probe-only `?probe&wide=` view); Five Moves' Imagine spread was
@@ -424,7 +450,7 @@ Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last code commit 61391
      unused `classroom-*.webp` and `v3/*` except `idea.webp`); then the PR into `deploy-prep`, superseding #18.
 - **Gotcha:** never run `next dev` with a stray `next start`/`build` on the same `.next` (500s on localhost).
 
-## 2026-10-01 - V8.3b build, session 1 done: nav, hero, idea, ideas, picture, model built and reviewed by Hmz
+## 2026-10-01 - V8.3b build, session 1 done: nav, hero, idea, ideas, picture, model built and reviewed by the owner
 
 Branch `dev/v8-3b-landing` (no upstream, nothing pushed). Last commit b73e4e0 plus the docs commit after it.
 Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first-sections/`, `sections-r5/`,
@@ -454,7 +480,7 @@ Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first
   - Posters: `<spot>-start.webp` on the live path and `<spot>.webp` on lite.
 - **Teacher.tsx** (product) gained three optional driver fields, used only by the landing: `viewer`, `afterPose`,
   `withhold`. The classroom passes no driver and is unchanged.
-- **Hmz's rules learned this session** (memory `landing_features_not_a_lesson`):
+- **The owner's rules learned this session:**
   - features, not a lesson;
   - every gesture lands on a real thing, verified from the bones with peak frames;
   - a section's poster is its first frame;
@@ -482,33 +508,33 @@ Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first
      driver hooks touch Teacher), then docs (decisions, brand-system, messaging). Then the PR into `deploy-prep`,
      superseding #18.
 
-## 2026-09-30 - V8.3b: direction E approved by Hmz; build next (new session)
+## 2026-09-30 - V8.3b: direction E approved by the owner; build next (new session)
 
 - **Direction E, "Jake Presents"** (`mockups/e.html`, `shots/sheet-e.webp`): A's page. Jake appears on his own in
   each section beside its short motion graphic, and does something with it. The room is one "Immersive" section with
   a camera tour. Nothing is pinned or scrubbed.
 - **The plan:** `.claude/plans/V8.3b-landing-plan.md`. Round 3 at the top is the direction and the two hard
   requirements; sections 5 to 8 give the perf plan, the notes, what is kept and deleted, and the build order.
-- **Hard requirements (Hmz):**
+- **Hard requirements (the owner):**
   - nothing may look wrong (the mockup's slim hero Jake was the capture framing; the build renders the product's
     `Teacher`, compared side by side with the classroom render);
   - gestures land on real things at the right scale, placed from Jake's hand bone at the gesture's peak and verified
     with peak frames.
 - **Already done:** note 7, the face (54f15a6); note 8, the paper (cc03e22).
-- **Next session:** start at plan section 8, step 2. Build a section at a time, and show Hmz the first live sections
+- **Next session:** start at plan section 8, step 2. Build a section at a time, and show the owner the first live sections
   (nav, hero, the model build) before the rest. Evidence goes in `.claude/eval/2026-09-30-v8-3b-landing/` (its
   README lists the scripts).
 
 ## 2026-09-30 - V8.3b: direction D (A's page + the V8.3 immersion) mocked; face and desk paper done
 
-- Round 2 (Hmz): A's style plus B's teacher as a main part of the look, with the V8.3 immersion but none of its UX.
+- Round 2 (the owner): A's style plus B's teacher as a main part of the look, with the V8.3 immersion but none of its UX.
   D is mocked (`mockups/d.html`, `shots/sheet-d.png`). No tilted cards. The Idea keeps its own section.
 - Committed: 54f15a6 (resting face smile 0.8 and lids 0.12, app-wide, gain-scaled; Jake and MJ checked in
   `face/pair-sheet.png`) and cc03e22 (the placeholder paper removed from the classroom). Tests 485, lint 0 errors
   and 10 warnings.
-- **Next:** Hmz's go on D and the desk-card question (plan section 9), then the build order in plan section 8.
+- **Next:** the owner's go on D and the desk-card question (plan section 9), then the build order in plan section 8.
 
-## 2026-09-30 - V8.3b planned: waiting for Hmz to pick a direction (no product code yet)
+## 2026-09-30 - V8.3b planned: waiting for the owner to pick a direction (no product code yet)
 
 - Branch `dev/v8-3b-landing` from `origin/dev/v8-3-landing` (93e913a), upstream unset.
 - Plan: `.claude/plans/V8.3b-landing-plan.md`, covering the research with links, three directions (A Lesson Objects,
@@ -518,11 +544,11 @@ Evidence: `.claude/eval/2026-09-30-v8-3b-landing/` (README rounds 1 to 6; `first
   at 1280 and 360, light and dark) and `face/sheet.png` (note 7, five idle faces).
 - `scripts/`: `mockups.cjs`, `sheets.cjs`, `face.cjs`, `measure.cjs`, `overflow.cjs`.
 - Dev harness only: `/dev/avatar-lab` reads `?who=&view=&clip=&smile=&lid=&blink=0`.
-- **Next:** Hmz answers the plan's section 10, then the build order in section 9.
+- **Next:** the owner answers the plan's section 10, then the build order in section 9.
 
-## 2026-09-30 - V8.3 reviewed by Hmz: redo the landing as a website (next session; PR #18 not merged)
+## 2026-09-30 - V8.3 reviewed by the owner: redo the landing as a website (next session; PR #18 not merged)
 
-Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new session, as V8.3b.
+The owner saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new session, as V8.3b.
 
 - **The direction:**
   - The page must look like a landing page: a modern, creative, real website, with a much better navbar and proper
@@ -531,7 +557,7 @@ Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new
   - Motion graphics need not come from Jake or the room: design them freely to the Night Class vibe.
   - Reference the lesson rather than replaying it. Anything that plays runs like a short demo at a readable pace, not
     scroll-scrubbed; the pinned scroll-through felt unintuitive.
-- **His notes on this build:**
+- **The owner's notes on this build:**
   1. Start with Jake idle, not facing the board.
   2. The dark ink-glass title chips ("A Teacher of Your Own") do not carry the app's vibe.
   3. The Column mark drawn in ink blends into the room in dark mode.
@@ -549,12 +575,12 @@ Hmz saw the V8.3 scroll story (entry below, PR #18) and wants it redone in a new
   - the resized `public/landing/heart.glb`;
   - the eval scripts and the perf lessons in the eval README (lazy parts warmed before use, no per-frame SVG filters,
     host-level pause state, idle writers skipped).
-- **Next:** V8.3b in a new session (prompt given to Hmz); V8.6; V8.7.
+- **Next:** V8.3b in a new session (prompt given to the owner); V8.6; V8.7.
 
-## 2026-09-30 - V8.3 landing v3 done: a scroll-driven story with the live classroom (Opus plan approved by Hmz)
+## 2026-09-30 - V8.3 landing v3 done: a scroll-driven story with the live classroom (Opus plan approved by the owner)
 
 Branch `dev/v8-3-landing` off `origin/deploy-prep` (83c6f37, #15 and #17 in it; no upstream set); PR into
-`deploy-prep`. Plan and storyboard: `.claude/plans/V8.3-landing-plan.md` (Hmz: the recommendations plus 6B desk
+`deploy-prep`. Plan and storyboard: `.claude/plans/V8.3-landing-plan.md` (the owner: the recommendations plus 6B desk
 challenge, 7C editorial map, 8B goodbye wave). Decisions: the eight V8.3 rows in decisions.md. System: brand-system.md
 "Landing (V8.3)" and Motion. Copy: messaging.md "Landing copy, V8.3". Evidence: `.claude/eval/2026-09-30-v8-3-landing/`.
 
@@ -588,13 +614,13 @@ challenge, 7C editorial map, 8B goodbye wave). Decisions: the eight V8.3 rows in
   - AA: 5,412 nodes, 0 failures, minimum 5.11 light and 5.48 dark (the stack 4.74). No target under 44px, no overflow.
   - 0 API and 0 paid calls in every run.
 - **Deviation:** GlanceBoard has no director signal (only the 25 s long wait), so the idea and diagram beats use
-  Pointing and PresentModel instead. A scripted cue would need `src/lib/avatar/director.ts`: ask Hmz.
+  Pointing and PresentModel instead. A scripted cue would need `src/lib/avatar/director.ts`: ask the owner.
 - **Gates:** type-check clean; lint 0 errors and 10 warnings; tests 482 (441 + 41); build green. The `code-reviewer`
   found 2 high, 7 medium and 4 low; all fixed (eval README, "Review").
 - **Next:** V8.6 (admin, then onboarding, course map, dashboard and create-teacher onto the tokens); V8.7 (re-capture,
   cleanup: the three `public/images/landing/classroom-*.webp` are now unused).
 
-## 2026-09-30 - Desk quiz at portrait sizes done: the whole card on every phone, 44px targets (Opus plan approved by Hmz, Sonnet execution)
+## 2026-09-30 - Desk quiz at portrait sizes done: the whole card on every phone, 44px targets (Opus plan approved by the owner, Sonnet execution)
 
 Branch `dev/desk-quiz-portrait` off `origin/deploy-prep` (b3cc79b, #15 and #16 in it; no upstream set); PR into
 `deploy-prep`. Decisions are the five rows starting "Desk quiz framing follows the canvas aspect ratio" in decisions.md;
@@ -628,13 +654,13 @@ the desk card part of brand-system.md is updated. Evidence, scripts and numbers:
   today's framing and is cropped (controls about 28px). Owner: a panel and strip layout task, not the camera.
 - **Next:** V8.3 landing v3 (session order below); V8.6; V8.7.
 
-## 2026-09-30 - Next: V8.3 landing (the desk-quiz framing is done, above) (direction agreed with Hmz, no code yet)
+## 2026-09-30 - Next: V8.3 landing (the desk-quiz framing is done, above) (direction agreed with the owner, no code yet)
 
-V8.4c merged (#15, 215db0d). Session order Hmz chose:
+V8.4c merged (#15, 215db0d). Session order the owner chose:
 
 1. ~~Desk-quiz framing at portrait sizes~~ Done, see the entry above.
-2. **V8.3 landing v3** (`/model opusplan`; Fable 5.1 only if the scroll-and-3D choreography stalls). The direction
-   Hmz agreed, which replaces the brief's looping hero video and example-image carousel:
+2. **V8.3 landing v3** (plan on the stronger model; a higher tier only if the scroll-and-3D choreography stalls). The direction
+   The owner agreed, which replaces the brief's looping hero video and example-image carousel:
    - **A motion-led, scroll-driven page**, premium, advanced yet friendly and creative: Night Class ink, the lit
      classroom as the warm window, the one orange as light. Soft, springy motion, depth and parallax. Not a static
      page with screenshots, not a carousel.
@@ -648,18 +674,18 @@ V8.4c merged (#15, 215db0d). Session order Hmz chose:
      `public/demo/heart/source.jpg`, `teaching.jpg` and `model.glb`, the pipeline's real before and after); the
      camera pulls back and the teacher starts teaching.
    - **One lesson, five moves** (pinned): the teacher delivers it; scroll drives Activate to Connect.
-   - **The student grasping it**, storyboarded and cinematic too (Hmz): the map's concepts light up, mastery rings
+   - **The student grasping it**, storyboarded and cinematic too (the owner): the map's concepts light up, mastery rings
      fill, and review pulses travel back along the links, labelled as an example learner.
    - **For parents:** calm. **Close:** the teacher sends you off, one CTA.
    - **Guards:** the first paint stays a poster with / at or under 135 kB; 3D, models and animation code load after
      it; phones, low-end GPUs, no WebGL and reduced motion get a lighter version telling the same story; only existing
      assets; no paid generation; finished pieces are labelled as real outputs, no speed claim unless measured.
    - **The plan starts with a storyboard** (start, middle and end of each section's scroll range, teacher gestures
-     that make sense in context, two or three options where there is a real choice) for Hmz to pick from before
+     that make sense in context, two or three options where there is a real choice) for the owner to pick from before
      anything is built.
 3. Then V8.6 (admin, then onboarding, course map, dashboard, create-teacher onto the tokens) and V8.7 (re-capture).
 
-## 2026-09-30 - V8.4c done: classroom shells, pickers, loading, free mode, review; the lock is gone (Opus plan approved by Hmz)
+## 2026-09-30 - V8.4c done: classroom shells, pickers, loading, free mode, review; the lock is gone (Opus plan approved by the owner)
 
 Branch `dev/v8-4c-shells` off `origin/deploy-prep` (36fefc8, #11 to #14 merged; no upstream set); PR into `deploy-prep`.
 Decisions are the nine V8.4c rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4c)", Theme,
@@ -671,7 +697,7 @@ register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-2
   - Top bars are ink-glass pills on the room (wordmark, account or demo banner, toggle); below md the /learn actions are
     44px icons with screen-reader names. Shared pieces in `src/components/learn/ClassroomChrome.tsx`.
   - The panel column follows the theme, is clamped to the viewport (fixes the overflow below 440px), and collapses to
-    its strip while the quiz is on the desk (Hmz: every width). The desk card is fully visible from 768 up.
+    its strip while the quiz is on the desk (the owner: every width). The desk card is fully visible from 768 up.
   - The topic picker and ModePicker (system scrim, surface cards, icons), the loading screen, free-mode cards, ReviewView
     and the lightbox are on the tokens; AvatarCredit and `.aristo-scroll` are off the orange. The last V8.1 step 5 sweep.
   - Onboarding, the course map and the dashboard (V8.6) are pinned light with `.theme-paper`.
@@ -689,12 +715,12 @@ register, AA gaps). Evidence, scripts and numbers are in `.claude/eval/2026-09-2
     screen dropped ui/button and MotionConfig). `/demo` JS 455.7 -> 456.9 kB, CSS 14.3 -> 13.9, scene ready median
     2343 -> 1639 ms (noise). 0 paid requests anywhere.
 - **Gap left:** the desk quiz at 360 portrait is cropped by the camera. Closed by the desk-framing task (entry above).
-  - `/learn` in the pane (production build, signed in by Hmz, view-only): JS 458.9 -> 460.6 kB, CSS 14.3 -> 13.9, only
+  - `/learn` in the pane (production build, signed in by the owner, view-only): JS 458.9 -> 460.6 kB, CSS 14.3 -> 13.9, only
     the three GET calls, no lock, dark under OS dark, the toggle 44px, no target under 44px.
 - **Next:** V8.3 landing v3; V8.6 (admin token pass, then onboarding, course map, dashboard and create-teacher onto the
   tokens, dropping the `.theme-paper` pins); V8.7 re-capture of the now-themed classroom.
 
-## 2026-09-29 - V8.4b done: quiz, desk card, answer panel, input box, quiz bars (Sonnet, plan approved by Hmz)
+## 2026-09-29 - V8.4b done: quiz, desk card, answer panel, input box, quiz bars (Sonnet, plan approved by the owner)
 
 Branch `dev/v8-4b-quiz` off `origin/deploy-prep` (then at #11 and #12); PR into `deploy-prep`. #11 to #14 are all merged
 since. Decisions are the seven V8.4b rows in decisions.md; the system parts are in brand-system.md ("Classroom
@@ -733,7 +759,7 @@ since. Decisions are the seven V8.4b rows in decisions.md; the system parts are 
 
 Branch `dev/v8-5b-day-walls` off `origin/deploy-prep`; PR into `deploy-prep`. It is independent of V8.4a (#11).
 
-- Both teachers wear white against warm plaster: 1.1:1 shirt to wall. Hmz picked deep blue-grey from six baked
+- Both teachers wear white against warm plaster: 1.1:1 shirt to wall. The owner picked deep blue-grey from six baked
   options.
 - `classroom_default.glb` was re-baked at full quality. The front wall behind the teacher is #6B8196, and the side and
   back walls are #D6DDE3. All-blue-grey baked the bounce-lit walls near-black.
@@ -741,11 +767,11 @@ Branch `dev/v8-5b-day-walls` off `origin/deploy-prep`; PR into `deploy-prep`. It
   and the file is 1.05 MB.
 - `build_studio_room.py` gains `--wall` / `--wall-side` and a per-face `wall_side` split.
 - Evidence and the option sheets are in `.claude/eval/2026-09-29-v8-5b-walls/`.
-- Blender 5.1 is installed locally at `C:/Program Files/Blender Foundation/Blender 5.1/`. A preview bake takes about
+- Blender 5.1 is installed locally. A preview bake takes about
   1 minute, a full one about 30.
 ## 2026-09-29 - V8.4a done: lesson panel and controls, caption first (Opus plan, then execution)
 
-Branch `dev/v8-4a-lesson-panel` off `origin/deploy-prep` (7d457c3, #10 merged); PR into `deploy-prep`. Plan approved by Hmz
+Branch `dev/v8-4a-lesson-panel` off `origin/deploy-prep` (7d457c3, #10 merged); PR into `deploy-prep`. Plan approved by the owner
 with two scope additions: the Experience.tsx toolbars, and one read-only `activeQuiz` selector. Decisions are the eight V8.4a
 rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4a)", Theme, register, AA gaps).
 
@@ -772,7 +798,7 @@ rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4a
   - `/demo` cold scene-ready median 2124 â†’ 1903 ms, not slower. JS +5.5 kB compressed (lazy classroom chunk; `/learn`
     450.8 â†’ 456.7 kB); first load unchanged at 134 kB.
   - `/learn` was checked signed in, read-only, with only its three GET calls.
-- **One orange (Hmz, after review):** every filled button is #F97B2F with brand-brown labels (#3D2110, 5.55:1; near-black read too harsh), app-wide (light `accent` changed; `status-ink` for danger; focus rings on `accent-text`; the classroom's leftover white-on-orange fills too). Landing and auth re-checked, 0 AA failures both themes.
+- **One orange (the owner, after review):** every filled button is #F97B2F with brand-brown labels (#3D2110, 5.55:1; near-black read too harsh), app-wide (light `accent` changed; `status-ink` for danger; focus rings on `accent-text`; the classroom's leftover white-on-orange fills too). Landing and auth re-checked, 0 AA failures both themes.
 - **Wordmark sharp on the first screen:** the /demo and /learn top bars sit above the picker scrims (the blur made the letters look low-res).
 - **Follow-up (#13):** Back / Next is sticky to the bottom of the lesson scroll, which now stops above the playback row (on a short screen the row had slid under the controls).
 - **Gates:** type-check clean; lint 0 errors / 10 warnings (unchanged); tests 404; build green; `/` static at 122 kB.
@@ -797,7 +823,7 @@ rows in decisions.md; the system parts are in brand-system.md ("Classroom (V8.4a
 ## 2026-09-29 - V8.2 done: design system v2, one orange, app-wide theme (Opus plan, then execution)
 
 Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens and #9 V8.1); PR into
-`deploy-prep`, not merged (Hmz merges). The system is written down in `.claude/docs/brand-system.md`;
+`deploy-prep`, not merged (the owner merges). The system is written down in `.claude/docs/brand-system.md`;
 `landing-design-system.md` is now a pointer. Decisions are in decisions.md (seven V8.2 rows).
 
 - **Orange decision:** `aristo-orange-main` #F97B2F and `aristo-brown-main` #3D2110 win; the legacy
@@ -823,7 +849,7 @@ Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens an
   success/warning on sunk/tint (4.2:1, darkened), the lock missing the viewport scrollbar. Documented, not
   changed: tailwind-merge does not know `type-*` / `shadow-e*` / `duration-*`; browsers without `:has()` lose
   the lock's cream defaults.
-- **Checked signed in** (Hmz signed in; free mode, read-only calls only, nothing generated): /learn,
+- **Checked signed in** (the owner signed in; free mode, read-only calls only, nothing generated): /learn,
   /admin (overview, users, courses, cost, audit-log) and /create-teacher all stay light under OS-dark with their
   old page defaults; the lock meta is in `<head>` on the first response, so no dark first frame. Admin contrast
   gaps are old ones, slightly better now: sidebar labels ~2.35, active nav white on #F97B2F 2.66 (V8.6).
@@ -835,11 +861,11 @@ Branch `dev/v8-2-design-system` off `origin/deploy-prep` (which has #8 tokens an
 
 ## 2026-09-28 - V8.1 done: brand foundation, mark and copy (Opus for the words and mark, Sonnet to apply)
 
-Branch `dev/v8-1-brand`, off `origin/deploy-prep`; PR into `deploy-prep`, not merged (Hmz merges). Gates and the code-review
+Branch `dev/v8-1-brand`, off `origin/deploy-prep`; PR into `deploy-prep`, not merged (the owner merges). Gates and the code-review
 result are at the end of this entry. `/` is still static, first-load JS 122 kB, no three / R3F import.
 
 - **Shipped:** `.claude/docs/brand/messaging.md` (positioning, descriptions, pillars, voice, words to avoid, honesty rules,
-  approved landing copy deck). The Column mark, candidate D (Hmz's pick), as vectors from Archivo's own outlines
+  approved landing copy deck). The Column mark, candidate D (the owner's pick), as vectors from Archivo's own outlines
   (`scripts/brand/build-mark.mjs` -> `src/components/brand/markPaths.ts`, `public/brand/*.svg`); one `AristoMark` component
   in the landing nav and footer, /learn and /demo top bars, loading screen, create-teacher header, empty-state avatar. Zero
   sparkle glyphs. Every landing string rewritten to the deck; section H2s are now Title Case Geist. Metadata fixed
@@ -910,10 +936,10 @@ scene. Merge it after the V8/V9 programme lands, or rebase the commits then. Evi
   each (noisy); it is 60 with vsync in both.
 - **Found:** the `Blackboard` canvas plane (z -6) sits behind the front wall and has never been visible. It is recorded
   in decisions.md with the display's probed rectangle, for V3 / T08.
-- **For Hmz to judge:** whether the look clears the bar (the before/after sheets are in the eval folder). The rows of
+- **For the owner to judge:** whether the look clears the bar (the before/after sheets are in the eval folder). The rows of
   desks stay, because they are the quiz anchors. The quiz card is now cream on pale oak, so its contrast is lower than on
   the old orange desk; worth a look in V8.4b.
-- **Evening room (second pass, Hmz: "do something to replace the alt room as well... be a little creative"):**
+- **Evening room (second pass, the owner: "do something to replace the alt room as well... be a little creative"):**
   `classroom_alternative.glb` is now built from the default room's shell (`--variant evening`). It is a one-to-one
   study at dusk: only the learner's desk remains, with a reading nook (CC0 Poly Haven props, fetched by
   `scripts/room/fetch-props.mjs`), pendant lamps, a rust rug, blue-ink walls, walnut and dusk windows. The picker
@@ -960,16 +986,16 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.7"). Gates: type-check clean, lint 1
 - **Shipped:** Imagine (hook), HoldIdea (explain, sparse), StepBeat (demo_step), MoveOn (transition), YourTurn
   (challenge_setup, plays at 0.85), BringTogether (connect, sparse) in the Jake and MJ clip packs (676,368 B and
   703,156 B). A new board image now also plays PresentModel. The director reads a segment's role via the new
-  `roleOf` (beside `phaseOf`). Approved by Hmz in motion on `/dev/avatar-lab`; five of six confirmed playing from
+  `roleOf` (beside `phaseOf`). Approved by the owner in motion on `/dev/avatar-lab`; five of six confirmed playing from
   the real Volcanoes lesson's own segment data on `/demo`, BringTogether confirmed by forcing a matching segment
   (its lesson has none) -- both via a temporary, reverted debug hook.
-- **Also:** all 13 hand-keyed clips (the new six plus the six V9.6 ones) got a "life" pass on the fingers (Hmz:
+- **Also:** all 13 hand-keyed clips (the new six plus the six V9.6 ones) got a "life" pass on the fingers (the owner:
   the old hands were "flat... rigid"); MJ's collar and sleeves fixed (arm/head skin was showing through).
 - **Bug caught and fixed before shipping:** `typescript-reviewer` found `beatDone` (the sparse-beat gate) was
   latching even when the overlay never actually played (blocked by Pointing/Thinking, a busy overlay, or a clip
   not yet loaded), permanently losing HoldIdea/BringTogether for the rest of the lesson. Fixed and covered by a
   regression test.
-- **Question for Hmz:** none blocking. Two low-priority items are recorded in V9-REPORT's "Known edges": whether
+- **Question for the owner:** none blocking. Two low-priority items are recorded in V9-REPORT's "Known edges": whether
   BringTogether is rare across real lessons (its Volcanoes trigger only fires via a forced segment), and that
   `beatDone` isn't seeded on a mid-lesson avatar swap.
 - **Next:** batch 3 of the gesture catalogue (OneMoment, BackToBoard, OverToYou, PatientTilt, PointNear), Opus to
@@ -980,12 +1006,12 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.7"). Gates: type-check clean, lint 1
 Detail in `.claude/plans/V9-REPORT.md` ("V9.6"). Gates: type-check clean, lint 10, tests 291, build green.
 
 - **Shipped:** PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard in the Jake and MJ clip packs
-  (500,280 to 577,352 B and 526,496 to 603,744 B), wired for rows 2, 9, 13, 14, 16 and 18. Each approved by Hmz in
+  (500,280 to 577,352 B and 526,496 to 603,744 B), wired for rows 2, 9, 13, 14, 16 and 18. Each approved by the owner in
   motion. Checked in the app on Jake and MJ (`/dev/free-model` and `/demo`). `/learn` not opened (auth).
 - **Also:** greeting wave at 0.75; ShakeNo at a third of Almost's weight in the wrong-answer pool; PP viseme softened
   to 0.6 on both teachers; `ClipSpec.look` (an overlay clip can own the head's look, used by GlanceBoard). LookAgain
   rejected (a nod says yes).
-- **Question for Hmz:** the long wait now alternates Idle3 and GlanceBoard, about one gesture every 35 s of quiet
+- **Question for the owner:** the long wait now alternates Idle3 and GlanceBoard, about one gesture every 35 s of quiet
   instead of every 70 s. Raise `LONG_WAIT_S` or lengthen both cooldowns (about 130 s) if it feels restless.
 - **Next:** the gesture catalogue's batches 2 (teaching moves by segment role) and 3 (event clips), Opus to author,
   in `.claude/plans/V96-GESTURE-CATALOGUE.md`. V8.7 (landing re-capture) still waits on V8.4 and V8.5.
@@ -1003,11 +1029,11 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.5"). V9 is finished apart from the o
 - **Budget (cold `/demo`, before = branch start with Marcus, after = Jake):** GLBs 6.95 MB to 3.23 MB, everything 9.2 MB
   to 5.5 MB, posed at 9 Mbps 14.7 s to 9.4 s, warm unchanged. T02's 12 MB bar met; nothing to re-export.
 - **Docs:** `LICENSES.md` (new), `.claude/docs/architecture.md` ("Teacher avatar subsystem"), CLAUDE.md avatar notes.
-- **Blocked on Hmz / open questions:** (1) ShakeNo: Hmz decided to keep it for now; (2) the Tier 2 clips (hand-keyed gestures: present a model, "let's look again", supportive quiz);
-  (3) `LICENSES.md`: classroom and Ryan/Sonia are open source from a YouTuber per Hmz (creator, licence, URL still to record), the Sony duck `dev_placeholder.glb` still open; (4) done: the unreferenced V1 JSX tree and its images are deleted (lint is now 10 warnings, not 22).
+- **Blocked on the owner / open questions:** (1) ShakeNo: the owner decided to keep it for now; (2) the Tier 2 clips (hand-keyed gestures: present a model, "let's look again", supportive quiz);
+  (3) `LICENSES.md`: classroom and Ryan/Sonia are open source from a YouTuber per the owner (creator, licence, URL still to record), the Sony duck `dev_placeholder.glb` still open; (4) done: the unreferenced V1 JSX tree and its images are deleted (lint is now 10 warnings, not 22).
 - **Not verified:** `/learn` end to end (needs auth), face hints in a real quiz, a phone, frame rate.
 - **Next:** V8.7 re-capture is no longer blocked by V9; the plan also waits on V8.4 and V8.5 (both still unticked).
-  The plan assigns it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal once you confirm.
+  The plan assigns it Sonnet 5 for captures and Haiku 4.5 for the dead-code removal once that is confirmed.
 
 ## 2026-09-23 - V9.4 done: face and gaze (Sonnet)
 
@@ -1023,7 +1049,7 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.4"). No escalation to Opus needed.
   `min(1, volume*4)`); not fixed, the timeline path is the real one.
 - **Not verified visually:** the face hints in a real quiz (correct, wrong, lesson complete), covered by
   the director tests only; Marcus/Priya/custom teachers (archived, gain 0.4); `/learn` (needs auth).
-- **Blocked on Hmz:** still the ShakeNo question from V9.3 (recommendation: silence it).
+- **Blocked on the owner:** still the ShakeNo question from V9.3 (recommendation: silence it).
 - **Next:** V9.5 integration (budgets, `AVATAR_ASSETS`, picker and `/create-teacher`, docs,
   `LICENSES.md`). The Tier 2 clips are still open.
 
@@ -1039,7 +1065,7 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.3", with the coverage table and the 
   she had no greeting or head overlays until `HEAD`/`HIP` accepted a numeric suffix. Fixed and tested.
 - **Not verified visually:** head-to-desk in a real quiz, `lessonComplete` and quiz-result reactions,
   Marcus/Priya on their own GLBs, `/learn` (needs auth).
-- **Blocked on Hmz:** the ShakeNo question (keep, or silence a wrong-answer head shake until a
+- **Blocked on the owner:** the ShakeNo question (keep, or silence a wrong-answer head shake until a
   "let's look again" clip exists). Recommendation: silence.
 - **Next:** V9.4 face and gaze (expressions from the director's `face` hint, eyes, drift and
   saccades). The Tier 2 clips (present model, wrong answer, quiz supportive) are still open.
@@ -1060,10 +1086,10 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.3", with the coverage table and the 
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.2b"). Ran against `NEXT-SESSION-V92B-FIXES.md`.
 
-- **Scale:** three live rounds with Hmz. True real height (Jake 1.78 m) read as a dwarf; halfway
+- **Scale:** three live rounds with the owner. True real height (Jake 1.78 m) read as a dwarf; halfway
   to the old 2.79 m giant still read short; landed on **halfway Ã— 1.125 â€” Jake 2.57 m
   (`standScale` 1.3824), MJ 2.51 m (1.3521)**, taller than the brief's original "believable
-  adult" target, by Hmz's explicit choice after seeing it live. New `AvatarConfig.standScale` in
+  adult" target, by the owner's explicit choice after seeing it live. New `AvatarConfig.standScale` in
   `Teacher.tsx`, read via `standScaleFor(teacher)` in `Experience.tsx`; legacy avatars keep the
   old flat 1.5. `SCENE_Y`/`TEACHER_HEAD_Y` re-tuned to match (final: 0.18 / 0.65). Generated-model
   initial spawn size also cut 45% (1.5 â†’ 0.825) â€” the student's own scroll-to-resize is
@@ -1091,7 +1117,7 @@ grind â€” see "Model discipline" in the programme plan).
 
 **Still open:** the Avaturn rig's packs (mirrors, diet); the gap clips (Mixamo exhausted, see
 "Clip sources" below); MJ's hair on her shoulder; the scalp seam; female narration for MJ
-(parked, needs Hmz's go).
+(parked, needs the owner's go).
 
 ## 2026-09-23 â€” V9.2: animation library for Jake and MJ (17 clips, base + lazy pack)
 
@@ -1115,7 +1141,7 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn
   - Fixed: the talking cycler skipped variants.
 - **Gates:** type-check clean, lint 22 (pre-existing), tests 85/85; `typescript-reviewer` pass.
 
-**Next:** **V9.2b** fixes Hmz found in the app. Start prompt:
+**Next:** **V9.2b** fixes the owner found in the app. Start prompt:
 `.claude/plans/NEXT-SESSION-V92B-FIXES.md` (Sonnet).
 - The teachers stand 2.79 m in a real-size classroom (`scale={1.5}`), so a desk reaches the
   knee.
@@ -1123,7 +1149,7 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.2"). **Canino rigs done; the Avaturn
 - Jake's trousers deform at the knees.
 
 Then V9.3 director (manifest, pools, runtime time-warp, procedural life; wire Idle3 and the
-waves), then Tier 2 hand-keyed gestures for the gaps (decisions.md "Clip sources"). Hmz saw
+waves), then Tier 2 hand-keyed gestures for the gaps (decisions.md "Clip sources"). The owner saw
 Idle3: fine.
 
 **Still open:** the Avaturn rig's packs (mirrors, diet); MJ's hair on her shoulder; the scalp
@@ -1141,7 +1167,7 @@ Detail in `.claude/plans/V9-REPORT.md` ("V9.1e"). **A passed the bar; B not buil
   - arm skin through MJ's sleeve, 18 mm, fixed with `v9_mask.adopt_weights`;
   - MJ's fingers inside any eased skirt, fixed by `v9_skirt.clear_hands`, which swings
     hanging arms 3-10Â° (a deliberate deviation from the source; Pointing untouched).
-  - MJ's broken left elbow (spotted by Hmz): a sculpt defect in the source mesh, rebuilt
+  - MJ's broken left elbow (spotted by the owner): a sculpt defect in the source mesh, rebuilt
     as a mirror of her right arm with `v9_mask.mirror_region`.
 - Zero pokes on every frame of all six clips for both teachers. The new `check_through`
   covers the hands and knees that `find_pokes` cannot see.
@@ -1157,7 +1183,7 @@ per clip) and how packs ship, then the remaining 10 source clips. Start prompt:
 re-checked), her hair clipping the shoulder, the forehead scalp seam, and the parked female
 narration.
 
-## 2026-09-23 â€” V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on Hmz
+## 2026-09-23 â€” V9.1d: motion fixed and re-shipped; MJ's wardrobe waits on the owner
 
 Detail in `.claude/plans/V9-REPORT.md` ("V9.1d"). **V9.1c's motion was wrong in ways three
 sampled frames could not show.**
@@ -1175,7 +1201,7 @@ sampled frames could not show.**
 
 **MJ's wardrobe:** her extended tee and skirt fail the bar (slits showing her legs, stretched
 dark blotches, jagged hem, crop-hem ridge on the tee). Options in
-`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`. **Hmz picked A** (rebuilt
+`.claude/eval/2026-09-18-v9-bakeoff/v91d_mj_wardrobe_options.png`. **The owner picked A** (rebuilt
 pleated skirt, `scripts/v9_skirt.py`, plus a tee repair) **with B (CC0 MPFB trousers) as the
 fallback** if A cannot pass. Until it ships, students who pick MJ see the failing skirt.
 
@@ -1198,9 +1224,9 @@ hid the source rig), and MJ's 32k tris came from decimation that shattered her t
 - **CC BY credit** on each avatar's config â†’ `<AvatarCredit>` in the `/learn` and `/demo` panels, plus
   `asset.copyright` in each GLB.
 - Gates: type-check clean, lint 22 (pre-existing), tests 85/85. Checked in `/dev/free-model` and in
-  `/demo`, then `/learn` once Hmz signed in (see follow-up).
+  `/demo`, then `/learn` once the owner signed in (see follow-up).
 
-**Follow-up (same day, Hmz):** Jake and MJ are the roster. `ACTIVE_TEACHERS` in the store drives both
+**Follow-up (same day, the owner):** Jake and MJ are the roster. `ACTIVE_TEACHERS` in the store drives both
 pickers; Ryan/Sonia/Marcus/Priya archived (config + GLBs kept), `DEFAULT_TEACHER` = jake, persisted
 old choices remap to it. `/demo` opens on Jake with a Jake/MJ switcher. `/learn` checked signed in
 (switcher only). The /learn switcher had been hiding Jake/MJ in a clipped 260 px row.
@@ -1210,9 +1236,9 @@ then more clips (Thinking, Nodding, ShakeNo). Start prompt:
 `.claude/plans/NEXT-SESSION-V91D-MOTION-WARDROBE-QA.md`. Motion was only checked at 3 sampled frames
 per clip; wrist twist, fingers, feet and where Pointing lands are unverified.
 
-**TODO, parked by Hmz (2026-09-22):** female narration for MJ in `/demo` (she lip-syncs the male
+**TODO, parked by the owner (2026-09-22):** female narration for MJ in `/demo` (she lip-syncs the male
 pre-rendered voice). 6,856 ElevenLabs chars for both topics, plus per-voice folders in the player.
-Do not start without Hmz's go.
+Do not start without the owner's go.
 
 ## 2026-09-21 â€” V9.1b: the Canino pair is shippable
 
@@ -1249,7 +1275,7 @@ Findings, numbers and licences are in `.claude/plans/V9-REPORT.md`; renders are 
 - Blender 5.1.1 via MCP (the add-on is outdated but works). Scene `V9_bakeoff` matches the app's lesson camera, placement and lights.
 - Rendered: Marcus control; L2-a MPFB female; L2-b Rocketbox F17 and M12; L3-a the same MPFB female with cel shading and an outline. Each at lesson framing and in close-up.
 - **Face rig is not the blocker any more:** MPFB (CC0) and Rocketbox (MIT) both ship 52 ARKit shapes + 15 visemes.
-- Quaternius free tier dropped (Superhero bodies only, no clothes, no face). The generate-and-rig run was skipped by Hmz.
+- Quaternius free tier dropped (Superhero bodies only, no clothes, no face). The generate-and-rig run was skipped by the owner.
 - Installed into Blender: the MPFB 2.0.17 extension + 13 CC0 asset packs. Sources are git-ignored under `sources/`.
 
 ### 2026-09-20 (later) â€” L3 reopened: the Canino pair goes first next session
@@ -1278,7 +1304,7 @@ Branch `docs/v8-v9-programme`. Canvas: https://claude.ai/artifact/CNqx2JxQMkpyye
 - **V9.0 had no renders:** Blender was not running and no candidate meshes exist yet. Renders move to V9.1, where they belong anyway.
 
 ### Next
-- **Mark decided:** R1 The Column, from Hmz's own pillar reference (round two on the canvas). V8.1 draws the final vector wordmark.
+- **Mark decided:** R1 The Column, from the owner's own pillar reference (round two on the canvas). V8.1 draws the final vector wordmark.
 - **V9.1 bake-off** (wave 2): L2 and L3 candidates with L5 casting, rendered in the classroom at the real framing. Needs Blender running with the MCP add-on.
 - **V8.3 now needs a plan-mode pass** before anything: 3D on `/` means a Pages Router move and a new performance plan.
 
@@ -1292,7 +1318,7 @@ Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.
   blobs, tinted cells, 9 icon chips, pills, a full-orange band). The hero headline ran to 3
   lines at 1440. No `--aristo-*` token had a dark value.
 - **Three directions on a canvas** (https://claude.ai/code/artifact/faee56f8-fe76-499b-9ee2-4e19f5fcf3dc):
-  A Ember (keep orange, calmer), B Night Class (dark-first), C Cobalt (move the accent). Hmz
+  A Ember (keep orange, calmer), B Night Class (dark-first), C Cobalt (move the accent). The owner
   picked **B**, **landing-only scope**, **follow the OS with a toggle**.
 - **Scoped, not global:** `--lp-*` tokens under `.landing`. `/learn` + `/demo` hardcode
   `#F97B2F` ~87 times, so global tokens would have half-migrated the app. The system is
@@ -1312,7 +1338,7 @@ Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.
 ### Open
 
 - Product-wide migration of the palette (a sweep of the ~87 hardcoded hex values) is its own task.
-- The wordmark was not touched. Whether it should change now the page around it has is Hmz's call.
+- The wordmark was not touched. Whether it should change now the page around it has is the owner's call.
 - Screenshots did not need re-shooting: the product did not change.
 
 ## 2026-09-10 (later) â€” heart demo topic, three playback bugs, PR #4 merged
@@ -1321,7 +1347,7 @@ Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.
   surface: rendered through the app's own loader stack its model measured
   `0.08 x 0.85 x 1.00`, a paper-thin sliver. The heart's model and labelled teaching image
   were already paid for by the 2026-09-09 eval and were sitting in `public/demo/heart/`
-  (I had wrongly reported that model as lost, having checked only the persistent cache and
+  (An earlier report wrongly said that model was lost, having checked only the persistent cache and
   the tracked GLBs). `scripts/generate-demo-heart.ts` makes **zero fal calls**.
 - **No segment visuals were generated either.** `useLessonPlayback` holds the last visible
   image when a segment supplies none, so one teaching image on `seg_005` carries the whole
@@ -1349,7 +1375,7 @@ Branch `dev/t04b-visual-identity` off `deploy-prep`, PR into `deploy-prep`.
 
 ### Landing page
 
-The last stale asset is replaced: `classroom-3d-model.webp` is now Hmz's own capture of the
+The last stale asset is replaced: `classroom-3d-model.webp` is now the owner's own capture of the
 heart at the shared anchor. It was cropped from the left rather than squashed, because the
 source frame was 1.96:1 against the 1.78:1 the other two shots use and a mismatched intrinsic
 aspect makes `next/image` reserve the wrong space.
@@ -1413,8 +1439,8 @@ no press feedback on any control.
 
 ### Open
 
-- **Visual identity is NOT done** and Hmz has called it: the orange is 90% saturation against
-  the skill's 80% ceiling, the lowercase wordmark undersells, and he wants a dark mode.
+- **Visual identity is NOT done** and the owner has called it: the orange is 90% saturation against
+  the skill's 80% ceiling, the lowercase wordmark undersells, and the owner wants a dark mode.
   Brief written: `.claude/plans/T04b-landing-visual-identity.md`, to run as its own session.
 - **The two landing images that show a 3D model are stale** (they show the old rejected one).
   Re-shoot after confirming the new volcano looks right.
@@ -1516,15 +1542,15 @@ Per concept now **$0.77** (1 Pro teaching image + 4 NB2 segment visuals + FLUX +
 against $0.82 before for a worse 3D model â€” the whole quality upgrade lands cheaper than the
 status quo, and lessons render faster.
 
-Total eval spend across the session: **$2.43** of the $3 Hmz authorised.
+Total eval spend across the session: **$2.43** of the $3 the owner authorised.
 
 ## 2026-09-09 (latest) â€” pipeline eval run, $2.35 spent, three findings
 
-Hmz authorised up to $3 for one round of real generations. Spent **$2.352**. Eval called fal
+The owner authorised up to $3 for one round of real generations. Spent **$2.352**. Eval called fal
 **directly**, not through `banana.ts`, so `usage_events` stays clean (verified: still 57 rows,
 unchanged) â€” same precedent T07 set.
 
-**1. Nano Banana 2 matches Pro on text. My earlier assumption was wrong.**
+**1. Nano Banana 2 matches Pro on text. The earlier assumption was wrong.**
 Tested on three *real* segment prompts pulled from `cached_lessons` â€” all text-heavy Python
 material (code snippets with quotes and line numbers, `python3 --version` / `Python 3.12.0`,
 labelled flow boxes). This is the hardest text workload the product has. **NB2 garbled nothing
@@ -1565,7 +1591,7 @@ though the mesh was fine (14.9 MB) â€” treat that preview as unreliable, ne
 ## 2026-09-09 (later) â€” Tripo3D v2.5 swap + fal pricing correction
 
 Same branch `dev/t06-persistent-cache`, on top of T06. **Not yet run against fal** â€” the
-swap is code-complete but deliberately unverified to preserve credits (Hmz's call).
+swap is code-complete but deliberately unverified to preserve credits (the owner's call).
 
 - **`fal-ai/triposr` -> `tripo3d/tripo/v2.5/image-to-3d`** (`texture: "standard"`,
   `pbr: true`, $0.30/gen). T07 scored it 4/5 vs TripoSR's 1.5/5 and it is faster
@@ -1608,7 +1634,7 @@ lipsync, demo and avatar-clone work). Closes the last open T06 item.
   `/api/generate-model/3d`, `/api/learn/segment-visuals` and their call sites.
 - **Migration 016 is applied** to the live DB (was the blocker; done by hand in the SQL
   Editor â€” PostgREST has no arbitrary-SQL endpoint, so agent sessions cannot run DDL).
-- **Bucket decision: PUBLIC** (Hmz, 2026-09-09). Generated educational images, no learner
+- **Bucket decision: PUBLIC** (the owner, 2026-09-09). Generated educational images, no learner
   data, content-addressed unguessable paths, CDN-cacheable, no signing round trip â€” so the
   URLs stay safe to hold in the L1 cache and in lesson payloads. Verified live:
   `cache-control: public, max-age=31536000`.
@@ -1746,7 +1772,7 @@ they are separate owners, not part of this race.
 Cost: a ~32s answer is roughly 500 characters, so each free-topic question billed ~1,000
 (prod) or ~1,500 (dev) instead of ~500 â€” against a 10,000/month tier.
 
-Two changes, both on Hmz's call:
+Two changes, both on the owner's call:
 
 1. **`FreeTopicCard` owns free-topic narration**; the `speak()` call is gone from
    `InputBox`. The card renders the answer, speaks the parsed text that matches what is on
