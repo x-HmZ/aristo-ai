@@ -2,6 +2,19 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-19 - Launch features live; migrations 023-025 applied and checked
+
+- PR 33 (camera: LensShift measures from the lesson pose, so a drag no longer slides and warps the room; the desk
+  glide starts from the live pose and lands, so the quiz paper stops re-rasterising) and PR 32 merged and deployed.
+- Hmz applied 023 and 025 (before the merge) and 024 (after the deploy). 61 behavioural checks pass with a temporary
+  user (grants, take_rate limits and concurrency, the nine protected profile columns, consents, learner-table writes
+  refused and reads allowed, increment_misconception locked, custom-teacher URL guard). Script: session scratchpad only.
+- Repro scripts for the camera bug: `.claude/eval/2026-11-19-demo-glitch/` (free route, /api aborted).
+- Open: PR 29 (fix/classroom-ux, October) conflicts with deploy-prep. Desk flicker never seen headless; ask Hmz.
+- Next (code): narration-failure notice; grounded ingest test once OpenAI has credit (ask before each paid run);
+  several learners per account; server-side checkout; quiz cache and catalogue pre-generation. Remaining owner steps:
+  `OWNER-STEPS.md` B onwards.
+
 ## 2026-11-17 - Launch readiness: everything without the owner is built (branch feat/launch-features, PR open)
 
 **Resume from `.claude/plans/launch/OWNER-STEPS.md`** (what only Hmz can do, in order) and `.claude/plans/launch/README.md`
