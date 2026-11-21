@@ -2,7 +2,7 @@
 // node probe.cjs <variant> [sizes]   variants: today | dolly | scale | narrow | flat | steep
 const fs = require("fs");
 const path = require("path");
-const { chromium, sleep, LAUNCH, themedContext, guardApi } = require("C:/Users/Pc/Desktop/Empire/Artisto/Aristo 2.0/Aristo-AI/.claude/eval/2026-09-29-v8-4c/scripts/common.cjs");
+const { chromium, sleep, LAUNCH, themedContext, guardApi } = require(path.join(__dirname, "..", "..", "2026-09-29-v8-4c", "scripts", "common.cjs"));
 const [, , variant = "today", sizesArg] = process.argv;
 const OUT = path.join(__dirname, "shots");
 fs.mkdirSync(OUT, { recursive: true });

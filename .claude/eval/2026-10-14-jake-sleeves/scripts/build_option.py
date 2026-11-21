@@ -4,11 +4,12 @@ saved. blender -b bakeoff_scene.blend --python build_option.py -- <option> <raw.
 """
 
 import json
+import os
 import sys
 
 import bpy
 
-sys.path.insert(0, r"C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\scripts")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "2026-09-18-v9-bakeoff", "scripts"))
 import v9_export as EX  # noqa: E402
 import v9_sleeve as SL  # noqa: E402
 

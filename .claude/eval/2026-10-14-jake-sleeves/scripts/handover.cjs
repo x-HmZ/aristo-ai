@@ -1,5 +1,5 @@
 // The V8.3c handover check (2026-10-03-v8-3c-landing/scripts/handover.cjs), copied with ?nointro: the opening (2026-10-05) holds the hero otherwise.
-// The poster against the first live frame, per spot (Hmz: a section's poster must be its first frame, or going live
+// The poster against the first live frame, per spot (the owner: a section's poster must be its first frame, or going live
 // jumps). For each spot: scroll it to the middle, the moment it goes live screenshot its box (the canvas, Jake at
 // rest), then put the poster back over it (the canvas layer hidden, the spot's live-path poster shown) and screenshot
 // the same box. Writes the pair and their difference side by side, and per spot: the mean difference, and Jake's

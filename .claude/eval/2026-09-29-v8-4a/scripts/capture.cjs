@@ -8,7 +8,7 @@ const { chromium } = require(path.join(gRoot, "playwright"));
 
 const [, , label = "before", base = "http://localhost:3100", themesArg = "light", mode = "demo"] = process.argv;
 const THEMES = themesArg.split(",");
-const OUT = path.join("C:/Users/Pc/Desktop/Empire/Artisto/Aristo 2.0/Aristo-AI/.claude/eval/2026-09-29-v8-4a", label);
+const OUT = path.join(__dirname, "..", label);
 fs.mkdirSync(OUT, { recursive: true });
 const ALL_SIZES = [[360, 780], [768, 1024], [1024, 768], [1280, 720], [1280, 600]];
 const SIZES = process.env.SIZES ? ALL_SIZES.filter(([w, h]) => process.env.SIZES.split(",").includes(`${w}x${h}`)) : ALL_SIZES.slice(0, 3);

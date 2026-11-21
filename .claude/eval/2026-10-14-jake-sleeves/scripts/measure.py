@@ -15,7 +15,7 @@ import bpy
 import numpy as np
 from mathutils import Vector
 
-sys.path.insert(0, r"C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\scripts")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "2026-09-18-v9-bakeoff", "scripts"))
 import v9_loose as VL  # noqa: E402
 
 cfg = VL.JAKE

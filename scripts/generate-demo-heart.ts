@@ -24,9 +24,9 @@
 import dotenv from "dotenv";
 import { existsSync, writeFileSync } from "fs";
 import path from "path";
-import { pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
-const ROOT = "C:\\Users\\Pc\\Desktop\\Empire\\Artisto\\Aristo 2.0\\Aristo-AI";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 dotenv.config({ path: path.join(ROOT, ".env.local") });
 process.env.NEXT_PUBLIC_ADAPTIVE_VISUALS = "true";

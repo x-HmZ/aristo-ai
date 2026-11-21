@@ -31,6 +31,7 @@
  */
 
 import fs   from "node:fs";
+import os   from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { fal } from "@fal-ai/client";
@@ -71,12 +72,9 @@ fal.config({ credentials: process.env.FAL_KEY });
 
 // ─── Output dir ─────────────────────────────────────────────────────────────
 
-// Absolute scratch path passed in by the calling agent session. Kept as a
-// constant (not derived) so this script has no dependency on the invoking
-// environment's temp-dir layout beyond this one path.
+// Output folder: EVAL_OUT_DIR, or a folder in the OS temp directory.
 const SCRATCH_DIR =
-  process.env.EVAL_OUT_DIR ??
-  "C:\\Users\\Pc\\AppData\\Local\\Temp\\claude\\c--Users-Pc-Desktop-Empire-Artisto-Aristo-2-0-Aristo-AI\\292f9d4b-3c54-4c11-8b10-e3ca7f61eb3e\\scratchpad\\t07-3d-eval";
+  process.env.EVAL_OUT_DIR ?? path.join(os.tmpdir(), "aristo-t07-3d-eval");
 
 fs.mkdirSync(SCRATCH_DIR, { recursive: true });
 

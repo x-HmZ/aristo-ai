@@ -10,7 +10,7 @@
  * showing the output of a generator this project already rejected.
  *
  * Cost: one FLUX source image (~$0.003) plus one Tripo3D v2.5 model ($0.30)
- * per topic. Two topics, so ~$0.61. Authorised by Hmz on 2026-09-10.
+ * per topic. Two topics, so ~$0.61. Authorised by the owner on 2026-09-10.
  *
  * This calls the real pipeline (banana.ts), not fal directly, so the run
  * lands in usage_events and the persistent asset cache like any other
@@ -27,9 +27,9 @@
 import dotenv from "dotenv";
 import { copyFileSync, existsSync, statSync, writeFileSync } from "fs";
 import path from "path";
-import { pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
-const ROOT = "C:\\Users\\Pc\\Desktop\\Empire\\Artisto\\Aristo 2.0\\Aristo-AI";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 dotenv.config({ path: path.join(ROOT, ".env.local") });
 
