@@ -34,7 +34,7 @@ cp .env.example .env.local      # PowerShell: Copy-Item .env.example .env.local
 | Variable(s) | Needed for | Where to get it |
 |-------------|-----------|-----------------|
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Sign-in, `/learn`, `/admin`, every API route that touches the database | Ask the owner |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server routes, quiz/narration token signing | Ask the owner. Bypasses Row Level Security: server-only, never in a `NEXT_PUBLIC_` var, never logged |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server routes, quiz/narration token signing | **Never the production key**: it bypasses Row Level Security on real learners' (minors') data. Use a dummy locally, or the key of a separate development project if the owner sets one up |
 | `ANTHROPIC_API_KEY` | Lessons, quizzes, chat (paid) | Ask the owner |
 | `OPENAI_API_KEY` | RAG embeddings and server voice input (paid, optional) | Ask the owner; skip locally |
 | `ELEVENLABS_API_KEY` (+ `ELEVENLABS_PLAN`) | Teacher speech (paid, optional; falls back to the browser voice) | Ask the owner; skip unless you work on speech |
@@ -43,8 +43,8 @@ cp .env.example .env.local      # PowerShell: Copy-Item .env.example .env.local
 | Billing (`BILLING_ENABLED`, `PADDLE_*`, ...) | Payments: **sandbox-only, off by default** | Skip locally |
 | Turnstile, operator details, Avaturn, `APP_URL` | Sign-up captcha, legal pages, custom teachers, absolute links | Skip locally |
 
-There is one Supabase project, and it is production. Ask the owner whether you should get a separate development
-project before you work on anything that writes data. Never apply a migration from `supabase/migrations/` to the
+There is one Supabase project, and it is production, holding real learners' data. Production credentials are not
+handed out: work that needs a real database waits for a separate development project from the owner. Never apply a migration from `supabase/migrations/` to the
 production project yourself: the owner applies migrations, and a PR that adds one says so at the top of its
 description, with any ordering constraint (some migrations must land before or after a deploy).
 
@@ -105,7 +105,7 @@ Claude Code asks you to approve the project's servers the first time it starts i
 | `sequential-thinking` | Step-by-step reasoning tool | None |
 | `magic` | Magic UI component registry | None |
 | `puppeteer` | Headless browser checks | None; downloads Chromium on first run |
-| `vercel` | Deployments, logs, env | Run `/mcp` in Claude Code and sign in with Vercel (OAuth). Needs the owner to give you access to the Vercel project; read-only use unless agreed |
+| `vercel` | Deployments and logs | Run `/mcp` in Claude Code and sign in with Vercel (OAuth). Only useful if the owner gives you access to the Vercel project, at a role that cannot read production env values; without access, leave it disabled. PR preview links appear on the PR anyway |
 | `blender` | Driving a local Blender for asset work | Needs Blender with the blender-mcp add-on and `uv`/`uvx` with Python 3.11. Leave it disabled otherwise |
 
 Supabase and GitHub MCP servers are not in `.mcp.json`; add them at user level if you want them. `gh` covers PR work.
@@ -143,6 +143,6 @@ Start every session the same way:
 4. At the end of a significant session, add a short entry to the top of `.claude/docs/state.md`
    (done / next / blockers) in the same PR.
 
-`.claude/settings.json` holds shared permissions (yarn and read-only git/gh commands allowed; reading `.env.local`
-and pushing to `deploy-prep` denied). Put anything machine-specific in `.claude/settings.local.json`, which is
+`.claude/settings.json` holds shared permissions (yarn and a few read-only git/gh commands allowed; every `git push`
+asks first; reading `.env.local`, force pushes and pushes to `deploy-prep` denied). Put anything machine-specific in `.claude/settings.local.json`, which is
 gitignored.

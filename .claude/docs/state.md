@@ -5,8 +5,8 @@ _Update this at the end of every significant session: done / next / blockers, co
 ## 2026-11-21 - Collaborator onboarding (branch `docs/collaborator-onboarding`, PR into deploy-prep, not merged)
 
 - **Done:** every tracked doc under `CLAUDE.md`, `.claude/` (docs, plans, launch, research), `docs/` and `LICENSES.md`
-  rewritten in a team-neutral voice ("the owner", "the team"); no personal paths, emails, personal tooling or
-  immigration details; payments only "sandbox-only behind an off flag". New `CONTRIBUTING.md` (setup, env, running
+  rewritten in a team-neutral voice ("the owner", "the team"); no personal paths, emails, personal tooling or other
+  personal details; payments only "sandbox-only behind an off flag". New `CONTRIBUTING.md` (setup, env, running
   without paid keys, paid-API rule, `/learn` constraint, MCP servers, PR flow); `.env.example` lists every variable the
   code reads, marked required/optional/paid/auto; shared `.claude/settings.json` (yarn, read-only git/gh allowed;
   `.env.local` reads and pushes to deploy-prep denied); LICENSES.md rows for the landing heart, volcano picture, column
