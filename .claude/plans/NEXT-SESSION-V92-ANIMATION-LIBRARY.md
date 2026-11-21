@@ -24,7 +24,7 @@ that folder's `scripts/`: add it to `sys.path` in Blender and `importlib.reload`
 
 Do this before baking anything; it decides how every later clip is delivered. Each baked clip
 costs about 0.14 MB on Jake and 0.22 MB on MJ (303 vs 765 channels per clip). All 16 would put
-MJ's animation data near 3.5 MB, over the plan's 3 MB-per-rig budget. Plan, then show Hmz:
+MJ's animation data near 3.5 MB, over the plan's 3 MB-per-rig budget. Plan, then show the owner:
 
 1. **Channel diet.** MJ's glTF rig has `_scaleCompensation` bones and leaf duplicates (`_0`,
    `_1`), and most of their tracks are probably constant. Measure how many of the 765 channels
@@ -40,13 +40,13 @@ MJ's animation data near 3.5 MB, over the plan's 3 MB-per-rig budget. Plan, then
    load budget from regressing; measure first load before and after.
 3. **Which clips.** Map the 16 source clips and the Tier 1 variants (mirror, time-warp
    0.85x/1.15x) onto the scenario catalogue. List what's missing per scenario. Anything that
-   needs a Mixamo download goes on a list for Hmz; it needs his login, so don't try to fetch it.
+   needs a Mixamo download goes on a list for the owner; it needs the owner's login, so don't try to fetch it.
    Only Mixamo, ActorCore free, Quaternius CC0 and Mesh2Motion CC0 are allowed (see the plan's
    licence table).
 
-Stop after the plan and get Hmz's answer before baking beyond a test clip or two.
+Stop after the plan and get the owner's answer before baking beyond a test clip or two.
 
-## Part 2 — bake and check (after Hmz approves the plan)
+## Part 2 — bake and check (after the owner approves the plan)
 
 `v9_retarget.bake_clips([...])` bakes both teachers. It already does the facing fix, rest
 alignment, helper bones (elbow and knee share, forearm twist), per-frame grounding, and the
@@ -77,7 +77,7 @@ Things paid for in V9.1d and V9.1e (don't rediscover them):
   (Clapping) must be looked at beside Marcus in close-up. The IK fix was tried and thrown away
   (limp wrist, or skin 19 mm through Jake's cuff). Prefer another clip.
 - **Check left against right**, not only against the source. MJ's left elbow had a sculpt defect
-  that two sessions passed and Hmz caught in the app. `v9_mask.mirror_region` fixed it.
+  that two sessions passed and the owner caught in the app. `v9_mask.mirror_region` fixed it.
 - The **skirt hem stays at 0.52** (knee joint 0.55). A clip that bends a knee back can still put
   the calf through it, and `check_through` catches that.
 - Clips go into `v9_export.export(..., clips={...}, budget=None)` after
@@ -104,18 +104,18 @@ Things paid for in V9.1d and V9.1e (don't rediscover them):
     with `await setTimeout(33); three.advance(performance.now())`.
   - **Restarting gestures.** Setting a gesture that is already current doesn't restart it, so
     reset to `idle` between trials.
-- Also check MJ in `/demo` once (Hmz hasn't signed off her new outfit there yet).
+- Also check MJ in `/demo` once (the owner hasn't signed off her new outfit there yet).
 
 ## Parked, do not do
 
 - Female narration for MJ in `/demo` (ElevenLabs characters).
-- New app signals (mic listening, raise hand, XP) — they need Hmz's OK per the plan.
+- New app signals (mic listening, raise hand, XP) — they need the owner's OK per the plan.
 - Hand-keyframed Tier 2 gestures (next phase, after the pipeline and packaging are settled).
 
 ## Ground rules
 
 Stop and ask before any spend, any account-gated download (Mixamo, ActorCore), or anything
-needing Hmz's login.
+needing the owner's login.
 
 Model use per the plan: design and debug the pipeline and packaging with the strongest model on
 2-3 clips, then switch to Sonnet for the bulk bakes.

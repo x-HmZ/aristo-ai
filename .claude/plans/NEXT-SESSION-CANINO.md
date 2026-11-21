@@ -6,7 +6,7 @@ Paste the block below as the first message of the new session.
 
 Continue V9.1 of the teacher programme. Read `CLAUDE.md`, `.claude/docs/state.md`, then `.claude/plans/V9-REPORT.md` (round 1 and 2 sections) before doing anything. Blender is running with the MCP add-on; open `.claude/eval/2026-09-18-v9-bakeoff/bakeoff_scene.blend`, which already holds the classroom, the app's lesson camera and lights, and every candidate. Renders and sources live in that folder; `sources/` is git-ignored.
 
-**Decided, do not re-open:** L2 fallback is Rocketbox Female_Adult_01 + Male_Adult_04 (MIT), already rendered. L3 candidate is the Canino3d pair (CC-BY, Sketchfab): `Jake` the man and `MJ` the woman. The Canino "boy" (`Frank`) is broken and out. $0 for assets and tools. I am signed in to Sketchfab in your built-in browser.
+**Decided, do not re-open:** L2 fallback is Rocketbox Female_Adult_01 + Male_Adult_04 (MIT), already rendered. L3 candidate is the Canino3d pair (CC-BY, Sketchfab): `Jake` the man and `MJ` the woman. The Canino "boy" (`Frank`) is broken and out. $0 for assets and tools. The owner is signed in to Sketchfab in the built-in browser.
 
 **The one blocker to solve first.** Neither file of the woman has both a good body and a face rig:
 - `sources/canino/MJ_sketchfab.glb` — clean geometry, rig intact (255 bones), **zero morph targets**.
@@ -30,6 +30,6 @@ Try in this order and stop at the first that works:
 - The classroom's warm wall patch is baked into its texture, and no mesh in the app casts shadows.
 - Rocketbox FBX clips import with rotations relative to the clip file's own rest pose, and bones arrive in Euler mode.
 
-**Ground rules:** verify claims by rendering, not by reading bounding-box numbers — I got that wrong once this programme and it cost a candidate. Stop and ask before any spend, any account-gated download, or anything needing my login. Update `.claude/plans/V9-REPORT.md` and `.claude/docs/state.md` at the end.
+**Ground rules:** verify claims by rendering, not by reading bounding-box numbers (that was got wrong once in this programme and it cost a candidate). Stop and ask before any spend, any account-gated download, or anything needing the owner's login. Update `.claude/plans/V9-REPORT.md` and `.claude/docs/state.md` at the end.
 
 **Fallback:** if the face rig cannot be made to work on the woman in this session, say so plainly and ship Rocketbox F01 + M04 instead. Do not pair a stylised teacher with a photoreal one.

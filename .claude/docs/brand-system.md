@@ -62,9 +62,9 @@ Keep the two copies identical.
 | `accent-text` | #A94C1B | #EF9A66 | accent as text, icon or focus ring: on bg 5.11 / 8.53, surface 5.48 / 7.94, sunk 4.75 / 8.78, tint 4.74 / 7.74 |
 
 The accent is the brand orange (`--aristo-orange-main` #F97B2F, hue 22.6 degrees) in light mode, lightened to
-#E98A52 in dark mode. Since V8.4a it is one orange on every filled button, app-wide (Hmz's choice). White fails
+#E98A52 in dark mode. Since V8.4a it is one orange on every filled button, app-wide (the owner's choice). White fails
 on it (2.66:1), so labels on it are the brand brown (#3D2110, 5.55:1; #2A160A on the dark accent, 6.75). Near-black
-passed too (7.11) but read harsh against the saturated orange, so the brown won (Hmz, V8.4a, from four options
+passed too (7.11) but read harsh against the saturated orange, so the brown won (the owner, V8.4a, from four options
 rendered in context: terracotta + cream, orange + brown, tonal peach, slate). As text or as a focus ring #F97B2F fails too
 (2.66 on white, 2.59 against the page, under the 3:1 a focus indicator needs), so orange text and focus rings
 use `accent-text`. Before V8.4a the light accent was #B4531F with white labels (4.88), and the classroom still
@@ -238,7 +238,7 @@ is a stack.
 - **In-scene controls:** "View in 3D" / "Show image" are `Button variant="secondary"` inside `.theme-ink`;
   status and hint chips and the callouts are `bg-bg/[0.86]` pills with `text-body` / `text-ink`.
   The row under the room's display (picture and model toolbars, the widget's strip, Open interactive, Continue) is one
-  shape (Hmz, 2026-10-15): 44px `pill`s, buttons and hint chips alike, in one row; a control never sits on another.
+  shape (the owner, 2026-10-15): 44px `pill`s, buttons and hint chips alike, in one row; a control never sits on another.
 - **Status in lesson cards:** key insight `warning` on `warning/10` with a Lightbulb icon; output and "in the room"
   chips `success` on `success/10`; code `ink` on `sunk`; hint and analogy on `tint`.
 
@@ -386,7 +386,7 @@ x Buttons are `landing/ui.ts` (`BTN_PRIMARY`, `BTN_OUTLINE`,
   so controls are 36px, not the app's 44px.
 - **Link-preview image** (`opengraph-image.tsx` through `brand/OgCard.tsx`): the wordmark, the outlined headline and sub line on
   ink, and a wide still of the lit classroom (Jake and the brain; `public/images/og/room.jpg`, cropped from the landing's room
-  still by `scripts/brand/og-still.mjs`) that melts into the ink on its left edge. Chosen by Hmz from three layouts (a hard
+  still by `scripts/brand/og-still.mjs`) that melts into the ink on its left edge. Chosen by the owner from three layouts (a hard
   split, this fade, a framed window). Served as a 1200x630 JPEG of about 74 KB: the route renders the card with
   ImageResponse (PNG only) and re-encodes it with sharp at build, 4:4:4 so the orange words stay crisp.
 

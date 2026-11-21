@@ -1,6 +1,6 @@
 # Vercel "Function Storage 75%" warning - diagnosis (2026-11-16)
 
-Read from the Vercel dashboard (team `x-hmzs-projects`, Hobby), Usage > Deployment Storage > Functions Storage,
+Read from the Vercel dashboard (the owner's Vercel team, Hobby plan), Usage > Deployment Storage > Functions Storage,
 window Oct 17 - Nov 16. Nothing was changed in the dashboard.
 
 ## What the meter is

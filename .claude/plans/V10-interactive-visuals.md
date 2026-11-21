@@ -2,13 +2,13 @@
 
 ## Context
 
-Hmz learns math best from the code-driven, interactive visuals Gemini produces (sliders, buttons, a live
+The owner's direction: math is learned best from code-driven, interactive visuals of the kind Gemini produces (sliders, buttons, a live
 picture). Aristo has two visuals today: per-segment images (`/api/learn/segment-visuals`) and one 3D model
 per lesson (`metadata.should_generate_model`, FLUX then Tripo). This adds a third, an interactive widget,
 and puts it in the same decision the teaching agent already makes, so each topic gets whichever visual
 explains it best.
 
-Decided with Hmz (2026-10-13):
+Decided with the owner (2026-10-13):
 - **Generated code.** Claude writes a small self-contained widget per topic; it runs in a locked sandbox.
 - **On the board, expandable.** Same spot beside the teacher where the image floats; an Expand button opens
   it large; below `lg` it opens large directly.
@@ -100,19 +100,19 @@ the fixtures and live runs are checked for it.
 hand-written fixture widgets in `src/data/dev/interactive/` (slope and intercept of a line, fractions on
 a bar, stepping through a Python `for` loop) shown in the frame alone, on the board in the room, and
 expanded, in both themes. The fixtures are also the few-shot examples in the generator's prompt, so what
-Hmz approves by eye is what the model is asked to match.
+the owner approves by eye is what the model is asked to match.
 
 ## Steps (build on Sonnet, small commits, branch `dev/v10-interactive-visuals` off `origin/deploy-prep`)
 
 1. Copy this plan to `.claude/plans/V10-interactive-visuals.md`.
 2. `src/lib/interactive/` (spec, validate, shell) with tests.
 3. `InteractiveFrame`, the three fixtures, the dev harness. Headless screenshots, both themes, 360 and 1280.
-   **Stop 1: Hmz reviews the look and the board placement by eye.**
+   **Stop 1: the owner reviews the look and the board placement by eye.**
 4. Store fields, `InteractiveBoard`, `InteractiveOverlay`, the explore gate in the hook and its bar,
    driven by a fixture lesson in the harness (still no API).
-5. Generator agent, route, migration 017 (written; applied only with Hmz's go-ahead), models entry.
+5. Generator agent, route, migration 017 (written; applied only with the owner's go-ahead), models entry.
 6. Decider changes in `teaching.ts` and `/api/teach`; free-mode wiring.
-7. **Stop 2: live runs need Hmz's go-ahead.** Proposed: 6 topics (3 math, 2 Python, 1 that should pick 3D
+7. **Stop 2: live runs need the owner's go-ahead.** Proposed: 6 topics (3 math, 2 Python, 1 that should pick 3D
    or image instead), about 6 Sonnet lessons plus 5 widgets, well under $1. Save each widget and a
    screenshot under `.claude/eval/2026-10-xx-v10-interactive/`.
 8. `security-reviewer` on the route, the sandbox and the validator; `typescript-reviewer` on the rest.
@@ -139,7 +139,7 @@ Hmz approves by eye is what the model is asked to match.
 ## Status (2026-10-13) and deviations from the plan above
 
 Built on `dev/v10-interactive-visuals`. Steps 1 to 6 are done and verified with no API calls; step 7 (live runs) and
-applying migration 017 wait for Hmz's go-ahead. What changed while building, each with its reason:
+applying migration 017 wait for the owner's go-ahead. What changed while building, each with its reason:
 
 - **A DOM layer, not an `<Html>` in the scene.** The board image sits in a bobbing `<Float>` and is partly under the
   400px lesson panel at 1280px, so a slider could not live there (`InteractiveStage.tsx`, not `InteractiveBoard`). One

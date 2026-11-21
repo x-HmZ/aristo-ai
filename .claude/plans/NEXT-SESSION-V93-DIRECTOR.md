@@ -9,7 +9,7 @@ Read `CLAUDE.md`, then `.claude/docs/state.md` (top entry), then in
 table), "Architecture", the "V9.3" phase entry, and "Model discipline". Skim
 `.claude/plans/V9-REPORT.md`'s "V9.2" and "V9.2b" sections for what the clips and pools actually
 are today, and `.claude/docs/decisions.md` for the scale numbers now in effect (teachers ship
-taller than a "believable adult" by Hmz's own call — don't re-litigate that).
+taller than a "believable adult" by the owner's own call — don't re-litigate that).
 
 ## Where things stand
 
@@ -28,7 +28,7 @@ taller than a "believable adult" by Hmz's own call — don't re-litigate that).
   needs the director to work correctly with what exists, repeat-free, and degrade sanely where a
   row is short.
 - `Idle3` (a restless fidget) and `Talking6`/`Talking6M` (a wave) ship in the pack but are
-  unwired — they're V9.3's "long wait" (row 2) and "greeting" (row 3) rows. Hmz has seen `Idle3`
+  unwired — they're V9.3's "long wait" (row 2) and "greeting" (row 3) rows. The owner has seen `Idle3`
   in motion and called it fine.
 
 ## The task

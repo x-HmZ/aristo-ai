@@ -27,7 +27,7 @@ Last updated: 2026-09-10 (session: 3D root cause, heart demo topic, PR #4 merged
    `V6-parent-weekly-digest.md`. Plus `UX-POLISH-BACKLOG.md` (14 small fixes from the UX
    inventory, batchable on haiku/sonnet). README updated with the vision tier + recommended
    order V2 -> V1 -> V5 -> V4 -> V3 -> V6, interleaved with T02/T05/T09.
-5. Memory index updated (`roadmap-2026-07-12` memory points here).
+5. (Session notes updated to point at this roadmap.)
 6. **Execution wave 1** (done 2026-07-12, user approved):
    - **T01 (main session)**: docs committed; drift fixed (decisions.md TripoSR row, stale
      handoff deleted, plans archived to docs/archive/); `dev/desk-quiz-3d-fixes` pushed and
@@ -102,7 +102,7 @@ frequency in /admin/cost.
 
 1. Apply migration: paste `supabase/migrations/016_generated_assets.sql` into the Supabase
    SQL Editor -> then T06 verification + merge can proceed.
-2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — aitchemmzi is still
+2. Admin bootstrap SQL (exact SQL in `.claude/plans/T10-RUNBOOK.md`) — the owner's account is still
    pending/non-admin in the live DB.
 3. Resend env vars in Vercel (runbook section 1) for signup notifications.
 4. V2 demo voice decision: browser TTS as-is, or confirm ElevenLabs quota headroom
@@ -199,10 +199,10 @@ Two notes for future PRs, both learned the hard way this session:
 - The repo's **default branch is already `deploy-prep`**, so GitHub does NOT default a new PR
   to `master`. Earlier handoff text warning about that was wrong. `master` is still stale and
   must not be merged into.
-- The `github` MCP server authenticates with a static PAT in `~/.claude.json`
+- The `github` MCP server authenticates with a static PAT set in the local Claude Code config
   (`GITHUB_PERSONAL_ACCESS_TOKEN`). It returned `Bad credentials` mid-session because the PAT
-  had expired; replacing the value and restarting fixed it. There is no `gh` CLI on this
-  machine — installing it (`winget install --id GitHub.cli`) would give a fallback path.
+  had expired; replacing the value and restarting fixed it. There was no `gh` CLI on the machine used then;
+  installing it (`winget install --id GitHub.cli`) would give a fallback path.
 
 ## USER ACTIONS — all previously-blocking ones are now DONE (2026-09-08)
 
@@ -270,7 +270,7 @@ Branch `dev/t06-persistent-cache`, PR into `deploy-prep`.
   demoMode/TTS work and T06's `conceptId` threading survived). The stale 2026-07-13
   "USER ACTIONS NEEDED" block above was retitled rather than deleted: a newer section
   supersedes it and leaving it phrased as blocking would mislead the next session.
-- **Bucket decision recorded: PUBLIC** (Hmz). It already existed — created live by the
+- **Bucket decision recorded: PUBLIC** (the owner). It already existed — created live by the
   earlier T06 session via the Storage Admin API, not by migration 016. Note for future
   sessions: **the bucket is not in version control.** Migration 016 creates the table only,
   so a fresh Supabase project needs the bucket created by hand.
@@ -291,7 +291,7 @@ Branch `dev/t06-persistent-cache`, PR into `deploy-prep`.
 
 ## Session 2026-09-09 (later) — Tripo3D swap + a 3.75x pricing error
 
-Continues the T06 branch/PR. Hmz asked for a re-eval of the image + 3D pipeline before
+Continues the T06 branch/PR. The owner asked for a re-eval of the image + 3D pipeline before
 committing spend, and explicitly asked for **no test generations** — so everything below is
 desk research against fal's live pricing API and model pages, plus code.
 
@@ -324,7 +324,7 @@ Branch `dev/t04-landing-page` off `deploy-prep` (which was clean at `341ac81`), 
 - **Designed before coded.** A multi-artboard design canvas (desktop 1440, mobile 390, and an
   alternate centred hero) was published and reviewed first:
   https://claude.ai/code/artifact/d0d76f20-e5f9-4051-8ee3-ea36eb68a1d5
-  Hmz picked the split hero and supplied the footer contact address. Working files for
+  The owner picked the split hero and supplied the footer contact address. Working files for
   re-seeding that canvas live only in the session scratchpad — to change it later, read the
   artifact back and `--extract` it rather than starting over.
 - **Screenshots come from `/demo`, on a production build.** Not `/learn`: the demo renders the
@@ -383,7 +383,7 @@ are not.
 
 ## Session 2026-09-11 - T04b landing visual identity (done)
 
-Branch `dev/t04b-visual-identity`, PR into `deploy-prep`. Hmz picked "Night Class" from three
+Branch `dev/t04b-visual-identity`, PR into `deploy-prep`. The owner picked "Night Class" from three
 directions on a design canvas (https://claude.ai/code/artifact/faee56f8-fe76-499b-9ee2-4e19f5fcf3dc):
 dark-first ink, orange as a spark, Archivo wide caps for display, a real light variant,
 following the OS with a toggle. Tokens are scoped to `.landing`; the classroom is untouched.

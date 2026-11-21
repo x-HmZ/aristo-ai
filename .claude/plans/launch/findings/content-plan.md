@@ -1,6 +1,6 @@
 # Content plan: more subjects on day one through the RAG upload path
 
-Audit and research, 2026-11-16. Code read only; no server started, no paid call, nothing downloaded. Web facts were read from the cited pages on 2026-11-16; anything I could not read on the page is marked UNCONFIRMED. This is not legal advice.
+Audit and research, 2026-11-16. Code read only; no server started, no paid call, nothing downloaded. Web facts were read from the cited pages on 2026-11-16; anything that could not be read on the page is marked UNCONFIRMED. This is not legal advice.
 
 ## One-page summary
 
@@ -9,7 +9,7 @@ Audit and research, 2026-11-16. Code read only; no server started, no paid call,
 - The upload route refuses PDFs (`src/app/api/admin/rag/upload/route.ts:54-59`) and the dialog says so and only accepts `.txt/.md` (`src/app/admin/rag/_components/UploadDialog.tsx:92,141`). No PDF library is in `package.json`.
 - Even with text: the route runs inside one Vercel function (`maxDuration = 60`, route.ts:21) and Vercel rejects request bodies over 4.5 MB (https://vercel.com/docs/errors/FUNCTION_PAYLOAD_TOO_LARGE). So a 20 to 200 MB textbook PDF cannot be posted at all, and a whole book's text in one call would time out (inferred ceiling about 500 to 600 chunks per call, see 1.5).
 - Adding the text is only half a subject. A subject also needs a domain with concepts and prerequisites, and nothing creates those from a document: `/api/kg/generate/[domain]` takes only a subject name (`src/app/api/kg/generate/[domain]/route.ts:55-56`), never text or a table of contents. The two systems (KG and RAG) are independent, linked only by the free-text `domain` string.
-- Today's manual path that does work: extract the text yourself, upload one `.txt` per chapter (under 4.5 MB and about 500 chunks each), typing the same `domain` the concepts use. KG: generate by subject name, review, commit.
+- Today's manual path that does work: extract the text outside the app, upload one `.txt` per chapter (under 4.5 MB and about 500 chunks each), typing the same `domain` the concepts use. KG: generate by subject name, review, commit.
 
 **Smallest changes that make "upload a PDF, get a grounded subject" true** (briefs in Part 4, in order):
 1. Extract PDF text in the admin's browser with `pdfjs-dist` (no server upload, so the 4.5 MB limit never applies), send it in batches of about 40 chunks per request (E1, E2).
@@ -88,7 +88,7 @@ Audit and research, 2026-11-16. Code read only; no server started, no paid call,
 
 ## Part 2. Sources
 
-What the licences mean for a paid, or free-with-paid-later, product. **BY**: commercial use allowed; credit author, give the licence link, say if you changed it. **BY-SA**: same, and adaptations must be released under the same licence. **BY-NC / BY-NC-SA**: no commercial use, which I treat as ruling out any product from a company or individual that sells or plans to sell, including a free tier that funds itself later. **BY-ND**: no adaptations. **Honest uncertainty on generated lessons:** whether an LLM lesson written with a book's text in its prompt is an "adaptation" is legally unsettled. For BY it does not matter (credit and keep commercial rights). For SA it matters: the safe reading is that the lessons would have to carry the same licence, which conflicts with a proprietary catalogue; for NC it is a breach regardless; for ND the chunks-to-lessons pipeline is almost certainly an adaptation. Where a rights holder wrote an explicit AI clause (OpenStax), that clause governs. The owner has already decided not to take money until he has written confirmation he may sell (state.md 2026-11-16), so also get written confirmation for each source he relies on.
+What the licences mean for a paid, or free-with-paid-later, product. **BY**: commercial use allowed; credit author, give the licence link, say if you changed it. **BY-SA**: same, and adaptations must be released under the same licence. **BY-NC / BY-NC-SA**: no commercial use, which is treated here as ruling out any product from a company or individual that sells or plans to sell, including a free tier that funds itself later. **BY-ND**: no adaptations. **Honest uncertainty on generated lessons:** whether an LLM lesson written with a book's text in its prompt is an "adaptation" is legally unsettled. For BY it does not matter (credit and keep commercial rights). For SA it matters: the safe reading is that the lessons would have to carry the same licence, which conflicts with a proprietary catalogue; for NC it is a breach regardless; for ND the chunks-to-lessons pipeline is almost certainly an adaptation. Where a rights holder wrote an explicit AI clause (OpenStax), that clause governs. Get written confirmation for each source relied on.
 
 ### 2.1 Verdict table
 
@@ -234,7 +234,7 @@ Rules for all: tests with vitest; no paid call without the owner's approval; Zod
 
 - Ask OpenSciEd in writing: middle school units are CC BY 4.0; does that include ingestion into an AI tutoring product; confirm the attribution wording.
 - Ask Siyavula whether unbranded CC BY editions are available as ePUB/PDF and how they want attribution.
-- Decide the ShareAlike stance (skip BY-SA sources unless he accepts releasing those lessons under BY-SA).
+- Decide the ShareAlike stance (skip BY-SA sources unless the owner accepts releasing those lessons under BY-SA).
 - Confirm the real ElevenLabs rate and plan (every narration dollar in 3.4 is r times characters).
 - Take legal advice on commercial use of CC BY content for children and on the attribution placement.
 - Apply migration 018 (still unapplied in production) before anything else, per state.md.

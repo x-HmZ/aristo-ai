@@ -7,16 +7,16 @@ that point. If a session never says anything, no switch is needed.
 
 Two things *are* automatic, and they do most of the work:
 
-- **`opusplan`** runs Opus in plan mode and Sonnet for the edits, inside one session. Most
-  build phases use this, so you set it once at the start and never touch it again.
+- **Plan-then-execute mode** runs Opus in plan mode and Sonnet for the edits, inside one session. Most
+  build phases use this, so it is set once at the start and never touched again.
 - **Subagents** can run on a different model from the session that spawns them. An Opus
   session can hand a mechanical sweep to Sonnet or Haiku, and a Sonnet session can hand a
   hard analysis to Opus, without you doing anything.
 
 ## How to switch
 
-- **Desktop app (what you use):** the model picker in the session UI.
-- **Terminal:** `/model opus`, `/model sonnet`, `/model haiku`, `/model opusplan`. For Fable,
+- **Desktop app:** the model picker in the session UI.
+- **Terminal:** `/model opus`, `/model sonnet`, `/model haiku`, or the plan-then-execute option. For Fable,
   pick `claude-fable-5-1` if no short alias is offered.
 
 Switching mid-session keeps the conversation; it costs one cache rewrite, roughly $1 on a
@@ -28,7 +28,7 @@ expensive model.
 | # | Moment | What you will see | Do |
 |---|---|---|---|
 | 1 | Starting a taste session (V8.0 + V9.0) | You are opening a direction/canvas task | **Opus** before the first message |
-| 2 | Starting most build phases (V8.2, V8.3, V8.4a, V9.3) | The brief header says `opusplan` | **opusplan**, then leave it alone |
+| 2 | Starting most build phases (V8.2, V8.3, V8.4a, V9.3) | The brief header says plan-then-execute | **Plan-then-execute**, then leave it alone |
 | 3 | Starting a settled-design phase (V8.4b/c, V8.6, V8.7, V9.4, V9.5) | The design is decided, the work is edits | **Sonnet** |
 | 4 | Starting V9.2 (the retarget pipeline) | The one Fable phase | **Fable 5.1** |
 | 5 | **Inside V9.2**, once the pipeline is clean on 2 or 3 clips | The session says the pipeline is proven and asks you to switch | **Sonnet**, then let it convert the rest |

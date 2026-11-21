@@ -276,7 +276,7 @@ Covered in L2 and C2. `/hx` and `pages/dev/*` are gated by `NODE_ENV`, the legac
 ## What is already good, do not touch
 
 - Admin authorisation is consistent: every `src/app/api/admin/**` file calls `verifyAdmin`/`requireAdmin`, plus the layout and middleware (defence in depth). Keep the service-client profile lookup pattern; only the RLS hole (C1) needs closing.
-- The approval-at-SSR design (`pages/learn.tsx`, `src/app/admin/layout.tsx`) and its comment about Edge Runtime and `@supabase/ssr`: do not move it into middleware (also memory note).
+- The approval-at-SSR design (`pages/learn.tsx`, `src/app/admin/layout.tsx`) and its comment about Edge Runtime and `@supabase/ssr`: do not move it into middleware.
 - `learn/interactive` route as a model for the rest: auth, bounded inputs, provenance check against stored lessons, hash cache keyed on every spec field, in-flight de-duplication, two-layer throttle, no storing of free-form output, `disabled` kill switch. Copy its budget check (`:166-178`) for the others.
 - The V10 widget boundary: opaque-origin sandbox, hash-only inner CSP, `frame-src 'none'` header, source-window message check, re-validation of cached rows, run-budget guard. Do not loosen `WIDGET_SANDBOX` (never add `allow-same-origin`) and keep `frame-src 'none'` on every page that hosts widgets.
 - RLS patterns of migrations 012, 013, 014, 016, 017 (service-role-only policies, `REVOKE ALL` in 017): reuse for new tables.

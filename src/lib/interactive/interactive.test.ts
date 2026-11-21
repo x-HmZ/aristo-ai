@@ -295,7 +295,8 @@ describe("parseWidgetMessage", () => {
 
 // ── tokens: the widget kit must equal globals.css ──────────────────────────────
 
-const css = readFileSync(fileURLToPath(new URL("../../app/globals.css", import.meta.url)), "utf8");
+// Normalised to LF: a Windows checkout with core.autocrlf has CRLF, and the markers below contain "\n".
+const css = readFileSync(fileURLToPath(new URL("../../app/globals.css", import.meta.url)), "utf8").replace(/\r\n/g, "\n");
 
 function block(startMarker: string): string {
   const i = css.indexOf(startMarker);

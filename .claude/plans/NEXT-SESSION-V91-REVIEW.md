@@ -104,8 +104,8 @@ toggles (lesson / face), the three clips, the pre-rendered demo narration with i
 sidecars, and a live readout of the current viseme and the loaded morph targets.
 
 **Ground rules:** verify by rendering and by running the app, not by reading numbers. Stop and ask
-before any spend, any account-gated download, or anything needing my login. Package manager is
+before any spend, any account-gated download, or anything needing the owner's login. Package manager is
 **yarn**. Update `.claude/plans/V9-REPORT.md` and `.claude/docs/state.md` at the end.
 
-**One open call for me, not for you:** `.claude/eval/2026-09-18-v9-bakeoff/` holds ~64 MB of PNG
-renders and is still untracked. Ask me whether it goes into git before committing anything in it.
+**One open call for the owner, not for you:** `.claude/eval/2026-09-18-v9-bakeoff/` holds ~64 MB of PNG
+renders and is still untracked. Ask the owner whether it goes into git before committing anything in it.

@@ -17,7 +17,7 @@ Read first: `NEXT-SESSION-V93-DIRECTOR.md` (acceptance, ground rules), the heade
 | **Pointing stays a full-body base clip**, not the catalogue's upper overlay | Its fingertip was placed on the panel edge with the clip's own hips (V9.2b). A talking base's hips would swing the aim. Recorded in `SCENARIOS.point` |
 | **Nod and shake are head-only overlays** (`mask: "head"`), not base clips | The body keeps talking under a nod. Also makes the reaction visible in lessons at all: see next row |
 | **Reactions are latched events**, not the `gesture` level | `submitAnswer` sets `"nodding"`, then the next segment's effect sets its own gesture in the same tick. Sampled once a frame, the nod was nearly always missed in real lessons. The renderer latches it with a store subscription (below) |
-| **ShakeNo still plays for a wrong answer** | Keeps today's behaviour. The catalogue wants a gentle "let's look again" instead; that needs a Tier 2 clip. Flag it to Hmz in the report, don't remove it |
+| **ShakeNo still plays for a wrong answer** | Keeps today's behaviour. The catalogue wants a gentle "let's look again" instead; that needs a Tier 2 clip. Flag it to the owner in the report, don't remove it |
 | **Overlay = weight dominance on one mixer** | three has no bone masks. A masked copy of the clip at weight `w` over a base of weight 1 shows `w/(w+1)` of it (`PropertyMixer.accumulate` is a running weighted average; checked in three 0.161's source). `overlayWeight()` converts the eased blend into that weight |
 | **Crossfades 0.4 s** (was 0.5) | The programme's bar is <= 0.4 s |
 | **Idle3 → long wait, Talking6/6M → greeting** on Marcus/Priya too | Their old pools had the fidget in idle and the wave in talking. Retired from the picker; the new tags are what the catalogue asks for |
@@ -165,6 +165,6 @@ V9-REPORT) if you need exact frames. Revert it before committing, as before.
 ## 6. Close out
 
 Gates, `typescript-reviewer` on `Teacher.tsx`/`Experience.tsx`, the V9.3 section in
-`V9-REPORT.md` (with the coverage table and the ShakeNo question for Hmz), tick V9.3 in the
+`V9-REPORT.md` (with the coverage table and the ShakeNo question for the owner), tick V9.3 in the
 plan checklist, `decisions.md` rows for the decisions table above, `state.md`, push to
 `origin docs/v8-v9-programme`.

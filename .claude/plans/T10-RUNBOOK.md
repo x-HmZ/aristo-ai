@@ -2,7 +2,7 @@
 
 The autonomous parts of T10 (CI, unit tests, migration reconciliation, `.env.example` audit)
 are done on `dev/t10-ops-hardening` — see the checklist in `T10-ops-hardening.md`. The steps
-below need Hmz to act (dashboard access, real secrets, or a decision) and were out of scope
+below need the owner to act (dashboard access, real secrets, or a decision) and were out of scope
 for the agent session. Nothing in this file has been executed against Vercel or Supabase.
 
 ---

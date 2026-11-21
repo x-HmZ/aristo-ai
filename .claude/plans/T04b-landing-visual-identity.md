@@ -11,7 +11,7 @@ Paste the block at the bottom of this file to start the session.
 
 T04 rebuilt the landing page's *structure* and fixed its mechanical design faults
 (em-dashes, eyebrow spam, twelve corner radii, four identical zigzag rows, three-equal-cards).
-It did not touch the *identity*. Hmz's read after seeing it live:
+It did not touch the *identity*. The owner's read after seeing it live:
 
 - The colours are too bright and hued. This is measurable, not taste:
   `--aristo-orange` is `hsl(25 90% 62%)`, and the `design-taste-frontend` skill puts accents
@@ -20,7 +20,7 @@ It did not touch the *identity*. Hmz's read after seeing it live:
 - The uncapitalised text reads as boring and undersells the product. This is about the
   page's typography, not the logo: the two are independent.
 - It should feel like "the future of education". Right now it feels like a tidy prototype page.
-- He wants a dark mode, at least for the landing page.
+- The owner wants a dark mode, at least for the landing page.
 
 ## What is already true (do not redo)
 
@@ -33,17 +33,17 @@ It did not touch the *identity*. Hmz's read after seeing it live:
 - Screenshots in `public/images/landing/` are real captures of `/demo` on a production build.
   If you change how the product looks, they need re-shooting.
 
-## The three things to decide with Hmz
+## The three things to decide with the owner
 
 1. **Palette.** Desaturate the orange, or move the accent entirely. CLAUDE.md's "Vision"
-   section still says pastel orange + cream; Hmz has explicitly opened that up, so update
+   section still says pastel orange + cream; the owner has explicitly opened that up, so update
    CLAUDE.md to match whatever is chosen. Note the constraint that actually binds: the
    product being sold is a warm cream 3D classroom, and the page has to sit next to
    screenshots of it.
 2. **Typography.** Currently Geist everywhere, shared with the app through
    `src/lib/fonts.ts`. A display face for headlines is the single biggest lift available.
    The skill bans Fraunces and Instrument_Serif as defaults and discourages serif generally.
-   Casing is part of this: the page is sentence case throughout and Hmz finds it flat.
+   Casing is part of this: the page is sentence case throughout and the owner finds it flat.
 
    **The wordmark is a SEPARATE decision and is not a blocker here.** Restyling headings,
    changing the type scale or moving to title case does not touch the logo. (If the mark
@@ -70,14 +70,14 @@ It did not touch the *identity*. Hmz's read after seeing it live:
 >
 > Load the `design-taste-frontend` skill and the `design` skill. The landing page at
 > src/app/page.tsx + src/components/landing/* was rebuilt structurally in T04 and is fine
-> anatomically, but it looks like a prototype rather than the future of education. I want a
+> anatomically, but it looks like a prototype rather than the future of education. The owner wants a
 > visual identity pass: the orange is too saturated (90%), the type is flat and the
-> sentence-case headings read as boring, and I want a dark mode for the landing page. The
-> logo is a separate thing and is not in scope unless I say so.
+> sentence-case headings read as boring, and a dark mode is wanted for the landing page. The
+> logo is a separate thing and is not in scope unless the owner says so.
 >
-> Audit first, then show me 2-3 genuinely different directions on a design canvas before you
+> Audit first, then show the owner 2-3 genuinely different directions on a design canvas before you
 > write any code. Reference DESIGN.md files live in
-> `C:\Users\Pc\Desktop\Empire\CLAUDE SETUP\awesome-design-md\` — use them for how to write a
+> a local reference library outside the repo (the awesome-design-md collection) — use them for how to write a
 > design system down, not to copy any brand's look.
 >
 > Work on a branch off deploy-prep and open the PR into deploy-prep.

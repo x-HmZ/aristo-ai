@@ -6,7 +6,7 @@ Read `CLAUDE.md`, the top of `.claude/docs/state.md`, `.claude/plans/NEXT-SESSIO
 original brief: steps 4 to 6 and the close-out are still yours), and `.claude/plans/V96-GESTURE-CATALOGUE.md`
 (why these clips exist). Everything the authoring half decided is below; do not re-ask any of it.
 
-## Approved by Hmz in motion on /dev/avatar-lab (2026-09-24)
+## Approved by the owner in motion on /dev/avatar-lab (2026-09-24)
 
 All authored in Blender for Aristo (V9.6), both teachers, in `Teacher_{Jake,MJ}_clips.glb` (the pack), upper
 mask, played once. Durations are the real GLB lengths (24 fps).
@@ -23,10 +23,10 @@ mask, played once. Durations are the real GLB lengths (24 fps).
 
 Also decided:
 
-- **ShakeNo stays in `wrong` at weight 1** (Almost 3): a shake about one wrong answer in four. Hmz chose "lower".
-- **Talking6 and Talking6M play at 0.75**: `timeWarp: [0.75, 0.75]` on both rows (Hmz picked it in the lab).
+- **ShakeNo stays in `wrong` at weight 1** (Almost 3): a shake about one wrong answer in four. The owner chose "lower".
+- **Talking6 and Talking6M play at 0.75**: `timeWarp: [0.75, 0.75]` on both rows (the owner picked it in the lab).
 - LookAgain and LookAgainHand were rejected and are no longer in the packs. Do not add rows for them.
-- Jake's and MJ's `viseme_PP` were softened to 0.6 in the base GLBs (committed, Hmz: "visemes look better").
+- Jake's and MJ's `viseme_PP` were softened to 0.6 in the base GLBs (committed, the owner: "visemes look better").
 
 ## Already done in code (committed or about to be, check `git log`)
 
@@ -54,7 +54,7 @@ Also decided:
    port 3000: reuse it, do not start a second. Force each scenario through the store (the V9.2b `window.__v92`
    hook pattern, reverted before committing), and check: the overlay blends in and out with no pop, the base keeps
    playing, the other arm keeps the base's motion, and GlanceBoard's head reaches the board. Screenshots or a frame
-   strip for Hmz. `/learn` needs auth: say so rather than claiming it.
+   strip for the owner. `/learn` needs auth: say so rather than claiming it.
 4. **Gates:** `yarn type-check`, `yarn lint` (10 warnings), `yarn test`, `yarn build` (temporary `distDir` because
    the dev server holds `.next`; revert `next.config.mjs` and `tsconfig.json`). `typescript-reviewer` on the diff.
    Push to `origin docs/v8-v9-programme` (the authoring commits are local and unpushed too).

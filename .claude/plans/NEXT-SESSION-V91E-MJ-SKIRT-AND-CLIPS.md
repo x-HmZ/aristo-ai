@@ -11,7 +11,7 @@ camera and lights, both teachers, and the Mixamo source rig `MarcusArma`. Script
 folder's `scripts/` (add it to `sys.path` in Blender and `importlib.reload` after edits).
 
 V9.1d fixed and re-shipped the motion. It found that MJ's extended tee and skirt fail the quality
-bar and rendered two free options (`v91d_mj_wardrobe_options.png`). **Hmz picked A: rebuild her
+bar and rendered two free options (`v91d_mj_wardrobe_options.png`). **The owner picked A: rebuild her
 skirt and repair her tee. B (CC0 MPFB trousers) is the fallback, only if A cannot pass the bar.**
 Recorded in `.claude/docs/decisions.md`. Job one is A, job two is B only if A fails, job three is
 more clips once MJ passes.
@@ -150,11 +150,11 @@ Thinking, Nodding and ShakeNo:
 
 ## Parked, do not do
 
-- A female narration for MJ in `/demo` (6,856 ElevenLabs characters). Hmz has parked it.
+- A female narration for MJ in `/demo` (6,856 ElevenLabs characters). The owner has parked it.
 
 ## Ground rules
 
-Stop and ask before any spend, any account-gated download, or anything needing Hmz's login. Don't
+Stop and ask before any spend, any account-gated download, or anything needing the owner's login. Don't
 start lessons in `/learn` (paid APIs); `/demo` and the `/dev` pages cost nothing. Package manager
 is yarn. Gates before committing: `yarn type-check`, `yarn lint` (22 pre-existing warnings),
 `yarn test` (85). Small atomic commits, imperative mood, no AI attribution. Keep new renders few

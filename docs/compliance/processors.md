@@ -1,6 +1,6 @@
 # Processors and recipients
 
-Status: DRAFT. Links are the providers' usual data processing pages as I know them; none was opened in this session, so
+Status: DRAFT. Links are the providers' usual data processing pages as the author recalled them; none was opened when this was drafted, so
 check each one. Not legal advice.
 
 ## To complete

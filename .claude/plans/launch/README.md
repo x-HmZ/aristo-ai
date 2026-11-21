@@ -2,7 +2,7 @@
 
 Goal: get Aristo from "works behind a manual approval gate" to "strangers can sign up, use a capped free allowance,
 and nothing leaks, breaks the law, or drains the owner's credits". Payments are designed and built in a sandbox;
-they are switched on only after the owner's legal status is settled.
+they stay sandbox-only behind an off flag (`BILLING_ENABLED=false`).
 
 **Any model can resume from this file.** Read it, then the one brief you are executing, then only the findings
 file that brief names. Do not re-audit: the audits are done and recorded under `findings/`.
@@ -13,7 +13,7 @@ file that brief names. Do not re-audit: the audits are done and recorded under `
 |---|---|
 | Launch shape | Early access, not "a complete app": open sign-up, small free allowance, hard spend caps, paid plan later. The manual approval gate goes away. |
 | Who can sign up | Any learner. Below the age of digital consent the account belongs to a parent, who adds the learner. |
-| Legal status | No company. Plan around a merchant of record; **no money is taken until the owner has confirmed in writing that he may sell** (`findings/payments-research.md`, kept local and untracked on purpose). |
+| Legal status | No company. Plan around a merchant of record; **payments are sandbox-only behind an off flag** (`BILLING_ENABLED`; research in `findings/payments-research.md`, kept local and untracked). |
 | Domain | None yet; will buy one only if needed. Capital is close to zero: nothing in this programme may add a recurring cost without the owner's yes. |
 | Out of scope for now | Better animations, voices and 3D models (cost capital). |
 | Paid API calls | None for testing without the owner's go-ahead for that run. Verify on free routes (`/demo`, `/dev/*`), every `/api` request aborted. |
@@ -26,7 +26,7 @@ file that brief names. Do not re-audit: the audits are done and recorded under `
 | `findings/security.md` | Security and cost-abuse audit, ranked |
 | `findings/dead-code.md` | Unused deps, files, assets, branches, docs; removal batches |
 | `findings/compliance.md` | Data inventory, processors, GDPR / COPPA / AI Act, age and parent model, legal-page outlines |
-| `findings/payments-research.md` | Stripe vs merchant of record for an individual in Austria, tax and permit questions, hosting terms |
+| `findings/payments-research.md` | Stripe vs merchant of record for an individual in Austria, tax questions, hosting terms |
 | `findings/product-cost.md` | User journey gaps, unfinished features, cost per lesson, free-allowance designs |
 | `findings/pricing.md` | Competitor prices with sources, customer segments, the plan table with margins, what changes when selling to schools |
 | `findings/content-plan.md` | How RAG and the knowledge graph ingest content today, what blocks PDF upload, open textbooks by licence, costed tracks, briefs E1-E6 |
@@ -49,7 +49,7 @@ Three gates. Do not start a gate's "open" step until everything above it is done
 | L10 | Dead screens, error pages, landing copy, SEO, feedback channel, monitoring | before sign-ups open | sonnet | M | BUILT on `feat/launch-features`: lesson failure states with Retry, error pages, sitemap, robots, canonical from `APP_URL`, report-a-problem link, `/create-teacher` 404 without its setting. Left: narration-failure notice, error monitoring (owner picks a service), nobody has looked at the screens |
 | L11 | Content: more subjects on day one, added through PDF upload and RAG | before sign-ups open | opus plans, sonnet builds | L | pipeline BUILT and live-tested 2026-11-17 on a 25-page PDF (0.11 USD): PDF reading, licence rules, estimate, duplicates, draft course, publish, onboarding list, credits all work; five defects fixed. NOT exercised: embeddings and stored chunks, grounding preview, a grounded lesson (the OpenAI account has no credit). Owner: top up OpenAI, pick books (`OWNER-STEPS.md` E) |
 | L12 | Ops: provider spend limits, regions, DPAs, email sender, branches, PR 29 | owner, mostly dashboards | owner + sonnet | S each | open |
-| L13 | Payments in a sandbox behind an off switch | before the first payment | opus | L | BUILT on `feat/launch-features`: Paddle webhook (signature, idempotency, plan from price id only), portal, overlay checkout from `/account`; sandbox is refused on the production deployment and live needs a second switch. Never run against Paddle. Go-live still blocked on the owner's written clearance |
+| L13 | Payments in a sandbox behind an off switch | before the first payment | opus | L | BUILT on `feat/launch-features`: Paddle webhook (signature, idempotency, plan from price id only), portal, overlay checkout from `/account`; sandbox is refused on the production deployment and live needs a second switch. Never run against Paddle. Sandbox-only behind an off flag |
 | L15 | Speech-to-text for voice input (owner asked for it) | optional | sonnet | S | BUILT on `feat/launch-features`: `/api/stt` and a recorder engine behind `NEXT_PUBLIC_STT_ENGINE=server`; default stays the browser engine. Never tried in a real browser |
 | L14 | Before marketing: checklist | after sign-ups open | owner + any | S | open |
 
@@ -155,7 +155,7 @@ the owner, and nothing is published until ten parents have seen three price poin
 | Plan | Month / year | Limits | Sold when |
 |---|---|---|---|
 | Free | 0 | 1 learner, catalogue replays, 2 fresh lessons and 15 chat turns a month, no 3D | at launch |
-| Plus | 10.99 / 99 | 3 learners, parent dashboard, 4 fresh lessons, 100 replays, 150 chat turns a month | first paid plan, once payments may go live |
+| Plus | 10.99 / 99 | 3 learners, parent dashboard, 4 fresh lessons, 100 replays, 150 chat turns a month | first paid plan, when billing is switched on |
 | Pro | 19.99 / 199 | 5 learners, 8 fresh lessons, 3 generated 3D models | later, "contact us" until then |
 | Organisation, education | 60 / 48 / 36 per seat per year by volume, minimum 10 seats | pooled per-seat caps, organisation admin | not at launch; pilots first |
 | Organisation, business or university | 144 / 120 / 100 per seat per year, minimum 5 seats | same | not at launch |
@@ -176,7 +176,7 @@ costs credits: list what a run will cost and get the owner's go-ahead before eac
 Findings: `compliance.md` (outlines for privacy policy, terms, imprint; must-have items 3, 8-11, 14, 17),
 `payments-research.md` part E. Pages under `src/app/(legal)/`: `/privacy`, `/terms`, `/imprint`, a parent notice; link
 them in `SiteFooter.tsx` (`LEGAL_LINKS` is empty) and at sign-up. Visible "Jake is an AI" label in the lesson UI. Fix the
-landing claim that voice input stays in the browser (Chrome sends audio to Google). Replace the personal Gmail address
+landing claim that voice input stays in the browser (Chrome sends audio to Google). Replace the personal email address
 with a role address. Documents in `docs/compliance/`: DPIA, record of processing, retention schedule, breach runbook.
 Drafts are the model's; the owner reads every page before it ships and should have the privacy policy checked by
 someone qualified. Imprint needs the owner's name and town (free beta) - never invent these.
@@ -224,13 +224,13 @@ for a pre-generated catalogue of 16 lessons per track with pictures and audio. O
 ### L13 Payments (sandbox only)
 Findings: `payments-research.md`, `compliance.md` "before first payment". Paddle sandbox behind `BILLING_ENABLED=false`:
 checkout redirect, signature-verified webhook, customer portal link, parent-only subscribe, withdrawal and cancellation
-buttons, pre-contract information. Nothing here goes live without the owner's written clearance on self-employment,
-a host plan that allows commercial use, and Paddle's written answer on minors, exam-prep wording and the domain.
+buttons, pre-contract information. Sandbox only. Live use would also need a host plan that allows commercial use,
+and Paddle's written answer on minors, exam-prep wording and the domain.
 
 ### L14 Before marketing
 Analytics that needs no consent banner; a feedback loop the owner actually reads; a 60-second demo clip; pricing tested
 with ten real parents before any price is published; a waiting list with explicit consent; the Claude for Startups
-programme (knowledge-tree node `claude-for-startups`); Strix or the Cloudflare security-audit skill against a preview
+programme; Strix or the Cloudflare security-audit skill against a preview
 deployment once L04-L06 are in (both cost model tokens: ask first).
 
 ## Owner decisions still open
@@ -253,9 +253,9 @@ deployment once L04-L06 are in (both cost model tokens: ask first).
 
 Existing subagents cover the pipeline: `planner` for L04/L06/L07 designs, `security-reviewer` before every merge that
 touches auth, data or routes, `typescript-reviewer` and `code-reviewer` after each change, `build-error-resolver` for
-broken builds, `code-simplifier` after L03. From the knowledge tree: `security-audit-skill` (Cloudflare) and `strix`
+broken builds, `code-simplifier` after L03. Optional external tools: the Cloudflare `security-audit-skill` and `strix`
 are worth one run against a preview deployment after L06, not before (heavy on tokens; a full audit already exists in
-`findings/security.md`); `launch-legal-checklist` is folded into L09 and L10.
+`findings/security.md`); a launch legal checklist is folded into L09 and L10.
 
 ## Rules for every brief
 
