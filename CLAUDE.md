@@ -2,7 +2,9 @@
 
 Aristo AI is an immersive, knowledge-graph-driven AI tutoring platform. A 3D avatar teacher delivers structured 5-phase lessons to middle-school students (grades 6–8), adapting to each learner's behaviorally-inferred profile and tracking mastery per concept with spaced repetition.
 
-> **For Claude:** read `.claude/docs/state.md` first for current status. Auto-memory `MEMORY.md` is for session learnings only — durable facts belong in `.claude/docs/`. The authoritative spec is `AI_TEACHER_APP_SPEC.md` at project root; consult `spec_index.md` to read one section surgically rather than the full file. **The spec supersedes this CLAUDE.md on any conflict.** Deep docs are in `.claude/docs/` — read on demand, not upfront.
+> **New here?** Setup, env vars, the paid-API rule and the PR flow are in `CONTRIBUTING.md`.
+>
+> **For Claude:** read the top entry of `.claude/docs/state.md` first for current status. Durable facts belong in `.claude/docs/`, not in per-machine auto-memory. The authoritative spec is `AI_TEACHER_APP_SPEC.md` at project root; list its `## ` headings (Grep) and read one section at a time rather than the full file. **The spec supersedes this CLAUDE.md on any conflict.** Deep docs are in `.claude/docs/` — read on demand, not upfront.
 
 ## Vision (do not redirect from this)
 
@@ -56,6 +58,7 @@ The same applies to `/` (`pages/index.tsx`, static; its 3D stage loads after fir
 
 | Doc | Contents |
 |-----|----------|
+| `CONTRIBUTING.md` | Setup, env vars, running without paid keys, MCP servers, branch/PR/commit flow |
 | `.claude/docs/state.md` | Phase status, what's next, migration state |
 | `.claude/docs/architecture.md` | Agents, subsystems, all API routes, components, hooks, store, approval gate |
 | `.claude/docs/decisions.md` | Decision log — why things are the way they are |
@@ -66,23 +69,28 @@ The same applies to `/` (`pages/index.tsx`, static; its 3D stage loads after fir
 
 ## Workflow
 
-- Plan mode (Opus) before multi-file changes; execute with Sonnet.
-- `security-reviewer` subagent before shipping anything touching auth, learner data, or API routes.
+- Plan (plan mode) before multi-file changes, then implement.
+- Security review before shipping anything touching auth, learner data, payments, secrets or API routes.
+- **No paid generation for testing** (fal.ai, ElevenLabs, LLM calls, the `scripts/eval-*`, `regen-*`, `generate-demo-*` scripts) without the owner's go-ahead for that run. Signed-in `/learn` checks are view-only: clear sessionStorage first (course auto-teach fires on load).
 - All Anthropic calls use `tool_use` with strict schemas — never regex-parse JSON.
 - Update `.claude/docs/state.md` at session end (done / next / blockers, compact).
 
 ## Env vars
 
+`.env.example` is the full, grouped list (required vs optional, what each does). The core ones:
+
 ```
 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
 ANTHROPIC_API_KEY     # Teaching / Assessment / Curriculum
 OPENAI_API_KEY        # RAG embeddings — gracefully optional
-FAL_KEY               # fal.ai 3D generation (NOT FAL_API_KEY)
+ELEVENLABS_API_KEY    # Teacher speech — optional, falls back to the browser voice
+FAL_KEY               # fal.ai image + 3D generation (NOT FAL_API_KEY)
+BILLING_ENABLED       # payments: sandbox-only behind this off flag
 NEXT_PUBLIC_INTERACTIVE_VISUALS  # "true" turns on generated interactive widgets (V10); off by default; also the kill switch
 ```
 
 ## Repo & tooling
 
-- Git: `master` (currently on `build-v2`), user `x-HmZ`. Package manager: **yarn**.
-- Skills to load per task: `nextjs-turbopack`, `frontend-design`, `claude-api`, `fal-ai-media`, `security-review`, `design-system`, `postgres-patterns`, `database-migrations`
-- MCP: `context7`, `vercel`, `magic`, `sequential-thinking` (`.mcp.json`); `supabase`, `github` (global)
+- GitHub `x-HmZ/aristo-ai` (public). Main branch **`deploy-prep`**: Vercel deploys production from it, so changes land only through PRs into it, never by a direct push. Package manager: **yarn** (never npm or pnpm).
+- Useful skills, if your Claude setup has them: Next.js, frontend design, Claude API, fal.ai media, security review, design system, Postgres, database migrations.
+- MCP: `context7`, `vercel`, `magic`, `sequential-thinking`, `puppeteer`, `blender` in `.mcp.json` (setup in `CONTRIBUTING.md`); Supabase and GitHub MCPs are optional, user-level.
