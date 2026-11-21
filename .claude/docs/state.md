@@ -1,6 +1,35 @@
-﻿# Aristo AI â€” Current State & Next Steps
+﻿# Aristo AI - Current State & Next Steps
 
 _Update this at the end of every significant session: done / next / blockers, compact._
+
+## 2026-11-21 - Classroom layout per screen merged (PR 34, replaces PR 29)
+
+- PR 29 (October, conflicting) rebased onto deploy-prep as `fix/classroom-ux-rebased`, PR 34; PR 29 to be closed.
+  Layout per screen (`useClassroomLayout`: desk column, bottom sheet for upright phones AND tablets under 1024px,
+  drawer for phones on their side), fixed desk sheet (`sheetFraming`), result as a green/red bar at the sheet's foot
+  (no placeholder), fading scroll edges (`src/lib/ui/useScrollFade.ts`), panel header yields space on short screens
+  (`PANEL_HEADER` / `PANEL_SLOT` in `ClassroomChrome.tsx`), picker clear of the top bar, board toolbar hidden during
+  the desk quiz. A hook-order bug in `LessonView` (hooks after an early return) fixed.
+- Layout audit: `.claude/eval/2026-11-19-demo-glitch/` (`audit.cjs`, README). Clean at 8 sizes x 6 states.
+- Vercel Function Storage at 75% of the free 10 GB: 162 deployments kept (116 preview, 46 production), about 45 MB
+  each; bundles are normal. Owner action: set a deployment retention policy in the Vercel project settings.
+- Not checked: the signed-in `/learn` page with the new panel (same components; needs an owner sign-in).
+- Next sessions: collaborator onboarding (CLAUDE.md and docs team-neutral, `.env.example` complete, a contributor
+  guide); fal.ai to Higgsfield migration (research first, no paid call without the owner's go-ahead). Then the code
+  list below.
+
+## 2026-11-19 - Launch features live; migrations 023-025 applied and checked
+
+- PR 33 (camera: LensShift measures from the lesson pose, so a drag no longer slides and warps the room; the desk
+  glide starts from the live pose and lands, so the quiz paper stops re-rasterising) and PR 32 merged and deployed.
+- Hmz applied 023 and 025 (before the merge) and 024 (after the deploy). 61 behavioural checks pass with a temporary
+  user (grants, take_rate limits and concurrency, the nine protected profile columns, consents, learner-table writes
+  refused and reads allowed, increment_misconception locked, custom-teacher URL guard). Script: session scratchpad only.
+- Repro scripts for the camera bug: `.claude/eval/2026-11-19-demo-glitch/` (free route, /api aborted).
+- Open: PR 29 (fix/classroom-ux, October) conflicts with deploy-prep. Desk flicker never seen headless; ask Hmz.
+- Next (code): narration-failure notice; grounded ingest test once OpenAI has credit (ask before each paid run);
+  several learners per account; server-side checkout; quiz cache and catalogue pre-generation. Remaining owner steps:
+  `OWNER-STEPS.md` B onwards.
 
 ## 2026-11-17 - Launch readiness: everything without the owner is built (branch feat/launch-features, PR open)
 

@@ -79,14 +79,14 @@ const F_MAX = 6;
 
 const K = PAPER_DISTANCE_FACTOR / 400;
 
-type V3 = [number, number, number];
+export type V3 = [number, number, number];
 
-const sub = (a: V3, b: V3): V3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-const add = (a: V3, b: V3): V3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-const mul = (a: V3, s: number): V3 => [a[0] * s, a[1] * s, a[2] * s];
-const dot = (a: V3, b: V3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-const cross = (a: V3, b: V3): V3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const unit = (a: V3): V3 => mul(a, 1 / Math.hypot(a[0], a[1], a[2]));
+export const sub = (a: V3, b: V3): V3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+export const add = (a: V3, b: V3): V3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+export const mul = (a: V3, s: number): V3 => [a[0] * s, a[1] * s, a[2] * s];
+export const dot = (a: V3, b: V3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+export const cross = (a: V3, b: V3): V3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+export const unit = (a: V3): V3 => mul(a, 1 / Math.hypot(a[0], a[1], a[2]));
 
 /** The offset from the target, with OrbitControls' polar clamp applied (azimuth is untouched). */
 function clampPolar(offset: V3): V3 {
@@ -102,7 +102,7 @@ const TARGET0: V3 = [DESK_TARGET.x, DESK_TARGET.y, DESK_TARGET.z];
 export const DESK_POSE: V3 = add(TARGET0, clampPolar(sub([DESK_POS.x, DESK_POS.y, DESK_POS.z], TARGET0)));
 
 /** Screen projection through a plain perspective camera that looks from `pos` at `target` (up is +Y). */
-function camera(pos: V3, target: V3, width: number, height: number, fovDeg: number) {
+export function camera(pos: V3, target: V3, width: number, height: number, fovDeg: number) {
   const f = unit(sub(target, pos));
   const r = unit(cross(f, [0, 1, 0]));
   const u = cross(r, f);

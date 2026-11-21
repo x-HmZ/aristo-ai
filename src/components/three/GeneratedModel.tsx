@@ -1,6 +1,7 @@
 "use client";
 
-import { Html, useGLTF } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
+import { SceneHtml as Html } from "@/components/three/SceneHtml";
 import { useFrame, ThreeEvent } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Box3, Euler, Group, Matrix4, Vector3, type Mesh, type Object3D } from "three";

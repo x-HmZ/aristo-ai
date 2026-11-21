@@ -302,6 +302,7 @@ export function WallDisplay({ display }: { display: RoomDisplay }) {
     return t;
   }, []);
   useEffect(() => () => glow?.dispose(), [glow]);
+  const widgetOnBoard = useAristoStore((s) => s.widgetOnBoard);
   const [cx, cy, cz] = display.center;
   return (
     <group position={[cx, cy, cz]}>
@@ -312,7 +313,20 @@ export function WallDisplay({ display }: { display: RoomDisplay }) {
       </mesh>
       <mesh position={[0, 0, -0.001]}>
         <planeGeometry args={[display.width, display.height]} />
-        <meshBasicMaterial color={glow ? undefined : SCREEN} map={glow} toneMapped={false} />
+        {widgetOnBoard ? (
+          // A hole: writes depth and clears the canvas to transparent here, so the widget under the canvas shows
+          // through, and anything nearer (the teacher's hand) still draws over it. Zero factors write rgba 0.
+          <meshBasicMaterial
+            key="hole"
+            transparent
+            blending={THREE.CustomBlending}
+            blendSrc={THREE.ZeroFactor}
+            blendDst={THREE.ZeroFactor}
+            toneMapped={false}
+          />
+        ) : (
+          <meshBasicMaterial key="screen" color={glow ? undefined : SCREEN} map={glow} toneMapped={false} />
+        )}
       </mesh>
     </group>
   );

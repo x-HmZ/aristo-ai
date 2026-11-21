@@ -2,7 +2,8 @@
 
 import { useAristoStore, DEFAULT_TEACHER, type TeacherAvatar } from "@/store/useAristoStore";
 import type { ModelAnnotation } from "@/lib/agents/teaching";
-import { Environment, Float, Grid, Html, useTexture } from "@react-three/drei";
+import { Environment, Float, Grid, useTexture } from "@react-three/drei";
+import { SceneHtml as Html } from "@/components/three/SceneHtml";
 import { Component, Suspense, useCallback, useEffect, useRef, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { Mesh, MeshBasicMaterial, Plane, SRGBColorSpace, Vector3 } from "three";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
@@ -15,7 +16,8 @@ import { Button } from "@/components/ui/button";
 import { ReopenInteractiveControls } from "@/components/learn/InteractiveStage";
 import { CameraController } from "./CameraController";
 import { LensShift } from "./LensShift";
-import { DeskQuiz, PAPER_ANCHOR } from "./DeskQuiz";
+import { DeskQuiz, SHEET_ANCHOR } from "./DeskQuiz";
+import { useClassroomLayout } from "@/store/useClassroomLayout";
 import { RendererConfig, SceneLights } from "./SceneBits";
 
 // Re-exported for existing importers; they live in SceneBits so the landing can use them without this module (and
@@ -101,6 +103,10 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
   const setViewMode3d        = useAristoStore((s) => s.setViewMode3d);
   const demoMode             = useAristoStore((s) => s.demoMode);
   const setBoardInteracting  = useAristoStore((s) => s.setBoardInteracting);
+  // The camera is on the desk during a quiz: the board's toolbar is out of view, so it is not rendered (it stayed
+  // focusable off screen). The wheel hint only means something with a mouse, and it overran a phone's edge.
+  const quizOnDesk           = useAristoStore((s) => !!s.activeQuiz);
+  const phoneLayout          = useClassroomLayout((s) => s.mode !== "desk");
 
   const activeLesson     = useAristoStore((s) => s.activeLesson);
 
@@ -297,7 +303,7 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
         {/* Bottom toolbar — state-aware. Ink glass (`.theme-ink`) in both
             themes, like everything placed on the lit room; "View in 3D" is
             the system's secondary control (V8.4a). */}
-        <Html position={[0, -(display.height / 2 + 0.2), 0]} center>
+        {!quizOnDesk && <Html position={[0, -(display.height / 2 + 0.2), 0]} center>
           <div className="theme-ink flex items-center gap-1.5">
             {isGeneratingModel ? (
               <div role="status" className={SCENE_CHIP}>
@@ -316,14 +322,16 @@ function TeachingImageInner({ imageUrl, display }: { imageUrl: string; display: 
                   <Maximize2 aria-hidden />
                   Expand
                 </Button>
-                <div className={SCENE_CHIP}>
-                  {zoomed ? "drag to move · double-click to reset" : "scroll on the screen to zoom"}
-                </div>
+                {!phoneLayout && (
+                  <div className={SCENE_CHIP}>
+                    {zoomed ? "drag to move · double-click to reset" : "scroll on the screen to zoom"}
+                  </div>
+                )}
               </>
             )}
             <ReopenInteractiveControls buttonClassName={SCENE_BUTTON} />
           </div>
-        </Html>
+        </Html>}
     </group>
   );
 }
@@ -569,7 +577,7 @@ export function Experience({ devOverrides }: { devOverrides?: DevOverrides } = {
   const lookTargets = useMemo<LookTargets>(() => ({
     board: display.center,
     model: [SCENE_X, SCENE_Y, SCENE_Z],
-    desk:  paperAnchor ?? PAPER_ANCHOR,
+    desk:  paperAnchor ?? SHEET_ANCHOR,
   }), [paperAnchor, display]);
 
   // The set the camera frames: the teacher's outer edge and the display's far edge (bezel included).

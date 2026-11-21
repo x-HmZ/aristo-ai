@@ -42,6 +42,7 @@ import { FOCUS, SHAPE } from "@/lib/design/shape";
 import { SourceCredit } from "@/components/learn/SourceCredit";
 import { cn } from "@/lib/utils";
 import { pushLessonNotice } from "@/hooks/useLessonStatus";
+import { useClassroomLayout } from "@/store/useClassroomLayout";
 
 // ─── The five phases (brand-system.md: no colours) ───────────────────────────
 //
@@ -775,12 +776,18 @@ export function LessonView({
     return map;
   }, [playbackMode, lesson]);
 
+  // Hooks stay above the early return below: a lesson that arrives after an empty first render must not change
+  // the hook count. On a phone the caption is the band over the room (LessonPlayer), except with the sheet at full height.
+  const layoutMode    = useClassroomLayout((s) => s.mode);
+  const sheetSnap     = useClassroomLayout((s) => s.snap);
+
   if (!lesson) return null;
 
   const phase      = PHASES[phaseIdx];
   const isFirst    = phaseIdx === 0;
   const isLast     = phaseIdx === PHASES.length - 1;
   const caption       = captionAt(lesson.segments, currentSegmentId);
+  const phoneCaptionOnBand = layoutMode !== "desk" && !(layoutMode === "portrait" && sheetSnap === "full");
   const hasTranscript = PHASES.some((p) => segmentsByPhase[p].length > 0);
 
   const goNext = () => {
@@ -833,7 +840,7 @@ export function LessonView({
         {/* In-panel caption below lg, where the band over the scene is hidden.
             The min height keeps the card below from jumping on most sentences. */}
         {playbackMode && caption.current && (
-          <div className={cn(SHAPE.surface, "min-h-[9rem] shrink-0 border border-line bg-surface px-4 py-3 lg:hidden")}>
+          <div className={cn(SHAPE.surface, "min-h-[9rem] shrink-0 border border-line bg-surface px-4 py-3 lg:hidden", phoneCaptionOnBand && "hidden")}>
             <p className="type-h4 font-semibold text-ink">{caption.current}</p>
             {caption.next && (
               <p className="mt-1.5 line-clamp-2 text-sm text-muted">{caption.next}</p>

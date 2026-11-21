@@ -15,6 +15,7 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useScrollFade } from "@/lib/ui/useScrollFade";
 import { ArrowRight, BookOpen, Check, ChevronDown, ChevronUp, Hammer, Lightbulb, Scale, ScanSearch, Wrench, X } from "lucide-react";
 import type { LucideIcon }                              from "lucide-react";
 import type { QuizQuestion }                         from "@/lib/agents/assessment";
@@ -50,6 +51,12 @@ interface QuizViewProps {
    * always exact, not a degraded fallback.
    */
   localOnly?: boolean;
+  /**
+   * One fixed page (the desk sheet): fills its parent's height, the question and answers scroll in the middle if
+   * they must, and the result and Next sit in a band at the bottom that is there from the start, so nothing moves
+   * or grows when an answer is marked.
+   */
+  sheet?: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -528,7 +535,7 @@ function FeedbackBanner({ result }: { result: AnswerResult }) {
 
 // ─── Main QuizView ────────────────────────────────────────────────────────────
 
-export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson", localOnly = false }: QuizViewProps) {
+export function QuizView({ conceptId, questions, userId, onComplete, context = "lesson", localOnly = false, sheet = false }: QuizViewProps) {
   const incrementSignal = useAristoStore((s) => s.incrementSignal);
 
   const [currentIdx,    setCurrentIdx]    = useState(0);
@@ -549,6 +556,11 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
   const currentR  = results[currentIdx];
   const totalQs   = questions.length;
   const answered  = results.filter(Boolean).length;
+
+  // The sheet's question and its result text scroll when they do not fit (a phone's small paper, or once the result
+  // bar takes the foot): the edge where more content continues fades, so a row is never cut by a hard line.
+  const questionFade = useScrollFade(sheet, currentIdx, currentR);
+  const feedbackFade = useScrollFade(sheet, currentIdx, currentR);
 
   // ── Submit a single answer ────────────────────────────────────────────────
   const handleAnswer = useCallback(async (userAnswer: string) => {
@@ -662,17 +674,47 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
 
   const progressPct = ((answered) / totalQs) * 100;
 
+  // Feedback, then Next. The live region is always mounted, so a screen reader announces the banner when it appears.
+  const feedbackPart = (
+    <>
+      <div role="status" className="empty:!mt-0">
+        {currentR && <FeedbackBanner result={currentR} />}
+      </div>
+    </>
+  );
+  const nextPart = currentR && (
+    <div className="space-y-2">
+      {isEvaluating && (
+        <div className="flex items-center gap-1.5 text-xs text-muted">
+          <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce" />
+          Marking…
+        </div>
+      )}
+      <div className="flex justify-end">
+        <Button onClick={handleNext}>
+          {currentIdx < totalQs - 1 ? "Next question" : "See results"}
+          <ArrowRight aria-hidden />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-surface">
+    <div className={cn("overflow-hidden rounded-2xl bg-surface", sheet && "flex min-h-0 flex-1 flex-col")}>
       {/* Progress bar: the number is also in the header, so the fill is not the only cue */}
-      <div className="h-1 bg-sunk">
+      <div className="h-1 shrink-0 bg-sunk">
         <div
           className="h-full bg-accent transition-all duration-slow"
           style={{ width: `${progressPct}%` }}
         />
       </div>
 
-      <div className="space-y-3 px-4 py-3">
+      <div
+        ref={questionFade.ref}
+        onScroll={questionFade.onScroll}
+        className={cn("space-y-3 px-4 py-3", sheet && "aristo-scroll min-h-0 flex-1 overflow-y-auto")}
+        style={questionFade.style}
+      >
 
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
@@ -731,28 +773,41 @@ export function QuizView({ conceptId, questions, userId, onComplete, context = "
           <MatchingRenderer question={currentQ} result={currentR} onAnswer={handleAnswer} />
         )}
 
-        {/* Feedback + Next. The live region is always mounted, so a screen reader
-            announces the banner when it appears. */}
-        <div role="status" className="empty:!mt-0">
-          {currentR && <FeedbackBanner result={currentR} />}
-        </div>
-        {currentR && (
-          <div className="space-y-2">
-            {isEvaluating && (
-              <div className="flex items-center gap-1.5 text-xs text-muted">
-                <span className="size-1.5 rounded-full bg-accent-text motion-safe:animate-bounce" />
-                Marking…
-              </div>
-            )}
-            <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                {currentIdx < totalQs - 1 ? "Next question" : "See results"}
-                <ArrowRight aria-hidden />
-              </Button>
-            </div>
-          </div>
-        )}
+        {!sheet && <>{feedbackPart}{nextPart}</>}
       </div>
+
+      {/* The sheet's result band: a fixed share of the page, there before the answer. The feedback scrolls inside it
+          rather than growing it; Next stays pinned below, so it is always in reach. */}
+      {sheet && (
+        <div role="status" className="flex max-h-[60%] shrink-0 flex-col empty:hidden">
+          {currentR && (
+            <div
+              className={cn(
+                "flex min-h-0 flex-1 flex-col gap-2 border-t-2 px-4 py-3",
+                currentR.is_correct ? "border-success bg-success/15" : "border-danger bg-danger/15",
+              )}
+            >
+              <div
+                ref={feedbackFade.ref}
+                onScroll={feedbackFade.onScroll}
+                className="aristo-scroll flex min-h-0 gap-2 overflow-y-auto type-caption text-ink"
+                style={feedbackFade.style}
+              >
+                {currentR.is_correct
+                  ? <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
+                  : <X aria-hidden className="mt-0.5 size-4 shrink-0 text-danger" />}
+                <p>
+                  <span className={cn("mr-1 font-semibold", currentR.is_correct ? "text-success" : "text-danger")}>
+                    {currentR.is_correct ? "Correct." : "Not quite."}
+                  </span>
+                  {currentR.feedback}
+                </p>
+              </div>
+              {nextPart}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

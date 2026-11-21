@@ -23,6 +23,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import { useAristoStore, type LessonPayload } from "@/store/useAristoStore";
+import { useClassroomLayout } from "@/store/useClassroomLayout";
 import { useLessonPlayback } from "@/hooks/useLessonPlayback";
 import { Button } from "@/components/ui/button";
 import { SHAPE } from "@/lib/design/shape";
@@ -71,6 +72,17 @@ function CaptionFit({
   next:    string | null;
 }) {
   const { n, name, icon: Icon } = PHASE_META[phase];
+  // On a phone the band sits above the lesson sheet (portrait) or beside the drawer (landscape), where the panel
+  // has no room for the caption; with the sheet at full height there is no room for the band instead.
+  const mode = useClassroomLayout((s) => s.mode);
+  const panelRight = useClassroomLayout((s) => s.panelRight);
+  const panelBottom = useClassroomLayout((s) => s.panelBottom);
+  const viewportH = useClassroomLayout((s) => s.viewport.h);
+  const phone = mode !== "desk";
+  const bandStyle = !phone ? undefined
+    : mode === "portrait" ? { left: 12, right: 12, bottom: panelBottom + 8 }
+    : { left: 12, right: panelRight + 12, bottom: 12 };
+  const bandHidden = mode === "portrait" && panelBottom > viewportH * 0.7;
   const bandRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
   const [step, setStep]         = useState(0);
@@ -100,9 +112,11 @@ function CaptionFit({
       aria-label="Caption"
       className={cn(
         SHAPE.surface,
-        "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 hidden max-h-[calc(20vh-16px)] items-start gap-4 overflow-hidden",
-        "border border-line bg-bg/[0.86] px-5 py-2.5 shadow-e2 backdrop-blur-md lg:flex",
+        "theme-ink pointer-events-none fixed bottom-4 left-5 right-[440px] z-10 max-h-[calc(20vh-16px)] items-start gap-4 overflow-hidden",
+        "border border-line bg-bg/[0.86] px-5 py-2.5 shadow-e2 backdrop-blur-md",
+        phone ? (bandHidden ? "hidden" : "flex px-4") : "hidden lg:flex",
       )}
+      style={bandStyle}
     >
       <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5 text-accent-text">
         <Icon aria-hidden className="size-5" />

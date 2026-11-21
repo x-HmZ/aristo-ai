@@ -8,6 +8,8 @@ import { AiTeacherLabel, AiFirstLessonNotice } from "@/components/learn/AiDisclo
 import { Button } from "@/components/ui/button";
 import { FOCUS, SHAPE } from "@/lib/design/shape";
 import { cn } from "@/lib/utils";
+import { PANEL_HEADER } from "@/components/learn/ClassroomChrome";
+import { useScrollFade } from "@/lib/ui/useScrollFade";
 import { useCapabilities } from "@/lib/account/CapabilitiesContext";
 
 // T02 — 3D asset diet: only the default avatar + classroom preload at module
@@ -84,8 +86,10 @@ export function TeacherControls({ onClear }: TeacherControlsProps) {
     ...AVATARS,
   ];
 
+  const headerFade = useScrollFade(true, teacher, inCourse, topicNum);
+
   return (
-    <div className="flex flex-col gap-2.5 rounded-t-2xl border-b border-line bg-surface/95 px-4 py-3 backdrop-blur-xl">
+    <div ref={headerFade.ref} onScroll={headerFade.onScroll} style={headerFade.style} className={cn(PANEL_HEADER, "gap-2.5")}>
 
       {/* Row 1: Avatar selector + generating badge + clear */}
       <div className="flex items-center justify-between gap-2">
