@@ -1,6 +1,22 @@
-﻿# Aristo AI â€” Current State & Next Steps
+﻿# Aristo AI - Current State & Next Steps
 
 _Update this at the end of every significant session: done / next / blockers, compact._
+
+## 2026-11-21 - Classroom layout per screen merged (PR 34, replaces PR 29)
+
+- PR 29 (October, conflicting) rebased onto deploy-prep as `fix/classroom-ux-rebased`, PR 34; PR 29 to be closed.
+  Layout per screen (`useClassroomLayout`: desk column, bottom sheet for upright phones AND tablets under 1024px,
+  drawer for phones on their side), fixed desk sheet (`sheetFraming`), result as a green/red bar at the sheet's foot
+  (no placeholder), fading scroll edges (`src/lib/ui/useScrollFade.ts`), panel header yields space on short screens
+  (`PANEL_HEADER` / `PANEL_SLOT` in `ClassroomChrome.tsx`), picker clear of the top bar, board toolbar hidden during
+  the desk quiz. A hook-order bug in `LessonView` (hooks after an early return) fixed.
+- Layout audit: `.claude/eval/2026-11-19-demo-glitch/` (`audit.cjs`, README). Clean at 8 sizes x 6 states.
+- Vercel Function Storage at 75% of the free 10 GB: 162 deployments kept (116 preview, 46 production), about 45 MB
+  each; bundles are normal. Owner action: set a deployment retention policy in the Vercel project settings.
+- Not checked: the signed-in `/learn` page with the new panel (same components; needs an owner sign-in).
+- Next sessions: collaborator onboarding (CLAUDE.md and docs team-neutral, `.env.example` complete, a contributor
+  guide); fal.ai to Higgsfield migration (research first, no paid call without the owner's go-ahead). Then the code
+  list below.
 
 ## 2026-11-19 - Launch features live; migrations 023-025 applied and checked
 
