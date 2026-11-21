@@ -1,4 +1,4 @@
-// Peak-gesture frames (build steps 5 and 7; Hmz's second hard requirement). For a spot, from the moment the teacher
+// Peak-gesture frames (build steps 5 and 7; the owner's second hard requirement). For a spot, from the moment the teacher
 // is live there: a screenshot of the spot about every 120 ms, each with Jake's bones read in the same frame
 // (`?probe`, stage/Probe.tsx) and projected to the page. The gesture's peak is the frame that maximises the spot's
 // measure (the wave: the raised hand's height; the present: the hand's reach towards the object). Writes the frames,

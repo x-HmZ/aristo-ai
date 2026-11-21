@@ -27,7 +27,7 @@ export { RendererConfig, SceneLights };
 // In-scene controls (the image and model toolbars): the system's secondary
 // button and a status chip, inside `.theme-ink`. Classes only; the <Html>
 // positions and every scene constant are unchanged.
-// One shape for the whole row under the screen (Hmz, 2026-10-15): 44px pills, buttons and hint chips alike, like
+// One shape for the whole row under the screen (the owner, 2026-10-15): 44px pills, buttons and hint chips alike, like
 // every other control placed on the room.
 const SCENE_BUTTON = "whitespace-nowrap rounded-full border border-line shadow-e1";
 const SCENE_CHIP =
@@ -39,7 +39,7 @@ const SCENE_CHIP =
 // half-image (~0.73) left and up moves the plane towards the avatar's head
 // so "pointing" gestures actually land on the diagram instead of empty air.
 const SCENE_X = 0.37;   // was 1.1 — half-width left
-const SCENE_Y = 0.18;   // was 0.33, then -0.035 for the 2.2-2.3 m halfway pass — re-tuned again for standScale 10-15% taller still (V9.2b, Hmz)
+const SCENE_Y = 0.18;   // was 0.33, then -0.035 for the 2.2-2.3 m halfway pass — re-tuned again for standScale 10-15% taller still (V9.2b, the owner)
 const SCENE_Z = -3;
 
 // 3D model anchor. This used to sit at the original chest-height spot
@@ -47,7 +47,7 @@ const SCENE_Z = -3;
 // avatar's face. Seen side by side that was the wrong trade: the image plane
 // was moved up and left so pointing gestures land on it, and the model was
 // left behind at the old anchor, so it spawned low and to the right where the
-// lesson panel clips it. They share the anchor again (Hmz, 2026-09-10).
+// lesson panel clips it. They share the anchor again (the owner, 2026-09-10).
 const MODEL_X = SCENE_X;
 const MODEL_Y = SCENE_Y;
 const MODEL_Z = SCENE_Z;
@@ -449,7 +449,7 @@ function FloatingModel({
         modelAnnotations={modelAnnotations}
         focusLabels={focusLabels}
         position={[MODEL_X, MODEL_Y, MODEL_Z]}
-        // Was 1.5 — Hmz called the initial spawn size too big (V9.2b, 2026-09-23):
+        // Was 1.5 — the owner called the initial spawn size too big (V9.2b, 2026-09-23):
         // 45% smaller (middle of his 40-50% ask), 1.5 * 0.55 = 0.825. The user's
         // own scroll-to-resize (GeneratedModel's onWheel) is unaffected.
         scale={0.825}
@@ -494,7 +494,7 @@ function ScreenRectReporter({ display }: { display: RoomDisplay }) {
 // visual cue — the actual interactive input is the AnswerInputPanel in the
 // right panel where typing/dictation makes sense.
 //
-// Re-tuned for standScale 10-15% taller still (V9.2b, Hmz — see SCENE_Y).
+// Re-tuned for standScale 10-15% taller still (V9.2b, the owner — see SCENE_Y).
 // Jake and MJ differ by ~5 cm at this scale but share one bubble anchor.
 const TEACHER_HEAD_X = TEACHER_X + 0.75;
 const TEACHER_HEAD_Y = 0.65;

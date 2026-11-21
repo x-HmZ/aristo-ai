@@ -53,7 +53,7 @@ export const PRESENT_PEAKS: Record<LandingTeacher, { hand: V3; index: V3 }> = {
 export const PRESENT_PEAK = PRESENT_PEAKS.jake;
 
 /**
- * The heart, placed from that hand (Hmz's second hard requirement): at the product's own spawn scale (Experience
+ * The heart, placed from that hand (the owner's second hard requirement): at the product's own spawn scale (Experience
  * FloatingModel, 0.825: 0.49 m wide, 0.83 m tall, 0.53 m deep), so it is in the lesson's proportion to him. At the
  * peak it faces the reader (it turns only once built, after his hand is down), so its near edge is its front
  * half-width from its centre: that edge sits 2 cm past his fingertip, and his open hand is at its lower-left, level

@@ -5,7 +5,7 @@ import { OG_HEADLINE, OG_SUB } from "@/components/brand/ogPaths";
  * The link-preview card (1200x630) as ImageResponse markup: the wordmark, the
  * headline and the sub line on ink, and a wide panel with a still of the lit
  * classroom (Jake and the 3D brain), the product's selling point, which melts
- * into the ink on its left edge. Picked by Hmz from three layouts in V8.7
+ * into the ink on its left edge. Picked by the owner from three layouts in V8.7
  * (decisions.md).
  *
  * Every word is an outline (see ogPaths.ts), so there is no font to load. The

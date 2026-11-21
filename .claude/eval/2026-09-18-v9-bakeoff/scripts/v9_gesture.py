@@ -45,7 +45,7 @@ FPS = 24  # the scene's rate; every shipped clip is baked at it
 FINGER_RE = re.compile(r"^CC_Base_([LR])_(Index|Mid|Ring|Pinky|Thumb)\d(_\d+)?$")
 FINGER_JOINT_RE = re.compile(r"^CC_Base_([LR])_(Index|Mid|Ring|Pinky|Thumb)(\d)(_\d+)?$")
 
-# Hand life (V9.7, a spec with "life": True). Hmz on the first V9.7 drafts:
+# Hand life (V9.7, a spec with "life": True). The owner on the first V9.7 drafts:
 # the hands stayed flat and rigid. A real open hand is not flat: the index
 # opens most and the pinky least (the cascade), the fingertips keep a bend,
 # the fingers unfurl one after another, a held hand never freezes, and the
@@ -915,7 +915,7 @@ def build_all(teachers=("Jake", "MJ")):
 # 14), so each has to read as its own move and not as a batch 1 clip: no nod
 # (Exactly and Encourage own it) and no wide palms-up opening (WellDone and
 # ThatsIt own it). Where a row has two plausible gestures there is an "A" and
-# a "B" for Hmz to pick from.
+# a "B" for the owner to pick from.
 
 def _pair(left):
     """Both arms from left-arm keys, the right one mirrored."""
@@ -1104,7 +1104,7 @@ BRING_TOGETHER = {
     "fingers": {s: [(0, 0), (0.6, 0.6), (1.3, 0.45), (1.9, 0.48), (2.4, 0)] for s in "LR"},
 }
 
-# Hmz picked MoveOn B and YourTurn B (2026-09-26); ImagineB never converged.
+# The owner picked MoveOn B and YourTurn B (2026-09-26); ImagineB never converged.
 V97 = (IMAGINE_A, HOLD_IDEA, STEP_BEAT, MOVE_ON_B, YOUR_TURN_B, BRING_TOGETHER)
 V97_NOT_SHIPPED = (IMAGINE_B, MOVE_ON_A, YOUR_TURN_A)
 
@@ -1240,7 +1240,7 @@ OVER_TO_YOU_R2 = {
     "fingers": {"L": [(0, 0), (0.2, 0.3), (0.55, 0.7), (1.0, 0.85), (1.8, 0.82), (2.4, 0)]},
 }
 
-# Round 3 (Hmz picked the sideways sweep over round 2): the left hand comes
+# Round 3 (the owner picked the sideways sweep over round 2): the left hand comes
 # up palm up out at his side, then sweeps in across the front and down,
 # palm tilted to the student and fingers angled at the desk, with a lean and
 # the head down to it. The sideways travel is what the student's camera can
@@ -1277,7 +1277,7 @@ OVER_TO_YOU = {
     "fingers": {"L": [(0, 0), (0.2, 0.3), (0.6, 0.8), (1.15, 0.85), (1.85, 0.82), (2.4, 0)]},
 }
 
-# Hmz rejected all three OverToYou rounds (the sweep: "the arm movement is
+# The owner rejected all three OverToYou rounds (the sweep: "the arm movement is
 # very unnatural"), so none ships.
 V98 = (ONE_MOMENT, POINT_NEAR, PATIENT_TILT, BACK_TO_BOARD)
 V98_NOT_SHIPPED = (OVER_TO_YOU_R2, OVER_TO_YOU)
@@ -1298,11 +1298,11 @@ def build_v98(teachers=("Jake", "MJ"), names=None):
 # ─── Pointing's hand (V9.8) ──────────────────────────────────────────────────
 # The shipped Pointing clip (Mixamo) extends the right index but leaves the
 # middle finger half out and the others loose and splayed: a claw at the
-# classroom camera (Hmz, V9.8). V9.2b kept the index out of the finger relax
+# classroom camera (the owner, V9.8). V9.2b kept the index out of the finger relax
 # and did nothing else to the hand. This folds the three fingers a point does
 # not use, and the thumb, to PointNear's shape while the hand is up.
 # The index itself was bent back about 9 deg at the knuckle and splayed 12
-# deg towards the thumb (Hmz, second look: "the angle of the pointing finger
+# deg towards the thumb (the owner, second look: "the angle of the pointing finger
 # looks unnatural"), so `index` sets it to a small forward bend in line with
 # the hand. That moves the aim a little; check it with `panel_hit`.
 

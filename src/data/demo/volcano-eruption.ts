@@ -3,7 +3,7 @@
  * Do not hand-edit; regenerate via the script if the source concept changes.
  * Served with zero Anthropic/fal.ai calls at runtime (public/demo/volcano-eruption/...).
  *
- * One hand edit (V8.3c, Hmz): no 3D model. Its Tripo3D model was a rock exterior that showed nothing the diagrams do
+ * One hand edit (V8.3c, the owner): no 3D model. Its Tripo3D model was a rock exterior that showed nothing the diagrams do
  * not, so `should_generate_model` is false and `demo_model_url` is gone (no "View in 3D"); no narration refers to it.
  * The heart and the brain carry 3D in /demo.
  */

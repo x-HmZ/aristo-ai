@@ -1,4 +1,4 @@
-// The first-sections review sheet for Hmz (nav, hero, the model build): section captures, the peak frames with the
+// The first-sections review sheet for the owner (nav, hero, the model build): section captures, the peak frames with the
 // hands and the heart marked, the build strip and the proportions side by side. Reads build/*, writes
 // build/review-first-sections.png. Usage: node review.cjs
 const path = require("path");

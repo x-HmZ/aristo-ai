@@ -26,7 +26,7 @@ export const IDLE_INTERACTIVE: InteractiveState = { status: "idle", spec: null, 
 
 export type TeacherMode   = "course" | "free";
 /**
- * The avatar a new session starts on (Jake, decided by Hmz 2026-09-23), and the
+ * The avatar a new session starts on (Jake, decided by the owner 2026-09-23), and the
  * only one preloaded eagerly. MJ is the second teacher in the picker.
  *
  * It has to be a rig that can lipsync -- the product's central visual claim --

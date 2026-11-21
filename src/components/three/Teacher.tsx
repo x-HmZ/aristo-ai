@@ -225,8 +225,8 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // Re-tuned in world space for the new standScale (V9.2b).
     spawnLabelHeight: 2.1,
     // Real height (1.78 m / 1.859 m TARGET_HEIGHT) read as a dwarf next to
-    // the old 2.79 m giant (Hmz, 2026-09-23) — halfway between the two was
-    // 1.2288 (2.28 m), then Hmz asked for 10-15% taller still: 1.2288 *
+    // the old 2.79 m giant (the owner, 2026-09-23) — halfway between the two was
+    // 1.2288 (2.28 m), then the owner asked for 10-15% taller still: 1.2288 *
     // 1.125 = 1.3824, height 2.57 m.
     standScale: 1.3824,
     clips:  CANINO_CLIP_SET,
@@ -237,7 +237,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-cartoon-game-man-character-rigged-a69c8962f4a14ea89bf623d716a81411",
       ...CANINO3D,
     },
-    // Sage (Hmz, V8.3d sheet A2): swatch #A9C6A4, solved on the shipped cloth so the lit shirt renders as it
+    // Sage (the owner, V8.3d sheet A2): swatch #A9C6A4, solved on the shipped cloth so the lit shirt renders as it
     // (#B1CDAD, dE00 2.0); the lit shirt reads lighter than the hex it is given.
     outfit: { material: "lambert3SG", color: "#7CA772" },
   },
@@ -249,8 +249,8 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
     // See Jake's comment — same re-tune for the new standScale (V9.2b).
     spawnLabelHeight: 2.1,
     // Real height (1.68 m) read as a dwarf next to the old 2.79 m giant
-    // (Hmz, 2026-09-23) — halfway between the two was 1.2019 (2.23 m), then
-    // Hmz asked for 10-15% taller still: 1.2019 * 1.125 = 1.3521, height
+    // (the owner, 2026-09-23) — halfway between the two was 1.2019 (2.23 m), then
+    // The owner asked for 10-15% taller still: 1.2019 * 1.125 = 1.3521, height
     // 2.51 m. She was normalised to Jake's rig height
     // (v9_export.TARGET_HEIGHT), so this is where she gets her own stature
     // back, per the app scale, not the GLB.
@@ -263,7 +263,7 @@ export const AVATAR_ASSETS: Record<Exclude<TeacherAvatar, "custom">, AvatarConfi
       sourceUrl: "https://sketchfab.com/3d-models/free-stylized-cartoon-girl-rigged-character-dcaa822909ae4e04ad7eb85bc371a8c4",
       ...CANINO3D,
     },
-    // Lavender (Hmz, V8.3d sheet A2): swatch #C3B1E1, solved the same way (renders #C6B3E1, dE00 0.9).
+    // Lavender (the owner, V8.3d sheet A2): swatch #C3B1E1, solved the same way (renders #C6B3E1, dE00 0.9).
     outfit: { material: "lambert7.003", color: "#AA89E5" },
   },
 };

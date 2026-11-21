@@ -57,7 +57,7 @@ const CLIPS = ["Idle", "Talking", "Thinking", "Pointing", "PointNear"] as const;
  * Overlay gestures to review in motion (V9.6), with the mask each plays under.
  * Played the way Teacher.tsx plays an overlay: a masked copy of the pack clip
  * over the base, weighted by the director's own fade and dominance curve. The
- * V9.6 clips are not in the manifest until Hmz approves them; the last three
+ * V9.6 clips are not in the manifest until the owner approves them; the last three
  * are shipped overlays, for comparison.
  */
 const GESTURES = [
@@ -84,7 +84,7 @@ const GESTURES = [
 type GestureName = (typeof GESTURES)[number]["name"];
 interface GestureCue { name: GestureName; id: number; loop: boolean; speed: number }
 
-/** Playback rates to try; the one Hmz picks becomes the clip's `timeWarp`. */
+/** Playback rates to try; the one the owner picks becomes the clip's `timeWarp`. */
 const SPEEDS = [1, 0.85, 0.75, 0.65] as const;
 
 /** Where the generated 3D model appears in the classroom (Experience.tsx SCENE_X/Y/Z). */

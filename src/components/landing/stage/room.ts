@@ -126,7 +126,7 @@ export const ROOM_PRESENT_TIP: Record<LandingTeacher, V3> = {
 
 /**
  * The brain's model (the lesson's own demo_model_url, resized for the landing as the heart is), placed from that
- * fingertip (Hmz's second hard requirement). The GLB is centred, +-0.497 x 0.454 x 0.5 local, its back (the
+ * fingertip (the owner's second hard requirement). The GLB is centred, +-0.497 x 0.454 x 0.5 local, its back (the
  * cerebellum) at -z. A brain has no foot to offer it from (the volcano's base was): it floats beside the open hand, its
  * middle a little above the fingertip, where it is widest, its near side `gap` past the fingertip. `half` is its
  * surface's reach to that side at that height, in any of its turns (read from the bones and the mesh: room-peaks.cjs).

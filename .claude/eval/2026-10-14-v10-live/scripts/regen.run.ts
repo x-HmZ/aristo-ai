@@ -1,4 +1,4 @@
-// Regenerates widgets from their saved specs with the current generator prompt (approved by Hmz 2026-10-15:
+// Regenerates widgets from their saved specs with the current generator prompt (approved by the owner 2026-10-15:
 // if/elif and probability, to check the "show only what really happens" and "say each thing once" rules).
 // Anthropic only; usage captured in-process. Writes <slug>-v2/widget.json beside the originals.
 // Usage: yarn vitest run --config .claude/eval/2026-10-14-v10-live/scripts/vitest.regen.config.mts

@@ -1,4 +1,4 @@
-// Does Jake stay inside his box through every gesture? (Hmz: his right side went out of bounds.) For each spot, the
+// Does Jake stay inside his box through every gesture? (the owner: his right side went out of bounds.) For each spot, the
 // page loads with `?probe&wide=M`: the canvas layer reaches M of the box's width past each side and M of its height
 // above, and the view grows to match, so the box shows exactly what it does live and anything of him that would be
 // cut off is drawn as well. Through the spot's whole timeline (the hero: its arrival wave, the offer on Try a lesson,

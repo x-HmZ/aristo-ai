@@ -1,5 +1,5 @@
 """
-Jake's sleeves from the elbow down (2026-10-14). Hmz: they read as a sweater.
+Jake's sleeves from the elbow down (2026-10-14). The owner: they read as a sweater.
 
 What made them read that way (crops and numbers: .claude/eval/2026-10-14-jake-sleeves/):
 
@@ -42,7 +42,7 @@ OLD = VL.JAKE  # the V8.3d numbers this edit takes back
 
 OPTIONS = {
     # A tailored sleeve: narrower from the elbow down, a cuff that closes round the wrist.
-    # cuff_gap 11 mm (what Hmz picked) let the right wrist through the lower cuff in seven clips once the cuff left
+    # cuff_gap 11 mm (what the owner picked) let the right wrist through the lower cuff in seven clips once the cuff left
     # the hand bone (camera-ray test, up to 5.9 mm); 13 mm clears every frame.
     "tailored": dict(spread=(0.30, 0.95), elbow_take=0.006, cuff_gap=0.013, beta=0.85, detail_kill=0.75),
     # More room: the elbow as shipped, a looser cuff; the same straight line and hard cuff.

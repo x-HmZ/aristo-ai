@@ -1,4 +1,4 @@
-// The /demo widget topic Hmz picked (2026-10-15): "steepness is speed", the idea behind differentiation framed for
+// The /demo widget topic the owner picked (2026-10-15): "steepness is speed", the idea behind differentiation framed for
 // grade 8. One live lesson (interactive flag on for this run only), its widget, the segment images (fal
 // nano-banana-2, "fast" tier) and the desk quiz. Loads only ANTHROPIC_API_KEY and FAL_KEY; usage is captured here,
 // nothing is written to the database. Stops before a call that could take the run past MAX_USD.

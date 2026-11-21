@@ -1,4 +1,4 @@
-// The close's offer (V8.3b, session 3, Hmz): pointing at Try a lesson there gets the hero's palm-up offer towards it.
+// The close's offer (V8.3b, session 3, the owner): pointing at Try a lesson there gets the hero's palm-up offer towards it.
 // After his arrival wave, the button gets a pointerenter; his bones are sampled (`?probe`) and, at the offer's peak
 // (his left fingertip furthest towards the button), the page angle between shoulder-to-fingertip and
 // shoulder-to-button's-centre, with a screenshot. Usage: node close-offer.cjs <outdir> [base] [theme] [width]

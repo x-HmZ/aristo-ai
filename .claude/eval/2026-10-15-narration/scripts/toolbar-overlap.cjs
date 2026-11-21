@@ -1,5 +1,5 @@
 // Under the display: "Open interactive" (and Continue) must sit in the picture toolbar's row, never on top of it
-// (Hmz, 2026-10-15). Steepness on /demo: before the explore segment (widget ready, hidden) and after Hide at the
+// (the owner, 2026-10-15). Steepness on /demo: before the explore segment (widget ready, hidden) and after Hide at the
 // explore pause. Checks every visible button and chip under the screen for overlap, and saves a crop. 0 paid calls.
 // Usage: node toolbar-overlap.cjs [baseUrl=http://localhost:3000] [outDir]
 const path = require("path");

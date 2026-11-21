@@ -1,5 +1,5 @@
 // Regenerates ONLY the steepness widget, from the curated spec (spec-curated.json: the lesson's own worked example
-// plus a curved stretch for the tangent line). Approved by Hmz 2026-10-15; one Anthropic call. Writes widget-v2.json.
+// plus a curved stretch for the tangent line). Approved by the owner 2026-10-15; one Anthropic call. Writes widget-v2.json.
 // Usage: yarn vitest run --config .claude/eval/2026-10-15-steepness/scripts/vitest.widget.config.mts
 import fs from "node:fs";
 import path from "node:path";

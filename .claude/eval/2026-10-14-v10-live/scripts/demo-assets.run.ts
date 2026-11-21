@@ -1,4 +1,4 @@
-// /demo assets for the frozen python-for-range topic (approved by Hmz 2026-10-14): its two segment images
+// /demo assets for the frozen python-for-range topic (approved by the owner 2026-10-14): its two segment images
 // (fal nano-banana-2, "fast" tier, 0.08 USD each) and its desk quiz (one assessment-agent call).
 // Loads only FAL_KEY and ANTHROPIC_API_KEY; usage and Supabase persistence are stubbed, nothing touches the DB.
 // Writes public/demo/python-for-range/<seg>.png and demo-assets.json (image paths, quiz, cost).

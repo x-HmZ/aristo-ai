@@ -6,7 +6,7 @@
  * The camera never moves: it is the classroom's lesson camera (AristoCanvas: [0, 0, 0.9], looking straight down -z),
  * and Jake stands where the classroom puts him (Experience: [-1, -1.7, -3], turned 0.3). A spot only chooses which
  * rectangle of that view fills its box, as an off-axis frustum. So his proportions, the perspective and the light
- * are exactly the lesson's, at any box size (Hmz's first hard requirement, plan round 3).
+ * are exactly the lesson's, at any box size (the owner's first hard requirement, plan round 3).
  *
  * Pure: no DOM, no three.js. Unit-tested.
  */
@@ -111,7 +111,7 @@ const n = (v: number) => +v.toFixed(4);
 
 /**
  * Where a spot's still goes in its box, as CSS for `.landing-still-<id>`, so the still and the live canvas show every
- * world point at the same place in a box of any size: the poster and the first live frame are the same picture (Hmz).
+ * world point at the same place in a box of any size: the poster and the first live frame are the same picture (the owner).
  *
  * The still is the spot's view captured at CAPTURE_ASPECT; the canvas shows frustumFor(box aspect). Both are crops of
  * one view from one eye, so one is the other scaled and moved. In a box at least as wide as `need`, the vertical

@@ -2,7 +2,7 @@
  * V8.3c: a 3D model worth turning, through the product's own pipeline (banana.ts), so the result is real output and
  * the spend lands in usage_events like any production generation (the regen-demo-3d.ts pattern).
  *
- * Budget: Hmz allowed $2.00; this script refuses any call that would take the ledger past $1.80. Prices are fal's own
+ * Budget: The owner allowed $2.00; this script refuses any call that would take the ledger past $1.80. Prices are fal's own
  * (GET /v1/models/pricing, read 2026-10-03): FLUX Schnell $0.003 per megapixel ("square" is 512 x 512, so about
  * $0.0008, booked as $0.003), Tripo3D v2.5 $0.01 per credit (standard texture + PBR = 30 credits, $0.30).
  *

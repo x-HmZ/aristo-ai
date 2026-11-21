@@ -1,4 +1,4 @@
-// V10 live test (approved by Hmz 2026-10-14): six topics through generateLesson, and generateInteractive wherever the
+// V10 live test (approved by the owner 2026-10-14): six topics through generateLesson, and generateInteractive wherever the
 // lesson asked for a widget. Anthropic only: only ANTHROPIC_API_KEY is loaded from .env.local (no FAL_KEY, no
 // ElevenLabs), the interactive flag is switched on for this process only, and usage is captured here instead of being
 // written to usage_events. A hard budget stops the run before a call that could take it past MAX_USD.

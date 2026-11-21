@@ -26,7 +26,7 @@ w.js = swap(w.js, `    ctx.stroke();
 w.markup = swap(w.markup, `Steepness of segment 2 <span class="value" id="steepv">0</span> m/s</label>`, `Steepness of segment 2 <span><span class="value" id="steepv">0</span> m/s</span></label>`);
 w.markup = swap(w.markup, `Time position <span class="value" id="tposv">0</span> s</label>`, `Time position <span><span class="value" id="tposv">0</span> s</span></label>`);
 
-// The trip, matched to the lesson's worked example (Hmz, 2026-10-15): segment 3 is the straight 7 to 9 s at 10 m/s
+// The trip, matched to the lesson's worked example (the owner, 2026-10-15): segment 3 is the straight 7 to 9 s at 10 m/s
 // the narration walks through (20 m to 40 m past segment 2), and the curve the tangent needs comes after it,
 // 9 to 12 s, the runner speeding up from 10 to 20 m/s (the challenge's "curve bending steeply upward"). Axes to 12 s
 // and 120 m, which holds the steepest case (segment 2 at 10 m/s ends at 115 m).
