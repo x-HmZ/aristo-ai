@@ -2,6 +2,27 @@
 
 _Update this at the end of every significant session: done / next / blockers, compact._
 
+## 2026-11-21 - Collaborator onboarding (branch `docs/collaborator-onboarding`, PR into deploy-prep, not merged)
+
+- **Done:** every tracked doc under `CLAUDE.md`, `.claude/` (docs, plans, launch, research), `docs/` and `LICENSES.md`
+  rewritten in a team-neutral voice ("the owner", "the team"); no personal paths, emails, personal tooling or
+  immigration details; payments only "sandbox-only behind an off flag". New `CONTRIBUTING.md` (setup, env, running
+  without paid keys, paid-API rule, `/learn` constraint, MCP servers, PR flow); `.env.example` lists every variable the
+  code reads, marked required/optional/paid/auto; shared `.claude/settings.json` (yarn, read-only git/gh allowed;
+  `.env.local` reads and pushes to deploy-prep denied); LICENSES.md rows for the landing heart, volcano picture, column
+  SVGs and current landing stills. The 2026-11-21 provider research (`.claude/research/`) is committed.
+- **Fixed on the way:** `src/lib/interactive/interactive.test.ts` failed on every Windows checkout (CRLF in
+  `globals.css`); now normalised, test-only. CI on Linux was never affected.
+- **Verified:** a fresh clone with dummy `.env.local` runs `yarn install`, `yarn test` (75 files, 1063 tests),
+  `yarn lint`, `yarn type-check`, `yarn build`; `yarn dev` serves `/`, `/demo`, `/sign-in`, `/dev/*` with no real key.
+- **Needs real keys:** sign-in, `/learn`, `/admin` and any lesson (Supabase + Anthropic); speech (ElevenLabs);
+  generated images/3D (fal); RAG (OpenAI). There is one Supabase project and it is production.
+- **Open for the owner:** merge the PR; decide on removing large tracked `.claude/eval/*` folders (list in the PR);
+  `deploy-prep` has no branch protection (a collaborator with write access can push to production); the repo is
+  public, so personal content removed here is still in git history; code comments in `src/` and `scripts/` still use
+  the old nickname, and six scripts hardcode a local absolute path (`scripts/generate-demo-*`, `regen-demo-3d.ts`,
+  `eval-3d-models.ts`, `eval-multiview-3d.mjs`).
+
 ## 2026-11-21 - fal.ai to Higgsfield: researched, DECIDED TO STAY ON fal (no code changed)
 
 - Owner decision: keep fal.ai (Nano Banana Pro/2, FLUX Schnell, Tripo3D). Quality is not to be compromised for cost.
