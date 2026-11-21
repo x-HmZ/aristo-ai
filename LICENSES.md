@@ -45,7 +45,7 @@ the use Mixamo's terms describe, but nobody has confirmed that reading with Adob
 
 | Clips | Author | Licence | Source | Modified |
 |---|---|---|---|---|
-| `PresentModel`, `Almost`, `Exactly`, `WellDone`, `Encourage`, `ThatsIt`, `GlanceBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source. **Not Mixamo-derived**: the keys are written by hand from poses (`.claude/eval/2026-09-18-v9-bakeoff/scripts/v9_gesture.py`), not retargeted from any captured or purchased motion | Authored 2026-09-24 | Not applicable. They play on the CC BY 4.0 characters above and are packed inside the same GLB files, so the file as a whole stays under the attribution requirement of its character |
+| `PresentModel`, `Almost`, `Exactly`, `WellDone`, `Encourage`, `ThatsIt`, `GlanceBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (the owner, keyed in Blender with Claude's help) | Aristo's own work; no third-party source. **Not Mixamo-derived**: the keys are written by hand from poses (`.claude/eval/2026-09-18-v9-bakeoff/scripts/v9_gesture.py`), not retargeted from any captured or purchased motion | Authored 2026-09-24 | Not applicable. They play on the CC BY 4.0 characters above and are packed inside the same GLB files, so the file as a whole stays under the attribution requirement of its character |
 
 The two clips tried and rejected in the same session (`LookAgain`, `LookAgainHand`) were never shipped.
 
@@ -53,17 +53,17 @@ The two clips tried and rejected in the same session (`LookAgain`, `LookAgainHan
 
 | Clips | Author | Licence | Source | Modified |
 |---|---|---|---|---|
-| `Imagine`, `HoldIdea`, `StepBeat`, `MoveOn`, `YourTurn`, `BringTogether` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6 clips above | Authored 2026-09-27 | Not applicable, as the V9.6 row above. `Imagine`, `MoveOn` and `YourTurn` each replace a rejected alternate concept, kept as `V97_NOT_SHIPPED` specs, never exported |
+| `Imagine`, `HoldIdea`, `StepBeat`, `MoveOn`, `YourTurn`, `BringTogether` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (the owner, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6 clips above | Authored 2026-09-27 | Not applicable, as the V9.6 row above. `Imagine`, `MoveOn` and `YourTurn` each replace a rejected alternate concept, kept as `V97_NOT_SHIPPED` specs, never exported |
 
 The six V9.6 hand-keyed clips above were also re-exported this session with the same finger life (cascade, stagger,
-drift, wrist lag) the six V9.7 clips use, replacing their previously flatter hands; Hmz approved both sets in motion.
+drift, wrist lag) the six V9.7 clips use, replacing their previously flatter hands; the owner approved both sets in motion.
 That is a re-bake of existing clips, not a new authored work, so it does not add a row.
 
 ## Authored animation clips (Aristo's own, V9.8)
 
 | Clips | Author | Licence | Source | Modified |
 |---|---|---|---|---|
-| `OneMoment`, `PointNear`, `PatientTilt`, `BackToBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (Hmz, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6/V9.7 clips above | Authored 2026-09-27 | Not applicable, as the rows above. `OverToYou` (row 18 of the catalogue) was rejected after three rounds and dropped; its two rejected concepts are kept as `OVER_TO_YOU_R2` and `OVER_TO_YOU` in `V98_NOT_SHIPPED`, never exported |
+| `OneMoment`, `PointNear`, `PatientTilt`, `BackToBoard` inside `Teacher_Jake_clips.glb` and `Teacher_MJ_clips.glb` | Aristo (the owner, keyed in Blender with Claude's help) | Aristo's own work; no third-party source, same tool and process as the V9.6/V9.7 clips above | Authored 2026-09-27 | Not applicable, as the rows above. `OverToYou` (row 18 of the catalogue) was rejected after three rounds and dropped; its two rejected concepts are kept as `OVER_TO_YOU_R2` and `OVER_TO_YOU` in `V98_NOT_SHIPPED`, never exported |
 
 Also this session: `Pointing`'s hand fixed in the base GLBs (the other fingers folded, index straightened; it had been
 bent back 9deg and splayed 12.5deg) -- a fix to an existing Mixamo-derived clip's keys, not a new authored work, so it
@@ -76,14 +76,14 @@ does not add a row. `scripts/v9_gesture.py` gained `digits`, `on`/`passes`, `fit
 |---|---|---|---|
 | `Teacher_Marcus.glb`, `Teacher_Priya.glb` | Avatars generated with Avaturn's editor | Avaturn's terms of service; the page at avaturn.me/terms returned 404, so the wording is **unverified** | Archived. Marcus is the source of the shared Avaturn rig and of custom teachers |
 | `animations_Avaturn.glb` | Mixamo clips retargeted to the Avaturn rig | See "Animation clips" | Used by custom teachers |
-| `Teacher_Ryan.glb`, `animations_Ryan.glb`, `Teacher_Sonia.glb`, `animations_Sonia.glb` | V1 (2024) characters | Open-source models from a YouTuber's tutorial (Hmz, 2026-09-23; the V1 app followed the Wawa Sensei "AI teacher" tutorial). **Not recorded:** the creator's name, the exact licence and a source URL | Archived. Fill in the licence and URL when known |
+| `Teacher_Ryan.glb`, `animations_Ryan.glb`, `Teacher_Sonia.glb`, `animations_Sonia.glb` | V1 (2024) characters | Open-source models from a YouTuber's tutorial (per the owner, 2026-09-23; the V1 app followed the Wawa Sensei "AI teacher" tutorial). **Not recorded:** the creator's name, the exact licence and a source URL | Archived. Fill in the licence and URL when known |
 | `dev_placeholder.glb` | Stand-in model for `/dev/free-model` | It renders as the yellow duck on `/dev/free-model` (seen on screen), and its generator (COLLADA2GLTF) matches the Khronos glTF sample "Duck", which is under the **SCEA Shared Source License 1.0** (Sony Computer Entertainment, 2006, per the Khronos repository). A byte-for-byte match was not checked | Dev only. The page 404s in production, but the file is still copied into `public/` and so is served. See Open items |
 
 ## Classroom
 
 | File | Source | Licence |
 |---|---|---|
-| `public/models/classroom_default.glb`, `classroom_alternative.glb` | Open-source model from a YouTuber's tutorial (Hmz, 2026-09-23), added in the "AI Module" commit of 2024-05-04. Compressed by Aristo (Draco, WebP) in 2026. **Not recorded:** creator, exact licence, source URL | Open source per Hmz; the exact licence is **unrecorded** |
+| `public/models/classroom_default.glb`, `classroom_alternative.glb` | Open-source model from a YouTuber's tutorial (per the owner, 2026-09-23), added in the "AI Module" commit of 2024-05-04. Compressed by Aristo (Draco, WebP) in 2026. **Not recorded:** creator, exact licence, source URL | Open source per the owner; the exact licence is **unrecorded** |
 | `public/models/classroom_default.glb` since V8.5 (2026-09-27) | **Modified by Aristo** (`scripts/room/build_studio_room.py`). The geometry is the original's, with the lockers, wall clock, cork boards and chalk tray deleted. The materials, palette and baked lighting are Aristo's own. **No third-party assets were added** (no Poly Haven, Sketchfab or generated geometry) | The original's licence still governs the geometry, and it is **unrecorded**. It now also has to allow modification (an "ND" licence would not). See Open items |
 | `public/models/classroom_alternative.glb` since V8.5 (2026-09-28), the "Evening" room | **Rebuilt by Aristo** from the same original classroom's shell (`build_studio_room.py --variant evening`). The previous alternative room (an anime-style classroom from the same V1 tutorial source) is **no longer shipped**. The room shell is the original's, with every desk but the learner's removed and a new flat floor, a rug and pendant cords (Aristo's own, scripted). It also contains the four Poly Haven models below, all baked into one texture | The original classroom's licence for the shell (**unrecorded**, as above). The Poly Haven models are CC0 |
 
@@ -103,10 +103,10 @@ credit; the authors are listed as a courtesy.
 
 | Files | Made with | Licence |
 |---|---|---|
-| `<slug>/model.glb` (heart; the volcano's was removed in V8.3c) | Generated by Tripo3D v2.5 through fal.ai from a FLUX Schnell image, Draco-compressed by Aristo | fal output, commercial use permitted (see "fal.ai output terms" below) |
+| `<slug>/model.glb` (heart; the volcano's was removed in V8.3c), `public/landing/heart.glb` (V8.3) | Generated by Tripo3D v2.5 through fal.ai from a FLUX Schnell image, Draco-compressed by Aristo; the landing copy is the same model with 1024px textures, simplified to 100k triangles (`decisions.md`, "The landing's heart is a resized copy") | fal output, commercial use permitted (see "fal.ai output terms" below) |
 | `heart/source.jpg` | FLUX Schnell through fal.ai (`.claude/eval/2026-09-09-pipeline/README.md`) | fal output, commercial use permitted (below) |
 | `heart/teaching.jpg` | Nano Banana Pro (per the same README) | fal output, commercial use permitted (below) |
-| `volcano-eruption/seg_*.png` | The app's own image generator, run by `scripts/generate-demo-content.ts` | **Unverified**: which model and terms were not recorded |
+| `volcano-eruption/seg_*.png`, `public/landing/volcano-picture.webp` (seg_008 resized for the landing, `src/components/landing/stage/scripts.ts`) | The app's own image generator, run by `scripts/generate-demo-content.ts` | **Unverified**: which model and terms were not recorded |
 | `<slug>/seg_*.mp3`, `*.align.json`, `audio.json` | ElevenLabs text-to-speech: all four topics re-rendered 2026-10-15 in Jake's placeholder voice (`bIHbv24MWmeRgasZH58o`, `eleven_turbo_v2_5`, `/with-timestamps`; log in `.claude/eval/2026-10-15-narration/render.log`) | Rendered on the **free** ElevenLabs plan: attribution required, not for commercial use. Re-render on a paid plan before launch (`ELEVENLABS_PLAN=paid`, Mike). The portfolio clips are muted |
 | `brain/model.glb`, `public/landing/brain.glb` (V8.3c) | Tripo3D v2.5 through fal.ai from a FLUX Schnell image, run by the V8.3c eval (`.claude/eval/2026-10-03-v8-3c-landing/scripts/volcano-model.ts`, ledger there); resized, simplified (landing copy), WebP textures and Draco by Aristo | fal output, commercial use permitted (below) |
 | `brain/seg_004.png`, `public/landing/brain-picture.webp` (V8.3c) | Nano Banana Pro through the app's own generator, run by `scripts/generate-demo-brain.ts` | fal output, commercial use permitted (below) |
@@ -132,7 +132,9 @@ none restricts showing the output. So the demo pictures and models may be shown 
 |---|---|---|---|---|---|
 | `public/brand/aristo-wordmark-*.svg`, `src/components/brand/markPaths.ts`, `ogPaths.ts` | Letter shapes A, R, S, T, O and the OG image's words, as vector outlines | Omnibus-Type, "Archivo" (https://fonts.google.com/specimen/Archivo) | SIL Open Font License 1.1, which allows use and modification, including embedding outlines, with the name "Archivo" not used for a modified font | The same Archivo file next/font already serves on the landing page | Yes: instanced at wdth 112 / wght 600 (wordmark) and wdth 125 / wght 800 (OG headline), kerned, joined with the Aristo column, and converted to paths by `scripts/brand/build-mark.mjs` |
 
-The column itself is Aristo's own drawing. No font file is embedded in the mark or the OG image.
+The column itself is Aristo's own drawing: `public/brand/aristo-column-{dark,light}.svg` and the 16px-grid
+`public/brand/aristo-column-16-{dark,light}.svg` are drawn from rectangles by `scripts/brand/build-mark.mjs`, with no
+font involved. No font file is embedded in the mark or the OG image.
 
 | File | Work | Licence and open item |
 |---|---|---|
@@ -143,16 +145,16 @@ The column itself is Aristo's own drawing. No font file is embedded in the mark 
 | Files | Source | Licence |
 |---|---|---|
 | `public/draco/*` | Google's Draco decoder, copied from three.js (`three/examples/jsm/libs/draco/gltf`) | Apache 2.0 (Draco); verified from the upstream project, not re-read from the copy |
-| `public/images/landing/*.webp` | Aristo's own screenshots of the product (with the Marcus teacher) | Aristo's own. They show an Avaturn avatar, see the Marcus row |
+| `public/images/landing/v3/idea.webp`, `public/images/landing/v3b/*.webp`, `public/images/landing/v3b/mj/*.webp` | Aristo's own renders of the product (landing posters and lite stills, captured from the landing stage), with Jake (`v3b/`) and MJ (`v3b/mj/`) | Aristo's own renders. They show Jake or MJ (Canino3d, CC BY 4.0: the credit is on the page via `AvatarCredit`) and may show the demo's generated models and pictures (fal output, commercial use permitted: see "fal.ai output terms") |
 | `public/next.svg`, `public/vercel.svg` | Next.js starter template | Vercel's starter, MIT-licensed project; unused |
 
 ## Open items
 
-1. **Ryan, Sonia and the classroom GLBs**: open source from a YouTuber, per Hmz. Add the creator's name, the
+1. **Ryan, Sonia and the classroom GLBs**: open source from a YouTuber, per the owner. Add the creator's name, the
    exact licence and the URL to the rows above. The classroom is on screen in every lesson, so it matters most. Since
    V8.5 the default room is a modified version, so also confirm that the licence allows derivatives.
 3. **`dev_placeholder.glb`**: the Khronos/Sony Duck, under a licence that is not a plain open licence.
    It is dev-only; the cleanest fix is to drop it from `public/` or swap it for a CC0 model.
-4. **Mixamo, Avaturn and ElevenLabs terms**: Hmz has read them (2026-09-23), but the fetch tool could not, so the
+4. **Mixamo, Avaturn and ElevenLabs terms**: the owner has read them (2026-09-23), but the fetch tool could not, so the
    wording is not pasted here. fal.ai and Tripo3D are settled (2026-10-16, "fal.ai output terms" above); the
    ElevenLabs plan and date are in the narration rows.
