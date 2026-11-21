@@ -63,7 +63,7 @@ Relevant code: `src/lib/imagegen/banana.ts` (all three generators + cache helper
       `generated_assets` returns `200 []` rather than `PGRST205 relation not found`.
       Note: `concept_id` is `VARCHAR(100)` (FK to `concepts.id`), not `uuid` as sketched
       above — `concepts.id` is `VARCHAR(100)` per `005_reset_and_graph.sql`.
-- [x] Bucket created — **decision recorded: PUBLIC** (confirmed by Hmz, 2026-09-09).
+- [x] Bucket created — **decision recorded: PUBLIC** (confirmed by the owner, 2026-09-09).
       `generated-assets`, public, 20 MB file size limit, created live via the Storage Admin
       API. Rationale: the assets are generated educational images with no learner data;
       paths are content-addressed (`{kind}/{sha256-24}.{ext}`) so they are unguessable;

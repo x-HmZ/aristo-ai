@@ -11,7 +11,7 @@ fresh session can pick up one sub-task, read this file plus `CLAUDE.md`, and exe
 ## The goal
 
 Aristo should look and feel like a brand about **the future of teaching**, across the whole
-product, not only the landing page. Hmz has approved a **complete visual redesign** to get
+product, not only the landing page. The owner has approved a **complete visual redesign** to get
 there, with one hard boundary: **no change to underlying functionality**. APIs, agents, the
 lesson schema, store shape, BKT/FSRS, auth and the approval gate are untouched. Everything in
 this plan is presentation: layout, visual design, copy, motion, 3D art direction and brand.
@@ -53,7 +53,7 @@ no fabricated proof.
 ## Guardrails for every V8 sub-task
 
 - **No functional change.** If a task seems to need one (new store field, new API, lesson
-  schema change), stop and ask Hmz. Diffs in `src/lib/`, `src/app/api/`, `src/hooks/` and
+  schema change), stop and ask the owner. Diffs in `src/lib/`, `src/app/api/`, `src/hooks/` and
   `src/store/` should be empty unless a sub-task explicitly allows a presentational helper.
 - **`CLAUDE.md` constraints stand:** `/learn` stays in the Pages Router; three / R3F / drei
   versions are pinned; model IDs only in `src/lib/agents/models.ts`; yarn only.
@@ -61,7 +61,7 @@ no fabricated proof.
   import on `/`.
 - **Honesty:** no testimonials, user counts, logos or statistics that are not real. Anything
   illustrative is labelled as an example. The Bloom idea is cited as an idea, not a number.
-- **Spend:** $0 by default. No fal generations without Hmz's explicit go-ahead (he prefers
+- **Spend:** $0 by default. No fal generations without the owner's explicit go-ahead (the owner prefers
   desk research over test generations). ElevenLabs has roughly 2,879 credits left: reuse the
   pre-rendered demo audio in `public/demo/*`; do not generate new narration for marketing.
 - **Accessibility:** WCAG AA on every text/background pair (record ratios), 44px targets,
@@ -100,7 +100,7 @@ brand. Full wave table in `V8-V9-estimates-models-tooling.md`.
 
 **Model:** Opus 5 start to finish (`/model opus`). Taste work: judgement per token is what matters and there is no code to write. Do NOT use Fable here; it is priced for hard reasoning, not taste, and thinks longer for no gain.
 
-**Goal:** settle the big creative decisions visually with Hmz before anything is built.
+**Goal:** settle the big creative decisions visually with the owner before anything is built.
 **Run this together with V9.0** (the teacher's look): they are one decision, and the teacher
 is the brand's main asset. Confirm the $0 animation strategy from V9 in the same session.
 
@@ -118,19 +118,19 @@ Load the `design-taste-frontend` and `design` skills. Produce one canvas with pa
 4. **Classroom UI** (the lesson panel over the 3D scene): 2 directions, e.g. "caption-first
    dark glass" vs. "docked transcript rail". Hi-fi enough to judge the feel.
 5. **Casing and type**: keep Archivo wide capitals for the hero and closing line only, and
-   mixed case for section headings. Show both on the same headings so Hmz can compare.
+   mixed case for section headings. Show both on the same headings so the owner can compare.
 
-Close with Hmz's picks recorded in `.claude/docs/decisions.md`. Keep option names stable
+Close with the owner's picks recorded in `.claude/docs/decisions.md`. Keep option names stable
 across turns. No code changes in this sub-task.
 
-**Acceptance:** Hmz has chosen a positioning line, a mark direction, a narrative layout, a
+**Acceptance:** the owner has chosen a positioning line, a mark direction, a narrative layout, a
 classroom UI direction and the casing rule; all recorded.
 
 ## V8.0b — The name (decide before anything carries it)
 
 **Model:** Opus 5 for candidates and judgement; Sonnet 5 for the screening legwork.
 
-**Why now.** Hmz opened this on 2026-09-12: "Aristo" is crowded, with several unrelated
+**Why now.** The owner opened this on 2026-09-12: "Aristo" is crowded, with several unrelated
 products already using it. The name is the single most expensive thing to change late, because
 it is stamped into the mark, the copy, the domain, the screenshots and the deployed URL. Decide
 it in wave 1, before V8.1 draws a mark and writes copy around it.
@@ -147,10 +147,10 @@ distinctive. Changing costs a sweep; keeping costs discoverability. Put both on 
    and a quick free trademark look in the classes that matter (roughly class 9 for software,
    class 41 for education services) on the USPTO and EUIPO public search pages. **This is a
    screen, not legal advice:** anything that survives should get a professional clearance
-   search before Hmz files or prints anything.
+   search before anything is filed or printed.
 3. **Shortlist 5** and set each as a real wordmark, in the chosen display face, next to the
    mark explorations from V8.1, on the canvas. A name has to be judged set, not in a list.
-4. **Hmz picks**, and the decision is recorded in `decisions.md` with the runners-up and why.
+4. **The owner picks**, and the decision is recorded in `decisions.md` with the runners-up and why.
 
 **If the name changes, the rename splits in two:**
 
@@ -181,7 +181,7 @@ user-visible list above has an owner and lands inside V8.1.
    description, three brand pillars, voice rules (assertive, specific, warm; no negations as
    headlines; no filler verbs; no em-dashes in rendered copy), words to avoid, and the honesty
    rules above. Use the `brand-voice` skill from the reference library if it helps
-   (`C:\Users\Pc\Desktop\Empire\CLAUDE SETUP\everything-claude-code\skills\brand-voice`).
+   (a local skills library kept outside the repo).
 2. Rewrite every rendered string on the landing page to the new voice. Section headlines
    become assertions about the learner.
 3. Fix root metadata in `src/app/layout.tsx`. Today it has an em-dash in the title, says the
@@ -200,7 +200,7 @@ doc exists; every landing string passes the copy self-audit in `design-taste-fro
 
 ## V8.2 — Design system v2 (product-wide)
 
-**Model:** **`/model opusplan`**: Opus plans the token structure and theme migration, Sonnet edits. The risk here is a missed surface, not hard reasoning, so Fable is not worth 2x.
+**Model:** **plan-then-execute**: Opus plans the token structure and theme migration, Sonnet edits. The risk here is a missed surface, not hard reasoning, so Fable is not worth 2x.
 
 **Goal:** one brand system for the whole app, promoted from the landing page's scoped
 `--lp-*` tokens. **Wait until the hex-to-token refactor has merged** (done: branch `dev/v8-tokens`, PR into
@@ -212,7 +212,7 @@ tokens, which is what makes this sub-task a token edit instead of a sweep.
 `--aristo-brown` (#402B1C) are the old tokens and are not the classroom colours; the classroom
 ones are `--aristo-orange-main` and `--aristo-brown-main`. Pick one of each, change the loser's
 value, delete the alias: the visible change then happens once, on purpose. (2) Status and
-data-viz colours (greens, reds, ambers, slates) were left literal for your `success` /
+data-viz colours (greens, reds, ambers, slates) were left literal for the `success` /
 `warning` / `danger` / `info` tokens; see the "not swept" row in decisions.md.
 
 1. Define semantic tokens app-wide in `globals.css` + `tailwind.config.js`: `bg`, `surface`,
@@ -231,7 +231,7 @@ data-viz colours (greens, reds, ambers, slates) were left literal for your `succ
    caption / mono) as CSS variables and Tailwind utilities.
 5. Write `.claude/docs/brand-system.md` (supersedes `landing-design-system.md`; keep that
    file as a pointer). Follow the structure of the reference DESIGN.md files in
-   `C:\Users\Pc\Desktop\Empire\CLAUDE SETUP\awesome-design-md\design-md\` (overview, colours,
+   a local reference library outside the repo (the awesome-design-md collection: overview, colours,
    typography, layout, elevation, components, responsive).
 
 **Acceptance:** no hex literals left in components except documented 3D-material constants;
@@ -239,9 +239,9 @@ every surface renders correctly in both themes; the brand-system doc exists.
 
 ## V8.3 — Landing v3: the teacher alive, the method as the story
 
-> **Superseded in part (2026-09-18, V8.0 decision).** Hmz chose a live 3D landing: a teacher appears, smiles, greets, then moves through interactive sections, with the five phases as a pinned scroll. The looping hero video and its capture pipeline below are replaced by that. Plan this sub-task in plan mode first: R3F cannot run under App Router, so `/` likely moves to the Pages Router like `/learn`; the 135 kB first-load budget and a poster as LCP still apply. See decisions.md, "Landing concept".
+> **Superseded in part (2026-09-18, V8.0 decision).** The owner chose a live 3D landing: a teacher appears, smiles, greets, then moves through interactive sections, with the five phases as a pinned scroll. The looping hero video and its capture pipeline below are replaced by that. Plan this sub-task in plan mode first: R3F cannot run under App Router, so `/` likely moves to the Pages Router like `/learn`; the 135 kB first-load budget and a poster as LCP still apply. See decisions.md, "Landing concept".
 
-**Model:** **`/model opusplan`**. One exception: if the capture and encoding pipeline fights back for more than a couple of rounds (codec, determinism, LCP), give that sub-problem one scoped **Fable 5.1** session.
+**Model:** **plan-then-execute**. One exception: if the capture and encoding pipeline fights back for more than a couple of rounds (codec, determinism, LCP), give that sub-problem one scoped **Fable 5.1** session.
 
 **Goal:** rebuild `/` around the narrative chosen in V8.0. Structure (adjust to V8.0's
 picks): **Hero → The idea → One lesson, five phases → The map → For parents → Close → Footer.**
@@ -258,7 +258,7 @@ picks): **Hero → The idea → One lesson, five phases → The map → For pare
    - Reduced motion: poster only.
    - **Capture pipeline** (new `scripts/capture-demo-video.mjs`): drive `/demo` headlessly,
      record the R3F canvas via `canvas.captureStream()` + `MediaRecorder`, or CDP screencast
-     frames, then encode with ffmpeg. **ffmpeg is not installed on this machine**; ask Hmz to
+     frames, then encode with ffmpeg. **ffmpeg is not installed on the dev machine**; ask the owner to
      run `winget install Gyan.FFmpeg` first. Make the script deterministic (fixed viewport,
      fixed topic and segment, fixed camera) so V8.7 can re-run it after V9.
 2. **The idea.** One short section carrying the positioning story (Aristotle, one-to-one
@@ -286,7 +286,7 @@ reduced-motion path verified; `design-taste-frontend` pre-flight passes.
 
 ## V8.4 — Classroom UI redesign (`/learn` and `/demo` chrome)
 
-**Model:** **V8.4a `/model opusplan`** (the panel needs a layout decision first). **V8.4b and V8.4c `/model sonnet`**: the design is settled by then and the work is markup. Never Fable; this is the cheapest work to verify by eye.
+**Model:** **V8.4a plan-then-execute** (the panel needs a layout decision first). **V8.4b and V8.4c `/model sonnet`**: the design is settled by then and the work is markup. Never Fable; this is the cheapest work to verify by eye.
 
 **Goal:** the lesson experience looks like the future, not a prototype. Presentation only:
 props, store reads and handlers stay as they are; diffs should be markup and classes.
@@ -333,7 +333,7 @@ life) remain valid later work on top of the new room.
    palette, lighting, remove lockers and wall clock, replace the chalkboard with a large
    display surface). Only if that cannot reach the bar, build a new environment from CC0
    sources (Poly Haven through the Blender MCP), then CC-BY with attribution recorded in
-   `public/models/LICENSES.md`. No paid assets; generated geometry only with Hmz's approval.
+   `public/models/LICENSES.md`. No paid assets; generated geometry only with the owner's approval.
 3. **Budget:** ≤ 2 MB compressed (Draco, as T02 established); draw calls not above today's.
 
 **Acceptance:** before/after renders from every camera framing; all anchors verified with
@@ -350,11 +350,11 @@ Presentation only. Admin (`/admin/*`) gets the token pass from V8.2 and nothing 
 internal.
 
 **Acceptance:** every page in both themes at 360 / 768 / 1280; no flow change (walk sign-up
-→ pending → onboarding → learn with a test account Hmz provides, or review screenshots with him).
+→ pending → onboarding → learn with a test account the owner provides, or review screenshots with them).
 
 ## V8.7 — Re-capture, assets, cleanup (last)
 
-**Model:** **Sonnet 5** for captures; **Haiku 4.5** for dead-code removal once Hmz has confirmed it is dead.
+**Model:** **Sonnet 5** for captures; **Haiku 4.5** for dead-code removal once the owner has confirmed it is dead.
 
 After V8.4, V8.5 and V9 have merged:
 
@@ -362,7 +362,7 @@ After V8.4, V8.5 and V9 have merged:
    `public/images/landing/` on a production build. Clear `.next/cache/images` and use a
    fresh browser profile: on 2026-09-11 a headless capture showed a stale cached image.
 2. Final OG image and social assets from the new captures.
-3. ~~Remove dead legacy components~~ Done in V9.5 (2026-09-23, Hmz confirmed): the old JSX landing
+3. ~~Remove dead legacy components~~ Done in V9.5 (2026-09-23, the owner confirmed): the old JSX landing
    `src/components/{Hero,Navbar,Team,WhyAristo,GuideToAristo,Footer}` and the V1 `Experience.jsx` tree are deleted.
 4. Update `CLAUDE.md` (Vision section), `brand-system.md`, `state.md`, and tick this file.
 
@@ -391,7 +391,7 @@ Per-phase choices are stated above. The rules behind them:
 9. **A session cannot change its own model.** Where a phase says "then switch", the session
    must stop and say so in plain words; the human switches. See `MODEL-SWITCHING.md`.
 8. **Setting the model:** in the desktop app use the model picker; in a terminal session use
-   `/model opus`, `/model sonnet`, `/model haiku`, `/model opusplan`. If no short alias for Fable is offered,
+   `/model opus`, `/model sonnet`, `/model haiku`, or the plan-then-execute option. If no short alias for Fable is offered,
    pick `claude-fable-5-1` from the picker.
 
 ## Status checklist
@@ -400,10 +400,10 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V8.0b name decision: **keep Aristo** (2026-09-18, screen recorded in decisions.md)
 - [x] V8.1 brand foundation (messaging doc, copy, metadata, mark in 3 places) - done 2026-09-28 on `dev/v8-1-brand`. **Step 5, the in-app microcopy sweep, is deferred** (done for the V8.4a files on 2026-09-29; the rest goes with V8.4b/c) (a parallel session, `dev/v8-tokens`, is editing colours across the learn and quiz components): sweep buttons, empty states and loading lines against `.claude/docs/brand/messaging.md` once it merges. Mark is candidate D of four (decisions.md).
 - [x] V8.2 design system v2 (2026-09-29, `dev/v8-2-design-system`): semantic tokens app-wide from the Night Class set, one orange (#F97B2F, `-main` names), `data-theme` app-wide with a light lock on the classroom, admin and create-teacher, `ui/*` and the auth pages on the system, motion and `type-*` scale. `.claude/docs/brand-system.md`. Deviation: classroom and admin hex literals stay, each with an owner (V8.4a/b, V8.6)
-- [x] V8.3 landing v3 (2026-09-30, `dev/v8-3-landing`): replaced by the live scroll story Hmz chose (no hero video). `/` in the Pages Router (127 kB, static, poster LCP), the R3F stage after first paint (the product room and Jake driven through a `Teacher` driver), from a question to a lesson with the real heart outputs (diagram from noise, photo to points to model), five moves with the desk challenge, a real KG snapshot with an example learner beside a memory curve, lite stills and a reduced-motion stack, opt-in pre-rendered sound. Plan `.claude/plans/V8.3-landing-plan.md`; evidence `.claude/eval/2026-09-30-v8-3-landing/`
+- [x] V8.3 landing v3 (2026-09-30, `dev/v8-3-landing`): replaced by the live scroll story the owner chose (no hero video). `/` in the Pages Router (127 kB, static, poster LCP), the R3F stage after first paint (the product room and Jake driven through a `Teacher` driver), from a question to a lesson with the real heart outputs (diagram from noise, photo to points to model), five moves with the desk challenge, a real KG snapshot with an example learner beside a memory curve, lite stills and a reduced-motion stack, opt-in pre-rendered sound. Plan `.claude/plans/V8.3-landing-plan.md`; evidence `.claude/eval/2026-09-30-v8-3-landing/`
 - [x] V8.4a lesson panel and controls (2026-09-29, `dev/v8-4a-lesson-panel`): caption band in ink glass over the scene (`.theme-ink`, top edge at or below 80% of the height, hidden on the desk quiz), phase rail and phase label in one accent, transcript drawer, the panel on the semantic tokens (follows the theme, light under the lock), View in 3D / Show image as the secondary button (Experience.tsx toolbars added to scope), seg N / M dev-only, V8.1 step 5 microcopy for these files. Evidence and cold load in `.claude/eval/2026-09-29-v8-4a/`. Left for V8.4b/c: the quiz, the page shells in LearnClient / DemoClient (incl. the 400px panel overflowing below 440px wide), then deleting the lock
 - [x] V8.4b quiz and answers (2026-09-29, `dev/v8-4b-quiz`): the desk card is paper in the room (`.theme-paper`, light in both themes, box and anchor untouched), QuizView on the tokens and host-agnostic, right and wrong as `success` / `danger` tints with icons and words, Bloom level as one neutral chip with an icon, AnswerInputPanel / InputBox / the CourseFlow bars on the system Button and Input (44px, follow the theme), mic and listening keep their behaviour and honour reduced motion, the desk status strips and DemoResultBar added to scope, V8.1 step 5 microcopy for these files. Evidence in `.claude/eval/2026-09-29-v8-4b/`. Left for V8.4c: `ReviewView`, the page shells, FreeTopicCard, ModePicker, loading, then deleting the lock
 - [x] V8.4c free mode, pickers, loading, the shells (2026-09-30, `dev/v8-4c-shells`): the /learn and /demo top bars as ink-glass pills with a theme toggle, the panel column on the tokens (clamped to the viewport, collapsed to its strip while the quiz is on the desk), the topic and mode pickers on the system scrim, the loading screen, free-mode cards and ReviewView following the theme, AvatarCredit and `.aristo-scroll` off the orange, the last V8.1 step 5 sweep, a pre-paint theme script for the Pages Router (`pages/_document.tsx`), then the lock deleted from `pages/_app.tsx` with no edit to the V8.4a/b files. Onboarding, course map and dashboard stay V8.6 (pinned light). Gap: the desk quiz at 360 portrait is cropped by the camera. Evidence in `.claude/eval/2026-09-29-v8-4c/`
 - [x] V8.5 environment art direction (2026-09-27): the original room restyled and re-baked (`scripts/room/`), with lockers, clock, cork boards and chalk tray gone and the chalkboard now a display. All anchors unchanged, 1.07 MB, fps not lower. Alt room replaced by "Evening", a one-to-one study on the same shell (2026-09-28). Evidence in `.claude/eval/2026-09-27-v8-5-room/`
 - [x] V8.6 app pages (2026-10-06, `dev/v8-6-app-pages`): onboarding, course map, dashboard, /create-teacher and admin on the tokens, /pending and auth audited; mastery as icon + word; modal in-place dialogs; admin drawer below md; the light lock retired. AA 0 failures, 0 sub-44 targets on every surface in both themes at 360 / 768 / 1280. Evidence in `.claude/eval/2026-10-05-v8-6-app-pages/`
-- [x] V8.7 assets and cleanup (2026-10-06, `dev/v8-7-cleanup`): the room's last overlays and the /dev pages onto the tokens, the link-preview image with the room still (Hmz picked the fade), the classroom palette removed (22 tokens, compiled CSS diffed). The capture and legacy-component items were already done (V8.3d, V9.5). **V8 is complete.** Evidence in `.claude/eval/2026-10-06-v8-7/`
+- [x] V8.7 assets and cleanup (2026-10-06, `dev/v8-7-cleanup`): the room's last overlays and the /dev pages onto the tokens, the link-preview image with the room still (the owner picked the fade), the classroom palette removed (22 tokens, compiled CSS diffed). The capture and legacy-component items were already done (V8.3d, V9.5). **V8 is complete.** Evidence in `.claude/eval/2026-10-06-v8-7/`

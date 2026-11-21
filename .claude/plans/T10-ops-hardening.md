@@ -13,7 +13,7 @@ have been done since):
 1. **Resend not wired**: `RESEND_API_KEY` + `ADMIN_NOTIFY_EMAIL` (+ `APP_URL`) env vars not set
    in Vercel; the helper (`src/lib/email/resend.ts`) silently no-ops, so admin never hears about
    new signups.
-2. **Admin bootstrap**: `aitchemmzi@gmail.com` is still `pending` in prod — the promotion SQL is
+2. **Admin bootstrap**: the owner's account is still `pending` in prod — the promotion SQL is
    in `DEPLOY.md` section 2.2 but was never run against Supabase project `thivgkbxgfchhystlyvh`.
 3. **Migration 011** (`custom_teacher`) may not be applied — check `supabase/migrations/` against
    the live DB.

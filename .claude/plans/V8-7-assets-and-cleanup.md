@@ -8,9 +8,9 @@ plan's V8.7 is "re-capture, assets, cleanup". Part of it is already done or moot
 - V8.3d re-shot every landing still into `public/images/landing/v3b/`.
 - Legacy components were removed in V9.5.
 
-What is left, with your answers (2026-10-06):
+What is left, with the owner's answers (2026-10-06):
 - an OG image with words and a room still (variants first);
-- dead code listed for you to confirm, then removed;
+- dead code listed for the owner to confirm, then removed;
 - the /dev pages onto the tokens;
 - plan here, then **switch this session to Sonnet** for the build.
 
@@ -53,7 +53,7 @@ never follows the theme.
 - **Verify:** `/dev/avatar-lab`, `/dev/desk-quiz` and `/dev/free-model` captured in both themes at 1280 (dev tools,
   desktop only), with the AA checker and 0 API calls.
 
-### 3. OG image: words plus a room still (stop for your pick)
+### 3. OG image: words plus a room still (stop for the owner's pick)
 
 - **Source:** `v3b/room.webp` (1600x900, opaque: Jake in the lit room beside the 3D brain). `ImageResponse` cannot read
   webp, so a small script `scripts/brand/og-still.mjs` uses sharp, already a Next dependency, to write a committed JPEG
@@ -63,14 +63,14 @@ never follows the theme.
   - **B, full bleed:** the still across the frame with an ink fade from the left, and the words over the fade.
   - **C, window:** the still as a framed, lit window with the 16px radius and `shadow-e2` on ink, the words beside it
     (the landing's "the classroom is the lit window").
-- **Stop:** I send the variants and you pick. Then I implement the pick.
+- **Stop:** send the variants for the owner to pick. Then implement the pick.
   - `/` and `/demo` already point `og:image` and `twitter:image` at `/opengraph-image`, so no metadata change.
   - The literals stay in the register (rendered outside CSS).
 - **Verify:**
   - `yarn build`, then on `next start` fetch `/opengraph-image`: 1200x630 PNG, a sane size.
   - Text contrast on the still side checked by sampling the rendered pixels under the words.
 
-### 4. Dead code: list, confirm, remove (stop for your confirmation)
+### 4. Dead code: list, confirm, remove (stop for the owner's confirmation)
 
 - **When:** after steps 1 and 2, because they free more tokens.
 - **The list:** `.claude/eval/2026-10-06-v8-7/dead-code.md`, one row per item with its zero-reference proof (the grep
@@ -84,7 +84,7 @@ never follows the theme.
   - `.text-gradient` in `globals.css` (its only user, the onboarding title, went in V8.6).
   - `BRAND_HEX` keys besides `orangeMain`, `purple`, `amber` and `backdrop`, with `brandColors.test.ts` trimmed to match.
   - `public/images/landing/v3/` (one unused `idea.webp`).
-- **Stop:** you confirm. Then everything goes in one commit, verified by build, tests and lint, and a before/after pixel
+- **Stop:** the owner confirms. Then everything goes in one commit, verified by build, tests and lint, and a before/after pixel
   diff of `/` (light and dark, 1280) and /demo, which must be identical.
 
 ### 5. Docs
@@ -101,14 +101,14 @@ never follows the theme.
 ## Order and stops
 
 1. Steps 1 and 2 (build, about an hour).
-2. **Stop A:** the OG variants for your pick.
+2. **Stop A:** the OG variants for the owner's pick.
 3. Step 3 implemented.
 4. **Stop B:** the dead-code list for your confirmation.
 5. Step 4.
 6. Docs.
-7. PR into deploy-prep; merge once CI passes and you have seen the OG sheet.
+7. PR into deploy-prep; merge once CI passes and the owner has seen the OG sheet.
 
-The model switch happens after this plan is approved: I stop and you switch this session to Sonnet.
+The model switch happens after this plan is approved: stop there and switch the session to Sonnet.
 
 ## Verification (whole step)
 

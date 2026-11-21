@@ -3,7 +3,7 @@
 **Model:** sonnet | **Tier:** VISION | **Depends on:** T10 (Resend must be wired)
 **Product thesis:** The student is the user; the PARENT is the customer. Today parents have
 zero visibility, so there is nothing to justify paying when the approval gate becomes a
-paywall. A weekly email — "what Hamza learned, where he's strong, what he's practicing" —
+paywall. A weekly email — "what <student> learned, where they're strong, what they're practicing" —
 is the cheapest possible feature that creates willingness-to-pay, and every ingredient
 (analytics route, mastery tables, Resend helper) already exists.
 

@@ -4,7 +4,7 @@
 
 ---
 
-## What I'm building
+## What is being built
 
 **Aristo AI** is an immersive AI tutoring web app for middle-school students (grades 6–8). A 3D avatar teacher lives in a real-time scene; when teaching a tangible topic (an organ, a planet, a molecule, a machine), a generated 3D model appears in the scene next to the avatar and the teacher narrates and annotates it. The student progresses through structured 5-phase lessons, takes quizzes, and the system tracks mastery per concept with spaced repetition.
 
@@ -99,7 +99,7 @@ For each, produce a high-fidelity component / page mockup. **Treat each as a rea
 - Brand mark + tagline
 - Email + password fields, Google OAuth button, link between sign-in and sign-up
 
-## Components I want explicit designs for
+## Components that need explicit designs
 
 - The **5-phase lesson card** (one design per phase — they share a frame but each phase has a unique micro-visual: Activate = bridge motif, Explain = analogy/formal split, Demonstrate = worked example with optional code, Challenge = question + hint reveal, Connect = forward arrow to next concept)
 - The **floating top nav pill** (default state, with reviews-due chip, with course map button)
@@ -125,7 +125,7 @@ For each, produce a high-fidelity component / page mockup. **Treat each as a rea
 - Khan Academy's pedagogical seriousness, but more visually alive
 - The way Duolingo handles encouragement — without the cartoon noise
 
-## Output I want
+## Expected output
 
 1. A short design rationale (one paragraph: how the system holds together)
 2. A typography + colour token sheet (Tailwind-ready)

@@ -35,13 +35,13 @@ MPFB packs used (all CC0, no CC-BY): system assets, visemes02, faceunits01, skin
 - **Quaternius free tier is not viable as-is:** it contains only the Superhero bodies, in underwear, with no clothes and no face shapes. Teen/Regular bodies are in the $19.99 Source tier. Dropped unless the budget changes.
 - Two shader bugs to remember for export: MPFB eyes have an outer cornea layer that is only transparent via texture alpha; the Rocketbox opacity material wires alpha from colour instead of alpha.
 
-## Round 1 decisions (Hmz, 2026-09-19)
+## Round 1 decisions (the owner, 2026-09-19)
 
 - **L2 = Rocketbox** (F17/M12 liked; final casting open). MPFB L2 not pursued.
 - **L3-a (MPFB + cel shading) rejected.** Replacement search:
   - VRoid CC0 samples are anime (schoolgirls, an elf). Out: childish.
   - Quaternius Modular Men/Women are low-poly with dot eyes and no mouth, so they can't lip-sync. Out.
-  - Sketchfab (public search API, 166 hits triaged): proposed the **Canino3d set**. Stylised woman `dcaa8229`, man `a69c8962`, young man `92b4b22d`. CC-BY 4.0, rigged, "100+ face blendshapes" (viseme coverage unverified), 57-105k tris (needs decimation). Download needs Hmz's Sketchfab login.
+  - Sketchfab (public search API, 166 hits triaged): proposed the **Canino3d set**. Stylised woman `dcaa8229`, man `a69c8962`, young man `92b4b22d`. CC-BY 4.0, rigged, "100+ face blendshapes" (viseme coverage unverified), 57-105k tris (needs decimation). Download needs the owner's Sketchfab login.
   - Also excluded: Levi (fan art of Corinna Marie's concept, IP risk) and "Pixar style girl" (suggestive listing).
 - Casting board (both looks): https://claude.ai/artifact/Qk5cieG57J5LGtrLHMRCha
 
@@ -61,7 +61,7 @@ MPFB packs used (all CC0, no CC-BY): system assets, visemes02, faceunits01, skin
 
 ## Decision: L2 Rocketbox, F01 + M04 (2026-09-20)
 
-Hmz chose "find a CC-style female to match Jake, fall back to shipping F01/M04". The search failed, so the fallback stands.
+The owner chose "find a CC-style female to match Jake, fall back to shipping F01/M04". The search failed, so the fallback stands.
 
 - **Searched ~250 free models** in two sweeps: general stylised-character queries, then the Character Creator tags (`charactercreator`, `cc4`, `cc3`, `iclone`, `reallusion`). The CC tags are almost entirely fan art of copyrighted characters (Family Guy, Lara Croft, Jim Carrey); the general sweep produced nothing near Jake's quality. Closest was "Green Dress Girl" (Guugoo3D, CC-BY), whose listing never claims a rig.
 - **Sketchfab's converted GLB of the Canino woman (`MJ_sketchfab.glb`, md5 9c4c5040…) fixes the geometry but not the face.** Rendered in `glbtest_canino_girl.png`: arms and hands are correct, rig present (255 bones). But it imports with **zero morph targets** — their conversion drops them — so there is no viseme or expression set at all. (An earlier note here claimed the GLB arms were warped; that was inferred from bounding boxes and was wrong.) Two blockers remain before she could teach: sculpt the 15 visemes plus expressions by hand, and replace the crop top and micro skirt.
@@ -70,7 +70,7 @@ Hmz chose "find a CC-style female to match Jake, fall back to shipping F01/M04".
 
 ## Open
 - Not done yet: lab page (`pages/dev/avatar-lab.tsx`), GLB export + compressed sizes, 3-clip retarget, lipsync with demo narration.
-- The generate-and-rig pipeline run (Meshy/Tripo -> AccuRIG) was skipped by Hmz on 2026-09-18.
+- The generate-and-rig pipeline run (Meshy/Tripo -> AccuRIG) was skipped by the owner on 2026-09-18.
 
 ## V9.1b — the Canino pair is usable (2026-09-20/21)
 
@@ -290,7 +290,7 @@ It is also written into each GLB's `asset.copyright`, because `/models/*.glb` is
   and talking, label height, materials.
 - `/demo` with Jake swapped in temporarily: credit line renders, Talking plays in time with the
   narration, camera moves fine. Reverted — the demo still runs Marcus.
-- **`/learn` not checked**: it needs Hmz's login. The credit component is the same one verified in
+- **`/learn` not checked**: it needs the owner's login. The credit component is the same one verified in
   `/demo`.
 
 ### Still open
@@ -304,7 +304,7 @@ It is also written into each GLB's `asset.copyright`, because `/models/*.glb` is
 
 ### Follow-up, same day: Jake and MJ become the roster
 
-Hmz's call after the audit: Jake runs the demo, both new teachers are offered in `/learn` and
+The owner's call after the audit: Jake runs the demo, both new teachers are offered in `/learn` and
 `/demo`, and the old four are archived.
 
 - **Why `/learn` showed only the old four:** Jake and MJ were there, but the switcher row was capped
@@ -319,13 +319,13 @@ Hmz's call after the audit: Jake runs the demo, both new teachers are offered in
   a single pre-rendered male voice (Antoni)**, so MJ lip-syncs a man's voice there. A female narration
   is 6,856 ElevenLabs characters for both topics (dry-run count, nothing sent), plus a per-voice
   folder in the player. Not done: it is spend.
-- Checked in Hmz's signed-in `/learn` (switcher only, no lesson started): Jake, MJ, + Create, no
+- Checked in the owner's signed-in `/learn` (switcher only, no lesson started): Jake, MJ, + Create, no
   clipping, credit swaps with the avatar, the old persisted choice remapped to jake. Checked `/demo`
   with both teachers.
 
 ## V9.1d — motion QA, then MJ's wardrobe against a written bar (2026-09-22/23)
 
-**Verdict: motion passes after fixes. MJ's wardrobe fails the bar and needs Hmz's pick. Part 3
+**Verdict: motion passes after fixes. MJ's wardrobe fails the bar and needs the owner's pick. Part 3
 (more clips) not started: it was gated on both.** Evidence in `.claude/eval/2026-09-18-v9-bakeoff/`:
 `v91d_retarget_facing_fix.png`, `v91d_mj_elbow_share.png`, `v91d_mj_wardrobe_options.png`.
 Method: frame strips at every 4th frame (source Marcus beside each teacher; the lesson camera, a
@@ -435,7 +435,7 @@ rejected Thinking bake), `v91e_new_clips_thinking2.png` and `v91e_new_clips_shak
 | Option A "0 legs through the skirt" | a new check, `v9_skirt.check_through` | `find_pokes` only tests skin a garment covers at rest within 2 cm. A flared skirt stands far off the hands and knees, so **MJ's fingers sat 24-33 mm inside the skirt in every Idle frame, and up to 79 mm in Talking**, invisible to it. In close-up her fingertips vanish into the skirt |
 | The mock-up's skirt centre was a fixed `(0, 0.005)` | ray casts: her body axis is at y = −0.039 | `normalise` moved her in V9.1d. `build` now measures the axis per build |
 | "1 tee vertex through the waistband" | — | Gone with the rebuilt tee |
-| **MJ's left elbow broken** (a notch on the inner elbow, a hump at its point) in every clip since she shipped. V9.1d's elbow-share fix was real, but this was a different defect | Hmz, from the app, after this session had signed her off | A sculpt defect in the source mesh. It is there at rest, up to 49 mm off the mirrored right arm, while her rig is symmetric to 0.1 mm and the rest of the arm to a median 0.1 mm. No weight or bone fix could reach it. `v9_mask.mirror_region` rebuilds the left arm within 16 cm of the elbow (fading out by 20 cm) as the mirror of the right, pairing vertices through the mirrored UVs (u + u' = 5): 394 vertices. Checked at rest, in Idle, Talking and Pointing in Eevee and three.js; arm pokes still 0 in all six clips. My left-vs-right strips never compared the two elbows, which is how it got through |
+| **MJ's left elbow broken** (a notch on the inner elbow, a hump at its point) in every clip since she shipped. V9.1d's elbow-share fix was real, but this was a different defect | the owner, from the app, after this session had signed her off | A sculpt defect in the source mesh. It is there at rest, up to 49 mm off the mirrored right arm, while her rig is symmetric to 0.1 mm and the rest of the arm to a median 0.1 mm. No weight or bone fix could reach it. `v9_mask.mirror_region` rebuilds the left arm within 16 cm of the elbow (fading out by 20 cm) as the mirror of the right, pairing vertices through the mirrored UVs (u + u' = 5): 394 vertices. Checked at rest, in Idle, Talking and Pointing in Eevee and three.js; arm pokes still 0 in all six clips. The left-vs-right strips never compared the two elbows, which is how it got through |
 
 ### Tee (`scripts/v9_tee.py`, new)
 
@@ -568,7 +568,7 @@ motion, shake at 33-34°, Thinking at 30° (head up), on both teachers.
 ## V9.2 — the animation library: channel diet, lazy clip packs, 17 clips per teacher (2026-09-23)
 
 **Verdict: both teachers now carry 17 clips, only 3 of them in the file that blocks first load,
-and that first load is smaller than with yesterday's 6.** Hmz approved the plan: base + lazy
+and that first load is smaller than with yesterday's 6.** The owner approved the plan: base + lazy
 pack, four baked mirrors with runtime time-warp, and a Quaternius check. Scene backup before
 this session: `bakeoff_scene_pre_v92.blend`. Evidence: `v92_clapping_contact.png`,
 `v92_talking5_legs.png`.
@@ -682,7 +682,7 @@ V9.1e's published values on the reference clips.
 - **Idle3 is not jitter**, but it is too restless for the attentive idle pool.
   - Direction reverses 0.19 times/s (Talking: 0.26), but the hands move at 78 cm/s, faster than
     Talking (46), with the elbows cocked out.
-  - It ships in the pack for V9.3's "long wait" row, for Hmz to judge in motion.
+  - It ships in the pack for V9.3's "long wait" row, for the owner to judge in motion.
 - **Talking6 / Talking6M** (a one-second wave, right and left hand) ship for the "greeting" row.
 
 **Rejected:**
@@ -706,18 +706,18 @@ V9.1e's published values on the reference clips.
 - With the pack missing (404): pointing plays Talking, a nod keeps Idle looping, the teacher
   stays up.
 - The largest per-step bone change is inside Talking's own motion, not at a switch.
-- **MJ in `/demo`**, in her new outfit, which Hmz had not seen there:
+- **MJ in `/demo`**, in her new outfit, which the owner had not seen there:
   - the credit shows;
   - her pack loads 0.2 s after the avatar switch;
   - she plays the talking pool, and Pointing from the pack.
 
-### Catalogue coverage and gaps (for Hmz)
+### Catalogue coverage and gaps (for the owner)
 
 Rows 1, 3, 5, 7, 12, 17 and 19 have their minimum count. Short:
 
 | Row | Short by |
 |---|---|
-| 2 long wait | 1 (Idle3 waits on Hmz's call) |
+| 2 long wait | 1 (Idle3 waits on the owner's call) |
 | 4 thinking | 1 |
 | 6 inviting | 1 |
 | 8 point at board | 2 real variants |
@@ -741,7 +741,7 @@ contact:
 
 **Quaternius UAL:** CC0, 45 free animations, no login ("name your price" works at $0). Its pages
 don't list clip names, and the packs lean towards locomotion, combat and generic emotes.
-Nothing was downloaded; that needs Hmz's go.
+Nothing was downloaded; that needs the owner's go.
 
 ### Not done
 
@@ -749,13 +749,13 @@ Nothing was downloaded; that needs Hmz's go.
   one 1.98 MB pack. That is why the V9.2 checklist box stays open.
 - **The gap clips above**, whether from Mixamo, Quaternius or Tier 2 hand-keying.
 - **Sonnet for the bulk bakes.** A session cannot switch its own model, so this one stayed on
-  Opus; Hmz can pick Sonnet in the model menu next time.
+  Opus; the owner can pick Sonnet in the model menu next time.
 - **Unchanged:** MJ's hair clipping her shoulder, the forehead scalp seam, and the parked female
   narration.
 
-## V9.2b — three fixes Hmz found in the app (2026-09-23)
+## V9.2b — three fixes the owner found in the app (2026-09-23)
 
-**Verdict: all three fixed and shipped.** Scale/placement went through three rounds of Hmz's
+**Verdict: all three fixed and shipped.** Scale/placement went through three rounds of the owner's
 live feedback before landing; fingers and trousers each needed one real fix, both root-caused
 before touching anything, per the brief. Scene backup before this session:
 `bakeoff_scene_pre_v92b.blend`.
@@ -770,7 +770,7 @@ legacy avatars (Ryan/Sonia/Marcus/Priya/custom) keep the old flat `scale={1.5}`.
 Three rounds, each verified live in `/dev/free-model` and re-tuning `SCENE_Y` / `TEACHER_HEAD_Y`
 / `spawnLabelHeight` to match:
 
-1. True real height (Jake 1.78 m, MJ 1.68 m) — Hmz: reads as a dwarf next to the old giant.
+1. True real height (Jake 1.78 m, MJ 1.68 m) — the owner: reads as a dwarf next to the old giant.
 2. Halfway between the giant and true height (Jake 2.28 m, MJ 2.23 m) — still short.
 3. **Final: halfway value × 1.125** (10-15% taller, his range) — **Jake `standScale` 1.3824
    (2.57 m), MJ 1.3521 (2.51 m)**. Signed off.
@@ -780,7 +780,7 @@ the teacher's own scaled `<group>`, so it tracks `standScale` automatically. `SC
 image-panel / generated-model anchor) and `TEACHER_HEAD_Y` (Your-turn bubble) are world-space
 siblings of that group and needed re-tuning each round; final values 0.18 and 0.65.
 
-Hmz also asked the generated-model's initial spawn size down **45% (1.5 → 0.825)** once the
+The owner also asked the generated-model's initial spawn size down **45% (1.5 → 0.825)** once the
 teacher's own scale grew past it — the student's own scroll-to-resize is untouched.
 
 Checked at the final scale: Pointing's fingertip lands right at the panel's edge for both
@@ -940,7 +940,7 @@ Rows 9 and 16-supportive have no clip on any rig (Tier 2 work); row 9 still turn
 model, and both keep their timing and face hint. Ryan and Sonia get no head reactions at all:
 their nod and shake fall back to a timed release, as before.
 
-### Question for Hmz: ShakeNo
+### Question for the owner: ShakeNo
 
 A wrong answer still plays **ShakeNo** (a head shake), to keep today's behaviour. The catalogue
 asks for a gentle "let's look again" instead, and for grade 6-8 learners a head shake at a wrong
@@ -1054,7 +1054,7 @@ timings, remap the volume to a spread range (about 0.4-0.75 to 0.3-0.85) and re-
 ## V9.5 - integration (2026-09-23)
 
 Model: Sonnet 5 throughout, no escalation, no design decision needed. Jake as the default teacher was settled by
-Hmz beforehand (`DEFAULT_TEACHER` was already `"jake"`; recorded in decisions.md). Gates: type-check clean, lint 22
+the owner beforehand (`DEFAULT_TEACHER` was already `"jake"`; recorded in decisions.md). Gates: type-check clean, lint 22
 (pre-existing), tests 267/267, build green (temporary distDir, reverted). `typescript-reviewer` on the
 `Teacher.tsx` and `Experience.tsx` diff: no findings beyond one stale comment, fixed. `security-reviewer` not run:
 nothing touched auth or `/create-teacher` input handling.
@@ -1121,7 +1121,7 @@ are unchanged. Not measured: `/learn` (auth), a phone, real networks beyond the 
   export in `src/lib/avatar/` is used by the app or by a test.
 - The `AVATAR_ASSETS` entries for Ryan, Sonia, Marcus and Priya are archived by decision, not dead: Marcus is
   the custom teacher's rig source, and `/dev/free-model?avatar=` can still select any of them. Kept.
-- **Deleted after Hmz's go (git history keeps it):** a whole V1 JSX tree that nothing imported:
+- **Deleted after the owner's go (git history keeps it):** a whole V1 JSX tree that nothing imported:
   `src/components/{Experience,Teacher,BoardSettings,ImageBox,MessagesList,QuizBox,TypingBox,LogoutButton}.jsx`
   and `src/components/{Hero,Navbar,Team,WhyAristo,GuideToAristo,Footer}`, with `public/images/{1..12}.png`,
   `teamMember1-2.jpg`, `Ryan.jpg`, `Sonia.jpg`. 36 files. Type-check, tests and build pass; lint warnings fell from 22 to 10
@@ -1147,12 +1147,12 @@ licence.
 
 ## V9.6 - Tier 2 gestures: seven hand-keyed clips (2026-09-24/25)
 
-Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (a session cannot switch its own model, so Hmz
+Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (a session cannot switch its own model, so the owner
 switched at the hand-off). Scene backup before the session: `bakeoff_scene_pre_v96.blend`. Brief:
-`.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`; the catalogue that came out of Hmz's review of the first round:
+`.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`; the catalogue that came out of the owner's review of the first round:
 `.claude/plans/V96-GESTURE-CATALOGUE.md`; the hand-off: `.claude/plans/NEXT-SESSION-V96-WIRING.md`.
 
-**Verdict: seven authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+**Verdict: seven authored clips shipped and wired on Jake and MJ, all approved by the owner in motion on
 `/dev/avatar-lab`.** Gates: type-check clean, lint 10 (unchanged), tests 291 (was 267), build green (temporary
 distDir, reverted). `typescript-reviewer` on the director change and again on the whole V9.6 source diff: no defects.
 
@@ -1169,13 +1169,13 @@ distDir, reverted). `typescript-reviewer` on the director change and again on th
 | GlanceBoard | `longWait` (2), beside Idle3 | 2.83 s | Turns head and chest to the board as if rereading it, then back |
 
 All are upper-mask overlays played once (the other arm and the legs keep the base), for the Canino rigs only.
-Also, from Hmz's review: the greeting wave (Talking6 and Talking6M) plays at 0.75, ShakeNo stays in the
+Also, from the owner's review: the greeting wave (Talking6 and Talking6M) plays at 0.75, ShakeNo stays in the
 wrong-answer pool at a third of Almost's weight (about one wrong answer in four), and Jake's mouth was fixed.
 
 ### What was rejected, and why
 
 **LookAgain** (a slow tilt and a soft nod) and **LookAgainHand** (the same with a hand towards the desk).
-Hmz: "doesn't give the look again vibe" and "I don't get what pointing to it would achieve". Both were wrong on
+The owner: "doesn't give the look again vibe" and "I don't get what pointing to it would achieve". Both were wrong on
 meaning, which no frame check could catch:
 
 - a nod reads as "yes", the opposite of a wrong answer;
@@ -1227,13 +1227,13 @@ a viewport display artefact, not part of this work.
 About 77 KB more per pack for seven clips; still about 0.6 MB of animation per rig against the 3 MB budget. Gzip on
 the wire was not re-measured. The clips are in the pack, not the base file, as briefed.
 
-### Jake's mouth (Hmz: "closes a bit too much, creepy")
+### Jake's mouth (the owner: "closes a bit too much, creepy")
 
 At full weight the baked `viseme_PP` (`Explosive` plus `Mouth_Lips_Tight`) rolls both lips inward into a thin
 pinched line, and lipsync drives it to 1 on every m, b and p, which is why it only showed sometimes. MJ has the
 same recipe and the same flaw, so both were fixed: `v9_face.scale_shapes` scales the baked key to 0.6 in place
 (idempotent; the source shapes were dropped after the V9.1 bake). PP against U went from 0.50 to 0.30 in the shipped
-GLBs, read back with gltf-transform. Hmz: "visemes look better on Jake". Close-ups:
+GLBs, read back with gltf-transform. The owner: "visemes look better on Jake". Close-ups:
 `v96_jake_mouth_closing.png`, `v96_mj_mouth_pp.png` in the bake-off folder.
 
 ### Director: a clip can say where the head looks
@@ -1273,7 +1273,7 @@ motion was recorded. `/learn` needs a login and was not opened.
 | The base keeps playing | Over Talking2, Talking4 and the live lesson's `talkExplain` base the base clip kept cycling; the other arm's motion was unchanged (Exactly: 0.89 deg average during, 0.87 before) |
 | Greeting wave at 0.75 | On `/demo` the wave's `timeScale` was 0.75 and the overlay was Talking6 |
 | Release | The store's gesture returned to idle after each nod and shake, including over the lesson |
-| Frames for Hmz | Jake in the classroom at the peak of Almost, Exactly, WellDone, Encourage, ThatsIt, PresentModel and GlanceBoard, and MJ in ThatsIt, were captured in the browser pane (screenshots are not stored in the repo) |
+| Frames for the owner | Jake in the classroom at the peak of Almost, Exactly, WellDone, Encourage, ThatsIt, PresentModel and GlanceBoard, and MJ in ThatsIt, were captured in the browser pane (screenshots are not stored in the repo) |
 
 ### Tooling notes for next time
 
@@ -1287,13 +1287,13 @@ motion was recorded. `/learn` needs a login and was not opened.
 - A multi-line node script in a Bash heredoc did not parse in this shell; write it to a file and run it.
 - **The lab has no look layer.** Head turns look bigger there than in lessons, and PresentModel's head stays still.
 
-### Known edges and one question for Hmz
+### Known edges and one question for the owner
 
 - **Long-wait rate doubled.** With two clips in the pool the director alternates them, and a simulated hour of
   quiet gave 102 long-wait gestures (one about every 35 s), against about one every 70 s with Idle3 alone. Each clip
   still honours its own cooldown; it is the alternation that doubles the rate. GlanceBoard has the 30 s cooldown the
   brief suggested. If it feels restless: raise `LONG_WAIT_S` in `director.ts`, or give both clips a cooldown near
-  130 s. A data or one-line change; not done without Hmz.
+  130 s. A data or one-line change; not done without the owner.
 - **Events do not preempt a running overlay for a model.** A model appearing while GlanceBoard is 1.4 s in does not
   play PresentModel (the director's existing `!overlay` rule); the head still turns to it. Rare.
 - GlanceBoard's head turn wins over the desk during a quiz for its 2.5 s (by design, see above).
@@ -1310,7 +1310,7 @@ motion was recorded. `/learn` needs a login and was not opened.
 Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (hand-off: `.claude/plans/NEXT-SESSION-V97-WIRING.md`,
 brief: `.claude/plans/NEXT-SESSION-V97-TEACHING-MOVES.md`). Scene backup before the session: `bakeoff_scene_pre_v97.blend`.
 
-**Verdict: six authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+**Verdict: six authored clips shipped and wired on Jake and MJ, all approved by the owner in motion on
 `/dev/avatar-lab`, all six confirmed playing through the real director in the app.** Gates: type-check clean,
 lint 10 (unchanged), tests 314 (was 291), build green. `typescript-reviewer` on the director/Teacher.tsx diff
 found one real bug (below), fixed and covered by a regression test before this report was written.
@@ -1322,8 +1322,8 @@ found one real bug (below), fixed and covered by a regression test before this r
 | Imagine | `hook` | segment role `hook` | 2.25 s | Both palms open outward and slightly apart, a curious head tilt |
 | HoldIdea | `explainBeat` | phase `explain`, once per phase | 2.54 s | Hands in front of the chest, palms facing with a gap, as if holding the idea |
 | StepBeat | `demoStep` | segment role `demo_step` | 1.46 s | One chop of the right hand, lands about 0.6 s in: "first... then..." |
-| MoveOn | `transition` | segment role `transition` | 1.63 s | Forward roll, opens palm up. Hmz picked this over a palm-down brush |
-| YourTurn | `challengeSetup` | segment role `challenge_setup` | 2.04 s, plays at **0.85** | Both palms offered forward, a small lean. Hmz picked this over the other draft, and its speed, like the greeting wave |
+| MoveOn | `transition` | segment role `transition` | 1.63 s | Forward roll, opens palm up. The owner picked this over a palm-down brush |
+| YourTurn | `challengeSetup` | segment role `challenge_setup` | 2.04 s, plays at **0.85** | Both palms offered forward, a small lean. The owner picked this over the other draft, and its speed, like the greeting wave |
 | BringTogether | `connectBeat` | phase `connect`, once per phase | 2.46 s | Wide to close, never nearer than 182 mm: "it all fits" |
 
 Also wired (data only, no new clip): a new image landing on the board (`activePreviewImageUrl` changes) plays the
@@ -1337,7 +1337,7 @@ same `QUIET_BASES`/`TALKING_BASES` list PresentModel and the greeting already us
 
 ### What was rejected, and why (Opus half)
 
-Two concepts were built for each of Imagine, MoveOn and YourTurn; Hmz judged each pair in motion and picked one:
+Two concepts were built for each of Imagine, MoveOn and YourTurn; the owner judged each pair in motion and picked one:
 
 - **Imagine**: shipped the palms-open-outward concept. Its alternate (pointing at empty space) read as a wave and
   did not converge in three drafts.
@@ -1347,16 +1347,16 @@ Two concepts were built for each of Imagine, MoveOn and YourTurn; Hmz judged eac
 
 Every rejected concept is kept as a `V97_NOT_SHIPPED` spec in `v9_gesture.py`, never exported.
 
-### Hands get a "life" pass (Opus half, Hmz: "the hands remain flat... rigid and not life like")
+### Hands get a "life" pass (Opus half, the owner: "the hands remain flat... rigid and not life like")
 
 `v9_gesture.py` specs can now set `"life": True`: a finger cascade (index most open, pinky least), bent
 fingertips, a staggered unfurl, a slow drift while held, and 0.1 s of wrist follow-through at half strength,
 built with `finish(..., relax=0)`. All six V9.7 clips use it, and so do the six V9.6 hand clips (PresentModel,
 Encourage, Almost, Exactly, WellDone, ThatsIt), re-baked into the packs this session. Exactly and MoveOn start
-and end slightly open, and MoveOn lifts before it drops, to keep MJ's fingertips clear of her skirt. Hmz approved
+and end slightly open, and MoveOn lifts before it drops, to keep MJ's fingertips clear of her skirt. The owner approved
 both the new and re-baked sets in motion.
 
-### MJ's shirt fixed (Opus half, Hmz: "looks a bit chopped")
+### MJ's shirt fixed (Opus half, the owner: "looks a bit chopped")
 
 Arm-skin triangles under her sleeves and one head-mesh face under the collar showed through as skin patches;
 `find_pokes` (vertex-only) missed both, because it skips skin within 1 cm of a garment edge and a face can cross
@@ -1468,10 +1468,10 @@ waiting for a real new image) and gone on a clean reload. `/learn` needs a login
 ## V9.8 - Batch 3: event and base clips (2026-09-27)
 
 Authored and judged on Opus 5.5, wired and verified on Sonnet 5 (hand-off: `.claude/plans/NEXT-SESSION-V98-WIRING.md`,
-brief: Hmz's V9.8 prompt). Rules for every clip: `.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`. Scene backup
+brief: the owner's V9.8 prompt). Rules for every clip: `.claude/plans/NEXT-SESSION-V96-TIER2-CLIPS.md`. Scene backup
 before the Opus half: not recorded in the hand-off (see its own session for the bake-off folder).
 
-**Verdict: four authored clips shipped and wired on Jake and MJ, all approved by Hmz in motion on
+**Verdict: four authored clips shipped and wired on Jake and MJ, all approved by the owner in motion on
 `/dev/avatar-lab`, all four confirmed firing through the real director in `/dev/free-model` (forced through
 the store).** Gates: type-check clean, lint 10 (unchanged), tests 337 (was 314), build green (default `.next`,
 dev server stopped for the run -- see Tooling notes). `typescript-reviewer` on the director diff found one real
@@ -1496,7 +1496,7 @@ own numbers): 2.042, 6.042, 3.042, 2.042 s.
 ### What was rejected, and why (Opus half)
 
 **OverToYou** (row 18, an open hand down towards the student's desk as the quiz is handed out) was rejected in
-all three authored rounds -- Hmz: "the arm movement is very unnatural". Dropped: no `quizHandout` scenario
+all three authored rounds -- the owner: "the arm movement is very unnatural". Dropped: no `quizHandout` scenario
 wired, no clip exported. The look layer turning the head to the desk (`quizLook`, already shipped) is the
 whole "over to you"; batch 3 of `V96-GESTURE-CATALOGUE.md` is now closed out (row 18 marked dropped). The two
 rejected rounds are kept as `OVER_TO_YOU_R2` and `OVER_TO_YOU` in `v9_gesture.py`'s `V98_NOT_SHIPPED`, never
@@ -1505,7 +1505,7 @@ exported.
 **Pointing's hand fixed** (not a new clip, a fix to the existing Mixamo-derived base clip): the other fingers
 folded to PointNear's shape and the index reset to a small forward bend (8/4/2 deg) with no splay, weighted by
 hand height (`tuck_point`). Was bent back ~9 deg at the knuckle and splayed ~12.5 deg towards the thumb (a
-claw) -- Hmz had flagged it twice before this session ("this looks so wrong", then "the angle of the pointing
+claw) -- the owner had flagged it twice before this session ("this looks so wrong", then "the angle of the pointing
 finger looks unnatural"); after: "pointing looks good now". Confirmed visually this session on both Jake and
 MJ in `/dev/free-model` (clean straight index, no claw).
 
@@ -1606,7 +1606,7 @@ and the `/dev/free-model` checks, this was judged sufficient rather than fightin
   to re-evaluate whether the real pool has arrived at every Talking clip's own loop boundary (~3.5 s, under the
   old `"cycle"` mode); under `"dwell"` it now waits out a Talking-length dwell (~20 s) before the next check.
   Accepted (decisions.md): the clip pack almost always finishes loading well before a lesson's first pointing
-  gesture, so this only lengthens an already-rare cold-start window, not the steady-state behaviour Hmz asked
+  gesture, so this only lengthens an already-rare cold-start window, not the steady-state behaviour the owner asked
   for.
 - **BackToBoard's fallback (`wrong`) was verified in the director, not by pulling a clip from a rig that
   actually lacks it in the running app** (Marcus/Priya were checked via `resolvePool` and the coverage

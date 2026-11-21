@@ -1,6 +1,6 @@
 # V9.6 gesture catalogue: built on the stage and the lesson (proposal, 2026-09-24)
 
-Hmz, after reviewing the first clips: "think about better actions ... a longer catalog, built on the
+The owner, after reviewing the first clips: "think about better actions ... a longer catalog, built on the
 surroundings and situations that can rise up and that make sense overall". This is that catalogue. Every
 row names what is physically around the teacher, what is happening in the lesson at that moment, and the
 signal that already exists for it. Nothing here needs a new app signal or a lesson-schema change.
@@ -12,7 +12,7 @@ Encourage); see V9-REPORT "V9.6". **Batch 2 is done and wired** (Imagine, HoldId
 BringTogether, plus PresentModel reused for a new board image); see V9-REPORT "V9.7". The director now reads
 segment roles and phases (`roleOf`/`phaseOf` in `director.ts`). Batch 3 is next, on Opus.
 
-## Settled so far in V9.6 (Hmz)
+## Settled so far in V9.6 (the owner)
 
 - PresentModel and Encourage: approved in motion.
 - Talking6 / Talking6M (greeting wave): play at 0.75 (a `timeWarp` of [0.75, 0.75], data only).
@@ -110,6 +110,6 @@ Batches 1 and 2 use what V9.6 already built.
 ## Honest limits
 
 - These stay emblematic, pose-to-pose gestures. Talking acting stays mocap (the plan's Tier 2 limit).
-- Each clip is judged by Hmz in motion before it is wired, as for V9.6.
+- Each clip is judged by the owner in motion before it is wired, as for V9.6.
 - In V9.6 a clip took one to three drafts before it read at the classroom camera, and one of four
-  (LookAgain) missed on meaning, which only Hmz's review caught. Expect the same ratio.
+  (LookAgain) missed on meaning, which only the owner's review caught. Expect the same ratio.

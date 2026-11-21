@@ -13,7 +13,7 @@ library, the triggering logic and the performance budget all constrain each othe
 
 1. **A different-looking teacher** who reads as the future of teaching: warm, credible, not
    childish, not corporate, not uncanny, for 11 to 14 year olds and the parents watching.
-2. **Good quality at no licence fee. This is now a hard constraint** (Hmz, 2026-09-12): $0 for
+2. **Good quality at no licence fee. This is now a hard constraint** (the owner, 2026-09-12): $0 for
    assets and tools, commercial use allowed, shipping inside the web app allowed. Quality comes
    from engineering and free sources; see "Getting ActorCore quality without buying it".
 3. **An extensive animation library**, organised so animations are **triggered by lesson
@@ -22,7 +22,7 @@ library, the triggering logic and the performance budget all constrain each othe
 
 **Boundary (same as V8):** no change to lesson logic, APIs or the lesson schema. Scenarios
 are driven by signals the app **already emits**. Anything that needs a new signal is listed
-as "later" and needs Hmz's OK.
+as "later" and needs the owner's OK.
 
 ## What exists today (read before designing)
 
@@ -68,17 +68,17 @@ as "later" and needs Hmz's OK.
 | **Avaturn** (current vendor) | Free Basic export (Pro is $800/mo, not needed) | ARKit + visemes | Proven in this codebase. Mostly realistic, so the uncanny issue remains unless a stylised output meets the bar. Verify what styles the free tier exports today |
 | **VRoid Studio / VIVERSE Avatar Creator → VRM** | Free; VRM spec is MIT | 5 vowel visemes (aa ih ou ee oh); ARKit "perfect sync" possible with extra work | Anime aesthetic, a strong risk with Western parents. Needs `@pixiv/three-vrm`: **verify compatibility with three 0.161 before anything else** |
 | **Quaternius Universal Base Characters** | CC0 | Probably none; add 15 viseme shape keys in Blender | Stylised base meshes on the same universal rig as the Quaternius animation libraries. Good path to a custom look if faces can be sculpted to a high bar |
-| **Generated character** (Hunyuan3D or Hyper3D via the Blender MCP) + auto-rig (Mesh2Motion or Mixamo auto-rigger) + hand-made visemes | Hyper3D credits cost money; Hunyuan3D weights are free but need a local GPU | None; add in Blender | Most control over the look, highest risk (topology for facial deformation, hands). Any paid generation needs Hmz's OK |
+| **Generated character** (Hunyuan3D or Hyper3D via the Blender MCP) + auto-rig (Mesh2Motion or Mixamo auto-rigger) + hand-made visemes | Hyper3D credits cost money; Hunyuan3D weights are free but need a local GPU | None; add in Blender | Most control over the look, highest risk (topology for facial deformation, hands). Any paid generation needs the owner's OK |
 | **Microsoft Rocketbox** | MIT (verify) | Varies; verify blendshapes | Realistic and somewhat dated. Mostly a fallback |
 | **MetaHuman** | Free under $1M revenue; allowed in any engine since June 2025 | Full facial rig | Best realism, which is the wrong direction for this brief, and far too heavy for the web without a large LOD/export project. Include only for completeness |
 | ~~Ready Player Me~~ | Shut down 31 Jan 2026 (Netflix acquisition) | | Excluded |
-| Paid (Character Creator, marketplace) | Not $0 | | Excluded unless nothing free meets the bar. That call is Hmz's |
+| Paid (Character Creator, marketplace) | Not $0 | | Excluded unless nothing free meets the bar. That call is the owner's |
 
 **Animations**
 
 | Source | Licence | What it gives | Notes |
 |---|---|---|---|
-| **Mixamo** (Adobe) | Free, commercial use, royalty-free. No redistribution as standalone asset files | The largest free library: talking, gesturing, pointing, thinking, idle, reactions, sitting, walking | Needs an Adobe login. **Hmz downloads; Claude never enters credentials.** Claude prepares the exact clip list. Ship only inside the app's GLBs |
+| **Mixamo** (Adobe) | Free, commercial use, royalty-free. No redistribution as standalone asset files | The largest free library: talking, gesturing, pointing, thinking, idle, reactions, sitting, walking | Needs an Adobe login. **The owner downloads; Claude never enters credentials.** Claude prepares the exact clip list. Ship only inside the app's GLBs |
 | **Reallusion AccuRIG 2** | **Free**, no per-use fee | Auto-rigs any humanoid mesh, **body only** | The strongest free auto-rigger and it needs no Adobe account. Use it on a generated or CC0 mesh. It does not produce facial blendshapes |
 | **Reallusion ActorCore** | **Mostly paid.** ~4,500 motions, about 32 free; single clips roughly $1.50 to $12; packs up to about $200, bundles from $14.99 | n/a | The best library for what Aristo actually needs (conversation, presenter, gesture, teaching acting), and the reason to consider breaking the $0 rule. See the budget decision below |
 | **Quaternius Universal Animation Library 1 and 2** | CC0 | UAL1 120+ clips (free Standard tier has 45), UAL2 130+; universal humanoid rig | Strong on locomotion and emotes; check the free tier for teaching-relevant clips before buying the full tier (not $0) |
@@ -86,7 +86,7 @@ as "later" and needs Hmz's OK.
 | **NVIDIA Kimodo** (text-to-motion, March 2026) | Code Apache-2.0; **SOMA** checkpoints under the NVIDIA Open Model License (commercial OK); **SMPL-X checkpoint is research-only: do not use it** | Bespoke clips from text ("teacher gestures toward something floating on their left, then back to the student") | Needs ~17 GB VRAM, or under 3 GB with the text encoder on CPU. Output needs retargeting from SOMA to our rig. Optional, for scenarios no library covers |
 | ~~Ready Player Me animation library~~ | Built for RPM armatures only; RPM itself is gone | | Excluded |
 
-## The pipeline from Hmz's research, and the gap in it
+## The pipeline from the owner's research, and the gap in it
 
 The proposed chain is the right shape for this project:
 
@@ -114,7 +114,7 @@ teacher points at things), and edge loops around mouth and eyes good enough to d
 
 ## Getting ActorCore quality without buying it (decided 2026-09-12)
 
-Hmz cannot spend right now, so **the programme is $0 and the plan is built around that.**
+There is no budget for paid tools right now, so **the programme is $0 and the plan is built around that.**
 ActorCore stays on the shelf as a later upgrade, not a dependency.
 
 The important realisation: **the teacher does not feel dead because there are too few clips.**
@@ -150,12 +150,12 @@ on fingers, a gentle "let's look again" correction, and transitions between stan
 **Be honest about the limit.** Hand-keyframed full-body *talking acting* (the thing mocap
 libraries sell) will read stiffer than mocap, because Claude's feedback loop is still frames
 from the viewport, not motion. So: procedural and emblematic gestures authored here, and the
-Talking pools stay mocap (Mixamo). Every authored clip is reviewed by Hmz in motion on
+Talking pools stay mocap (Mixamo). Every authored clip is reviewed by the owner in motion on
 `/dev/avatar-lab` before it ships.
 
-### Tier 3 (free, Hmz's labour, optional): perform the signature gestures
+### Tier 3 (free, the owner's labour, optional): perform the signature gestures
 
-If a few gestures must feel unmistakably like teaching, the cheapest authentic source is Hmz
+If a few gestures must feel unmistakably like teaching, the cheapest authentic source is the owner
 performing them. Either as **reference video** for Claude to key against in Blender (free,
 unlimited), or through a free video-to-mocap tier. **Rokoko Vision free is 30 seconds per
 month, FBX export only** (single camera since Vision 3.0), so it is a trickle for 3 to 5 hero
@@ -177,7 +177,7 @@ on it.
 
 | Source | Licence | Use |
 |---|---|---|
-| **Mixamo** | Free, commercial | The backbone: talking, gesturing, pointing, thinking, idle, reactions, greetings. Richer for conversation than the vendor blogs selling alternatives imply. Hmz downloads from the prepared list |
+| **Mixamo** | Free, commercial | The backbone: talking, gesturing, pointing, thinking, idle, reactions, greetings. Richer for conversation than the vendor blogs selling alternatives imply. The owner downloads from the prepared list |
 | **ActorCore free tier** | Free (about 32 motions) | Take the free ones; they are production-grade mocap |
 | **Quaternius UAL 1 and 2** | CC0 | Free tiers for locomotion and emotes |
 | **Mesh2Motion** | CC0 animations, MIT tool | Gap filling, and a free auto-rigger |
@@ -221,7 +221,7 @@ never shows. Layers: **base** (full body), **upper** (upper-body gesture over th
 | 20 | Blink, micro-expressions, breathing | always | procedural | face | continuous |
 | 21 | Eye contact | default look target is the camera, with drift and saccades | procedural | look | continuous |
 
-**Later (needs a new signal, so Hmz's OK):** learner speaking into the mic (the listening
+**Later (needs a new signal, so the owner's OK):** learner speaking into the mic (the listening
 state is local to `AnswerInputPanel.tsx`, not in the store), raise-hand interruption (V1),
 XP and level-up celebrations (V5), greeting by name (V4), and LLM-authored gesture cues per
 segment (a lesson-schema change).
@@ -253,7 +253,7 @@ segment (a lesson-schema change).
 Build a design canvas with 4 to 6 look
 directions as turnaround renders placed in the real classroom at the real camera framing
 (Blender MCP renders of candidate models). Cover at least: stylised-realistic, clean
-stylised (illustrated 3D), and the current realistic look as a control. Hmz picks a direction
+stylised (illustrated 3D), and the current realistic look as a control. The owner picks a direction
 and says whether Marcus and Priya stay available as options.
 
 **V9.1 — Bake-off.** **Model: Opus 5 to judge, Sonnet 5 to build the lab page.** Escalate to **Fable 5.1** only if the viseme route will not come together: proving the face rig is the make-or-break reasoning here.
@@ -267,7 +267,7 @@ judged. Also run the generate-and-rig pipeline end to end once (Meshy or Tripo m
 three retargeted clips -> **visemes added by one of the three routes above**), so the face gap
 is proved solved or ruled out before that pipeline is adopted. Write
 `.claude/plans/V9-REPORT.md` with renders, numbers, licence notes and a recommendation.
-Hmz decides.
+The owner decides.
 
 **V9.2 — Library assembly and retarget pipeline.** **Model: Fable 5.1 to design and debug the pipeline, then Sonnet 5 to grind.** The one phase where Fable clearly earns 2x: a long agentic loop across Blender, bone maps, retarget failures, root motion and compression, where a wrong call surfaces forty clips later. Use it on 2 or 3 clips until the pipeline is right, then `/model sonnet` in the same session for the rest. Do not leave Fable on for bulk conversion: identical work at twice the price.
 
@@ -276,10 +276,10 @@ Generalise
 driven through the Blender MCP or run headless) that takes a source list plus a target rig
 and outputs pack GLBs: retarget, remove root motion, resample to 30 fps, trim, export. Then
 compress with `@gltf-transform/cli` (already a dev dependency): resample, prune, Draco or
-meshopt. Source every scenario in the catalogue. Prepare the Mixamo clip list for Hmz to
+meshopt. Source every scenario in the catalogue. Prepare the Mixamo clip list for the owner to
 download. Total animation payload ≤ 3 MB per rig.
 
-**V9.2b — Fixes Hmz found in the app (2026-09-23), before V9.3.** **Model: Sonnet 5**, escalating to Opus if a diagnosis does not converge. Start prompt: `.claude/plans/NEXT-SESSION-V92B-FIXES.md`.
+**V9.2b — Fixes the owner found in the app (2026-09-23), before V9.3.** **Model: Sonnet 5**, escalating to Opus if a diagnosis does not converge. Start prompt: `.claude/plans/NEXT-SESSION-V92B-FIXES.md`.
 
 1. **Scale and placement.** The classroom is built at real size (chair seats 0.45-0.5 m, desk
    tops 0.7-0.8 m, camera eye 1.71 m above the floor). The teachers stand **2.79 m** tall
@@ -291,7 +291,7 @@ download. Total animation payload ≤ 3 MB per rig.
    - the generated model's anchor and its `scale={1.5}`;
    - the speech bubble and `spawnLabelHeight`;
    - the desk-quiz camera.
-   Measure before and after; Hmz signs off from screenshots.
+   Measure before and after; the owner signs off from screenshots.
 2. **Fingers look bent** on both teachers. Already ruled out: the palm roll after rest
    alignment is within 3.6-5.1° of Marcus, and the finger deltas copy the source exactly, so it
    is not the retarget maths. Compare close-ups beside Marcus in three.js for Idle and Talking.
@@ -324,7 +324,7 @@ complete. Then V8.7 re-captures the landing footage.
 
 ## Acceptance criteria (whole programme)
 
-- Hmz signed off the look in V9.0 and the candidate in V9.1.
+- The owner signed off the look in V9.0 and the candidate in V9.1.
 - $0 spent on assets; every shipped file licensed and recorded.
 - Every scenario row plays at least its minimum variants; no clip repeats back to back.
 - No T-pose, foot sliding, or hands through the body at any camera framing; crossfades
@@ -335,7 +335,7 @@ complete. Then V8.7 re-captures the landing footage.
   teachers all behave exactly as before.
 - Director logic covered by unit tests; `yarn type-check`, `lint`, `test`, `build` green.
 
-## Things only Hmz can do
+## Things only the owner can do
 
 - Log in to Adobe and download the Mixamo clips from the prepared list, and create a free
   ActorCore account for its ~32 free motions. Claude must not create accounts, enter passwords,
@@ -372,7 +372,7 @@ Per-phase choices are stated above. The rules behind them:
 9. **A session cannot change its own model.** Where a phase says "then switch", the session
    must stop and say so in plain words; the human switches. See `MODEL-SWITCHING.md`.
 8. **Setting the model:** in the desktop app use the model picker; in a terminal session use
-   `/model opus`, `/model sonnet`, `/model haiku`, `/model opusplan`. If no short alias for Fable is offered,
+   `/model opus`, `/model sonnet`, `/model haiku`. If no short alias for Fable is offered,
    pick `claude-fable-5-1` from the picker.
 
 ## Status checklist
@@ -380,12 +380,12 @@ Per-phase choices are stated above. The rules behind them:
 - [x] V9.0 look direction chosen (2026-09-18): L2 and L3 both to the V9.1 bake-off, L5 casting on both, two teachers, Marcus/Priya retired from the picker, $0 animation plan confirmed
 - [x] V9.1 bake-off report, candidate chosen (2026-09-21 to 09-23): the Canino pair, Jake and MJ, shipped through V9.1b-e
 - [ ] V9.2 animation packs built for the new rig(s) and the Avaturn rig. **Canino rigs done 2026-09-23** (17 clips, base + lazy pack, see V9-REPORT "V9.2"); open: the Avaturn rig and the catalogue's gap clips
-- [x] V9.2b scale and placement (Hmz settled on taller-than-real, not the brief's original "believable adult"), fingers and Jake's trousers fixed (2026-09-23)
-- [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for Hmz is in V9-REPORT)
+- [x] V9.2b scale and placement (the owner settled on taller-than-real, not the brief's original "believable adult"), fingers and Jake's trousers fixed (2026-09-23)
+- [x] V9.3 manifest, director (tested), layers wired (2026-09-23; the ShakeNo question for the owner is in V9-REPORT)
 - [x] V9.4 face, expressions, gaze (2026-09-23; the Canino rigs have only a weak `mouthSmile` and blink, so expressions are smile levels plus eye gaze, see V9-REPORT "V9.4")
-- [x] V9.5 integrated, budgets measured, docs and LICENSES.md done (2026-09-23; Jake is the default, budgets not blown, LICENSES.md has open items for Hmz, see V9-REPORT "V9.5")
-- [x] V9.6 Tier 2 gestures (2026-09-25): seven hand-keyed clips (PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard) authored, approved by Hmz in motion, wired for Jake and MJ; ShakeNo kept at a lower weight; PP viseme softened; see V9-REPORT "V9.6". Next: the catalogue's batches 2 and 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
-- [x] V9.7 teaching moves (2026-09-27): catalogue batch 2 -- six role/phase-aware clips (Imagine, HoldIdea, StepBeat, MoveOn, YourTurn, BringTogether) authored, approved by Hmz in motion, wired for Jake and MJ via new `roleOf`/segment-edge signals in the director; a new board image reuses PresentModel; hands on all 13 authored clips got a "life" pass and MJ's collar/sleeves were fixed. See V9-REPORT "V9.7". Next: batch 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
+- [x] V9.5 integrated, budgets measured, docs and LICENSES.md done (2026-09-23; Jake is the default, budgets not blown, LICENSES.md has open items for the owner, see V9-REPORT "V9.5")
+- [x] V9.6 Tier 2 gestures (2026-09-25): seven hand-keyed clips (PresentModel, Almost, Exactly, WellDone, Encourage, ThatsIt, GlanceBoard) authored, approved by the owner in motion, wired for Jake and MJ; ShakeNo kept at a lower weight; PP viseme softened; see V9-REPORT "V9.6". Next: the catalogue's batches 2 and 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
+- [x] V9.7 teaching moves (2026-09-27): catalogue batch 2 -- six role/phase-aware clips (Imagine, HoldIdea, StepBeat, MoveOn, YourTurn, BringTogether) authored, approved by the owner in motion, wired for Jake and MJ via new `roleOf`/segment-edge signals in the director; a new board image reuses PresentModel; hands on all 13 authored clips got a "life" pass and MJ's collar/sleeves were fixed. See V9-REPORT "V9.7". Next: batch 3 (`.claude/plans/V96-GESTURE-CATALOGUE.md`)
 
 ## Sources (checked 2026-09-11)
 

@@ -167,7 +167,7 @@ These come from the V8 guardrails and bind every string, screenshot and asset.
 
 ## Landing copy deck (for Phase 2 to apply)
 
-Proposed with the mark, for Hmz's approval before the Sonnet pass applies it. Headings are
+Proposed with the mark, for the owner's approval before the Sonnet pass applies it. Headings are
 written in Title Case (V8.0 rule); the hero and closing lines render in wide caps.
 
 **Nav:** How it works · What it does · For parents · Sign in · **Try a lesson**
@@ -237,7 +237,7 @@ Try a lesson, Sign in, Create an account · Get in touch
 - openGraph: same title; description "Your own AI teacher for grades 6 to 8, in a 3D
   classroom."; url `https://aristo-ai-ten.vercel.app`; image from `opengraph-image.tsx`
 - keywords: AI tutor, grades 6 to 8, middle school, 3D classroom, mastery learning
-- authors: drop "Aristo Team" (there is no team); use Hmz's name or omit the field
+- authors: drop "Aristo Team"; use the owner's name or omit the field
 
 **OG image** (1200 x 630, dark): the wordmark top left, the positioning line in Archivo wide
 caps, "Your own AI teacher, grades 6 to 8" beneath it, the full column large on the right.

@@ -1,7 +1,7 @@
 # Aristo AI: data-protection and compliance audit before public sign-up
 
 Date: 2026-11-16. Scope: audit and research only, no project code changed. Not legal advice; the owner should have a lawyer
-(or the DSB's published guidance, dsb.gv.at) check the items marked DECISION. Anything I could not confirm from a primary
+(or the DSB's published guidance, dsb.gv.at) check the items marked DECISION. Anything not confirmed from a primary
 source is marked **[unconfirmed]**.
 
 ---
@@ -25,11 +25,11 @@ below the Austrian digital-consent age (14) and every EU one (13 to 16).
 
 **Four things that are bad enough to fix first.**
 1. `/api/whisper` and `/api/openai-tts` (`src/app/api/whisper/route.js`, `src/app/api/openai-tts/route.js`) have **no
-   authentication**: anyone on the internet can send audio to OpenAI at your cost and have it transcribed. No client calls them
+   authentication**: anyone on the internet can send audio to OpenAI at the operator's cost and have it transcribed. No client calls them
    (grep finds no caller). Delete them.
 2. RLS policy `profiles: own update` (`005_reset_and_graph.sql:80-82`) has no column restriction and no later migration revokes
    column privileges, so a signed-in user can probably set their own `is_admin` and `approval_status` through the Supabase anon
-   key. Verify on the live project (the Supabase MCP was down in this session) and fix. Any age/consent column you add to
+   key. Verify on the live project (the Supabase MCP was down in this session) and fix. Any age/consent column added to
    `profiles` would be forgeable the same way.
 3. Voice input uses the browser Web Speech API (`InputBox.tsx:214-233`, `AnswerInputPanel.tsx:78`). In Chrome that sends the
    child's audio to Google. The landing copy says "speech to text is the browser's own" (`content.ts:155`); that is true but
@@ -45,7 +45,7 @@ country detection is needed); 16 and 17 may self-register but keep the minor saf
 (selfie) teacher are off for child profiles until the parent opts in. See section 6.
 
 **Legal position in one line each.** GDPR applies in full: a public service run by one person is not household processing
-(Art 2(2)(c)), and you are the controller personally. A DPIA is needed. Art 22 is not triggered by the profile, because it only
+(Art 2(2)(c)), and the operator is the controller personally. A DPIA is needed. Art 22 is not triggered by the profile, because it only
 tunes pace and depth. The EU AI Act: Art 50(1) disclosure applies now; Annex III "education" high-risk is, on its wording,
 tied to institutions, so a consumer self-study tutor is outside it as long as schools do not use it; emotion recognition is not
 done. COPPA applies to an Austrian operator whose service is directed to US children. A parent-owned account is the right shape
@@ -63,20 +63,20 @@ Effort: S under a day, M 1 to 3 days, L more. Type: C code, D document, O decisi
 |---|------|--------------|------------------------|--------|------|
 | 1 | Delete the unauthenticated `/api/whisper` and `/api/openai-tts` routes | GDPR Art 5(1)(f), 32; also cost abuse | Remove both route files; drop `openai` audio use. OpenAI stays only for embeddings of concept strings (`src/lib/rag/embed.ts`), no personal data | S | C |
 | 2 | Lock `profiles` columns | Art 32 | Migration: `REVOKE UPDATE ON profiles FROM authenticated; GRANT UPDATE (full_name, goal, daily_time_minutes) ...`, or a `WITH CHECK` that pins `is_admin`/`approval_status`. Test with an anon-key client. Add the same for any new consent/age columns | S | C |
-| 3 | Privacy policy, terms, imprint, parent notice, footer and sign-up links | GDPR Art 12-14; ECG s.5; MedienG s.25; COPPA 16 CFR 312.4 | Write per section 7; fill `LEGAL_LINKS` in `SiteFooter.tsx`; link from `sign-up/page.tsx`; replace the personal Gmail in the footer (`SiteFooter.tsx:9`) with a role address | M | D + C |
+| 3 | Privacy policy, terms, imprint, parent notice, footer and sign-up links | GDPR Art 12-14; ECG s.5; MedienG s.25; COPPA 16 CFR 312.4 | Write per section 7; fill `LEGAL_LINKS` in `SiteFooter.tsx`; link from `sign-up/page.tsx`; replace the personal email address in the footer (`SiteFooter.tsx:9`) with a role address | M | D + C |
 | 4 | Parent-owned account and age model | GDPR Art 8; DSG s.4(4) (Austria, 14); COPPA 312.5 | `learners` table, parent sign-up, profile switcher, age screen (neutral, no "you must be 13" hint), per section 6. This is the biggest change: every table is keyed by `auth.users.id` (`006_mastery.sql`) | L | C + O |
 | 5 | Consent record and verifiable parental consent | Art 8(2), 7(1); COPPA 312.5 | `consents` table (parent, learner, policy version, purposes, method, timestamp). VPC method decision in 9.3. Direct notice email to parent before any child data is collected | M | C + O |
 | 6 | Stop collecting a child's full name | Art 5(1)(c) minimisation | Replace "Full name" (`sign-up/page.tsx:43-50`, `actions.ts:29`, trigger in `005_reset_and_graph.sql:47-53`) with first name or nickname for the learner; the parent's name is optional | S | C |
 | 7 | Self-service account and child-profile deletion, and data export | Art 15, 17, 20; COPPA 312.6 | Authenticated routes: export (JSON of profile, mastery, quiz attempts, misconceptions, session logs), delete (service-role `auth.admin.deleteUser` as in `admin/users/[id]/route.ts:195-232`). Fix leftovers: `admin_audit_log.diff` stores the deleted user's `full_name` (`[id]/route.ts:226`), `usage_events.metadata.topic` survives with `user_id` nulled, audit `ip` and `user_agent` | M | C |
 | 8 | Retention schedule and the jobs to enforce it | Art 5(1)(e); COPPA 312.10 (written retention policy, compliance date 2026-04-22) | Table in 3.1; scheduled deletes (pg_cron or a Vercel cron: none exists, grep finds no retention job); stop storing `topic` in `usage_events` | M | D + C |
-| 9 | Processor DPAs and region | Art 28, 44-46 | Accept or sign each provider's DPA (table 4); confirm Supabase region is EU (not discoverable from the repo); add `"regions": ["fra1"]` to `vercel.json` (it has none, so functions run in Vercel's default region, which I believe is US East **[unconfirmed]**) so lesson data is not processed in the US by the host. ElevenLabs: exercise the training opt-out (ToS s.4(i)) | S-M | O + C |
+| 9 | Processor DPAs and region | Art 28, 44-46 | Accept or sign each provider's DPA (table 4); confirm Supabase region is EU (not discoverable from the repo); add `"regions": ["fra1"]` to `vercel.json` (it has none, so functions run in Vercel's default region, which is believed to be US East **[unconfirmed]**) so lesson data is not processed in the US by the host. ElevenLabs: exercise the training opt-out (ToS s.4(i)) | S-M | O + C |
 | 10 | Child-safety layer for LLM use | Anthropic "Guidelines for Organizations Serving Minors"; OpenAI under-18 guidance (if used); Art 25 | Input and output moderation on `/api/teach`, challenge and short-answer evaluation (a Haiku classifier pass or a moderation endpoint on text only); safety clauses in system prompts; crisis response text (self-harm etc.); length cap and "do not type your name or address" hint; log flags without content; a "report a problem" link; incident path including Stopline.at for CSAM | M-L | C |
 | 11 | "This is an AI" disclosure in the product | AI Act Art 50(1) (applies from 2026-08-02, not deferred by the omnibus per Gibson Dunn **[provisional agreement; check OJ]**); Anthropic AUP "AI Disclosure" | Persistent label in the lesson UI and chat ("Jake is an AI teacher; it can make mistakes"), age-appropriate wording; sign-up page and landing already say AI | S | C |
 | 12 | Voice input off for child profiles; fix the claim | Art 5(1)(a), 13; COPPA audio-file rule (FTC FAQ A.3, F.6); FTC Act s.5 | Hide the mic buttons (`InputBox.tsx`, `AnswerInputPanel.tsx`) unless the parent enabled voice; show a one-time notice that Chrome sends audio to its speech provider; change `PARENTS_COPY.promises[2]` | S | C + D |
 | 13 | Custom (selfie) teacher off for child profiles | Art 5(1)(c), 25; third-party processing by Avaturn | Gate `/create-teacher` (`TeacherControls.tsx:108`) behind the parent opt-in; name Avaturn in the policy. `custom_teacher_glb_url` accepts any `https://` URL (`custom-teacher/route.ts:18`): restrict to the Avaturn host | S | C |
 | 14 | DPIA and records of processing | Art 35, 30 | Internal documents; skeleton in 5.3 and section 3. Art 30(5) exemption does not apply (processing is not occasional) | M | D |
 | 15 | Email verification and sign-up abuse controls | Art 32; Art 8(2) "reasonable efforts" | Confirm "Confirm email" is on in the Supabase project (the action text assumes it, `actions.ts:38`; setting not visible); CAPTCHA or rate limit on `/sign-up`; parent email is the only email | S | O + C |
-| 16 | Remove unused `@google/generative-ai` and `GOOGLE_AI_KEY` | Art 5(1)(c), processor list accuracy | Not imported anywhere in `src/`, `pages/`, `scripts/`. Drop the dependency and the env example line so Google is not a processor you must list | S | C |
+| 16 | Remove unused `@google/generative-ai` and `GOOGLE_AI_KEY` | Art 5(1)(c), processor list accuracy | Not imported anywhere in `src/`, `pages/`, `scripts/`. Drop the dependency and the env example line so Google is not a processor that must be listed | S | C |
 | 17 | Breach procedure and contact | GDPR Art 33-34 | One-page runbook: DSB notification within 72 h, who, template. Publish a privacy contact address | S | D |
 | 18 | Harden `/auth/callback` redirect | Art 32 | `next` is concatenated to the origin (`callback/route.ts:8,25`); only allow paths starting with a single `/` | S | C |
 
@@ -88,7 +88,7 @@ Effort: S under a day, M 1 to 3 days, L more. Type: C code, D document, O decisi
 | 2 | Pre-contract information and "button solution" | FAGG s.4, s.8(2) (Directive 2011/83/EU Art 6, 8(2)) | Order summary with price, term, renewal, cancellation; the button labelled "order with obligation to pay" (zahlungspflichtig bestellen) | S-M | C |
 | 3 | Withdrawal handling for digital content | FAGG s.11 and the digital-content exemption (Directive 2011/83/EU Art 16(m), requires express consent and acknowledgement of loss at the start) | Consent and acknowledgement checkbox before the first lesson of a paid period; or grant the 14 days and pro-rate | S | C + D |
 | 4 | Withdrawal function ("Widerrufsbutton") | Directive (EU) 2023/2673, apply from 2026-06-19; Austrian transposition via VerbRÄG 2026 **[section numbers inconsistent across sources: check RIS]** | Online withdrawal function and confirmation, where a withdrawal right exists | S | C |
-| 5 | Easy online cancellation | Good practice; the cancellation-button rule is German (BGB s.312k) and I found no Austrian equivalent **[unconfirmed]** | Self-service cancel in account settings, renewal reminder emails, no dark patterns (also UK AADC nudge standard) | S | C |
+| 5 | Easy online cancellation | Good practice; the cancellation-button rule is German (BGB s.312k) and no Austrian equivalent was found **[unconfirmed]** | Self-service cancel in account settings, renewal reminder emails, no dark patterns (also UK AADC nudge standard) | S | C |
 | 6 | Contracting party is the parent | ABGB minors rules **[unconfirmed]**; Art 8 | Only the parent account can subscribe; Terms state that | S | C + D |
 | 7 | Stronger verifiable parental consent | COPPA 312.5(b) methods; Art 8(2) | The card transaction itself is an accepted COPPA method when the parent is notified; see 9.3 | M | C |
 | 8 | Payment processor and tax | Art 28; EU VAT OSS | Prefer a merchant of record (Paddle, Lemon Squeezy) or Stripe plus Stripe Tax: the question is who files VAT for digital services to EU consumers. Add the processor to the policy and its DPA | M | O |
@@ -176,7 +176,7 @@ para 165). Disclose all of the above in the privacy policy. Re-evaluate before a
 
 | Topic | State |
 |-------|-------|
-| Privacy policy, terms, imprint | None. Footer says so. Only a contact email (a personal Gmail) |
+| Privacy policy, terms, imprint | None. Footer says so. Only a contact email (a personal address) |
 | Cookie notice | None needed today (3.3); nothing to disclose it either |
 | Consent at sign-up | None: no checkbox, no policy version stored |
 | Age capture | None. The grade band is implied by the product, not collected |
@@ -194,7 +194,7 @@ para 165). Disclose all of the above in the privacy policy. Re-evaluate before a
 | Check | Finding |
 |-------|---------|
 | Captions for speech | The caption band shows the current and next sentence (`LessonPlayer.tsx:268-282`), and a caption inside the panel below `lg`. Good. Whether it can be turned off or is always on: always on when a segment plays |
-| Keyboard access to the lesson | Playback controls (pause, resume, previous, skip) are DOM buttons (`LessonPlayer.tsx:171-200`), the quiz on the desk is a DOM layer (`DeskQuiz`), widgets live in an iframe with a keyboard path (`InteractiveStage`). The 3D canvas itself is not keyboard-operable; if everything needed is also in the DOM that is acceptable, but I have not tested a full tab-through **[unverified]** |
+| Keyboard access to the lesson | Playback controls (pause, resume, previous, skip) are DOM buttons (`LessonPlayer.tsx:171-200`), the quiz on the desk is a DOM layer (`DeskQuiz`), widgets live in an iframe with a keyboard path (`InteractiveStage`). The 3D canvas itself is not keyboard-operable; if everything needed is also in the DOM that is acceptable, but a full tab-through has not been tested **[unverified]** |
 | Contrast claim | `brand-system.md:337-338` and "Known AA gaps" (463-475): measured 1812 text nodes, minimum 4.71 light and 5.24 dark, for the landing and the lesson panel, quiz buttons and callouts. Not stated as measured: sign-up/sign-in, pending, create-teacher, admin, the quiz sheet text inside the canvas (`state.md` says sheet text is "a little soft"). Do not publish an unqualified "AA" statement |
 | Reduced motion | CSS tokens go to 0 ms under `prefers-reduced-motion` (`brand-system.md:182`); the landing falls to a still "stack" mode. Whether the 3D teacher's idle and gesture animation is reduced in the lesson is not documented **[unverified]** (`Experience.tsx:523` has one media query only) |
 | Touch targets | 44 px target rule documented and measured |
@@ -206,17 +206,17 @@ para 165). Disclose all of the above in the privacy policy. Re-evaluate before a
 | Provider | Minors, as the terms read | Conditions for Aristo | Source |
 |----------|---------------------------|-----------------------|--------|
 | Anthropic | Usage Policy defines a minor as under 18 anywhere. Products serving minors "must comply with the additional guidelines". Minors may use API-powered products directly only if the product meets the "Guidelines for Organizations Serving Minors": age verification so only intended users get in, content moderation and filtering, monitoring and reporting, educational resources for minors, compliance with child-safety and privacy laws "stated on the organization's website", disclosure that the user is talking to an AI. Anthropic audits; a high violation rate or ignoring a request can end the account. Consumer chatbots must disclose AI "at a minimum at the beginning of each chat session or in the product interface". Education, grading and admissions are "high-risk" use cases in the policy | Items 10, 11 and the website compliance statement | anthropic.com/legal/aup ("Do Not Compromise Children's Safety", "Products Serving Minors", "AI Disclosure"); support.claude.com/en/articles/9307344 (dated 2026-03-16 per search); support.claude.com/en/articles/15591275 |
-| OpenAI | Under-18 API guidance: comply with child-safety and privacy law incl. COPPA; ensure content is age-appropriate; content filters; monitoring and escalation; age assurance where appropriate; and do not process personal data of children under 13 (or the digital-consent age) without ZDR | Keep OpenAI to non-personal embedding text; delete the audio routes | developers.openai.com/api/docs/guides/safety-checks/under-18-api-guidance. The usage-policy page returned 403 to my fetch |
+| OpenAI | Under-18 API guidance: comply with child-safety and privacy law incl. COPPA; ensure content is age-appropriate; content filters; monitoring and escalation; age assurance where appropriate; and do not process personal data of children under 13 (or the digital-consent age) without ZDR | Keep OpenAI to non-personal embedding text; delete the audio routes | developers.openai.com/api/docs/guides/safety-checks/under-18-api-guidance. The usage-policy page returned 403 to the fetch |
 | ElevenLabs | Terms s.1(a): under 18 may not use the Services; the Services include the API. Learners hear generated audio but do not use ElevenLabs directly; the terms do not address building a service for minors | Ask ElevenLabs in writing that a child-directed product is permitted (and send text only); opt out of training | elevenlabs.io/terms-of-use-eu (EEA, dated 2024-07-23 per search) **[unconfirmed whether superseded]** |
 | fal.ai | ToS and Acceptable Use Policy bar users under 18 of fal itself; the privacy policy says no sale, sharing or targeted ads for consumers known to be under 18 | Same position as ElevenLabs: end users are not fal users, but ask; send no personal data; prompts are LLM-written | fal.ai/legal/terms-of-service, fal.ai/legal/acceptable-use-policy (per search), fal.ai/privacy |
-| Supabase, Vercel, Resend | General-purpose infrastructure, no age restriction in the product terms I know of **[unconfirmed]** | DPAs and region | provider legal pages (not fetched) |
+| Supabase, Vercel, Resend | General-purpose infrastructure, no age restriction in the product terms known **[unconfirmed]** | DPAs and region | provider legal pages (not fetched) |
 | Google (browser speech) | Not a contract of Aristo's | Disclose; default off for children | n/a |
 
 **EU-US transfers.** The EU-US Data Privacy Framework adequacy decision (10 July 2023) stands. The General Court dismissed Latombe's
 challenge on 3 September 2025 (T-553/23); the appeal is pending before the Court of Justice as C-703/25 P, with no ruling found by
 16 November 2026 (WilmerHale 2025-12-01; Baker McKenzie; ieu-monitoring 2026-06-28). Rely on DPF only for providers that are
 certified (check each on dataprivacyframework.gov **[unconfirmed per provider]**) and keep SCCs as a fallback in the DPA. Record
-that you will need a plan if the framework falls.
+that a plan is needed if the framework falls.
 
 ---
 
@@ -225,8 +225,8 @@ that you will need a plan if the framework falls.
 ### 5.1 GDPR for this operator
 
 - **Does it apply?** Yes. Art 2(2)(c) (household exemption) covers purely personal activity; a public online service offered to
-  strangers is not that. You are a natural-person controller (Art 4(7)) established in Austria (Art 3(1)); no company shields
-  you, so liability is personal. The supervisory authority is the Datenschutzbehörde (dsb.gv.at). Regulation (EU) 2016/679 on EUR-Lex.
+  strangers is not that. The operator is a natural-person controller (Art 4(7)) established in Austria (Art 3(1)); no company shields
+  the operator, so liability is personal. The supervisory authority is the Datenschutzbehörde (dsb.gv.at). Regulation (EU) 2016/679 on EUR-Lex.
 - **Lawful bases (Art 6)**:
   - Account, lessons, mastery, SRS, quiz scoring, the behavioural profile that tunes pace and depth: Art 6(1)(b) contract with the parent.
     The profile is the core of the service, not an extra.
@@ -262,7 +262,7 @@ that you will need a plan if the framework falls.
 
 ### 5.2 US COPPA (16 CFR Part 312, amended)
 
-- **Applies?** Yes if the service is directed to US children or you knowingly collect from them. FTC COPPA FAQ B.7: "Foreign-based
+- **Applies?** Yes if the service is directed to US children or it knowingly collects from them. FTC COPPA FAQ B.7: "Foreign-based
   websites and online services must comply with COPPA if they are directed to children in the United States." Grades 6 to 8
   reaches under-13s, and a 3D animated teacher character is a "directed to children" factor; treat as child-directed or mixed
   audience (FAQ D.4: mixed audiences may age-screen neutrally but may not block children).
@@ -271,28 +271,28 @@ that you will need a plan if the framework falls.
   duties relevant here: a written data retention policy (312.10), a written information security program with a named
   coordinator (312.8), separate parental consent for disclosure of children's data to third parties where the disclosure is not
   integral to the service, an expanded notice. FTC policy statement of 25 February 2026 eases age-verification data collection
-  (Davis Polk summary); not relevant to your design.
+  (Davis Polk summary); not relevant to this design.
 - **Does the parent-owned account solve it?** No, but it is the right structure. Info the parent types about the child is not
   "collected from a child" (FAQ F.4), but the child then supplies answers, free text, possibly voice and persistent identifiers
-  (cookies, IP) which are personal information (FAQ A.3, C.5). You still owe: the direct notice to the parent (312.4(c)), VPC before
+  (cookies, IP) which are personal information (FAQ A.3, C.5). Still owed: the direct notice to the parent (312.4(c)), VPC before
   collecting from the child (312.5), parental access, deletion and the right to stop further collection (312.6), and no conditioning
   participation on more data than necessary (312.7). Parent enters first name and grade: fine, minimal.
 - **Parental consent methods.** FAQ I.3-I.4: "email plus" only where the data is used internally and not disclosed; signed form,
-  toll-free call, card transaction, knowledge-based challenge, government ID with face match. Because you disclose to AI
+  toll-free call, card transaction, knowledge-based challenge, government ID with face match. Because data is disclosed to AI
   processors, treat email-plus as insufficient **[the FTC treatment of service providers is unconfirmed]** and use the card route
   when payment arrives; before payment see 9.3.
 - **Voice.** A child's voice recording is personal information (FAQ A.3). The FTC will not enforce consent where audio is used
-  "solely as a replacement for written words" with prompt deletion and notice (FAQ F.6). Your path (Web Speech) never gives you the
-  audio, so you are not the collector of the file, but Google is receiving it from your page for the child; disclose and default
-  it off. If you later add a server-side STT, F.6 applies only if you delete immediately and use it for nothing else.
+  "solely as a replacement for written words" with prompt deletion and notice (FAQ F.6). The Web Speech path never gives the operator the
+  audio, so the operator is not the collector of the file, but Google is receiving it from the page for the child; disclose and default
+  it off. If a server-side STT is added later, F.6 applies only if you delete immediately and use it for nothing else.
 
 ### 5.3 UK Age Appropriate Design Code (ICO)
 
 The Code applies to online services likely to be accessed by under-18s, including a UK-served product. Standards (15) that matter
 for defaults, from the ICO code **[ico.org.uk page returned 403; list from memory of the Code, check wording]**: best interests of
 the child; DPIA; age-appropriate application; transparency in child-readable form; detrimental use (no use of data against the
-child's wellbeing); policies and community standards (you must follow your own stated rules); **default settings high privacy**;
-data minimisation; data sharing; geolocation off by default (you collect none); parental controls with a visible signal to the
+child's wellbeing); policies and community standards (the service must follow its own stated rules); **default settings high privacy**;
+data minimisation; data sharing; geolocation off by default (none is collected); parental controls with a visible signal to the
 child; **profiling off by default unless there is a compelling reason**, with safeguards (the adaptive profile is the service,
 so document the compelling reason, keep it rule-based, and let the parent turn it off); nudge techniques (no streak-guilt or
 dark patterns in the V5 motivation loop; the plan files mention one); connected toys (n/a); online tools (easy report and delete).
@@ -305,12 +305,12 @@ free-mode chat is in scope of the Online Safety Act is **[unconfirmed]**.
   the context to a reasonably well-informed person. It applies from 2 August 2026. The "digital omnibus" provisional agreement (political
   agreement 6-7 May 2026, Council confirmed 13 May) leaves 50(1) unchanged and gives a grace period to 2 December 2026 only for 50(2)
   marking of systems already on the market (Gibson Dunn, Hogan Lovells, Simmons & Simmons). Formal adoption and OJ publication were
-  "expected" and I could not confirm them. For children never rely on the obviousness exception: label it (item 11).
+  "expected" and were not confirmed. For children never rely on the obviousness exception: label it (item 11).
 - **Annex III point 3 (education).** The four heads: (a) deciding access or admission or placement in educational institutions,
   (b) evaluating learning outcomes, including when they steer the learning process (c) assessing the appropriate level of education
   a person will receive or access, (d) monitoring prohibited behaviour during tests. Item (b) reads like what BKT mastery scoring
   and "what to teach next" do. The qualifier in the annex text, "of natural persons in educational and vocational training institutions at all
-  levels" (my reading of the Regulation; verify the wording on EUR-Lex), ties the scope to institutional use. A consumer self-study product
+  levels" (reading of the Regulation; verify the wording on EUR-Lex), ties the scope to institutional use. A consumer self-study product
   bought by parents, used outside any school, with scores that no institution sees or uses, is outside the heads. Conclusion for the
   owner: classify as not high-risk on that basis, record the reasoning (an Art 6(3)/(4)-style note), and state in the Terms
   that it is not for formal assessment or placement. Triggers to revisit: any school or teacher dashboard, any export of mastery
@@ -328,10 +328,10 @@ free-mode chat is in scope of the Online Safety Act is **[unconfirmed]**.
 - **Cookies and storage**: TKG 2021 s.165(3), see 3.3.
 - **Imprint**: ECG s.5 (service-provider information: name, address, email, trade and chamber details, UID) and MedienG s.25
   (disclosure for websites that go beyond personal presentation: owner's name, residence or seat, the object of the business).
-  I could not retrieve either text with the search tool **[unconfirmed; check RIS]**; WKO's imprint guide lists the fields.
+  Neither text could be retrieved with the search tool **[unconfirmed; check RIS]**; WKO's imprint guide lists the fields.
 - **Barrierefreiheitsgesetz (BaFG)** in force 28 June 2025 (EU Accessibility Act). It covers e-commerce services to consumers.
   Micro-enterprises (fewer than 10 staff and at most EUR 2m turnover or balance sheet) are exempt for services (WKO FAQ;
-  Sozialministerium; the statute is s.6 BaFG **[verify]**). You qualify while you are a micro-enterprise. The Austrian
+  Sozialministerium; the statute is s.6 BaFG **[verify]**). The operator qualifies while it is a micro-enterprise. The Austrian
   Behindertengleichstellungsgesetz discrimination rules remain **[unconfirmed]**. Keep a note recording the exemption status.
 - **Consumer law for subscriptions** (2.2 above): FAGG, the Directive 2011/83/EU Art 16(m) digital-content exception, the button
   solution, and the withdrawal function under Directive 2023/2673 applying from 19 June 2026, transposed in Austria via VerbRÄG 2026
@@ -427,8 +427,8 @@ accounts removed from backups on expiry of the Supabase backup window **[length 
 
 ### 7.3 Imprint (Impressum), under ECG s.5 and MedienG s.25 **[field list unconfirmed against the statute text]**
 
-Full name; a postal address you can be served at; email; a second quick contact (phone or form); trade (Gewerbe) description and the competent trade authority; chamber membership
-(WKO) if applicable; UID number if you have one; the object of the business (an "AI tutoring app"); supervisory or licence details if any; the MedienG disclosure block
+Full name; a postal address where the operator can be served; email; a second quick contact (phone or form); trade (Gewerbe) description and the competent trade authority; chamber membership
+(WKO) if applicable; UID number if one exists; the object of the business (an "AI tutoring app"); supervisory or licence details if any; the MedienG disclosure block
 (owner and "basic direction" of the site). A home address here is public: decide on a business address first.
 
 ### 7.4 Other short documents
@@ -453,23 +453,23 @@ page (what Jake is, models used by category, limits, how to report); DPIA, ROPA,
 
 ## 9. Open questions for the owner
 
-1. **Trade status.** Will you register a Gewerbe and operate as a sole trader at launch, or form a company (GmbH or FlexKapG) first? It changes personal liability for GDPR fines, the
-   imprint and who contracts with providers. Do you want your home address public?
-2. **Which age line?** I recommend 16 (parent-owned below it). Do you accept that 16 and 17 may self-register, or do you want every minor under 18 parent-owned, which also matches Anthropic's
+1. **Trade status.** Register a Gewerbe and operate as a sole trader at launch, or form a company (GmbH or FlexKapG) first? It changes personal liability for GDPR fines, the
+   imprint and who contracts with providers. Should a home address be public?
+2. **Which age line?** Recommendation: 16 (parent-owned below it). Can 16 and 17 self-register, or should every minor under 18 be parent-owned, which also matches Anthropic's
    definition of a minor?
 3. **VPC method before payment.** Email-plus is cheap but weak and arguably unavailable because data goes to processors; a card transaction needs payment infrastructure first.
-   Do you accept launching with email-plus and a lower free allowance, or delay US under-13 access until a stronger method exists? Alternative: block under-13s in the US at sign-up
+   Launch with email-plus and a lower free allowance, or delay US under-13 access until a stronger method exists? Alternative: block under-13s in the US at sign-up
    (country declared by the parent), at the cost of a smaller market.
 4. **Free chat for children at launch?** Moderation work is L; course-mode-only is S. Which one ships first?
-5. **UK.** Do you want UK sign-ups at launch (UK GDPR Art 27 representative, AADC defaults, possible ICO registration fee) or EU and US only?
-6. **Supabase region and Vercel region.** What region is the Supabase project in? If it is not in the EU, can you move it before launch (cheaper now than later)?
+5. **UK.** UK sign-ups at launch (UK GDPR Art 27 representative, AADC defaults, possible ICO registration fee), or EU and US only?
+6. **Supabase region and Vercel region.** What region is the Supabase project in? If it is not in the EU, can it be moved before launch (cheaper now than later)?
 7. **Approval gate.** Keep it as a launch brake, or retire it? The landing copy depends on the answer.
-8. **Provider requests.** Will you email ElevenLabs and fal.ai to confirm child-directed use, and ask Anthropic for the current retention figure and DPA copy? I could not confirm these from primary sources.
+8. **Provider requests.** Email ElevenLabs and fal.ai to confirm child-directed use, and ask Anthropic for the current retention figure and DPA copy; these could not be confirmed from primary sources.
 9. **Selfie teacher.** Drop the custom (Avaturn) teacher entirely for launch? It adds a face-image processor and a parental-consent item for little gain.
 10. **Who answers rights requests and incidents?** One person: set a monthly check and a backup contact.
 11. **Moderation and safety reporting.** Which hotline and escalation path (Stopline.at for CSAM; a crisis resource for self-harm text)? Anthropic's guidance recommends one and an audit trail.
-12. **Reality check on school use.** Will any teacher or school be invited to use it in the first year? That would push the AI Act classification and a school-data-processing role (you
-    would be a processor, not a controller) into scope.
+12. **Reality check on school use.** Will any teacher or school be invited to use it in the first year? That would push the AI Act classification and a school-data-processing role (the
+    operator would be a processor, not a controller) into scope.
 
 ---
 

@@ -60,7 +60,7 @@ The Avaturn avatars (Marcus/Priya) carry 4096x4096 baked textures — most of th
 ## Do NOT
 
 - Do not touch camera constants, anchors, or any positioning — desk-quiz placement was
-  painstakingly probed (see `.claude/docs/` and memory notes).
+  painstakingly probed (see `.claude/docs/`).
 - Do not move `/learn` or restructure the R3F component tree.
 
 ## Status checklist

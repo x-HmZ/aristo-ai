@@ -1,5 +1,5 @@
-Start V9.2b of the teacher programme: three fixes Hmz found in the app. Run with **Sonnet**; if
-a diagnosis doesn't converge after two tries, stop and say so (Hmz will switch to Opus).
+Start V9.2b of the teacher programme: three fixes the owner found in the app. Run with **Sonnet**; if
+a diagnosis doesn't converge after two tries, stop and say so (the owner will switch to Opus).
 
 Read `CLAUDE.md`, `.claude/docs/state.md`, the **V9.2** section at the end of
 `.claude/plans/V9-REPORT.md`, and **V9.2b** in the "Phases" of
@@ -52,7 +52,7 @@ A desk reaches their knee.
   panel, before and after. Take lesson-view screenshots of both teachers at 1440×810 in
   `/dev/free-model?avatar=jake|mj` with the image stage and the model stage, and once in
   `/demo`.
-- **Hmz signs off** on the before/after pair before you move on. Record the numbers in
+- **The owner signs off** on the before/after pair before you move on. Record the numbers in
   `decisions.md` (they supersede the 1.5 from the Marcus era).
 
 ## 2. Fingers look bent (both teachers)

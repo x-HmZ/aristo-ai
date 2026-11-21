@@ -54,7 +54,7 @@ Tools in the app: `/dev/free-model?avatar=jake|mj&state=thinking|talking|pointin
 `AristoCanvas`, lesson camera and lights), `/dev/avatar-lab` (face framing, demo narration), and
 `/demo` (Jake default, Jake/MJ switcher, pre-rendered narration; opening a topic costs nothing).
 **Do not start lessons in `/learn`** — they call paid APIs. Looking at `/learn` with the switcher is
-fine if Hmz is signed in to the browser pane.
+fine if the owner is signed in to the browser pane.
 
 Fix what fails in `v9_retarget.py` and re-bake. If the fix is to map twist bones, distribute the
 forearm roll across them rather than copying the parent delta (copying it double-counts and
@@ -85,10 +85,10 @@ Judge 1–6 in three.js, not only in Eevee: last session found two defects (skir
 specular) that only three.js showed.
 
 If the extended garments cannot meet the bar with reasonable fixes (weights, a few rings of
-geometry, normals), **stop and propose alternatives to Hmz before building one**. Candidates that
+geometry, normals), **stop and propose alternatives to the owner before building one**. Candidates that
 cost nothing: the MPFB CC0 clothing packs already installed in Blender (`shirts01`, `pants01`,
 `shoes01`), or re-fitting her garments with a donor's weights. Show renders of the options.
-Anything that needs a download, an account or money is Hmz's call.
+Anything that needs a download, an account or money is the owner's call.
 
 The forehead scalp seam (source asset) and hair clipping the shoulder in some poses are known.
 Fix them only if cheap; otherwise leave them listed.
@@ -133,12 +133,12 @@ nodes.
 ## Parked, do not do
 
 - **A female narration for MJ in `/demo`.** She currently lip-syncs the male pre-rendered voice.
-  It is 6,856 ElevenLabs characters and Hmz has parked it.
+  It is 6,856 ElevenLabs characters and the owner has parked it.
 
 ## Ground rules
 
 Verify by rendering and running the app. Stop and ask before any spend, any account-gated download,
-or anything needing Hmz's login. Package manager is yarn. Gates before committing: `yarn
+or anything needing the owner's login. Package manager is yarn. Gates before committing: `yarn
 type-check`, `yarn lint` (22 pre-existing warnings), `yarn test`. Small atomic commits, imperative
 mood, no AI attribution. Keep new renders few and cited in the report: the eval folder is tracked
 in git now. Update `.claude/plans/V9-REPORT.md` (a V9.1d section) and `.claude/docs/state.md` at

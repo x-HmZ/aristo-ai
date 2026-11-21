@@ -12,7 +12,7 @@ Conventions: `path:line` cites. "Table `cached_lessons`" is the lesson cache (th
 
 **Landing `/`** (`pages/index.tsx`, static, `SITE_URL` hardcoded at `pages/index.tsx:8`)
 - Works: full / lite / stack modes by device (`src/components/landing/stage/gate.ts`), real OG image (`src/app/opengraph-image.tsx`), nav, footer with a contact mailto.
-- Broken at launch: the "For parents" block says "Every Account Is Approved by Hand. A new account waits for an administrator to approve it" (`src/components/landing/content.ts:149-150`). That becomes false the day the gate goes and is a public promise to parents. Same file also says "early prototype". The footer's only contact is a personal Gmail (`src/components/landing/SiteFooter.tsx:8`) and its legal row is an empty array (`SiteFooter.tsx:18-22`): no /privacy, no /terms, for a product whose users are 11 to 14 year olds.
+- Broken at launch: the "For parents" block says "Every Account Is Approved by Hand. A new account waits for an administrator to approve it" (`src/components/landing/content.ts:149-150`). That becomes false the day the gate goes and is a public promise to parents. Same file also says "early prototype". The footer's only contact is a personal email address (`src/components/landing/SiteFooter.tsx:8`) and its legal row is an empty array (`SiteFooter.tsx:18-22`): no /privacy, no /terms, for a product whose users are 11 to 14 year olds.
 - Phone: landing has a lite mode (stills) for phones/weak GPUs. Fine.
 
 **`/demo`** (`pages/demo.tsx`)
@@ -21,7 +21,7 @@ Conventions: `path:line` cites. "Table `cached_lessons`" is the lesson cache (th
 
 **Sign-up `/sign-up`** (`src/app/sign-up/page.tsx`, action `src/app/auth/actions.ts:21-39`)
 - Works: name, email, password (min 8, HTML only, `sign-up/page.tsx:71`), server action, error banner.
-- Missing: no terms/privacy consent, no age or parent-consent step (users are grades 6 to 8), no CAPTCHA/bot check (with the gate gone, every bot signup would get an allowance), no password-strength hint (UX backlog item 14), no Zod on the form (global rule), `emailRedirectTo` not set (`actions.ts:24-32`) so the confirmation link target depends entirely on the Supabase dashboard "Site URL".
+- Missing: no terms/privacy consent, no age or parent-consent step (users are grades 6 to 8), no CAPTCHA/bot check (with the gate gone, every bot signup would get an allowance), no password-strength hint (UX backlog item 14), no Zod on the form (project rule), `emailRedirectTo` not set (`actions.ts:24-32`) so the confirmation link target depends entirely on the Supabase dashboard "Site URL".
 - Confusing: after sign-up the user is sent to `/sign-in?message=Check your email to confirm your account` (`actions.ts:38`) unconditionally. If Supabase "confirm email" is off (the `/pending` comment at `pending/page.tsx:18` implies it may be), nothing arrives and the user is stuck. UNVERIFIED which.
 
 **Email confirmation**
@@ -84,7 +84,7 @@ Conventions: `path:line` cites. "Table `cached_lessons`" is the lesson cache (th
 | SEO basics | Partial | `metadata` + OG + icons in `src/app/layout.tsx:12-27`; `metadataBase`/canonical **hardcoded to `https://aristo-ai-ten.vercel.app`** (`layout.tsx:9`, `pages/index.tsx:8`, also `pages/demo.tsx`). **No `sitemap`, no `robots`** (`src/app` listing has neither; `public/` has no robots.txt). `/learn`, `/admin`, `/pending`, `/sign-*` have no `noindex`. |
 | Analytics | **None** | `package.json` has no analytics/PostHog/Plausible/Vercel Analytics dependency |
 | Error monitoring | **None** | no Sentry; failures are `console.error` only, so on Vercel they are visible only in function logs. The dead-screen failure above would be invisible. |
-| Feedback / contact | Personal Gmail in footer only | `SiteFooter.tsx:8`. No in-app feedback widget, no report-a-wrong-answer button (lessons "can be wrong", `content.ts` PARENTS_COPY). |
+| Feedback / contact | Personal email address in footer only | `SiteFooter.tsx:8`. No in-app feedback widget, no report-a-wrong-answer button (lessons "can be wrong", `content.ts` PARENTS_COPY). |
 | Onboarding emails / Resend | Code wired for 2 mails; sandbox sender; not for users' lifecycle | `resend.ts`; `RESEND_FROM` defaults to sandbox (`resend.ts:44-46`). UNVERIFIED in Vercel env. |
 | Legal | **Missing** | `SiteFooter.tsx:18-22` comment: "Legal pages do not exist yet". No terms, privacy policy, cookie notice, age gate. |
 
@@ -111,7 +111,7 @@ Conventions: `path:line` cites. "Table `cached_lessons`" is the lesson cache (th
 | Courses: "Build my course" per user | Uncached Sonnet call per click | **Finish**: one course per domain, shared and published; remove per-user generation for free tier. |
 | Interactive widgets (V10) | Off by default, `NEXT_PUBLIC_INTERACTIVE_VISUALS` (`.env.example:60`), already has throttle + `overBudget` (`api/learn/interactive/route.ts:132,166-178`) | **Keep behind the flag**; enable only for cached/curated concepts; best demo of the product. |
 | 3D model generation (Tripo, click-only) | Costly ($0.30 to $0.52), failure silent (`Experience.tsx:262`) | **Paid-only** (or catalogue-only pre-generated); surface errors. |
-| MJ teacher | Second teacher; no TTS voice entry for key `mj` (`src/lib/tts/voices.json` has marcus/ryan/priya/sonia/custom/jake, default marcus), so MJ speaks with a male voice on `/learn` (confirmed by memory note `mj_demo_narration_todo`) | **Hide MJ** until she has a voice, or add the entry. |
+| MJ teacher | Second teacher; no TTS voice entry for key `mj` (`src/lib/tts/voices.json` has marcus/ryan/priya/sonia/custom/jake, default marcus), so MJ speaks with a male voice on `/learn` (see the MJ narration TODO in `.claude/docs/state.md`) | **Hide MJ** until she has a voice, or add the entry. |
 | Teacher archive roster (Ryan, Sonia, Marcus, Priya) | Archived, not offered | Keep archived; `public/models` still ships 4 x 10 MB of unused GLBs (not served unless requested; fine). |
 | Landing copy about manual approval | Stale | Rewrite (see 1.1). |
 | `POST /api/quiz` (legacy, `src/app/api/quiz/route.ts`) | **No auth at all**; Haiku call per request, `topics` unbounded (`route.ts:34-52`); no caller in `src`/`pages` (grep) | **Delete now.** It is a public free Anthropic proxy (see Part 3). |
@@ -306,7 +306,7 @@ Effort S = under a day, M = 1 to 3 days, L = a week or more. "Cheaper model" = c
 | B3 | Force a shared `profile_signature` for free users and measure signature spread | `moderation-rules.ts:83-94`; fragmentation UNVERIFIED | Turns the cache hit rate from hopeful into guaranteed | S | Yes |
 | B4 | Account page: change goal/subject, sign-out, delete account, plan/usage ("2 of 3 custom lessons left") | none exists | Required by A6 and by any allowance UI | M | Yes |
 | B5 | SEO and canonical: real domain constant (env), sitemap, robots, `noindex` on app routes, per-page titles | `layout.tsx:9`, `pages/index.tsx:8`, `pages/demo.tsx` hardcode vercel.app; no sitemap/robots | Link previews, indexing and Google trust on a vercel.app host | S | Yes |
-| B6 | Analytics (privacy-light) + a feedback/report-wrong-answer button + a project mailbox (not personal Gmail) | none; footer uses personal Gmail | You cannot learn from early users; lessons "can be wrong" has no report path | S to M | Yes |
+| B6 | Analytics (privacy-light) + a feedback/report-wrong-answer button + a project mailbox (not a personal address) | none; footer uses a personal address | You cannot learn from early users; lessons "can be wrong" has no report path | S to M | Yes |
 | B7 | Cap `/api/teach` input (topic <= 200 chars, history length), Zod on all external inputs | `teach/route.ts:111-124`, onboarding, courses/generate, `custom-teacher` URL | Cost and prompt-injection hardening; matches the global Zod rule | S | Yes |
 | B8 | Welcome + "come back" emails; fix `RESEND_FROM` to a verified domain | `resend.ts` only has admin/approval mails | Retention is the product's loop; V6 parent digest depends on it | M | Yes |
 | B9 | WebGL/low-end fallback for `/learn` and a real-phone pass | no WebGL check; phone behaviour unverified (`state.md`) | School Chromebooks and older phones get a dead screen | M | Partly (needs device testing) |

@@ -22,7 +22,7 @@ Desk research only. No code changed, no paid API called, no personal detail used
 
 **Three things to settle before the price is final.** (1) The real ElevenLabs rate. (2) Whether Paddle's standard 5% + 0.50 USD applies to a product priced under 10 USD: Paddle's own page says products under 10 USD should "contact us for bespoke pricing" (CONFIRMED), so Plus is priced above 10 USD on purpose. (3) Whether parents of 11 to 14 year olds want Python at all; the onboarding content is Python while the pitch is school subjects (product-cost.md 1.3). Price tests mean little until that is answered.
 
-**Org plan timing.** Do not open it at launch. Build the org tables and the DPA pack during months 2 to 4, run 2 or 3 free pilots with tutoring centres or small training companies, and sell the first paid seat only after the owner's legal status, a written AI Act scoping opinion, and the quota and audio-cache work are done (realistically month 6 to 9). Part D has the plain version.
+**Org plan timing.** Do not open it at launch. Build the org tables and the DPA pack during months 2 to 4, run 2 or 3 free pilots with tutoring centres or small training companies, and sell the first paid seat only after billing is switched on, a written AI Act scoping opinion, and the quota and audio-cache work are done (realistically month 6 to 9). Part D has the plain version.
 
 ---
 
@@ -107,7 +107,7 @@ The important consequence for Aristo: **a Khan-level school price (10 USD per st
 | Hard to monetise | education is among the categories hardest for new apps to reach revenue thresholds | secondary coverage | https://9to5mac.com/?p=1042212 |
 | Parents and AI | study of 2,000+ parents (US, UK, Canada): willingness to pay for a child's AI subscription rose by over 60% when told more peers use AI; risk warnings did not reduce it | secondhand, check the paper | https://phys.org/archive/06-08-2026/ |
 
-I found **no** credible published figure for family-plan uptake share or free-to-paid conversion specific to children's education apps. Treat any 2 to 5% free-to-paid assumption as a hypothesis to measure, not a fact. Practical reading: price annual plans at about 8 to 9 months of monthly (education buyers already pick annual), expect small conversion, and keep free-user cost near 0.30 USD a month so that a low conversion is survivable.
+No credible published figure was found for family-plan uptake share or free-to-paid conversion specific to children's education apps. Treat any 2 to 5% free-to-paid assumption as a hypothesis to measure, not a fact. Practical reading: price annual plans at about 8 to 9 months of monthly (education buyers already pick annual), expect small conversion, and keep free-user cost near 0.30 USD a month so that a low conversion is survivable.
 
 ---
 
@@ -117,7 +117,7 @@ Short form first, detail below.
 
 | Segment | Can pay | Realistic in 6 months without a company |
 |---|---|---|
-| Parents of 10-15 (EU, US) | Yes, 5 to 15 EUR/month | Yes, via MoR (after the owner's own legal clearance) |
+| Parents of 10-15 (EU, US) | Yes, 5 to 15 EUR/month | Yes, via MoR (billing is sandbox-only behind an off flag today) |
 | Self-directed teens (14 to 17) and adults | Low to medium, 5 to 10; a teen rarely owns a card; adults compare with Codecademy, Mimo, free AI | Yes, same plan, secondary |
 | Private tutors, small tutoring centres | 5 to 12 per seat, 50 to 300 EUR/month per centre | Pilot only; paid needs org tables and an invoice route |
 | Schools, public and private | 10 to 60 per student per year, budget holder is not the teacher | No (as a paid sale). Free pilot with a private school or a teacher yes |
@@ -129,7 +129,7 @@ Short form first, detail below.
 - **Alternatives:** school homework help, YouTube, free ChatGPT or Gemini, Khanmigo (4 USD), IXL, a human tutor (Austria about 129 to 224 EUR a month at an institute, AK family average 720 EUR per child per year; US 27 to 68 USD an hour).
 - **Ability and willingness:** the parent already pays; 720 EUR a year shows the budget exists. They will not pay more than a known app for an unknown brand without a trial. A parent of a 6th to 8th grader will check "is it safe for my child" before price.
 - **Buying process:** impulse to 2-week research; trial then card; annual if trust is built. Under 16 the account is the parent's (decision D2) so the parent is the only buyer, which helps: no teen payment problem.
-- **Realistic:** yes. Constraint is legal (owner may not sell yet) and content (Python vs school subjects).
+- **Realistic:** yes. Constraints: billing is sandbox-only behind an off flag, and content (Python vs school subjects).
 
 ### B2. Self-directed teens and adults
 - **Job:** learn Python or a topic on my own, with structure and review.
@@ -306,7 +306,7 @@ Decision rule: pick the highest price at which at least 5 of 10 say "reasonable"
 
 ---
 
-## Part D. What changes when you sell to schools or companies
+## Part D. What changes when selling to schools or companies
 
 ### D1. Operator becomes data processor
 - For a school or company the organisation is the controller and Aristo the processor (GDPR Art. 28). Required: a data-processing agreement (instructions, confidentiality, security measures, sub-processor consent, assistance with data-subject requests, deletion or return at the end, audit rights).
@@ -335,7 +335,7 @@ Expect from a school: DPA; list of sub-processors; data location; retention and 
 ### D4. Invoicing and VAT
 - Paddle is the merchant of record for card checkout: it sets tax, collects, remits and handles the buyer relationship.
 - For invoiced B2B deals Paddle has a separate Invoicing feature: manual-collection transactions with a business id, purchase order number and payment terms (for example 14 days), payment by wire transfer or Paddle Checkout, and the customer must accept Paddle's buyer terms appended to your own terms. https://developer.paddle.com/build/invoices/create-issue-invoices ; https://www.paddle.com/help/sell/invoicing-tool/which-terms-and-conditions-apply-when-using-paddle-invoicing . CONFIRMED that Paddle's pricing page lists invoicing as an additional service outside the 5% + 0.50 USD base rate with no price shown, so assume a separate quote: https://www.paddle.com/pricing .
-- Not found: whether invoices can be issued by an individual (no company) seller, whether Paddle accepts school purchase orders or net-60, and minimum deal size. Ask Paddle in writing before listing an org price. A public school may refuse to pay a foreign MoR, because many procurement rules want the supplier named on the contract; that is a risk to test with the first pilot, not a fact I could source.
+- Not found: whether invoices can be issued by an individual (no company) seller, whether Paddle accepts school purchase orders or net-60, and minimum deal size. Ask Paddle in writing before listing an org price. A public school may refuse to pay a foreign MoR, because many procurement rules want the supplier named on the contract; that is a risk to test with the first pilot, not a sourced fact.
 - VAT: Paddle as MoR handles consumer VAT. For direct invoices by the owner (outside Paddle) the owner needs a tax registration and invoice rules (Austrian invoice content, reverse charge for EU businesses, small-business exemption thresholds). That is the owner's legal-status question already in `payments-research.md` and cannot be answered here.
 
 ### D5. Support expectations
@@ -345,7 +345,7 @@ A paid org expects: a named contact and email, a response-time promise (one busi
 1. **At launch: no.** Put a waitlist form on the site. Offer nothing for sale to organisations.
 2. **Months 1 to 3:** run consumer Plus; build the audio cache, quotas and entitlements; read the real cost per user. In parallel, build the organisation tables (C7) and the DPA and sub-processor pack, because they are also useful for parents.
 3. **Months 2 to 5:** run **2 or 3 free design-partner pilots** with small tutoring centres or a small training company; no invoice, no school, no university. Test the admin dashboard and the pooled caps.
-4. **Open paid org seats only when all of these are true:** the owner has confirmed in writing that he may sell and invoice; Paddle has answered the invoicing questions in writing; a lawyer has confirmed the AI Act scoping for the education offer; audio cache, quotas and org tables are in production; the real voice rate is known so the 36 to 60 USD seat prices are verified. Earliest realistic date: **month 6 to 9**, tutors and small companies first, schools last (spring budget cycle), universities not before the legal scoping is solid.
+4. **Open paid org seats only when all of these are true:** billing is switched on and invoicing is set up; Paddle has answered the invoicing questions in writing; a lawyer has confirmed the AI Act scoping for the education offer; audio cache, quotas and org tables are in production; the real voice rate is known so the 36 to 60 USD seat prices are verified. Earliest realistic date: **month 6 to 9**, tutors and small companies first, schools last (spring budget cycle), universities not before the legal scoping is solid.
 5. Keep "contact us" pricing for schools until at least one pilot has run, because the 36 to 60 USD seat price is above the 10 USD Khan benchmark and may fail.
 
 ---
