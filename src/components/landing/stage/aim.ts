@@ -3,7 +3,7 @@ import { Quaternion, Vector3, type Object3D } from "three";
 import { damp } from "./ease";
 
 /**
- * Aims an offered hand at a point (V8.3b, the hero: Hmz wanted the open palm to point at Try a lesson). The clip
+ * Aims an offered hand at a point (V8.3b, the hero: the owner wanted the open palm to point at Try a lesson). The clip
  * (PresentModel) holds the hand out level at shoulder height; the button is lower. After the pose each frame, the
  * shoulder turns so the line from it to the fingertip meets the point, then the wrist turns so the hand does too,
  * which also tips the palm towards it. Both are limited, and weighted by how far the arm is raised, so the

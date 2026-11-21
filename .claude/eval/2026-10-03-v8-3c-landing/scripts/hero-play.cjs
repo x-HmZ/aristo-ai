@@ -1,4 +1,4 @@
-// The hero's play (V8.3b, Hmz: a hello and some fun, no lesson). Live at 1280: after the arrival wave,
+// The hero's play (V8.3b, the owner: a hello and some fun, no lesson). Live at 1280: after the arrival wave,
 //   1. the mouse at three places (the headline, the calls to action, above him): where he looks;
 //   2. hovering Try a lesson: "your turn" (peak = both hands furthest towards the reader);
 //   3. hovering Create an account: the nod (peak = the head lowest);

@@ -1,7 +1,7 @@
 """
 Loosen a teacher's shirt (V8.3d): ease, an untucked hem that hangs, folds.
 
-Hmz (2026-10-04): the shirts are skin tight; he wants a relaxed fit that reads as
+The owner (2026-10-04): the shirts are skin tight; the owner wants a relaxed fit that reads as
 fabric. Jake's collared shirt comes out of his trousers with a straight hem and a
 shallow shirt-tail curve; MJ's tee comes out over the skirt with a slight A-line.
 
@@ -68,7 +68,7 @@ JAKE = dict(
     z_cut=1.16, clear=0.013, z_top=1.47, z_chest=1.38, z_waist=1.13, ease_chest=0.010, ease_waist=0.025,
     side=0.45, drape=0.04, drape_back=0.08, drape_side=0.15, rise=0.15, flare=0.0, hem_side=1.000, tail=0.025, ring_dz=0.012, seam_band=0.03,
     # Along the arm line, 0 = shoulder joint, 1 = wrist (hand head); his elbow is at about 0.58, the cuff from 0.88.
-    # Hmz (2026-10-05) on the first fit: the arm read tight and deformed, the sleeve a little long. Now an even
+    # The owner (2026-10-05) on the first fit: the arm read tight and deformed, the sleeve a little long. Now an even
     # 12 to 14 mm down the arm with a gentle taper into the cuff, no stacked rings, and the sleeve 3 cm shorter.
     sleeve=((0.0, 0.0), (0.06, 0.009), (0.45, 0.012), (0.60, 0.014), (0.85, 0.014), (0.95, 0.009), (1.0, 0.007)),
     underside=0.7, shorten=0.03,
@@ -172,7 +172,7 @@ def _convex(r):
     The convex hull of a closed polar profile (radii at evenly spaced angles round the axis), as radii again.
     Loose cloth bridges hollows: it does not follow them. Without this the hem followed the groove where the legs
     meet the torso (the trousers' and the skirt's sections), and the lower front of both shirts showed the body's V
-    (Hmz).
+    (the owner).
     """
     n = len(r)
     if np.isnan(r).all():
@@ -336,7 +336,7 @@ def _loosen(ob, arm, cfg, N):
     # The sides follow the body in: the slice is widest under the armpits, and holding it out there (the drape
     # rule) pushed the torso cloth into the hanging arms.
     # cos^2, not cos^4, and a quarter of the earlier strength: the narrow cos^4 band made the front a flat panel
-    # with the sides falling away, which shaded as a V on both lower torsos (Hmz).
+    # with the sides falling away, which shaded as a V on both lower torsos (the owner).
     drape_th = drape_th + cfg["drape_side"] * np.cos(th) ** 2
 
     # Buttons of the source: small islands on the front.
@@ -453,12 +453,12 @@ def _loosen(ob, arm, cfg, N):
                 u = P - q
                 if u.length > 1e-6:
                     # The underside (down and in, in the rest A-pose) lies against the body when the arm hangs.
-                    # It had a third of the ease, which made the sleeve oval: Hmz read the arm as tight and
+                    # It had a third of the ease, which made the sleeve oval: the owner read the arm as tight and
                     # deformed. Now it keeps `underside` of it.
                     un = u.normalized()
                     under_ = max(0.0, un.dot(Vector((-0.45 if s == "L" else 0.45, 0.0, -0.9)).normalized()))
                     move += un * _interp(cfg["sleeve"], t) * a * (1.0 - (1.0 - cfg["underside"]) * under_)
-                    # A shorter sleeve (Hmz, Jake): the forearm part slides up the arm, most at the cuff.
+                    # A shorter sleeve (the owner, Jake): the forearm part slides up the arm, most at the cuff.
                     if cfg.get("shorten"):
                         seg = (lines[s][2] - lines[s][1]).normalized()
                         move -= seg * cfg["shorten"] * _smoothstep(0.55, 0.9, t) * a
@@ -523,7 +523,7 @@ def _loosen(ob, arm, cfg, N):
     for k in range(1, len(zs2)):
         Hd[k] = _convex(Hd[k])
     Hd[0] = R0
-    # Wide round the body and over 7 cm in height: narrower kernels kept the V and the under-belly curve (Hmz).
+    # Wide round the body and over 7 cm in height: narrower kernels kept the V and the under-belly curve (the owner).
     Hd = _smooth_rows(Hd, 15, 3)
     Hd[0] = R0
     grid2 = _Grid(zs2[::-1].copy(), N)

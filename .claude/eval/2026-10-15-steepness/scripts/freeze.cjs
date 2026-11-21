@@ -22,7 +22,7 @@ const quiz = assets.quiz
   .map((q, i) => ({ ...q, id: `${SLUG}-q${i + 1}`, concept_id: SLUG }));
 
 const header = `/**
- * FROZEN DEMO CONTENT: the V10 interactive-visual topic (Hmz, 2026-10-15): steepness is speed, the idea behind
+ * FROZEN DEMO CONTENT: the V10 interactive-visual topic (the owner, 2026-10-15): steepness is speed, the idea behind
  * differentiation framed for grade 8. Written by .claude/eval/2026-10-15-steepness/scripts/freeze.cjs from that run:
  * the lesson as generated, the curated spec (the lesson's worked example plus a curve for the tangent) and the widget
  * made from it with the edits in curate.cjs. The quiz keeps its true/false and multiple-choice questions: /demo grades

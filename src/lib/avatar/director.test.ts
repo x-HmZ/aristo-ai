@@ -413,7 +413,7 @@ describe("greeting (row 3)", () => {
     expect(waves[0].overlay!.mask).toBe("upper");
   });
 
-  it("plays the wave at 0.75 (Hmz, V9.6)", () => {
+  it("plays the wave at 0.75 (the owner, V9.6)", () => {
     for (const seed of [1, 2, 3]) {
       const out = run({ seconds: 10, seed, signalsAt: () => sig({ sceneReady: true }) }).outputs;
       const wave = out.find((o) => o.overlay?.scenario === "greeting")!;
@@ -577,7 +577,7 @@ describe("teaching moves play in their scenarios", () => {
     expect(hit!.overlay!.endsAt - hit!.overlay!.startedAt).toBeCloseTo(DURATIONS.get(clip)! / hit!.overlay!.timeScale, 5);
   });
 
-  it("YourTurn plays at a fixed 0.85, like the greeting wave (Hmz)", () => {
+  it("YourTurn plays at a fixed 0.85, like the greeting wave (the owner)", () => {
     const out = run({
       seconds: 2,
       signalsAt: narrating("seg_1", { phase: "challenge", role: "challenge_setup" }),

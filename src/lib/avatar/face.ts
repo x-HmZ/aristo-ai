@@ -20,7 +20,7 @@ import type { FaceHint } from "./animationManifest";
  * like this one; checked at 1.8 on Jake with no mesh artifacts.
  */
 export const SMILE_REST: Record<FaceHint, number> = {
-  neutral:  0.8,  // a soft closed smile at rest (V8.3b, Hmz): friendly, short of the greeting
+  neutral:  0.8,  // a soft closed smile at rest (V8.3b, the owner): friendly, short of the greeting
   smile:    1.6,  // greeting, correct, quiz good
   warm:     1.1,  // wrong, quiz supportive: kind, not celebrating; still a lift above rest
   thinking: 0.03, // a flat, attentive mouth
@@ -34,7 +34,7 @@ export const SMILE_REST: Record<FaceHint, number> = {
 export const SMILE_REST_PLAIN = 0.15;
 
 /**
- * The lids' resting closure on a tuned rig (V8.3b, Hmz): lowered a little, which reads as smiling eyes with the
+ * The lids' resting closure on a tuned rig (V8.3b, the owner): lowered a little, which reads as smiling eyes with the
  * soft resting smile. Blinks close from here.
  */
 export const LID_REST = 0.12;

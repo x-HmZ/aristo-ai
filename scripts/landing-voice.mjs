@@ -5,7 +5,7 @@
  *
  *   public/landing/voice/<teacher>/line_<n>.mp3 + line_<n>.align.json
  *
- * Jake speaks with the demo's voice (Antoni, as prerender-demo-tts.mjs "ryan"); MJ with Jessica, the female voice Hmz picked
+ * Jake speaks with the demo's voice (Antoni, as prerender-demo-tts.mjs "ryan"); MJ with Jessica, the female voice the owner picked
  * from the samples.
  *
  *   node scripts/landing-voice.mjs samples           # line 1 in each candidate female voice -> .claude/eval/.../voice/

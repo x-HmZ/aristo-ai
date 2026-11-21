@@ -1,7 +1,7 @@
 /**
  * Three hand-written widgets. They serve two jobs: the dev harness shows them
  * with no API call, and the generator's prompt quotes them as the standard to
- * match (what Hmz approves by eye is what the model is asked to write).
+ * match (what the owner approves by eye is what the model is asked to write).
  *
  * Writing rules these follow, which the generator is also given: CSS variables
  * and `ARISTO.colors` for every colour, `accentText` for the key mark, controls

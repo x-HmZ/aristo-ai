@@ -74,7 +74,7 @@ function useSceneToolbar(): boolean {
 
 /**
  * "Open interactive", and Continue while the lesson waits, in the scene toolbar's row under the screen. Two controls
- * centred under the same screen on separate layers drew over each other (Hmz, 2026-10-15). Renders nothing unless
+ * centred under the same screen on separate layers drew over each other (the owner, 2026-10-15). Renders nothing unless
  * the screen could hold the widget; otherwise InteractiveStage puts the controls in the corner.
  */
 export function ReopenInteractiveControls({ buttonClassName }: { buttonClassName: string }) {

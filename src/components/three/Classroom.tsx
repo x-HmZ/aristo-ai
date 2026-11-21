@@ -226,7 +226,7 @@ const ROOM_SHELL = {
   classroom: { position: [0.2, -1.7, -2] as Vec3, rotationY: 0, scale: 1 },
   board:     { position: [0.45, 0.382, -6] as Vec3 },
   // The wall display. The baked one (probe-display.cjs: screen x -1.059..1.867, y -0.421..1.132, bezel front at
-  // z -5.52) read small behind the teacher, so the app draws its own 30% larger (Hmz, 2026-10-15): same bottom edge
+  // z -5.52) read small behind the teacher, so the app draws its own 30% larger (the owner, 2026-10-15): same bottom edge
   // on the panelling, grown up and out, 0.2 m further from the teacher, just in front of the baked one it covers.
   display:   { center: [0.604, 0.589, -5.494] as Vec3, width: 3.804, height: 2.019, bezel: "#1C1E22" },
 };

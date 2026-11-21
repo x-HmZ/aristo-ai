@@ -39,7 +39,7 @@ declare global {
 
 /**
  * `?probe`: the verification's window into the stage. It reads Jake's bones in world space, so an object is placed
- * from where his hand actually is at a gesture's peak (Hmz's second hard requirement), and peak frames can show the
+ * from where his hand actually is at a gesture's peak (the owner's second hard requirement), and peak frames can show the
  * hand against the object in page pixels. Reads only; renders nothing.
  */
 export function Probe({ spot }: { spot: SpotId }) {

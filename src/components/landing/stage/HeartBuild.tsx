@@ -22,7 +22,7 @@ import { warmUp } from "./warm";
  * the original cost a 200 to 400ms frame mid-scroll.
  */
 export const MODEL_URL = "/landing/heart.glb";
-/** The lesson's own picture of the heart: its board infographic (Hmz, V8.3b: the picture is an infographic). */
+/** The lesson's own picture of the heart: its board infographic (the owner, V8.3b: the picture is an infographic). */
 export const SOURCE_URL = "/demo/heart/teaching.jpg";
 /**
  * Where the heart itself is in the infographic, in uv (the title and the labels are around it): the model's front

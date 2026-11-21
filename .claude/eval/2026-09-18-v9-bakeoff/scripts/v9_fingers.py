@@ -3,7 +3,7 @@ Relax the Canino teachers' fingers towards a neutral curl (V9.2b).
 
 The retarget math was already proven exact -- rest alignment puts each palm
 within 3.6-5.1 deg of Marcus's, and finger deltas copy the Mixamo source to
-0.000 deg (see decisions.md). The bent look Hmz found in the app is not a
+0.000 deg (see decisions.md). The bent look the owner found in the app is not a
 retarget bug: it is the same Mixamo rotation values read on the Canino
 rigs' shorter, thicker finger segments, which curl into a visually tighter
 fist than the same angle does on Marcus's longer, slender fingers. Confirmed

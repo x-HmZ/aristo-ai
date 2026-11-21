@@ -15,11 +15,13 @@
  * precedent set by the T07 and pipeline-eval sessions is that evals stay out
  * of usage_events so the cost dashboard keeps meaning production spend.
  *
- * Run: node mv-experiment.mjs [--dry-run]
+ * Run: node scripts/eval-multiview-3d.mjs [--dry-run]
  */
 import { readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = "C:/Users/Pc/Desktop/Empire/Artisto/Aristo 2.0/Aristo-AI";
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const KEY = (readFileSync(`${ROOT}/.env.local`, "utf8").match(/^FAL_KEY=(.*)$/m) || [])[1]?.trim();
 if (!KEY) throw new Error("FAL_KEY missing");
 const DRY = process.argv.includes("--dry-run");

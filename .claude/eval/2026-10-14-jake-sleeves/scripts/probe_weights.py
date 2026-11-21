@@ -1,12 +1,13 @@
 """Jake's sleeve weights along the forearm (rest): the mean weight per bone group in bins of t, per side.
 blender -b bakeoff_scene.blend --python probe_weights.py"""
 
+import os
 import sys
 from collections import defaultdict
 
 import bpy
 
-sys.path.insert(0, r"C:\Users\Pc\Desktop\Empire\Artisto\Aristo 2.0\Aristo-AI\.claude\eval\2026-09-18-v9-bakeoff\scripts")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "2026-09-18-v9-bakeoff", "scripts"))
 import v9_loose as VL  # noqa: E402
 
 ob = bpy.data.objects[VL.JAKE["shirt"]]

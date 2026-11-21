@@ -24,7 +24,7 @@ export interface GateEnv {
   forced?: "full" | "lite" | null;
 }
 
-/** Below this width the stage is a phone's: lite by default (Hmz, V8.3 plan). */
+/** Below this width the stage is a phone's: lite by default (the owner, V8.3 plan). */
 export const FULL_MIN_WIDTH = 768;
 
 export function decideMode(env: GateEnv): LandingMode {

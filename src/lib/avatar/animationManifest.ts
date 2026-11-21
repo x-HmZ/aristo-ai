@@ -123,7 +123,7 @@ export const SCENARIOS: Record<Scenario, ScenarioSpec> = {
   // Pointing stays a full-body base clip, not the catalogue's upper overlay:
   // its fingertip was placed on the panel edge with the clip's own hips
   // (V9.2b), and a talking base's hips would swing that aim. `play: "dwell"`
-  // (V9.8, was "cycle"): PointNear joins the pool beside it, and Hmz wants one
+  // (V9.8, was "cycle"): PointNear joins the pool beside it, and the owner wants one
   // hand picked per pointing stretch, not swapped at every clip loop -- dwell
   // holds the pick for DWELL_S (20s), longer than a pointing stretch runs.
   point:          { row: 8,  layer: "base",  play: "dwell", fallback: "talking", look: "board" },
@@ -214,7 +214,7 @@ const WARP = [0.92, 1.08] as const;
 /** The greeting wave plays slower than recorded; one fixed rate, not a range. */
 const GREETING_WARP = [0.75, 0.75] as const;
 
-/** YourTurn plays slower too, the same choice Hmz made for the wave (V9.7). */
+/** YourTurn plays slower too, the same choice the owner made for the wave (V9.7). */
 const YOUR_TURN_WARP = [0.85, 0.85] as const;
 
 export const CLIP_MANIFEST: readonly ClipSpec[] = [
@@ -225,13 +225,13 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "Idle4", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["idle", "listen", "quizLook"], layer: "base", mask: "full", play: "loop", duration: 3.04,  weight: 1, cooldown: 0, mirrorable: true, family: "Idle4", timeWarp: WARP },
 
   // Row 2: long wait. Too restless for the attentive pool (hands at 78 cm/s,
-  // V9.2); Hmz saw it in motion and called it fine for this row.
+  // V9.2); the owner saw it in motion and called it fine for this row.
   { id: "Idle3", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["longWait"], layer: "upper", mask: "upper", play: "once", duration: 10.42, weight: 1, cooldown: 60, mirrorable: true, family: "Idle3" },
   { id: "GlanceBoard", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["longWait"], layer: "upper", mask: "upper", play: "once", duration: 2.83, weight: 1, cooldown: 30, mirrorable: false, family: "GlanceBoard", look: "board",
     notes: "Turns to the board as if rereading it; `look` keeps the head there, the look layer would pull it back to the student" },
 
   // Row 3: greeting, a one-second wave with either hand, played at 0.75
-  // (Hmz: full speed felt too fast, V9.6).
+  // (the owner: full speed felt too fast, V9.6).
   { id: "Talking6",  source: MIXAMO,        licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6",  timeWarp: GREETING_WARP },
   { id: "Talking6M", source: MIXAMO_MIRROR, licence: MIXAMO_LICENCE, scenarios: ["greeting"], layer: "upper", mask: "upper", play: "once", duration: 1.04, weight: 1, cooldown: 0, mirrorable: true, family: "Talking6", timeWarp: GREETING_WARP },
 
@@ -270,7 +270,7 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "Nodding", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["correct", "quizGood"], layer: "upper", mask: "head", play: "once", duration: 2.63, weight: 1, cooldown: 0, mirrorable: false, family: "Nodding",
     notes: "Also the demo's scripted nod: /demo accepts any answer with an encouraging nod (useLessonPlayback submitAnswer, demoMode branch)" },
   { id: "ShakeNo", source: MIXAMO, licence: MIXAMO_LICENCE, scenarios: ["wrong"], layer: "upper", mask: "head", play: "once", duration: 3.08, weight: 1, cooldown: 0, mirrorable: false, family: "ShakeNo",
-    notes: "Kept at a third of Almost's weight, about one wrong answer in four (Hmz: lower, V9.6). For grade 6-8 a head shake reads as scolding" },
+    notes: "Kept at a third of Almost's weight, about one wrong answer in four (the owner: lower, V9.6). For grade 6-8 a head shake reads as scolding" },
 
   // V9.6 authored reactions, beside the shipped ones.
   { id: "Almost", source: AUTHORED, licence: AUTHORED_LICENCE, scenarios: ["wrong"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 3, cooldown: 0, mirrorable: false, family: "Almost",
@@ -290,9 +290,9 @@ export const CLIP_MANIFEST: readonly ClipSpec[] = [
   { id: "StepBeat", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["demoStep"], layer: "upper", mask: "upper", play: "once", duration: 1.46, weight: 1, cooldown: 0, mirrorable: false, family: "StepBeat",
     notes: "One chop of the right hand, lands about 0.6 s in: 'first... then...'" },
   { id: "MoveOn", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["transition"], layer: "upper", mask: "upper", play: "once", duration: 1.63, weight: 1, cooldown: 0, mirrorable: false, family: "MoveOn",
-    notes: "Forward roll of the right hand, opens palm up: 'now, next'. Hmz picked this over a palm-down brush" },
+    notes: "Forward roll of the right hand, opens palm up: 'now, next'. The owner picked this over a palm-down brush" },
   { id: "YourTurn", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["challengeSetup"], layer: "upper", mask: "upper", play: "once", duration: 2.04, weight: 1, cooldown: 0, mirrorable: false, family: "YourTurn", timeWarp: YOUR_TURN_WARP,
-    notes: "Both palms offered forward, a small lean: 'your turn'. Plays at 0.85, like the greeting wave (Hmz)" },
+    notes: "Both palms offered forward, a small lean: 'your turn'. Plays at 0.85, like the greeting wave (the owner)" },
   { id: "BringTogether", source: AUTHORED_V97, licence: AUTHORED_LICENCE, scenarios: ["connectBeat"], layer: "upper", mask: "upper", play: "once", duration: 2.46, weight: 1, cooldown: 0, mirrorable: false, family: "BringTogether",
     notes: "Wide to close, never nearer than 182 mm: 'it all fits'. Fires once per connect phase, not every segment" },
 

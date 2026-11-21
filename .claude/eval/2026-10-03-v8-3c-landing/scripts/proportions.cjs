@@ -1,4 +1,4 @@
-// Hmz's first hard requirement: Jake on the landing against the classroom render (public/images/landing/v3/idea.webp)
+// the owner's first hard requirement: Jake on the landing against the classroom render (public/images/landing/v3/idea.webp)
 // at the same scale. Both are measured the same way on a column through his body: the top of his head (the first
 // row that is not background) and his belt (the shirt's white turning to the trousers' dark). The landing still is
 // scaled so head-to-belt matches, then the shirt's width is measured at the chest and at the waist in both, and a

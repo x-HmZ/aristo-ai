@@ -1,5 +1,5 @@
 // V8.7 step 4: which --aristo-* tokens, BRAND_HEX keys, Tailwind aristo utilities and files are referenced
-// outside their own definitions. Writes dead-code.md (the list Hmz confirms) and prints a summary.
+// outside their own definitions. Writes dead-code.md (the list the owner confirms) and prints a summary.
 //   node .claude/eval/2026-10-06-v8-7/scripts/deadcode.cjs
 const fs = require("fs");
 const path = require("path");
